@@ -1,5 +1,9 @@
 # Plano — confiança antes de acurácia
 
+> **Estado em 11/09:** 2.2 (filtro do vocabulário: rótulo meta + fim do veto de título) e 2.4 (compilador nos 4 cursos, 16
+> chamadas, com os membros do zip no bundle) FECHADAS; camada 3 cortada (produtor determinístico, 142 × 137 em 151); zips sem
+> colisão. 2.1, 2.3, Fase 1 e Fase 3 continuam. Ver `2026-09-11-handoff-camada3.md`.
+
 last_updated: 2026-09-08 (reescrito depois da atualização dos artefatos)
 Entrada: `docs/reports/pendencias.md` (tracker vivo) · `.mex/context/audit-2026-09-07.md` (memória) ·
 harness `docs/reports/_harness-2026-09-04/c1-3/`

@@ -1,7 +1,7 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-09-11 (2.4 executada com b, filtro do vocabulario, determ v3 138 x Gemini 137; ver secao de 11/09). **PONTO DE ENTRADA =
-`2026-09-08-handoff-confianca.md`**; o `2026-09-05b-handoff-fila-campanhas.md` passa a ser historico.
+`2026-09-11-handoff-camada3.md`**; o `2026-09-08-handoff-confianca.md` passa a ser historico.
 **Plano a REVISAR antes de executar: `2026-09-08-plano-confianca-antes-de-acuracia.md`.**
 
 **Reguas no produto (08/09, Gemini bloqueado):** materiais 100% certos **199/288** · bloco **235/237** · unidade
@@ -83,6 +83,12 @@ alias igual a parte CamelCase do identificador, zip com `.md` proprio tambem sin
 **10 votos do voter bloqueados** (materiais sem voto em cache: 6 paginas do Moodle do CG, 3 FR, 1 IA `prova-1-2024-02`): bloco deles saiu
 deterministico. Decisao do user: liberar os 10 (cap 20) ou aceitar. Golden regenerados de proposito: SO `divisao_blocos`, TCC `casos_chave`.
 Orfaos de codigo apagados nos tutores (nao referenciados pelo manifest; `exemplo1..3.md` do SO estavam orfaos desde 21/06).
+**Votos liberados (user):** `c1-3/libera_votos.py` CG 6, FR 3, IA 1 = 10 chamadas, **0 blocos mudaram**. 8 tutores commitados, arvores limpas.
+Handoff novo: `2026-09-11-handoff-camada3.md` (ROUTER aponta).
+**De onde vem o 214 (medido, `c1-3/mede_contribuicao_llm.py`, 3 regimes x 8 tutores em copia, rota do produto, 0 chamadas):**
+produto 214 · sem vocab LLM 138 · sem vocab LLM e sem voter 137. Deterministico de ponta a ponta = **137/214 = 64%**; vocabulario
+compilado por LLM = **76 = 36%** (1 chamada por unidade, em cache: nao ha chamada na atribuicao); voter = **1 = 0,5%**.
+Por curso sem vocab LLM: IA 36 -> 5, FR 18 -> 7, ES2 25 -> 16, SO 15 -> 9, MF 55 -> 46, CG 55 -> 47, TCC 10 -> 8.
 
 ## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
 Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`** (reescrito apos os artefatos).
