@@ -143,4 +143,4 @@ reprocessa com detector de chamadas) · `libera_votos.py` · brief e resposta do
 `resposta_codex_astra_camada3{,.clean}.md`).
 
 ## 10. Artefatos publicados
-Não atualizados em 11/09. O Placar do Motor e a Matriz de Atribuição ainda mostram o estado de 08/09 (subunidade 161/251).
+Placar do Motor republicado em 12/09 com a seção "Estado em 12/09" (subunidade 224/251, confiante 92,2%, unidade 274/278 com o CG); 08/09 vira histórico. A Matriz de Atribuição continua em 08/09 (regenerar o JSON dos 348 materiais é item da C5); os demais já linkam o Placar.
