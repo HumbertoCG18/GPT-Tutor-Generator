@@ -126,12 +126,14 @@ for sig, repo in GOLD.items():
         c["NENHUMA"] += not any(hit.values())
         c["SO-PLANO"] += hit["PLANO"]
         c["SEM-CURADO"] += hit["PLANO"] or hit["AL-HEADING"] or hit["SARC"] or hit["SECAO"] or hit["TITULO"] or hit["HEADINGS"]
+        # 12/09 (astra): so as 5 fontes CRUAS do professor, sem coluna de alias (AL-HEADING hoje carrega o vocab LLM fundido no glossario)
+        c["PROFESSOR"] += hit["PLANO"] or hit["SARC"] or hit["SECAO"] or hit["TITULO"] or hit["HEADINGS"]
         c["PLANO+SARC+MOODLE"] += hit["PLANO"] or hit["SARC"] or hit["SECAO"] or hit["TITULO"]
     POR_CURSO[sig] = c
     TOT.update(c)
 
 print(f"O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? {'[TAXONOMIA LIMPA: sem aliases curados]' if LIMPO else '[taxonomia como esta]'}")
-cols = FONTES + ["PLANO+SARC+MOODLE", "SEM-CURADO", "QUALQUER", "NENHUMA"]
+cols = FONTES + ["PLANO+SARC+MOODLE", "SEM-CURADO", "PROFESSOR", "QUALQUER", "NENHUMA"]
 print(f"{'':5} {'n':>4} " + " ".join(f"{f[:9]:>10}" for f in cols))
 for sig, c in POR_CURSO.items():
     print(f"{sig:5} {c['n']:4} " + " ".join(f"{c[f]:>4} {100 * c[f] / max(1, c['n']):>4.0f}%" for f in cols))

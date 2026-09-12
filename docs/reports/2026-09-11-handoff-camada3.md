@@ -1,3 +1,5 @@
+> **HISTÓRICO desde 12/09.** Ponto de entrada vivo: `2026-09-12-handoff-regime-cru.md`.
+
 # Handoff 2026-09-11 — PONTO DE ENTRADA: camada 3 cortada, vocabulário LLM nos 8 tutores, zips sem colisão
 
 Único handoff vivo. Substitui `2026-09-08-handoff-confianca.md` (que passa a ser histórico).
