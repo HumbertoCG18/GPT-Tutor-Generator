@@ -85,7 +85,9 @@ for nome, mod in REGIMES:
                 c["conf_pr"] += ok_pr
                 c["conf_vazio"] += not p
             if nome == "cru" and not ok_ac:
-                motivos_cru[(sig, eid)] = (motivos_de(e), p, row["gold_subunit"])
+                # `na_fila` (revisar_de) e o criterio, NAO `motivos_de`: revisar_de tambem devolve "mudou" por
+                # `sync_changed`, e 5 materiais caem so por esse gatilho. Contar por motivos_de dava 82 em vez de 77.
+                motivos_cru[(sig, eid)] = (na_fila, motivos_de(e), p, row["gold_subunit"])
         por_curso[sig] = c
         for k in tot:
             tot[k] += c[k]
@@ -122,7 +124,7 @@ for sig in CURSOS:
 
 print()
 print("ERROS CONFIANTES DO REGIME CRU (o motor entrega errado sem avisar), por curso:")
-conf_err = {k: v for k, v in motivos_cru.items() if not v[0]}
+conf_err = {k: v for k, v in motivos_cru.items() if not v[0]}   # v[0] = na_fila
 for sig in CURSOS:
     ids = [k[1] for k in conf_err if k[0] == sig]
     print(f"  {sig:5} {len(ids):>3}")
@@ -130,7 +132,7 @@ print(f"  TOTAL {len(conf_err)}")
 print()
 print("Os erros do cru que a FILA pega (tem motivo), por motivo:")
 cnt = {}
-for (sig, eid), (mot, p, g) in motivos_cru.items():
+for (sig, eid), (na_fila, mot, p, g) in motivos_cru.items():
     for m in mot:
         cnt[m] = cnt.get(m, 0) + 1
 for m, n in sorted(cnt.items(), key=lambda x: -x[1]):

@@ -392,16 +392,16 @@ do entry; o único gatilho que muda entre regimes é o de subunidade — bloco, 
 | regime, base 251 | cobertura (confiante/n) | **ACEITO do confiante** | primário do confiante | erros confiantes | recall da fila |
 |---|---|---|---|---|---|
 | produto | 193 = 76,9% | **178/193 = 92,2%** | 154/193 = 79,8% | 15 | 12/27 = 44% |
-| **cru** | 190 = 75,7% | **113/190 = 59,5%** | 83/190 = 43,7% | **82** | 27/104 = 26% |
+| **cru** | 190 = 75,7% | **113/190 = 59,5%** | 83/190 = 43,7% | **77** | 27/104 = 26% |
 | só código de outline | 183 = 72,9% | 93/183 = 50,8% | 70/183 = 38,3% | 90 | 48/138 = 35% |
 
-**Sem o vocabulário do LLM o motor não sabe que está inseguro.** Ele entrega errado sem avisar em **82 dos 190
+**Sem o vocabulário do LLM o motor não sabe que está inseguro.** Ele entrega errado sem avisar em **77 dos 190
 confiantes** (contra 15 de 193 no produto), e a fila pega só 26% dos erros (contra 44%). A cobertura quase não muda
 (75,7% × 76,9%): **o que o vocab LLM compra não é decisão a mais, é decisão CERTA** — e, junto, a capacidade de abster.
 
 Por curso, o aceito do confiante no cru: **IA 5/39 = 13%** (39 de 39 confiantes: o motor decide tudo, com confiança, e
 erra 34) · FR 7/17 = 41% · ES2 13/19 = 68% · SO 8/11 = 73% · MF 36/48 = 75% · CG 36/46 = 78% · TCC 8/10 = 80%.
-Os erros do cru que a fila pega têm motivo `sub-empate` (14), `conflito` (8), `sub-ambigua` (1) — nenhum outro gatilho
+Os erros do cru que a fila pega têm motivo `sub-empate` (14), `conflito` (8), `sub-ambigua` (1) **Correção de contagem (12/09 tarde):** o bloco final do `calibra_fila_cru` contava por `motivos_de`, que não vê o gatilho "mudou" (`sync_changed`); 5 materiais caem só por ele. São **77** erros confiantes, não 82 (190 − 113). Os dois scripts e esta tabela já usam `revisar_de`; o commit c8c018a saiu com 82 na mensagem. — nenhum outro gatilho
 reage à falta de vocabulário.
 
 **Consequência para o passo 1:** o IA não é só o maior bolsão de erro, é onde a abstenção falha por completo. O SARC
@@ -419,3 +419,100 @@ Efeito medido no placar (`c1-3/calibra_fila_como_regua_12-09b.log` × `_12-09.lo
 **unidade 205/212 = 96,7% → 209/216 = 96,8%**; entraram 4 materiais do CG que ficavam fora da régua e todos acertam;
 nenhum dos 19 que eram pontuados contra uma única unidade regrediu. Bloco (188/189) e subunidade (178/193) inalterados,
 como esperado. "Qualquer eixo": 219/241 → 223/245.
+
+## 14. "COMO AUMENTAR O NÚMERO DO CRU" — a pergunta do usuário, o que foi medido e o que o astra respondeu (12/09, noite)
+
+Brief: `c1-3/brief_codex_astra_cru_como_subir.md` (377 linhas, com os 77 erros confiantes um a um).
+Resposta: `c1-3/resposta_codex_astra_cru_como_subir.md` (75.748 tokens).
+
+### 14.1 Correção de contagem: são 77 erros confiantes, não 82
+
+O bloco final de `calibra_fila_cru_12-09.py` contava por `motivos_de`, que não vê o gatilho "mudou" (`sync_changed`);
+5 materiais caem só por ele. **190 − 113 = 77.** Os dois scripts (`calibra_fila_cru` e `lista_erros_confiantes_cru`) já
+usam `revisar_de`. O commit `c8c018a` saiu com 82 na mensagem.
+
+### 14.2 Os 77, um a um (`c1-3/lista_erros_confiantes_cru_12-09.{py,log,csv}`)
+
+**63 o produto acerta** (o vocab LLM resolve) e **14 ele também erra**. **53 decididos na 1ª passada, 24 na 2ª.**
+3 têm predição VAZIA e mesmo assim ficam fora da fila. Colapso por destino: **IA manda 34 para
+`introducao-ao-aprendizado-de-maquina`**, FR manda 6 para `paradigmas-clienteservidor-e-p2p`, MF manda 5 para
+`abordagens-para-verificacao-formal` — quase metade dos erros confiantes do acervo inteiro é um curso indo para um destino.
+
+### 14.3 O que a investigação paralela mediu (3 frentes, cada uma com refutador independente)
+
+**(a) O colapso do IA é ausência de vocabulário, não desempate** (refutador sustenta). Nos 34 erros o tópico do gold tem
+score **ZERO em 30**; a unidade está certa em 39/39. Contrafactual: matar o rótulo-aspirador vale **+2**; devolver só o
+vocabulário de domínio dos 3 tópicos do gold vale **+31** (5 → 36, igual ao produto).
+**AUTO-ENVENENAMENTO (achado novo):** `content_taxonomy.py:603-646` doa headings dos próprios materiais como alias de
+tópico; no IA, 5 headings de slides foram arquivados no tópico errado, **não vêm do LLM e por isso sobrevivem ao corte do
+regime cru** — `arvores-de-decisao` pontua 8,97 no tópico errado por casar a frase que é o H2 do próprio arquivo.
+**A 2ª passada APAGA a abstenção da 1ª** (`resolver_apply.py:339` sobrescreve os reasons): 7 dos 39 materiais do IA
+abstiveram na 1ª passada e terminaram confiantes no destino errado, sem rastro na fila. E **o plano do IA realmente não
+numera** — os 0 aliases de código não são falha de captura.
+
+**(b) Sinal de fragilidade** (recomendação principal REFUTADA). **Fecha:** margem absoluta entre 1º e 2º
+(Spearman **0,948** com o próprio `winner_score` — é o piso global com outro nome, 5ª refutação), razão s2/s1, cobertura
+de tokens, riqueza de alias, "sem competição". **Abre de graça** (sobreviveu intacto): alinhar a fila com as abstenções
+que o matcher **já emite** — `auto_map_entry_subtopic` abstém em `winner_score <= 0` e em "revisao-sem-assunto-dominante",
+mas `revisar._subunidade_em_duvida` só casa "ambiguous" e "empate-exato"; são **3 materiais no cru entregues com slug
+VAZIO e sem aviso** (9 no só-código, 0 no produto). **Teto da abstenção, medido:** a união mais agressiva que não quebra o
+produto leva o aceito do confiante de 59,5% para 67,3%, com a cobertura caindo de 75,7% para 64,5% — **a abstenção não
+conserta o cru, só torna a falta de vocabulário visível.**
+
+**(c) A 2ª passada no cru é quase neutra na métrica que ordena** (aceito do confiante 59,1% → 59,5%), embora compre +11
+aceito bruto e +9 de cobertura. `partes de rótulo` paga (−6 aceito ao desligar); `propagação por headings` custa no cru
+(isolada derruba para 56,1%, erros 74 → 82) mas **no produto é a maior alavanca** (−8 se desligada). Das 9 decisões que
+ela tira da fila no cru, 3 estão certas e 6 erradas.
+**REFUTA uma dívida que eu havia registrado (§11.5 item 2):** a doação de token de mídia é pequena (4 de 169 tokens) e
+na conta real **ganha 3 e perde 1** — a higiene mínima custa −2 aceito no cru e −3 no produto. O alias é feio e o acerto é
+acidental, mas remover piora o número.
+
+### 14.4 O astra derrubou a métrica que eu propus — e está certo
+
+Eu propus **"entrega confiável" = confiantes certos / 251** dizendo que não dá para inflar abstendo nem chutando.
+**Metade errada:** não dá para inflar abstendo, mas dá para inflar **deixando de abster**. Verificado por aritmética
+sobre o próprio log: esvaziar a fila sem mudar predição nenhuma leva a entrega de **113/251 = 45,0% para 147/251 = 58,6%**
+e os erros confiantes de 77 para 104. Erro não entra no numerador, mas também não penaliza.
+
+**A forma corrigida, que ele propõe:** maximizar entrega **sob precisão mínima**, publicando fila e resultado por curso.
+E, para congelar a troca ANTES de medir alavanca, um custo explícito: **`saldo = ΔC − 4 × ΔE`** (um erro confiante custa
+quatro entregas certas), com piso de entrega para "abster de tudo" nunca virar candidato. **O peso 4 é preferência
+operacional proposta, não estimada do gold — é decisão do usuário.**
+Alvos que ele separa: **imediato calculável** = encaminhar os 3 vazios errados (C=113, E=74, Q=64 → precisão 60,4%);
+**marco de pesquisa proposto** = precisão ≥ 80% preservando ≥ 113 entregas certas, depois buscar 126/251 = 50,2% de
+entrega. Os 70,9% do produto são referência, não promessa.
+
+**E os 64% NÃO limitam a entrega confiável do cru:** é alcance do PRIMÁRIO, em outra base, por um instrumento que
+consulta o gold e aceita a união das fontes — não demonstra que o motor escolhe a fonte certa quando elas discordam, nem
+exclui combinação de sinais. É alcance daquele detector, não teto de informação.
+
+### 14.5 As outras respostas dele
+
+- **Os 14 que nem o vocab resolve FICAM no denominador.** "O produto também erra" prova que o vocabulário atual não
+  basta, não que seja teto; não distingue extração, vínculo, scorer, propagação ou gold ruim. Só excluir por
+  inelegibilidade independente do resultado. Para os 2 com gold vazio, verificar se vazio é "nenhum tópico aplicável"
+  (resposta válida) ou "ainda não adjudicado". **E: 251 entradas não são 251 evidências independentes** — há duplicata
+  (dois `entry_id` para o mesmo documento), então publicar também o resultado por documento distinto.
+- **Não desligar a 2ª passada inteira pelos 24.** "24" é atribuição pela razão final, não erro causado incrementalmente:
+  a comparação completa compra +6 confiantes certos e +3 erros confiantes; pelo custo dele, saldo −6 — justifica
+  investigar restrição, não diz qual. "Só headings" não mede "tudo menos headings". Hipótese prioritária dele: **não
+  liberar automaticamente uma abstenção quando a nova evidência deriva das próprias previsões que alimentaram a
+  propagação**, preservando a predição candidata para revisão.
+- **Não promover `exact_hits == 0` porque ganhou no PRIMÁRIO**: a régua decisória congelada é ACEITO, e trocar a régua
+  depois do resultado é ajuste. Custo menor justifica considerá-la candidata, não trocar o critério.
+- **O 67,3% não é teto da abstenção** — é o melhor entre ~20 regras varridas no mesmo 251, sem holdout.
+- **Não dizer "custo zero, sem risco"** para o alinhamento da fila; "zero regressões observadas nesta base" é o que a
+  evidência sustenta.
+
+### 14.6 A ordem que ele deixa agora (substitui a do §12.5)
+
+1. **Alinhar matcher e fila** — cobrir as abstenções explícitas que ainda não são resolvidas, preservando
+   "não aplicável" legítimo.
+2. **Medir a liberação de abstenção pela 2ª passada**, separando evidência independente de evidência produzida pelo
+   próprio motor.
+3. **Controle limpo + SARC no IA**, com vínculos congelados, contando entregas certas, erros e fila.
+4. **Avaliar aquisição de vocabulário independente do gold**, com curso reservado (os 7 atuais já são desenvolvimento).
+5. **base × advanced** só nos erros residuais e só onde o texto efetivamente consumido difere.
+
+**Descartar agora, sem nova rodada:** numerar artificialmente o IA; desligar toda a 2ª passada por contagem bruta; limpar
+tokens de mídia para melhorar este placar; excluir os 14 difíceis; tratar 64% como teto; repetir piso global com outro nome.

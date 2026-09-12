@@ -25,9 +25,9 @@ ERROS CONFIANTES DO REGIME CRU (o motor entrega errado sem avisar), por curso:
   IA     34
   ES2     6
   TCC     2
-  CG     15
+  CG     10
   FR     10
-  TOTAL 82
+  TOTAL 77
 
 Os erros do cru que a FILA pega (tem motivo), por motivo:
   sub-empate             14
