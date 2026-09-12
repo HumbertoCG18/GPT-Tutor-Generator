@@ -39,6 +39,13 @@ from src.models.core import moodle_label_text  # noqa: E402
 
 H_RE = re.compile(r"^#{1,3}\s+(.+)$", re.M)
 LIMPO = "--limpo" in sys.argv  # avalia SARC/SECAO/TITULO/HEADINGS contra a taxonomia SEM os aliases curados
+# 12/09 tarde (astra, brief v2): `--limpo` so tira o sidecar MANUAL (`course/.glossary_curation.json`). Os sinonimos do
+# sidecar do LLM (`course/.glossary_curation.llm.json`) ja estao FUNDIDOS na taxonomia e sobrevivem: medido, 501 dos 841
+# aliases dos 6 cursos (60%) sao de origem LLM. Ou seja, o "teto das fontes cruas do professor" era medido com
+# vocabulario de LLM dentro. `--cru` tira os dois sidecares, igual ao regime `sem_llm` do replay.
+CRU = "--cru" in sys.argv
+# `--sem-gemini` tira do TEXTO o que veio do Gemini: os blocos IMAGE_DESCRIPTION (74/227) e o resumo de codigo (33/227).
+SEM_GEMINI = "--sem-gemini" in sys.argv
 
 
 def nomeia(texto: str, tops: list) -> str:
@@ -73,6 +80,12 @@ for sig, repo in GOLD.items():
         for k, v in json.loads(curp.read_text(encoding="utf-8")).items():
             if not k.startswith("_"):
                 curados |= {N(s) for s in (v.get("synonyms") or [])}
+    if CRU:  # o sidecar do LLM tambem sai (ver nota do CRU la em cima)
+        llmp = root / "course/.glossary_curation.llm.json"
+        if llmp.exists():
+            for k, v in json.loads(llmp.read_text(encoding="utf-8")).items():
+                if not k.startswith("_"):
+                    curados |= {N(s) for s in (v.get("synonyms") or [])}
     tl = json.loads((root / "course/.timeline_index.json").read_text(encoding="utf-8"))
     ses = {}
     for b in tl["blocks"]:
@@ -102,6 +115,10 @@ for sig, repo in GOLD.items():
             continue
         md = eng._entry_markdown_text_for_file_map(root, e) or ""
         rec = (code_cur.get("entries") or {}).get(str(e.get("id") or "")) or {}
+        if SEM_GEMINI:
+            from src.builder.extraction.entry_signals import texto_para_score
+            md = texto_para_score(md)
+            rec = {}
         txt = md + "\n" + (code_curation_signal_text(rec) if rec else "")
         label = gt.get("topic_label") or ""
         todos_al = list(gt.get("aliases") or [])
@@ -132,7 +149,12 @@ for sig, repo in GOLD.items():
     POR_CURSO[sig] = c
     TOT.update(c)
 
-print(f"O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? {'[TAXONOMIA LIMPA: sem aliases curados]' if LIMPO else '[taxonomia como esta]'}")
+MODO = ("[CRU: taxonomia sem os aliases dos sidecares manual E LLM]" if CRU
+        else "[TAXONOMIA LIMPA: sem aliases curados do sidecar MANUAL; os do LLM sobrevivem]" if LIMPO
+        else "[taxonomia como esta]")
+if SEM_GEMINI:
+    MODO += " [SEM GEMINI no texto: sem IMAGE_DESCRIPTION e sem code_curation]"
+print(f"O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? {MODO}")
 cols = FONTES + ["PLANO+SARC+MOODLE", "SEM-CURADO", "PROFESSOR", "QUALQUER", "NENHUMA"]
 print(f"{'':5} {'n':>4} " + " ".join(f"{f[:9]:>10}" for f in cols))
 for sig, c in POR_CURSO.items():

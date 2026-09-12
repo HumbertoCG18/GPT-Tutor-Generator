@@ -1,0 +1,17 @@
+A FILA COMO DETECTOR DE ERRO (o motor sabe quando esta inseguro?)
+eixo               n  confiante&certo  confiante&ERRADO  fila&errado  fila&certo
+bloco            237              188                 1            1          47
+unidade          279              205                 7           14          53
+subunidade       251              178                15           12          46
+subunid(prim)    251              154                39           26          32
+qualquer eixo    311              219                22           26          44
+
+eixo             PRECISAO do confiante   RECALL da fila   alarme falso
+bloco             188/189     99.5%    1/2      50%   47/48    98%
+unidade           205/212     96.7%   14/21     67%   53/67    79%
+subunidade        178/193     92.2%   12/27     44%   46/58    79%
+subunid(prim)     154/193     79.8%   26/65     40%   32/58    55%
+qualquer eixo     219/241     90.9%   26/48     54%   44/70    63%
+
+LEITURA: 'PRECISAO do confiante' e a pergunta do user — num curso NOVO, sem gold, se eu aceitar tudo que o
+motor nao poe na fila, quanto disso esta certo? 'RECALL da fila' e quanto dos erros ela consegue avisar.

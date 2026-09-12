@@ -78,6 +78,27 @@ NAMES = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor",
          "TCC": "TCC-Tutor"}
 CATEGORIAS = {"material-de-aula", "codigo-professor", "listas", "gabaritos", "slides", "apostila",
               "provas", "trabalhos", "exercicios", "bibliografia", "referencias", "quadro-branco"}
+# Categorias sem eixo temporal, `content_taxonomy._NO_TIMELINE_CATEGORIES` (o produto as processa mesmo sem bloco).
+NO_TIMELINE = {"cronograma", "bibliografia", "referencias", "references"}
+
+
+def _no_escopo(e, escopo):
+    """Quem entra na passada do replay.
+
+    `replay` (default): o filtro historico, preservado para os asserts contra os logs de 11/09.
+    `produto`: o MESMO predicado do produto (`resolver_apply.apply_unit_subunit_fields`, linhas 421-436):
+    `_is_material` e (bloco OU bloco temporal OU categoria sem eixo temporal). Medido em 12/09: com o filtro
+    historico o replay processa 68 das 93 entradas do CG, e as 25 puladas ficam com o `computed_subunit_slug`
+    QUE VEIO DO MANIFEST DO PRODUTO -- 22 delas estao no gold, e o regime cru marcava 16 aceito/14 primario
+    herdados de uma decisao tomada COM o vocabulario LLM. Alem do vazamento, as puladas nao entram no `df` nem
+    nos `owners` da 2a passada, o que fazia a propagacao divergir do produto."""
+    if escopo != "produto":
+        return e.get("category") in CATEGORIAS or bool(e.get("computed_block_id"))
+    if str(e.get("file_type") or "") != "pdf" and not e.get("category"):
+        return False
+    if str(e.get("computed_block_id") or "").strip() or str(e.get("temporal_block_id") or "").strip():
+        return True
+    return str(e.get("category") or "").strip().lower() in NO_TIMELINE
 
 
 def load(sig, new=True):
@@ -112,15 +133,15 @@ def load(sig, new=True):
     return root, entries, tax, cc, gold
 
 
-def evaluate(sig, mode, new=True, taxmod=None, synth=None):
-    """mode: 'sem' | 'determ' | 'com'. Devolve
-    (com_extras, primario, ok_por_id, pred_por_id, match_1a_passada, texto_por_id, entries, tax)."""
+def evaluate(sig, mode, new=True, taxmod=None, synth=None, escopo="replay"):
+    """mode: 'sem' | 'determ' | 'com'; escopo: 'replay' (historico) | 'produto' (ver `_no_escopo`). Devolve
+    (com_extras, primario, ok_por_id, pred_por_id, match_1a_passada, texto_por_id, entries, tax, processados)."""
     root, entries, tax, cc, gold = load(sig, new)
     if taxmod:
         taxmod(tax)
     passes, first, texts = [], {}, {}
     for e in entries:
-        if e.get("category") not in CATEGORIAS and not e.get("computed_block_id"):
+        if not _no_escopo(e, escopo):
             continue
         md = getmd(root, e)
         if mode == "com":
@@ -148,7 +169,8 @@ def evaluate(sig, mode, new=True, taxmod=None, synth=None):
                    if r["gold_subunit"] else {""})
         ok[k] = pred.get(k) in aceitos
     prim = sum(pred.get(k) == r["gold_subunit"] for k, r in gold.items())
-    return sum(ok.values()), prim, ok, pred, first, texts, entries, tax
+    processados = {e["id"] for e, _, _, _ in passes}
+    return sum(ok.values()), prim, ok, pred, first, texts, entries, tax, processados
 
 
 def tabela(new=True):

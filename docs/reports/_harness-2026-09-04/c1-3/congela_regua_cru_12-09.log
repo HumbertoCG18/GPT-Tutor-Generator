@@ -1,0 +1,748 @@
+MF   n= 58 · produto  55 aceito /  39 prim · sem_llm  43 aceito /  23 prim · so_codigo  31 aceito /  24 prim
+SO   n= 15 · produto  15 aceito /  14 prim · sem_llm   9 aceito /   8 prim · so_codigo   5 aceito /   4 prim
+IA   n= 39 · produto  36 aceito /  36 prim · sem_llm   5 aceito /   4 prim · so_codigo   6 aceito /   4 prim
+ES2  n= 28 · produto  26 aceito /  24 prim · sem_llm  19 aceito /  17 prim · so_codigo   9 aceito /   9 prim
+TCC  n= 11 · produto  10 aceito /   8 prim · sem_llm   8 aceito /   6 prim · so_codigo   8 aceito /   5 prim
+CG   n= 82 · produto  64 aceito /  49 prim · sem_llm  56 aceito /  41 prim · so_codigo  47 aceito /  32 prim
+FR   n= 18 · produto  18 aceito /  16 prim · sem_llm   7 aceito /   6 prim · so_codigo   7 aceito /   6 prim
+
+== PLACAR CONGELADO (escopo = produto; aceito E primario, base 251) ==
+regime             aceito       primario    (escopo antigo do replay)
+produto     224/251  89.2%  186/251  74.1%    222 aceito / 184 prim
+sem_llm     147/251  58.6%  105/251  41.8%    147 aceito / 104 prim
+so_codigo   113/251  45.0%   84/251  33.5%    116 aceito / 87 prim
+
+== POR CURSO (aceito/primario/n), escopo produto ==
+curso    n            produto            sem_llm          so_codigo
+MF      58      55/39              43/23              31/24        
+SO      15      15/14               9/8                5/4         
+IA      39      36/36               5/4                6/4         
+ES2     28      26/24              19/17               9/9         
+TCC     11      10/8                8/6                8/5         
+CG      82      64/49              56/41              47/32        
+FR      18      18/16               7/6                7/6         
+
+== VAZAMENTO DO ESCOPO ANTIGO: 23 materiais do gold nao eram recalculados pelo replay (ficavam com o valor do manifest do produto)
+   desses, o escopo antigo marcava 16 aceito no regime cru; no escopo corrigido o cru marca 15
+   MF   archive-of-formal-proofs-355fb8
+        gold  : provadores-de-teoremas
+        antigo: abordagens-para-verificacao-formal   (herdado do produto)
+        cru   : abordagens-para-verificacao-formal   (recalculado)
+   CG   video-sobre-origens-da-computacao-grafica-806e66
+        gold  : origens
+        antigo: origens   (herdado do produto)
+        cru   : origens   (recalculado)
+   CG   video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758
+        gold  : aplicacoes
+        antigo: aplicacoes   (herdado do produto)
+        cru   : aplicacoes   (recalculado)
+   CG   pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9
+        gold  : entidades-geometricas [extras: operacoes-com-vetores]
+        antigo: algoritmos-de-poligonos   (herdado do produto)
+        cru   : algoritmos-de-poligonos   (recalculado)
+   CG   videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84
+        gold  : algoritmos-de-deteccao-e-calculo-de-interseccao
+        antigo: algoritmos-de-deteccao-e-calculo-de-interseccao   (herdado do produto)
+        cru   : (vazio)   (recalculado)
+   CG   pagina-com-videos-sobre-geometria-computacional-ebca9a
+        gold  : algoritmos-de-geometria-computacional
+        antigo: algoritmos-de-geometria-computacional   (herdado do produto)
+        cru   : algoritmos-de-geometria-computacional   (recalculado)
+   CG   pagina-com-videos-sobre-recorte-e257d3
+        gold  : recorte
+        antigo: recorte   (herdado do produto)
+        cru   : recorte   (recalculado)
+   CG   video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e
+        gold  : recorte
+        antigo: recorte   (herdado do produto)
+        cru   : recorte   (recalculado)
+   CG   pagina-com-videos-sobre-mapeamento-9f410e
+        gold  : sistema-de-coordenadas-cartesianas
+        antigo: (vazio)   (herdado do produto)
+        cru   : (vazio)   (recalculado)
+   CG   video-sobre-mapeamento-em-opengl-1dad3c
+        gold  : sistema-de-coordenadas-cartesianas
+        antigo: 2d-3d-mao-direita-e-mao-esquerda   (herdado do produto)
+        cru   : (vazio)   (recalculado)
+   CG   pagina-com-videos-sobre-curvas-parametricas-63d902
+        gold  : representacao-de-curvas-parametricas
+        antigo: representacao-de-curvas-parametricas   (herdado do produto)
+        cru   : representacao-de-curvas-parametricas   (recalculado)
+   CG   pagina-com-videos-sobre-manipulacao-de-imagens-61ddde
+        gold  : cores-e-tipos-de-imagens [extras: filtros]
+        antigo: segmentacao   (herdado do produto)
+        cru   : cores-e-tipos-de-imagens   (recalculado)
+   CG   pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156
+        gold  : introducao-e-exemplos-de-aplicacoes [extras: filtros]
+        antigo: filtros   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   pagina-com-videos-sobre-segmentacao-de-imagens-d0627f
+        gold  : segmentacao
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   pagina-com-videos-sobre-segmentacao-por-texturas-e03566
+        gold  : segmentacao
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   aula-gravada-975b85
+        gold  : segmentacao [extras: filtros]
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   pagina-com-videos-sobre-morfologia-matematica-06265a
+        gold  : segmentacao [extras: filtros]
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   video-sobre-prechimento-de-areas-duracao-330-defae7
+        gold  : segmentacao
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   video-sobre-prechimento-de-areas-duracao-1300-d87e5f
+        gold  : segmentacao
+        antigo: segmentacao   (herdado do produto)
+        cru   : segmentacao   (recalculado)
+   CG   paginas-com-videos-sobre-modelagem-geometrica-f2614a
+        gold  : tecnicas-de-modelagem-3d [extras: formas-de-representacao]
+        antigo: geometria-solida-construtiva-csg   (herdado do produto)
+        cru   : geometria-solida-construtiva-csg   (recalculado)
+   CG   pagina-com-videos-sobre-visualizacao-3d-35a833
+        gold  : pipeline-de-visualizacao-3d [extras: projecoes;conceito-de-camera-sintetica]
+        antigo: paralela   (herdado do produto)
+        cru   : (vazio)   (recalculado)
+   CG   pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a
+        gold  : algoritmos-de-remocao-de-elementos-ocultos
+        antigo: algoritmos-de-remocao-de-elementos-ocultos   (herdado do produto)
+        cru   : algoritmos-de-remocao-de-elementos-ocultos   (recalculado)
+   CG   pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea
+        gold  : modelos-de-iluminacao-luz-pontual-direcional-spot [extras: modelos-de-reflexao-ambiente-difusa-especular;metodos-de-sombreamento-flat-gouraud-phong]
+        antigo: modelos-de-reflexao-ambiente-difusa-especular   (herdado do produto)
+        cru   : modelos-de-reflexao-ambiente-difusa-especular   (recalculado)
+
+== ERROS DO REGIME CRU (sem_llm) por ACEITO: 104 (18 vazios · 86 trocados; produto acerta 80)
+== nao-primarios no mesmo regime: 146
+
+MF   archive-of-formal-proofs-355fb8
+     GOLD     : provadores-de-teoremas
+     CRU      : abordagens-para-verificacao-formal   [trocado, conf 1a 0.204]
+     PRODUTO  : abordagens-para-verificacao-formal   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   logicapredicados-semantica
+     GOLD     : fundamentos-de-logica-de-primeira-ordem
+     CRU      : especificacao-de-funcoes-recursivas   [trocado, conf 1a 0.895]
+     PRODUTO  : fundamentos-de-logica-de-primeira-ordem   [acerta]
+     SO_CODIGO: especificacao-de-funcoes-recursivas   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   logicaproposicional-sintaxe
+     GOLD     : linguagens-de-especificacao-e-logicas [extras: fundamentos-de-logica-de-primeira-ordem]
+     CRU      : especificacao-de-funcoes-recursivas   [trocado, conf 1a 0.862]
+     PRODUTO  : linguagens-de-especificacao-e-logicas   [acerta]
+     SO_CODIGO: especificacao-de-conjuntos-indutivos   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   revisao
+     GOLD     : sistemas-formais
+     CRU      : especificacao-de-conjuntos-indutivos   [trocado, conf 1a 0.837]
+     PRODUTO  : sistemas-formais   [acerta]
+     SO_CODIGO: especificacao-de-conjuntos-indutivos   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   exerciciosespecificacao-respostas
+     GOLD     : linguagens-de-especificacao-e-logicas
+     CRU      : especificacao-de-funcoes-recursivas   [trocado, conf 1a 0.624]
+     PRODUTO  : linguagens-de-especificacao-e-logicas   [acerta]
+     SO_CODIGO: linguagens-de-especificacao-e-logicas   [acerta]
+     UNIDADE  : unidade-01-metodos-formais
+MF   exerciciosespecificacao
+     GOLD     : linguagens-de-especificacao-e-logicas
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : linguagens-de-especificacao-e-logicas   [acerta]
+     SO_CODIGO: linguagens-de-especificacao-e-logicas   [acerta]
+     UNIDADE  : unidade-01-metodos-formais
+MF   logicaproposicional-semantica
+     GOLD     : linguagens-de-especificacao-e-logicas [extras: fundamentos-de-logica-de-primeira-ordem]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : linguagens-de-especificacao-e-logicas   [acerta]
+     SO_CODIGO: especificacao-de-conjuntos-indutivos   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   arvores
+     GOLD     : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU      : abordagens-para-verificacao-formal   [trocado, conf 1a 0.862]
+     PRODUTO  : provadores-de-teoremas   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   exemplos
+     GOLD     : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas;especificacao-de-conjuntos-indutivos]
+     CRU      : exemplos-de-aplicacoes   [trocado, conf 1a 0.989]
+     PRODUTO  : exemplos-de-aplicacoes   [erra]
+     SO_CODIGO: exemplos-de-aplicacoes   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   intro
+     GOLD     : provadores-de-teoremas [extras: especificacao-de-conjuntos-indutivos;especificacao-de-funcoes-recursivas]
+     CRU      : abordagens-para-verificacao-formal   [trocado, conf 1a 0.000]
+     PRODUTO  : especificacao-de-conjuntos-indutivos   [acerta]
+     SO_CODIGO: especificacao-de-funcoes-recursivas   [acerta]
+     UNIDADE  : unidade-01-metodos-formais
+MF   listas
+     GOLD     : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU      : abordagens-para-verificacao-formal   [trocado, conf 1a 0.862]
+     PRODUTO  : provadores-de-teoremas   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-metodos-formais
+MF   provas
+     GOLD     : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU      : abordagens-para-verificacao-formal   [trocado, conf 1a 0.862]
+     PRODUTO  : provadores-de-teoremas   [acerta]
+     SO_CODIGO: especificacao-de-funcoes-recursivas   [acerta]
+     UNIDADE  : unidade-01-metodos-formais
+MF   hoare
+     GOLD     : logica-de-hoare [extras: softwares-de-suporte-a-verificacao-formal-de-programas;verificacao-de-programas]
+     CRU      : correcao-parcial-e-total   [trocado, conf 1a 0.964]
+     PRODUTO  : logica-de-hoare   [acerta]
+     SO_CODIGO: logica-de-hoare   [acerta]
+     UNIDADE  : unidade-02-verificacao-de-programas
+MF   terminacao
+     GOLD     : correcao-parcial-e-total [extras: invariante-e-variante-de-laco]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : correcao-parcial-e-total   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-verificacao-de-programas
+MF   tiposindutivos
+     GOLD     : softwares-de-suporte-a-verificacao-formal-de-programas
+     CRU      : verificacao-de-programas   [trocado, conf 1a 0.862]
+     PRODUTO  : verificacao-de-programas   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-verificacao-de-programas
+SO   1903-estruturas-de-controle
+     GOLD     : conceitos-basicos
+     CRU      : escalonamento   [trocado, conf 1a 0.946]
+     PRODUTO  : conceitos-basicos   [acerta]
+     SO_CODIGO: escalonamento   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+SO   3103-threads
+     GOLD     : conceitos-basicos
+     CRU      : escalonamento   [trocado, conf 1a 0.946]
+     PRODUTO  : conceitos-basicos   [acerta]
+     SO_CODIGO: escalonamento   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+SO   exercicios
+     GOLD     : algoritmos-de-escalonamento
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : algoritmos-de-escalonamento   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+SO   exemplo-threads-em-c-exemplo1
+     GOLD     : conceitos-basicos
+     CRU      : escalonamento   [trocado, conf 1a 0.000]
+     PRODUTO  : conceitos-basicos   [acerta]
+     SO_CODIGO: escalonamento   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+SO   exemplo-threads-em-c-exemplo2
+     GOLD     : conceitos-basicos
+     CRU      : escalonamento   [trocado, conf 1a 0.000]
+     PRODUTO  : conceitos-basicos   [acerta]
+     SO_CODIGO: escalonamento   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+SO   exemplo-threads-em-c-exemplo3
+     GOLD     : conceitos-basicos
+     CRU      : escalonamento   [trocado, conf 1a 0.000]
+     PRODUTO  : conceitos-basicos   [acerta]
+     SO_CODIGO: escalonamento   [erra]
+     UNIDADE  : unidade-02-gerencia-do-processador
+IA   algoritmo-de-classificacao-k-nn
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.917]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exemplo-com-k-nn
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exemplo-2-k-nn-com-iriscsv-mais-completo
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exemplo-de-programa-com-k-nn-em-java
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : introducao-ao-aprendizado-de-maquina   [erra]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   artigo-usando-k-nn-em-texto
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.200]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   k-nn-para-classificacao-exemplo-cardio
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   k-nn-para-regressao-exemplo-imc
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   introducao-a-redes-neurais
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.125]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: paradigmas-de-aprendizado   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.908]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-classificacao-de-cliente
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-classificacao-planta-iris
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-exemplo-atualizado
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.881]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-or-em-python
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-reconhecendo-letras
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exercicio-2-solucao-com-rede-perceptron-atualizado
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   mlp
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.222]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: paradigmas-de-aprendizado   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   mlp-xoripynb
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : (vazio)   [erra]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   mlp-classificacao-iris-atualizado
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.881]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: metricas-de-avaliacao   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   mlp-regressao-cardio
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   rede-perceptron-e-equacao-de-reta
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   xor-backpropagation-em-python
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv
+     GOLD     : modelos-preditivos [extras: metricas-de-avaliacao]
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.000]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: metricas-de-avaliacao   [acerta]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   como-analisar-resultados-acc-pr-re-e-f1
+     GOLD     : metricas-de-avaliacao
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.897]
+     PRODUTO  : metricas-de-avaliacao   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   arvores-de-decisao
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.988]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exemplo-1-arvores-de-decisao-classificacao-planta-iris
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.908]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   exemplo-2-arvores-de-decisao-regressao-diabetes
+     GOLD     : modelos-preditivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.908]
+     PRODUTO  : modelos-preditivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   aula-sobre-agrupamento-parte-1-particional
+     GOLD     : modelos-descritivos [extras: paradigmas-de-aprendizado]
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.664]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   agrupamento-usando-k-means-exemplo-1-ipynb
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.924]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   agrupamento-usando-k-means-exemplo-2-ipynb
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.988]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   artigo-usando-agrupamento
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.273]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: metricas-de-avaliacao   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   survey-on-clustering
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 1.000]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   aula-sobre-agrupamento-parte-2-hierarquico
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.957]
+     PRODUTO  : introducao-ao-aprendizado-de-maquina   [erra]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   agrupamento-hierarquico-exemplo-1
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.988]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+IA   agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris
+     GOLD     : modelos-descritivos
+     CRU      : introducao-ao-aprendizado-de-maquina   [trocado, conf 1a 0.993]
+     PRODUTO  : modelos-descritivos   [acerta]
+     SO_CODIGO: introducao-ao-aprendizado-de-maquina   [erra]
+     UNIDADE  : unidade-de-aprendizagem-05-aprendizado-de-maquina
+ES2  revisaoarquiteturapadroes
+     GOLD     : conceito-de-arquitetura-de-software [extras: estilos-e-padroes-arquiteturais]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : conceito-de-arquitetura-de-software   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-arquitetura-de-software
+ES2  microsservicos
+     GOLD     : orientada-a-microsservicos
+     CRU      : estilos-e-padroes-arquiteturais   [trocado, conf 1a 0.301]
+     PRODUTO  : orientada-a-microsservicos   [acerta]
+     SO_CODIGO: estilos-e-padroes-arquiteturais   [erra]
+     UNIDADE  : unidade-01-arquitetura-de-software
+ES2  roteiro1
+     GOLD     : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : estudo-de-caso-arquitetura-orientada-a-microsservicos   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-arquitetura-de-software
+ES2  devops
+     GOLD     : conceito-de-devops [extras: gerenciamento-da-configuracao]
+     CRU      : integracao-continua-ci   [trocado, conf 1a 0.869]
+     PRODUTO  : gerenciamento-da-configuracao   [acerta]
+     SO_CODIGO: integracao-continua-ci   [erra]
+     UNIDADE  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+ES2  kubernetes
+     GOLD     : plataformas-de-devops
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : plataformas-de-devops   [acerta]
+     SO_CODIGO: estudo-de-caso-integracao-e-implantacao-de-microsservicos   [erra]
+     UNIDADE  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+ES2  roteiro2-nameserver
+     GOLD     : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU      : cliente-servidor   [trocado, conf 1a 0.330]
+     PRODUTO  : estudo-de-caso-arquitetura-orientada-a-microsservicos   [acerta]
+     SO_CODIGO: cliente-servidor   [erra]
+     UNIDADE  : unidade-01-arquitetura-de-software
+ES2  roteiro2
+     GOLD     : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : estudo-de-caso-arquitetura-orientada-a-microsservicos   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-01-arquitetura-de-software
+ES2  microsservicos6
+     GOLD     : estudo-de-caso-integracao-e-implantacao-de-microsservicos
+     CRU      : gerenciamento-da-configuracao   [trocado, conf 1a 1.000]
+     PRODUTO  : estudo-de-caso-integracao-e-implantacao-de-microsservicos   [acerta]
+     SO_CODIGO: gerenciamento-da-configuracao   [erra]
+     UNIDADE  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+ES2  roteiro8-autenticacao-autorizacao
+     GOLD     : estudo-de-caso-integracao-e-implantacao-de-microsservicos
+     CRU      : gerenciamento-da-configuracao   [trocado, conf 1a 1.000]
+     PRODUTO  : estudo-de-caso-integracao-e-implantacao-de-microsservicos   [acerta]
+     SO_CODIGO: gerenciamento-da-configuracao   [erra]
+     UNIDADE  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos
+     GOLD     : (vazio)
+     CRU      : maquinas-de-turing   [trocado, conf 1a 0.909]
+     PRODUTO  : maquinas-de-turing   [erra]
+     SO_CODIGO: maquinas-de-turing   [erra]
+     UNIDADE  : unidade-02-turing-computabilidade
+TCC  aula-09-variacoes-de-maquinas-de-turing
+     GOLD     : variacoes-de-maquinas-de-turing
+     CRU      : maquinas-de-turing   [trocado, conf 1a 0.005]
+     PRODUTO  : variacoes-de-maquinas-de-turing   [acerta]
+     SO_CODIGO: maquinas-de-turing   [erra]
+     UNIDADE  : unidade-02-turing-computabilidade
+TCC  aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf
+     GOLD     : linguagens-reconheciveis-e-decidiveis [extras: maquinas-de-turing-universais]
+     CRU      : maquinas-de-turing   [trocado, conf 1a 0.401]
+     PRODUTO  : linguagens-reconheciveis-e-decidiveis   [acerta]
+     SO_CODIGO: maquinas-de-turing-universais   [acerta]
+     UNIDADE  : unidade-02-turing-computabilidade
+CG   atividade
+     GOLD     : conceito-de-camera-sintetica [extras: projecoes]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : conceito-de-camera-sintetica   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   basico3d-py
+     GOLD     : conceito-de-camera-sintetica [extras: pipeline-de-visualizacao-3d;projecoes]
+     CRU      : perspectiva   [trocado, conf 1a 0.978]
+     PRODUTO  : perspectiva   [erra]
+     SO_CODIGO: perspectiva   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   opengl3d
+     GOLD     : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU      : perspectiva   [trocado, conf 1a 0.579]
+     PRODUTO  : conceito-de-camera-sintetica   [acerta]
+     SO_CODIGO: perspectiva   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   opengl3dcpp-vdi
+     GOLD     : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : paralela   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   opengl3dcpp
+     GOLD     : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : paralela   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   vis3d
+     GOLD     : projecoes [extras: paralela;perspectiva;conceito-de-camera-sintetica;a-matematica-das-projecoes-planares]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : paralela   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+CG   programabasico3d
+     GOLD     : modelos-de-reflexao-ambiente-difusa-especular [extras: modelos-de-iluminacao-luz-pontual-direcional-spot;projecoes]
+     CRU      : metodos-de-sombreamento-flat-gouraud-phong   [trocado, conf 1a 0.000]
+     PRODUTO  : metodos-de-sombreamento-flat-gouraud-phong   [erra]
+     SO_CODIGO: metodos-de-sombreamento-flat-gouraud-phong   [erra]
+     UNIDADE  : unidade-08-sintese-de-imagens-realisticas
+CG   exercicio-com-animacao
+     GOLD     : operacoes-com-vetores [extras: entidades-geometricas]
+     CRU      : algoritmos-de-poligonos   [trocado, conf 1a 1.000]
+     PRODUTO  : (vazio)   [erra]
+     SO_CODIGO: algoritmos-de-poligonos   [erra]
+     UNIDADE  : unidade-02-fundamentos-matematicos
+CG   matematica
+     GOLD     : operacoes-com-vetores [extras: entidades-geometricas]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : entidades-geometricas   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-fundamentos-matematicos
+CG   animacao-v2
+     GOLD     : (vazio)
+     CRU      : desenho-de-linhas   [trocado, conf 1a 0.920]
+     PRODUTO  : desenho-de-linhas   [erra]
+     SO_CODIGO: desenho-de-linhas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d
+     GOLD     : sistema-de-coordenadas-cartesianas
+     CRU      : desenho-de-linhas   [trocado, conf 1a 0.887]
+     PRODUTO  : desenho-de-linhas   [erra]
+     SO_CODIGO: desenho-de-linhas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   instanciamento
+     GOLD     : (vazio)
+     CRU      : sistema-de-coordenadas-cartesianas   [trocado, conf 1a 0.843]
+     PRODUTO  : 2d-3d-mao-direita-e-mao-esquerda   [erra]
+     SO_CODIGO: sistema-de-coordenadas-cartesianas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   mapeamento
+     GOLD     : sistema-de-coordenadas-cartesianas
+     CRU      : recorte   [trocado, conf 1a 0.813]
+     PRODUTO  : sistema-de-coordenadas-cartesianas   [acerta]
+     SO_CODIGO: recorte   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   pagina-com-videos-sobre-instanciamento
+     GOLD     : (vazio)
+     CRU      : desenho-de-linhas   [trocado, conf 1a 0.986]
+     PRODUTO  : desenho-de-linhas   [erra]
+     SO_CODIGO: desenho-de-linhas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   transformacoesgeometricas
+     GOLD     : (vazio)
+     CRU      : desenho-de-linhas   [trocado, conf 1a 0.862]
+     PRODUTO  : desenho-de-linhas   [erra]
+     SO_CODIGO: desenho-de-linhas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   transformacoesgl
+     GOLD     : (vazio)
+     CRU      : sistema-de-coordenadas-cartesianas   [trocado, conf 1a 0.840]
+     PRODUTO  : sistema-de-coordenadas-cartesianas   [erra]
+     SO_CODIGO: sistema-de-coordenadas-cartesianas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   remocaoderuido
+     GOLD     : filtros
+     CRU      : cores-e-tipos-de-imagens   [trocado, conf 1a 1.000]
+     PRODUTO  : filtros   [acerta]
+     SO_CODIGO: cores-e-tipos-de-imagens   [erra]
+     UNIDADE  : unidade-03-processamento-de-imagens-e-visao-computacional
+CG   introducaoprocimg
+     GOLD     : filtros [extras: introducao-e-exemplos-de-aplicacoes;cores-e-tipos-de-imagens]
+     CRU      : segmentacao   [trocado, conf 1a 0.120]
+     PRODUTO  : filtros   [acerta]
+     SO_CODIGO: filtros   [acerta]
+     UNIDADE  : unidade-03-processamento-de-imagens-e-visao-computacional
+CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d-html
+     GOLD     : sistema-de-coordenadas-cartesianas
+     CRU      : desenho-de-linhas   [trocado, conf 1a 0.887]
+     PRODUTO  : desenho-de-linhas   [erra]
+     SO_CODIGO: desenho-de-linhas   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9
+     GOLD     : entidades-geometricas [extras: operacoes-com-vetores]
+     CRU      : algoritmos-de-poligonos   [trocado, conf 1a 0.722]
+     PRODUTO  : algoritmos-de-poligonos   [erra]
+     SO_CODIGO: algoritmos-de-poligonos   [erra]
+     UNIDADE  : unidade-02-fundamentos-matematicos
+CG   videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84
+     GOLD     : algoritmos-de-deteccao-e-calculo-de-interseccao
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : algoritmos-de-deteccao-e-calculo-de-interseccao   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-fundamentos-matematicos
+CG   pagina-com-videos-sobre-mapeamento-9f410e
+     GOLD     : sistema-de-coordenadas-cartesianas
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : (vazio)   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   video-sobre-mapeamento-em-opengl-1dad3c
+     GOLD     : sistema-de-coordenadas-cartesianas
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : 2d-3d-mao-direita-e-mao-esquerda   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-04-processo-de-visualizacao-2d
+CG   pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156
+     GOLD     : introducao-e-exemplos-de-aplicacoes [extras: filtros]
+     CRU      : segmentacao   [trocado, conf 1a 0.071]
+     PRODUTO  : filtros   [acerta]
+     SO_CODIGO: filtros   [acerta]
+     UNIDADE  : unidade-03-processamento-de-imagens-e-visao-computacional
+CG   paginas-com-videos-sobre-modelagem-geometrica-f2614a
+     GOLD     : tecnicas-de-modelagem-3d [extras: formas-de-representacao]
+     CRU      : geometria-solida-construtiva-csg   [trocado, conf 1a 0.069]
+     PRODUTO  : geometria-solida-construtiva-csg   [erra]
+     SO_CODIGO: geometria-solida-construtiva-csg   [erra]
+     UNIDADE  : unidade-07-representacao-e-modelagem-de-objetos
+CG   pagina-com-videos-sobre-visualizacao-3d-35a833
+     GOLD     : pipeline-de-visualizacao-3d [extras: projecoes;conceito-de-camera-sintetica]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : paralela   [erra]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-06-processo-de-visualizacao-3d
+FR   01-protocolos-de-rede
+     GOLD     : conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia [extras: conceitos-de-redes-de-computadores-e-internet]
+     CRU      : modelos-osi-e-tcpip   [trocado, conf 1a 1.000]
+     PRODUTO  : conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia   [acerta]
+     SO_CODIGO: modelos-osi-e-tcpip   [erra]
+     UNIDADE  : unidade-01-introducao-a-redes-de-computadores
+FR   03-tipos-de-redes
+     GOLD     : conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia [extras: classificacao-e-topologias-de-redes-de-computadores]
+     CRU      : modelos-osi-e-tcpip   [trocado, conf 1a 0.816]
+     PRODUTO  : conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia   [acerta]
+     SO_CODIGO: conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia   [acerta]
+     UNIDADE  : unidade-01-introducao-a-redes-de-computadores
+FR   04-camada-de-aplicacao
+     GOLD     : funcoes-e-caracteristicas-do-nivel-de-aplicacao [extras: paradigmas-clienteservidor-e-p2p]
+     CRU      : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [trocado, conf 1a 0.333]
+     PRODUTO  : paradigmas-clienteservidor-e-p2p   [acerta]
+     SO_CODIGO: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   04-protocolo-http
+     GOLD     : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.300]
+     PRODUTO  : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   05-protocolo-dns
+     GOLD     : protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat
+     CRU      : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [trocado, conf 1a 0.273]
+     PRODUTO  : protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat   [acerta]
+     SO_CODIGO: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   unidade2-exercicios-http
+     GOLD     : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.287]
+     PRODUTO  : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   08-desenvolvimento-de-aplicacoes
+     GOLD     : implementacao-de-sockets [extras: paradigmas-clienteservidor-e-p2p]
+     CRU      : (vazio)   [vazio, conf 1a 0.000]
+     PRODUTO  : implementacao-de-sockets   [acerta]
+     SO_CODIGO: (vazio)   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   udp-example-c
+     GOLD     : implementacao-de-sockets [extras: protocolo-udp]
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.981]
+     PRODUTO  : implementacao-de-sockets   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   udp-example-java
+     GOLD     : implementacao-de-sockets [extras: protocolo-udp]
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.981]
+     PRODUTO  : implementacao-de-sockets   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   tcp-chat-c
+     GOLD     : implementacao-de-sockets [extras: protocolo-tcp]
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.981]
+     PRODUTO  : implementacao-de-sockets   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+FR   tcp-example
+     GOLD     : implementacao-de-sockets [extras: protocolo-tcp]
+     CRU      : paradigmas-clienteservidor-e-p2p   [trocado, conf 1a 0.981]
+     PRODUTO  : implementacao-de-sockets   [acerta]
+     SO_CODIGO: paradigmas-clienteservidor-e-p2p   [erra]
+     UNIDADE  : unidade-02-nivel-de-aplicacao
+
+CSV dos 251 materiais: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\congela_regua_cru_12-09.csv

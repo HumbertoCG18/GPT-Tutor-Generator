@@ -60,11 +60,17 @@ COURSES = {
 }
 
 
-def _load_truth(sigla: str) -> dict:
-    """entry_id -> true_unit. Regua CURRICULAR (12/09, C5 item 1): `docs/reports/material_gt_<sigla>.csv` (`gold_units`
-    por material, adjudicado pelo user) sobrepoe a unidade do bloco verdadeiro (ground_truth |><| gold_units), que preenche
-    o resto. Antes de 12/09 o bloco mandava e material_gt so entrava em curso sem gold por bloco (CG); as 17 contradicoes
-    (MF 5, SO 8, ES2 4) foram adjudicadas para material_gt: unidade = onde o plano poe o assunto, nao quando a aula foi dada."""
+def carrega_regua_unidade(sigla: str) -> dict:
+    """entry_id -> TUPLA de unidades aceitas; a primeira e a primaria. Regua CURRICULAR (12/09, C5 item 1):
+    `docs/reports/material_gt_<sigla>.csv` (`gold_units` por material, adjudicado pelo user) sobrepoe a unidade do bloco
+    verdadeiro (ground_truth |><| gold_units), que preenche o resto. Antes de 12/09 o bloco mandava e material_gt so
+    entrava em curso sem gold por bloco (CG); as 17 contradicoes (MF 5, SO 8, ES2 4) foram adjudicadas para material_gt:
+    unidade = onde o plano poe o assunto, nao quando a aula foi dada.
+
+    12/09 tarde (decisao do user, depois da auditoria do passo 0): linha com `gold_units` MULTI-VALORADO (separador `|`,
+    "qualquer uma vale") passa a virar CONJUNTO ACEITO em vez de ser descartada. Eram 24 materiais transversais (ES2 12,
+    CG 5, SO 5, MF 1, TCC 1: planos, cronogramas, listas): 19 ficavam pontuados contra a UNICA unidade que o bloco tinha
+    dado, e 5 (CG, sem gold de unidade por bloco) ficavam fora da regua."""
     gold_units = ROOT / "tests" / "fixtures" / "eval" / f"gold_units_{sigla}.csv"
     ground_truth = ROOT / "docs" / "reports" / f"ground_truth_{sigla}.csv"
     truth = {}
@@ -79,24 +85,29 @@ def _load_truth(sigla: str) -> dict:
                 continue
             unit = unit_by_uuid.get((row.get("true_block_uuid") or "").strip())
             if unit:
-                truth[row["id"]] = unit
+                truth[row["id"]] = (unit,)
     material_gt = ROOT / "docs" / "reports" / f"material_gt_{sigla}.csv"
     if not material_gt.exists():
         return truth
-    # ponytail: linha com `|` (qualquer uma vale) fica fora porque os consumidores comparam com ==; split("|") neles se precisar.
     for row in csv.DictReader(material_gt.open(encoding="utf-8-sig", newline="")):
         if (row.get("scorable") or "yes").strip().lower() != "yes":
             continue
         units = [u.strip() for u in str(row.get("gold_units") or "").split("|") if u.strip()]
-        if len(units) == 1:
-            truth[str(row.get("entry_id") or "").strip()] = units[0]
+        if units:
+            truth[str(row.get("entry_id") or "").strip()] = tuple(units)
     return truth
+
+
+def _load_truth(sigla: str) -> dict:
+    """entry_id -> unidade PRIMARIA (a 1a de `carrega_regua_unidade`). Contrato antigo, para o harness que compara com
+    `==`; quem pontua a regua deve usar `carrega_regua_unidade` e testar pertinencia."""
+    return {eid: units[0] for eid, units in carrega_regua_unidade(sigla).items()}
 
 
 def score_course(sigla: str, repo_name: str, store: SubjectStore) -> dict:
     repo = GITHUB_DIR / repo_name
     manifest_path = repo / "manifest.json"
-    truth = _load_truth(sigla)
+    truth = carrega_regua_unidade(sigla)
     if not manifest_path.exists() or not truth:
         return {"curso": sigla, "erro": "sem manifest ou sem rotulos"}
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -127,18 +138,20 @@ def score_course(sigla: str, repo_name: str, store: SubjectStore) -> dict:
         if not _is_material(entry) or entry_id not in truth:
             continue
         n += 1
-        want = truth[entry_id]
+        aceitas = truth[entry_id]          # tupla; a 1a e a primaria, as outras sao "qualquer uma vale"
+        want = " | ".join(aceitas)         # so para o relatorio de erro
         markdown = _entry_markdown_text_for_file_map(repo, entry)
         learned = build_learned_unit_boosts(tag_profile, entry) if tag_profile else {}
         match = _auto_map_entry_unit(entry, unit_index, markdown, topic_index,
                                      learned_unit_boosts=learned)
-        bruto += match.slug == want
+        acertou = match.slug in aceitas
+        bruto += acertou
         if match.ambiguous or match.confidence < T.UNIT_TAG:
             sem_resposta += 1
-            if match.slug == want:
+            if acertou:
                 erros.append({"id": entry_id, "kind": "perdido-no-gate",
                               "conf": round(float(match.confidence), 2), "unit": want})
-        elif match.slug == want:
+        elif acertou:
             certo += 1
         else:
             confiante_errado += 1

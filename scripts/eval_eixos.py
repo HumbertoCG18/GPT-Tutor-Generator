@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from eval_coverage import score as coverage_score  # noqa: E402
-from eval_entry_unit import COURSES, GITHUB_DIR, _load_truth  # noqa: E402
+from eval_entry_unit import COURSES, GITHUB_DIR, carrega_regua_unidade  # noqa: E402
 from eval_ground_truth import (  # noqa: E402
     evaluate_ground_truth, load_block_period_map, load_labels_csv, load_pair_keys, load_predictions,
 )
@@ -62,16 +62,16 @@ def medir(sigla: str, repo_name: str) -> dict:
              "fontes": {k: (v["correct"], v["wrong"]) for k, v in rep.get("sources", {}).items()}}
 
     # UNIDADE (gravada vs verdade = unidade do bloco verdadeiro)
-    truth = _load_truth(sigla)
+    truth = carrega_regua_unidade(sigla)
     ok = n = 0
     erros = []
-    for eid, want in truth.items():
+    for eid, aceitas in truth.items():   # tupla: a 1a e a primaria, as outras sao "qualquer uma vale" (12/09)
         e = by_id.get(eid)
         if not e or not _is_material(e):
             continue
         n += 1
         got = str(e.get("computed_unit_slug") or "").strip()
-        if got == want:
+        if got in aceitas:
             ok += 1
         else:
             erros.append(eid)

@@ -27,7 +27,7 @@ UNI = {"MF", "SO", "IA", "ES2", "TCC", "CG"}  # CG desde 11/09: material_gt_CG.c
 sys.path.insert(0, str(GEN))
 sys.path.insert(0, str(GEN / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-from eval_entry_unit import _load_truth  # noqa: E402
+from eval_entry_unit import carrega_regua_unidade  # noqa: E402
 from eval_ground_truth import load_labels_csv  # noqa: E402
 from src.builder.routing.revisar import motivos_de, revisar_de  # noqa: E402
 
@@ -35,17 +35,19 @@ from src.builder.routing.revisar import motivos_de, revisar_de  # noqa: E402
 def golds(sig):
     p = GEN / "docs/reports" / f"ground_truth_{sig}.csv"
     gb = load_labels_csv(p) if p.exists() else {}
-    gu = _load_truth(sig) if sig in UNI else {}
+    gu = carrega_regua_unidade(sig) if sig in UNI else {}  # tupla de unidades aceitas (12/09)
     p = GEN / "docs/reports" / f"subunit_gt_{sig}.csv"
-    gs = {}
+    gs, gsp = {}, {}
     if p.exists():
         for r in _csv.DictReader(p.open(encoding="utf-8-sig", newline="")):
             if r["scorable"] == "yes":
                 gs[r["entry_id"]] = ({r["gold_subunit"]} | set(filter(None, r["gold_subunits_extra"].split(";")))) if r["gold_subunit"] else {""}
-    return gb, gu, gs
+                gsp[r["entry_id"]] = {r["gold_subunit"]}  # 12/09: so o rotulo PRIMARIO (a lei manda publicar os dois)
+    return gb, gu, gs, gsp
 
 
-EIXOS = ("bloco", "unidade", "subunidade", "qualquer eixo")
+# "subunid(prim)" entra como eixo proprio e FICA FORA de "qualquer eixo", que continua medindo o aceito (12/09).
+EIXOS = ("bloco", "unidade", "subunidade", "subunid(prim)", "qualquer eixo")
 M = {e: collections.Counter() for e in EIXOS}
 for sig, repo in GOLD.items():
     root = GH / repo
@@ -54,7 +56,7 @@ for sig, repo in GOLD.items():
     for b in json.loads((root / "course/.timeline_index.json").read_text(encoding="utf-8"))["blocks"]:
         ti[b["block_uuid"]] = b["id"]
         ti[b["id"]] = b["id"]
-    gb, gu, gs = golds(sig)
+    gb, gu, gs, gsp = golds(sig)
     for e in man:
         eid = e["id"]
         na_fila = revisar_de(e) in ("duvida", "mudou")
@@ -62,11 +64,13 @@ for sig, repo in GOLD.items():
         if eid in gb:
             cert["bloco"] = ti.get(str(e.get("manual_timeline_block_id") or e.get("temporal_block_id") or ""), "") == gb[eid]
         if eid in gu:
-            cert["unidade"] = str(e.get("computed_unit_slug") or "") == gu[eid]
+            cert["unidade"] = str(e.get("computed_unit_slug") or "") in gu[eid]
         if eid in gs:
             cert["subunidade"] = str(e.get("computed_subunit_slug") or "") in gs[eid]
         if cert:
             cert["qualquer eixo"] = all(cert.values())
+        if eid in gsp:
+            cert["subunid(prim)"] = str(e.get("computed_subunit_slug") or "") in gsp[eid]
         for eixo, ok in cert.items():
             c = M[eixo]
             c["n"] += 1

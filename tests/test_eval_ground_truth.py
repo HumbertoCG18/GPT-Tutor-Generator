@@ -164,15 +164,37 @@ def test_load_truth_material_gt_sobrepoe_o_gold_por_bloco(tmp_path, monkeypatch)
     """11/09 (3.2): curso sem gold por bloco (CG) usa `docs/reports/material_gt_<sig>.csv` (`gold_units` por material).
     12/09 (C5 item 1, user + astra): a regua de unidade e CURRICULAR (onde o plano poe o assunto), nao temporal (bloco em
     que a aula foi dada): onde material_gt tem uma unidade adjudicada ele SOBREPOE o gold por bloco; o bloco preenche o
-    resto. Linha com `|` (qualquer uma vale) e `scorable=no` ficam fora. As 17 contradicoes de 12/09 foram adjudicadas
-    para material_gt (`docs/reports/contradicoes_unidade_material_gt_vs_bloco.csv`)."""
+    resto. `scorable=no` e `gold_units` vazio ficam fora. As 17 contradicoes de 12/09 foram adjudicadas para material_gt
+    (`docs/reports/contradicoes_unidade_material_gt_vs_bloco.csv`)."""
     import scripts.eval_entry_unit as eu
     monkeypatch.setattr(eu, "ROOT", tmp_path)
     (tmp_path / "docs/reports").mkdir(parents=True)
     (tmp_path / "tests/fixtures/eval").mkdir(parents=True)
     (tmp_path / "docs/reports/material_gt_X.csv").write_text(
         "entry_id,gold_units,scorable\na,unidade-01,yes\nb,unidade-01|unidade-02,yes\nc,unidade-03,no\nd,,yes\n", encoding="utf-8")
-    assert eu._load_truth("X") == {"a": "unidade-01"}
+    assert eu._load_truth("X") == {"a": "unidade-01", "b": "unidade-01"}  # `b` multi: `_load_truth` da a PRIMARIA
     (tmp_path / "tests/fixtures/eval/gold_units_X.csv").write_text("block_uuid,true_unit\nu1,unidade-09\n", encoding="utf-8")
     (tmp_path / "docs/reports/ground_truth_X.csv").write_text("id,true_block_uuid,scorable\na,u1,yes\nz,u1,yes\n", encoding="utf-8")
-    assert eu._load_truth("X") == {"a": "unidade-01", "z": "unidade-09"}  # a: material_gt sobrepoe o bloco (u09); z: so bloco
+    # a: material_gt sobrepoe o bloco (u09); z: so bloco
+    assert eu._load_truth("X") == {"a": "unidade-01", "b": "unidade-01", "z": "unidade-09"}
+
+
+def test_carrega_regua_unidade_multivalorado_vira_conjunto_aceito(tmp_path, monkeypatch):
+    """12/09 tarde (decisao do user): linha de `material_gt` com `gold_units` MULTI-VALORADO (`|`, "qualquer uma vale")
+    vira CONJUNTO ACEITO em vez de ser descartada. Antes, os 24 transversais dos 6 cursos (planos, cronogramas, listas)
+    eram pontuados contra a unica unidade que o bloco tinha dado (19) ou ficavam fora da regua (5, no CG)."""
+    import scripts.eval_entry_unit as eu
+    monkeypatch.setattr(eu, "ROOT", tmp_path)
+    (tmp_path / "docs/reports").mkdir(parents=True)
+    (tmp_path / "tests/fixtures/eval").mkdir(parents=True)
+    (tmp_path / "docs/reports/material_gt_X.csv").write_text(
+        "entry_id,gold_units,scorable\na,unidade-01,yes\nb,unidade-01|unidade-02,yes\nc,unidade-03,no\nd,,yes\n", encoding="utf-8")
+    (tmp_path / "tests/fixtures/eval/gold_units_X.csv").write_text("block_uuid,true_unit\nu1,unidade-09\n", encoding="utf-8")
+    (tmp_path / "docs/reports/ground_truth_X.csv").write_text(
+        "id,true_block_uuid,scorable\nb,u1,yes\nz,u1,yes\n", encoding="utf-8")
+    regua = eu.carrega_regua_unidade("X")
+    assert regua["b"] == ("unidade-01", "unidade-02")   # o multi SOBREPOE o bloco (que dava so u09) e as duas valem
+    assert regua["a"] == ("unidade-01",)
+    assert regua["z"] == ("unidade-09",)                # so bloco: tupla de um
+    assert "c" not in regua and "d" not in regua        # scorable=no e gold vazio ficam fora
+    assert "unidade-02" in regua["b"] and "unidade-09" not in regua["b"]
