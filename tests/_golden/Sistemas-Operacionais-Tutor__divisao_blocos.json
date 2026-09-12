@@ -69,7 +69,7 @@
     "id": "bloco-12",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-04-deadlock"
+    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-04-deadlock, unidade-03-programacao-concorrente"
   },
   {
     "id": "bloco-13",
@@ -153,7 +153,7 @@
     "id": "bloco-26",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-04-deadlock, unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida, unidade-06-gerencia-de-arquivos"
+    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-04-deadlock, unidade-03-programacao-concorrente, unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida, unidade-06-gerencia-de-arquivos"
   },
   {
     "id": "bloco-27",

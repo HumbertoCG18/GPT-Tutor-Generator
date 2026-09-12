@@ -1681,6 +1681,13 @@ def _normalize_secao(text: str) -> str:
     return normalize_match_text(_SECAO_NUM_RE.sub("", str(text or "")))
 
 
+def _veto_norm(text: str) -> str:
+    """Chave de comparacao do veto (12/09, revisao): o mesmo normalizador do casamento (NFKD, sem acento), para
+    'Comunicacao entre Processos' vetar 'Comunicação entre Processos'; so casefold falhava em silencio."""
+    from src.builder.text.normalize import normalize_match_text
+    return normalize_match_text(" ".join(str(text or "").split()))
+
+
 def _moodle_section_names(root_dir: Optional[Path]) -> set:
     """Nomes das secoes do Moodle (`source_section`, sem numeracao), normalizados; vazio sem manifest."""
     path = Path(root_dir) / "manifest.json"
@@ -1718,6 +1725,7 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
     if not root_dir:
         return {}
     out: Dict[str, List[str]] = {}
+    vetos: Dict[str, set] = {}  # 12/09: "veto" por termo no sidecar MANUAL tira o sinonimo da fusao, venha do manual ou do LLM
     secoes = _moodle_section_names(root_dir)
     # Manual + compilado por LLM (Fase 1b, 02/09: `.glossary_curation.llm.json`, mesmo formato,
     # chaves `_*` = metadados). Fundidos sem repetir; manual vem primeiro.
@@ -1732,8 +1740,16 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
         for term, info in (data or {}).items():
             if str(term).startswith("_"):
                 continue
+            key = _glossary_curation_key(term)
+            if name == _GLOSSARY_CURATION_NAME and isinstance(info, dict) and info.get("veto"):
+                # Regressao de unidade no SO (11/09): o LLM doou 'Comunicacao entre Processos' e 'Pipes' a 3.1 (u02) e o
+                # bloco-09 virou u03 -> u02; editar o .llm.json morre no --refiltrar. O veto e decisao humana e sobrevive.
+                # A chave do veto e a do topico (`_glossary_curation_key`, COM o codigo de outline: "3.1 Conceitos basicos");
+                # sem o codigo cai noutra chave e nao faz nada, sem aviso.
+                vetos.setdefault(key, set()).update(_veto_norm(s) for s in info["veto"])
             syn = info.get("synonyms") if isinstance(info, dict) else info
-            vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
+            vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())
+                    and _veto_norm(s) not in vetos.get(key, set())]
             if name == _GLOSSARY_LLM_NAME and secoes:
                 # Higiene (CG 05/09): o compilador recebe NOMES DE SECAO do Moodle como termos e, sem
                 # topico que case, pendura-os no topico generico da unidade 1 ("Morfologia Matematica"
@@ -1742,7 +1758,6 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
                 vals = [v for v in vals if _normalize_secao(v) not in secoes]
             if not vals:
                 continue
-            key = _glossary_curation_key(term)
             atual = out.setdefault(key, [])
             seen = {v.casefold() for v in atual}
             for v in vals:

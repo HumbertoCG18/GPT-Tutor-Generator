@@ -79,3 +79,21 @@ def test_sinonimo_compilado_igual_a_secao_do_moodle_nao_entra(tmp_path):
     (tmp_path / "course" / ".glossary_curation.json").write_text(json.dumps(
         {"Mapeamento de Textura": {"synonyms": ["Mapeamento de Texturas"]}}, ensure_ascii=False), encoding="utf-8")
     assert load_glossary_curation(tmp_path)["mapeamento de textura"] == ["Mapeamento de Texturas"]
+
+
+def test_veto_no_sidecar_manual_tira_termo_doado_pelo_llm(tmp_path):
+    """12/09 (regressao de unidade no SO): a fusao manual + LLM era aditiva e a curadoria nao tinha como tirar um termo
+    doado pelo LLM ('Comunicacao entre Processos' e 'Pipes' em 3.1 viraram o bloco-09 de u03 para u02; editar o .llm.json
+    morre no --refiltrar). `"veto"` por termo no sidecar manual remove o sinonimo da lista fundida, venha do LLM ou do
+    manual, e sobrevive a recompilacao. Entrada so com veto (sem synonyms) tambem vale. O veto compara sem acento e sem
+    caixa (revisao 12/09): 'Comunicacao' veta 'Comunicação'."""
+    from src.builder.artifacts.repo import load_glossary_curation
+    root = _repo(tmp_path, {"3.1 Conceitos básicos": {"synonyms": ["Processos", "Pipes"], "veto": ["Comunicacao entre Processos", "pipes"]},
+                            "4.2 Comunicação e sincronização de processos": {"veto": ["Sockets"]}})
+    (root / "course" / ".glossary_curation.llm.json").write_text(json.dumps({
+        "_provenance": "llm",
+        "3.1 Conceitos básicos": {"synonyms": ["Comunicação entre Processos", "Pipes", "Multithread"]},
+        "4.2 Comunicação e sincronização de processos": {"synonyms": ["Sockets", "exec"]}}, ensure_ascii=False), encoding="utf-8")
+    cur = load_glossary_curation(root)
+    assert cur["3.1 conceitos básicos"] == ["Processos", "Multithread"]
+    assert cur["4.2 comunicação e sincronização de processos"] == ["exec"]
