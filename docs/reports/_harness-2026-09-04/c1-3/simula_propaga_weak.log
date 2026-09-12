@@ -1,0 +1,29 @@
+== COPIAS weak 0.7 2 df0.25
+  + SO  exemplo-threads-em-c-exemplo3          -                        -> conceitos-basicos        gold=conceitos-basicos      conf 0.00->0.98 aliases_novos_do_alvo=['basica', 'demonstracao', 'execucao', 'java', 'memoria', 'servidor']
+SO  confiantes=19/39 aliases novos=10 | sub 10/15 -> 11/15  + 1  - 0  ~ 0
+  + IA  rede-perceptron-exemplo-atualizado     introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.66->0.87 aliases_novos_do_alvo=['algoritmo', 'cardio', 'implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  rede-perceptron-or-em-python           introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.47->0.79 aliases_novos_do_alvo=['algoritmo', 'cardio', 'implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  rede-perceptron-reconhecendo-letras    introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.52->0.89 aliases_novos_do_alvo=['algoritmo', 'cardio', 'implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  mlp-xoripynb                           introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.08->0.78 aliases_novos_do_alvo=['algoritmo', 'cardio', 'implementacao', 'nearest', 'neighbors', 'rede']
+IA  confiantes=25/59 aliases novos=9 | sub 35/39 -> 39/39  + 4  - 0  ~ 0
+ES2 confiantes=21/35 aliases novos=29 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+TCC confiantes=12/27 aliases novos=14 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+TOTAL[weak-only] conf_min=0.7 min_entries=2 df_max=0.25: sub 82/93 -> 87/93  + 5  - 0  ~ 0
+== COPIAS weak 0.7 3 df0.25
+SO  confiantes=19/39 aliases novos=0 | sub 10/15 -> 10/15  + 0  - 0  ~ 0
+  + IA  rede-perceptron-exemplo-atualizado     introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.66->0.84 aliases_novos_do_alvo=['implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  rede-perceptron-or-em-python           introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.47->0.75 aliases_novos_do_alvo=['implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  rede-perceptron-reconhecendo-letras    introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.52->0.87 aliases_novos_do_alvo=['implementacao', 'nearest', 'neighbors', 'rede']
+  + IA  mlp-xoripynb                           introducao-ao-aprendizad -> modelos-preditivos       gold=modelos-preditivos     conf 0.08->0.78 aliases_novos_do_alvo=['implementacao', 'nearest', 'neighbors', 'rede']
+IA  confiantes=25/59 aliases novos=4 | sub 35/39 -> 39/39  + 4  - 0  ~ 0
+ES2 confiantes=21/35 aliases novos=17 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+TCC confiantes=12/27 aliases novos=0 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+TOTAL[weak-only] conf_min=0.7 min_entries=3 df_max=0.25: sub 82/93 -> 86/93  + 4  - 0  ~ 0
+== ORIG weak 0.7 2 df0.25
+SO  confiantes=24/39 aliases novos=15 | sub 15/15 -> 15/15  + 0  - 0  ~ 0
+IA  confiantes=33/59 aliases novos=22 | sub 39/39 -> 39/39  + 0  - 0  ~ 0
+  ~ ES2 microsservicos5                        plataformas-de-devops    -> estudo-de-caso-integraca gold=plataformas-de-devops  conf 0.70->0.49 aliases_novos_do_alvo=['arquiteturais', 'cloud', 'configurando', 'conversao', 'criando', 'decisoes']
+  ~ ES2 roteiro5-conteiners                    plataformas-de-devops    -> estudo-de-caso-integraca gold=estudo-de-caso-integra conf 0.15->0.73 aliases_novos_do_alvo=['arquiteturais', 'cloud', 'configurando', 'conversao', 'criando', 'decisoes']
+ES2 confiantes=21/35 aliases novos=23 | sub 28/28 -> 28/28  + 0  - 0  ~ 2
+TCC confiantes=6/27 aliases novos=5 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+TOTAL[weak-only] conf_min=0.7 min_entries=2 df_max=0.25: sub 93/93 -> 93/93  + 0  - 0  ~ 2

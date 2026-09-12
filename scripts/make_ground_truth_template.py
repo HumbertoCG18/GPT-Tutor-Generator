@@ -13,6 +13,8 @@ import csv
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from scripts.eval_ground_truth import load_predictions, load_block_period_map
 
 COLUMNS = ["id", "title", "category", "markdown_path",

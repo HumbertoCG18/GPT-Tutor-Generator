@@ -202,7 +202,7 @@ CODE_EXTENSIONS: set = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
     ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
     ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
-    ".css", ".scss", ".ipynb", ".thy", ".dfy",
+    ".css", ".scss", ".ipynb", ".thy", ".dfy", ".smv",
 }
 
 LANG_MAP: Dict[str, str] = {
@@ -213,7 +213,7 @@ LANG_MAP: Dict[str, str] = {
     "swift": "swift", "kt": "kotlin", "scala": "scala",
     "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
     "sql": "sql", "html": "html", "css": "css", "scss": "scss",
-    "ipynb": "json", "thy": "isabelle", "dfy": "dafny",
+    "ipynb": "json", "thy": "isabelle", "dfy": "dafny", "smv": "nusmv",
 }
 
 CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
@@ -247,9 +247,19 @@ def normalize_document_profile(profile: str | None) -> str:
 
 # Utilities
 
+def strip_accents(text: str) -> str:
+    """NFKD + remove marcas combinantes. Fonte única do strip de acento
+    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12).
+
+    U+0131 (dotless i) não decompõe em NFKD e vazou pro id da aula-10 do TCC
+    ("Reconhecıveis" no PDF do professor) — translitera na fonte única."""
+    text = (text or "").replace("ı", "i")
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in text if not unicodedata.combining(ch))
+
+
 def slugify(value: str) -> str:
-    value = unicodedata.normalize("NFKD", value or "")
-    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = strip_accents(value)
     value = value.strip().lower()
     value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
     value = re.sub(r"[\s_]+", "-", value)
@@ -264,8 +274,32 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 def write_text(path: Path, content: str) -> None:
+    """Write text atomically: stage to a sibling .tmp then os.replace().
+
+    os.replace is atomic on the same filesystem, so a crash/kill mid-write
+    leaves the previous file fully intact (never a torn/empty file)."""
     ensure_dir(path.parent)
-    path.write_text(content, encoding="utf-8")
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(content, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def write_json_manifest(path: Path, data: dict) -> None:
+    """Write manifest.json atomically, keeping a .bak of the previous version.
+
+    Backup is best-effort (never blocks the write). Uses the canonical
+    serialization shared by every manifest writer (indent=2, ensure_ascii=False)."""
+    ensure_dir(path.parent)
+    if path.exists():
+        try:
+            path.with_name(path.name + ".bak").write_text(
+                path.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+        except OSError:
+            pass  # backup best-effort, never block the write
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
 
 def parse_page_range(page_range: str) -> Optional[List[int]]:
     value = (page_range or "").strip()
@@ -328,11 +362,20 @@ def pages_to_marker_range(pages: Optional[Sequence[int]]) -> Optional[str]:
     ranges.append(f"{start}-{prev}" if start != prev else str(start))
     return ",".join(ranges)
 
-def file_size_mb(path: Path) -> float:
+def normalized_source_key(raw_path: str) -> str:
+    """Chave canônica de um source_path para dedup: URLs casefold;
+    paths locais resolvidos, barras normalizadas, casefold."""
+    value = str(raw_path or "").strip()
+    if not value:
+        return ""
+    if "://" in value:
+        return value.casefold()
     try:
-        return round(path.stat().st_size / (1024 * 1024), 2)
+        normalized = Path(value).expanduser().resolve()
     except Exception:
-        return 0.0
+        normalized = Path(value).expanduser()
+    return str(normalized).replace("\\", "/").casefold()
+
 
 def safe_rel(path: Optional[Path], root: Path) -> Optional[str]:
     if not path:
@@ -365,12 +408,18 @@ def _aspnet_row_cell(row, suffix: str) -> str:
 _ASPNET_COLOR_KIND_MAP = {
     "red": ("suspension", True),
     "#ff0000": ("suspension", True),
+    # #FF4500 (orangered): feriado/suspensao no export do IA (censo D2 28/08);
+    # fora do mapa caia em aula.
+    "#ff4500": ("suspension", True),
+    "orangered": ("suspension", True),
     "lightgrey": ("g2_or_results", False),
     "#d3d3d3": ("g2_or_results", False),
     "#ffa500": ("assessment", False),
     "orange": ("assessment", False),
-    "#ff8c00": ("assessment", False),
-    "darkorange": ("assessment", False),
+    # D1 (ruling 28/08): darkorange e a cor PROPRIA da PS em 6/6 cronogramas —
+    # substitutiva cobre o semestre inteiro, nao e prova principal nem marco.
+    "#ff8c00": ("ps", True),
+    "darkorange": ("ps", True),
     "#8b0000": ("event", True),
     "darkred": ("event", True),
     "#ffff00": ("deliverable", False),
@@ -379,13 +428,20 @@ _ASPNET_COLOR_KIND_MAP = {
 
 
 def _aspnet_row_kind(row) -> tuple[str, bool]:
-    """Return (kind, ignored) derived from row background-color. Default: ('class', False)."""
-    style = (row.get("style") or "").lower().replace(" ", "")
+    """Return (kind, ignored) derived from row background-color. Default: ('class', False).
+
+    Exports 2026/1 usam style="background-color:X"; os de 2026/2 (FR/labs)
+    trocaram pelo ATRIBUTO bgcolor= — os dois formatos contam."""
     import re as _re
+    color = ""
+    style = (row.get("style") or "").lower().replace(" ", "")
     match = _re.search(r"background-color:([^;]+)", style)
-    if not match:
+    if match:
+        color = match.group(1).strip().rstrip(";")
+    if not color:
+        color = str(row.get("bgcolor") or "").strip().lower()
+    if not color:
         return ("class", False)
-    color = match.group(1).strip().rstrip(";")
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
 
 
@@ -397,16 +453,20 @@ ATIVIDADE_KIND_MAP = {
     "trabalho": "deliverable",
     "entrega": "deliverable",
     "feriado": "holiday",
+    # "evento" (Evento Academico/Institucional): kind ignorado, igual ao evento
+    # marcado por cor (darkred -> "event"). Sem isso, "Evento Academico" na coluna
+    # Atividade caía em "class" (aula) e poluía a atribuição de unidade.
+    "evento": "event",
     "revisao": "review",
 }
 
 
 def norm_ascii_lower(text: str) -> str:
-    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
-    import unicodedata as _ud
-    text = _ud.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not _ud.combining(ch))
-    return text.lower().strip()
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC.
+
+    Preserva pontuação (≠ normalize_match_text, que reduz a [a-z0-9 ] para
+    matching fuzzy — precisa de chave exata? use este; matching? use aquele)."""
+    return strip_accents(text).lower().strip()
 
 
 def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
@@ -423,8 +483,14 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     color_kind, ignored = _aspnet_row_kind(row)
     atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
     if color_kind == "g2_or_results":
-        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade decide.
-        return ("results", True) if "devolu" in atividade else ("assessment", False)
+        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade OU
+        # Descricao decidem (caso real MF 13/07: Atividade "Aula", Descricao
+        # "Devolução das provas").
+        # D1 (ruling 28/08): G2 = recuperacao condicional que cobre o semestre —
+        # nao e N-esima prova; linha ignorada como marco (consumidor ja tratava
+        # o token g2 em _IGNORED_KINDS; o produtor nunca emitia).
+        descricao = norm_ascii_lower(_aspnet_row_cell(row, "Descricao"))
+        return ("results", True) if "devolu" in f"{atividade} {descricao}" else ("g2", True)
     if ignored:
         return (color_kind, True)
     for needle, kind in ATIVIDADE_KIND_MAP.items():
@@ -487,6 +553,20 @@ def is_sarc_url(url: Optional[str]) -> bool:
         return False
     host = (parsed.hostname or "").lower()
     return host == SARC_HOST
+
+
+def parse_sarc_turma_key(url: Optional[str]) -> dict:
+    """Extrai {guid, ano, sem} da query da URL do SARC Export.aspx. Ausentes -> ""."""
+    from urllib.parse import parse_qs
+    try:
+        q = parse_qs(urlparse(str(url or "")).query)
+    except Exception:
+        return {"guid": "", "ano": "", "sem": ""}
+    return {
+        "guid": (q.get("id") or [""])[0].strip(),
+        "ano": (q.get("ano") or [""])[0].strip(),
+        "sem": (q.get("sem") or [""])[0].strip(),
+    }
 
 
 def decide_schedule_source(url: Optional[str], pasted_html: Optional[str]) -> dict:
@@ -579,15 +659,22 @@ def get_app_data_dir() -> Path:
         base_dir = Path.home() / ".config" / "gpt_tutor_generator"
     ensure_dir(base_dir)
     return base_dir
-def auto_detect_category(name: str, is_image: bool = False) -> str:
-    """Detecta a categoria provável baseada no nome do arquivo."""
+def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None) -> str:
+    """Detecta a categoria provável baseada no nome do arquivo.
+
+    `frases_do_plano` (F11, opcional): frases de conteúdo do plano de ensino, minúsculas.
+    Cue de bibliografia não dispara quando o nome casa uma frase do plano que contém o
+    cue — "02 - Modelos de Referencia.pdf" é tópico da u01 do FR ("modelos de referência
+    de interconexão OSI/ISO"), não bibliografia. Sem o parâmetro, comportamento de antes."""
     if is_image:
         return "fotos-de-prova"
     
     import re as _re
     name = name.lower()
     ext = Path(name).suffix.lower()
-    if ext in CODE_EXTENSIONS:
+    # ".htm/.html" solto no stash e pagina (material), nao codigo (SYNC S6b, 03/09); dentro de zip
+    # o process_zip decide por CODE_EXTENSIONS e nao passa por aqui.
+    if ext in CODE_EXTENSIONS and ext not in (".htm", ".html"):
         return "codigo-professor"
 
     # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
@@ -598,11 +685,23 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
         return "listas"
     if any(k in name for k in ["gabarito", "resol", "soluc", "key", "espelho"]):
         return "gabaritos"
-    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule", "ementa"]):
+    # "ementa" so como palavra: "material-complementar" contem "ementa" (holdout CG 2026-08-26).
+    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule"]) or _wb("ementa"):
         return "cronograma"
     if any(k in name for k in ["slide", "aula", "apresenta", "unidade", "modulo", "cap"]):
         return "material-de-aula"
-    if any(k in name for k in ["livro", "referencia", "biblio", "artigo", "paper"]):
+    def _cue_e_conteudo_do_plano(cue: str) -> bool:
+        for fr in (frases_do_plano or ()):
+            fr = str(fr or "").lower()
+            if cue in fr and any(len(t) >= 4 and cue not in t and t in name for t in fr.split()):
+                return True
+        return False
+
+    # "bibliogra", nao "biblio": "biblioteca" (library de codigo: "Biblioteca Grafica OpenGL",
+    # "ImageClass - biblioteca para manipulacao de imagens") virava bibliografia e saia do
+    # desempate de bloco (ref-generica -> 1o bloco). Achado no holdout CG 2026-08-26.
+    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]
+           if not _cue_e_conteudo_do_plano(k)):
         return "bibliografia"
 
     if any(k in name for k in ["trabalho", "projeto", "assignment",

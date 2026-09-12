@@ -154,6 +154,40 @@ def test_apply_curation_overrides_sets_unit(tmp_path):
     assert blk["unit_confidence"] == 1.0
 
 
+def test_kind_override_to_class_promotes_auto_unit(tmp_path):
+    # RED real (bloco-16 IA, 2026-08-11): serialize zera unit_slug de nao-class
+    # ANTES da curadoria; kind override -> class deixava a unidade vazia mesmo
+    # com auto_unit_slug provando que o DP acertou. Workaround era pino junto.
+    from src.builder.timeline.index import _apply_curation_overrides
+    set_block_override(tmp_path, "bloco-16", "manual_kind_override", "class")
+    ti = {"version": 4, "blocks": [
+        {"id": "bloco-16", "kind": "planning", "unit_slug": "", "unit_confidence": 0.0,
+         "auto_unit_slug": "unidade-03-agentes", "topic_text": "agentes planejamento",
+         "sessions": [{"d": 1}]}
+    ]}
+    touched = _apply_curation_overrides(ti, tmp_path)
+    assert touched == 1
+    blk = ti["blocks"][0]
+    assert blk["kind"] == "class"
+    assert blk["unit_slug"] == "unidade-03-agentes"
+    assert blk["unit_confidence"] > 0.0
+
+
+def test_kind_override_to_class_respects_manual_unit(tmp_path):
+    # manual_unit_slug sempre vence a promocao do auto.
+    from src.builder.timeline.index import _apply_curation_overrides
+    set_block_override(tmp_path, "bloco-16", "manual_kind_override", "class")
+    set_block_override(tmp_path, "bloco-16", "manual_unit_slug", "unidade-05-pino")
+    ti = {"version": 4, "blocks": [
+        {"id": "bloco-16", "kind": "planning", "unit_slug": "", "unit_confidence": 0.0,
+         "auto_unit_slug": "unidade-03-agentes", "topic_text": "x",
+         "sessions": [{"d": 1}]}
+    ]}
+    _apply_curation_overrides(ti, tmp_path)
+    assert ti["blocks"][0]["unit_slug"] == "unidade-05-pino"
+    assert ti["blocks"][0]["unit_confidence"] == 1.0
+
+
 def test_kind_display_safe_lookup():
     from src.ui.timeline_dashboard import _kind_display
     assert _kind_display("class")["label"] == "Aula"
@@ -167,3 +201,130 @@ def test_status_color_map_covers_all_statuses():
                 "non_applicable", "needs_review"}
     assert statuses <= set(_STATUS_COLOR)
     assert statuses <= set(_STATUS_LABEL)
+
+
+# ---------------------------------------------------------------------------
+# manual_scope_unit_slugs override
+# ---------------------------------------------------------------------------
+
+def test_scope_override_roundtrip(tmp_path):
+    from src.builder.timeline.curation import set_block_override, load_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1", "u2"])
+    cur = load_block_curation(tmp_path)
+    assert cur["blk-01"]["manual_scope_unit_slugs"] == ["u1", "u2"]
+
+
+def test_scope_override_empty_list_removes(tmp_path):
+    from src.builder.timeline.curation import set_block_override, load_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1"])
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", [])
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_save_block_scope_override_wrapper(tmp_path):
+    from src.ui.timeline_dashboard import save_block_scope_override
+    from src.builder.timeline.curation import load_block_curation
+    save_block_scope_override(tmp_path, "blk-01", ["u1", "u2"])
+    assert load_block_curation(tmp_path)["blk-01"]["manual_scope_unit_slugs"] == ["u1", "u2"]
+    save_block_scope_override(tmp_path, "blk-01", [])
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_scope_override_applies_renamed(tmp_path):
+    from src.builder.timeline.curation import set_block_override, apply_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1", "u2"])
+    blocks = [{"id": "blk-01"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["block_manual_scope_slugs"] == ["u1", "u2"]
+    assert "manual_scope_unit_slugs" not in blocks[0]
+
+
+# ---------------------------------------------------------------------------
+# apply_block_curation — uuid-keyed curation (migrated files, Task 3)
+# ---------------------------------------------------------------------------
+
+def test_apply_uuid_keyed_curation_applies_override(tmp_path):
+    """Curation migrada (chave = block_uuid) deve ser aplicada ao bloco."""
+    import json
+    uuid = "a1b2c3d4-0001-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {uuid: {"manual_kind_override": "holiday"}},
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-03", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_apply_uuid_keyed_all_fields(tmp_path):
+    """Todos os campos override funcionam via chave uuid."""
+    import json
+    uuid = "a1b2c3d4-0002-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {uuid: {
+            "manual_kind_override": "assessment",
+            "manual_topic_label": "Prova Final",
+            "manual_unit_slug": "unidade-10",
+        }},
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-07", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "assessment"
+    assert blocks[0]["manual_topic_label"] == "Prova Final"
+    assert blocks[0]["block_manual_unit_slug"] == "unidade-10"
+
+
+def test_apply_legacy_key_still_works_after_uuid_support(tmp_path):
+    """Backwards-compat: curation keyed por bloco-NN (não migrada) ainda aplica."""
+    set_block_override(tmp_path, "bloco-05", "manual_kind_override", "holiday")
+    blocks = [{"id": "bloco-05"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_apply_uuid_takes_priority_over_legacy_key(tmp_path):
+    """Se existirem entradas uuid E bloco-NN, uuid vence."""
+    import json
+    uuid = "a1b2c3d4-0003-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {
+            uuid: {"manual_kind_override": "holiday"},
+            "bloco-01": {"manual_kind_override": "assessment"},
+        },
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-01", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_boundary_dates_invalida_avisa_e_descarta(tmp_path, caplog):
+    # Item B (01/09): data fora do formato era fail-open SILENCIOSO — a
+    # fronteira pedida nunca acontecia e ninguem sabia.
+    import logging
+    from src.builder.timeline.curation import load_boundary_dates
+    course = tmp_path / "course"
+    course.mkdir()
+    (course / ".timeline_curation.json").write_text(
+        '{"version": 1, "boundary_dates": ["2026-03-19", "19/03/2026", ""]}',
+        encoding="utf-8",
+    )
+    with caplog.at_level(logging.WARNING):
+        dates = load_boundary_dates(course)
+    assert dates == {"2026-03-19"}
+    assert any("19/03/2026" in r.message for r in caplog.records)

@@ -1,0 +1,13 @@
+  !! SO exemplo-threads-em-c-exemplo1 harness='' snapshot='conceitos-basicos' ['empate-exato 3x score=0.11']
+  V2 ~ IA  mlp-xoripynb                           base=introducao-ao-aprendizado- -> -                          gold=modelos-preditivos       conf 0.08->0.00
+  V2s ~ IA  mlp-xoripynb                           base=introducao-ao-aprendizado- -> -                          gold=modelos-preditivos       conf 0.08->0.00
+  V2 - IA  aula-sobre-agrupamento-parte-1-partici base=modelos-descritivos        -> introducao-ao-aprendizado- gold=modelos-descritivos      conf 0.13->0.03
+  V2 - IA  agrupamento-usando-k-means-exemplo-1-i base=modelos-descritivos        -> introducao-ao-aprendizado- gold=modelos-descritivos      conf 0.76->0.88
+  V2 - IA  agrupamento-usando-k-means-exemplo-2-i base=modelos-descritivos        -> introducao-ao-aprendizado- gold=modelos-descritivos      conf 0.27->1.00
+  V2 - IA  artigo-usando-agrupamento              base=modelos-descritivos        -> -                          gold=modelos-descritivos      conf 0.62->0.00
+  V2 - IA  aula-sobre-agrupamento-parte-2-hierarq base=modelos-descritivos        -> introducao-ao-aprendizado- gold=modelos-descritivos      conf 0.16->0.28
+  V2 + ES2 devops                                 base=integracao-continua-ci     -> gerenciamento-da-configura gold=conceito-de-devops       conf 0.04->0.26
+base subunidade 81/93  diverge_do_snapshot=1
+V1   subunidade 81/93  flips: + 0  - 0  ~ 0
+V2   subunidade 77/93  flips: + 1  - 5  ~ 1
+V2s  subunidade 81/93  flips: + 0  - 0  ~ 1

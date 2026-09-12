@@ -3,6 +3,7 @@
     "blocks": [
       {
         "id": "bloco-01",
+        "block_uuid": "00000000-0000-0000-0000-000000000001",
         "period_label": "11/03/2026 a 13/03/2026",
         "unit_slug": "unidade-01-logica",
         "unit_confidence": 0.82,
@@ -20,6 +21,7 @@
       },
       {
         "id": "bloco-02",
+        "block_uuid": "00000000-0000-0000-0000-000000000002",
         "period_label": "18/03/2026 a 18/03/2026",
         "unit_slug": "unidade-01-logica",
         "unit_confidence": 0.51,
@@ -36,6 +38,7 @@
       },
       {
         "id": "bloco-04",
+        "block_uuid": "00000000-0000-0000-0000-000000000004",
         "period_label": "01/04/2026 a 01/04/2026",
         "unit_slug": "",
         "unit_confidence": 0.0,
@@ -52,6 +55,7 @@
       },
       {
         "id": "bloco-03",
+        "block_uuid": "00000000-0000-0000-0000-000000000003",
         "period_label": "25/03/2026 a 25/03/2026",
         "unit_slug": "",
         "unit_confidence": 0.0,
@@ -68,6 +72,7 @@
       },
       {
         "id": "bloco-05",
+        "block_uuid": "00000000-0000-0000-0000-000000000005",
         "period_label": "08/04/2026 a 08/04/2026",
         "unit_slug": "unidade-01-logica",
         "unit_confidence": 0.50,
@@ -93,7 +98,7 @@
       "tags": "",
       "markdown": "# Processos\n\nslides da aula de processos",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
-      "expected_block_id": "bloco-01",
+      "expected_block_id": "00000000-0000-0000-0000-000000000001",
       "note": "data 12.03 ancorada no titulo cai no periodo 11-13/03 do bloco-01"
     },
     {
@@ -104,7 +109,7 @@
       "tags": "",
       "markdown": "# Inducao Estrutural\n\ninducao estrutural sobre termos e conjuntos indutivos",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
-      "expected_block_id": "bloco-02",
+      "expected_block_id": "00000000-0000-0000-0000-000000000002",
       "note": "texto casa o topic_text do bloco-02; sem data"
     },
     {
@@ -115,7 +120,7 @@
       "tags": "",
       "markdown": "# Inducao Estrutural\n\ninducao estrutural sobre termos",
       "unit_guess": {"slug": "unidade-99-outra", "confidence": 0.40, "ambiguous": true},
-      "expected_block_id": "bloco-02",
+      "expected_block_id": "00000000-0000-0000-0000-000000000002",
       "note": "palpite de unidade ERRADO (off-unit -0.45); data 18.03 + titulo devem vencer"
     },
     {
@@ -126,7 +131,7 @@
       "tags": "",
       "markdown": "conteudo generico sem pistas distintivas",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
-      "expected_block_id": "bloco-01",
+      "expected_block_id": "00000000-0000-0000-0000-000000000001",
       "note": "material fraco: deve atribuir o melhor (nunca orfao) com band media/baixa"
     },
     {
@@ -137,7 +142,7 @@
       "tags": "",
       "markdown": "# Aula 03\n\nslides da aula",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
-      "expected_block_id": "bloco-05",
+      "expected_block_id": "00000000-0000-0000-0000-000000000005",
       "note": "ordinal 3 -> 3a aula (bloco-05), pulando feriado/revisao; sem data/topico forte"
     }
   ],

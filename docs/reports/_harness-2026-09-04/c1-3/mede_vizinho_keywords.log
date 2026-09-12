@@ -1,0 +1,11 @@
+        n  base   VIZINHO igual        kNN-3   ANCORA certa
+SO     15     8     12/15     80%    11/15     73%     7/9      78%
+IA     39     6     31/39     79%    29/39     74%     1/2      50%
+ES2    28     6     22/28     79%    22/28     79%     1/4      25%
+TCC    11    10      7/11     64%     6/11     55%     6/9      67%
+MF     58    41     49/58     84%    45/58     78%    38/41     93%
+CG     82    43     56/82     68%    47/82     57%    29/45     64%
+TOT   233   114    177/233    76%   160/233    69%    82/110    75%
+
+LEITURA: 'VIZINHO igual' e o teto de QUALQUER propagacao por similaridade de palavras-chave.
+Se estiver perto de 50%, arquivos parecidos NAO compartilham subunidade e a arquitetura nao fecha.

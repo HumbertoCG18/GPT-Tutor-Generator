@@ -1,0 +1,18 @@
+== E5 ES2 em variantes
+  so 'gateway' em 1.5                          ES2   25 ->  26  gain ['roteiro3-gateway']  loss []
+  so 'Estudo de caso' em 1.5                   ES2   25 ->  25  gain []  loss []
+  'gateway' + 'Estudo de caso'                 ES2   25 ->  26  gain ['roteiro3-gateway']  loss []
+== E7 CG: topicos de u05 visiveis para materiais de u04 (gold atual conta u05 como erro; o que importa e para onde vao)
+  u05 anexada a u04                            CG    58 ->  58  gain []  loss []
+    animacao-v2                                    hoje=desenho-de-linhas              com u05=desenho-de-linhas                  gold_ok hoje=False com u05=False
+    instanciamento                                 hoje=2d-3d-mao-direita-e-mao-esquer com u05=2d-3d-mao-direita-e-mao-esquerda   gold_ok hoje=False com u05=False
+    pagina-com-videos-sobre-instanciamento         hoje=desenho-de-linhas              com u05=desenho-de-linhas                  gold_ok hoje=False com u05=False
+    transformacoesgeometricas                      hoje=desenho-de-linhas              com u05=transformacoes-geometricas-e-coord gold_ok hoje=False com u05=False
+    transformacoesgl                               hoje=sistema-de-coordenadas-cartesi com u05=transformacoes-geometricas-e-coord gold_ok hoje=False com u05=False
+    exercicios-teoricos-sobre-processo-de-visualiz hoje=desenho-de-linhas              com u05=desenho-de-linhas                  gold_ok hoje=False com u05=False
+    exercicios-teoricos-sobre-processo-de-visualiz hoje=desenho-de-linhas              com u05=desenho-de-linhas                  gold_ok hoje=False com u05=False
+    pagina-com-videos-sobre-mapeamento-9f410e      hoje=(vazio)                        com u05=(vazio)                            gold_ok hoje=False com u05=False
+    video-sobre-mapeamento-em-opengl-1dad3c        hoje=2d-3d-mao-direita-e-mao-esquer com u05=2d-3d-mao-direita-e-mao-esquerda   gold_ok hoje=False com u05=False
+    mapeamento                                     hoje=sistema-de-coordenadas-cartesi com u05=sistema-de-coordenadas-cartesianas gold_ok hoje=True com u05=True
+    vis2d                                          hoje=recorte                        com u05=recorte                            gold_ok hoje=True com u05=True
+    recorte                                        hoje=recorte                        com u05=recorte                            gold_ok hoje=True com u05=True

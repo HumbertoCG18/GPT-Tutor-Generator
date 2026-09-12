@@ -1,0 +1,27 @@
+== MF: membros de serie com voto: 11 (series 11)
+   exerciciosformalizacaoalgoritmosrecurs CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   formalizacaoalgoritmos-recursao2       CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   exerciciosformalizacaoalgoritmosrecurs CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   formalizacaoalgoritmos-recursao3       CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   exerciciosdafny1                       flagada->votaria               motor=bloco-12  band=baixa voto=bloco-12  gold=bloco-12  motor_ok voto_ok
+   exerciciosdafny2                       CONFIANTE->voto so pela serie  motor=bloco-11  band=alta  voto=bloco-13  gold=bloco-13  MOTOR_ERR voto_ok
+   exerciciosdafny3                       CONFIANTE->voto so pela serie  motor=bloco-13  band=alta  voto=bloco-13  gold=bloco-13  motor_ok voto_ok
+   exerciciosdafny4                       CONFIANTE->voto so pela serie  motor=bloco-13  band=alta  voto=bloco-13  gold=bloco-13  motor_ok voto_ok
+   exerciciosdafny5                       CONFIANTE->voto so pela serie  motor=bloco-15  band=media voto=bloco-15  gold=bloco-15  motor_ok voto_ok
+   classes-parte1                         CONFIANTE->voto so pela serie  motor=bloco-15  band=media voto=bloco-15  gold=bloco-15  motor_ok voto_ok
+   classes-parte2                         CONFIANTE->voto so pela serie  motor=bloco-15  band=media voto=bloco-15  gold=bloco-15  motor_ok voto_ok
+== SO: membros de serie com voto: 3 (series 8)
+   exemplo-criacao-de-processos-no-unix-l flagada->votaria               motor=bloco-03  band=baixa voto=bloco-03  gold=bloco-03  motor_ok voto_ok
+   exemplo-criacao-de-processos-no-unix-l flagada->votaria               motor=bloco-03  band=baixa voto=bloco-03  gold=bloco-03  motor_ok voto_ok
+   exemplo-criacao-de-processos-no-unix-l flagada->votaria               motor=bloco-03  band=baixa voto=bloco-03  gold=bloco-03  motor_ok voto_ok
+== ES2: membros de serie com voto: 6 (series 15)
+   microsservicos2                        CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   microsservicos3                        CONFIANTE->voto so pela serie  motor=bloco-04  band=media voto=bloco-04  gold=bloco-04  motor_ok voto_ok
+   microsservicos5                        CONFIANTE->voto so pela serie  motor=bloco-08  band=media voto=bloco-08  gold=bloco-08  motor_ok voto_ok
+   microsservicos6                        CONFIANTE->voto so pela serie  motor=bloco-10  band=media voto=bloco-10  gold=bloco-10  motor_ok voto_ok
+   microsservicos7                        CONFIANTE->voto so pela serie  motor=bloco-09  band=media voto=bloco-09  gold=bloco-09  motor_ok voto_ok
+   microsservicos4                        CONFIANTE->voto so pela serie  motor=bloco-07  band=media voto=bloco-07  gold=bloco-07  motor_ok voto_ok
+== CG: membros de serie com voto: 2 (series 2)
+   video-sobre-prechimento-de-areas-durac flagada->votaria               motor=bloco-08  band=media voto=bloco-07  gold=-         
+   video-sobre-prechimento-de-areas-durac CONFIANTE->voto so pela serie  motor=bloco-07  band=alta  voto=bloco-07  gold=-         
+TOTAL: {'CONFIANTE->voto so pela serie': 17, 'confiante: motor==voto': 16, 'confiante c/ gold': 16, 'confiante motor ok': 15, 'confiante voto ok': 16, 'flagada->votaria': 5}

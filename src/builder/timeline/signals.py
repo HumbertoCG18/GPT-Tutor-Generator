@@ -7,8 +7,10 @@ state, so they can be reused by timeline builders and tests.
 from __future__ import annotations
 
 import re
-import unicodedata
+from src.utils.helpers import strip_accents
 from datetime import datetime
+
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 
 _DATE_RE = r"\d{2}/\d{2}/\d{4}"
 _DATE_RANGE_RE = re.compile(
@@ -28,20 +30,8 @@ _KIND_MARKER_RE = re.compile(r"\{kind=([a-z0-9_]+)\}", re.IGNORECASE)
 _IGNORED_SESSION_KINDS = {"ps", "g2", "event", "suspension"}
 
 
-def _strip_accents(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    return "".join(ch for ch in normalized if not unicodedata.combining(ch))
-
-
-def _normalize_match_text(text: str) -> str:
-    text = _strip_accents(text)
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
-
-
 def _normalize_timeline_text(text: str) -> str:
-    return _strip_accents(text or "").lower().strip()
+    return strip_accents(text or "").lower().strip()
 
 
 def _parse_date(raw: str) -> str:

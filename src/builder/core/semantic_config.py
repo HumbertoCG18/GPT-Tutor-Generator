@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
+from src.utils.helpers import strip_accents
 from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
@@ -27,34 +27,7 @@ _PROFILE_ALIASES = {
     "tag_structural_headings": "structural_stop_headings",
 }
 
-_SEMANTIC_TOKEN_STOPWORDS = {
-    "curso",
-    "disciplina",
-    "aula",
-    "aulas",
-    "material",
-    "materiais",
-    "conteudo",
-    "conteudos",
-    "introducao",
-    "fundamentos",
-    "teoria",
-    "pratica",
-    "revisao",
-    "exercicios",
-    "atividade",
-    "atividades",
-    "lista",
-    "listas",
-    "prova",
-    "provas",
-    "projeto",
-    "projetos",
-    "sistema",
-    "sistemas",
-    "analise",
-    "estudo",
-}
+from src.builder.text.stopwords import SEMANTIC_TOKEN_STOPWORDS as _SEMANTIC_TOKEN_STOPWORDS
 
 _TOOL_CANDIDATE_RE = re.compile(r"\b[A-Za-z][A-Za-z0-9.+#-]{1,24}\b")
 _TOOL_CONTEXT_CUES = (
@@ -72,9 +45,7 @@ _TOOL_CONTEXT_CUES = (
 
 
 def _normalize_text(text: str) -> str:
-    cleaned = unicodedata.normalize("NFKD", text or "")
-    cleaned = "".join(ch for ch in cleaned if not unicodedata.combining(ch))
-    cleaned = cleaned.lower()
+    cleaned = strip_accents(text).lower()
     cleaned = re.sub(r"[^a-z0-9#+.\-\s]", " ", cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return cleaned
@@ -201,67 +172,30 @@ def _infer_tool_candidates(
     glossary_md: str,
     strong_headings: Optional[list[str]] = None,
 ) -> list[str]:
-    totals: Counter[str] = Counter()
-    heading_hits: Counter[str] = Counter()
-    context_hits: Counter[str] = Counter()
-    display: dict[str, str] = {}
-    heading_text = "\n".join(str(item) for item in (strong_headings or []) if _collapse_ws(str(item)))
-    sources = [
-        (teaching_plan or "", False),
-        (course_map_md or "", False),
-        (glossary_md or "", False),
-        (heading_text, True),
-    ]
+    """Deteccao de ferramentas CONHECIDAS (defaults) no corpus do curso.
 
-    for text, is_heading in sources:
-        seen_in_source = set()
-        for raw_line in (text or "").splitlines():
-            normalized_line = _normalize_text(raw_line)
-            has_tool_context = any(cue in normalized_line for cue in _TOOL_CONTEXT_CUES)
-            for match in _TOOL_CANDIDATE_RE.finditer(raw_line):
-                raw = match.group(0)
-                normalized = _normalize_text(raw)
-                if len(normalized) < 2:
-                    continue
-                if normalized in _SEMANTIC_TOKEN_STOPWORDS:
-                    continue
-                if normalized in seen_in_source:
-                    continue
-                seen_in_source.add(normalized)
-                totals[normalized] += 1
-                if is_heading:
-                    heading_hits[normalized] += 1
-                if has_tool_context:
-                    context_hits[normalized] += 1
-                display.setdefault(normalized, raw)
-
-    accepted: list[str] = []
+    B-1 (auditoria 18/08, fix 01/09): a versao anterior INFERIA vocabulario novo
+    do proprio corpus por heuristica de forma (CamelCase pegava nomes proprios
+    hifenados: Cook-Levin, Floyd-Hoare) e de contexto — realimentacao positiva
+    em que o termo mais central do curso virava "ferramenta" e ganhava
+    DOWN-WEIGHT no scorer de conceito de bloco (MF: formal/hoare/invariantes;
+    TCC: hierarquia/np-completude; ES2: cliente-servidor/devops). Agora so
+    aceita o que esta em `semantic_defaults.json` (11 provadores curados);
+    ferramenta nova de curso (ANTLR, Wireshark) entra pelo OVERRIDE por curso
+    (`course/.semantic_profile.json`), nunca por auto-inferencia.
+    """
     default_tools = {
         _normalize_text(tool)
         for tool in (load_semantic_defaults().get("known_tools") or [])
     }
-    for normalized, count in totals.items():
-        raw = display.get(normalized, normalized)
-        has_special_shape = (
-            any(ch in raw for ch in "+#.")
-            or any(ch.isdigit() for ch in raw)
-            or any(ch.isupper() for ch in raw[1:])
-        )
-        if normalized in default_tools:
-            accepted.append(normalized)
-            continue
-        if len(normalized) < 3:
-            continue
-        if has_special_shape and count >= 1 and len(normalized) >= 4:
-            accepted.append(normalized)
-            continue
-        if context_hits.get(normalized, 0) >= 1 and count >= 2 and len(normalized) >= 3:
-            accepted.append(normalized)
-            continue
-        if context_hits.get(normalized, 0) >= 2 and count >= 3 and 3 <= len(normalized) <= 18:
-            accepted.append(normalized)
-
-    return sorted(_ordered_unique(accepted))
+    heading_text = "\n".join(str(item) for item in (strong_headings or []) if _collapse_ws(str(item)))
+    found: list[str] = []
+    for text in (teaching_plan or "", course_map_md or "", glossary_md or "", heading_text):
+        for match in _TOOL_CANDIDATE_RE.finditer(text):
+            normalized = _normalize_text(match.group(0))
+            if normalized in default_tools:
+                found.append(normalized)
+    return sorted(_ordered_unique(found))
 
 
 def infer_semantic_profile(
@@ -371,7 +305,9 @@ def resolve_semantic_profile(
     glossary_md: str = "",
     strong_headings: Optional[list[str]] = None,
 ) -> dict:
-    cached = read_internal_semantic_profile(root_dir)
+    # R11: NAO funde o `.semantic_profile.generated.json` da rodada anterior — ele e so o
+    # `inferred` gravado por write_tag_catalog, e fundi-lo tornava o build dependente do
+    # estado derivado anterior (1 passo de memoria: tags/confidencias mudavam entre 2 reprocess).
     override = read_semantic_profile_override(root_dir)
     inferred = infer_semantic_profile(
         course_name=course_name,
@@ -380,4 +316,4 @@ def resolve_semantic_profile(
         glossary_md=glossary_md,
         strong_headings=strong_headings,
     )
-    return merge_semantic_profile(cached, inferred, override)
+    return merge_semantic_profile(inferred, override)

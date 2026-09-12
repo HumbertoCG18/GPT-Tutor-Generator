@@ -1,0 +1,53 @@
+PRODUTO   SO   100%  34/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  10/ 15 | fila  12 | conf-err  2 | prov-llm   9 | sem-bloco  0
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+SEM-VOTO  SO   100%  31/ 39 | bloco  36/ 39 | unidade  35/ 37 | sub  10/ 15 | fila  20 | conf-err  2 | prov-llm   0 | sem-bloco  1
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+ZERO-LLM  SO   100%  31/ 39 | bloco  36/ 39 | unidade  35/ 37 | sub   9/ 15 | fila  24 | conf-err  2 | prov-llm   0 | sem-bloco  1
+
+PRODUTO   IA   100%   7/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub   4/ 39 | fila   5 | conf-err 34 | prov-llm  14 | sem-bloco  1
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+SEM-VOTO  IA   100%   6/ 42 | bloco  41/ 42 | unidade  42/ 42 | sub   4/ 39 | fila  17 | conf-err 29 | prov-llm   0 | sem-bloco  3
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+ZERO-LLM  IA   100%   6/ 42 | bloco  41/ 42 | unidade  42/ 42 | sub   4/ 39 | fila  17 | conf-err 29 | prov-llm   0 | sem-bloco  3
+
+PRODUTO   ES2  100%  17/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub  15/ 28 | fila  11 | conf-err 11 | prov-llm  16 | sem-bloco  0
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+SEM-VOTO  ES2  100%  17/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub  15/ 28 | fila  12 | conf-err 10 | prov-llm   0 | sem-bloco  0
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+ZERO-LLM  ES2  100%   7/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub   5/ 28 | fila  17 | conf-err 10 | prov-llm   0 | sem-bloco  0
+
+PRODUTO   TCC  100%  24/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   5 | conf-err  2 | prov-llm   1 | sem-bloco  0
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+SEM-VOTO  TCC  100%  23/ 27 | bloco  26/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   6 | conf-err  2 | prov-llm   0 | sem-bloco  1
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+ZERO-LLM  TCC  100%  23/ 27 | bloco  26/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   6 | conf-err  2 | prov-llm   0 | sem-bloco  1
+
+PRODUTO   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6 | prov-llm  31 | sem-bloco  6
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+SEM-VOTO  MF   100%  51/ 66 | bloco  58/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  19 | conf-err 10 | prov-llm   0 | sem-bloco  6
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+ZERO-LLM  MF   100%  49/ 66 | bloco  59/ 66 | unidade  65/ 65 | sub  47/ 58 | fila  16 | conf-err 11 | prov-llm   0 | sem-bloco  6
+
+PRODUTO   CG   100%  59/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  58/ 82 | fila  47 | conf-err  9 | prov-llm  31 | sem-bloco  0
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+SEM-VOTO  CG   100%  56/ 83 | bloco  33/ 35 | unidade   0/  0 | sub  55/ 82 | fila  62 | conf-err  6 | prov-llm   0 | sem-bloco  8
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+ZERO-LLM  CG   100%  49/ 83 | bloco  33/ 35 | unidade   0/  0 | sub  48/ 82 | fila  63 | conf-err  7 | prov-llm   0 | sem-bloco  8
+
+================================================================================================================================
+PRODUTO   TOT  100% 199/288 | bloco 235/237 | unidade 190/190 | sub 146/233 | fila  91 | conf-err 64 | prov-llm 102 | sem-bloco  7
+SEM-VOTO  TOT  100% 184/288 | bloco 221/237 | unidade 188/190 | sub 143/233 | fila 136 | conf-err 59 | prov-llm   0 | sem-bloco 19
+ZERO-LLM  TOT  100% 165/288 | bloco 222/237 | unidade 188/190 | sub 121/233 | fila 143 | conf-err 61 | prov-llm   0 | sem-bloco 19
+[fim] 504s

@@ -1,0 +1,24 @@
+
+== MF: unidades 3 · P1 2026-04-22 · P2 2026-07-06 · cerca {'p1': [1, 2], 'p2': [3]}
+   VIOLA bloco-10 04-27 'logica de hoare aula' unidade=2-verificacao-de-programas (u2) conf=0.6 faixa=P1..P2 permitido=[3] · materiais 5 · gold: 0 dentro, 5 fora, motor certo 5
+   VIOLA bloco-12 05-11 'terminacao introducao ao dafny aula' unidade=2-verificacao-de-programas (u2) conf=0.6 faixa=P1..P2 permitido=[3] · materiais 1 · gold: 0 dentro, 1 fora, motor certo 1
+   VIOLA bloco-13 05-13 'logica de programas introducao ao dafny ' unidade=2-verificacao-de-programas (u2) conf=0.6 faixa=P1..P2 permitido=[3] · materiais 7 · gold: 0 dentro, 7 fora, motor certo 7
+   VIOLA bloco-15 06-01 'logica de programas orientacao a objetos' unidade=2-verificacao-de-programas (u2) conf=0.8 faixa=P1..P2 permitido=[3] · materiais 4 · gold: 0 dentro, 4 fora, motor certo 4
+   blocos-aula violando a cerca: 4
+
+== TCC: unidades 4 · P1 2026-05-08 · P2 2026-07-03 · cerca {'p1': [1, 2, 3], 'p2': [4]}
+   VIOLA bloco-18 05-13 'correcao prova p1 aula' unidade=-03-problemas-indecidiveis (u3) conf=0.6 faixa=P1..P2 permitido=[4] · materiais 0 · gold: 0 dentro, 0 fora, motor certo 0
+   blocos-aula violando a cerca: 1
+
+== ES2: unidades 3 · P1 2026-05-08 · P2 2026-07-03 · cerca {'p1': [1], 'p2': [2, 3]}
+   ok    bloco-04 04-10 'microservicos no spring discovery aula' u1 faixa=antes P1 · GOLD FORA DA CERCA em 7/7: ['revisao-p1', 'microsservicos2', 'microsservicos3', 'roteiro2-nameserver', 'roteiro2', 'roteiro3']
+   VIOLA bloco-07 05-15 'microservicos no spring circuit breaker ' unidade=01-arquitetura-de-software (u1) conf=0.4 faixa=P1..P2 permitido=[2, 3] · materiais 3 · gold: 3 dentro, 0 fora, motor certo 0
+   blocos-aula violando a cerca: 1
+
+== FR: unidades 6 · P1 2026-09-24 · P2 2026-11-26 · cerca {'p1': [1, 2, 3], 'p2': [4, 5, 6]}
+   VIOLA bloco-07 09-10 'camada de rede enderecamento ip aula' unidade=unidade-04-nivel-de-rede (u4) conf=0.6 faixa=antes P1 permitido=[1, 2, 3] · materiais 0 · gold: 0 dentro, 0 fora, motor certo 0
+   VIOLA bloco-08 09-15 'protocolo ipv4 aula' unidade=unidade-04-nivel-de-rede (u4) conf=0.6 faixa=antes P1 permitido=[1, 2, 3] · materiais 0 · gold: 0 dentro, 0 fora, motor certo 0
+   VIOLA bloco-09 09-17 'icmpv4 aula' unidade=unidade-04-nivel-de-rede (u4) conf=0.6 faixa=antes P1 permitido=[1, 2, 3] · materiais 0 · gold: 0 dentro, 0 fora, motor certo 0
+   blocos-aula violando a cerca: 3
+
+[TOTAL] {'blocos': 51, 'gold entries': 101, 'gold dentro da cerca': 77, 'gold FORA da cerca': 24, 'blocos violando': 9, 'gold em bloco violador': 20, 'motor certo em bloco violador': 17}

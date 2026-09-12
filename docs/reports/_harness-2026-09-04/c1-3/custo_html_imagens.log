@@ -1,0 +1,13 @@
+cache de transcricoes (CG): 129 imagens unicas ja pagas
+  com markdown vazio (chamada paga que nao rendeu nada): 4
+imagens em content/images: 769 · extensoes {'.png': 685, '.gif': 52, '.jpg': 31}
+  por tamanho: {'5-20 KB': 191, '20-100 KB': 283, '>=100 KB': 180, '<5 KB': 114}
+  por dimensao: {'>200px': 658, '<=200px': 105, '<=64px (icone/bullet)': 5}  (PIL=sim)
+entries html com stats: 48 · somatorio {'total': 147, 'formulas': 37, 'figuras': 95, 'descritas': 5, 'nao_capturadas': 10, 'datalab_calls': 105}
+
+=== o que o classificador LOCAL (gratis) diria das imagens ja pagas
+  {'decorativa': 99, 'genérico': 38}
+   decorativa: ['curvas-bezier3pontos.gif (1 KB)', 'curvas-bezier4pontos.gif (1 KB)', 'curvas-DuasBz3Ptos.gif (2 KB)', 'curvas-image003.gif (2 KB)']
+   genérico: ['curvas-EquacaoHermite.png (7 KB)', 'curvas-image001.gif (97 KB)', 'curvas-image002.gif (158 KB)', 'curvas-image007.png (12 KB)']
+
+=== o que as 129 chamadas pagas renderam: formula $$ em 34 · legenda ![] em 74 · vazio em 4

@@ -107,6 +107,17 @@ def build_file_map_aliases(
         timeline_unit_neutral_tokens=timeline_unit_neutral_tokens,
     )
 
+    # O loop por-entry de content_taxonomy chama este wrapper com a MESMA lista
+    # de units; memo de 1 slot por identidade (ref forte, sem hazard de id reuse)
+    # evita reindexar o IDF de unidades a cada entry (auditoria 2.9).
+    _unit_index_memo = {"units": None, "indexed": None}
+
+    def _memo_build_unit_index(units):
+        if _unit_index_memo["units"] is not units:
+            _unit_index_memo["units"] = units
+            _unit_index_memo["indexed"] = build_file_map_unit_index(units)
+        return _unit_index_memo["indexed"]
+
     def auto_map_entry_unit(entry, units, markdown_text, topic_index=None, unit_tag_index=None, learned_unit_boosts=None):
         return file_map_auto_map_entry_unit(
             entry,
@@ -115,7 +126,7 @@ def build_file_map_aliases(
             topic_index=topic_index,
             unit_tag_index=unit_tag_index,
             learned_unit_boosts=learned_unit_boosts,
-            build_file_map_unit_index=build_file_map_unit_index,
+            build_file_map_unit_index=_memo_build_unit_index,
             collect_entry_unit_signals=collect_entry_unit_signals,
             score_entry_against_unit=score_entry_against_unit,
             normalize_unit_slug=normalize_unit_slug,

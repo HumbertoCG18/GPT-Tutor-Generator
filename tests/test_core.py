@@ -54,6 +54,7 @@ from src.builder.artifacts.prompts import (
 )
 from src.builder.artifacts.repo import rows_to_markdown_table, wrap_frontmatter
 from src.builder.extraction.teaching_plan import (
+    _normalize_unit_slug,
     _parse_units_from_teaching_plan,
     _topic_depth,
     _topic_text,
@@ -63,8 +64,6 @@ from src.builder.timeline.index import (
     _build_timeline_index,
     _parse_syllabus_timeline,
     _parse_timeline_date_value,
-    _score_timeline_row_against_unit,
-    _serialize_timeline_index,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -77,7 +76,7 @@ from src.utils.helpers import (
     LANG_MAP,
     auto_detect_category,
     ensure_dir,
-    file_size_mb,
+
     pages_to_marker_range,
     parse_page_range,
     safe_rel,
@@ -1231,6 +1230,36 @@ class TestBacklogMarkdownStatus:
         assert status["status"] == "Aprovado/final"
         assert status["needs_reprocess"] == "false"
 
+    def test_effective_backend_prefers_advanced_when_promoted(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "approved_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "datalab",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "datalab"
+
+    def test_effective_backend_falls_back_to_base_when_no_advanced(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "base_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "pymupdf4llm"
+
     def test_loads_manual_unit_options_from_course_map(self, tmp_path):
         from src.ui.dialogs import _load_file_map_unit_options
 
@@ -1310,15 +1339,6 @@ class TestBacklogMarkdownStatus:
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisaoP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 06/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1348,7 +1368,7 @@ class TestBacklogMarkdownStatus:
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisaoP1", "category": "listas"},
+            {"title": "RevisaoP1", "category": "listas", "computed_block_id": "bloco-09"},
             repo,
         )
 
@@ -1653,53 +1673,34 @@ legacy
     assert manifest["entries"][0]["manual_review"] == "manual-review/web/url-item.md"
 
 
-    def test_resolves_backlog_unit_status_from_file_map(self, tmp_path):
+    def test_resolves_backlog_unit_status_from_manifest_computed_slug(self, tmp_path):
+        # Fonte única: a unidade vem do computed_unit_slug da entry do
+        # manifest — nada de regex sobre a célula do FILE_MAP.md renderizado.
         from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-02-verificacao-de-programas | 27/04/2026 a 06/05/2026 |
-""",
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_unit_status(
-            {"title": "Exerciciosespecificacao", "category": "listas"},
-            repo,
-        )
-
-        assert status["assigned"] == "unidade-02-verificacao-de-programas"
-        assert status["source"] == "FILE_MAP atual"
-
-    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
 
         status = _resolve_backlog_unit_status(
             {
                 "title": "Exerciciosespecificacao",
                 "category": "listas",
+                "computed_unit_slug": "unidade-02-verificacao-de-programas",
+            },
+            tmp_path / "repo",
+        )
+
+        assert status["assigned"] == "unidade-02-verificacao-de-programas"
+        assert status["source"] == "Atribuição automática"
+
+    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_unit_status
+
+        status = _resolve_backlog_unit_status(
+            {
+                "title": "Exerciciosespecificacao",
+                "category": "listas",
+                "computed_unit_slug": "unidade-01-metodos-formais",
                 "manual_unit_slug": "unidade-02-verificacao-de-programas",
             },
-            repo,
+            tmp_path / "repo",
             {"unidade-02-verificacao-de-programas": "Unidade 02 — Verificação de Programas"},
         )
 
@@ -1708,20 +1709,13 @@ legacy
         assert "reprocesse o repositório" in status["note"].lower()
 
     def test_resolves_backlog_timeline_status_from_timeline_index(self, tmp_path):
+        # Fonte única: o bloco vem do computed_block_id da entry do manifest,
+        # com lookup direto no .timeline_index.json — sem regex no FILE_MAP.md.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 11/03/2026 a 25/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1742,56 +1736,17 @@ legacy
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
+            {
+                "title": "Exerciciosformalizacaoalgoritmosrecursao",
+                "category": "listas",
+                "computed_block_id": "bloco-02",
+            },
             repo,
         )
 
         assert status["period"] == "11/03/2026 a 25/03/2026"
         assert status["block"] == "bloco-02"
         assert "funções recursivas" in status["topics"]
-
-    def test_resolves_backlog_timeline_status_from_current_file_map_layout(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_timeline_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | Definições indutivas | unidade-01-metodos-formais | Alta | 11/03/2026 a 25/03/2026 |
-|  | ↳ rastreabilidade |  | raw: `raw/aula.pdf` |  |  |  |  |  |  |
-""",
-            encoding="utf-8",
-        )
-        (course_dir / ".timeline_index.json").write_text(
-            json.dumps(
-                {
-                    "version": 1,
-                    "blocks": [
-                        {
-                            "id": "bloco-02",
-                            "period_label": "11/03/2026 a 25/03/2026",
-                            "unit_slug": "unidade-01-metodos-formais",
-                            "topics": ["definições indutivas", "funções recursivas"],
-                            "aliases": ["indução", "recursão"],
-                        }
-                    ],
-                },
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
-            repo,
-        )
-
-        assert status["period"] == "11/03/2026 a 25/03/2026"
-        assert status["block"] == "bloco-02"
         assert "recursão" in status["aliases"]
 
     def test_resolves_backlog_timeline_status_reads_version3_sessions(self, tmp_path):
@@ -1800,15 +1755,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | TÃ­tulo | Categoria | Quando abrir | Prioridade | Markdown | Unidade | PerÃ­odo |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisÃ£oP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 30/03/2026 a 03/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1855,7 +1801,7 @@ legacy
         assert options and "Especificacoes recursivas" in options[0][0]
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisÃ£oP1", "category": "listas"},
+            {"title": "RevisÃ£oP1", "category": "listas", "computed_block_id": "bloco-08"},
             repo,
         )
 
@@ -1871,15 +1817,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1912,28 +1849,15 @@ legacy
         assert status["block"] == "bloco-02"
         assert "reprocesse o repositório" in status["note"].lower()
 
-    def test_resolves_backlog_timeline_status_prefers_best_matching_block_within_same_unit(self, tmp_path):
+    def test_resolves_backlog_timeline_status_mirrors_computed_block_id(self, tmp_path):
+        # Fonte única: morto o re-score local (_score_serialized_timeline_block),
+        # o diálogo apenas espelha o computed_block_id do manifest — mesmo que
+        # outro bloco "parecesse" melhor para um scorer paralelo.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
-        exercises_dir = repo / "exercises" / "lists"
         course_dir.mkdir(parents=True)
-        exercises_dir.mkdir(parents=True)
-
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Lista Isabelle | listas | praticar | alta | `exercises/lists/lista-isabelle.md` | Prova de teoremas | unidade-01-metodos-formais | Alta | 01/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
-        (exercises_dir / "lista-isabelle.md").write_text(
-            "# Lista Isabelle\n\nExercícios de prova de teoremas usando Isabelle.\n",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1972,6 +1896,7 @@ legacy
             {
                 "title": "Lista Isabelle",
                 "category": "listas",
+                "computed_block_id": "bloco-isabelle",
                 "approved_markdown": "exercises/lists/lista-isabelle.md",
             },
             repo,
@@ -2098,19 +2023,6 @@ class TestBuildMarkerPageChunks:
         ]
 
 
-# ---------------------------------------------------------------------------
-# file_size_mb
-# ---------------------------------------------------------------------------
-
-class TestFileSizeMb:
-    def test_nonexistent_file(self):
-        assert file_size_mb(Path("/nonexistent/file.pdf")) == 0.0
-
-    def test_real_file(self, tmp_path):
-        f = tmp_path / "test.txt"
-        f.write_text("x" * (1024 * 1024))  # 1 MB
-        assert file_size_mb(f) >= 1.0
-
 
 # ---------------------------------------------------------------------------
 # safe_rel
@@ -2190,6 +2102,22 @@ class TestRowsToMarkdownTable:
 # ---------------------------------------------------------------------------
 
 class TestUrlFetcherMarkdownFormatting:
+    def test_html_images_keep_their_reference_inline_and_in_blocks(self):
+        # Piloto Curvas (03/09): formulas das paginas do professor sao GIFs dentro de <span>/<p>;
+        # o conversor descartava todo <img>. A ref fica no lugar, chaveada pelo src, alt preservado.
+        html = """
+        <html><body><article>
+          <h1>Curvas</h1>
+          <p>A equacao <span><img src="Curvas_files/image001.gif" alt="bezier"></span> define a curva.</p>
+          <img src="reta.gif">
+          <table><tr><td><img src="Logotipos/SomenteBrasao.png"></td><td>texto</td></tr></table>
+        </article></body></html>
+        """
+        md = _html_to_structured_markdown(html, "https://www.inf.pucrs.br/pinho/CG/Aulas/Curvas/Curvas.htm", "Curvas")
+        assert "A equacao ![bezier](Curvas_files/image001.gif) define a curva." in md
+        assert "![](reta.gif)" in md
+        assert "SomenteBrasao.png" not in md   # celula de tabela continua so texto (logos em <td>)
+
     def test_html_is_rendered_as_structured_markdown(self):
         pytest.importorskip("bs4")
 
@@ -2455,7 +2383,12 @@ class TestBackendSelector:
             processing_mode="quick",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.processing_mode == "quick"
         assert decision.advanced_backend is None
 
@@ -2469,7 +2402,12 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.advanced_backend is None
 
     def test_auto_mode_math_heavy_tries_advanced(self):
@@ -2482,8 +2420,13 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="math_heavy")
-        decision = selector.decide(entry, report)
         # Even if no advanced backend is available, the logic should try
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": False, "marker": False},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.effective_profile == "math_heavy"
 
     def test_formula_priority_activates_advanced(self):
@@ -2497,19 +2440,21 @@ class TestBackendSelector:
             formula_priority=True,
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
-        available = selector.available_backends()
-        has_advanced = available.get("datalab") or available.get("docling") or available.get("marker")
-        if has_advanced:
-            assert decision.advanced_backend is not None
-            assert "formula_priority" in " ".join(decision.reasons)
-        else:
-            # No advanced backend installed; formula_priority cannot activate one
-            assert decision.advanced_backend is None
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
+        assert decision.advanced_backend is not None
+        assert "formula_priority" in " ".join(decision.reasons)
 
     def test_available_backends_returns_dict(self):
         selector = BackendSelector()
-        available = selector.available_backends()
+        # Só o probe docling-python importa docling de verdade (~20s); o contrato
+        # do dict (chaves) não depende dele.
+        with mock.patch.object(engine_module, "has_docling_python_api", lambda: False):
+            available = selector.available_backends()
         assert isinstance(available, dict)
         assert "pymupdf4llm" in available
         assert "pymupdf" in available
@@ -2732,7 +2677,10 @@ class TestParseUnitsFromTeachingPlan:
     def test_pucrs_stops_at_markdown_section_heading(self):
         units = _parse_units_from_teaching_plan(PUCRS_PLAN_WITH_MARKDOWN_SECTIONS)
         all_topics = [_topic_text(t) for _, topics in units for t in topics]
-        assert "Sistemas Formais" in all_topics
+        # O texto do topico carrega o codigo ("1.1 Sistemas Formais"): sem ele,
+        # build_content_taxonomy nao reconhece o topico como vindo do plano e o
+        # joga no filtro de known_tools (perda medida em 2026-08-18).
+        assert "1.1 Sistemas Formais" in all_topics
         assert not any("PROCEDIMENTOS" in t for t in all_topics)
         assert not any("AVALIAÇÃO" in t for t in all_topics)
 
@@ -2767,6 +2715,33 @@ class TestParseUnitsFromTeachingPlan:
     def test_empty_string_returns_empty(self):
         assert _parse_units_from_teaching_plan("") == []
 
+
+class TestNormalizeUnitSlug:
+    def test_zero_pads_unit_number(self):
+        assert _normalize_unit_slug("Unidade 1 — Limites") == "unidade-01-limites"
+
+    def test_strips_workload_percent_from_title(self):
+        # Caso real IA: percentual de carga no título vazava pro slug
+        # ("...visao-geral-5"), poluindo display e fragilizando a chave.
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 1 — Visão Geral (5%)")
+            == "unidade-de-aprendizagem-01-visao-geral"
+        )
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 2 — Solução de Problemas (10%)")
+            == "unidade-de-aprendizagem-02-solucao-de-problemas"
+        )
+        assert (
+            _normalize_unit_slug("Unidade 3 — Tópicos Avançados (7,5%)")
+            == "unidade-03-topicos-avancados"
+        )
+
+    def test_title_without_percent_unchanged(self):
+        assert (
+            _normalize_unit_slug("UNIDADE 04 — Hierarquia de Classes de Complexidade de Problemas Computacionais")
+            == "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+        )
+
     def test_no_units_returns_empty(self):
         assert _parse_units_from_teaching_plan("Texto sem unidades aqui.") == []
 
@@ -2783,7 +2758,7 @@ class TestParseUnitsFromTeachingPlan:
         """1.1. Sistemas Formais → depth 0 (tópico principal)"""
         units = _parse_units_from_teaching_plan(PUCRS_PLAN)
         topics_u1 = units[0][1]
-        sistemas = [t for t in topics_u1 if _topic_text(t) == "Sistemas Formais"]
+        sistemas = [t for t in topics_u1 if _topic_text(t) == "1.1 Sistemas Formais"]
         assert len(sistemas) == 1
         assert _topic_depth(sistemas[0]) == 0
 
@@ -2948,11 +2923,24 @@ class TestTimelineIndex:
         assert "2 dias · 06/04/2026 a 08/04/2026" in periods
 
     def test_build_timeline_index_assigns_matching_block_to_unit(self):
+        # Cutover passo 3: unidade vem SÓ do matcher posicional (fallback
+        # keyword morto) — o teste passa a alimentar content_taxonomy, como
+        # produção (montador único W1/W2 sempre fornece taxonomy).
         timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)
         candidate_rows = _build_timeline_candidate_rows(timeline)
         unit_index = _build_file_map_unit_index(METODOS_FORMAIS_UNITS)
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Especificação de Conjuntos Indutivos"},
+                        {"label": "Especificação de Funções Recursivas"}]},
+            {"slug": "unidade-02-prova-interativa-de-teoremas",
+             "title": "Unidade 02 — Prova Interativa de Teoremas",
+             "topics": [{"label": "Isabelle"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            candidate_rows, unit_index=unit_index, content_taxonomy=taxonomy)
 
         recursion_block = next(
             block for block in timeline_index["blocks"]
@@ -2965,31 +2953,6 @@ class TestTimelineIndex:
 
         assert recursion_block["unit_slug"] == "unidade-01-metodos-formais"
         assert isabelle_block["unit_slug"] == "unidade-02-prova-interativa-de-teoremas"
-
-    def test_timeline_unit_scoring_is_conservative_for_generic_logic_and_admin_rows(self):
-        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
-        scores_by_slug = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Hoare", unit)
-            for unit in unit_index
-        }
-
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-01-metodos-formais"]
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-03-verificacao-de-modelos"]
-
-        predicados_scores = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Predicados", unit)
-            for unit in unit_index
-        }
-        assert predicados_scores["unidade-03-verificacao-de-modelos"] == 0.0
-        assert _score_timeline_row_against_unit(
-            "Lógica de Programas - coleções Dafny (conjuntos)",
-            next(unit for unit in unit_index if unit["slug"] == "unidade-01-metodos-formais"),
-        ) == 0.0
-
-        assert all(
-            _score_timeline_row_against_unit("Suspensão de aulas", unit) == 0.0
-            for unit in unit_index
-        )
 
     def test_timeline_index_does_not_assign_administrative_blocks(self):
         timeline = _parse_syllabus_timeline("""\
@@ -3004,8 +2967,22 @@ class TestTimelineIndex:
             ("Unidade 02 — Verificação de Programas", ["Lógica de Hoare"]),
             ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
         ])
+        # Cutover passo 3: rota posicional exige taxonomy (fallback keyword morto).
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Lógica de Predicados"}]},
+            {"slug": "unidade-02-verificacao-de-programas",
+             "title": "Unidade 02 — Verificação de Programas",
+             "topics": [{"label": "Lógica de Hoare"}]},
+            {"slug": "unidade-03-verificacao-de-modelos",
+             "title": "Unidade 03 — Verificação de Modelos",
+             "topics": [{"label": "Modelos de Kripke"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            _build_timeline_candidate_rows(timeline), unit_index=unit_index,
+            content_taxonomy=taxonomy)
         suspension_block = next(
             block for block in timeline_index["blocks"]
             if "suspensao" in block["topic_text"]
@@ -3023,10 +3000,12 @@ class TestTimelineIndex:
         assert hoare_block["unit_slug"] == "unidade-02-verificacao-de-programas"
         assert kripke_block["unit_slug"] == "unidade-03-verificacao-de-modelos"
 
-        serialized = _serialize_timeline_index(timeline_index)
-        assert all("suspensao" not in block["topic_text"] for block in serialized["blocks"])
+    def test_timeline_index_serialization_keeps_review_sessions_and_admin_events(self):
+        """Cutover passo 3: serializador unico (persist_enriched) NAO filtra
+        blocos admin (o filtro era do fantasma v4 so-testes, morto). Blocos
+        admin persistem e sao tratados a jusante (health/D2 predicado)."""
+        from src.builder.core.core_utils import persist_enriched_timeline_index
 
-    def test_timeline_index_serialization_keeps_review_sessions_but_drops_admin_events(self):
         timeline = _parse_syllabus_timeline("""\
 | Semana | Data | Conteúdo |
 |---|---|---|
@@ -3037,13 +3016,14 @@ class TestTimelineIndex:
         unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
 
         timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
-        serialized = _serialize_timeline_index(timeline_index)
+        serialized = persist_enriched_timeline_index(timeline_index)
 
         periods = [str(block.get("period_start", "")) for block in serialized["blocks"]]
         topics = [str(block.get("topic_text", "")) for block in serialized["blocks"]]
         assert "2026-04-15" in periods
         assert any("isabelle" in topic for topic in topics)
-        assert "2026-05-27" not in periods
+        assert "2026-05-27" in periods  # admin persiste (era filtrado pelo fantasma)
+        assert serialized["version"] == 4
 
     def test_timeline_index_keeps_weak_single_token_overlap_unassigned(self):
         timeline = _parse_syllabus_timeline("""\
@@ -3119,10 +3099,21 @@ class TestCourseMapTimeline:
 
     def test_timeline_section_present_for_learning_unit_format(self):
         from src.models.core import SubjectProfile
+        # Cutover passo 3: unidade só via matcher posicional (afinidade de
+        # conteúdo) — o syllabus da fixture precisa CASAR com o plano IA
+        # (antes o fallback keyword mascarava o descasamento MF×IA).
         sp = SubjectProfile(
             name="Inteligência Artificial",
             slug="inteligencia-artificial",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-02 | Conceituação e breve histórico de IA |
+| 2 | 2026-03-09 | Subáreas e disciplinas afins |
+| 3 | 2026-03-16 | Introdução a agentes em ambientes determinísticos |
+| 4 | 2026-03-23 | Representação de problemas |
+| 5 | 2026-03-30 | Busca informada (heurística) |
+""",
             teaching_plan=LEARNING_UNIT_PLAN,
         )
         result = course_map_md({"course_name": "Inteligência Artificial"}, sp)
@@ -3357,6 +3348,11 @@ class TestAssessmentConflicts:
             "title": "Isabelle",
             "category": "listas",
             "tags": "",
+            # Unidade/Período espelham o manifest: as colunas vêm de
+            # computed_unit_slug/computed_block_id (lookup no timeline
+            # cacheado), não de recomputação via matcher/scorer.
+            "computed_unit_slug": "unidade-01-metodos-formais",
+            "computed_block_id": "bloco-01",
             "raw_target": "raw/pdfs/listas/isabelle.pdf",
             "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",
         }
@@ -3369,7 +3365,7 @@ class TestAssessmentConflicts:
 
         result = file_map_md(course_meta, [entry], sp)
 
-        assert "unidade-01-metodos-formais" in result
+        assert "01 - Metodos Formais" in result or "01 - Métodos Formais" in result
         assert "02/03/2026 a 25/03/2026" in result
         assert "Isabelle" in result
 
@@ -3541,7 +3537,7 @@ class TestGlossarySeed:
         assert taxonomy["version"] == 1
         assert taxonomy["course_slug"]
         assert taxonomy["units"]
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert timeline_index["blocks"][0]["card_evidence"]
         assert assessment_context["version"] == 1
@@ -3617,9 +3613,9 @@ class TestGlossarySeed:
 
         result = file_map_md(course_meta, [entry], subject_profile)
 
-        assert "unidade-01-metodos-formais" in result
+        assert "01 - Metodos Formais" in result or "01 - Métodos Formais" in result
         assert "02/03/2026 a 25/03/2026" not in result
-        assert "| unidade-01-metodos-formais |" in result
+        assert "| 01 - Metodos Formais |" in result or "| 01 - Métodos Formais |" in result
         assert "| Alta |  |" in result
 
     def test_build_passes_manifest_entries_to_glossary(self, tmp_path, monkeypatch):
@@ -3638,6 +3634,10 @@ class TestGlossarySeed:
                 self.file_type = payload["file_type"]
                 self.source_path = payload["source_path"]
                 self.enabled = True
+                self.id_override = ""
+
+            def id(self):
+                return self.id_override if self.id_override else self._payload.get("id", "")
 
             def to_dict(self):
                 return self._payload
@@ -3854,6 +3854,7 @@ class TestGeneratedRepoGitignore:
         assert "course/.assessment_context.json" in text
         assert "course/.tag_catalog.json" in text
         assert "setup/" in text
+        assert "*.bak" in text  # T19: backups de retag/reprocess nao versionados
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
@@ -3884,7 +3885,10 @@ class TestFileMapMd:
         assert "Prova 1" in result
         assert "material-de-aula" in result
         assert "`content/aula-1.md`" in result
-        assert "unidade-01" in result
+        # C1 item 1 (05/09): tags/raw sairam do FILE_MAP para o FILE_MAP_TRACE (rastreabilidade)
+        from src.builder.engine import file_map_trace_md
+        assert "unidade-01" not in result
+        assert "unidade-01" in file_map_trace_md(self.META, entries)
 
     def test_cronograma_auto_tagged(self):
         entries = [
@@ -3916,11 +3920,16 @@ class TestFileMapMd:
             }
             for i in range(200)
         ]
+        # C1 item 1 (05/09): o teto subiu de 12 KB para 80 KB — 200 materiais (~30 KB) cabem inteiros;
+        # o clamp continua avisando quando ainda corta (1200 materiais).
         result = file_map_md(self.META, entries)
         assert "FILE_MAP" in result
         assert "Quando abrir" in result
-        assert "Conteúdo truncado" in result
-        assert len(result) <= 12000
+        assert "Conteúdo truncado" not in result
+        assert "| 200 |" in result
+        big = file_map_md(self.META, [{**e, "title": f"Aula {i:04d}"} for i, e in enumerate(entries * 6)])
+        assert "Conteúdo truncado" in big
+        assert len(big) <= 80_000
 
     def test_filters_orphan_manifest_entries_when_repo_root_is_known(self, tmp_path):
         repo = tmp_path / "repo"
@@ -4268,6 +4277,25 @@ class TestBundleSeedLowToken:
         assert item["formula_priority"] is True
         assert item["datalab_mode"] == "accurate"
 
+    def test_process_entry_persists_moodle_signals_set_before_the_build(self, tmp_path):
+        # SYNC 03/09: o Lab 4 do LR entrou com moodle_label do sidecar na FileEntry e o registro do
+        # manifest saiu sem ele — process_entry montava o dict com campos fixos e descartava o sinal.
+        from src.builder.engine import RepoBuilder
+        from src.models.core import FileEntry
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        source = tmp_path / "Lab 4 - HTTP.pdf"
+        source.write_bytes(b"%PDF-1.4\n%fake\n")
+        builder = RepoBuilder(root_dir=repo, course_meta={"course_slug": "lr"}, entries=[], options={})
+        builder._process_pdf = lambda entry, raw_target: {"base_markdown": "staging/example.md"}
+        entry = FileEntry(source_path=str(source), file_type="pdf", category="outros", title="Lab 4 - HTTP",
+                          source_section="[31.08] - HTTP", moodle_label="Laboratório 04 - HTTP(S)", posting_date="2026-08-31")
+        item = builder._process_entry(entry)
+        assert item["moodle_label"] == "Laboratório 04 - HTTP(S)"
+        assert item["posting_date"] == "2026-08-31"
+        assert item["source_section"] == "[31.08] - HTTP"
+
 
 class TestCourseMapLowToken:
     def test_course_map_is_short_router_not_parallel_apostila(self):
@@ -4289,10 +4317,16 @@ class TestCourseMapLowToken:
                 f"Subtópico {i}.3\n"
             )
 
+        # Cutover passo 3: syllabus sintético com afinidade de conteúdo com o
+        # plano sintético (o fallback keyword que casava com SYLLABUS_TABLE
+        # do MF morreu; o matcher posicional exige overlap real de tokens).
+        syllabus_rows = ["| Semana | Data | Conteúdo |", "|---|---|---|"]
+        for i in range(1, 10):
+            syllabus_rows.append(f"| {i} | 2026-03-{i:02d} | Tópico {i} e Subtópico {i}.1 |")
         sp = SubjectProfile(
             name="Teste",
             slug="teste",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="\n".join(syllabus_rows) + "\n",
             teaching_plan="\n".join(teaching_plan_parts),
         )
         result = course_map_md({"course_name": "Teste"}, sp)
@@ -4337,6 +4371,34 @@ class TestExerciseIndexLowToken:
         assert "[a preencher]" not in result
         assert "Adicione listas ou provas antigas" in result
         assert "Mapeamento de exercícios por tópico" not in result
+
+    def test_exercise_index_pairs_statement_with_answer_and_uses_real_unit(self):
+        # FASE 4 (31/08): X <-> X_respostas pareados; coluna Unidade = motor.
+        entries = [
+            FileEntry(title="ExerciciosEspecificacao", source_path="raw/ee.pdf",
+                      category="listas", file_type="pdf",
+                      computed_unit_slug="unidade-01-metodos-formais"),
+            FileEntry(title="ExerciciosEspecificacao_respostas", source_path="raw/eer.pdf",
+                      category="listas", file_type="pdf"),
+        ]
+        result = exercise_index_md({"course_name": "Teste"}, entries)
+        assert "sim — ExerciciosEspecificacao_respostas" in result
+        assert "é o gabarito" in result
+        assert "| gabarito |" in result
+        assert "unidade-01-metodos-formais" in result
+        assert "conferir após tentar" in result
+
+    def test_exam_index_dedups_and_shows_coverage_units(self):
+        from src.builder.engine import exam_index_md
+        e1 = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas",
+                       file_type="pdf",
+                       coverage_units=[{"unit_slug": "u01", "rule": "avaliacao"},
+                                       {"unit_slug": "u02", "rule": "calendario"}])
+        dup = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas", file_type="pdf")
+        r = exam_index_md({"course_name": "Teste"}, [e1, dup])
+        assert r.count("| p1.pdf |") == 1
+        assert "u01, u02" in r
+        assert "unidades têm maior incidência" in r
 
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
         entries = [
@@ -4444,6 +4506,7 @@ class TestIncrementalBuildLowTokenRollout:
         timeline_index = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
         assessment_context = json.loads((repo / "course" / ".assessment_context.json").read_text(encoding="utf-8"))
         instructions = (repo / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md").read_text(encoding="utf-8")
+        contexto_temporal = (repo / "setup" / "CONTEXTO_TEMPORAL.md").read_text(encoding="utf-8")
         bundle = json.loads((repo / "build" / "claude-knowledge" / "bundle.seed.json").read_text(encoding="utf-8"))
         lesson = (repo / "content" / "lesson.md").read_text(encoding="utf-8")
 
@@ -4451,13 +4514,14 @@ class TestIncrementalBuildLowTokenRollout:
         assert "Quando abrir" in file_map
         assert "Mapa pedagógico curto da disciplina" in course_map
         assert content_taxonomy["version"] == 1
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert assessment_context["version"] == 1
         assert "Ordem de leitura econômica" in instructions
         assert "artefatos estruturais gerados pelo app" in instructions
         assert "Reprocessar Repositório" in instructions
         assert "backlog" in instructions
+        assert "CONTEXTO TEMPORAL" in contexto_temporal
         assert "preencha a coluna **Unidade** dos itens vazios" not in instructions
         assert ".timeline_index.json" not in instructions
         assert ".content_taxonomy.json" not in instructions
@@ -4624,11 +4688,10 @@ class TestNewGenerators:
         assert "[a preencher]" not in r
         assert "Preencha conforme analisar" not in r
 
-    def test_whiteboard_professor_signal(self):
+    def test_whiteboard_lista_entrada(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
-        assert "colisão linear" in whiteboard_index_md(self.COURSE_META, [e])
+        assert "AulaHash" in whiteboard_index_md(self.COURSE_META, [e])
 
     def test_whiteboard_empty(self):
         from src.builder.engine import whiteboard_index_md
@@ -4644,9 +4707,8 @@ class TestNewGenerators:
     def test_whiteboard_entries_no_patterns_section(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
         r = whiteboard_index_md(self.COURSE_META, [e])
-        assert "colisão linear" in r
+        assert "AulaHash" in r
         assert "Padrões pedagógicos" not in r
 
 
@@ -4675,8 +4737,11 @@ class TestCronogramaDetalhado:
     def test_no_todo_comment_leaks(self):
         from src.builder.artifacts.repo import cronograma_detalhado_md
         from src.models.core import FileEntry
+        # D1: o cronograma agrupa por computed_block_id (funil), não pelo
+        # primary_block_id do Gemini — o funil sempre seta computed_block_id p/ código.
         entry = FileEntry(source_path="/fake/ll.py", file_type="code",
-                          category="codigo-professor", title="linked_list")
+                          category="codigo-professor", title="linked_list",
+                          computed_block_id="b1")
         curation = {"entries": {entry.id(): {"summary": {"primary_block_id": "b1"}}}}
         blocks = [{"id": "b1", "period_label": "Aula 1", "topics": ["Listas"]}]
         r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)
@@ -5095,17 +5160,20 @@ def _sarc_row(html):
     from bs4 import BeautifulSoup
     return BeautifulSoup(html, "html.parser").find("tr")
 
-def test_sarc_ps_is_assessment_not_ignored():
+def test_sarc_ps_is_ignored_marker_d1():
+    # D1 (ruling 28/08, implementado 31/08): PS cobre o semestre inteiro e nao
+    # e prova principal — cor propria #ff8c00 vira token ps ignorado.
     from src.utils.helpers import _aspnet_row_canonical_kind
     row = _sarc_row('<tr style="background-color:#ff8c00"><td><span id="x_lblAtividade">Prova PS</span></td></tr>')
     kind, ignored = _aspnet_row_canonical_kind(row)
-    assert kind == "assessment" and ignored is False
+    assert kind == "ps" and ignored is True
 
-def test_sarc_g2_lightgrey_is_assessment():
+def test_sarc_g2_lightgrey_is_ignored_marker_d1():
+    # D1: G2 = recuperacao condicional, cobre o semestre — nao e N-esima prova.
     from src.utils.helpers import _aspnet_row_canonical_kind
     row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Prova G2</span></td></tr>')
     kind, ignored = _aspnet_row_canonical_kind(row)
-    assert kind == "assessment" and ignored is False
+    assert kind == "g2" and ignored is True
 
 def test_sarc_lightgrey_devolucao_is_results():
     from src.utils.helpers import _aspnet_row_canonical_kind
@@ -5184,6 +5252,41 @@ def test_apply_assessment_review_scope_in_place():
     assert rev["primary_topic_label"] == "Conteúdo: unidade-1"
 
 
+def test_assessment_scope_excludes_units_from_earlier_exams():
+    """P(k) cobre só unidades novas: aula 'atrasada' de U1 depois da P1 não
+    deve poluir o escopo da P2 (regra por unidade, sem sobreposição)."""
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "sessions": [{"label": "prova p1 prova"}]},
+        {"id": "c2", "kind": "class", "period_start": "2026-04-27", "unit_slug": "u1"},  # straggler U1 pós-P1
+        {"id": "c3", "kind": "class", "period_start": "2026-05-06", "unit_slug": "u2"},
+        {"id": "c4", "kind": "class", "period_start": "2026-06-15", "unit_slug": "u3"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06",
+         "sessions": [{"label": "prova p2 prova"}]},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["u1"]
+    assert scope["p2"] == ["u2", "u3"]  # NÃO inclui u1 (já coberta pela P1)
+
+
+def test_assessment_scope_full_label_is_whole_semester():
+    """PS/G2 cobrem o semestre inteiro, independente da exclusão por prova."""
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "sessions": [{"label": "prova p1 prova"}]},
+        {"id": "c2", "kind": "class", "period_start": "2026-05-06", "unit_slug": "u2"},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08",
+         "sessions": [{"label": "prova ps prova de substituicao"}]},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["u1"]
+    assert scope["ps"] == ["u1", "u2"]  # semestre inteiro
+
+
 def test_demote_non_preexam_review_to_class():
     from src.builder.timeline.index import _demote_non_preexam_reviews
     blocks = [
@@ -5218,6 +5321,120 @@ def test_demote_respects_manual_review_override():
     assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
 
 
+def test_promote_preexam_session_review_to_review():
+    # RED real (TCC bloco-16/30, 2026-08-11): vespera com unidade herdada fica
+    # class porque o label de sessao ("revisao para prova p1") so era consultado
+    # sem unidade — falso negativo simetrico ao demote.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-05-01", "sessions": [{"label": "conteudo aula"}]},
+        {"id": "vesp", "kind": "class", "unit_slug": "u1", "unit_confidence": 0.4,
+         "period_start": "2026-05-06",
+         "sessions": [{"label": "revisao para prova p1 aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    vesp = next(b for b in blocks if b["id"] == "vesp")
+    assert vesp["kind"] == "review"
+    assert vesp["unit_slug"] == ""          # vespera nao carrega unidade
+    assert vesp["unit_confidence"] == 0.0
+
+
+def test_promote_skips_content_review_far_from_exam():
+    # MF bloco-03 ("revisao de logica de predicados"): proximo decisivo e class
+    # -> NAO promove (revisao de conteudo segue aula).
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "rev-cont", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-11",
+         "sessions": [{"label": "revisao de logica de predicados exercicios aula"}]},
+        {"id": "c2", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-13", "sessions": [{"label": "inducao aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-04-01", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev-cont")["kind"] == "class"
+
+
+def test_promote_skips_correction_and_manual_override():
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "corr", "kind": "class", "unit_slug": "u2",
+         "period_start": "2026-06-10",
+         "sessions": [{"label": "correcao da p1 revisao aula"}]},  # correcao: fica
+        {"id": "manual", "kind": "class", "manual_kind_override": "class",
+         "unit_slug": "u2", "period_start": "2026-06-12",
+         "sessions": [{"label": "revisao para prova p2"}]},
+        {"id": "p2", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-06-15", "sessions": [{"label": "prova p2"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "corr")["kind"] == "class"
+    assert next(b for b in blocks if b["id"] == "manual")["kind"] == "class"
+
+
+def test_classify_planning_keyword_needs_no_unit_evidence():
+    # RED real (IA bloco-16, 2026-08-11): "introducao a agentes e planejamento"
+    # (TEMA de aula, Atividade=Aula, DP da unidade) virou kind=planning pela
+    # keyword — sequestro administrativo de aula de conteudo.
+    from src.builder.timeline.classifier import classify_block
+    from src.builder.timeline.kinds import BlockKind
+    aula = {
+        "topic_text": "introducao agentes planejamento",
+        "auto_unit_slug": "unidade-03",
+        "sessions": [{"label": "introducao a agentes e planejamento aula"}],
+    }
+    assert classify_block(aula) is BlockKind.CLASS
+    admin = {
+        "topic_text": "planejamento",
+        "sessions": [{"label": "planejamento do semestre"}],
+    }
+    assert classify_block(admin) is BlockKind.PLANNING
+
+
+def test_promote_idempotent_with_chained_reviews():
+    # Achado do review 2026-08-12: com R1-class "revisao" -> R2 "revisao" ->
+    # prova, cada run promovia um bloco a mais (REVIEW nao era decisivo no
+    # promote). Idempotencia: 2 runs = mesmo resultado.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    def build():
+        return [
+            {"id": "r1", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-04", "sessions": [{"label": "revisao geral aula"}]},
+            {"id": "r2", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+            {"id": "p1", "kind": "assessment", "unit_slug": "",
+             "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+        ]
+    blocks = build()
+    _promote_preexam_reviews(blocks)
+    once = [(b["id"], b["kind"]) for b in blocks]
+    _promote_preexam_reviews(blocks)
+    twice = [(b["id"], b["kind"]) for b in blocks]
+    assert once == twice == [("r1", "class"), ("r2", "review"), ("p1", "assessment")]
+
+
+def test_review_inherits_manual_scope_of_next_exam():
+    # RED real (TCC vespera-P1, 2026-08-11): prova com manual_scope_unit_slugs
+    # ("P1 cobre u01+u02", note do gold) mas a revisao herdava o scope POR DATA
+    # (u01+u02+u03) — link_review_scope nao via o manual da prova.
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "rev", "kind": "review", "unit_slug": "",
+         "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08",
+         "block_manual_scope_slugs": ["u1", "u2"],
+         "sessions": [{"label": "prova p1"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    assert next(b for b in blocks if b["id"] == "p1")["scope_unit_slugs"] == ["u1", "u2"]
+    assert next(b for b in blocks if b["id"] == "rev")["scope_unit_slugs"] == ["u1", "u2"]
+
+
 def test_apply_assessment_review_scope_idempotent_and_manual_label():
     from src.builder.timeline.index import apply_assessment_review_scope
     blocks = [
@@ -5232,40 +5449,58 @@ def test_apply_assessment_review_scope_idempotent_and_manual_label():
     assert p1["primary_topic_label"] == "Minha prova"     # label manual nunca tocado
 
 
-def test_serialize_attaches_scope_unit_slugs():
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out = _serialize_timeline_index(ti)
-    by_id = {b["id"]: b for b in out["blocks"]}
-    assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
-    assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
-    assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []
+def test_apply_scope_honors_manual_override():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "c2", "kind": "class", "unit_slug": "u2", "period_start": "2026-03-17"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "block_manual_scope_slugs": ["u2"], "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    p1 = blocks[-1]
+    assert p1["scope_unit_slugs"] == ["u2"]  # manual, NOT derived ["u1","u2"]
+    assert p1["primary_topic_label"] == "Conteúdo: u2"
 
 
-def test_serialize_timeline_idempotent_scope():
-    """Regressão: re-serializar o output não muda scope nem rótulo (idempotente)."""
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out1 = _serialize_timeline_index(ti)
-    out2 = _serialize_timeline_index(out1)
-    s1 = {b["id"]: b.get("scope_unit_slugs") for b in out1["blocks"]}
-    s2 = {b["id"]: b.get("scope_unit_slugs") for b in out2["blocks"]}
-    assert s1 == s2
-    assert s2["p1"] == ["unidade-1"]
-    assert s2["ps"] == ["unidade-1"]
-    assert s2["rev"] == ["unidade-1"]
-    l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
-    l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
-    assert l1 == l2
+def test_apply_scope_empty_manual_falls_back_to_derived():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "block_manual_scope_slugs": [], "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    assert blocks[-1]["scope_unit_slugs"] == ["u1"]  # derived by date
+
+
+def test_apply_scope_review_honors_manual_override():
+    """REVIEW com block_manual_scope_slugs usa o manual, não o herdado da prova.
+
+    Setup: c1(u1) e c2(u2) → p1 deriva ["u1","u2"]. r1 precede p1 e herdaria
+    ["u1","u2"], mas tem manual=["u1"] — deve prevalecer o manual.
+    """
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "c2", "kind": "class", "unit_slug": "u2", "period_start": "2026-03-17"},
+        {"id": "r1", "kind": "review", "period_start": "2026-03-19",
+         "block_manual_scope_slugs": ["u1"], "primary_topic_label": ""},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    r1 = next(b for b in blocks if b["id"] == "r1")
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    # Confirma que o escopo herdado (de p1) seria diferente do manual
+    assert p1["scope_unit_slugs"] == ["u1", "u2"]  # derivado por data
+    assert r1["scope_unit_slugs"] == ["u1"]          # manual vence ["u1","u2"]
+    assert r1["primary_topic_label"] == "Conteúdo: u1"
+
+
+# Cutover passo 3: os 2 testes de scope VIA _serialize_timeline_index (fantasma
+# v4, morto) foram removidos — a cobertura do invariante de escopo permanece no
+# teste direto de apply_assessment_review_scope acima.
 
 
 class _ProfCfg:
@@ -5392,3 +5627,99 @@ def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     assert cfg.get("theme") == "light"          # chave válida preservada
     assert "default_profile" not in cfg.data    # chave removida ignorada
     assert "profile_backends" not in cfg.data
+
+
+def test_appconfig_migrates_legacy_vision_model_via_table(tmp_path, monkeypatch):
+    """Migração de vision_model é tabela (_MODEL_MIGRATIONS), não if inline (T1b):
+    cada (backend, modelo_velho) da tabela migra para o novo; combinações fora
+    da tabela (backend diferente, ou modelo já novo) não mexem no valor."""
+    import json as _json
+    import src.ui.theme as theme_mod
+
+    for old_model in ("qwen3-vl", "qwen2.5vl:7b", "qwen3-vl:8b"):
+        cfg_path = tmp_path / f"cfg_{old_model.replace(':', '_')}.json"
+        cfg_path.write_text(_json.dumps({
+            "vision_backend": "ollama",
+            "vision_model": old_model,
+        }), encoding="utf-8")
+        monkeypatch.setattr(theme_mod, "CONFIG_PATH", cfg_path)
+        cfg = theme_mod.AppConfig()
+        assert cfg.get("vision_model") == "qwen3-vl:235b-cloud", old_model
+
+    # backend diferente com o mesmo modelo velho: fora da tabela, não migra
+    other_backend = tmp_path / "cfg_other_backend.json"
+    other_backend.write_text(_json.dumps({
+        "vision_backend": "gemini",
+        "vision_model": "qwen3-vl",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", other_backend)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl"
+
+    # modelo já migrado: idempotente, não muda
+    already_new = tmp_path / "cfg_already_new.json"
+    already_new.write_text(_json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl:235b-cloud",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", already_new)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
+def test_unit_block_conflict_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t",
+                  unit_block_conflict={"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"})
+    d = e.to_dict()
+    assert d["unit_block_conflict"] == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+    assert FileEntry.from_dict(d).unit_block_conflict == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+
+
+def test_unit_block_conflict_default_not_emitted():
+    from src.models.core import FileEntry
+    d = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t").to_dict()
+    assert "unit_block_conflict" not in d
+    assert FileEntry.from_dict({"source_path": "C:/x/a.pdf", "file_type": "pdf",
+                                "category": "material", "title": "t"}).unit_block_conflict == {}
+
+
+def test_fileentry_posting_date_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A",
+                  posting_date="2026-02-12", posting_date_created="2026-02-10")
+    d = e.to_dict()
+    assert d["posting_date"] == "2026-02-12"
+    back = FileEntry.from_dict(d)
+    assert back.posting_date == "2026-02-12"
+    assert back.posting_date_created == "2026-02-10"
+
+
+def test_fileentry_posting_date_default_omitted_in_to_dict():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A")
+    assert "posting_date" not in e.to_dict()
+
+
+def test_subjectprofile_turma_schedule_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", turma="031",
+                        schedule_url="https://sarc.pucrs.br/Default/Export.aspx?id=abc&ano=2026&sem=1")
+    d = sp.to_dict()
+    back = SubjectProfile.from_dict(d)
+    assert back.turma == "031"
+    assert back.schedule_url.endswith("sem=1")
+
+
+def test_auto_detect_category_biblioteca_nao_e_bibliografia():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("biblioteca-grafica-opengl.pdf") != "bibliografia"
+    assert auto_detect_category("imageclass-biblioteca-para-manipulacao-de-imagens.pdf") != "bibliografia"
+    assert auto_detect_category("bibliografia-complementar.pdf") == "bibliografia"
+    assert auto_detect_category("Bibliography.pdf") == "bibliografia"
+
+
+def test_auto_detect_category_ementa_so_como_palavra():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("material-complementar.pdf") != "cronograma"
+    assert auto_detect_category("ementa-2026.pdf") == "cronograma"

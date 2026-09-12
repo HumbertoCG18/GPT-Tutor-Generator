@@ -35,14 +35,28 @@ def annotate_class_ordinals(blocks: List[dict]) -> List[dict]:
     em que aparecem em `blocks` (o caller ja entrega ordenado cronologicamente).
     Blocos de outro kind (ou sem kind) recebem class_ordinal=None. Idempotente.
     Muta os dicts in-place (consistente com rows/scores) e retorna a lista.
+
+    Carimba TAMBEM block["session_ordinals"]: os ordinais de ENCONTRO (1 por
+    sessao de aula, contagem global cronologica) que este bloco cobre. Motivo:
+    o professor numera "Aula N" por ENCONTRO, nao por bloco — um bloco tematico
+    pode agrupar varias aulas (TCC bloco-03 = 3 encontros), entao class_ordinal
+    desanda a partir do primeiro agrupamento. Medido no TCC: alvo por sessao
+    bate o gold em 16/19; por bloco, 1/19.
     """
     counter = 0
+    session_counter = 0
     for block in blocks:
         if str(block.get("kind") or "") == "class":
             counter += 1
             block["class_ordinal"] = counter
+            n_sessions = len(block.get("sessions") or []) or 1
+            block["session_ordinals"] = list(
+                range(session_counter + 1, session_counter + 1 + n_sessions)
+            )
+            session_counter += n_sessions
         else:
             block["class_ordinal"] = None
+            block["session_ordinals"] = []
     return blocks
 
 
@@ -57,6 +71,12 @@ def score_sequence_match(signals: dict, block: dict, *, boost: float = T.SEQUENC
         ordinal = extract_lecture_ordinal(signals.get("raw_text", ""))
     if ordinal is None:
         return 0.0
+    # Alvo primario: ordinal de ENCONTRO (o professor numera aulas, e um bloco
+    # tematico pode cobrir varias). Fallback class_ordinal p/ blocos sem
+    # sessions (fixtures minimas) — preserva o comportamento historico.
+    session_ordinals = block.get("session_ordinals")
+    if session_ordinals:
+        return float(boost) if ordinal in session_ordinals else 0.0
     class_ordinal = block.get("class_ordinal")
     if class_ordinal is not None and class_ordinal == ordinal:
         return float(boost)

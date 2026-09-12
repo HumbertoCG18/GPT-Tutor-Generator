@@ -1,0 +1,45 @@
+base: 195/233
+
+A) CURVA DO PISO (score < p -> vazio)
+  piso  certos  delta  ganha  perde  afetados
+  0.00     195     +0      0      0         0
+  0.05     194     -1      0      1         1
+  0.10     194     -1      0      1         1
+  0.15     191     -4      0      4         6
+  0.20     191     -4      0      4         6
+  0.30     191     -4      0      4         6
+  0.50     191     -4      0      4         6
+  0.80     191     -4      0      4         6
+  1.00     184    -11      1     12        15
+  1.20     181    -14      1     15        18
+  1.50     181    -14      3     17        24
+  2.00     180    -15      3     18        25
+  3.00     180    -15      3     18        25
+melhor piso: 0.0 -> 195/233 (+0)
+
+distribuicao do score do vencedor:
+         faixa     n  certos     %
+  0.00-   0.1     6       4   67%
+  0.50-   1.0     9       8   89%
+  1.00-   2.0    10       6   60%
+  2.00-   5.0    16      11   69%
+  5.00-  10.0    33      22   67%
+ 10.00- 999.0   154     142   92%
+ (sem subunid)     5       2
+
+B) ATRATORES (subtopico que mais vence, ordenado por erros)
+curso subtopico                                 vence  erra  prec
+ES2  estudo-de-caso-integracao-e-implantacao-     20     6   70%
+CG   conceitos                                     6     5   17%
+CG   desenho-de-linhas                             4     4    0%
+MF   verificacao-de-programas                     15     3   80%
+CG   hermite                                       4     3   25%
+CG   perspectiva                                   2     2    0%
+CG   2d-3d-mao-direita-e-mao-esquerda              2     2    0%
+ES2  integracao-continua-ci                        1     1    0%
+MF   abordagens-para-verificacao-formal            1     1    0%
+MF   exemplos-de-aplicacoes                        2     1   50%
+MF   correcao-parcial-e-total                      3     1   67%
+CG   metodos-de-sombreamento-flat-gouraud-pho      1     1    0%
+CG   sistema-de-coordenadas-cartesianas            2     1   50%
+CG   algoritmos-de-poligonos                       4     1   75%

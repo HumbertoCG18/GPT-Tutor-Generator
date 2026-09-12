@@ -1,0 +1,23 @@
+[stash] 20 entries | gemini_auto_summarize=True | client=ok
+[build] 881s | falhas 0 | chamadas {'gemini_bundle': 10}
+sem teaching_plan no perfil — content_taxonomy vazia (curso perde estrutura de unidades)
+unidades derivadas do repo gerado, nao do plano de ensino — fallback
+sem teaching_plan — unit_index cai pro fallback repo-derived (6 specs)
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\rebuild_fr_b.py", line 92, in <module>
+    ra.reprocess(REPO, [])
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\scripts\reprocess_assignments.py", line 115, in reprocess
+    builder.incremental_build()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2118, in incremental_build
+    self._incremental_build_impl()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2121, in _incremental_build_impl
+    _incremental_build_incremental_build_impl(
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\incremental_build.py", line 110, in incremental_build_impl
+    builder._regenerate_pedagogical_files(manifest)
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2138, in _regenerate_pedagogical_files
+    _pedagogical_regeneration_regenerate_pedagogical_files(
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\pedagogical_regeneration.py", line 473, in regenerate_pedagogical_files
+    _guard_units_not_silently_lost(
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\pedagogical_regeneration.py", line 377, in _guard_units_not_silently_lost
+    raise UnitsShrinkError(
+src.builder.ops.pedagogical_regeneration.UnitsShrinkError: Guard 'unidade nunca encolhe em silencio': curso 'Fundamentos de Redes de Computadores' - o indice existente tinha 5 unit-slugs distintos, o novo indice a persistir teria 0 (plano de ensino recem-parseado tem 0 unidades). Perfil da materia ausente? subjects.json? ou o formato do plano de ensino mudou e o parser nao o reconhece? O material ja foi processado e esta no manifest; a regeneracao pedagogica foi abortada para nao encolher unidades.

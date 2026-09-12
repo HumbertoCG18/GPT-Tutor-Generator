@@ -1,0 +1,15 @@
+curso  mat c/posicao coerente incoer. s/posicao | gold: coer&certo coer&errado incoer&certo incoer&errado
+MF      66        60       59       1         6 |               59           0            1             0
+      incoerentes: ['t2-2026-1:bloco-18∉11[label ]']
+SO      39        30       28       2         9 |               28           0            2             0
+      incoerentes: ['laminas-cs-4244-internet-programmi:bloco-09∉06/07[faixa ]', 'laminas-sockets-material-alternati:bloco-09∉06/07[faixa ]']
+IA      59        54       54       0         5 |               40           0            0             0
+ES2     35        29       27       2         6 |               23           1            2             0
+      incoerentes: ['roteiro1-introducao:bloco-02∉01[label ]', 'roteiro1:bloco-02∉01[label ]']
+TCC     27        22       20       2         5 |               20           0            2             0
+      incoerentes: ['3dm-caetano-gabriel-e-gustavo:bloco-25∉22/23[secao-]', 'programacao-inteira-01-20260617-15:bloco-25∉22/23[secao-]']
+CG      93         0        0       0        93 |                0           0            0             0
+LR       7         0        0       0         7 |                0           0            0             0
+FR      22         0        0       0        22 |                0           0            0             0
+TOTAL  348       195      188       7       153 |              170           1            7             0
+coerencia (onde ha posicao): 188/195 = 96.4% · cobertura da regua: 195/348 = 56%

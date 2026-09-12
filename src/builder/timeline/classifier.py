@@ -11,19 +11,16 @@ plano de ensino NUNCA cai em assessment mesmo contendo "avaliacao".
 from __future__ import annotations
 
 import re
-import unicodedata
 from typing import Iterable, List, Mapping, Pattern, Tuple, Union
 
-from .kinds import BlockKind
+from src.builder.text.normalize import normalize_match_text
+from .kinds import NON_ACADEMIC_KINDS, BlockKind
 
 
 def _norm(text: str) -> str:
-    """NFKD + lower + so [a-z0-9 ]. Match comportamento do index.py."""
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+    # Delega para a fonte unica; sem em-dash->hyphen e sem fix de typo porque
+    # o comportamento historico do classifier deixa — virar espaco via regex.
+    return normalize_match_text(text, em_dash_to_hyphen=False, fix_typos=False)
 
 
 # Excecao: se qualquer um destes termos aparecer, kind=CLASS mesmo se
@@ -77,8 +74,6 @@ KIND_KEYWORDS: List[Tuple[BlockKind, List[KeywordSpec]]] = [
     (BlockKind.DELIVERABLE, [
         "entrega trabalho", "entrega final", "entrega do trabalho",
         "submissao final",
-        # semana de trabalho/projeto generica (sem unidade unica)
-        "trabalho", "parte trabalho",
     ]),
     (BlockKind.WORKSHOP, [
         "oficina", "lancamento", "kick off", "kickoff",
@@ -131,9 +126,15 @@ def _session_text(block: Mapping[str, object]) -> str:
     return " ".join(parts)
 
 
-# Sinal forte de prova nas sessoes: P1-P4, PF, "prova N", "prova final".
+# Sinal forte de prova nas sessoes: P1-P4, PF, G2, PS, "prova N", "prova final".
 # "prova" sozinho NAO basta ("prova de teoremas" = demonstracao, nao exame).
-_STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bprova\s+\d+\b|\bprova\s+final\b")
+# Item 8b (cutover passo 3): vocabulario de exame UNIFICADO aqui, com nomes
+# PUBLICOS — o motor (window_provider) importa STRONG_EXAM_RE/WEAK_EXAM_TOKENS
+# em vez de duplicar literais ou importar nome privado cross-package.
+STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bg2\b|\bps\b|\bprova\s+\d+\b|\bprova\s+final\b")
+_STRONG_EXAM_RE = STRONG_EXAM_RE  # compat interna (usos historicos)
+# "prova"/"teste" nus = vocabulario fraco (conteudo de plano de ensino).
+WEAK_EXAM_TOKENS = frozenset({"prova", "teste"})
 
 
 def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
@@ -151,12 +152,59 @@ def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
     return None
 
 
+def _office_hours_session_majority(block: Mapping[str, object], needle: str) -> bool:
+    """Maioria das sessoes do bloco tem `needle` no proprio label (nao so no
+    topic_text agregado). Sem isso, uma sobra tipo "duvidas para a p2" que so
+    sobrevive no topic_text agregado (nao no label de nenhuma sessao)
+    sequestra o bloco inteiro pra OFFICE_HOURS mesmo quando as sessoes reais
+    sao aula de conteudo (caso real SO bloco-18: 3 sessoes "gerencia de
+    arquivos", nenhuma com "duvidas" no proprio label)."""
+    sessions = block.get("sessions")
+    if not isinstance(sessions, list) or not sessions:
+        return True  # sem sessoes pra checar: mantem comportamento historico
+    total = hits = 0
+    for sess in sessions:
+        if not isinstance(sess, Mapping):
+            continue
+        total += 1
+        label = _norm(str(sess.get("label", "") or ""))
+        if _phrase_match(needle, label, set(label.split())):
+            hits += 1
+    return total == 0 or hits * 2 > total
+
+
 def _text_of(block: Mapping[str, object]) -> str:
     """Conteudo + period_label. Usado no matching de keywords (feriado etc.
     podem vir no rotulo do periodo)."""
     label = block.get("period_label")
     label_str = label if isinstance(label, str) else ""
     return f"{_content_text(block)} {label_str}".strip()
+
+
+def _has_unit_evidence(block: Mapping[str, object]) -> bool:
+    """Bloco tem sinal de unidade (slug atribuido ou candidatos de topico)."""
+    if block.get("unit_slug") or block.get("auto_unit_slug"):
+        return True
+    cands = block.get("topic_candidates")
+    return isinstance(cands, list) and bool(cands)
+
+
+def _cue_e_conteudo_do_plano(spec: str, block: Mapping[str, object], hay_tokens: set) -> bool:
+    """F2/F3 (Lab SO, censo 2026-08-28): cue de prova/substituicao NAO dispara quando o
+    texto casa uma frase de CONTEUDO do plano que contem o cue — "avaliacao de desempenho
+    da nova implementacao" (topico 2.4) faz "Avaliacao de desempenho de escalonamento"
+    ser AULA; "algoritmos de substituicao de paginas" (4.3) nao e prova substituta.
+    "Prova P1" nao casa topico nenhum e segue assessment. As frases chegam normalizadas
+    em block["_plan_phrases"], carimbadas pelo builder do indice (que conhece o plano);
+    sem elas (dashboard, dados legados) o comportamento e exatamente o de antes.
+    Substitui a lista "corpus auditado" que dizia avaliacao/substituicao inequivocos —
+    eram, ate a primeira cadeira cujo PLANO usa essas palavras como conteudo."""
+    frases = block.get("_plan_phrases") or ()
+    for fr in frases:
+        if spec in fr:
+            if any(t in hay_tokens for t in fr.split() if len(t) >= 4 and spec not in t):
+                return True
+    return False
 
 
 def classify_block(block: Mapping[str, object]) -> BlockKind:
@@ -216,6 +264,33 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     return kind
             else:
                 if _phrase_match(spec, hay_all, hay_tokens):
+                    # Guard anti-falso-exame (so 'prova'/'teste' nus, ruling
+                    # 2026-08-06): em texto de CONTEUDO essas 2 palavras sao
+                    # vocabulario de plano de ensino (demonstracao, teste de
+                    # mesa) - exame de verdade exige sinal forte (P1-4/PF/G2/
+                    # PS/"prova N"), mesmo criterio de _session_exam_or_review.
+                    # 'substitutiva'/'recuperacao'/'avaliacao'/'exame' sao
+                    # inequivocos e ficam fora do guard (corpus auditado).
+                    if (kind is BlockKind.ASSESSMENT and spec in WEAK_EXAM_TOKENS
+                            and not _STRONG_EXAM_RE.search(hay_all)):
+                        continue
+                    # Guard cue-x-conteudo-do-plano (F2/F3): so para os kinds cujo
+                    # vocabulario colide com topico de plano medido (Lab SO).
+                    if (kind in (BlockKind.ASSESSMENT, BlockKind.MAKEUP)
+                            and _cue_e_conteudo_do_plano(spec, block, hay_tokens)):
+                        continue
+                    # Guard anti-sequestro OFFICE_HOURS: keyword so decide se
+                    # aparece no label da MAIORIA das sessoes (nao so no
+                    # topic_text agregado) -- caso real SO bloco-18.
+                    if (kind is BlockKind.OFFICE_HOURS
+                            and not _office_hours_session_majority(block, spec)):
+                        continue
+                    # Guard anti-sequestro PLANNING: bloco com evidencia de
+                    # unidade e aula cujo TEMA cita "planejamento" (caso real
+                    # IA bloco-16 "introducao a agentes e planejamento");
+                    # planejamento administrativo real nao tem unidade.
+                    if kind is BlockKind.PLANNING and _has_unit_evidence(block):
+                        continue
                     return kind
 
     # 3b. Conteudo curado nao bateu keyword. Sem unidade, o label cru da sessao
@@ -224,6 +299,13 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         sess_kind = _session_exam_or_review(session_hay)
         if sess_kind is not None:
             return sess_kind
+
+    # 3c. "trabalho"/TP sem evidencia de unidade = apresentacao/entrega de
+    #     trabalho (atravessa unidades) -> DELIVERABLE. Com unit_slug/candidatos
+    #     "trabalho" e so o tema de uma aula -> CLASS abaixo (mantem unidade).
+    #     Gated p/ nao roubar unidade de aula que cita "trabalho" (P3.4).
+    if "trabalho" in hay_tokens and not _has_unit_evidence(block):
+        return BlockKind.DELIVERABLE
 
     if has_unit or has_topic:
         return BlockKind.CLASS
@@ -234,3 +316,27 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
     if len(hay_content) >= 8 or len(content_tokens) >= 2:
         return BlockKind.CLASS
     return BlockKind.UNKNOWN
+
+
+def row_kind_from_text(content: str) -> str:
+    """Kind NAO-ACADEMICO que o texto de UMA linha do cronograma denuncia
+    ("suspensao ...", "feriado ...", "reserva tecnica"); "" se a linha e aula.
+
+    Mesma tabela de keywords de classify_block (uma fonte), mas SO os kinds
+    cujo vocabulario e inequivocamente administrativo: a linha vira bloco
+    proprio e nao funde com aula vizinha. OFFICE_HOURS ("duvidas") e PLANNING
+    ("planejamento") ficam de fora — no bloco eles tem guard (maioria das
+    sessoes / evidencia de unidade) que a linha isolada nao tem: "introducao a
+    agentes e planejamento" (IA) e "gerencia de arquivos, duvidas" (SO) sao
+    aula. Prova/revisao/entrega continuam vindo da coluna Atividade."""
+    text = " ".join(str(content or "").split())
+    if not text:
+        return ""
+    kind = classify_block({"topic_text": text, "topics": [], "sessions": [], "unit_slug": ""})
+    return kind.value if kind in ROW_TEXT_KINDS else ""
+
+
+# Kinds que UMA linha do cronograma pode assumir so pelo texto (ver
+# row_kind_from_text). Subconjunto de NON_ACADEMIC_KINDS sem os dois que
+# precisam de contexto de bloco.
+ROW_TEXT_KINDS = frozenset(NON_ACADEMIC_KINDS) - {BlockKind.OFFICE_HOURS, BlockKind.PLANNING}

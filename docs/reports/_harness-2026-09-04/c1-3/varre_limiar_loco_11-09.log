@@ -1,0 +1,13 @@
+confiantes com gold: 192 | erros com predicao VAZIA (gold cheio): 0 | erros com predicao: 18
+
+fora  t escolhido nos outros  no curso de fora: erros pegos  acertos p/ fila  erros totais do curso
+CG                    nenhum
+ES2                   nenhum
+FR                      0.35                              0                1                      0
+IA                      0.35                              0                3                      0
+MF                      0.35                              1                4                      3
+SO                      0.35                              0                1                      0
+TCC                      0.3                              0                0                      1
+
+criterio global (todos os cursos), por t: (erros pegos, acertos enviados)
+{0.2: (2, 3), 0.25: (3, 5), 0.3: (8, 8), 0.35: (10, 11), 0.4: (10, 18), 0.5: (12, 28)}

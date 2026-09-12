@@ -1,0 +1,19 @@
+  ~ MF  exerciciosespecificacao-respostas        linguagens-de-especificacao- -> especificacao-de-funcoes-rec conf 0.02->0.05 card='Revisão - Lógica e Especific'
+  ~ MF  t1-2026-1-thy                            -                            -> verificacao-de-programas     conf 0.00->1.00 card='TDE Trabalho Discente Efetiv'
+  ~ MF  hoare                                    logica-de-hoare              -> verificacao-de-programas     conf 0.06->0.55 card='Verificação de Programas'
+  ~ MF  invariantes                              -                            -> verificacao-de-programas     conf 0.00->1.00 card='Verificação de Programas'
+  ~ MF  terminacao                               -                            -> verificacao-de-programas     conf 0.00->1.00 card='Verificação de Programas'
+  ~ MF  plano                                    linguagens-de-especificacao- -> especificacao-de-conjuntos-i conf 0.19->0.21 card='Plano de Ensino'
+MF  materiais=66 confiantes=33 aliases novos=10 MUDAM=6
+  ~ CG  iluminacao                               modelos-de-reflexao-ambiente -> conceitos-basicos-de-ray-tra conf 0.35->0.60 card='16 - Síntese de Imagens Real'
+  ~ CG  exercicios                               -                            -> operacoes-com-vetores        conf 0.00->1.00 card='2 - Biblioteca OpenGL'
+  ~ CG  transformacoesgeometricas                -                            -> recorte                      conf 0.00->0.90 card='6 - Processo de Visualização'
+  ~ CG  exercicios-sobre-curvas-html             -                            -> operacoes-com-vetores        conf 0.00->0.97 card='Exercícios 2D'
+  ~ CG  resolucao-de-prova-de-computacao-grafica 2d-3d-mao-direita-e-mao-esqu -> recorte                      conf 0.15->0.11 card='Provas Resolvidas'
+  ~ CG  slab                                     algoritmos-de-geometria-comp -> operacoes-com-vetores        conf 0.67->0.88 card='5 - Geometria Computacional'
+  ~ CG  pagina-com-videos-sobre-fundamentos-mate -                            -> operacoes-com-vetores        conf 0.00->0.31 card='3 - Fundamentos Matemáticos '
+  ~ CG  videos-sobre-algoritmos-de-detecao-de-co -                            -> algoritmos-de-geometria-comp conf 0.00->0.51 card='4 - Detecção de Colisão'
+  ~ CG  aula-gravada-975b85                      -                            -> a-matematica-das-projecoes-p conf 0.00->0.99 card='11 - Morfologia Matemática'
+CG  materiais=93 confiantes=58 aliases novos=16 MUDAM=9
+FR  materiais=22 confiantes=10 aliases novos=7 MUDAM=0
+LR  materiais=7 confiantes=4 aliases novos=0 MUDAM=0

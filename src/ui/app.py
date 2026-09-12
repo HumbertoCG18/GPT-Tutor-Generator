@@ -20,7 +20,7 @@ from src.models.core import (
     PendingOperation, PendingOperationStore,
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
-from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends
+from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends, normalized_source_key as _normalized_source_key
 from src.builder.runtime.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
 from src.builder.artifacts.prompts import (
@@ -36,21 +36,10 @@ from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 from src.ui.timeline_dashboard import TimelineDashboardView
 from src.ui.codes_panel import CodesPanel
 from src.ui.maintenance_panel import MaintenancePanel
+from src.ui.ui_text import default_source_label
 
 logger = logging.getLogger(__name__)
 
-
-def _normalized_source_key(raw_path: str) -> str:
-    value = str(raw_path or "").strip()
-    if not value:
-        return ""
-    if "://" in value:
-        return value.casefold()
-    try:
-        normalized = Path(value).expanduser().resolve()
-    except Exception:
-        normalized = Path(value).expanduser()
-    return str(normalized).replace("\\", "/").casefold()
 
 
 def _manifest_source_keys_for_repo(repo_dir: Optional[Path]) -> set[str]:
@@ -91,8 +80,8 @@ def _format_backlog_title(entry_data: Dict[str, object]) -> str:
     return title
 
 
-def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj) -> Dict[str, object]:
-    return {
+def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj, subject=None) -> Dict[str, object]:
+    opts = {
         "default_processing_mode": default_mode,
         "default_ocr_language": default_ocr_language,
         "image_format": config_obj.get("image_format"),
@@ -107,6 +96,11 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "profile_backends": derive_profile_backends(config_obj),
         "skip_base_backends": config_obj.get("skip_base_backends", False),
     }
+    # Surface durável de feature flags por matéria: injeta o que ESTÁ em
+    # feature_flags (genérico). Ausente/{} → nada adicionado → byte-idêntico.
+    for key, value in (getattr(subject, "feature_flags", None) or {}).items():
+        opts[str(key)] = value
+    return opts
 
 
 class _UILogHandler(logging.Handler):
@@ -337,6 +331,13 @@ class App(tk.Tk):
         lbl_ocr.grid(row=4, column=2, sticky="w")
         ttk.Label(course, textvariable=self.var_default_ocr_language, font=("Segoe UI", 10, "bold")).grid(row=4, column=3, sticky="w", padx=(8, 0))
 
+        # Row 5: fonte dos padrões (matéria ativa vs global)
+        self.var_default_source = tk.StringVar(
+            value=default_source_label(self._var_active_subject.get())
+        )
+        ttk.Label(course, textvariable=self.var_default_source, style="Muted.TLabel").grid(
+            row=5, column=0, columnspan=4, sticky="w", pady=(2, 4))
+
         course.columnconfigure(1, weight=1)
         course.columnconfigure(3, weight=1)
 
@@ -368,6 +369,11 @@ class App(tk.Tk):
         self._profile_combo.grid(row=3, column=1, sticky="ew", padx=4, pady=(6, 0))
         self._profile_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_active_profile())
 
+        _btn_remove_entry = ttk.Button(
+            import_actions, text="🗑 Remover selecionado", command=self.remove_selected)
+        _btn_remove_entry.grid(row=4, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
+        add_tooltip(_btn_remove_entry, "Remove o item selecionado da fila (a tecla Delete também funciona).")
+
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
         self._btn_process = ttk.Button(build_actions, text="⚡ Processar",
@@ -384,8 +390,7 @@ class App(tk.Tk):
                                       style="Accent.TButton", command=self.build_repo)
         self._btn_build.grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
 
-        ttk.Button(tool_actions, text="🖼 Image Curator", command=self.open_image_curator).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
-        ttk.Button(tool_actions, text="🖌 Curator Studio", command=self.open_curator_studio).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(tool_actions, text="🧰 Curadoria", command=self.open_curation_workspace).grid(row=0, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
         ttk.Button(tool_actions, text="⚙ Configurações", command=self.open_settings).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(tool_actions, text="? Ajuda  F1", command=self.open_help).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         cb_shutdown = ttk.Checkbutton(
@@ -880,6 +885,19 @@ class App(tk.Tk):
         if current is getattr(self, "_maint_tab", None) and hasattr(self, "_maint_panel"):
             self._maint_panel.refresh()
 
+    def _refresh_timeline_dashboard(self) -> None:
+        """Re-le o cronograma do disco apos um build/processamento.
+
+        A view (TimelineDashboardView) le manifest.json + .timeline_index.json
+        sob demanda em refresh(); sem esta chamada a aba Cronograma fica com o
+        estado anterior ate o usuario trocar de aba ou reiniciar o app.
+        """
+        if hasattr(self, "_timeline_dashboard"):
+            try:
+                self._timeline_dashboard.refresh()
+            except Exception:
+                logger.exception("Falha ao atualizar a aba Cronograma apos build.")
+
     def _make_maintenance_builder(self):
         """Builder real para sweep — mesmo padrão do reprocessamento."""
         repo_dir = self._repo_dir()
@@ -1062,11 +1080,6 @@ class App(tk.Tk):
         self._repo_tasks = [task for task in self._repo_tasks if task.status not in {"completed", "failed", "cancelled"}]
         self._refresh_repo_task_views()
         self._set_status("Tasks finalizadas removidas da fila.")
-
-    def open_repo_dashboard_tab(self):
-        if hasattr(self, "_dashboard_tab"):
-            self.notebook.select(self._dashboard_tab)
-            self._refresh_repo_dashboard()
 
     def _handle_repo_task_event(self, event_name: str, task: RepoTask, error: Optional[Exception]):
         error_text = str(error) if error else ""
@@ -1365,23 +1378,14 @@ class App(tk.Tk):
     def open_status(self):
         StatusDialog(self, self.config_obj, self.student_store, self.theme_mgr)
 
-    def open_curator_studio(self):
+    def open_curation_workspace(self):
         repo_dir = self._repo_dir()
         if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Curator Studio.")
-            return
-        
-        from src.ui.curator_studio import CuratorStudio
-        CuratorStudio(self, str(repo_dir), self.theme_mgr)
-
-    def open_image_curator(self):
-        repo_dir = self._repo_dir()
-        if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Image Curator.")
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir a Curadoria.")
             return
 
-        from src.ui.image_curator import ImageCurator
-        ImageCurator(self, str(repo_dir), self.theme_mgr)
+        from src.ui.curation_workspace import CurationWorkspace
+        CurationWorkspace(self, str(repo_dir), self.theme_mgr)
 
     def _apply_active_profile(self):
         from src.utils.helpers import get_processing_profile
@@ -1416,6 +1420,7 @@ class App(tk.Tk):
         self.var_default_ocr_language.set(sp.default_ocr_lang)
         self.var_default_backend.set(getattr(sp, "default_backend", "auto") or "auto")
         self.var_default_datalab_mode.set(getattr(sp, "default_datalab_mode", "accurate") or "accurate")
+        self.var_default_source.set(default_source_label(self._var_active_subject.get()))
         prof_name = getattr(sp, "processing_profile", "") or ""
         self.var_active_profile.set(prof_name)
         if prof_name:
@@ -1492,7 +1497,7 @@ class App(tk.Tk):
                         f_data.get("effective_profile", ""),
                         f_data.get("tags", ""),
                         _format_backlog_title(f_data),
-                        f_data.get("base_backend", ""),
+                        status.get("effective_backend", ""),
                         Path(f_data.get("source_path", f_data.get("source_file", ""))).name,
                     )
                 )
@@ -1829,10 +1834,13 @@ class App(tk.Tk):
 
     def _build_options(self) -> Dict[str, object]:
         """Monta o dict de opções para o RepoBuilder."""
+        name = self._var_active_subject.get()
+        subject = self.subject_store.get(name) if name and name != "(nenhuma)" else None
         return _build_options_from_config(
             self.var_default_mode.get(),
             self.var_default_ocr_language.get(),
             self.config_obj,
+            subject=subject,
         )
 
     def _repo_dir(self) -> Optional[Path]:
@@ -2042,6 +2050,7 @@ class App(tk.Tk):
             self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
         self._active_operation = None
         self._reset_build_finish_options()
+        self._refresh_timeline_dashboard()
         self._set_status("Build cancelado.")
 
     def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0, failed_list: list | None = None):
@@ -2090,6 +2099,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._refresh_backlog()
         self._refresh_repo_dashboard()
+        self._refresh_timeline_dashboard()
 
     def _on_build_error(self, traceback_str: str):
         self._end_progress()
@@ -2220,12 +2230,14 @@ class App(tk.Tk):
             self._save_current_queue()
         self._clear_pending_operation()
         self._refresh_backlog()
+        self._refresh_timeline_dashboard()
         self._set_status("Item processado com sucesso.")
 
     def _on_single_interrupted(self, status_msg: str):
         self._end_progress()
         self._set_processing_state(False)
         self._active_operation = None
+        self._refresh_timeline_dashboard()
         self._set_status(status_msg)
 
     def _show_error_detail(self, title: str, message: str):
@@ -2371,7 +2383,8 @@ class App(tk.Tk):
 
         def worker():
             try:
-                builder = RepoBuilder(repo_dir, meta, [], {})
+                profile = SubjectStore().find_by_repo_root(repo_dir)
+                builder = RepoBuilder(repo_dir, meta, [], {}, subject_profile=profile)
                 ok = builder.unprocess(entry_id)
                 self.after(0, lambda: self._on_unprocess_done(entry_id, ok, None))
             except Exception as exc:
@@ -2436,7 +2449,7 @@ class App(tk.Tk):
                 builder.incremental_build()
                 self.after(0, lambda: self._on_reprocess_done(None))
             except Exception as e:
-                self.after(0, lambda: self._on_reprocess_done(e))
+                self.after(0, lambda exc=e: self._on_reprocess_done(exc))
 
         if active_subj:
             self._set_status(f"Reprocessando repositório com perfil da matéria: {active_subj.name}...")
@@ -2645,6 +2658,17 @@ class App(tk.Tk):
                        generate_gemini_instructions(
                            meta, student_p, active_subj, **common))
 
+            from src.builder.artifacts.temporal_context import temporal_context_md
+            _tl_path = repo_dir / "course" / ".timeline_index.json"
+            _tl_blocks = []
+            if _tl_path.exists():
+                try:
+                    _tl_blocks = json.loads(_tl_path.read_text(encoding="utf-8")).get("blocks", []) or []
+                except Exception:
+                    _tl_blocks = []
+            write_text(repo_dir / "setup" / "CONTEXTO_TEMPORAL.md",
+                       temporal_context_md(meta, _tl_blocks))
+
             platform_map = {
                 "claude": "setup/INSTRUCOES_CLAUDE_PROJETO.md",
                 "gpt": "setup/INSTRUCOES_GPT_PROJETO.md",
@@ -2717,23 +2741,6 @@ class App(tk.Tk):
             return
         self._open_path_in_system(repo_dir)
         self._set_status(f"Pasta do repositório aberta: {repo_dir}")
-
-    def open_file_map(self):
-        """Abre course/FILE_MAP.md do repositório da matéria ativa."""
-        repo_dir = self._repo_dir_from_active_subject()
-        if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Nenhum repositório configurado para a matéria ativa.")
-            return
-        file_map_path = repo_dir / "course" / "FILE_MAP.md"
-        if not file_map_path.exists():
-            messagebox.showerror(
-                APP_NAME,
-                f"FILE_MAP.md não encontrado em:\n{file_map_path}\n\n"
-                f"Crie ou processe o repositório antes de tentar abrir esse arquivo."
-            )
-            return
-        self._open_path_in_system(file_map_path)
-        self._set_status(f"FILE_MAP aberto: {file_map_path}")
 
     def open_student_state_curator(self):
         repo_dir = self._repo_dir_from_active_subject()

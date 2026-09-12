@@ -6,11 +6,19 @@ import re
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Callable, Dict, List, NamedTuple, Optional
+from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
-from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
-from src.builder.routing.thresholds import T, margin_confidence
+from src.builder.text.normalize import normalize_match_text as _normalize_text
+from src.builder.text.normalize import split_camel_case
+from src.builder.routing.thresholds import (
+    DATE_STRONG_BOOST,
+    DATE_WEAK_BOOST,
+    T,
+    relative_margin_confidence,
+)
+from src.builder.text.stopwords import UNIT_GENERIC_TOKENS
+from src.builder.text.stopwords import FILE_MAP_TITLE_ANCHOR_STOP, FILE_MAP_TOPIC_ANCHOR_STOP
 
 
 @dataclass
@@ -19,33 +27,6 @@ class UnitMatchResult:
     confidence: float
     ambiguous: bool = False
     reasons: List[str] = field(default_factory=list)
-
-
-UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
-}
 
 
 def strip_outline_prefix(text: str) -> str:
@@ -72,14 +53,45 @@ def build_file_map_unit_index(
     unit_generic_tokens: set[str],
 ) -> list:
     indexed = []
+    # Titulo normalizado de cada unidade: frase igual ao titulo de OUTRA unidade e
+    # sinal roubado (glossario e aliases injetavam `verificacao de programas` na u01
+    # do MF, titulo da u02 — 6 entries migravam para a unidade errada).
+    other_unit_titles = set()
     for unit in units or []:
+        raw_title = unit.get("title", "") if isinstance(unit, dict) else unit[0]
+        title_norm = normalize_match_text(strip_outline_prefix(raw_title))
+        if title_norm:
+            other_unit_titles.add(title_norm)
+
+    def _partes(unit):
         if isinstance(unit, dict):
-            title = unit.get("title", "")
-            topics = unit.get("topics", []) or []
-            extra_signals = unit.get("extra_signals", []) or []
-        else:
-            title, topics = unit
-            extra_signals = []
+            return (unit.get("title", ""), unit.get("topics", []) or [],
+                    unit.get("extra_signals", []) or [])
+        return (unit[0], unit[1], [])
+
+    def _frases(itens):
+        return {normalize_match_text(strip_outline_prefix(topic_text(i))) for i in itens} - {""}
+
+    # Frase presente em TODAS as unidades tem poder discriminante ZERO — so infla
+    # o score da unidade maior. Origens medidas (2026-08-18): a definicao
+    # auto-gerada do glossario, que e a MESMA frase-modelo para todo termo, e
+    # definicao que virou dump de sumario (ES2 injetava `camadas`, topico da u01,
+    # nas outras duas). Descarta so onde a frase NAO e topico proprio: a unidade
+    # dona mantem e volta a discriminar, as outras perdem.
+    proprias = [_frases(topics) for _, topics, _ in map(_partes, units or [])]
+    ubiquas: set = set()
+    if len(proprias) > 1:
+        ubiquas = set.intersection(
+            *(proprias[i] | _frases(extras)
+              for i, (_, _, extras) in enumerate(map(_partes, units or [])))
+        )
+
+    for unit_pos, unit in enumerate(units or []):
+        title, topics, extra_signals = _partes(unit)
+        # A2: conjunto de genericos POR CURSO carimbado no spec (build_file_map_unit_index_from_course);
+        # sem carimbo cai na constante injetada (comportamento de antes).
+        unit_generic = set((unit.get("generic_tokens") or []) if isinstance(unit, dict) else []) or set(unit_generic_tokens)
+        descartar = ubiquas - proprias[unit_pos]
         clean_title = strip_outline_prefix(title)
         topic_phrases = []
         topic_tokens = []
@@ -88,16 +100,22 @@ def build_file_map_unit_index(
             topic_norm = normalize_match_text(strip_outline_prefix(topic_text(topic)))
             if not topic_norm:
                 continue
+            if topic_norm != normalize_match_text(clean_title) and topic_norm in other_unit_titles:
+                continue
+            if topic_norm in descartar:
+                continue
             topic_phrases.append(topic_norm)
             if topic_norm not in seen_topic_tokens:
                 topic_tokens.append(topic_norm)
                 seen_topic_tokens.add(topic_norm)
             for token in topic_norm.split():
-                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic_tokens:
+                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic:
                     topic_tokens.append(token)
                     seen_topic_tokens.add(token)
         indexed.append({
             "title": title,
+            # carimbo so quando veio calculado por curso; None -> cada consumidor usa a sua constante
+            "generic_tokens": sorted(unit_generic) if (isinstance(unit, dict) and unit.get("generic_tokens")) else None,
             "slug": normalize_unit_slug(title),
             "normalized_title": normalize_match_text(clean_title),
             "topics": topics,
@@ -107,12 +125,12 @@ def build_file_map_unit_index(
             "title_anchor_tokens": [
                 token
                 for token in normalize_match_text(clean_title).split()
-                if len(token) >= 4 and token not in {"unidade", "aprendizagem", "verificacao"}
+                if len(token) >= 4 and token not in FILE_MAP_TITLE_ANCHOR_STOP
             ],
             "topic_anchor_tokens": [
                 token
                 for token in {token for text in topic_phrases for token in text.split()}
-                if len(token) >= 4 and token not in {"de", "para", "com", "sem", "sobre", "entre"}
+                if len(token) >= 4 and token not in FILE_MAP_TOPIC_ANCHOR_STOP
             ],
             "distinctive_tokens": [],
         })
@@ -122,7 +140,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         for token in unit_tokens:
             token_frequency[token] = token_frequency.get(token, 0) + 1
@@ -131,7 +149,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         unit["token_weights"] = {
             token: 1.0 / token_frequency[token]
@@ -144,6 +162,11 @@ def build_file_map_unit_index(
             if freq == 1 and token in unit_tokens and len(token) >= 5
         )
     return indexed
+
+
+# "Revisão", "revisao", "revisões" no titulo ou no id (o id preserva fronteira
+# de palavra onde o titulo usa "_", mesmo criterio do _PROVA_RE da cobertura).
+_REVISAO_RE = re.compile(r"\brevis", re.IGNORECASE)
 
 
 def auto_map_entry_subtopic(
@@ -167,7 +190,7 @@ def auto_map_entry_subtopic(
             unit_slug="",
             confidence=0.0,
             ambiguous=True,
-            reasons=["sem-taxonomia"],
+            reasons=[f"sem-topicos-para-unidade:{winning_unit_slug}" if winning_unit_slug else "sem-taxonomia"],
         )
 
     signals = collect_entry_unit_signals(entry, markdown_text)
@@ -178,15 +201,49 @@ def auto_map_entry_subtopic(
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
     margin = winner_score - runner_up_score
     rel_margin = margin / max(winner_score, 1e-6)
+    # Sem sinal ou empate EXATO: nao ha vencedor real — o sort estavel elegeria
+    # um slug arbitrario (menor indice na taxonomia) e o surfacaria com conf
+    # 0.0 no editor (12 entries codigo-professor do repo real, 12/06). Slug
+    # vazio e a resposta honesta; a reason preserva o diagnostico.
     if winner_score <= 0.0:
-        confidence = 0.0
-        ambiguous = True
-    elif len(scored) == 1:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=["sem-sinal (winner_score=0)"],
+        )
+    if len(scored) > 1 and margin == 0.0:
+        tied = sum(1 for _, score in scored if score == winner_score)
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"empate-exato {tied}x score={winner_score:.2f}"],
+        )
+    # Material de REVISAO sem assunto dominante revisa conteudo de fora da
+    # taxonomia (pre-requisito, prova) — caso real: TCC aula-06 revisa a
+    # cadeira de automatos e cairia em argumento-diagonal por vocabulario.
+    # Escopado a titulo/id de revisao: piso global e refutado (thresholds).
+    titulo_e_id = f"{entry.get('title') or ''} {entry.get('id') or ''}"
+    if _REVISAO_RE.search(titulo_e_id) and winner_score < T.SUBUNIT_REVISAO_FLOOR:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"revisao-sem-assunto-dominante (winner_score={winner_score:.2f} < {T.SUBUNIT_REVISAO_FLOOR})"],
+        )
+    if len(scored) == 1:
         confidence = 0.72
         ambiguous = False
     else:
         confidence = max(0.0, min(1.0, rel_margin))
-        ambiguous = rel_margin < 0.15
+        ambiguous = rel_margin < T.SUBUNIT_AMBIG_MARGIN
     if ambiguous:
         confidence = min(confidence, 0.45)
 
@@ -218,6 +275,10 @@ def score_entry_against_unit(
     legacy_tags_text = signals.get("legacy_tags_text", "")
     tags_text = signals.get("tags_text", "")
     raw_text = signals.get("raw_text", "")
+    card_text = signals.get("card_text", "")
+    # A2: genericos de unidade POR CURSO (carimbados no indice); sem carimbo, a constante.
+    _neutral = set(unit.get("generic_tokens") or []) or set(timeline_unit_neutral_tokens)
+    card_tokens = {tok for tok in card_text.split() if len(tok) >= 4}
     title_tokens = {tok for tok in title_text.split() if len(tok) >= 4}
     markdown_headings_tokens = {tok for tok in markdown_headings_text.split() if len(tok) >= 4}
     markdown_lead_tokens = {tok for tok in markdown_lead_text.split() if len(tok) >= 4}
@@ -247,6 +308,10 @@ def score_entry_against_unit(
             score += 1.8
         if unit_title in title_text:
             score += 1.0
+        # O card do Moodle costuma nomear a UNIDADE (MF: "Verificacao de Programas",
+        # "Provas por Inducao") ou o TEMA (SO: "Threads"; IA: "Machine Learning").
+        if unit_title in card_text or (card_text and card_text in unit_title):
+            score += 1.5
 
     for topic_phrase in topic_phrases:
         if not topic_phrase:
@@ -261,6 +326,13 @@ def score_entry_against_unit(
             continue
         if topic_phrase in title_text:
             score += 2.7
+            exact_topic_hits += 1
+            continue
+        # Card: sinal humano (o professor postou o material naquela secao). So no
+        # nivel de FRASE — card administrativo ("Informacoes Gerais", 10x no SO)
+        # nao casa frase nenhuma e fica inerte.
+        if topic_phrase in card_text:
+            score += 2.5
             exact_topic_hits += 1
             continue
         if topic_phrase in markdown_text:
@@ -279,10 +351,11 @@ def score_entry_against_unit(
             score += 0.24
             exact_topic_hits += 1
             continue
-        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights) * 0.55
-        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
-        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
-        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
+        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.55
+        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.48
+        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.18
+        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.45
+        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.40
         score += score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
         score += score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
         score += score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02
@@ -359,6 +432,30 @@ def score_entry_against_unit(
     return score
 
 
+# D3/F7 (censo Fund. Redes 2026-08-28): numero de unidade EXPLICITO no card
+# ("U1 - Redes de Computadores"), no titulo ou no arquivo ("Lista de exercicios -
+# Unidade 1"). A numeracao vem do PLANO (autoridade) -> sinal de 1a classe do eixo
+# de unidade, decide antes do scorer. "aula01"/"qemu2"/"udp 1" nao casam (o "u"
+# exige fronteira antes e digito logo depois).
+_UNIT_NUM_NAME_RE = re.compile(r"(?:^|[\W_])(?:u\.?\s*|unidade(?:\s+de\s+aprendizagem)?\s+)0*(\d{1,2})(?:$|[\W_])", re.IGNORECASE)
+_UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
+
+
+def explicit_unit_number(entry: dict):
+    """Numero de unidade explicito em card/titulo/arquivo; None se ausente."""
+    basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
+    for text in (str(entry.get("source_section") or ""), str(entry.get("title") or ""), basename):
+        m = _UNIT_NUM_NAME_RE.search(text)
+        if m:
+            return int(m.group(1))
+    return None
+
+
+def _unit_number_from_slug(slug: str):
+    m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
+    return int(m.group(1)) if m else None
+
+
 def auto_map_entry_unit(
     entry: dict,
     units: list,
@@ -377,6 +474,14 @@ def auto_map_entry_unit(
     indexed_units = build_file_map_unit_index(units)
     if not indexed_units:
         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
+
+    numero = explicit_unit_number(entry)
+    if numero is not None:
+        alvo = [u for u in indexed_units if _unit_number_from_slug(str(u.get("slug") or "")) == numero]
+        if len(alvo) == 1:
+            return unit_match_result_factory(
+                slug=str(alvo[0].get("slug") or ""), confidence=0.95, ambiguous=False,
+                reasons=[f"unidade-explicita=u{numero}"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
     unit_tag_boosts: Dict[str, float] = {}
@@ -404,7 +509,9 @@ def auto_map_entry_unit(
             for topic in normalized_topic_index:
                 if normalize_unit_slug(str(topic.get("unit_slug", "") or "")) != unit_slug:
                     continue
-                topic_score = score_entry_against_taxonomy_topic(signals, topic)
+                # A1: rota de TOPICO do mapeador de UNIDADE usa o fallback por radical
+                # (stem6); a rota de SUBUNIDADE (score_entry_topics) continua exata.
+                topic_score = score_entry_against_taxonomy_topic(signals, topic, stem_fallback=True)
                 if topic_score > best_topic_score:
                     best_topic_score = topic_score
             if best_topic_score >= 0.25:
@@ -424,10 +531,13 @@ def auto_map_entry_unit(
         confidence = 0.7
         ambiguous = False
     else:
-        # margin_confidence reintroduz o termo winner*k: um vencedor positivo
-        # rende confianca > 0 mesmo com margem nula (ex.: titulo concatenado que
-        # empata as unidades), restaurando o comportamento pre-refator.
-        confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
+        # relative_margin_confidence (idea 1: mesma fórmula do bloco, P2): margem
+        # RELATIVA escalada pela força absoluta. Mata a saturação do margin_confidence
+        # aditivo, cujo termo winner*k clampava em 1.0 com winner_score alto → unidade
+        # confiante-ERRADA (ex.: "exemplos" casando o subtópico de OUTRA unidade dava
+        # conf 1.0 e ainda vencia o bloco na reconciliação). O piso absoluto de
+        # ambiguidade abaixo (UNIT_MATCH_MIN_WINNER) segue valendo.
+        confidence = relative_margin_confidence(winner_score, runner_up_score)
         # Ambiguo por margem RELATIVA fraca OU por score ABSOLUTO baixo: sem o
         # piso absoluto, um winner fraco com runner_up ~0 (rel_margin ~1.0)
         # passaria por confiante (caso do token "estado" acidental).
@@ -487,22 +597,45 @@ def resolve_entry_manual_unit_slug(
     return normalized if normalized in valid_slugs else ""
 
 
+def _block_by_migrated_ref(raw: str, blocks: list) -> Optional[Dict[str, object]]:
+    """Casa uma ref de chave migrada (Fase 1) ao bloco: uuid-first, fallback bloco-NN.
+
+    Helper ÚNICO da classe "leitor de verdade-humana migrada": a Fase 1 migrou as
+    chaves (manual_timeline_block_id etc.) pra block_uuid, mas leitores que casavam
+    só block.id (bloco-NN) deixavam o uuid sem casar → verdade-humana invisível.
+    """
+    raw = str(raw or "").strip()
+    if not raw:
+        return None
+    for block in blocks:
+        if str(block.get("block_uuid") or "").strip() == raw:
+            return block
+    for block in blocks:
+        if str(block.get("id", "")).strip() == raw:
+            return block
+    return None
+
+
 def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> Optional[Dict[str, object]]:
     raw = str(entry.get("manual_timeline_block_id") or "").strip()
     if not raw:
         return None
     blocks = list(((timeline_context or {}).get("timeline_index") or {}).get("blocks", []) or [])
-    for block in blocks:
-        if str(block.get("id", "")).strip() == raw:
-            return block
+    hit = _block_by_migrated_ref(raw, blocks)
+    if hit is not None:
+        return hit
     match = re.fullmatch(r"bloco-(\d+)", raw, flags=re.IGNORECASE)
     if match:
         ordinal = int(match.group(1))
         entry_unit = str(entry.get("unit_slug") or entry.get("manual_unit_slug") or "").strip()
+        # D2: blocks vem do timeline_context runtime (_build_timeline_index) ->
+        # admin presente sem a chave; o key-lookup antigo era no-op e contava blocos
+        # admin no ordinal de "bloco-N". Lazy import: timeline.index importa este modulo.
+        from src.builder.timeline.index import timeline_block_is_administrative_only
         instructional_blocks = [
             block
             for block in blocks
-            if not bool(block.get("administrative_only"))
+            if not timeline_block_is_administrative_only(block)
             and (not entry_unit or str(block.get("unit_slug", "")).strip() == entry_unit)
         ]
         if 1 <= ordinal <= len(instructional_blocks):
@@ -581,6 +714,136 @@ def resolve_effective_block(
     if computed:
         return EffectiveBlock(computed, "auto")
     return EffectiveBlock("", "")
+
+
+def resolve_temporal_block(
+    entry: dict,
+    blocks: Optional[List[Dict[str, object]]] = None,
+) -> str:
+    """Bloco TEMPORAL (cronograma) efetivo do material.
+
+    Precedência: `temporal_block_id` (escrito pelo motor com use_anchor_engine)
+    sobrepõe; ausente → cai na FONTE ÚNICA
+    compartilhada `resolve_effective_block` (manual > computed). Com a flag OFF
+    o campo nunca existe → este helper é byte-idêntico ao resolve_effective_block
+    de hoje. Disjunto de KB: NÃO chama reconcile_unit_with_block.
+
+    O fallback é `resolve_effective_block` (NÃO computed_block_id cru) de
+    propósito: os consumidores temporais honram manual_timeline_block_id stale-safe
+    via essa fonte; trocar pelo computed cru perderia o manual com a flag OFF.
+
+    review F4 C1: o producer (_write_temporal, motor/apply.py) grava
+    block_uuid cru em temporal_block_id; os leitores (dashboard, cronograma_health)
+    casam contra display id (block["id"]). Sem resolução aqui, flag-ON vira
+    "unmapped" em cascata. Quando `blocks` está disponível, casa o uuid contra
+    block_uuid e devolve o display id do mesmo bloco (reusa _block_by_migrated_ref,
+    que também aceita um valor já-display e o devolve intacto). uuid que não
+    resolve (blocks ausente/desatualizado) cai no valor cru — sem crash.
+    """
+    temporal = str(entry.get("temporal_block_id") or "").strip()
+    if temporal:
+        if blocks:
+            hit = _block_by_migrated_ref(temporal, blocks)
+            if hit is not None:
+                return str(hit.get("id", "")).strip() or temporal
+        return temporal
+    return resolve_effective_block(entry, blocks).block_id
+
+
+def reconcile_unit_with_block(
+    *,
+    computed_unit_slug: str,
+    unit_confidence: float,
+    computed_block_id: str,
+    block_confidence: float,
+    block_unit_slug: str,
+    block_is_manual: bool,
+    has_manual_unit: bool,
+    unit_is_explicit: bool = False,
+) -> Tuple[str, List[str], Dict[str, str]]:
+    """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
+
+    Precedência:
+      1. Bloco MANUAL com unidade -> unidade do bloco (autoritativo, vence até
+         manual_unit). reason "unidade_do_bloco_manual".
+      2. manual_unit presente (sem bloco manual) -> mantém computed_unit_slug.
+      3. Auto:
+         - sem bloco / bloco sem unidade -> mantém computed_unit_slug.
+         - computed_unit_slug vazio -> herda do bloco ("herdada_do_bloco=<id>").
+         - concordam -> mantém.
+         - discordam: block_confidence >= unit_confidence -> unidade do bloco
+           ("reconciliada_do_bloco=<id>"); senão mantém a unidade forte e devolve
+           conflict {unit, block_unit, block_id}.
+         - discordam e a unidade e EXPLICITA (2026-09-06: a secao do Moodle diz
+           "U2 - ..."; `unit_is_explicit`) -> a unidade explicita vence o bloco
+           ("explicita-vence-bloco=<id>") e o conflito fica registrado. Medido no
+           FR reconstruido do zero: os 9 erros de unidade eram todos explicita
+           sobreposta por bloco flagado ou herdado do vizinho; no produto, 3.
+
+    conflict é {} exceto nos casos em que a unidade venceu bloco discordante.
+    """
+    if block_is_manual and block_unit_slug:
+        return block_unit_slug, ["unidade_do_bloco_manual"], {}
+    if has_manual_unit:
+        return computed_unit_slug, [], {}
+    if not computed_block_id or not block_unit_slug:
+        return computed_unit_slug, [], {}
+    if not computed_unit_slug:
+        return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
+    if block_unit_slug == computed_unit_slug:
+        return computed_unit_slug, [], {}
+    if unit_is_explicit:
+        return (
+            computed_unit_slug,
+            [f"explicita-vence-bloco={computed_block_id}"],
+            {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+        )
+    # 2026-08-21: a verdade de unidade e, por construcao, a unidade do bloco
+    # (ground_truth |><| gold_units). Medido nos 5 cursos (188 entries): scorer
+    # de texto 130, unidade do bloco temporal 162, bloco + heranca do vizinho
+    # 178 — e o scorer nao acrescenta nada por cima do bloco. Comparar
+    # confiancas (block_confidence >= unit_confidence) so deixava o texto
+    # vencer onde ele erra. O bloco decide; o texto discordante vira registro
+    # de conflito para auditoria (unit_block_conflict), nunca decisao.
+    return (
+        block_unit_slug,
+        [f"reconciliada_do_bloco={computed_block_id}"],
+        {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+    )
+
+
+_CONTENT_BLOCK_KINDS = frozenset({"class", "overview", ""})
+
+
+def unit_of_block_or_neighbor(block_id: str, blocks: List[Dict[str, object]]) -> Tuple[str, str]:
+    """(unit_slug, id_do_vizinho_de_onde_veio) para o bloco `block_id`.
+
+    Bloco de avaliacao/revisao/entrega/feriado nao recebe unit_slug por design
+    (timeline/index.py: so blocos de aula entram no posicional). O material
+    que cai nele pertence ao que veio ANTES (a prova/revisao fecha a unidade
+    anterior): herda do bloco de conteudo anterior. `overview` (apresentacao/
+    plano) abre o que vem: herda do proximo. Bloco com unit_slug proprio
+    devolve ("slug", ""). Medido 2026-08-21: 16 das 188 entries com gold caiam
+    em bloco sem unidade; a heranca acerta 11 delas (167 -> 178)."""
+    ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
+    idx = next((i for i, b in enumerate(ordered)
+                if str(b.get("id") or "") == block_id or str(b.get("block_uuid") or "") == block_id), None)
+    if idx is None:
+        return "", ""
+    own = str(ordered[idx].get("unit_slug") or "").strip()
+    if own:
+        return own, ""
+    prefer_next = str(ordered[idx].get("kind") or "") == "overview"
+    before = range(idx - 1, -1, -1)
+    after = range(idx + 1, len(ordered))
+    for j in (list(after) + list(before)) if prefer_next else (list(before) + list(after)):
+        cand = ordered[j]
+        if str(cand.get("kind") or "") not in _CONTENT_BLOCK_KINDS:
+            continue
+        slug = str(cand.get("unit_slug") or "").strip()
+        if slug:
+            return slug, str(cand.get("id") or "")
+    return "", ""
 
 
 def score_entry_against_timeline_row(
@@ -669,7 +932,10 @@ def score_card_evidence_against_entry(
 
     score = 0.0
     for item in card_items:
-        normalized_title = normalize_match_text(str(item.get("normalized_title", "") or ""))
+        # normalized_title já sai normalizado da extração (card_evidence._build_item,
+        # canônico [a-z0-9 ]); renormalizar aqui era no-op pago O(entries×blocos×cards)
+        # — provado por probe nos 5 índices vivos (auditoria 2.8).
+        normalized_title = str(item.get("normalized_title", "") or "")
         if not normalized_title:
             continue
         title_tokens = [tok for tok in normalized_title.split() if len(tok) >= 4]
@@ -701,6 +967,19 @@ def score_card_evidence_against_entry(
 
 def timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
     rows = list(block.get("rows", []) or [])
+    if not rows:
+        # Bloco PERSISTIDO (.timeline_index.json) não tem 'rows' — sintetiza
+        # linhas pontuáveis de source_rows/sessions (bug B3, 2º call site:
+        # sem isso o score é 0.0 e o ranking degenera pro 1º bloco).
+        for sr in block.get("source_rows", []) or []:
+            if isinstance(sr, dict):
+                content = " ".join(str(sr.get(k) or "") for k in ("date", "description"))
+                rows.append({"content": content.strip()})
+        if not rows:
+            for sess in block.get("sessions", []) or []:
+                if isinstance(sess, dict):
+                    content = " ".join(str(sess.get(k) or "") for k in ("date", "label"))
+                    rows.append({"content": content.strip()})
     return [row for row in rows if not bool(row.get("ignored"))]
 
 
@@ -768,89 +1047,6 @@ def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_t
     return False
 
 
-def score_entry_against_timeline_block(
-    signals: dict,
-    block: Dict[str, object],
-    *,
-    normalize_match_text: Callable[[str], str],
-    score_text_against_row: Callable[[str, List[str]], float],
-    score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
-    preferred_unit_slug: str = "",
-    preferred_topic_slug: str = "",
-) -> float:
-    rows = timeline_block_rows_for_scoring(block)
-    if not rows:
-        return 0.0
-    row_scores = [
-        score_entry_against_timeline_row(
-            signals,
-            str(row.get("content", "")),
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-        )
-        for row in rows
-    ]
-    runtime_block = dict(block)
-    runtime_block["rows"] = rows
-    runtime_block["scores"] = row_scores
-    score = score_timeline_block(
-        signals,
-        runtime_block,
-        normalize_match_text=normalize_match_text,
-        score_card_evidence_against_entry=score_card_evidence_against_entry_fn,
-    )
-
-    block_unit_slug = str(block.get("unit_slug", "") or "")
-    block_unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
-    if preferred_unit_slug:
-        if block_unit_slug == preferred_unit_slug:
-            score += 0.35 + (block_unit_confidence * 0.25)
-        elif block_unit_slug:
-            score -= 0.45
-
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    if preferred_topic_slug:
-        block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
-        block_topic_confidence = float(block.get("primary_topic_confidence", 0.0) or 0.0)
-        if block_topic_slug == preferred_topic_slug:
-            score += 0.8 + (block_topic_confidence * 0.35)
-        elif timeline_block_matches_preferred_topic(block, preferred_topic_slug):
-            score += 0.48
-        elif block_topic_slug:
-            score -= 0.18
-
-    topic_text = normalize_match_text(str(block.get("topic_text", "")))
-    if topic_text:
-        topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
-        score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
-        score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
-        score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
-
-    score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
-
-    # Boost de data (substitui o antigo regex DD.MM-no-início): extrai datas de
-    # QUALQUER posição do material (título/markdown/raw via extract_dates) e
-    # compara com o período do bloco. Data exata dentro de
-    # period_start..period_end (ou que casa um date_text de row) → boost FORTE
-    # (DATE_STRONG_BOOST=+0.30, peso calibrável herdado do +0.30 original); mês
-    # compatível mas fora do range → boost FRACO (DATE_WEAK_BOOST). O ano do
-    # bloco resolve datas year-less do material (default_year), já que não há
-    # campo course_year no modelo — o ano vive no próprio período do bloco.
-    score += _score_block_date_match(signals, block)
-
-    score += score_sequence_match(signals, block)
-
-    return score
-
-
-# Pesos do boost de data. DATE_STRONG_BOOST mantém o +0.30 original como base
-# calibrável (spec Fase 2). DATE_WEAK_BOOST é deliberadamente menor: mês
-# compatível é sinal mais fraco que data exata-no-range, então ~1/3 do forte —
-# o suficiente para desempatar sem competir com um match exato.
-DATE_STRONG_BOOST = 0.30
-DATE_WEAK_BOOST = 0.10
-
-
 def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:
     """Range do bloco como (date, date). Usa period_start/period_end (ISO) e
     cai para os date_text das rows quando os campos de período faltam."""
@@ -904,7 +1100,9 @@ def collect_entry_temporal_signals(
     extract_timeline_session_signals: Callable[[str], List[dict]],
 ) -> dict:
     raw_parts = [
-        str(entry.get("title", "") or ""),
+        # S1 (P4): camelCase do título separado também no caminho temporal
+        # (combined_text alimenta card_evidence e match de sessão por bloco).
+        split_camel_case(str(entry.get("title", "") or "")),
         str(entry.get("raw_target", "") or ""),
         str(entry.get("category", "") or ""),
         str(entry.get("tags", "") or ""),
@@ -1039,193 +1237,6 @@ def score_entry_against_timeline_sessions(
     return best_score, best_session, best_card_bonus
 
 
-def select_probable_period_for_entry(
-    entry: dict,
-    unit: dict,
-    candidate_rows: List[Dict[str, object]],
-    markdown_text: str,
-    *,
-    preferred_topic_slug: str = "",
-    collect_entry_unit_signals: Callable[[dict, str], dict],
-    build_timeline_index: Callable[[List[Dict[str, object]], Optional[list]], dict],
-    timeline_period_label: Callable[[str, str], str],
-    collapse_ws: Callable[[str], str],
-    normalize_match_text: Callable[[str], str],
-    score_text_against_row: Callable[[str, List[str]], float],
-    extract_date_range_signal: Callable[[str], dict],
-    extract_timeline_session_signals: Callable[[str], List[dict]],
-    parse_timeline_date_value: Callable[[str], object],
-) -> tuple[str, float, bool, List[str]]:
-    if not candidate_rows:
-        return "", 0.0, True, ["sem-linhas-candidato"]
-
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    if candidate_rows and "rows" in candidate_rows[0]:
-        blocks = list(candidate_rows)
-    else:
-        timeline_index = build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
-        blocks = list(timeline_index.get("blocks", []) or [])
-    if not blocks:
-        return "", 0.0, True, ["sem-blocos-candidato"]
-
-    annotate_class_ordinals(blocks)
-
-    preferred_unit_slug = str(unit.get("slug", "") or "")
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    temporal_signals = collect_entry_temporal_signals(
-        entry,
-        markdown_text,
-        collapse_ws=collapse_ws,
-        normalize_match_text=normalize_match_text,
-        extract_date_range_signal=extract_date_range_signal,
-        extract_timeline_session_signals=extract_timeline_session_signals,
-    )
-    topic_filtered_blocks = [
-        block for block in blocks if timeline_block_matches_preferred_topic(block, preferred_topic_slug)
-    ]
-    scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
-    session_scored_blocks = []
-    for block in scored_source_blocks:
-        block_score = score_entry_against_timeline_block(
-            signals,
-            block,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s,
-                items,
-                normalize_match_text=normalize_match_text,
-            ),
-            preferred_unit_slug=preferred_unit_slug,
-            preferred_topic_slug=preferred_topic_slug,
-        )
-        session_score, matched_session, session_card_bonus = score_entry_against_timeline_sessions(
-            temporal_signals,
-            block,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s,
-                items,
-                normalize_match_text=normalize_match_text,
-            ),
-            entry_temporal_range_contains_fn=lambda date_text, date_range: entry_temporal_range_contains(
-                date_text,
-                date_range,
-                parse_timeline_date_value=parse_timeline_date_value,
-            ),
-        )
-        if session_score >= 1.0:
-            session_scored_blocks.append((block, session_score, block_score, matched_session, session_card_bonus))
-
-    if session_scored_blocks:
-        session_scored_blocks.sort(key=lambda item: (item[1], item[2], item[4]), reverse=True)
-        best_block, best_score, best_block_score, best_session, best_session_card_bonus = session_scored_blocks[0]
-        runner_up_score = session_scored_blocks[1][1] if len(session_scored_blocks) > 1 else 0.0
-        if best_score < 1.0:
-            return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-        selected_rows = list(best_block.get("rows", []) or [])
-        period = str(best_block.get("period_label", "")).strip()
-        if not period:
-            selected_dates = [
-                str(row.get("date_text", "")).strip()
-                for row in selected_rows
-                if str(row.get("date_text", "")).strip()
-            ]
-            if selected_dates:
-                period = timeline_period_label(selected_dates[0], selected_dates[-1])
-        if not period:
-            return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-        confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
-        ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-        if len(session_scored_blocks) == 1 and not ambiguous:
-            confidence = max(confidence, 0.72)
-        reasons = [
-            f"best={best_score:.2f}",
-            f"runner_up={runner_up_score:.2f}",
-            f"session_block={best_block_score:.2f}",
-            f"selected_rows={len(selected_rows)}",
-            f"selected_block_rows={len(selected_rows)}",
-            "session-first",
-        ]
-        if best_session and best_session.get("id"):
-            reasons.append(f"session={best_session.get('id')}")
-        if best_session_card_bonus >= 0.15:
-            reasons.append("card-evidence")
-        if preferred_topic_slug:
-            reasons.append(f"topic={preferred_topic_slug}")
-            if topic_filtered_blocks:
-                reasons.append("topic-filtered")
-        if ambiguous:
-            reasons.append("ambiguous")
-        return period, confidence, ambiguous, reasons
-
-    scored_blocks = [
-        (
-            block,
-            score_entry_against_timeline_block(
-                signals,
-                block,
-                normalize_match_text=normalize_match_text,
-                score_text_against_row=score_text_against_row,
-                score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                    s,
-                    items,
-                    normalize_match_text=normalize_match_text,
-                ),
-                preferred_unit_slug=preferred_unit_slug,
-                preferred_topic_slug=preferred_topic_slug,
-            ),
-        )
-        for block in scored_source_blocks
-    ]
-    scored_blocks.sort(key=lambda item: item[1], reverse=True)
-
-    best_block, best_score = scored_blocks[0]
-    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
-    if best_score < 0.95:
-        return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-    selected_rows = list(best_block.get("rows", []) or [])
-    period = str(best_block.get("period_label", "")).strip()
-    if not period:
-        selected_dates = [
-            str(row.get("date_text", "")).strip()
-            for row in selected_rows
-            if str(row.get("date_text", "")).strip()
-        ]
-        if selected_dates:
-            period = timeline_period_label(selected_dates[0], selected_dates[-1])
-    if not period:
-        return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
-    ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-    best_block_card_bonus = min(
-        0.45,
-        score_card_evidence_against_entry(
-            signals,
-            best_block.get("card_evidence", []) or [],
-            normalize_match_text=normalize_match_text,
-        ),
-    )
-    reasons = [
-        f"best={best_score:.2f}",
-        f"runner_up={runner_up_score:.2f}",
-        f"selected_rows={len(selected_rows)}",
-        f"selected_block_rows={len(selected_rows)}",
-    ]
-    if best_block_card_bonus >= 0.15:
-        reasons.append("card-evidence")
-    if preferred_topic_slug:
-        reasons.append(f"topic={preferred_topic_slug}")
-        if topic_filtered_blocks:
-            reasons.append("topic-filtered")
-    if ambiguous:
-        reasons.append("ambiguous")
-    return period, confidence, ambiguous, reasons
-
-
 def build_file_map_content_taxonomy_from_course(
     course_meta: dict,
     subject_profile=None,
@@ -1244,6 +1255,7 @@ def build_file_map_content_taxonomy_from_course(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
+        _logger.warning("sem teaching_plan no perfil — content_taxonomy vazia (curso perde estrutura de unidades)")
         return {"version": 1, "course_slug": "", "units": []}
 
     root_dir = course_meta.get("_repo_root")
@@ -1295,6 +1307,9 @@ def build_file_map_content_taxonomy_from_course(
 
 def _derive_unit_specs_from_repo(course_meta: dict) -> list:
     """Fallback: deriva unit_specs do COURSE_MAP.md + .timeline_index.json do repo."""
+    _logger.warning(
+        "unidades derivadas do repo gerado, nao do plano de ensino — fallback"
+    )
     from src.builder.extraction.teaching_plan import _normalize_unit_slug as _slug_fn
 
     repo_root = course_meta.get("_repo_root")
@@ -1372,11 +1387,18 @@ def build_file_map_unit_index_from_course(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
         unit_specs = _derive_unit_specs_from_repo(course_meta)
+        _logger.warning(
+            "sem teaching_plan — unit_index cai pro fallback repo-derived (%d specs)", len(unit_specs)
+        )
         if unit_specs:
             return build_file_map_unit_index_fn(unit_specs)
         return []
 
     parsed_units = parse_units_from_teaching_plan(teaching_plan)
+    from src.builder.text.stopwords import resolve_unit_generic_tokens
+    course_generic = resolve_unit_generic_tokens(parsed_units, set(unit_generic_tokens) | set(timeline_unit_neutral_tokens),
+                                                 course_name=str(course_meta.get("course_name") or ""))
+    _def_generic = course_generic if course_generic is not None else (set(unit_generic_tokens) | set(timeline_unit_neutral_tokens))
     root_dir = course_meta.get("_repo_root")
     glossary_text = ""
     try:
@@ -1392,11 +1414,22 @@ def build_file_map_unit_index_from_course(
         seen_signals = set()
         for term in glossary_terms:
             unit_hint = normalize_match_text_fn(str(term.get("unit_hint", "") or ""))
-            if unit_hint and unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+            # Termo SEM `Aparece em` nao aponta unidade nenhuma — e secao do
+            # template (`## Formato de entrada`, `## Termos`), nao terminologia.
+            # O guard antigo (`if unit_hint and ...`) deixava passar e colava em
+            # TODA unidade dos 5 cursos (medido 2026-08-18).
+            if not unit_hint:
                 continue
+            if unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+                continue
+            # 2026-08-26: sinonimos do glossario ficam FORA do indice de UNIDADE.
+            # Sao vocabulario de subtopico (alias na taxonomia, scorer de
+            # subunidade); no scorer de unidade puxam a unidade que por acaso tem
+            # sidecar curado (SO u02 com PCB/FCFS/threads dominou: cobertura
+            # 47 -> 36/57). Medido em memoria: sem sinonimos 43/57, sem
+            # sinonimos E sem definicao 42 — definicao honesta ainda ajuda.
             for candidate in [
                 str(term.get("term", "") or ""),
-                *list(term.get("synonyms", []) or []),
             ]:
                 cleaned = collapse_ws_fn(str(candidate))
                 normalized = normalize_match_text_fn(cleaned)
@@ -1407,12 +1440,14 @@ def build_file_map_unit_index_from_course(
 
             definition = normalize_match_text_fn(str(term.get("definition", "") or ""))
             for token in definition.split():
-                if len(token) < 5 or token in unit_generic_tokens or token in timeline_unit_neutral_tokens:
+                if len(token) < 5 or token in _def_generic:
                     continue
                 if token in seen_signals:
                     continue
                 seen_signals.add(token)
                 extra_signals.append(token)
 
-        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
+        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals,
+                           "generic_tokens": sorted(course_generic) if course_generic is not None else None})
+
     return build_file_map_unit_index_fn(unit_specs)

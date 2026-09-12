@@ -1,0 +1,45 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS.&nbsp; Copyright © 2025. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Sugestão de Conteúdo Online",
+  "section": 4,
+  "summary": "Aqui você encontra algumas sugestões de filmes, documentários, séries e outros conteúdos relacionados a temas que poderão aparecer nas nossas discussões ao longo do semestre.",
+  "labels": []
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "section": 7,
+  "summary": "",
+  "labels": [
+   "Introdução a redes de computadores",
+   "Exercícios"
+  ]
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "section": 8,
+  "summary": "",
+  "labels": [
+   "Protocolos da camada de aplicação",
+   "Exercícios",
+   "Desenvolvimento de aplicações"
+  ]
+ }
+]

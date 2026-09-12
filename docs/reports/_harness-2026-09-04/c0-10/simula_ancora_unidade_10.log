@@ -1,0 +1,118 @@
+   [MF] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 0/0 | blocos mudados 0 -> []
+   [MF] F (E + afinidade >= 2): ancoras 9 | pinos ok 0/0 | blocos mudados 0 -> []
+   [MF] E (ancora D so no proprio bloco): pinos ok 0/0 | blocos mudados 0 -> []
+   D (C sem token generico): ancoras 9 | pinos ok 0 | blocos mudados 0 -> []
+   tokens das ancoras C nos blocos mudados: {'bloco-19': ['exercicios']}
+   C (ancora margem>=1 + token exclusivo): ancoras 12 | pinos ok 0 | blocos mudados 1 -> [('bloco-19', '03-verificacao', '02-verificacao')]
+== MF: blocos-aula 17 | reproduz DP gravada 17/17 | ancoras fortes 3 | pinos 0: DP 0 · A 0 · B 0 | blocos mudados A 0 · B 0
+     bloco-04 ANC DP=01-metodos-forma A=01-metodos-forma B=01-metodos-forma pino=-                'Especificação de Conjuntos Indutiv'
+     bloco-05 ANC DP=01-metodos-forma A=01-metodos-forma B=01-metodos-forma pino=-                'Inducao arvores'
+     bloco-15 ANC DP=02-verificacao-d A=02-verificacao-d B=02-verificacao-d pino=-                'Logica programas orientacao objeto'
+   [SO] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 1/2 | blocos mudados 0 -> []
+   [SO] F (E + afinidade >= 2): ancoras 10 | pinos ok 1/2 | blocos mudados 0 -> []
+   [SO] E (ancora D so no proprio bloco): pinos ok 1/2 | blocos mudados 0 -> []
+   D (C sem token generico): ancoras 10 | pinos ok 1 | blocos mudados 0 -> []
+   tokens das ancoras C nos blocos mudados: {}
+   C (ancora margem>=1 + token exclusivo): ancoras 10 | pinos ok 1 | blocos mudados 0 -> []
+   bloco-06 tokens=['deadlock', 'gerencia', 'processador', 'sincronizacao']
+      aff unidade-02-gerencia-do-process = 2 ['gerencia', 'processador']
+      aff unidade-03-programacao-concorr = 1 ['sincronizacao']
+      aff unidade-04-deadlock            = 1 ['deadlock']
+      aff unidade-05-gerencia-de-memoria = 1 ['gerencia']
+      aff unidade-06-gerencia-de-arquivo = 1 ['gerencia']
+      aff unidade-07-gerencia-de-entrada = 1 ['gerencia']
+   bloco-20 tokens=['arquivos', 'duvidas', 'gerencia']
+      aff unidade-02-gerencia-do-process = 1 ['gerencia']
+      aff unidade-05-gerencia-de-memoria = 1 ['gerencia']
+      aff unidade-06-gerencia-de-arquivo = 2 ['arquivos', 'gerencia']
+      aff unidade-07-gerencia-de-entrada = 1 ['gerencia']
+== SO: blocos-aula 17 | reproduz DP gravada 17/17 | ancoras fortes 3 | pinos 2: DP 1 · A 1 · B 0 | blocos mudados A 0 · B 1
+     bloco-03 ANC DP=01-introducao-ao A=01-introducao-ao B=01-introducao-ao pino=-                'Evolução histórica'
+     bloco-06     DP=02-gerencia-do-p A=02-gerencia-do-p B=02-gerencia-do-p pino=04-deadlock      'Gerencia processador sincronizacao'
+     bloco-13 ANC DP=05-gerencia-de-m A=05-gerencia-de-m B=05-gerencia-de-m pino=-                'Paginação'
+     bloco-16 ANC DP=05-gerencia-de-m A=05-gerencia-de-m B=05-gerencia-de-m pino=-                'Paginação'
+     bloco-20     DP=06-gerencia-de-a A=06-gerencia-de-a B=07-gerencia-de-e pino=06-gerencia-de-a 'Arquivos'
+   [IA] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 4/4 | blocos mudados 0 -> []
+   [IA] F (E + afinidade >= 2): ancoras 7 | pinos ok 4/4 | blocos mudados 0 -> []
+   [IA] E (ancora D so no proprio bloco): pinos ok 4/4 | blocos mudados 0 -> []
+   [IA] D detalhe: [('bloco-01', 'de-aprendizagem-05', 'de-aprendizagem-01', ''), ('bloco-02', 'de-aprendizagem-05', 'de-aprendizagem-01', ''), ('bloco-03', 'de-aprendizagem-05', 'de-aprendizagem-01', 'de-aprendizagem-05')]
+   D (C sem token generico): ancoras 7 | pinos ok 3 | blocos mudados 3 -> [('bloco-01', 'de-aprendizage', 'de-aprendizage'), ('bloco-02', 'de-aprendizage', 'de-aprendizage'), ('bloco-03', 'de-aprendizage', 'de-aprendizage')]
+   tokens das ancoras C nos blocos mudados: {}
+   C (ancora margem>=1 + token exclusivo): ancoras 7 | pinos ok 3 | blocos mudados 3 -> [('bloco-01', 'de-aprendizage', 'de-aprendizage'), ('bloco-02', 'de-aprendizage', 'de-aprendizage'), ('bloco-03', 'de-aprendizage', 'de-aprendizage')]
+== IA: blocos-aula 15 | reproduz DP gravada 15/15 | ancoras fortes 3 | pinos 4: DP 4 · A 4 · B 3 | blocos mudados A 0 · B 11
+     bloco-01     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Plano ensino programatico cronogra'
+     bloco-02     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Conceituação'
+     bloco-03     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=de-aprendizagem- 'Introducao'
+     bloco-04 ANC DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=de-aprendizagem- 'Introdução ao aprendizado de máqui'
+     bloco-05 ANC DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=de-aprendizagem- 'Modelos Preditivos'
+     bloco-07 ANC DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=de-aprendizagem- 'Modelos Descritivos'
+     bloco-08     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Duvidas'
+     bloco-11     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Gerais'
+     bloco-13     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Correcao algoritmos busca'
+     bloco-14     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Evento academico'
+     bloco-15     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Algoritmos busca'
+     bloco-16     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Correcao duvidas algoritmos busca'
+     bloco-17     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Introdução a agentes em ambientes '
+     bloco-18     DP=de-aprendizagem- A=de-aprendizagem- B=de-aprendizagem- pino=-                'Suspensao atividades feriado'
+   [ES2] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 4/4 | blocos mudados 0 -> []
+   [ES2] F (E + afinidade >= 2): ancoras 6 | pinos ok 4/4 | blocos mudados 0 -> []
+   [ES2] E (ancora D so no proprio bloco): pinos ok 4/4 | blocos mudados 0 -> []
+   D (C sem token generico): ancoras 7 | pinos ok 4 | blocos mudados 0 -> []
+   tokens das ancoras C nos blocos mudados: {}
+   C (ancora margem>=1 + token exclusivo): ancoras 7 | pinos ok 4 | blocos mudados 0 -> []
+== ES2: blocos-aula 11 | reproduz DP gravada 11/11 | ancoras fortes 1 | pinos 4: DP 4 · A 4 · B 4 | blocos mudados A 0 · B 0
+     bloco-04 ANC DP=02-integracao-de A=02-integracao-de B=02-integracao-de pino=02-integracao-de 'Estudo de Caso: integração e impla'
+     bloco-07     DP=02-integracao-de A=02-integracao-de B=02-integracao-de pino=02-integracao-de 'Estudo de Caso: integração e impla'
+     bloco-09     DP=02-integracao-de A=02-integracao-de B=02-integracao-de pino=02-integracao-de 'Estudo de Caso: integração e impla'
+     bloco-10     DP=02-integracao-de A=02-integracao-de B=02-integracao-de pino=02-integracao-de 'Estudo de Caso: integração e impla'
+   [TCC] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 3/3 | blocos mudados 0 -> []
+   [TCC] F (E + afinidade >= 2): ancoras 10 | pinos ok 3/3 | blocos mudados 0 -> []
+   [TCC] E (ancora D so no proprio bloco): pinos ok 3/3 | blocos mudados 1 -> [('bloco-33', '04-hierarquia-', '03-problemas-i', ['prova'])]
+   D (C sem token generico): ancoras 14 | pinos ok 3 | blocos mudados 2 -> [('bloco-30', '04-hierarquia-', '01-conjuntos-e'), ('bloco-33', '04-hierarquia-', '03-problemas-i')]
+   tokens das ancoras C nos blocos mudados: {'bloco-33': ['prova']}
+   C (ancora margem>=1 + token exclusivo): ancoras 14 | pinos ok 3 | blocos mudados 2 -> [('bloco-30', '04-hierarquia-', '01-conjuntos-e'), ('bloco-33', '04-hierarquia-', '03-problemas-i')]
+== TCC: blocos-aula 22 | reproduz DP gravada 22/22 | ancoras fortes 6 | pinos 3: DP 3 · A 3 · B 3 | blocos mudados A 0 · B 0
+     bloco-01 ANC DP=01-conjuntos-enu A=01-conjuntos-enu B=01-conjuntos-enu pino=-                'Teoria conjuntos'
+     bloco-02 ANC DP=01-conjuntos-enu A=01-conjuntos-enu B=01-conjuntos-enu pino=-                'Argumento Diagonal de Cantor e Con'
+     bloco-03 ANC DP=01-conjuntos-enu A=01-conjuntos-enu B=01-conjuntos-enu pino=-                'Funções Recursivas Primitivas e Fu'
+     bloco-06 ANC DP=02-turing-comput A=02-turing-comput B=02-turing-comput pino=-                'Máquinas de Turing'
+     bloco-09 ANC DP=02-turing-comput A=02-turing-comput B=02-turing-comput pino=-                'Linguagens Reconhecíveis e Decidív'
+     bloco-10     DP=03-problemas-ind A=03-problemas-ind B=03-problemas-ind pino=03-problemas-ind 'Halting problem'
+     bloco-11     DP=03-problemas-ind A=03-problemas-ind B=03-problemas-ind pino=03-problemas-ind 'Entscheidungsproblem'
+     bloco-12     DP=03-problemas-ind A=03-problemas-ind B=03-problemas-ind pino=03-problemas-ind 'Theorema rice'
+     bloco-19 ANC DP=04-hierarquia-de A=04-hierarquia-de B=04-hierarquia-de pino=-                'Complexidade de Tempo e de Espaço'
+   [LR] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 0/0 | blocos mudados 0 -> []
+   [LR] F (E + afinidade >= 2): ancoras 1 | pinos ok 0/0 | blocos mudados 0 -> []
+   [LR] E (ancora D so no proprio bloco): pinos ok 0/0 | blocos mudados 0 -> []
+   D (C sem token generico): ancoras 1 | pinos ok 0 | blocos mudados 0 -> []
+   tokens das ancoras C nos blocos mudados: {}
+   C (ancora margem>=1 + token exclusivo): ancoras 1 | pinos ok 0 | blocos mudados 0 -> []
+== LR: blocos-aula 8 | reproduz DP gravada 8/8 | ancoras fortes 1 | pinos 0: DP 0 · A 0 · B 0 | blocos mudados A 0 · B 0
+     bloco-07 ANC DP=02-nivel-de-tran A=02-nivel-de-tran B=02-nivel-de-tran pino=-                'Camada transporte sockets'
+   [FR] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 0/0 | blocos mudados 0 -> []
+   [FR] F (E + afinidade >= 2): ancoras 6 | pinos ok 0/0 | blocos mudados 0 -> []
+   [FR] E (ancora D so no proprio bloco): pinos ok 0/0 | blocos mudados 0 -> []
+   D (C sem token generico): ancoras 10 | pinos ok 0 | blocos mudados 0 -> []
+   tokens das ancoras C nos blocos mudados: {}
+   C (ancora margem>=1 + token exclusivo): ancoras 11 | pinos ok 0 | blocos mudados 0 -> []
+== FR: blocos-aula 21 | reproduz DP gravada 21/21 | ancoras fortes 2 | pinos 0: DP 0 · A 0 · B 0 | blocos mudados A 0 · B 0
+     bloco-03 ANC DP=02-nivel-de-apli A=02-nivel-de-apli B=02-nivel-de-apli pino=-                'Protocolos de aplicação para infra'
+     bloco-05 ANC DP=02-nivel-de-apli A=02-nivel-de-apli B=02-nivel-de-apli pino=-                'Protocolos de aplicação para o usu'
+   [CG] H (F + exclusivo de UMA so unidade, sem filtro generico): pinos ok 0/0 | blocos mudados 0 -> []
+   [CG] F (E + afinidade >= 2): ancoras 8 | pinos ok 0/0 | blocos mudados 0 -> []
+   [CG] E (ancora D so no proprio bloco): pinos ok 0/0 | blocos mudados 1 -> [('bloco-15', '06-processo-de', '07-representac', ['modelagem'])]
+   D (C sem token generico): ancoras 12 | pinos ok 0 | blocos mudados 5 -> [('bloco-09', '06-processo-de', '01-introducao-'), ('bloco-11', '06-processo-de', '01-introducao-'), ('bloco-15', '06-processo-de', '07-representac'), ('bloco-16', '06-processo-de', '01-introducao-'), ('bloco-17', '06-processo-de', '01-introducao-')]
+   tokens das ancoras C nos blocos mudados: {'bloco-15': ['modelagem']}
+   C (ancora margem>=1 + token exclusivo): ancoras 12 | pinos ok 0 | blocos mudados 5 -> [('bloco-09', '06-processo-de', '01-introducao-'), ('bloco-11', '06-processo-de', '01-introducao-'), ('bloco-15', '06-processo-de', '07-representac'), ('bloco-16', '06-processo-de', '01-introducao-'), ('bloco-17', '06-processo-de', '01-intro
+== CG: blocos-aula 22 | reproduz DP gravada 22/22 | ancoras fortes 0 | pinos 0: DP 0 · A 0 · B 0 | blocos mudados A 0 · B 3
+     bloco-06     DP=04-processo-de-v A=04-processo-de-v B=02-fundamentos-m pino=-                'Recorte'
+     bloco-08     DP=01-introducao-ao A=01-introducao-ao B=06-processo-de-v pino=-                'Áreas relacionadas'
+     bloco-13     DP=07-representacao A=07-representacao B=06-processo-de-v pino=-                'Curvas parametricas'
+
+TOTAL: reproducao da DP gravada 133/133 | pinos manuais 13 -> DP acerta 12 · A 12 · B 10 | blocos mudados A 0 · B 15 · C 11 | pinos C 11
+REGUA UNIDADE (5 golds, entries que seguem o bloco herdam): {'base': '183/191', 'A': '183/191', 'B': '181/191', 'C': '185/191', 'D': '185/191', 'E': '183/191', 'F': '183/191', 'H': '183/191'} | pinos D 11 E 12 F 12 H 12 | blocos mudados D 10 E 2 F 0 H 0
+   MF: base=66/66 A=66/66 B=66/66 C=66/66 D=66/66 E=66/66 F=66/66 H=66/66 | flips C: [] | flips D: [] | flips E: [] | flips F: [] | flips H: []
+   SO: base=32/37 A=32/37 B=28/37 C=32/37 D=32/37 E=32/37 F=32/37 H=32/37 | flips C: [] | flips D: [] | flips E: [] | flips F: [] | flips H: []
+   IA: base=39/42 A=39/42 B=41/42 C=41/42 D=41/42 E=39/42 F=39/42 H=39/42 | flips C: ['ia-responsável-7c4626:+', 'o-que-é-inteligência-artific:+', 'visao-geral-introducao-e-his:+', 'introducao-a-ml:-'] | flips D: ['ia-responsável-7c4626:+', 'o-que-é-inteligência-artific:+', 'visao-geral-introducao-e-his:+', 'introducao-a-m
+   ES2: base=28/28 A=28/28 B=28/28 C=28/28 D=28/28 E=28/28 F=28/28 H=28/28 | flips C: [] | flips D: [] | flips E: [] | flips F: [] | flips H: []
+   TCC: base=18/18 A=18/18 B=18/18 C=18/18 D=18/18 E=18/18 F=18/18 H=18/18 | flips C: [] | flips D: [] | flips E: [] | flips F: [] | flips H: []

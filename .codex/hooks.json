@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/engine-facade-guard.js",
+            "commandWindows": "node scripts/hooks/engine-facade-guard.js",
+            "timeout": 10
+          }
+        ],
+        "description": "engine.py e fachada (.mex/AGENTS.md). Caminho relativo: o hook roda com cwd no projeto."
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/gemini-antipattern-guard.js",
+            "commandWindows": "node scripts/hooks/gemini-antipattern-guard.js",
+            "timeout": 15
+          }
+        ],
+        "description": "anti-padroes Gemini no staged (.mex/AGENTS.md)"
+      }
+    ]
+  }
+}

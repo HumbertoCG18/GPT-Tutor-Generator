@@ -9,7 +9,6 @@ class _Entry:
         self.source_path = source_path
         self.tags = ""
         self.notes = ""
-        self.professor_signal = ""
         self.include_in_bundle = True
 
     def id(self):

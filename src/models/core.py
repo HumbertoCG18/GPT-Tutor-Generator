@@ -49,7 +49,6 @@ class FileEntry:
     manual_subunit_slug: str = ""
     manual_timeline_block_id: str = ""
     notes: str = ""
-    professor_signal: str = ""
     relevant_for_exam: bool = True
     include_in_bundle: bool = True
 
@@ -67,9 +66,9 @@ class FileEntry:
     ocr_language: str = DEFAULT_OCR_LANGUAGE
     enabled: bool = True
 
-    # Sinais de match persistidos no manifest.json (gravados por
-    # resolve_unit_block_tags). Declarados aqui para o round-trip from_dict ->
-    # to_dict parar de descarta-los silenciosamente.
+    # Sinais de match persistidos no manifest.json (gravados pelo motor,
+    # resolver_apply.apply_unit_subunit_fields). Declarados aqui para o
+    # round-trip from_dict -> to_dict parar de descarta-los silenciosamente.
     unit_match_confidence: float = 0.0
     unit_match_reasons: List[str] = field(default_factory=list)
     subunit_match_confidence: float = 0.0
@@ -77,25 +76,104 @@ class FileEntry:
 
     # Atribuicao first-class (Fase 1). Resolve "tudo e parse de tag": o slug/id
     # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
-    # destes campos (escritos por resolve_unit_block_tags).
+    # destes campos (escritos pelo motor: apply_concept_resolver +
+    # apply_unit_subunit_fields).
     computed_unit_slug: str = ""
+    # Duplicata confirmada (scripts/detecta_duplicatas.py, 100% mesmo documento
+    # por bytes/PDF-texto): id da entry PRIMARIA. Secundaria marcada continua no
+    # manifest e no MOTOR (golds/regua a referenciam), mas sai dos indices
+    # navegacionais (EXAM/EXERCISE/FILE_MAP etc., ruling user 2026-08-31).
+    duplicate_of: str = ""
+    # Cobertura N:N do motor (coverage_rules.derive_coverage_units): lista de
+    # {unit_slug, topics, confidence, rule}; None = nunca computada. Declarada
+    # para o round-trip from_dict -> to_dict parar de descarta-la (consumidor:
+    # EXAM_INDEX, FASE 4).
+    coverage_units: Optional[List[dict]] = None
+    # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
+    # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict
+    # (antes era descartado, deixando subunit_match_confidence orfa). A tag
+    # subunit: (gated) continua sendo a atribuicao; este campo e a sugestao.
+    computed_subunit_slug: str = ""
     computed_block_id: str = ""
     computed_block_confidence: float = 0.0
     # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
     # thresholds.confidence_band; "" quando nao ha bloco atribuido.
     computed_block_band: str = ""
+    # Justificativa do Gemini (code summarizer) para a escolha de bloco.
+    # Copiada de code_curation.json (summary.match_rationale) na regeneração
+    # pedagógica; "" para entries sem summary (não-código).
+    computed_block_rationale: str = ""
+    # Método e confiança do match code->bloco, do code summarizer (Gemini +
+    # matcher local). Copiados de code_curation.json (summary.block_match_method
+    # / block_match_confidence) na regeneração pedagógica; default vazio/0.0 para
+    # entries sem summary (não-código). Distinto de computed_block_confidence
+    # (acima), que é a confiança do routing determinístico.
+    computed_block_method: str = ""
+    computed_block_match_confidence: float = 0.0
+    # Bloco TEMPORAL (cronograma) resolvido pela camada de âncora, ADITIVO e
+    # disjunto de computed_block_id (KB). Escrito pelo motor (use_anchor_engine)
+    # com method do provider, ou manual; "" (omitido do to_dict) quando scorer ou flag OFF
+    # -> resolve_temporal_block cai no fallback resolve_effective_block. NUNCA
+    # alimenta file->card/unit (não re-conflaciona temporal vs KB).
+    temporal_block_id: str = ""
+    temporal_block_method: str = ""
     # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).
     source_section: str = ""
+    # Label do recurso no Moodle (= mod.get("name") do core_course_get_contents,
+    # ex. "Exemplos (Lógica de Floyd-Hoare)"). Capturado no import (backfill da API)
+    # ANTES do redirect SharePoint que deixa só o filename. Identidade LIMPA do
+    # material — pesa como conceito no resolver. NUNCA sobrescreve title. ""=ausente.
+    moodle_label: str = ""
+    # Posicao do professor no Moodle (Fase 3a, backfill de raw/moodle/contents.json a
+    # cada regeneracao): numero da secao, posicao do modulo na secao e texto do label
+    # DATADO mais proximo antes do modulo. Estrutura, nao decisao (o motor le em 3b).
+    # None/"" = sem match no Moodle (to_dict omite).
+    moodle_section_index: Optional[int] = None
+    moodle_module_index: Optional[int] = None
+    moodle_week_label: str = ""
+    # Data de upload/postagem (ISO YYYY-MM-DD) do timemodified Moodle/M365.
+    # Capturada no import (S0). NAO consumida pela atribuicao (consumo = A2).
+    # ""=ausente (HTML sem timestamp, ou fonte sem data).
+    posting_date: str = ""
+    posting_date_created: str = ""   # ISO do timecreated (diagnostico do probe)
+    # Conflito unidade×bloco detectado no auto (F1): a unidade forte (>=0.65)
+    # venceu um bloco que apontava OUTRA unidade (block_confidence < unit_conf).
+    # {} quando não há conflito. Sinal de revisão exibido no editor; o build
+    # mantém a unidade forte. Distinto da herança silenciosa (que não é conflito).
+    unit_block_conflict: dict = field(default_factory=dict)
+    # Fila de revisao (Fase 0, 02/09): "duvida" | "llm" | "ok"; "" = nao-material.
+    # Derivado por routing.revisar.revisar_de em apply_unit_subunit_fields e
+    # recalculado a cada reprocess. Consumidores: secao de revisao (UI, depois)
+    # e scripts/censo_motor_llm.py ("revisar por 100 materiais").
+    revisar: str = ""
+    # SYNC (03/09): "bloco: X -> Y (sync AAAA-MM-DD)" quando uma sincronizacao moveu uma decisao
+    # confiante desta entry (material novo mudou a estrutura/vizinhanca). revisar_de -> "mudou".
+    # A sync seguinte limpa se nada mover; "" = sem mudanca.
+    sync_changed: str = ""
+    # Override do id (bug B5): setado pelo import quando o id computado do
+    # source_path colide com entry de OUTRO source_path. Quando não-vazio,
+    # id() retorna este valor — assim assets/raw/manifest usam o id final
+    # consistente desde o início do processamento. Persistido no manifest
+    # (to_dict omite quando vazio; from_dict restaura), então releituras
+    # mantêm o id deduplicado em vez de recomputar do source_path.
+    id_override: str = ""
 
     def id(self) -> str:
+        if self.id_override:
+            return self.id_override
         if self.file_type == "url":
             import hashlib
             base = slugify(self.title) or "url"
             url_hash = hashlib.md5(self.source_path.encode()).hexdigest()[:6]
             return f"{base}-{url_hash}"
-        return slugify(Path(self.source_path).stem)
+        stem = Path(self.source_path).stem
+        # ".tar.gz": stem devolve "x.tar" — sem o corte o id herda o "tar"
+        # (tcp-chat-ctar, achado no import do FR 01/09).
+        if stem.lower().endswith(".tar"):
+            stem = stem[:-4]
+        return slugify(stem)
 
     def to_dict(self) -> Dict:
         from dataclasses import fields as _fields, MISSING
@@ -187,8 +265,14 @@ class SubjectProfile:
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
     m365_filter: str = ""        # substring do path OneDrive p/ filtrar insights (M365)
+    turma: str = ""              # turma(s) do curso Moodle (ex.: "031"); registro, nao scoped (S0)
+    schedule_url: str = ""       # URL do SARC Export.aspx (GUID/ano/sem da turma); registro (S0)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
+    # Flags de feature por matéria (durável). Ausente/{} → todas False. Injetadas
+    # nas builder.options por _build_options_from_config. Liga capacidades wired
+    # atrás de flag (ex.: use_anchor_engine) sem schema novo por flag.
+    feature_flags: Dict[str, bool] = field(default_factory=dict)
     queue: List[FileEntry] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -273,6 +357,10 @@ class PendingOperation:
         return op
 
 
+def _norm_repo_root(p) -> str:
+    return str(Path(p).resolve()).replace("\\", "/").rstrip("/").casefold()
+
+
 class SubjectStore:
     """Persistência de perfis de matérias em JSON."""
 
@@ -310,6 +398,19 @@ class SubjectStore:
 
     def names(self) -> List[str]:
         return sorted(list(self._data.keys()))
+
+    def find_by_repo_root(self, repo_root) -> Optional[SubjectProfile]:
+        """Resolve o perfil da materia dono de um repo-tutor gerado (match por repo_root).
+        Relativo ou absoluto, tanto faz: os dois lados passam por Path.resolve (02/09:
+        `reprocess_assignments.py ../X-Tutor` nao achava o perfil e o guard de unidades
+        abortava a rodada)."""
+        target = _norm_repo_root(repo_root)
+        for name in self.names():
+            sp = self.get(name)
+            rr = str(getattr(sp, "repo_root", "") or "")
+            if rr and _norm_repo_root(rr) == target:
+                return sp
+        return None
 
 
 class StudentStore:
@@ -361,3 +462,12 @@ class PendingOperationStore:
                 self._path.unlink()
         except Exception as e:
             logger.warning("Failed to clear pending operation %s: %s", self._path, e)
+
+
+def moodle_label_text(entry) -> str:
+    """Texto do `moodle_label` (str ou {"text": ...}); "" quando ausente. Leitor unico — era reimplementado em disambiguator,
+    window_provider, sources/moodle, resolver_apply, artifacts/navigation e vocabulary_compile (consolidacao 07/09)."""
+    ml = entry.get("moodle_label") if isinstance(entry, dict) else getattr(entry, "moodle_label", "")
+    if isinstance(ml, dict):
+        return str(ml.get("text") or "")
+    return str(ml or "")

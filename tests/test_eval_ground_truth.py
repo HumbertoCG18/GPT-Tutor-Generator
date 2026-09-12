@@ -120,3 +120,59 @@ def test_build_template_rows_prefills_true_with_predicted(tmp_path):
     for col in ("id", "title", "category", "markdown_path",
                 "predicted_block_id", "predicted_period", "predicted_band", "true_block_id"):
         assert col in rows[0]
+
+
+def test_band_e_a_do_metodo_que_decidiu_o_bloco(tmp_path):
+    """A predicao medida e resolve_temporal_block (ancora vence). Ler
+    computed_block_band para uma entry decidida pela ancora misturava a
+    confianca do scorer de conceito com o acerto do motor de janela e fabricava
+    uma 'banda invertida' (media < baixa) que nao existia (2026-08-20)."""
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    manifest = {"entries": [
+        {"id": "ancora", "computed_block_id": "bloco-01", "computed_block_band": "alta",
+         "computed_block_confidence": 0.9, "temporal_block_id": "bloco-02",
+         "temporal_block_band": "media", "temporal_block_confidence": 0.3},
+        {"id": "pino", "computed_block_id": "bloco-01", "computed_block_band": "baixa",
+         "manual_timeline_block_id": "bloco-03"},
+        {"id": "funil", "computed_block_id": "bloco-01", "computed_block_band": "baixa",
+         "computed_block_confidence": 0.1},
+    ]}
+    (repo / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    timeline = {"version": 4, "blocks": [{"id": f"bloco-0{i}", "period_label": f"S{i}"} for i in (1, 2, 3)]}
+    (repo / "course" / ".timeline_index.json").write_text(json.dumps(timeline), encoding="utf-8")
+
+    preds = load_predictions(repo)
+    assert preds["ancora"]["block_id"] == "bloco-02"
+    assert preds["ancora"]["band"] == "media"
+    assert preds["pino"]["block_id"] == "bloco-03"
+    assert preds["pino"]["band"] == "manual"
+    assert preds["funil"]["band"] == "baixa"
+
+
+def test_load_labels_csv_ignora_linha_scorable_no(tmp_path):
+    """05/09: `scorable=no` (ex.: prova antiga de outro semestre) sai do denominador da regua de bloco,
+    como ja acontecia na regua de unidade (_load_truth)."""
+    from scripts.eval_ground_truth import load_labels_csv
+    p = tmp_path / "gt.csv"
+    p.write_text("id,true_block_id,scorable\na,bloco-01,yes\nb,bloco-02,no\nc,bloco-03,\n", encoding="utf-8")
+    labels = load_labels_csv(p)
+    assert labels == {"a": "bloco-01", "c": "bloco-03"}
+
+
+def test_load_truth_material_gt_sobrepoe_o_gold_por_bloco(tmp_path, monkeypatch):
+    """11/09 (3.2): curso sem gold por bloco (CG) usa `docs/reports/material_gt_<sig>.csv` (`gold_units` por material).
+    12/09 (C5 item 1, user + astra): a regua de unidade e CURRICULAR (onde o plano poe o assunto), nao temporal (bloco em
+    que a aula foi dada): onde material_gt tem uma unidade adjudicada ele SOBREPOE o gold por bloco; o bloco preenche o
+    resto. Linha com `|` (qualquer uma vale) e `scorable=no` ficam fora. As 17 contradicoes de 12/09 foram adjudicadas
+    para material_gt (`docs/reports/contradicoes_unidade_material_gt_vs_bloco.csv`)."""
+    import scripts.eval_entry_unit as eu
+    monkeypatch.setattr(eu, "ROOT", tmp_path)
+    (tmp_path / "docs/reports").mkdir(parents=True)
+    (tmp_path / "tests/fixtures/eval").mkdir(parents=True)
+    (tmp_path / "docs/reports/material_gt_X.csv").write_text(
+        "entry_id,gold_units,scorable\na,unidade-01,yes\nb,unidade-01|unidade-02,yes\nc,unidade-03,no\nd,,yes\n", encoding="utf-8")
+    assert eu._load_truth("X") == {"a": "unidade-01"}
+    (tmp_path / "tests/fixtures/eval/gold_units_X.csv").write_text("block_uuid,true_unit\nu1,unidade-09\n", encoding="utf-8")
+    (tmp_path / "docs/reports/ground_truth_X.csv").write_text("id,true_block_uuid,scorable\na,u1,yes\nz,u1,yes\n", encoding="utf-8")
+    assert eu._load_truth("X") == {"a": "unidade-01", "z": "unidade-09"}  # a: material_gt sobrepoe o bloco (u09); z: so bloco

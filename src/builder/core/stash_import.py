@@ -10,6 +10,7 @@ Módulo PURO: sem Tkinter, sem I/O além de varrer o filesystem.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
 from pathlib import Path
 from typing import List
 
@@ -24,8 +25,9 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", "
 class StashItem:
     source_path: str
     card_name: str
-    file_type: str   # "pdf" | "image" | "zip" | "code"
+    file_type: str   # "pdf" | "image" | "zip" | "code" | "html"
     category: str
+    moodle_label: str = ""   # nome do modulo no Moodle (sidecar .moodle_nomes.json), S6f
 
 
 @dataclass
@@ -34,14 +36,23 @@ class StashScanResult:
     skipped: List[str] = field(default_factory=list)  # paths de ext. desconhecida
 
 
-def _classify_file_type(ext: str) -> str:
-    ext = ext.lower()
+def _classify_file_type(name: str) -> str:
+    """Tipo pelo NOME (nao por path.suffix: '.tar.gz' tem duplo sufixo e o
+    suffix ve so '.gz' — os 5 pacotes de codigo do FR 2026/2 eram pulados)."""
+    name = name.lower()
+    ext = Path(name).suffix
     if ext == ".pdf":
         return "pdf"
     if ext in IMAGE_EXTENSIONS:
         return "image"
-    if ext == ".zip":
+    # tar.gz/.tgz seguem o MESMO fluxo do zip (extrair -> sub-entries de
+    # codigo); process_zip decide o formato pelo CONTEUDO do arquivo.
+    if ext == ".zip" or name.endswith((".tar.gz", ".tgz")):
         return "zip"
+    # Pagina do professor / do Moodle salva no stash e MATERIAL (SYNC S6b, 03/09). Antes de code:
+    # ".html" esta em CODE_EXTENSIONS (virava codigo-professor sem texto) e ".htm" era ignorado.
+    if ext in (".htm", ".html"):
+        return "html"
     if ext in CODE_EXTENSIONS:
         return "code"
     return ""  # desconhecido -> skip
@@ -53,15 +64,33 @@ def _card_for(path: Path, root: Path) -> str:
     return rel_parts[0] if len(rel_parts) > 1 else ""
 
 
-def scan_stash_cards(stash_root) -> StashScanResult:
+def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
     root = Path(stash_root)
     result = StashScanResult()
     if not root.is_dir():
         return result
+    # F10 (censo 2026-08-28): a categoria certa vive ora no nome do MODULO do Moodle
+    # ("Tipos de Redes (Slides)"), ora no nome do ARQUIVO ("aula03 - buildroot-intro.pdf").
+    # Detecta sobre os dois concatenados — arquivo por ULTIMO preserva a extensao — e a
+    # ordem de prioridade dos cues decide ("aula" antes de "livro"). Sem sidecar
+    # (stash montado a mao, cursos antigos): comportamento identico ao de antes.
+    nomes_moodle: dict = {}
+    sidecar = root / ".moodle_nomes.json"
+    if sidecar.is_file():
+        try:
+            nomes_moodle = json.loads(sidecar.read_text(encoding="utf-8")) or {}
+        except Exception:
+            nomes_moodle = {}
+    # S6d: bundle de pagina = subdir (abaixo do card) com .htm/.html no topo; as imagens dentro dele sao da
+    # pagina (Curvas.fld/, irmas), nao itens — cru elas virariam entries `image`.
+    bundles = {p.parent for p in root.rglob("*") if p.is_file() and p.suffix.lower() in (".htm", ".html")
+               and len(p.relative_to(root).parts) >= 3}
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
-        ftype = _classify_file_type(path.suffix)
+        if path.suffix.lower() not in (".htm", ".html") and any(b in path.parents for b in bundles):
+            continue
+        ftype = _classify_file_type(path.name)
         if not ftype:
             result.skipped.append(str(path))
             continue
@@ -70,12 +99,16 @@ def scan_stash_cards(stash_root) -> StashScanResult:
         if ftype == "zip":
             category = "codigo-professor"
         else:
-            category = auto_detect_category(path.name, is_image=(ftype == "image"))
+            modulo = str(nomes_moodle.get(f"{_card_for(path, root)}/{path.name}") or "")
+            nome_para_categoria = f"{modulo} {path.name}" if modulo else path.name
+            category = auto_detect_category(nome_para_categoria, is_image=(ftype == "image"),
+                                            frases_do_plano=frases_do_plano)
         result.items.append(StashItem(
             source_path=str(path),
             card_name=_card_for(path, root),
             file_type=ftype,
             category=category,
+            moodle_label=str(nomes_moodle.get(f"{_card_for(path, root)}/{path.name}") or ""),
         ))
     return result
 
@@ -98,11 +131,17 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
     for item in scan.items:
         if item.source_path in existing:
             continue
+        # ".tar.gz": stem devolve "x.tar" — o id herdaria o "tar" (tcp-chat-ctar).
+        stem = Path(item.source_path).stem
+        if stem.lower().endswith(".tar"):
+            stem = stem[:-4]
         entries.append(FileEntry(
             source_path=item.source_path,
             file_type=item.file_type,
             category=item.category,
-            title=Path(item.source_path).stem,
+            title=stem,
+            # Sem o label o casador nao liga materiais de modulo url/page (rebuild do CG: 19/66 sem estrutura, 04/09).
+            moodle_label=getattr(item, "moodle_label", "") or "",
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
             ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),

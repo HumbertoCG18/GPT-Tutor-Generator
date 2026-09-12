@@ -1,15 +1,31 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
-from datetime import date
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
-from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
+from src.builder.extraction.content_taxonomy import (
+    _extract_markdown_headings,
+    extract_markdown_lead_text,
+)
+from src.builder.extraction.image_markdown import _IMAGE_DESC_BLOCK_RE, _IMAGE_DESC_ORPHANS_RE
+from src.builder.routing.thresholds import TOOL_EXTENSIONS
+from src.builder.text.normalize import (  # noqa: F401  (re-export)
+    normalize_match_text,
+    split_camel_case,
+)
 
 
-def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
+def score_text_against_row(
+    source_text: str,
+    row_tokens: List[str],
+    *,
+    weight: float = 1.0,
+    token_weights: Dict[str, float] | None = None,
+) -> float:
+    # S2 (P4): token_weights (token -> peso efetivo, cf.
+    # file_map.block_token_weights) multiplica a contribuição POR row_token —
+    # tokens raros entre os candidatos pesam mais. None = peso 1.0 para todos
+    # (comportamento anterior EXATO).
     if not source_text or not row_tokens:
         return 0.0
 
@@ -17,12 +33,13 @@ def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: f
     score = 0.0
     for source_token in source_tokens:
         for row_token in row_tokens:
+            token_weight = 1.0 if token_weights is None else float(token_weights.get(row_token, 1.0))
             if source_token == row_token:
-                score += 1.0 * weight
+                score += 1.0 * weight * token_weight
             elif source_token in row_token or row_token in source_token:
-                score += 0.45 * weight
+                score += 0.45 * weight * token_weight
             elif len(source_token) >= 5 and len(row_token) >= 5 and source_token[:5] == row_token[:5]:
-                score += 0.2 * weight
+                score += 0.2 * weight * token_weight
     return score
 
 
@@ -38,21 +55,6 @@ def entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
     if rendered_pages_dir:
         dirs.append(root_dir / rendered_pages_dir)
     return dirs
-
-
-def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
-    headings: List[str] = []
-    for line in (raw_markdown or "").splitlines():
-        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        heading = re.sub(r"\s+", " ", match.group(1)).strip()
-        if not heading:
-            continue
-        headings.append(heading)
-        if len(headings) >= limit:
-            break
-    return headings
 
 
 def _merge_manual_and_auto_tags(
@@ -76,9 +78,57 @@ def _merge_manual_and_auto_tags(
     return "; ".join(merged)
 
 
+# Prefixos que o PROPRIO motor escreve (`resolver_apply` espelha o que ele
+# computou). Realimentar o scorer com eles faz o sistema re-eleger a resposta
+# anterior: medido 2026-08-19 rodando o mesmo scorer sobre os manifests antes e
+# depois de um reprocess — 131 -> 129 acertos, toda a perda no MF, sem ninguem
+# ter mudado nada. `topico:`/`ferramenta:`/`tipo:` NAO entram aqui: vem do
+# catalogo/taxonomia, nao da atribuicao.
+_PREFIXOS_ESPELHO_DO_MOTOR = ("unit:", "subunit:", "bloco:", "block:")
+
+
+def _sem_eco(tags: List[str]) -> List[str]:
+    return [t for t in tags if not str(t).lower().startswith(_PREFIXOS_ESPELHO_DO_MOTOR)]
+
+
+def texto_para_score(markdown_text: str) -> str:
+    """Markdown sem os blocos de DESCRICAO DE IMAGEM. A descricao serve ao ALUNO (contexto da figura no tutor) e fica no
+    arquivo; ela nao deve pontuar. Medido em 07/09: a caption generica do Datalab, em ingles ("A 4x4 grid showing the
+    result of erosion", "Logos for GRU and PUCRS"), entra no vocabulario propagado do CURSO — os materiais confiantes doam
+    alias — e desvia a subunidade de materiais que nem tem imagem. Ablando os blocos: +2 materiais 100% certos, subunidade
+    193 -> 195/233, erro confiante 19 -> 18, fila 91 -> 89 (`c1-3/ablate_descricoes.log`)."""
+    texto = str(markdown_text or "")
+    if "IMAGE_DESCRIPTION" not in texto:
+        return texto
+    return _IMAGE_DESC_ORPHANS_RE.sub("\n", _IMAGE_DESC_BLOCK_RE.sub("", texto))
+
+
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
+    markdown_text = texto_para_score(markdown_text)
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
+    # Lista SEM eco: so o que vira TEXTO de score. A lista crua segue inteira
+    # para `tool_values` e para quem le auto_tags fora daqui.
+    auto_tags_sem_eco = _sem_eco(auto_tags)
+    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio.
+    # ATENCAO: o comentario antigo dizia que "o scorer de bloco (file_map,
+    # TOOL_TOKENS) filtra quais sao ferramentas de verdade". `TOOL_TOKENS` NAO
+    # existe em `src/` (so sobrevivia num .pyc stale) — **nada filtra esta lista**.
+    # Ver B-9 em pendencias.md; o vocabulario de `ferramenta:` e auto-inferido do
+    # proprio corpus (B-1) e por isso vem sujo.
+    tool_values = [
+        tag.split(":", 1)[1].strip()
+        for tag in auto_tags
+        if tag.lower().startswith("ferramenta:")
+    ]
+    # S4b (P4): ferramenta também pela EXTENSÃO do arquivo fonte (.thy ->
+    # isabelle, .dfy -> dafny) — os .thy do manifest real não trazem
+    # ferramenta:isabelle nas auto_tags. União dos dois sinais, dedupada.
+    for field in ("source_path", "raw_target"):
+        suffix = Path(str(entry.get(field, "") or "")).suffix.lower()
+        ext_tool = TOOL_EXTENSIONS.get(suffix)
+        if ext_tool and ext_tool not in tool_values:
+            tool_values.append(ext_tool)
     legacy_tags = [
         part.strip()
         for part in str(entry.get("tags", "") or "").replace(",", ";").split(";")
@@ -86,7 +136,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
     ]
     merged_tags = _merge_manual_and_auto_tags(
         manual_tags,
-        auto_tags,
+        auto_tags_sem_eco,
         fallback_tags="; ".join(legacy_tags),
         limit=6,
     )
@@ -99,36 +149,31 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         extra_parts.append(image_description)
     effective_markdown = "\n".join(p for p in extra_parts if p).strip()
     return {
-        "title_text": normalize_match_text(entry.get("title", "")),
-        "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
+        # S1 (P4): split camelCase SÓ no título — "LogicaDeHoare2" vira
+        # "logica de hoare 2" e casa com o topic do bloco. Markdown/tags intactos.
+        "title_text": normalize_match_text(split_camel_case(entry.get("title", ""))),
+        # limit=24 (2026-09-01): o default 8 parava no 8o heading e num
+        # slide-deck (formato dominante das aulas) o corpo estrutural fica
+        # invisivel — FR 02-modelos tinha "TCP/IP" no 17o heading e a subunit
+        # certa perdia o token no campo forte. So AQUI (scorer de entry); os
+        # strong_headings da taxonomia seguem com o default.
+        "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text, limit=24))),
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),
-        "auto_tags_text": normalize_match_text("; ".join(auto_tags)),
+        "auto_tags_text": normalize_match_text("; ".join(auto_tags_sem_eco)),
+        "tool_tags_text": normalize_match_text(" ".join(tool_values)),
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
         "image_description_text": normalize_match_text(image_description),
         "markdown_text": normalize_match_text(effective_markdown),
+        # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
+        # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
+        "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
+        # card do Moodle (secao onde o professor postou). Sinal de COBERTURA, nao
+        # temporal: o motor ja usa o card como janela por outra via. Consumido SO
+        # pelo scorer de unidade — ver test_card_nao_afeta_o_scorer_de_bloco_do_motor.
+        "card_text": normalize_match_text(entry.get("source_section", "")),
     }
 
-
-_DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
-
-
-def extract_date_prefix_signal(filename: str, year: int) -> Optional[date]:
-    """Extrai sinal de data DD.MM do início do nome do arquivo.
-
-    Padrão esperado: '12.03 Processos.pdf' → date(year, 3, 12)
-    O ponto é usado como separador porque '/' não é válido em nomes de
-    arquivo no Windows. Retorna None se o padrão não casar ou a data
-    for inválida.
-    """
-    stem = Path(filename).stem
-    m = _DATE_PREFIX_RE.match(stem)
-    if not m:
-        return None
-    try:
-        return date(year, int(m.group(2)), int(m.group(1)))
-    except ValueError:
-        return None

@@ -1,0 +1,9 @@
+curso | cards com file_dues | arquivos c/ due (chaves) | fonte | entries do tutor com due | em escopo do due-window (trabalhos/provas/codigo-TDE) | metodo dessas
+MF   |  2 |  58 | {'named': 54, 'structured': 4} |  26 |  3 (named: []) | {'due-contain': 2, 'due-straddle': 1}
+SO   |  0 |   0 | {} |   0 |  0 (named: []) | {}
+IA   |  0 |   0 | {} |   0 |  0 (named: []) | {}
+ES2  |  0 |   0 | {} |   0 |  0 (named: []) | {}
+TCC  |  0 |   0 | {} |   0 |  0 (named: []) | {}
+LR: sem card_block_map
+CG: sem card_block_map
+FR: sem card_block_map

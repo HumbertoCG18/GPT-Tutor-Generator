@@ -1,0 +1,11 @@
+MF   base  55/58  | L1 labels  55 (+0 -0) | L2 camel  55 (+0 -0) | L3 zip-md  55 (+0 -0) | M1 meta  55 (+0 -0) | M1+L2  55 (+0 -0) | M1+L2+L3  55 (+0 -0)
+SO   base  15/15  | L1 labels  15 (+0 -0) | L2 camel  15 (+0 -0) | L3 zip-md  15 (+0 -0) | M1 meta  15 (+0 -0) | M1+L2  15 (+0 -0) | M1+L2+L3  15 (+0 -0)
+IA   base  36/39  | L1 labels  36 (+0 -0) | L2 camel  36 (+0 -0) | L3 zip-md  36 (+0 -0) | M1 meta  36 (+0 -0) | M1+L2  36 (+0 -0) | M1+L2+L3  36 (+0 -0)
+ES2  base  25/28  | L1 labels  25 (+0 -0) | L2 camel  25 (+0 -0) | L3 zip-md  25 (+0 -0) | M1 meta  25 (+0 -0) | M1+L2  25 (+0 -0) | M1+L2+L3  25 (+0 -0)
+TCC  base  10/11  | L1 labels  10 (+0 -0) | L2 camel  10 (+0 -0) | L3 zip-md  10 (+0 -0) | M1 meta  10 (+0 -0) | M1+L2  10 (+0 -0) | M1+L2+L3  10 (+0 -0)
+    CG M1 meta: gain ['exercicios'] loss []
+    CG M1+L2: gain ['exercicios'] loss []
+    CG M1+L2+L3: gain ['exercicios'] loss []
+CG   base  53/82  | L1 labels  53 (+0 -0) | L2 camel  53 (+0 -0) | L3 zip-md  53 (+0 -0) | M1 meta  54 (+1 -0) | M1+L2  54 (+1 -0) | M1+L2+L3  54 (+1 -0)
+
+TOTAL 6 cursos (com-extras, primario): {'base': (194, 159), 'L1 labels': (194, 159), 'L2 camel': (194, 159), 'L3 zip-md': (194, 159), 'M1 meta': (195, 160), 'M1+L2': (195, 160), 'M1+L2+L3': (195, 160)}

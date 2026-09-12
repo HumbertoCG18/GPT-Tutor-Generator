@@ -1,0 +1,77 @@
+== CG: A=c56b6cb (ultimo commit ate 08/09) · B=HEAD · C=arvore de trabalho
+    CG  subunidade intro                                        conceitos              -> origens                igual p/ gold
+    CG  subunidade opengl3dcpp-vdi                              conceito-de-camera-sin -> paralela               PIOROU
+    CG  subunidade opengl3dcpp                                  perspectiva            -> paralela               igual p/ gold
+    CG  subunidade exercicios                                   conceitos              -> aplicacoes             melhorou
+    CG  subunidade opengl-cpp                                   conceitos              -> aplicacoes             melhorou
+    CG  subunidade opengl-py                                    conceitos              -> aplicacoes             melhorou
+    CG  subunidade openglbasico                                 conceitos              -> aplicacoes             melhorou
+    CG  subunidade texturas-v3                                  conceitos              -> aplicacoes             sem gold
+    CG  subunidade transformacoesgeometricas                    (vazio)                -> desenho-de-linhas      PIOROU
+    CG  subunidade bezier-py                                    bezier-e-algoritmo-de- -> representacao-de-curva igual p/ gold
+    CG  subunidade bezier-python                                bezier-e-algoritmo-de- -> tecnicas-de-modelagem- PIOROU
+    CG  subunidade videoscg-v2                                  conceitos              -> aplicacoes             sem gold
+    CG  subunidade video-com-instrucoes-para-usar-opengl-na-vdi conceitos              -> aplicacoes             melhorou
+  CG  A -> B (07/09 -> pre-correcao): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 13 (piorou 3, melhorou 5)
+    CG  subunidade bezier-py                                    representacao-de-curva -> bezier-e-algoritmo-de- igual p/ gold
+    CG  subunidade bezier-python                                tecnicas-de-modelagem- -> bezier-e-algoritmo-de- melhorou
+    CG  subunidade curvas                                       hermite                -> bezier-e-algoritmo-de- igual p/ gold
+    CG  subunidade exercicios-sobre-curvas                      hermite                -> bezier-e-algoritmo-de- melhorou
+    CG  subunidade exercicios-sobre-curvas-html                 hermite                -> bezier-e-algoritmo-de- melhorou
+    CG  subunidade pagina-com-videos-sobre-curvas-parametricas- hermite                -> representacao-de-curva melhorou
+  CG  B -> C (pre -> corrigido): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 6 (piorou 0, melhorou 4)
+    CG  subunidade intro                                        conceitos              -> origens                igual p/ gold
+    CG  subunidade opengl3dcpp-vdi                              conceito-de-camera-sin -> paralela               PIOROU
+    CG  subunidade opengl3dcpp                                  perspectiva            -> paralela               igual p/ gold
+    CG  subunidade exercicios                                   conceitos              -> aplicacoes             melhorou
+    CG  subunidade opengl-cpp                                   conceitos              -> aplicacoes             melhorou
+    CG  subunidade opengl-py                                    conceitos              -> aplicacoes             melhorou
+    CG  subunidade openglbasico                                 conceitos              -> aplicacoes             melhorou
+    CG  subunidade texturas-v3                                  conceitos              -> aplicacoes             sem gold
+    CG  subunidade transformacoesgeometricas                    (vazio)                -> desenho-de-linhas      PIOROU
+    CG  subunidade curvas                                       hermite                -> bezier-e-algoritmo-de- igual p/ gold
+    CG  subunidade exercicios-sobre-curvas                      hermite                -> bezier-e-algoritmo-de- melhorou
+    CG  subunidade exercicios-sobre-curvas-html                 hermite                -> bezier-e-algoritmo-de- melhorou
+    CG  subunidade videoscg-v2                                  conceitos              -> aplicacoes             sem gold
+    CG  subunidade video-com-instrucoes-para-usar-opengl-na-vdi conceitos              -> aplicacoes             melhorou
+    CG  subunidade pagina-com-videos-sobre-curvas-parametricas- hermite                -> representacao-de-curva melhorou
+  CG  A -> C (07/09 -> corrigido): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 15 (piorou 2, melhorou 8)
+== ES2: A=8cfaf2b (ultimo commit ate 08/09) · B=HEAD · C=arvore de trabalho
+    ES2 subunidade microsservicos2                              arquitetura-serverless -> orientada-a-microsserv igual p/ gold
+    ES2 subunidade microsservicos3                              arquitetura-serverless -> estilos-e-padroes-arqu igual p/ gold
+    ES2 subunidade roteiro1-introducao                          orientada-a-microsserv -> estudo-de-caso-arquite igual p/ gold
+    ES2 subunidade roteiro2-nameserver                          arquitetura-serverless -> estudo-de-caso-arquite melhorou
+    ES2 subunidade t1-2026-1                                    entrega-continua-cd    -> estudo-de-caso-integra sem gold
+    ES2 subunidade microsservicos6                              gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade roteiro1                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro2                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro3                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro6                                     gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade roteiro8-autenticacao-autorizacao            gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade microsservicos                               arquitetura-serverless -> orientada-a-microsserv melhorou
+    ES2 subunidade roteiro3-gateway                             orientada-a-servicos   -> cliente-servidor       igual p/ gold
+    ES2 subunidade devops                                       integracao-continua-ci -> gerenciamento-da-confi melhorou
+    ES2 subunidade kubernetes                                   estudo-de-caso-integra -> plataformas-de-devops  melhorou
+    ES2 subunidade revisao-p2                                   (vazio)                -> estudo-de-caso-integra sem gold
+    ES2 subunidade revisao-p2-respostas                         (vazio)                -> estudo-de-caso-integra sem gold
+  ES2 A -> B (07/09 -> pre-correcao): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 17 (piorou 0, melhorou 10)
+    ES2 subunidade roteiro3-gateway                             cliente-servidor       -> estudo-de-caso-arquite melhorou
+  ES2 B -> C (pre -> corrigido): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 1 (piorou 0, melhorou 1)
+    ES2 subunidade microsservicos2                              arquitetura-serverless -> orientada-a-microsserv igual p/ gold
+    ES2 subunidade microsservicos3                              arquitetura-serverless -> estilos-e-padroes-arqu igual p/ gold
+    ES2 subunidade roteiro1-introducao                          orientada-a-microsserv -> estudo-de-caso-arquite igual p/ gold
+    ES2 subunidade roteiro2-nameserver                          arquitetura-serverless -> estudo-de-caso-arquite melhorou
+    ES2 subunidade t1-2026-1                                    entrega-continua-cd    -> estudo-de-caso-integra sem gold
+    ES2 subunidade microsservicos6                              gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade roteiro1                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro2                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro3                                     orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade roteiro6                                     gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade roteiro8-autenticacao-autorizacao            gerenciamento-da-confi -> estudo-de-caso-integra melhorou
+    ES2 subunidade microsservicos                               arquitetura-serverless -> orientada-a-microsserv melhorou
+    ES2 subunidade roteiro3-gateway                             orientada-a-servicos   -> estudo-de-caso-arquite melhorou
+    ES2 subunidade devops                                       integracao-continua-ci -> gerenciamento-da-confi melhorou
+    ES2 subunidade kubernetes                                   estudo-de-caso-integra -> plataformas-de-devops  melhorou
+    ES2 subunidade revisao-p2                                   (vazio)                -> estudo-de-caso-integra sem gold
+    ES2 subunidade revisao-p2-respostas                         (vazio)                -> estudo-de-caso-integra sem gold
+  ES2 A -> C (07/09 -> corrigido): unidade mudou 0 (piorou 0, melhorou 0) · subunidade mudou 17 (piorou 0, melhorou 11)

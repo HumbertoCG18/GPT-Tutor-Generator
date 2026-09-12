@@ -324,6 +324,21 @@ def _prompt_first_session_protocol_text(
     ).strip()
 
 
+def _temporal_context_instructions() -> str:
+    return """
+## Contexto temporal — calcule no início de cada sessão
+Abra `setup/CONTEXTO_TEMPORAL.md`. Com a data de HOJE:
+1. **Semana atual**: linha onde hoje ∈ [inicio, fim]. Diga unidade + tópico vigente.
+   Se hoje for depois do último bloco, o semestre acabou; se antes do 1º, ainda não começou.
+2. **Próxima avaliação**: 1ª linha tipo=prova/exame com inicio ≥ hoje. Diga qual, a data,
+   dias restantes e o escopo (unidades — resolva o rótulo U1/U2 pela seção `## Unidades`).
+3. **Prontidão pré-prova** (só se houver prova futura): pra cada unidade do escopo →
+   tópicos no `COURSE_MAP.md` → status em `STUDENT_STATE.md` / `student/batteries/<slug>/`.
+   Liste tópicos sem registro ou pendentes. Priorize se a prova ≤ 7 dias.
+Se `CONTEXTO_TEMPORAL.md` não existir ou estiver vazio, pule este bloco.
+"""
+
+
 def _low_token_generate_claude_project_instructions(
     course_meta: dict,
     student_profile=None,
@@ -477,7 +492,7 @@ def generate_claude_project_instructions(
         has_assignments=has_assignments,
         has_code=has_code,
         has_whiteboard=has_whiteboard,
-    )
+    ) + _temporal_context_instructions()
 
 
 def generate_gpt_instructions(
@@ -541,7 +556,7 @@ diretamente de lá para ter sempre a versão mais atualizada.
         has_whiteboard=has_whiteboard,
     )
 
-    return f"""# Instruções do Tutor — {course_name}
+    _gpt_text = f"""# Instruções do Tutor — {course_name}
 
 ## REGRAS CRÍTICAS (leia antes de qualquer coisa)
 
@@ -618,6 +633,7 @@ Identifique o modo pela frase do aluno:
 - Ao final de cada sessão, gere um bloco de atualização do STUDENT_STATE.md
 
 {first_session_block}"""
+    return _gpt_text + _temporal_context_instructions()
 
 
 def generate_gemini_instructions(
@@ -691,7 +707,7 @@ conexão entre teoria e prática e progressão gradual.
         has_whiteboard=has_whiteboard,
     )
 
-    return f"""# Instruções do Tutor | {course_name}
+    _gemini_text = f"""# Instruções do Tutor | {course_name}
 
 Você é o tutor acadêmico de **{course_name}**, ministrada pelo professor
 **{professor}** na **{institution}**, semestre **{semester}**.
@@ -799,3 +815,4 @@ Ao responder:
 - se o aluno estiver em aula, priorize utilidade imediata
 - se houver ambiguidade, diga exatamente o que está faltando no repositório
 {first_session_block}"""
+    return _gemini_text + _temporal_context_instructions()

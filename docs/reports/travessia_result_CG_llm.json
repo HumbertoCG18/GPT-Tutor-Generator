@@ -1,0 +1,379 @@
+{
+ "curso": "CG",
+ "modo": "llm",
+ "n": 15,
+ "hit1": 10,
+ "hit3": 13,
+ "bloco_ok": 9,
+ "bloco_n": 11,
+ "chamadas": 15,
+ "linhas": [
+  {
+   "pergunta": "Como funciona o algoritmo de recorte de retas de Cohen-Sutherland?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "pagina-com-videos-sobre-recorte-e257d3",
+    "recorte",
+    "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+    "vis2d"
+   ],
+   "escolhido": [
+    "pagina-com-videos-sobre-recorte-e257d3"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": true,
+   "porque": "A linha 40 do FILE_MAP indica o material 'Recorte' associado à Unidade 04 (Processo de Visualização 2D), que aborda diretamente o algoritmo de recorte.",
+   "escolhido_raw": [
+    "Recorte",
+    "Página com Vídeos sobre RECORTE"
+   ]
+  },
+  {
+   "pergunta": "Quais são os fundamentos matemáticos (vetores, produto escalar) usados em computação gráfica?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "exerciciosfundamentosmatematicos",
+    "fundamentosmatematicos"
+   ],
+   "escolhido": [
+    "colisao",
+    "matematica",
+    "pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": false,
+   "porque": "A linha 31 (Slides) aborda Pontos e Vetores, e a linha 32 detalha a representação de vetores em C++ na Unidade 02.",
+   "escolhido_raw": [
+    "Slides",
+    "Representação e Operações Básicas de Vetores Bidimensionais em C++",
+    "Página com Vídeos sobre Fundamentos Matemáticos para Computação Gráfica"
+   ]
+  },
+  {
+   "pergunta": "Como detectar colisão entre dois objetos usando envelopes (AABB e OOBB)?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
+   ],
+   "escolhido": [
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-04",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": true,
+   "porque": "O arquivo 'Slides sobre Detecção de Colisão' possui no campo seções a descrição explícita de testes com AABB (Axis Aligned Bounding Boxes).",
+   "escolhido_raw": [
+    "Slides sobre Detecção de Colisão",
+    "Vídeos sobre Algoritmos de Deteção de Colisão"
+   ]
+  },
+  {
+   "pergunta": "Como funciona o algoritmo Z-Buffer para remoção de elementos ocultos?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "elemoculto",
+    "exemplozbuffer"
+   ],
+   "escolhido": [
+    "colisao",
+    "exemplozbuffer",
+    "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "bloco-20",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": false,
+   "porque": "As linhas 17, 18 e 91 do FILE_MAP mapeiam especificamente materiais sobre o algoritmo Z-Buffer e remoção de elementos ocultos na Unidade 6.",
+   "escolhido_raw": [
+    "Slides",
+    "Exemplo de Zbuffer",
+    "Página com Vídeos sobre Remoção de Elementos Ocultos"
+   ]
+  },
+  {
+   "pergunta": "Tem algum código de exemplo de curva de Bézier em Python?",
+   "tipo": "codigo",
+   "estilo": "estruturada",
+   "esperado": [
+    "bezier-animacao",
+    "bezier-py",
+    "bezier-python"
+   ],
+   "escolhido": [
+    "bezier-py",
+    "bezier-python",
+    "bezier-cpp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-13",
+   "bloco_pred": "bloco-13",
+   "bloco_ok": true,
+   "porque": "O FILE_MAP e o CRONOGRAMA_DETALHADO listam códigos específicos de Curvas de Bézier em Python (PyOpenGL/Bezier-Python) sob a Unidade 07.",
+   "escolhido_raw": [
+    "Visualização e Interação com Curvas de Bézier Quadráticas usando PyOpenGL",
+    "Animação de Objetos com Curvas de Bezier em OpenGL",
+    "Visualização Interativa de Curvas de Bézier Quadráticas com PyOpenGL"
+   ]
+  },
+  {
+   "pergunta": "me explica visualização 3D",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "opengl3d",
+    "opengl3dcpp",
+    "opengl3dcpp-vdi",
+    "openglbasico",
+    "vis3d"
+   ],
+   "escolhido": [
+    "vis3d",
+    "pagina-com-videos-sobre-visualizacao-3d-35a833"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-18",
+   "bloco_ok": null,
+   "porque": "As linhas 13 e 90 do FILE_MAP tratam diretamente do tema de visualização 3D e suas projeções associadas.",
+   "escolhido_raw": [
+    "Visualização 3D - Projeção",
+    "Página com Vídeos sobre Visualização 3D"
+   ]
+  },
+  {
+   "pergunta": "tem exercício de imagem?",
+   "tipo": "exercicio",
+   "estilo": "ambigua",
+   "esperado": [
+    "exercicios-de-processamento-de-imagens",
+    "floodfill",
+    "remocaoderuido"
+   ],
+   "escolhido": [
+    "exercicios-de-processamento-de-imagens",
+    "exercicioduascores",
+    "remocaoderuido"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": null,
+   "porque": "A linha 54 do FILE_MAP indica a existência do arquivo 'Exercícios de Processamento de Imagens' na categoria listas.",
+   "escolhido_raw": [
+    "Exercícios de Processamento de Imagens",
+    "Página sobre Manipulação de Imagens",
+    "Exercício sobre Remoção de Ruído"
+   ]
+  },
+  {
+   "pergunta": "como eu começo com OpenGL?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "opengl-cpp",
+    "opengl-py",
+    "openglbasico"
+   ],
+   "escolhido": [
+    "openglbasico",
+    "exercicios",
+    "opengl-cpp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "A linha 25 do FILE_MAP aponta diretamente para o 'Tutorial Introdutório de OpenGL', ideal para quem está iniciando na ferramenta.",
+   "escolhido_raw": [
+    "Tutorial Introdutório de OpenGL",
+    "Exercícios",
+    "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL"
+   ]
+  },
+  {
+   "pergunta": "o que é modelagem de sólidos?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "csg",
+    "modelagem3d"
+   ],
+   "escolhido": [
+    "modelagem3d",
+    "csg"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-15",
+   "bloco_pred": "bloco-15",
+   "bloco_ok": true,
+   "porque": "As linhas 7 e 6 do FILE_MAP contêm os materiais 'Página sobre Modelagem Geométrica' e 'Modelagem por CSG com Polígonos', focando em modelagem 3D e representações de sólidos.",
+   "escolhido_raw": [
+    "Página sobre Modelagem Geométrica",
+    "Modelagem por CSG com Polígonos"
+   ]
+  },
+  {
+   "pergunta": "o que cai na P1?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "cronograma2026-2",
+    "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
+    "resolucao-de-prova-de-computacao-grafica-2d",
+    "resolucao-de-prova-de-computacao-grafica-2d-html"
+   ],
+   "escolhido": [
+    "cronograma2026-2",
+    "planodeensino-4645z-04-fundamentos-de-computacao-grafica"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": "O Cronograma e o Plano de Ensino detalham a estrutura de avaliações e os tópicos de cada unidade cobrados na prova P1.",
+   "escolhido_raw": [
+    "Cronograma",
+    "Plano de Ensino"
+   ]
+  },
+  {
+   "pergunta": "segmentacao imagem",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "segmentacaodetexturas",
+    "segmentacaopptx"
+   ],
+   "escolhido": [
+    "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+    "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+    "segmentacaodetexturas"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "bloco-07",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": true,
+   "porque": "Linhas 3, 4, 83 e 84 do FILE_MAP tratam especificamente do tema de segmentação de imagens e texturas dentro da Unidade 03.",
+   "escolhido_raw": [
+    "Página com Vídeos sobre Segmentação de Imagens",
+    "Página com Vídeos sobre Segmentação por Texturas",
+    "Texto sobre Matrizes de Co-ocorrência de Níveis de Cinza"
+   ]
+  },
+  {
+   "pergunta": "iluminacao phong",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "iluminacao"
+   ],
+   "escolhido": [
+    "iluminacao",
+    "programabasico3d"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-21",
+   "bloco_pred": "bloco-21",
+   "bloco_ok": true,
+   "porque": "A linha 19 e a linha 20 do FILE_MAP referem-se diretamente à iluminação, sombreamento e ao modelo Phong na Unidade 08.",
+   "escolhido_raw": [
+    "Página sobre Síntese de Imagens Realísticas - Iluminação e Sobreamento",
+    "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+   ]
+  },
+  {
+   "pergunta": "filtro passa baixa exercicio",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "exercicios-de-processamento-de-imagens"
+   ],
+   "escolhido": [
+    "remocaoderuido",
+    "exercicios-de-processamento-de-imagens",
+    "exercicioduascores"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": null,
+   "porque": "O item 53 do FILE_MAP é um exercício focado em Remoção de Ruído (filtros passa-baixa) na Unidade 3 (Processamento de Imagens e Visão Computacional).",
+   "escolhido_raw": [
+    "Exercício sobre Remoção de Ruído",
+    "Exercícios de Processamento de Imagens",
+    "Página sobre Manipulação de Imagens"
+   ]
+  },
+  {
+   "pergunta": "geometria computacional plane sweep",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "planesweep"
+   ],
+   "escolhido": [
+    "domina",
+    "pagina-com-videos-sobre-geometria-computacional-ebca9a"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": "A linha 34 do FILE_MAP direciona para o material 'Página sobre Geometria Computacional' sob a unidade de Fundamentos Matemáticos, onde os algoritmos dessa área são abordados.",
+   "escolhido_raw": [
+    "Página sobre Geometria Computacional",
+    "Página com Videos Sobre Geometria Computacional"
+   ]
+  },
+  {
+   "pergunta": "transformacoes opengl codigo",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "transformacoesgeometricas",
+    "transformacoesgl"
+   ],
+   "escolhido": [
+    "transformacoesgeometricas",
+    "transformacoesgl",
+    "basico3d-py"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": true,
+   "porque": "A linha 41 do FILE_MAP detalha o código do professor sobre Transformações Geométricas em OpenGL, acompanhado pelas referências correlatas nas linhas 42 e 9.",
+   "escolhido_raw": [
+    "Modelagem 2D e Transformações Geométricas em OpenGL",
+    "Página sobre TRANSFORMAÇÕES GEOMÉTRICAS em OpenGL",
+    "Introdução a Computação Gráfica 3D e Transformações com PyOpenGL"
+   ]
+  }
+ ]
+}

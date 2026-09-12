@@ -1,0 +1,28 @@
+  [MF] erros  7 · escolheu PAI, gold quer FILHO=1 · mesma unidade, ramos diferentes=1 · sem parentesco=4 · motor vazio=1
+  [SO] erros  0 · 
+  [IA] erros  0 · 
+  [ES2] erros  7 · irmaos (mesmo pai)=1 · sem parentesco=6
+  [TCC] erros  0 · 
+  [CG] erros 26 · irmaos (mesmo pai)=6 · mesma unidade, ramos diferentes=5 · gold vazio=9 · motor vazio=3 · escolheu FILHO, gold quer PAI=3
+
+[TOTAL produto] erros de subunidade 40
+    10  sem parentesco
+     9  gold vazio
+     7  irmaos (mesmo pai)
+     6  mesma unidade, ramos diferentes
+     4  motor vazio
+     3  escolheu FILHO, gold quer PAI
+     1  escolheu PAI, gold quer FILHO
+
+casos que a regra pai x filho alcanca:
+    MF archive-of-formal-proofs-355fb escolheu PAI, gold quer FILHO  1.3      Abordagens para Verifi   -> 1.3.3    Provadores de Teoremas
+    ES2 devops                         irmaos (mesmo pai)             2.3      Integração contínua (C   -> 2.1      Conceito de DevOps
+    CG morfologiamatematicapptx       irmaos (mesmo pai)             3.2      Cores e tipos de image   -> 3.5      Segmentação
+    CG programabasico3d               irmaos (mesmo pai)             8.3      Métodos de sombreament   -> 8.2      Modelos de Reflexão: ambie
+    CG exercicios-sobre-curvas        irmaos (mesmo pai)             7.1.1.2  Hermite                  -> 7.1.1.4  Catmull-Rom
+    CG exercicios-sobre-curvas-html   irmaos (mesmo pai)             7.1.1.2  Hermite                  -> 7.1.1.4  Catmull-Rom
+    CG pagina-com-videos-sobre-fundam irmaos (mesmo pai)             2.4      Algoritmos de polígono   -> 2.1      Entidades geométricas
+    CG video-sobre-mapeamento-em-open escolheu FILHO, gold quer PAI  4.1.1    2D, 3D (mão direita) e   -> 4.1      Sistema de Coordenadas Car
+    CG pagina-com-videos-sobre-curvas escolheu FILHO, gold quer PAI  7.1.1.2  Hermite                  -> 7.1.1    Representação de Curvas Pa
+    CG pagina-com-videos-sobre-manipu irmaos (mesmo pai)             3.5      Segmentação              -> 3.2      Cores e tipos de imagens
+    CG paginas-com-videos-sobre-model escolheu FILHO, gold quer PAI  7.2.3    Geometria Sólida Const   -> 7.2      Técnicas de Modelagem 3D

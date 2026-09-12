@@ -1,0 +1,5 @@
+id,title,card,roteiro,placement,anchored,computed,conf,severity,reasons
+introducao-a-agentes,Introducao a agentes,"bloco-16,bloco-17",bloco-17,bloco-16,False,bloco-16,0.8,aviso,roteiro!=placement
+introducao-a-busca-informada,Introducao a busca informada,bloco-12,bloco-03,bloco-12,False,bloco-12,0.85,aviso,roteiro!=placement;card!=roteiro
+introducao-a-ml,Introdução a ML,"bloco-03,bloco-04",bloco-03,bloco-04,False,bloco-04,0.8,aviso,roteiro!=placement
+visao-geral-introducao-e-historico,Visão Geral - Introdução e Histórico,"bloco-01,bloco-02",bloco-03,bloco-01,True,bloco-01,0.44,aviso,roteiro!=placement;card!=roteiro

@@ -19,6 +19,20 @@ def test_no_image_description_is_empty():
     assert sig["image_description_text"] == ""
 
 
+def test_moodle_label_feeds_signal():
+    # alavanca 1: o label do recurso Moodle vira canal proprio (identidade limpa)
+    entry = {"title": "invariantes.zip",
+             "moodle_label": "Exemplos (Logica de Floyd-Hoare)", "auto_tags": []}
+    sig = collect_entry_unit_signals(entry, markdown_text="")
+    assert "hoare" in sig["moodle_label_text"]
+    assert "floyd" in sig["moodle_label_text"]
+
+
+def test_no_moodle_label_is_empty():
+    sig = collect_entry_unit_signals({"title": "x.pdf"}, markdown_text="")
+    assert sig["moodle_label_text"] == ""
+
+
 from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 
 
@@ -44,3 +58,45 @@ def test_exercise_notes_feed_signal():
              "auto_tags": []}
     sig = collect_entry_unit_signals(entry, markdown_text="")
     assert "decidibilidade" in sig["markdown_text"]
+
+
+# ---------------------------------------------------------------------------
+# S4b: ferramenta derivada da EXTENSÃO do arquivo (TOOL_EXTENSIONS) — movidos
+# de test_block_scorer_signals.py no cutover passo 3 (única cobertura
+# extensão→ferramenta; o scorer S2 daquele arquivo morreu com o funil).
+# ---------------------------------------------------------------------------
+
+def _entry_s4b(title, category="listas", auto_tags=None):
+    return {"id": "e1", "title": title, "category": category,
+            "manual_tags": [], "auto_tags": list(auto_tags or []), "tags": ""}
+
+
+def test_ferramenta_por_extensao_thy_sem_auto_tags():
+    """S4b: .thy SEM auto_tags ferramenta: deriva isabelle da EXTENSÃO do
+    source_path — os .thy do manifest real não têm ferramenta:isabelle."""
+    entry = _entry_s4b("intro")
+    entry["source_path"] = "x/intro.thy"
+    signals = collect_entry_unit_signals(entry, "")
+    assert "isabelle" in signals["tool_tags_text"].split()
+
+
+def test_ferramenta_por_extensao_dfy_via_raw_target():
+    """S4b: a extensão também vale via raw_target (o harness do eval só
+    repassa raw_target) e .dfy mapeia para dafny."""
+    entry = _entry_s4b("exemplos")
+    entry["raw_target"] = "Exemplos.DFY"
+    signals = collect_entry_unit_signals(entry, "")
+    assert "dafny" in signals["tool_tags_text"].split()
+
+
+def test_ferramenta_extensao_uniao_com_auto_tags_dedupada():
+    """União dos dois sinais, dedupada: auto_tag isabelle + .thy não duplica;
+    extensão fora do mapa (.pdf) não acrescenta nada."""
+    entry = _entry_s4b("intro", auto_tags=["ferramenta:isabelle"])
+    entry["source_path"] = "x/intro.thy"
+    signals = collect_entry_unit_signals(entry, "")
+    assert signals["tool_tags_text"].split().count("isabelle") == 1
+    entry_pdf = _entry_s4b("intro")
+    entry_pdf["source_path"] = "x/intro.pdf"
+    assert "tool" not in collect_entry_unit_signals(entry_pdf, "")["tool_tags_text"]
+    assert collect_entry_unit_signals(entry_pdf, "")["tool_tags_text"] == ""

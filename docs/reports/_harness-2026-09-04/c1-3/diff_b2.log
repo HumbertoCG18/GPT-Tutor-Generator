@@ -1,0 +1,18 @@
+MF: bloco 58/66 conf-err 1 -> 56/66 conf-err 1
+   = verificacaomodelos                       bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes->verificacao-de-modelos-model-checking
+   = exerciciosnusmv                          bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:softwares-de-suporte-a-verificacao-formal-de-modelos->verificacao-de-modelos-model-checking
+   = colecoes-arrays                          bloco bloco-13->bloco-13 gold=bloco-13 temporal_block_band:alta->media; temporal_block_flag:False->True
+   = colecoes-sequences                       bloco bloco-13->bloco-13 gold=bloco-13 temporal_block_band:alta->media; temporal_block_flag:False->True
+   - exercicios-conjuntos                     bloco bloco-13->bloco-12 gold=bloco-13 temporal_block_band:media->baixa
+   = invariantes                              bloco bloco-11->bloco-11 gold=bloco-11 computed_subunit_slug:->invariante-e-variante-de-laco
+   = exemplos-zip                             bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:->softwares-de-suporte-a-verificacao-formal-de-modelos
+   - exercicios-arrays                        bloco bloco-13->bloco-12 gold=bloco-13 temporal_block_band:media->baixa
+SO: bloco 37/39 conf-err 0 -> 37/39 conf-err 0 | sub 10/15 -> 10/15
+IA: bloco 41/42 conf-err 0 -> 41/42 conf-err 0 | sub 35/39 -> 35/39
+ES2: bloco 27/28 conf-err 0 -> 27/28 conf-err 0 | sub 26/28 -> 26/28
+   = roteiro8-autenticacao-autorizacao        bloco bloco-10->bloco-10 gold=bloco-10 temporal_block_band:alta->media; temporal_block_method:titulo-topico->janela-1
+   = devops                                   bloco bloco-12->bloco-12 gold=bloco-12 temporal_block_method:titulo-topico->disamb
+TCC: bloco 26/27 conf-err 0 -> 26/27 conf-err 0 | sub 11/11 -> 11/11
+CG: bloco 31/35 conf-err 0 -> 31/35 conf-err 0
+   = intro                                    bloco bloco-01->bloco-01 gold=bloco-01 computed_subunit_slug:->origens
+   = fundamentosmatematicos                   bloco bloco-03->bloco-03 gold=bloco-03 temporal_block_method:titulo-topico->disamb

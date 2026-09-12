@@ -1,0 +1,334 @@
+<title>Razão dos Blocos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
+<style>
+:root{
+  --ground:#F4F6F7; --surface:#FFFFFF; --surface-2:#EBEFF1; --line:#D3DADE; --line-strong:#AEB8BE;
+  --ink:#1B2226; --ink-2:#4E5A62; --ink-3:#7C878E;
+  --accent:#0E6F74; --accent-ink:#FFFFFF; --accent-soft:#D9ECEC;
+  --ok:#2E7D4F; --ok-soft:#DDEFE3; --err:#B8432F; --err-soft:#F6DED9; --warn:#9A6B0C; --warn-soft:#F5E9CF;
+  --pin:#5B4B9E; --pin-soft:#E6E1F4; --on-pin:#FFFFFF; --on-warn:#FFFFFF;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121618; --surface:#191F22; --surface-2:#20282C; --line:#2C363B; --line-strong:#45525A;
+    --ink:#E4E9EC; --ink-2:#AEB9C0; --ink-3:#7F8B92;
+    --accent:#5FBFC4; --accent-ink:#0E1E20; --accent-soft:#173538;
+    --ok:#6FCB94; --ok-soft:#173327; --err:#F08C78; --err-soft:#3D1F1A; --warn:#E0B458; --warn-soft:#3A2F14;
+    --pin:#B4A6EA; --pin-soft:#2B2546; --on-pin:#1B1433; --on-warn:#2B2109;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121618; --surface:#191F22; --surface-2:#20282C; --line:#2C363B; --line-strong:#45525A;
+  --ink:#E4E9EC; --ink-2:#AEB9C0; --ink-3:#7F8B92;
+  --accent:#5FBFC4; --accent-ink:#0E1E20; --accent-soft:#173538;
+  --ok:#6FCB94; --ok-soft:#173327; --err:#F08C78; --err-soft:#3D1F1A; --warn:#E0B458; --warn-soft:#3A2F14;
+  --pin:#B4A6EA; --pin-soft:#2B2546; --on-pin:#1B1433; --on-warn:#2B2109;
+}
+*{box-sizing:border-box}
+html{font-size:15px}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1360px;margin:0 auto;padding:20px 22px 60px}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 22px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+header.top h1{font-family:var(--cond);font-weight:600;font-size:1.65rem;letter-spacing:.01em;margin:0;text-wrap:balance}
+header.top .sub{color:var(--ink-2);font-size:.9rem;max-width:68ch}
+header.top .stamp{margin-left:auto;font-family:var(--mono);font-size:.75rem;color:var(--ink-3)}
+nav.tabs{display:flex;gap:4px;margin-top:16px;border-bottom:1px solid var(--line);overflow-x:auto}
+nav.tabs button{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 9px;font:inherit;font-family:var(--cond);font-weight:600;font-size:1rem;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+nav.tabs button .n{font-family:var(--mono);font-weight:400;font-size:.75rem;color:var(--ink-3);margin-left:6px}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible,.ctl :focus-visible,.card-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0 14px}
+.stat{background:var(--surface);border:1px solid var(--line);padding:10px 12px}
+.stat .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+.stat .v{font-family:var(--mono);font-size:1.25rem;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .v small{font-size:.8rem;color:var(--ink-3)}
+.stat.err .v{color:var(--err)}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:10px 12px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:18px;font-size:.88rem}
+.ctl label{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2)}
+.ctl input[type="search"],.ctl select{font:inherit;font-size:.88rem;color:var(--ink);background:var(--surface);border:1px solid var(--line-strong);padding:5px 8px;min-width:200px}
+.ctl select{min-width:150px}
+.ctl .count{margin-left:auto;font-family:var(--mono);font-size:.78rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--ink-2);margin:-8px 0 16px}
+.block{background:var(--surface);border:1px solid var(--line);margin-bottom:14px}
+.block.has-err{border-left:4px solid var(--err)}
+.bh{display:grid;grid-template-columns:110px 190px 1fr;gap:6px 14px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface-2);align-items:start}
+.bh .id{font-family:var(--mono);font-weight:500;font-size:.95rem}
+.bh .per{font-family:var(--mono);font-size:.85rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bh .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;min-width:0}
+.bh .topic{font-family:var(--cond);font-weight:500;font-size:1rem}
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;padding:1px 7px;border:1px solid var(--line-strong);border-radius:2px;color:var(--ink-2);white-space:nowrap}
+.chip.kind-class{border-color:var(--accent);color:var(--accent)}
+.chip.kind-assessment{border-color:var(--warn);color:var(--warn)}
+.chip.kind-deliverable{border-color:var(--warn);color:var(--warn)}
+.chip.kind-holiday,.chip.kind-suspended,.chip.kind-office_hours,.chip.kind-academic_event,.chip.kind-workshop{color:var(--ink-3);border-style:dashed}
+.chip.unit{color:var(--ink-2);border-color:var(--line)}
+.chip.pin{background:var(--pin-soft);border-color:var(--pin);color:var(--pin)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.err{background:var(--err-soft);border-color:var(--err);color:var(--err)}
+.chip.na{color:var(--ink-3);border-style:dashed}
+.who{display:inline-block;font-family:var(--cond);font-weight:600;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:2px;white-space:nowrap}
+.who-humano{background:var(--pin);color:var(--on-pin)}
+.who-motor{background:var(--accent);color:var(--accent-ink)}
+.who-llm{background:var(--warn);color:var(--on-warn)}
+.who-humano-motor{background:linear-gradient(90deg,var(--pin) 50%,var(--accent) 50%);color:var(--on-pin)}
+.who-humano-llm{background:linear-gradient(90deg,var(--pin) 50%,var(--warn) 50%);color:var(--on-pin)}
+.stat .bar{display:flex;height:8px;margin-top:6px;overflow:hidden;border-radius:2px}
+.stat .bar span{display:block;height:100%}
+details.legend2{margin:-6px 0 16px;border:1px solid var(--line);background:var(--surface)}
+details.legend2 summary{cursor:pointer;padding:8px 14px;font-family:var(--cond);font-weight:600;list-style:none}
+details.legend2 summary::-webkit-details-marker{display:none}
+details.legend2 summary::before{content:"\25B8  ";font-family:var(--mono);color:var(--ink-3)}
+details.legend2[open] summary::before{content:"\25BE  "}
+details.legend2 table{font-size:.82rem}
+details.legend2 td.m{font-family:var(--mono);font-size:.78rem;white-space:nowrap}
+.sess{margin:0;padding:6px 14px 8px;list-style:none;display:grid;gap:2px;border-bottom:1px solid var(--line);font-size:.83rem}
+.sess li{display:grid;grid-template-columns:110px 1fr;gap:14px;color:var(--ink-2)}
+.sess li .d{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-3)}
+.sess li .d::before{content:"cronograma";display:inline-block;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);opacity:0;width:0}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:500;text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr.err td{background:color-mix(in srgb,var(--err-soft) 45%,transparent)}
+td.t .title{font-weight:500}
+td.t .file{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);word-break:break-all}
+td.mono{font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.cat{color:var(--ink-2);white-space:nowrap}
+td.card{max-width:220px;color:var(--ink-2)}
+td.card .lab{display:block;font-size:.78rem;color:var(--ink-3)}
+td.unit{font-family:var(--mono);font-size:.74rem;color:var(--ink-2);max-width:200px;word-break:break-word}
+.empty{padding:12px 14px;color:var(--ink-3);font-size:.85rem;font-style:italic}
+.section-h{font-family:var(--cond);font-weight:600;font-size:1.05rem;margin:26px 0 10px;display:flex;align-items:baseline;gap:10px}
+.section-h .n{font-family:var(--mono);font-weight:400;font-size:.78rem;color:var(--ink-3)}
+details.cards{margin:6px 0 18px;border:1px solid var(--line);background:var(--surface)}
+details.cards summary{cursor:pointer;padding:9px 14px;font-family:var(--cond);font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+details.cards summary::-webkit-details-marker{display:none}
+details.cards summary::before{content:"▸";font-family:var(--mono);color:var(--ink-3)}
+details.cards[open] summary::before{content:"▾"}
+details.cards table{font-size:.82rem}
+.hidden{display:none!important}
+@media (max-width:760px){.bh{grid-template-columns:1fr}.sess li{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){nav.tabs button{transition:border-color .15s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Razão dos Blocos</h1>
+    <div class="sub">Cronograma × bloco × atribuição, no estado curado que está em disco. Cada bloco mostra as linhas do cronograma que o formam e, abaixo, o que o motor pendurou nele, por qual caminho, e se bate com o gold.</div>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="ctl">
+    <label><input type="search" id="q" placeholder="buscar id, título, card, rótulo Moodle"></label>
+    <label><input type="checkbox" id="onlyErr"> só erros de bloco</label>
+    <label>decisor <select id="fWho"><option value="">todos</option><option value="humano">humano</option><option value="humano-motor">humano + motor</option><option value="humano-llm">humano + LLM</option><option value="motor">motor</option><option value="llm">LLM</option></select></label>
+    <label>método <select id="fMet"><option value="">todos</option></select></label>
+    <label>categoria <select id="fCat"><option value="">todas</option></select></label>
+    <label><input type="checkbox" id="showEmpty"> mostrar blocos sem material</label>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="legend">
+    <span><span class="who who-humano">humano</span> pino na entry ou card manual de 1 bloco</span>
+    <span><span class="who who-motor">motor</span> regra determinística, sem gente e sem LLM</span>
+    <span><span class="who who-llm">LLM</span> voto do modelo decidiu o bloco</span>
+    <span><span class="who who-humano-motor">humano + motor</span> janela veio de card manual, motor escolheu dentro</span>
+    <span><span class="chip ok">✓ gold</span> / <span class="chip err">✗ gold</span> / <span class="chip na">fora do gold</span></span>
+  </div>
+  <details class="legend2"><summary>Como ler método / provider</summary><div class="tblwrap"><table><thead><tr><th>método</th><th>provider</th><th>decisor</th><th>o que aconteceu</th></tr></thead><tbody>
+    <tr><td class="m">pino</td><td class="m">—</td><td><span class="who who-humano">humano</span></td><td>manual_timeline_block_id na entry: alguém fixou o bloco à mão. O motor nem roda.</td></tr>
+    <tr><td class="m">janela-1</td><td class="m">manual</td><td><span class="who who-humano">humano</span></td><td>Card do Moodle mapeado à mão (.card_block_map.json, source=manual) para exatamente 1 bloco. A regra só copia.</td></tr>
+    <tr><td class="m">disamb</td><td class="m">manual</td><td><span class="who who-humano-motor">humano + motor</span></td><td>Card manual com 2+ blocos; o desempate por tokens (título + rótulo + texto vs. rótulos das sessões) escolheu dentro da janela.</td></tr>
+    <tr><td class="m">janela-1</td><td class="m">labels</td><td><span class="who who-motor">motor</span></td><td>Card do Moodle com datas no rótulo (parse automático) apontando 1 bloco.</td></tr>
+    <tr><td class="m">janela-1</td><td class="m">data</td><td><span class="who who-motor">motor</span></td><td>Data DD.MM no nome/rótulo do arquivo (SO "12/03 Processos") → sessão do cronograma → bloco.</td></tr>
+    <tr><td class="m">janela-1</td><td class="m">ordinal</td><td><span class="who who-motor">motor</span></td><td>"Aula N" no título → N-ésimo encontro de aula do cronograma → bloco.</td></tr>
+    <tr><td class="m">janela-1</td><td class="m">topic</td><td><span class="who who-motor">motor</span></td><td>Tópico do card ("Threads") casou com rótulos de sessão de 1 bloco só.</td></tr>
+    <tr><td class="m">disamb</td><td class="m">labels / data / topic</td><td><span class="who who-motor">motor</span></td><td>Janela automática com 2+ blocos; desempate por tokens, confiante (margem + token discriminante).</td></tr>
+    <tr><td class="m">prep-prova</td><td class="m">prep-prova</td><td><span class="who who-motor">motor</span></td><td>"lista/revisão pN" → último bloco hospedável antes da N-ésima prova (convenção do curso).</td></tr>
+    <tr><td class="m">irmao-card</td><td class="m">irmao-card</td><td><span class="who who-motor">motor</span></td><td>Entry sem texto herda o bloco do irmão numerado no mesmo card (roteiro7.zip ← roteiro7.pdf).</td></tr>
+    <tr><td class="m">ref-generica</td><td class="m">ref-generica</td><td><span class="who who-motor">motor</span></td><td>Referência/bibliografia sem card → primeiro bloco de aula.</td></tr>
+    <tr><td class="m">due-contain / due-straddle</td><td class="m">due-window</td><td><span class="who who-motor">motor</span></td><td>Prova/trabalho com prazo casado ao cronograma → bloco que contém (ou atravessa) o prazo.</td></tr>
+    <tr><td class="m">llm</td><td class="m">llm</td><td><span class="who who-llm">LLM</span></td><td>Janela com 2+ blocos e desempate flagado (sem margem) → o modelo votou dentro da janela. Se a janela veio de card manual: humano + LLM.</td></tr>
+    <tr><td class="m">llm-funil</td><td class="m">llm-funil</td><td><span class="who who-llm">LLM</span></td><td>Nenhum provider deu janela → o modelo votou entre TODOS os blocos hospedáveis. Degrau mais fraco; sempre flagado.</td></tr>
+  </tbody></table></div></details>
+
+  <div id="cards"></div>
+  <div id="blocks"></div>
+</div>
+
+<script id="dados" type="application/json">__DADOS__</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('dados').textContent);
+  var ORDER = ['MF','SO','IA','ES2','TCC','CG'].filter(function(k){ return !!D[k]; });
+  var cur = ORDER[0];
+  try { var s = localStorage.getItem('razao.tab'); if (s && D[s]) cur = s; } catch(e){}
+  var $ = function(id){ return document.getElementById(id); };
+  ORDER.forEach(function(k){ D[k].entries.forEach(function(e){ if(e.pino){ e.bloco = e.pino; } }); });
+  function who(e){
+    if(e.pino) return 'humano';
+    var m = e.metodo||'', p = e.provider||'';
+    if(m==='llm'){ var cd = e.card && D[cur].cards[e.card]; return (cd && cd.source==='manual') ? 'humano-llm' : 'llm'; }
+    if(m==='llm-funil') return 'llm';
+    if(p==='manual') return m==='janela-1' ? 'humano' : 'humano-motor';
+    return 'motor';
+  }
+  var WHO_TXT = {'humano':'humano','motor':'motor','llm':'LLM','humano-motor':'humano + motor','humano-llm':'humano + LLM'};
+  function whoChip(e){ var w = who(e); return '<span class="who who-'+w+'">'+WHO_TXT[w]+'</span>'; }
+  var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var fmt = function(d){ if(!d) return ''; var p = d.split('-'); return p.length===3 ? p[2]+'/'+p[1] : d; };
+  var KIND = {class:'aula',assessment:'prova',deliverable:'entrega',review:'revisão',holiday:'feriado',suspended:'suspensa',office_hours:'atendimento',academic_event:'evento',workshop:'oficina',overview:'abertura',planning:'planejamento'};
+
+  function status(e){
+    if(!e.scorable) return {cls:'na', txt: e.gold ? 'gold '+e.gold+' (fora)' : 'fora do gold'};
+    if(e.gold === e.bloco) return {cls:'ok', txt:'✓ gold'};
+    return {cls:'err', txt:'✗ gold '+e.gold};
+  }
+  function isErr(e){ return e.scorable && e.gold !== e.bloco; }
+
+  function renderTabs(){
+    var t = $('tabs'); t.innerHTML = '';
+    ORDER.forEach(function(k){
+      var c = D[k]; var n = c.entries.filter(function(e){return e.scorable;}).length;
+      var ok = c.entries.filter(function(e){return e.scorable && e.gold===e.bloco;}).length;
+      var b = document.createElement('button'); b.setAttribute('role','tab'); b.setAttribute('aria-selected', k===cur);
+      b.innerHTML = esc(k)+' <span class="n">'+ok+'/'+n+'</span>'; b.title = c.nome;
+      b.onclick = function(){ cur = k; try{localStorage.setItem('razao.tab',k);}catch(e){} render(); };
+      t.appendChild(b);
+    });
+  }
+
+  function fillSelect(sel, values, keep){
+    var v = keep ? sel.value : '';
+    sel.innerHTML = '<option value="">'+(sel.id==='fMet'?'todos':'todas')+'</option>';
+    values.forEach(function(x){ var o = document.createElement('option'); o.value = x; o.textContent = x; sel.appendChild(o); });
+    sel.value = values.indexOf(v) >= 0 ? v : '';
+  }
+
+  function render(){
+    renderTabs();
+    var c = D[cur];
+    var entries = c.entries;
+    var scor = entries.filter(function(e){return e.scorable;});
+    var ok = scor.filter(function(e){return e.gold===e.bloco;}).length;
+    var errs = scor.length - ok;
+    var pinsB = entries.filter(function(e){return e.pino;}).length;
+    var pinsU = c.blocos.filter(function(b){return b.unidade_pino;}).length + entries.filter(function(e){return e.unidade_pino;}).length;
+    var manualCards = Object.keys(c.cards).filter(function(k){return c.cards[k].source==='manual';}).length;
+    var noBlock = entries.filter(function(e){return !e.bloco;}).length;
+    var W = {humano:0,'humano-motor':0,'humano-llm':0,motor:0,llm:0}; entries.forEach(function(e){ W[who(e)]++; });
+    var tot = entries.length || 1;
+    var bar = '<div class="bar">'+['humano','humano-motor','humano-llm','motor','llm'].map(function(k){ return '<span class="who-'+k+'" style="width:'+(100*W[k]/tot)+'%"></span>'; }).join('')+'</div>';
+    $('summary').innerHTML =
+      stat('cadeira', esc(c.nome), '') +
+      stat('blocos', c.blocos.length, '') +
+      stat('entries', entries.length, noBlock ? ' <small>'+noBlock+' sem bloco</small>' : '') +
+      stat('bloco vs gold', ok+'/'+scor.length, '') +
+      stat('erros de bloco', errs, '', errs>0 ? 'err' : '') +
+      stat('cards manuais', manualCards, '') +
+      stat('pinos', pinsB+'<small> bloco</small> · '+pinsU+'<small> unidade</small>', '') +
+      stat('quem decidiu o bloco', '<span style="color:var(--pin)">'+(W.humano+W['humano-motor']+W['humano-llm'])+'</span><small> humano</small> · <span style="color:var(--accent)">'+W.motor+'</span><small> motor</small> · <span style="color:var(--warn)">'+W.llm+'</span><small> LLM</small>', bar);
+
+    var mets = uniq(entries.map(function(e){return e.metodo || '—';}));
+    var cats = uniq(entries.map(function(e){return e.categoria || '—';}));
+    fillSelect($('fMet'), mets, true); fillSelect($('fCat'), cats, true);
+
+    // cards
+    var ck = Object.keys(c.cards).sort();
+    var ch = '<details class="cards"><summary>Cards do Moodle → blocos <span class="n">'+ck.length+' cards, '+manualCards+' manuais</span></summary><div class="empty">labels = datas que o professor escreveu (no título da seção ou em rótulos dentro dela) · manual = mapeado à mão · sem datas = o motor casa o NOME da seção com as sessões do cronograma (provider topic) em tempo de execução</div><div class="tblwrap"><table><thead><tr><th>card (source_section)</th><th>de onde vem a janela</th><th>blocos</th><th>entries</th></tr></thead><tbody>';
+    ck.forEach(function(k){
+      var v = c.cards[k]; var n = entries.filter(function(e){return e.card===k;}).length;
+      ch += '<tr><td>'+esc(k)+'</td><td>'+(v.source==='manual' ? '<span class="chip pin">manual</span>' : '<span class="chip">'+esc(v.source||'')+'</span>')+'</td><td class="mono">'+esc(v.blocos.join(', '))+'</td><td class="mono">'+n+'</td></tr>';
+    });
+    var orphan = uniq(entries.map(function(e){return e.card;})).filter(function(k){return k && !c.cards[k];});
+    orphan.forEach(function(k){ var n = entries.filter(function(e){return e.card===k;}).length; ch += '<tr><td>'+esc(k)+'</td><td><span class="chip">sem datas → tópico pelo nome</span></td><td class="mono">—</td><td class="mono">'+n+'</td></tr>'; });
+    ch += '</tbody></table></div></details>';
+    $('cards').innerHTML = ch;
+
+    applyFilters();
+  }
+
+  function stat(k, v, extra, cls){ return '<div class="stat '+(cls||'')+'"><div class="k">'+k+'</div><div class="v">'+v+extra+'</div></div>'; }
+  function uniq(a){ var s = {}; a.forEach(function(x){ s[x]=1; }); return Object.keys(s).sort(); }
+
+  function applyFilters(){
+    var c = D[cur];
+    var q = $('q').value.trim().toLowerCase();
+    var onlyErr = $('onlyErr').checked, met = $('fMet').value, cat = $('fCat').value, showEmpty = $('showEmpty').checked, fw = $('fWho').value;
+    var pass = function(e){
+      if(onlyErr && !isErr(e)) return false;
+      if(met && (e.metodo||'—')!==met) return false;
+      if(fw && who(e)!==fw) return false;
+      if(cat && (e.categoria||'—')!==cat) return false;
+      if(q){ var hay = (e.id+' '+e.titulo+' '+e.arquivo+' '+e.card+' '+e.label+' '+e.bloco+' '+e.gold).toLowerCase(); if(hay.indexOf(q)<0) return false; }
+      return true;
+    };
+    var shown = 0, html = '';
+    var byBlock = {};
+    c.entries.forEach(function(e){ (byBlock[e.bloco||''] = byBlock[e.bloco||''] || []).push(e); });
+    c.blocos.forEach(function(b){
+      var es = (byBlock[b.id]||[]).filter(pass);
+      var all = byBlock[b.id]||[];
+      if(!es.length && (!showEmpty || onlyErr || q || met || cat || fw)) return;
+      shown += es.length;
+      html += blockHtml(b, es, all);
+    });
+    var loose = (byBlock['']||[]).filter(pass);
+    if(loose.length){
+      shown += loose.length;
+      html += '<div class="section-h">Sem bloco temporal <span class="n">'+loose.length+'</span></div>' + blockHtml(null, loose, byBlock['']||[]);
+    }
+    $('blocks').innerHTML = html || '<div class="empty">Nada passa pelos filtros.</div>';
+    $('count').textContent = shown+' de '+c.entries.length+' entries';
+  }
+
+  function blockHtml(b, es, all){
+    var hasErr = all.some(isErr);
+    var h = '<section class="block'+(hasErr?' has-err':'')+'">';
+    if(b){
+      var per = b.ini ? (b.fim && b.fim!==b.ini ? fmt(b.ini)+' – '+fmt(b.fim) : fmt(b.ini)) : '—';
+      h += '<div class="bh"><div class="id">'+esc(b.id)+'</div><div class="per">'+esc(per)+'</div><div class="meta">'+
+           '<span class="chip kind-'+esc(b.kind)+'">'+esc(KIND[b.kind]||b.kind||'?')+'</span>'+
+           (b.unidade ? '<span class="chip unit">'+esc(b.unidade)+'</span>' : '')+
+           (b.unidade_pino ? '<span class="chip pin">pino unidade</span>' : '')+
+           '<span class="topic">'+esc(b.topico)+'</span>'+
+           '<span class="chip">'+all.length+' material'+(all.length===1?'':'is')+'</span></div></div>';
+      if(b.sessoes && b.sessoes.length){
+        h += '<ul class="sess">';
+        b.sessoes.forEach(function(s){ h += '<li><span class="d">'+esc(fmt(s.data))+'</span><span>'+esc(s.label||'')+'</span></li>'; });
+        h += '</ul>';
+      }
+    }
+    if(!es.length){ h += '<div class="empty">nenhum material atribuído a este bloco</div></section>'; return h; }
+    h += '<div class="tblwrap"><table><thead><tr><th>material</th><th>categoria</th><th>card · rótulo Moodle</th><th>postado</th><th>decisor</th><th>método / provider</th><th>banda</th><th>unidade · subunidade</th><th>gold</th></tr></thead><tbody>';
+    es.forEach(function(e){
+      var st = status(e);
+      h += '<tr class="'+(isErr(e)?'err':'')+'">'+
+        '<td class="t"><div class="title">'+esc(e.titulo)+'</div><div class="file">'+esc(e.id)+(e.arquivo && e.arquivo!==e.id ? ' · '+esc(e.arquivo) : '')+'</div></td>'+
+        '<td class="cat">'+esc(e.categoria||'—')+'</td>'+
+        '<td class="card">'+esc(e.card||'—')+(e.label ? '<span class="lab">'+esc(e.label)+'</span>' : '')+'</td>'+
+        '<td class="mono">'+esc(fmt(e.postagem))+'</td>'+
+        '<td>'+whoChip(e)+'</td>'+
+        '<td class="mono">'+(e.pino ? 'pino' : esc(e.metodo||'—'))+(e.provider && e.provider!==e.metodo ? ' / '+esc(e.provider) : '')+'</td>'+
+        '<td class="mono">'+esc(e.band||'—')+'</td>'+
+        '<td class="unit">'+esc(e.unidade||'—')+(e.unidade_pino?' <span class="chip pin">pino</span>':'')+(e.subunidade ? '<br>↳ '+esc(e.subunidade) : '')+'</td>'+
+        '<td><span class="chip '+st.cls+'">'+esc(st.txt)+'</span></td></tr>';
+    });
+    h += '</tbody></table></div></section>';
+    return h;
+  }
+
+  ['q','onlyErr','fWho','fMet','fCat','showEmpty'].forEach(function(id){ $(id).addEventListener('input', applyFilters); $(id).addEventListener('change', applyFilters); });
+  $('stamp').textContent = 'estado curado · ' + (D.__stamp || '');
+  render();
+})();
+</script>

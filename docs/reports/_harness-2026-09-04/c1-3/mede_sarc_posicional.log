@@ -1,0 +1,17 @@
+SARC POSICIONAL — a aula alinhada ao topico do plano acerta a subunidade?
+         n        POS        ORD   motor hoje
+SO      15    7   47%    6   40%     15  100%
+IA      39    3    8%   11   28%     39  100%
+ES2     28    9   32%    2    7%     27   96%
+TCC     10    7   70%    4   40%     10  100%
+MF      58   38   66%   32   55%     51   88%
+CG      72   40   56%   25   35%     57   79%
+TOT    222  104   47%   80   36%    199   90%
+
+VOCABULARIO QUE O ALINHAMENTO DOARIA (amostra por curso):
+  SO: chamadas-de-sistema <- ['estruturas', 'evolucao', 'historico', 'operacionais', 'sistemas'] · escalonamento <- ['chamadas', 'especificacao', 'exclusao', 'gerencia', 'mutua', 'processador', 'sistema'] · comunicacao-e-sincronizaca <- ['exercicios', 'filas', 'pipes'] · conceitos-basicos <- ['deadlock', 'gerencia', 'processador', 'sincronizacao']
+  IA: conceituacao <- ['exercicios', 'gerais'] · algoritmos-de-busca-com-in <- ['correcao', 'duvidas', 'exercicios'] · agentes-em-logica <- ['exercicios', 'planejamento'] · introducao-ao-aprendizado- <- ['abordagem', 'analise', 'arvores', 'dados', 'decisao', 'exercicios', 'mlp']
+  ES2: estudo-de-caso-arquitetura <- ['api', 'apresentacao', 'baseada', 'conceitos', 'disciplina', 'discovery', 'exercicios'] · conceito-de-devops <- ['assincrona', 'autenticacao', 'autorizacao', 'breaker', 'circuit', 'comunicacao', 'conteineres']
+  TCC: funcoes-recursivas-primiti <- ['alfabeto', 'automatos', 'cadeia', 'chomsky', 'hierarquia', 'lemas', 'linguagem'] · maquinas-de-turing <- ['maquias', 'variacoes'] · prova-da-indecidibilidade- <- ['correspondencia', 'entscheidungsproblem', 'post', 'rice', 'theorema'] · teoremas-de-godel <- ['correcao', 'prova']
+  MF: sistemas-formais <- ['apresentacao', 'disciplina', 'metodos'] · fundamentos-de-logica-de-p <- ['exercicios', 'revisao'] · especificacao-de-conjuntos <- ['caso', 'equacoes', 'estudo', 'exercicios', 'recursivas'] · provadores-de-teoremas <- ['exercicios', 'interativa']
+  CG: origens <- ['apresentacao', 'disciplina'] · entidades-geometricas <- ['fundamentos', 'matematicos'] · algoritmos-de-deteccao-e-c <- ['colisao'] · visao-computacional-e-conc <- ['exercicios', 'imagens', 'matematica', 'morfologia', 'processamento']

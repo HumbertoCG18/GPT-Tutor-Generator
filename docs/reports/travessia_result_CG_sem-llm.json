@@ -1,0 +1,327 @@
+{
+ "curso": "CG",
+ "modo": "sem-llm",
+ "n": 15,
+ "hit1": 5,
+ "hit3": 6,
+ "bloco_ok": 10,
+ "bloco_n": 11,
+ "chamadas": 0,
+ "linhas": [
+  {
+   "pergunta": "Como funciona o algoritmo de recorte de retas de Cohen-Sutherland?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "pagina-com-videos-sobre-recorte-e257d3",
+    "recorte",
+    "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+    "vis2d"
+   ],
+   "escolhido": [
+    "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+    "elemoculto",
+    "exemplozbuffer"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Quais são os fundamentos matemáticos (vetores, produto escalar) usados em computação gráfica?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "exerciciosfundamentosmatematicos",
+    "fundamentosmatematicos"
+   ],
+   "escolhido": [
+    "matematica",
+    "exemplodemanipulacaodeimagens",
+    "exercicio-com-animacao"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Como detectar colisão entre dois objetos usando envelopes (AABB e OOBB)?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
+   ],
+   "escolhido": [
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-04",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Como funciona o algoritmo Z-Buffer para remoção de elementos ocultos?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "elemoculto",
+    "exemplozbuffer"
+   ],
+   "escolhido": [
+    "elemoculto",
+    "exemplozbuffer",
+    "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-20",
+   "bloco_pred": "bloco-20",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Tem algum código de exemplo de curva de Bézier em Python?",
+   "tipo": "codigo",
+   "estilo": "estruturada",
+   "esperado": [
+    "bezier-animacao",
+    "bezier-py",
+    "bezier-python"
+   ],
+   "escolhido": [
+    "bezier-py",
+    "bezier-python",
+    "bezier-animacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-13",
+   "bloco_pred": "bloco-13",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "me explica visualização 3D",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "opengl3d",
+    "opengl3dcpp",
+    "opengl3dcpp-vdi",
+    "openglbasico",
+    "vis3d"
+   ],
+   "escolhido": [
+    "animacao-v2",
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "tem exercício de imagem?",
+   "tipo": "exercicio",
+   "estilo": "ambigua",
+   "esperado": [
+    "exercicios-de-processamento-de-imagens",
+    "floodfill",
+    "remocaoderuido"
+   ],
+   "escolhido": [
+    "exercicio-com-animacao",
+    "exercicio-com-poligonos",
+    "exercicio-de-animacao-foguete"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "como eu começo com OpenGL?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "opengl-cpp",
+    "opengl-py",
+    "openglbasico"
+   ],
+   "escolhido": [
+    "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+    "basico3d-py",
+    "bezier-animacao"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "o que é modelagem de sólidos?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "csg",
+    "modelagem3d"
+   ],
+   "escolhido": [
+    "basico3d-cpp",
+    "basico3d-py-zip",
+    "csg"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "bloco-15",
+   "bloco_pred": "bloco-15",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "o que cai na P1?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "cronograma2026-2",
+    "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
+    "resolucao-de-prova-de-computacao-grafica-2d",
+    "resolucao-de-prova-de-computacao-grafica-2d-html"
+   ],
+   "escolhido": [],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "segmentacao imagem",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "segmentacaodetexturas",
+    "segmentacaopptx"
+   ],
+   "escolhido": [
+    "floodfill",
+    "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+    "pagina-com-videos-sobre-segmentacao-por-texturas-e03566"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-07",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "iluminacao phong",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "iluminacao"
+   ],
+   "escolhido": [
+    "iluminacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-21",
+   "bloco_pred": "bloco-21",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "filtro passa baixa exercicio",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "exercicios-de-processamento-de-imagens"
+   ],
+   "escolhido": [
+    "exercicio-com-animacao",
+    "exercicio-com-poligonos",
+    "exercicio-de-animacao-foguete"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "geometria computacional plane sweep",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "planesweep"
+   ],
+   "escolhido": [
+    "domina",
+    "exercicios-de-geometria-computacional",
+    "geomcomp"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "transformacoes opengl codigo",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "transformacoesgeometricas",
+    "transformacoesgl"
+   ],
+   "escolhido": [
+    "basico3d-py",
+    "opengl-cpp",
+    "opengl-py"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-18",
+   "bloco_ok": false,
+   "porque": "",
+   "escolhido_raw": []
+  }
+ ]
+}

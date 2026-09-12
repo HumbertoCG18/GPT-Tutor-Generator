@@ -1,6 +1,7 @@
 """Gemini API client for code summarization."""
 from __future__ import annotations
 import logging
+from pathlib import Path
 import os
 import time
 from typing import Optional, Type
@@ -8,7 +9,11 @@ from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_MODEL = "gemini-3.5-flash"
+
+# Modelos aposentados pela API (404 em generateContent). Config persistido
+# antigo pode ainda apontar pra eles: resolve em runtime pro default vivo.
+RETIRED_MODELS = frozenset({"gemini-2.5-flash", "gemini-2.5-pro"})
 
 
 def _resolve_gemini_key(config) -> str:
@@ -93,10 +98,29 @@ class GeminiClient:
                 continue
         raise RuntimeError(f"Gemini falhou após {max_retries} tentativas") from last_exc
 
+    def generate_text(self, prompt: str, image_path=None) -> str:
+        """Texto livre; com `image_path` a imagem vai como parte inline (legenda/descricao de figura, S6b)."""
+        self._ensure_client()
+        contents = prompt
+        if image_path is not None:
+            from google.genai import types
+            import mimetypes
+
+            mime = mimetypes.guess_type(str(image_path))[0] or "image/png"
+            data = Path(image_path).read_bytes()
+            contents = [prompt, types.Part.from_bytes(data=data, mime_type=mime)]
+        resp = self._client.models.generate_content(model=self.model, contents=contents)
+        return (getattr(resp, "text", None) or "").strip()
+
 
 def get_gemini_client(config) -> Optional[GeminiClient]:
     key = _resolve_gemini_key(config)
     if not key:
         return None
     model = config.get("gemini_model", DEFAULT_MODEL) if config is not None else DEFAULT_MODEL
+    if model in RETIRED_MODELS:
+        # review F4 T1a: remap silencioso de modelo aposentado -> log p/ auditoria
+        # (config persistido antigo apontando pra um modelo morto some sem rastro).
+        logger.info("gemini_model %r aposentado; usando default %r", model, DEFAULT_MODEL)
+        model = DEFAULT_MODEL
     return GeminiClient(api_key=key, model=model)

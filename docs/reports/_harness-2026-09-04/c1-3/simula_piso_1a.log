@@ -1,0 +1,25 @@
+decisoes da 1a passada que BLOQUEIAM a 2a e tem gold: 178 · certas 148 · erradas 30
+  winner_score das CERTAS:  min 0.12 · p10 1.30 · mediana 16.61
+  winner_score das ERRADAS: min 0.12 · mediana 7.14 · max 29.15
+
+  as 12 decisoes de MENOR forca (o piso corta por baixo):
+       0.12 ERRO MF   tiposindutivos                 verificacao-de-programas     gold=icacao-formal-de-programas
+       0.12 OK   CG   video-sobre-prechimento-de-are segmentacao                  gold=segmentacao
+       0.12 OK   MF   colecoes-conjuntos             verificacao-de-programas     gold=icacao-formal-de-programas
+       0.14 ERRO CG   video-sobre-mapeamento-em-open mao-direita-e-mao-esquerda   gold=de-coordenadas-cartesianas
+       0.14 OK   CG   exemplozbuffer                 algoritmo-z-buffer           gold=algoritmo-z-buffer
+       0.91 ERRO CG   morfologiamatematicapptx       cores-e-tipos-de-imagens     gold=segmentacao
+       0.91 ERRO CG   transformacoesgl               de-coordenadas-cartesianas   gold=
+       0.91 OK   CG   basico3d-py-zip                tecnicas-de-modelagem-3d     gold=tecnicas-de-modelagem-3d
+       0.91 OK   CG   pagina-com-videos-sobre-geomet de-geometria-computacional   gold=de-geometria-computacional
+       0.91 OK   CG   planesweep                     de-geometria-computacional   gold=de-geometria-computacional
+       0.94 OK   MF   classes-parte1                 verificacao-de-programas     gold=pre-e-pos-condicoes
+       0.94 OK   MF   colecoes-arrays                verificacao-de-programas     gold=icacao-formal-de-programas
+
+  efeito de exigir piso de forca para BLOQUEAR a 2a passada (abaixo do piso, a 2a passada pode agir):
+    piso  0.50: libera   5 decisoes para a 2a passada — 2 hoje ERRADAS (chance de ganho), 3 hoje CERTAS (risco)
+    piso  1.00: libera  15 decisoes para a 2a passada — 4 hoje ERRADAS (chance de ganho), 11 hoje CERTAS (risco)
+    piso  1.05: libera  15 decisoes para a 2a passada — 4 hoje ERRADAS (chance de ganho), 11 hoje CERTAS (risco)
+    piso  1.50: libera  23 decisoes para a 2a passada — 8 hoje ERRADAS (chance de ganho), 15 hoje CERTAS (risco)
+    piso  2.00: libera  24 decisoes para a 2a passada — 8 hoje ERRADAS (chance de ganho), 16 hoje CERTAS (risco)
+    piso  3.00: libera  24 decisoes para a 2a passada — 8 hoje ERRADAS (chance de ganho), 16 hoje CERTAS (risco)

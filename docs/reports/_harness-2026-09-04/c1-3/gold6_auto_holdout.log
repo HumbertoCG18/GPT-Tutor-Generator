@@ -1,0 +1,7 @@
+[nu] CG: 0 pinos zerados
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+reprocess: 41s
+HOLDOUT CG motor puro (GPT-Tutor-Generator @ C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao): bloco 35/35 | conf-err 0 | flagados/sem bloco 1 | metodos: Counter({'llm': 32, 'janela-1': 24, 'titulo-topico': 13, 'disamb': 8, 'llm-funil': 8, 'disamb-curto': 3, 'irmao-card': 2, 'meta-generica': 2, 'prep-prova': 1})
+
+SUBUNIDADE CG motor puro: 49/82 com-extras · 36/82 primario

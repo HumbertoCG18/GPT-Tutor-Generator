@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+from pathlib import Path
 
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.ops.state_ops import (
@@ -10,6 +12,7 @@ from src.builder.ops.state_ops import (
 )
 from src.builder.core.reference_navigation import build_unit_topic_reference_index
 from src.builder.core.reference_summary import load_reference_curation
+from src.builder.routing.thresholds import METHOD_CAPS, confidence_band
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -38,6 +41,113 @@ def _resolve_gemini_client(builder):
         return get_gemini_client(config)
     except Exception:
         return None
+
+
+def _build_motor_voter(builder):
+    """Voter TIER 3 do motor. OPT-IN por flag de curso `use_llm_voter`.
+
+    None em qualquer falha/ausência: voter=None => AnchorEngine byte-idêntico
+    às FASES 0-2 (determinístico). Cache = sidecar do repo-tutor; o reprocess
+    roda na task queue (background), nunca na UI thread. Cap=20 (orçamento D8).
+    """
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("use_llm_voter", False)):
+        return None
+    try:
+        import json as _json
+        from src.builder.routing.motor.llm_vote import LlmVoter, material_curation_path
+        from src.builder.runtime.gemini_client import has_gemini_api_key
+
+        cfg_path = Path.home() / ".gpt_tutor_config.json"
+        config = _json.loads(cfg_path.read_text(encoding="utf-8")) if cfg_path.exists() else {}
+        # review F4 I2: precedência real (config > GEMINI_API_KEY do ambiente),
+        # a MESMA usada por get_gemini_client — um pré-check que só lia
+        # config.get("gemini_api_key") devolvia None mesmo com a chave só no
+        # ambiente, degradando o voter silenciosamente.
+        if not isinstance(config, dict) or not has_gemini_api_key(config):
+            return None
+        return LlmVoter(
+            config,
+            cache_path=material_curation_path(builder.root_dir),
+            repo_dir=builder.root_dir,
+            # B-4: o llm-funil soma ate 17 votos numa rodada (SO); com 20 o curso
+            # levava 2 rodadas para cobrir o funil. Cache hit nao conta.
+            cap=60,
+        )
+    except Exception:
+        return None
+
+
+def _run_moodle_structure_backfill(builder, live_manifest_entries) -> None:
+    """Fase 3a: posicao do professor no Moodle (secao/modulo/label datado) gravada nas
+    entries a partir de `raw/moodle/contents.json`, a cada regeneracao (idempotente; sem o
+    arquivo nada muda). Roda ANTES do motor: e sinal de estrutura, nunca decisao. Falha
+    nunca derruba a build."""
+    try:
+        from src.builder.sources.moodle import backfill_moodle_structure_repo
+        res = backfill_moodle_structure_repo(builder.root_dir, live_manifest_entries)
+        if res is not None:
+            logger.info("estrutura moodle: %d entries casadas, %d sem match",
+                        res["matched"], len(res["unmatched"]))
+    except Exception as exc:
+        logger.warning("estrutura moodle: backfill pulado (%s: %s)", type(exc).__name__, exc, exc_info=True)
+
+
+def _run_vocabulary_compile_layer(builder, live_manifest_entries) -> None:
+    """Fase 1b (02/09): vocabulario por curso compilado por LLM, 1x por curso (cache =
+    `course/.glossary_curation.llm.json`). OPT-IN por flag de curso `compile_vocabulary`
+    (mesmo padrao do voter: roda na task queue, ~1 chamada por unidade). `recompile_vocab`
+    forca (decisao D); `refilter_vocab` reaplica os filtros sobre `_raw` sem chamar. Env TUTOR_NO_VOCAB_COMPILE=1 = kill switch dos harnesses (motor puro
+    mede SEM vocabulario por definicao). Roda ANTES da taxonomia: `glossary_md` le o sidecar
+    fresco e os termos viram alias do topico neste mesmo passe. Falha nunca derruba a build."""
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("compile_vocabulary", False)) or os.environ.get("TUTOR_NO_VOCAB_COMPILE"):
+        return
+    try:
+        client = _resolve_gemini_client(builder)
+        if client is None:
+            return
+        from src.builder.core import vocabulary_compile
+        from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
+        vocabulary_compile.compile_course_vocabulary(
+            builder.root_dir, live_manifest_entries, load_internal_content_taxonomy(builder.root_dir), client,
+            recompile=bool(options.get("recompile_vocab", False)),
+            refilter=bool(options.get("refilter_vocab", False)),
+        )
+    except Exception as exc:
+        logger.warning("vocab: compilacao pulada nesta regeneracao (%s: %s)", type(exc).__name__, exc, exc_info=True)
+
+
+def _run_anchor_engine_layer(builder, live_manifest_entries):
+    """Camada temporal do motor (D9). Falha aqui NUNCA derruba a regeneração:
+    camada é opcional — loga e devolve as entries como estão (funil intacto)."""
+    try:
+        from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+        from src.builder.routing.motor.apply import apply_anchor_engine
+        from src.builder.routing.motor.llm_vote import content_key
+
+        voter = _build_motor_voter(builder)
+        if voter is not None:
+            live_keys = {content_key(e, builder.root_dir) for e in live_manifest_entries}
+            pruned = voter.prune(live_keys)
+            if pruned:
+                logger.info("motor/voter: %d voto(s) órfão(s) removido(s) do sidecar", pruned)
+        live_manifest_entries = apply_anchor_engine(
+            live_manifest_entries,
+            builder.root_dir,
+            str((builder.course_meta or {}).get("course_name") or ""),
+            enabled=True,
+            voter=voter,
+            markdown_fn=lambda e: _entry_markdown_text_for_file_map(builder.root_dir, e) or "",
+        )
+        if voter is not None:
+            logger.info("motor/voter round_summary: %s", voter.round_summary())
+    except Exception as exc:
+        # review F4 T7d: exc_info=True p/ stacktrace completo no log (camada
+        # isolada não derruba a build, mas o traceback é essencial p/ diagnosticar).
+        logger.warning("motor D9: camada temporal pulada nesta regeneração (%s: %s)",
+                       type(exc).__name__, exc, exc_info=True)
+    return live_manifest_entries
 
 
 def run_material_residual(builder, live_manifest_entries):
@@ -112,12 +222,175 @@ def run_material_residual(builder, live_manifest_entries):
     return live_manifest_entries
 
 
+def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list = None) -> list:
+    """Sincroniza campos do code_curation (summary.*) com o entry dict:
+    match_rationale -> computed_block_rationale,
+    block_match_method -> computed_block_method,
+    block_match_confidence -> computed_block_match_confidence.
+    Sem valor na curation, remove o campo — evita dado stale após
+    prune/reatribuição."""
+    curation_entries = (code_curation or {}).get("entries", {})
+    for e in entries:
+        rec = curation_entries.get(str(e.get("id") or "")) or {}
+        summary = rec.get("summary") or {}
+
+        rationale = str(summary.get("match_rationale") or "").strip()
+        if rationale:
+            e["computed_block_rationale"] = rationale
+        else:
+            e.pop("computed_block_rationale", None)
+
+        method = str(summary.get("block_match_method") or "").strip()
+        if method:
+            # Caminho de CÓDIGO vence: roda DEPOIS da atribuicao (hoje o motor,
+            # apply_concept_resolver) no regenerate_pedagogical_files, então
+            # consensus/llm_only sobrescreve o method (P2.3) — intencional.
+            e["computed_block_method"] = method
+        elif str(e.get("computed_block_method") or "") not in METHOD_CAPS:
+            # Sem method na curation: só remove se o valor existente NÃO é dos
+            # methods de atribuicao (METHOD_CAPS) recém-gravados nesta mesma
+            # regeneração. Pop incondicional apagaria o method de toda entry
+            # não-código; o pop continua valendo para dado de código stale
+            # (prune/reatribuição), que era o propósito original.
+            e.pop("computed_block_method", None)
+
+        conf = summary.get("block_match_confidence")
+        if conf is not None:
+            try:
+                e["computed_block_match_confidence"] = float(conf)
+            except (TypeError, ValueError):
+                e.pop("computed_block_match_confidence", None)
+        else:
+            e.pop("computed_block_match_confidence", None)
+
+        # D1: consenso band-gated para CÓDIGO. computed_block_id é a fonte única
+        # do bloco. O funil decide (card-aware); o Gemini só desempata onde o
+        # funil é honestamente fraco — SEM card E band "baixa". Card e funil-forte
+        # nunca são sobrescritos (preserva o gabarito autoritativo, erro 0/22).
+        if str(e.get("file_type") or "") in ("code", "zip"):
+            gemini_primary = str(summary.get("primary_block_id") or "")
+            if gemini_primary and blocks:
+                from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
+                from src.builder.timeline.card_block import resolve_block_ref as _rbr
+                if _POS_RE.match(gemini_primary):
+                    _r = _rbr(gemini_primary, blocks)
+                    if _r:
+                        gemini_primary = _r
+            if (
+                gemini_primary
+                and not str(e.get("source_section") or "").strip()
+                and str(e.get("computed_block_band") or "") == "baixa"
+            ):
+                e["computed_block_id"] = gemini_primary
+                e["computed_block_method"] = method or "llm_only"
+                _gem_conf = summary.get("block_match_confidence")
+                if _gem_conf is not None:
+                    try:
+                        e["computed_block_confidence"] = float(_gem_conf)
+                        e["computed_block_band"] = confidence_band(float(_gem_conf))
+                    except (TypeError, ValueError):
+                        pass
+                # Resync do espelho: sem isto a tag bloco: segue descrevendo o
+                # bloco antigo (drift 1.3, auditoria 2026-08-14). Tag e DISPLAY.
+                if blocks is not None:
+                    _display = next(
+                        (str(b.get("id") or "") for b in blocks
+                         if str(b.get("block_uuid") or "") == gemini_primary),
+                        gemini_primary,
+                    )
+                    _tags = [t for t in (e.get("auto_tags") or []) if not str(t).startswith("bloco:")]
+                    if _display:
+                        _tags.append(f"bloco:{_display}")
+                    e["auto_tags"] = _tags
+
+    return entries
+
+
+class UnitsShrinkError(RuntimeError):
+    """Indice de unidades encolheu sem plano de ensino para autorizar (fio subject_profile Task 4).
+
+    Tipo dedicado (nao ``RuntimeError`` cru) para que callers que envolvem
+    ``regenerate_pedagogical_files`` num ``except Exception`` amplo (``unprocess``,
+    ``reject`` em lifecycle_ops.py) possam re-levantar SELETIVAMENTE em vez de
+    engolir num ``logger.warning`` que a UI nunca mostra.
+    """
+
+
+def _distinct_unit_slugs(index: dict) -> set:
+    slugs: set = set()
+    for block in (index or {}).get("blocks") or []:
+        for key in ("unit_slug", "auto_unit_slug"):
+            slug = str(block.get(key) or "").strip()
+            if slug:
+                slugs.add(slug)
+    return slugs
+
+
+def _guard_units_not_silently_lost(
+    root_dir, course_name: str, parsed_unit_count: int, new_index: dict,
+) -> None:
+    """Guard "unidade nunca encolhe em silencio" (fio subject_profile, Task 4, fix round 1).
+
+    Mede o ENCOLHIMENTO REAL do indice prestes a ser persistido -- nao um proxy de risco.
+    Compara unit-slugs distintos (``unit_slug``/``auto_unit_slug``) do NOVO indice
+    (``new_index``, ja calculado, ainda nao escrito) vs o ``course/.timeline_index.json``
+    EXISTENTE no repo (lido daqui, ANTES do write).
+
+    Sem encolhimento (novo >= existente, inclui "sem indice previo") -> nunca dispara,
+    mesmo com plano de ensino ausente. Cobre o fluxo legitimo "reprocessar sem perfil"
+    (app.py ``_reprocess_repository``, botao "Reprocessar Repositorio"): o fallback
+    repo-derived (``_derive_unit_specs_from_repo``, file_map.py) reconstroi as MESMAS
+    unidades a partir do COURSE_MAP/indice antigos -- proxy antigo (parsed==0 E
+    existente>=2) disparava aqui por engano; a v2 mede o resultado real.
+
+    Com encolhimento: se o plano de ensino recem-parseado tem unidades
+    (``parsed_unit_count>0``), e reducao AUTORADA (usuario editou o plano) -- loga
+    info, nao bloqueia. Se ``parsed_unit_count==0`` (plano ausente ou parser nao
+    reconheceu o formato), e o mecanismo exato da perda silenciosa da u3 do MF
+    (docs/reports/2026-08-05-unit-sources-investigacao.md) -> levanta
+    ``UnitsShrinkError`` ANTES do write.
+
+    Generico: recebe ``root_dir``/``course_name`` como parametros, sem hardcode por
+    curso -- roda para qualquer curso que passe por ``regenerate_pedagogical_files``.
+    """
+    idx_path = Path(root_dir) / "course" / ".timeline_index.json"
+    existing_index: dict = {}
+    if idx_path.is_file():
+        try:
+            existing_index = json.loads(idx_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            existing_index = {}
+    existing_slugs = _distinct_unit_slugs(existing_index)
+    new_slugs = _distinct_unit_slugs(new_index)
+
+    if len(new_slugs) >= len(existing_slugs):
+        return
+
+    if parsed_unit_count > 0:
+        logger.info(
+            "unidades do indice reduziram de %d para %d em curso %r -- plano de ensino "
+            "presente (%d unidades parseadas), reducao autorada, guard nao bloqueia",
+            len(existing_slugs), len(new_slugs), course_name, parsed_unit_count,
+        )
+        return
+
+    raise UnitsShrinkError(
+        f"Guard 'unidade nunca encolhe em silencio': curso {course_name!r} - "
+        f"o indice existente tinha {len(existing_slugs)} unit-slugs distintos, o novo "
+        f"indice a persistir teria {len(new_slugs)} (plano de ensino recem-parseado tem "
+        f"0 unidades). Perfil da materia ausente? subjects.json? ou o formato do plano de "
+        f"ensino mudou e o parser nao o reconhece? "
+        f"O material ja foi processado e esta no manifest; a regeneracao pedagogica foi "
+        f"abortada para nao encolher unidades."
+    )
+
+
 def regenerate_pedagogical_files(
     builder,
     manifest: dict,
     *,
     filter_live_manifest_entries_fn,
-    build_file_map_content_taxonomy_from_course_fn,
+    build_rich_content_taxonomy_fn,
     write_internal_content_taxonomy_fn,
     build_file_map_timeline_context_from_course_fn,
     persist_enriched_timeline_index_fn,
@@ -137,7 +410,7 @@ def regenerate_pedagogical_files(
     glossary_md_fn,
     write_tag_catalog_fn,
     refresh_manifest_auto_tags_fn,
-    resolve_unit_block_tags_fn,
+    apply_unit_subunit_fn,
     syllabus_md_fn,
     exam_index_md_fn,
     exercise_index_md_fn,
@@ -147,8 +420,8 @@ def regenerate_pedagogical_files(
     whiteboard_index_md_fn,
     file_map_md_fn,
     student_profile_md_fn,
+    file_map_trace_md_fn=None,
     student_state_md_fn,
-    progress_schema_md_fn,
     parse_units_from_teaching_plan_fn,
     topic_text_fn,
     inject_executive_summary_fn,
@@ -163,6 +436,7 @@ def regenerate_pedagogical_files(
         builder.root_dir / "system" / "BACKEND_ARCHITECTURE.md",
         builder.root_dir / "system" / "BACKEND_POLICY.yaml",
         builder.root_dir / "student" / "PROGRESS_SCHEMA.md",
+        builder.root_dir / "build" / "PROGRESS_SCHEMA.md",
     ]
     for stale in stale_files:
         if stale.exists():
@@ -176,10 +450,13 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
     runtime_course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
 
-    content_taxonomy = build_file_map_content_taxonomy_from_course_fn(
+    _run_moodle_structure_backfill(builder, live_manifest_entries)
+    _run_vocabulary_compile_layer(builder, live_manifest_entries)
+    content_taxonomy = build_rich_content_taxonomy_fn(
+        builder.root_dir,
         runtime_course_meta,
         builder.subject_profile,
-        live_manifest_entries,
+        entries=live_manifest_entries,
     )
     runtime_course_meta["_content_taxonomy"] = content_taxonomy
     write_internal_content_taxonomy_fn(builder.root_dir, content_taxonomy)
@@ -192,6 +469,12 @@ def regenerate_pedagogical_files(
     runtime_course_meta["_timeline_context"] = timeline_context
     enriched_timeline_index = persist_enriched_timeline_index_fn(
         timeline_context.get("timeline_index", empty_timeline_index_fn()),
+    )
+    _guard_units_not_silently_lost(
+        builder.root_dir,
+        runtime_course_meta.get("course_name", "Curso"),
+        len(content_taxonomy.get("units") or []),
+        enriched_timeline_index,
     )
     write_text(
         builder.root_dir / "course" / ".timeline_index.json",
@@ -278,19 +561,59 @@ def regenerate_pedagogical_files(
     )
     live_manifest_entries = refresh_manifest_auto_tags_fn(builder.root_dir, live_manifest_entries, tag_catalog)
 
-    live_manifest_entries = resolve_unit_block_tags_fn(
-        live_manifest_entries,
-        runtime_course_meta,
-        builder.subject_profile,
-    )
+    # Cutover passo 3 (2026-08-17): funil legado (resolve_unit_block_tags) morto.
+    # Atribuicao bloco/unit/subunit e' 100% do motor (apply_concept_resolver +
+    # apply_unit_subunit_fn abaixo), incluindo semeadura de entries novos.
 
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)
 
+    _code_curation = builder._load_code_curation()
+    live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation, blocks=enriched_timeline_index.get("blocks") or [])
+    # Cutover passo 3 (2026-08-17): default ON — opt-out explicito por curso via
+    # feature_flags {"use_concept_resolver": false} no subjects.json.
+    if bool(builder.options.get("use_concept_resolver", True)):
+        from src.builder.routing.resolver_apply import apply_concept_resolver
+        live_manifest_entries = apply_concept_resolver(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+            content_taxonomy.get("units") or [],
+            _code_curation,
+            builder.root_dir,
+        )
+
+    # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
+    # temporal_* sem tocar computed_block_id (KB). Motor D9 (use_anchor_engine,
+    # FASE 4); o legado use_anchor_placement foi removido em 07/09/2026
+    # (nunca ligado em produto; flag desconhecida e ignorada).
+    if bool(builder.options.get("use_anchor_engine", False)):
+        live_manifest_entries = _run_anchor_engine_layer(builder, live_manifest_entries)
+
+    # F4: unit/subunit do motor, reconciliados contra o bloco TEMPORAL.
+    # 2026-08-21: esta fase rodava ANTES da camada temporal e reconciliava
+    # contra o computed_block_id do scorer de conceito — o eixo de unidade
+    # nunca via a decisao da ancora (a que a regua mede). Movida para depois:
+    # unidade = unidade do bloco temporal (+ heranca do vizinho de conteudo),
+    # medido 130/188 -> 178/188.
+    if bool(builder.options.get("use_concept_resolver", True)):
+        live_manifest_entries = apply_unit_subunit_fn(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+            runtime_course_meta,
+            builder.subject_profile,
+            builder.root_dir,
+            _code_curation,
+        )
+
     manifest["entries"] = live_manifest_entries
 
     try:
-        all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries]
+        # Duplicatas confirmadas (duplicate_of) ficam FORA dos indices
+        # navegacionais gerados abaixo; o motor (que ja rodou acima, sobre
+        # live_manifest_entries) segue processando as secundarias — golds e
+        # regua as referenciam.
+        all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries
+                       if not str(e.get("duplicate_of") or "").strip()]
     except Exception:
         all_entries = []
 
@@ -326,9 +649,9 @@ def regenerate_pedagogical_files(
         )
 
     code_entries = [e for e in all_entries if e.category in code_categories]
+    _code_curation = builder._load_code_curation()
+    _timeline_blocks = builder._load_timeline_blocks()
     if code_entries:
-        _code_curation = builder._load_code_curation()
-        _timeline_blocks = builder._load_timeline_blocks()
         write_text(
             builder.root_dir / "code" / "CODE_INDEX.md",
             code_index_md_fn(
@@ -339,18 +662,20 @@ def regenerate_pedagogical_files(
                 timeline_blocks=_timeline_blocks,
             ),
         )
-        if _timeline_blocks:
-            from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
-            write_text(
-                builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
-                _cronograma_detalhado_md(
-                    builder.course_meta,
-                    code_entries,
-                    _code_curation,
-                    _timeline_blocks,
-                    builder.subject_profile,
-                ),
-            )
+    # C1 item 2 (05/09): o CRONOGRAMA_DETALHADO e o "quando" do tutor e nao depende de haver codigo —
+    # aninhado em `if code_entries` deixava TCC e LR (35 e 17 blocos datados) sem o artefato.
+    if _timeline_blocks:
+        from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
+        write_text(
+            builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
+            _cronograma_detalhado_md(
+                builder.course_meta,
+                code_entries,
+                _code_curation,
+                _timeline_blocks,
+                builder.subject_profile,
+            ),
+        )
 
     from src.builder.artifacts.repo import code_health_md as _code_health_md
     write_text(
@@ -362,6 +687,12 @@ def regenerate_pedagogical_files(
             timeline_blocks=builder._load_timeline_blocks(),
             glossary_terms=builder._load_glossary_terms() if hasattr(builder, "_load_glossary_terms") else None,
         ),
+    )
+
+    from src.builder.artifacts.temporal_context import temporal_context_md as _temporal_context_md
+    write_text(
+        builder.root_dir / "setup" / "CONTEXTO_TEMPORAL.md",
+        _temporal_context_md(builder.course_meta, builder._load_timeline_blocks()),
     )
 
     from src.builder.artifacts.cronograma_health import cronograma_health_md as _cronograma_health_md
@@ -378,19 +709,22 @@ def regenerate_pedagogical_files(
     if wb_entries:
         write_text(builder.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md", whiteboard_index_md_fn(builder.course_meta, wb_entries))
 
+    _fm_entries = [e for e in live_manifest_entries if not str(e.get("duplicate_of") or "").strip()]
     write_text(
         builder.root_dir / "course" / "FILE_MAP.md",
-        file_map_md_fn(runtime_course_meta, live_manifest_entries, builder.subject_profile),
+        file_map_md_fn(runtime_course_meta, _fm_entries, builder.subject_profile),
     )
+    if file_map_trace_md_fn is not None:   # C1 item 1: rastreabilidade por material, fora do roteador
+        write_text(
+            builder.root_dir / "course" / "FILE_MAP_TRACE.md",
+            file_map_trace_md_fn(runtime_course_meta, _fm_entries),
+        )
 
     if builder.student_profile:
         write_text(builder.root_dir / "student" / "STUDENT_PROFILE.md", student_profile_md_fn(builder.student_profile))
     state_path = builder.root_dir / "student" / "STUDENT_STATE.md"
     if not state_path.exists():
         write_text(state_path, student_state_md_fn(builder.course_meta, builder.student_profile))
-    progress_path = builder.root_dir / "build" / "PROGRESS_SCHEMA.md"
-    if not progress_path.exists():
-        write_text(progress_path, progress_schema_md_fn())
     ensure_unit_battery_directories(
         builder.root_dir,
         builder.subject_profile,

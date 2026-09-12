@@ -20,7 +20,11 @@ def test_infer_semantic_profile_uses_course_corpus():
 
     assert profile["course_slug"] == "compiladores"
     assert "compiladores" in profile["tag_generic_slugs"]
-    assert "antlr" in profile["known_tools"]
+    # B-1 (01/09): ferramenta NAO e mais auto-inferida do corpus (realimentacao
+    # positiva promovia o termo mais central do curso a "ferramenta" e ele
+    # ganhava down-weight no conceito de bloco). ANTLR agora entra pelo
+    # override por curso (course/.semantic_profile.json), nunca sozinho.
+    assert "antlr" not in profile["known_tools"]
 
 
 def test_internal_semantic_profile_roundtrip(tmp_path: Path):
@@ -102,3 +106,23 @@ def test_infer_semantic_profile_short_default_tools_still_accepted():
     )
     known = profile.get("known_tools", [])
     assert "z3" in known, f"Z3 (default tool) should be in known_tools, got: {known}"
+
+
+def test_resolve_semantic_profile_ignora_perfil_gerado_da_rodada_anterior(tmp_path: Path):
+    """R11: o build e funcao pura de input + curadoria; o .generated.json da rodada
+    anterior (estado derivado, fora do git) nao pode vazar para a rodada atual."""
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    write_internal_semantic_profile(repo, {"course_slug": "velho", "known_tools": ["ferramenta-fantasma"]})
+
+    profile = resolve_semantic_profile(
+        root_dir=repo,
+        course_name="Compiladores 2026",
+        teaching_plan="## Análise Léxica",
+        course_map_md="",
+        glossary_md="",
+        strong_headings=["ANTLR4"],
+    )
+
+    assert "ferramenta-fantasma" not in profile["known_tools"]
+    assert profile["course_slug"] != "velho"

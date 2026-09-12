@@ -1,0 +1,88 @@
+========================================================================================================================
+PARTE A - subunidade: causa x evidencia do gold no texto
+========================================================================================================================
+
+SO: 15/15 · {}
+
+IA: 39/39 · {}
+
+ES2: 21/28 · {'gold-fora-da-unidade/SEM-evidencia': 6, 'confiante/COM-evidencia': 1}
+
+TCC: 11/11 · {}
+
+MF: 51/58 · {'confiante/COM-evidencia': 2, 'fraca/SEM-evidencia': 2, 'gold-pontua-zero/SEM-evidencia': 1, 'vazia/SEM-evidencia': 1, 'confiante/SEM-evidencia': 1}
+
+CG: 58/82 · {'gold-vazio/SEM-evidencia': 9, 'confiante/SEM-evidencia': 5, 'confiante/COM-evidencia': 4, 'gold-pontua-zero/SEM-evidencia': 3, 'vazia/SEM-evidencia': 2, 'fraca/SEM-evidencia': 1}
+
+------------------------------------------------------------------------------------------------------------------------
+[confiante/COM-evidencia   ] CG  basico3d-py                        unit=o-de-visualizacao-3d pred=perspectiva           (8.98) gold=to-de-camera-sintetica(4.46) txt=   454 ev=['Câmera Sintética'] why=winner_score=8.98 p1=perspectiva
+[confiante/COM-evidencia   ] CG  exercicios-sobre-curvas            unit=modelagem-de-objetos pred=hermite               (4.92) gold=catmull-rom           (4.27) txt=  1148 ev=['Catmull-Rom'] why=winner_score=4.92 p1=hermite
+[confiante/COM-evidencia   ] CG  exercicios-sobre-curvas-html       unit=modelagem-de-objetos pred=hermite               (4.92) gold=catmull-rom           (4.27) txt=  1148 ev=['Catmull-Rom'] why=winner_score=4.92 p1=hermite
+[confiante/COM-evidencia   ] CG  pagina-com-videos-sobre-fundamento unit=damentos-matematicos pred=lgoritmos-de-poligonos(18.93) gold=entidades-geometricas (11.03) txt=  1524 ev=['Pontos', 'Retas'] why=winner_score=18.93 p1=itmos-de-poligonos
+[confiante/COM-evidencia   ] ES2 devops                             unit=to-e-operacao-devops pred=integracao-continua-ci(10.14) gold=conceito-de-devops    (11.74) txt= 36596 ev=['DEVOPS'] why=winner_score=16.95 rotulo-decomposto p1=conceito-de-devops
+[confiante/COM-evidencia   ] MF  archive-of-formal-proofs-355fb8    unit=e-01-metodos-formais pred=ara-verificacao-formal(16.31) gold=provadores-de-teoremas(7.28) txt=   473 ev=['Isabelle'] why=winner_score=16.31 p1=verificacao-formal
+[confiante/COM-evidencia   ] MF  exemplos                           unit=e-01-metodos-formais pred=exemplos-de-aplicacoes(11.09) gold=provadores-de-teoremas(8.11) txt=  2025 ev=['Isabelle'] why=winner_score=11.09 p1=plos-de-aplicacoes
+[confiante/SEM-evidencia   ] CG  opengl3dcpp                        unit=o-de-visualizacao-3d pred=perspectiva           (8.98) gold=to-de-camera-sintetica(1.04) txt=   661 ev=[] why=winner_score=8.98 ambiguous p1=perspectiva
+[confiante/SEM-evidencia   ] CG  pagina-com-videos-sobre-curvas-par unit=modelagem-de-objetos pred=hermite               (4.84) gold=de-curvas-parametricas(0.94) txt=  1670 ev=[] why=winner_score=4.84 p1=hermite
+[confiante/SEM-evidencia   ] CG  pagina-com-videos-sobre-manipulaca unit=-visao-computacional pred=segmentacao           (4.46) gold=res-e-tipos-de-imagens(1.04) txt=  1101 ev=[] why=winner_score=4.46 p1=segmentacao
+[confiante/SEM-evidencia   ] CG  paginas-com-videos-sobre-modelagem unit=modelagem-de-objetos pred=solida-construtiva-csg(5.38) gold=cnicas-de-modelagem-3d(0.91) txt=  1391 ev=[] why=winner_score=8.58 rotulo-decomposto p1=ento-de-primitivas
+[confiante/SEM-evidencia   ] CG  pagina-com-videos-sobre-visualizac unit=o-de-visualizacao-3d pred=paralela              (12.40) gold=ine-de-visualizacao-3d(0.91) txt=  1895 ev=[] why=winner_score=12.40 p1=paralela
+[confiante/SEM-evidencia   ] MF  classes-parte2                     unit=ficacao-de-programas pred=rrecao-parcial-e-total(3.49) gold=rificacao-de-programas(0.94) txt=   551 ev=[] why=winner_score=3.49 p1=ao-parcial-e-total
+[fraca/SEM-evidencia       ] CG  programabasico3d                   unit=-imagens-realisticas pred=nto-flat-gouraud-phong(0.91) gold=iente-difusa-especular(1.04) txt= 13440 ev=[] why=winner_score=5.36 rotulo-decomposto p1=e-difusa-especular
+[fraca/SEM-evidencia       ] MF  invariantes                        unit=ficacao-de-programas pred=rificacao-de-programas(0.12) gold=nte-e-variante-de-laco(0.12) txt=   402 ev=[] why=winner_score=25.46 propagado-headings p1=
+[fraca/SEM-evidencia       ] MF  terminacao                         unit=ficacao-de-programas pred=rificacao-de-programas(0.12) gold=rrecao-parcial-e-total(0.12) txt=   460 ev=[] why=winner_score=25.46 propagado-headings p1=
+[gold-fora-da-unidade/SEM-evidencia] ES2 microsservicos2                    unit=to-e-operacao-devops pred=acao-de-microsservicos(18.66) gold=ntada-a-microsservicos(0.00) txt= 16014 ev=[] why=winner_score=18.66 p1=-de-microsservicos
+[gold-fora-da-unidade/SEM-evidencia] ES2 microsservicos3                    unit=to-e-operacao-devops pred=acao-de-microsservicos(22.40) gold=ntada-a-microsservicos(0.00) txt= 20236 ev=[] why=winner_score=22.40 p1=-de-microsservicos
+[gold-fora-da-unidade/SEM-evidencia] ES2 roteiro2-nameserver                unit=to-e-operacao-devops pred=acao-de-microsservicos(9.33) gold=ntada-a-microsservicos(0.00) txt= 20925 ev=[] why=winner_score=9.33 p1=-de-microsservicos
+[gold-fora-da-unidade/SEM-evidencia] ES2 roteiro3-gateway                   unit=to-e-operacao-devops pred=acao-de-microsservicos(27.05) gold=ntada-a-microsservicos(0.00) txt= 15307 ev=[] why=winner_score=27.05 p1=-de-microsservicos
+[gold-fora-da-unidade/SEM-evidencia] ES2 roteiro2                           unit=to-e-operacao-devops pred=acao-de-microsservicos(8.38) gold=ntada-a-microsservicos(0.00) txt=   554 ev=[] why=winner_score=8.38 p1=-de-microsservicos
+[gold-fora-da-unidade/SEM-evidencia] ES2 roteiro3                           unit=to-e-operacao-devops pred=acao-de-microsservicos(29.15) gold=ntada-a-microsservicos(0.00) txt=   717 ev=[] why=winner_score=29.15 p1=-de-microsservicos
+[gold-pontua-zero/SEM-evidencia] CG  exercicios-teoricos-sobre-processo unit=o-de-visualizacao-2d pred=desenho-de-linhas     (1.41) gold=oordenadas-cartesianas(0.00) txt=   918 ev=[] why=winner_score=1.41 p1=desenho-de-linhas
+[gold-pontua-zero/SEM-evidencia] CG  exercicios-teoricos-sobre-processo unit=o-de-visualizacao-2d pred=desenho-de-linhas     (1.41) gold=oordenadas-cartesianas(0.00) txt=   918 ev=[] why=winner_score=1.41 p1=desenho-de-linhas
+[gold-pontua-zero/SEM-evidencia] CG  video-sobre-mapeamento-em-opengl-1 unit=o-de-visualizacao-2d pred=direita-e-mao-esquerda(0.14) gold=oordenadas-cartesianas(0.00) txt=   397 ev=[] why=winner_score=0.14 p1=ita-e-mao-esquerda
+[gold-pontua-zero/SEM-evidencia] MF  tiposindutivos                     unit=ficacao-de-programas pred=rificacao-de-programas(0.12) gold=ao-formal-de-programas(0.00) txt=   409 ev=[] why=winner_score=0.12 p1=cacao-de-programas
+[gold-vazio/SEM-evidencia  ] CG  exercicios                         unit=rocessamento-grafico pred=conceitos             (7.14) gold=(vazio)               (0.00) txt=   456 ev=[] why=winner_score=7.14 p1=conceitos
+[gold-vazio/SEM-evidencia  ] CG  opengl-cpp                         unit=rocessamento-grafico pred=conceitos             (13.50) gold=(vazio)               (0.00) txt=   626 ev=[] why=winner_score=13.50 p1=conceitos
+[gold-vazio/SEM-evidencia  ] CG  opengl-py                          unit=rocessamento-grafico pred=conceitos             (9.90) gold=(vazio)               (0.00) txt=   598 ev=[] why=winner_score=9.90 p1=conceitos
+[gold-vazio/SEM-evidencia  ] CG  openglbasico                       unit=rocessamento-grafico pred=conceitos             (7.06) gold=(vazio)               (0.00) txt= 19931 ev=[] why=winner_score=7.06 p1=conceitos
+[gold-vazio/SEM-evidencia  ] CG  animacao-v2                        unit=o-de-visualizacao-2d pred=desenho-de-linhas     (1.35) gold=(vazio)               (0.00) txt= 11595 ev=[] why=winner_score=1.35 p1=desenho-de-linhas
+[gold-vazio/SEM-evidencia  ] CG  instanciamento                     unit=o-de-visualizacao-2d pred=direita-e-mao-esquerda(8.29) gold=(vazio)               (0.00) txt= 14613 ev=[] why=winner_score=8.29 p1=ita-e-mao-esquerda
+[gold-vazio/SEM-evidencia  ] CG  pagina-com-videos-sobre-instanciam unit=o-de-visualizacao-2d pred=desenho-de-linhas     (1.35) gold=(vazio)               (0.00) txt=  9822 ev=[] why=winner_score=1.35 p1=desenho-de-linhas
+[gold-vazio/SEM-evidencia  ] CG  transformacoesgl                   unit=o-de-visualizacao-2d pred=oordenadas-cartesianas(0.91) gold=(vazio)               (0.00) txt=  3616 ev=[] why=winner_score=0.91 p1=enadas-cartesianas
+[gold-vazio/SEM-evidencia  ] CG  video-com-instrucoes-para-usar-ope unit=rocessamento-grafico pred=conceitos             (7.06) gold=(vazio)               (0.00) txt=   419 ev=[] why=winner_score=7.06 p1=conceitos
+[vazia/SEM-evidencia       ] CG  exercicio-com-animacao             unit=damentos-matematicos pred=-                     (0.00) gold=operacoes-com-vetores (0.14) txt=   539 ev=[] why=empate-exato 2x score=3.53 p1=
+[vazia/SEM-evidencia       ] CG  pagina-com-videos-sobre-mapeamento unit=o-de-visualizacao-2d pred=-                     (0.00) gold=oordenadas-cartesianas(0.00) txt=   191 ev=[] why=empate-exato 4x score=0.02 p1=
+[vazia/SEM-evidencia       ] MF  exemplos-zip                       unit=rificacao-de-modelos pred=-                     (0.00) gold=acao-formal-de-modelos(0.00) txt=   536 ev=[] why=empate-exato 4x score=0.02 p1=
+
+TOTAL POR CAUSA x EVIDENCIA:
+   gold-vazio/SEM-evidencia         9  (24%)
+   confiante/COM-evidencia          7  (18%)
+   gold-fora-da-unidade/SEM-evidencia   6  (16%)
+   confiante/SEM-evidencia          6  (16%)
+   gold-pontua-zero/SEM-evidencia   4  (11%)
+   fraca/SEM-evidencia              3  (8%)
+   vazia/SEM-evidencia              3  (8%)
+   soma                            38
+
+========================================================================================================================
+PARTE B - fila (revisar) nos 8, por motivo
+========================================================================================================================
+SO  itens=114 materiais= 39/ 39 · {'o': 30, 'k': 30, 'd': 18, 'u': 9, 'v': 9, 'i': 9, 'a': 9}
+IA  itens=134 materiais= 59/ 59 · {'o': 55, 'k': 55, 'd': 8, 'u': 4, 'v': 4, 'i': 4, 'a': 4}
+ES2 itens=118 materiais= 35/ 35 · {'d': 24, 'o': 23, 'k': 23, 'u': 12, 'v': 12, 'i': 12, 'a': 12}
+TCC itens= 78 materiais= 27/ 27 · {'o': 21, 'k': 21, 'd': 12, 'u': 6, 'v': 6, 'i': 6, 'a': 6}
+MF  itens=176 materiais= 66/ 66 · {'o': 55, 'k': 55, 'd': 22, 'u': 11, 'v': 11, 'i': 11, 'a': 11}
+CG  itens=352 materiais= 93/ 93 · {'d': 72, 'u': 69, 'o': 68, 'k': 46, 'v': 25, 'i': 25, 'a': 25, 'm': 22}
+LR  itens= 14 materiais=  7/  7 · {'o': 7, 'k': 7}
+FR  itens= 64 materiais= 22/ 22 · {'o': 17, 'k': 17, 'd': 10, 'u': 5, 'v': 5, 'i': 5, 'a': 5}
+
+FILA TOTAL POR MOTIVO:
+   o                                  276
+   k                                  254
+   d                                  166
+   u                                  116
+   v                                   72
+   i                                   72
+   a                                   72
+   m                                   22
+   soma                               1050

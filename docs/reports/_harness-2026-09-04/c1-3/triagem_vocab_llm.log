@@ -1,0 +1,48 @@
+VALOR REAL DE CADA CHAMADA (ablacao do vocabulario LLM, uma unidade por vez)
+     unidade                         mat  termos   com   sem  delta  sinal-fraco
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+MF   01-metodos-formais               30      50    51    47     -4 2/30    7%
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+MF   02-verificacao-de-programas      24      16    51    51     +0 8/24   33%
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+MF   03-verificacao-de-modelos         4      11    51    51     +0 2/4   50%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   06-processo-de-visualizacao-3d   10      19    58    53     -5 5/10   50%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   02-fundamentos-matematicos       15      21    58    56     -2 4/15   27%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   01-introducao-ao-processamento    8      10    58    60     +2 1/8   12%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   03-processamento-de-imagens-e-   17      27    58    55     -3 6/17   35%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   04-processo-de-visualizacao-2d   14       7    58    56     -2 5/14   36%
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+CG   08-sintese-de-imagens-realisti    3       2    58    58     +0 0/3    0%
+
+RESUMO — se so chamassemos as unidades que rendem:
+  unidades com vocabulario LLM: 9  ->  rendem 5 · nao mudam nada 3
+  chamadas economizaveis: 3/9 (33%)
+  pontos que as uteis carregam: 16
+
+  as INUTEIS (chamada desperdicada) e seu sinal deterministico:
+     CG   08-sintese-de-imagens-realistica mat=  3 sinal-fraco=   0%
+     MF   02-verificacao-de-programas      mat= 24 sinal-fraco=  33%
+     MF   03-verificacao-de-modelos        mat=  4 sinal-fraco=  50%
+
+  as UTEIS:
+     CG   06-processo-de-visualizacao-3d   mat= 10 delta= -5 sinal-fraco=  50%
+     MF   01-metodos-formais               mat= 30 delta= -4 sinal-fraco=   7%
+     CG   03-processamento-de-imagens-e-vi mat= 17 delta= -3 sinal-fraco=  35%
+     CG   02-fundamentos-matematicos       mat= 15 delta= -2 sinal-fraco=  27%
+     CG   04-processo-de-visualizacao-2d   mat= 14 delta= -2 sinal-fraco=  36%
+
+[fim] 277s

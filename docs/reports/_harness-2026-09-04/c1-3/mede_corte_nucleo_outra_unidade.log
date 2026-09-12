@@ -1,0 +1,51 @@
+    MF V1: gain [] loss ['hoare']
+    MF V1 cortados (5): ['composicao', 'consequencia', 'formalizacao de algoritmos', 'logica de floyd hoare', 'sistemas']
+    MF V2 cortados (7): ['composicao', 'consequencia', 'especificacoes equacionais', 'formalizacao de algoritmos', 'modelos', 'propriedades', 'sistemas']
+    MF V3: gain [] loss ['logicapredicados-sintaxe', 'exerciciosespecificacao-respostas', 'exerciciosespecificacao', 'arvores', 'intro', 'listas', 'provas', 'terminacao']
+    MF V3 cortados (26): ['assinatura', 'composicao', 'consequencia', 'correcao de algoritmos', 'correcao parcial', 'correcao total', 'equivalencias', 'especificacao formal', 'especificacoes equacionais', 'formalizacao de algoritmos', 'invariante de laco', 'invariantes', 'isabelle', 'isar', 'logica de predicados'] ...
+    MF V12: gain [] loss ['hoare']
+    MF V12 cortados (8): ['composicao', 'consequencia', 'especificacoes equacionais', 'formalizacao de algoritmos', 'logica de floyd hoare', 'modelos', 'propriedades', 'sistemas']
+MF   base  55/58  doados  81 | V1 corta   5 ->  54 (+0 -1) | V2 corta   7 ->  55 (+0 -0) | V3 corta  26 ->  47 (+0 -8) | V12 corta   8 ->  54 (+0 -1)
+    SO V1: gain [] loss ['3103-threads', 'exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3']
+    SO V1 cortados (6): ['comunicacao entre processos', 'multithread', 'multithreading', 'processos', 'sincronizacao', 'troca de mensagens']
+    SO V2: gain [] loss ['exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3']
+    SO V2 cortados (15): ['codigo java com threads', 'exec', 'execvp', 'gerencia de arquivos', 'multithreading', 'ponte de pista unica', 'processo multithread', 'processos', 'programacao de sockets', 'semaforos', 'sincronizacao', 'socket', 'socket programming', 'sockets', 'wait']
+    SO V3: gain [] loss ['exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3']
+    SO V3 cortados (38): ['alocacao contigua', 'chamada de sistema', 'codigo java com threads', 'comunicacao entre processos', 'discos magneticos', 'dispatcher', 'endereco fisico', 'escalonamento de processos', 'escalonamento de requisicoes', 'espaco de enderecamento virtual', 'exclusao mutua', 'exec', 'execvp', 'fragmentacao externa', 'gerencia de arquivos'] ...
+    SO V12: gain [] loss ['3103-threads', 'exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3']
+    SO V12 cortados (18): ['codigo java com threads', 'comunicacao entre processos', 'exec', 'execvp', 'gerencia de arquivos', 'multithread', 'multithreading', 'ponte de pista unica', 'processo multithread', 'processos', 'programacao de sockets', 'semaforos', 'sincronizacao', 'socket', 'socket programming'] ...
+SO   base  15/15  doados  99 | V1 corta   6 ->  11 (+0 -4) | V2 corta  15 ->  12 (+0 -3) | V3 corta  38 ->  12 (+0 -3) | V12 corta  18 ->  11 (+0 -4)
+    IA V1 cortados (1): ['ambientes']
+    IA V2 cortados (2): ['inteligencia artificial', 'selecao']
+    IA V3: gain ['mlp-xoripynb'] loss ['introducao-a-ml', 'exemplo-com-k-nn', 'exemplo-2-k-nn-com-iriscsv-mais-completo', 'k-nn-para-classificacao-exemplo-cardio', 'k-nn-para-regressao-exemplo-imc', 'rede-perceptron-classificacao-planta-iris', 'mlp-classificacao-iris-atualizado', 'mlp-regressao-cardio', 'xor-backpropagation-em-python', 'aula-sobre-agrupamento-parte-1-particional', 'agrupamento-usando-k-means-exemplo-1-ipynb', 'agrupamento-usando-k-means-exemplo-2-ipynb', 'artigo-usando-agrupamento', 'agrupamento-hierarquico-exemplo-1', 'agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris']
+    IA V3 cortados (29): ['agentes reativos', 'agrupamento', 'agrupamento hierarquico', 'agrupamento particional', 'algoritmo genetico', 'algoritmo minimax', 'algoritmos geneticos', 'ambientes', 'aprendizado nao supervisionado', 'aprendizado supervisionado', 'backpropagation', 'chatgpt', 'classificacao', 'deep learning', 'dijkstra'] ...
+    IA V12 cortados (3): ['ambientes', 'inteligencia artificial', 'selecao']
+IA   base  36/39  doados  80 | V1 corta   1 ->  36 (+0 -0) | V2 corta   2 ->  36 (+0 -0) | V3 corta  29 ->  22 (+1 -15) | V12 corta   3 ->  36 (+0 -0)
+    ES2 V1 cortados (1): ['microsservicos']
+    ES2 V2: gain [] loss ['roteiro1']
+    ES2 V2 cortados (9): ['apigatewayapplication', 'currencyconversion', 'currencyexchange', 'currencyexchangeproxy', 'decisoes arquiteturais', 'microservicos', 'microsservicos', 'padroes', 'padroes de projeto']
+    ES2 V3: gain ['microsservicos3', 'roteiro3-gateway'] loss ['roteiro1', 'kubernetes', 'roteiro2', 'roteiro4', 'roteiro5', 'roteiro6']
+    ES2 V3 cortados (24): ['azure', 'backends for frontends', 'circuit breaker', 'client side discovery', 'cliente', 'conteiner', 'currencyconversion', 'currencyexchange', 'currencyexchangeproxy', 'decisoes arquiteturais', 'docker', 'http', 'kubernetes', 'maquina virtual', 'microservico de conversao'] ...
+    ES2 V12: gain [] loss ['roteiro1']
+    ES2 V12 cortados (9): ['apigatewayapplication', 'currencyconversion', 'currencyexchange', 'currencyexchangeproxy', 'decisoes arquiteturais', 'microservicos', 'microsservicos', 'padroes', 'padroes de projeto']
+ES2  base  25/28  doados  60 | V1 corta   1 ->  25 (+0 -0) | V2 corta   9 ->  24 (+0 -1) | V3 corta  24 ->  21 (+2 -6) | V12 corta   9 ->  24 (+0 -1)
+    TCC V1 cortados (2): ['complexidade de tempo', 'np compleitude']
+    TCC V2 cortados (4): ['composicao de funcoes', 'funcoes computaveis', 'rekursiva', 'robustez']
+    TCC V3 cortados (34): ['automatos finitos', 'complexidade de tempo', 'composicao de funcoes', 'configuracao', 'conjunto enumeravel', 'conjunto nao enumeravel', 'contavel', 'entscheidungsproblem', 'fechamento', 'funcao parcial', 'funcao total', 'funcoes computaveis', 'funcoes recursivas', 'funcoes recursivas parciais', 'funcoes recursivas primitivas'] ...
+    TCC V12 cortados (6): ['complexidade de tempo', 'composicao de funcoes', 'funcoes computaveis', 'np compleitude', 'rekursiva', 'robustez']
+TCC  base  10/11  doados  96 | V1 corta   2 ->  10 (+0 -0) | V2 corta   4 ->  10 (+0 -0) | V3 corta  34 ->  10 (+0 -0) | V12 corta   6 ->  10 (+0 -0)
+    CG V1: gain ['exercicio-com-animacao'] loss ['exercicio-de-animacao-foguete', 'slab']
+    CG V1 cortados (2): ['poligonos', 'retas']
+    CG V2: gain [] loss ['exercicio-de-animacao-foguete', 'slab']
+    CG V2 cortados (6): ['colisao', 'poligono', 'poligonos', 'projecao', 'retas', 'triangulo']
+    CG V3: gain [] loss ['exercicio-de-animacao-foguete', 'matematica', 'exercicios-de-processamento-de-imagens']
+    CG V3 cortados (33): ['aabb', 'calculo de u', 'calculo de v', 'colisao', 'contraste', 'convolucao', 'eixos', 'envelopes hierarquicos', 'histogramas', 'limiar', 'mediana', 'niveis de cinza', 'observador', 'oobb', 'poligono'] ...
+    CG V12: gain [] loss ['exercicio-de-animacao-foguete', 'slab']
+    CG V12 cortados (6): ['colisao', 'poligono', 'poligonos', 'projecao', 'retas', 'triangulo']
+CG   base  53/82  doados  79 | V1 corta   2 ->  52 (+1 -2) | V2 corta   6 ->  51 (+0 -2) | V3 corta  33 ->  50 (+0 -3) | V12 corta   6 ->  51 (+0 -2)
+    FR V1 cortados (1): ['bluetooth']
+    FR V2 cortados (1): ['internet']
+    FR V3 cortados (6): ['camada de transporte', 'http', 'internet', 'simple mail transfer protocol', 'smtp', 'tcp ip']
+    FR V12 cortados (2): ['bluetooth', 'internet']
+FR   base  18/18  doados  53 | V1 corta   1 ->  18 (+0 -0) | V2 corta   1 ->  18 (+0 -0) | V3 corta   6 ->  18 (+0 -0) | V12 corta   2 ->  18 (+0 -0)
+TOTAL 7 cursos (com-extras) /251: {'base': '212/251', 'V1': '206/251', 'V2': '206/251', 'V3': '180/251', 'V12': '204/251'}

@@ -1,0 +1,18 @@
+pino do bloco-04 removido
+ANTES     100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+CORRIGIDO 100%  29/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub  27/ 28 | fila  11 | conf-err  1
+
+materiais que mudaram de subunidade:
+  + microsservicos2                    u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  + microsservicos3                    u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  ~ microsservicos5                    u 02-integraca->02-integraca  estudo-de-caso-integracao-e-implan -> plataformas-de-devops              gold=estudo-de-caso-integracao-e-implan
+  + roteiro2                           u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  + roteiro2-nameserver                u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  + roteiro3                           u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  + roteiro3-gateway                   u 02-integraca->01-arquitetu  estudo-de-caso-integracao-e-implan -> estudo-de-caso-arquitetura-orienta gold=estudo-de-caso-arquitetura-orienta
+  ~ roteiro5-conteiners                u 02-integraca->02-integraca  estudo-de-caso-integracao-e-implan -> plataformas-de-devops              gold=estudo-de-caso-integracao-e-implan
+
+bloco-04 depois: unit=01-arquitetura-de-soft conf=0.8 topico=estudo-de-caso-arquitetura-orientada-a-micro (1.0)
+[fim] 26s  (copia mantida em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao\es2cur\Engenharia-Software-2-Tutor)

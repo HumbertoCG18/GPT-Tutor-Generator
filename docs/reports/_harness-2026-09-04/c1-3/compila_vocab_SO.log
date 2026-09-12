@@ -1,0 +1,35 @@
+SO: 38 materiais, 6 unidades com material, 6 chamadas previstas (cap)
+  unidade-01-introducao-ao-estudo-de-sistemas-operacionais mats  10  zips 0  membros   0  bundle  3815 chars
+  unidade-02-gerencia-do-processador mats  11  zips 0  membros   0  bundle  4582 chars
+  unidade-03-programacao-concorrente mats   4  zips 0  membros   0  bundle  2762 chars
+  unidade-04-deadlock              mats   3  zips 1  membros   2  bundle  1145 chars
+  unidade-05-gerencia-de-memoria   mats   6  zips 0  membros   0  bundle  5011 chars
+  unidade-06-gerencia-de-arquivos  mats   4  zips 0  membros   0  bundle  1797 chars
+  chamada 1/6
+  chamada 2/6
+  chamada 3/6
+  chamada 4/6
+  chamada 5/6
+  chamada 6/6
+chamadas feitas: 6/6; modelo gemini-3.5-flash; sidecar manual devolvido: True
+gravado .glossary_curation.llm.json: 20 topicos com termos, 112 termos, erros: []
+  1.1 Evolução histórica: ['Histórico', 'Sistemas de Lotes', 'Sistemas de Tempo Compartilhado', 'Batch Multiprogramming']
+  1.1 Serviços dos sistemas operacionais: ['Process management', 'File management', 'Directory and file system management']
+  1.2 Chamadas de sistema: ['SVCs', 'Chamada de Sistema', 'syscalls', 'Chamada de Sistema para Criação de Processos']
+  1.3 Estudo de casos: ['Linux', 'Unix', 'Unix/Linux', 'Linux kernel map']
+  3.1 Conceitos básicos: ['Processos', 'Recurso Computacional', 'Imagem do processo', 'Bloco de Controle do Processo', 'Inter-process Communication', 'Comunicação entre Processos', 'Memória Compartilhada', 'Pipes', 'Tubos', 'Multithread', 'Troca de Mensagens', 'Sincronização', 'Exclusão mútua']
+  3.2 Escalonamento: ['Escalonamento de Processos', 'Troca de Contexto', 'O Escalonador', 'Scheduler', 'Dispatcher', 'Critérios de Alocação', 'Critérios de Otimização']
+  3.3 Algoritmos de escalonamento: ['First-Come-First-Served', 'Shortest Job First', 'Prioridade', 'Round-Robin', 'Múltiplas Filas', 'Prioridade não-preemptiva', 'SJF (não preemptivo)', 'nonpreemptive', 'preemptive']
+  3.4 Estudo de casos: ['Linux Threads', 'S.O. Solaris', 'Pthreads', 'pthread_create', 'pthread_exit', 'pthread_join', 'pthread_self', 'threads em C']
+  4.1 Programas multithreads: ['multithreading', 'Processo multithread', 'Código Java com threads']
+  4.2 Comunicação e sincronização de processos: ['Sockets', 'Socket', 'Programação de sockets', 'Socket programming', 'exec', 'wait', 'execvp']
+  4.3 Primitivas de sincronização: ['semáforos']
+  4.4 Problemas clássicos: ['Ponte de pista única']
+  6.1 Políticas básicas: ['Princípios Básicos', 'Mecanismos básicos', 'Unidade de Gerenciamento de Memória', 'Amarração de endereços', 'binding', 'Endereço lógico', 'Endereço físico', 'Código relocável', 'Código absoluto', 'Carregador absoluto', 'carregador relocador']
+  6.2 Memória virtual: ['Espaço de Endereçamento Virtual', 'Biblioteca Compartilhada', 'Copy-on-Write', 'Localidade']
+  6.2.1 Paginação: ['Paginação sob Demanda', 'Tamanho da página', 'Tabela de páginas', 'Translation look-aside buffers', 'TLBs', 'Registradores associativos', 'Bit Válido-Inválido', 'Página Ausente', 'Page Fault', 'Paginação Excessiva', 'Thrashing', 'Substituição de Páginas']
+  6.2.2 Segmentação: ['Tabela de segmentos', 'Fragmentação externa', 'Segmentação com paginação']
+  7.1 Arquivos: ['Gerência de Arquivos', 'Tipos de Arquivos', 'Operações sobre Arquivos', 'Sistemas de Armazenamento em Massa', 'Unidades de Armazenamento Secundário']
+  7.2 Diretórios: ['Estrutura de diretórios Hierárquicos']
+  7.3 Implementação de sistemas de arquivos: ['Implementação de Arquivos', 'Alocação Contígua', 'Esquema do Sistema de Arquivos', 'Discos Magnéticos', 'Disco Mecânico', 'Estrutura Interna do Disco Mecânico', 'Escalonamento de Requisições', 'SSTF', 'SCAN', 'C-SCAN', 'C-LOOK']
+  7.6 Estudo de casos: ['Kernel UNIX']

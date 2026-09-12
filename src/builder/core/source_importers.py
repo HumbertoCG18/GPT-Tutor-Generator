@@ -14,9 +14,10 @@ from src.builder.core.code_summarization import (
 from src.builder.core.markdown_utils import compact_notebook_markdown
 from src.models.core import FileEntry
 from src.utils.helpers import (
+    CODE_CATEGORIES,
     CODE_EXTENSIONS,
+    slugify,
     LANG_MAP,
-    STUDENT_BRANCHES,
     ensure_dir,
     json_str,
     safe_rel,
@@ -189,8 +190,16 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
     extract_dir = builder.root_dir / "staging" / "zip-extract" / entry.id()
     ensure_dir(extract_dir)
     try:
-        with zipfile.ZipFile(raw_target, "r") as zf:
-            zf.extractall(extract_dir)
+        # Formato pelo CONTEUDO, nao pelo nome: o raw_target do tar.gz pode
+        # chegar nomeado so ".gz" (safe_name usa path.suffix). filter="data"
+        # bloqueia tar-slip/paths absolutos (backport de seguranca do 3.11.4+).
+        if zipfile.is_zipfile(raw_target):
+            with zipfile.ZipFile(raw_target, "r") as zf:
+                zf.extractall(extract_dir)
+        else:
+            import tarfile
+            with tarfile.open(raw_target, "r:*") as tf:
+                tf.extractall(extract_dir, filter="data")
     except Exception as exc:
         item["extraction_error"] = str(exc)
         builder.logs.append(
@@ -211,9 +220,15 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
             title=relative_name,
             tags=entry.tags,
             notes=f"Extraído de: {entry.title}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
+        # 11/09: o id do membro = id do zip + caminho relativo + extensao. So o nome-base colidia entre zips (ex1.dfy em 5
+        # zips do MF: 129 arquivos em 23/44 zips com conteudo de OUTRO zip), dentro do mesmo zip (CG: src/main.py x
+        # tests/main.py) e entre fonte e cabecalho (CG: Bezier.cpp x Bezier.h, 150 de 273 membros). Logs em c1-3/.
+        # ponytail: id longo em arvore Java funda (~110 chars); se bater no limite de caminho do Windows, encurtar por hash.
+        rel = Path(relative_name)
+        partes = [*rel.parts[:-1], rel.stem, rel.suffix.lstrip(".")]
+        sub_entry.id_override = "-".join([entry.id(), *(slugify(q) for q in partes if slugify(q))])
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
         safe_name_c = f"{sub_entry.id()}{code_path.suffix.lower()}"
         raw_target_c = builder.root_dir / "raw" / "code" / code_subdir / safe_name_c
@@ -264,6 +279,22 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         "clone_error": None,
     }
     url = entry.source_path
+    # Texto da pagina do repo (README server-rendered) e a UNICA rota de texto
+    # de um github-repo: o clone importa so codigo e nunca preenche
+    # base_markdown, deixando o scorer de unidade/cobertura com 0 chars
+    # (eth2/aws-encryption-sdk no MF). Mesmo mecanismo de file_type=url.
+    url_item = builder._process_url(entry)
+    for key in ("base_markdown", "base_backend", "manual_review"):
+        item[key] = url_item.get(key)
+    # Clone e SO para entries de CODIGO: para bibliografia/materiais o valor e
+    # o texto da pagina — clonar importava o repo INTEIRO como codigo e a
+    # heuristica de branch (main/master em STUDENT_BRANCHES) sobrescrevia a
+    # categoria da entry para codigo-aluno (higiene 2026-08-31; eth2/aws no MF
+    # ficaram com pin de branch errado DE PROPOSITO ate este fix).
+    if entry.category not in CODE_CATEGORIES:
+        builder.logs.append({"entry": entry.id(), "step": "github_clone", "status": "skip",
+                             "reason": f"categoria '{entry.category}' nao e de codigo"})
+        return item
     # tags pinam o branch explicitamente; vazio -> detecta o default do remoto.
     branch = entry.tags.strip() or _detect_default_branch(url)
     slug = entry.id()
@@ -289,7 +320,9 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         builder.logs.append({"entry": slug, "step": "github_clone", "status": "error", "error": err})
         return item
 
-    category = "codigo-aluno" if branch.lower() in STUDENT_BRANCHES else "codigo-professor"
+    # Branch default nao diz nada sobre aluno x professor — a categoria da
+    # ENTRY (escolhida no import) manda; sub-entries herdam.
+    category = entry.category
     processed = []
     for code_path in sorted(clone_dir.rglob("*")):
         if _should_skip_code_import_path(clone_dir, code_path):
@@ -303,7 +336,6 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
             title=relative_name,
             tags=entry.tags,
             notes=f"Branch: {branch} — {url}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
         code_subdir = "student" if category == "codigo-aluno" else "professor"
@@ -319,6 +351,5 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
 
     item["extracted_files"] = processed
     item["file_count"] = len(processed)
-    item["category"] = category
     builder.logs.append({"entry": slug, "step": "github_clone", "status": "ok", "file_count": len(processed)})
     return item

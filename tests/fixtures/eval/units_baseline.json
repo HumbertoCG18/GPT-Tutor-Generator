@@ -1,0 +1,42 @@
+{
+  "_comment": "Fio subject_profile Task 4 -- perdas parser-vs-indice conhecidas por curso, as-of a data/commit abaixo. Perda registrada aqui = scripts/verify_units.py WARN + exit 0. Perda NOVA (fora daqui) = FAIL + exit != 0. A cura (fio Task 3) atualiza este arquivo quando resolve uma perda -- nao editar a mao sem re-rodar scripts/verify_units.py.",
+  "as_of_commit": "f11dda7",
+  "as_of_date": "2026-08-05",
+  "source": "docs/reports/pendencias.md (Fio subject_profile Task 2: verificacao 5 cursos) + docs/reports/2026-08-05-unit-sources-investigacao.md (MF)",
+  "courses": {
+    "TCC-Tutor": {
+      "parser_n": 4,
+      "index_n": 4,
+      "missing_slugs": []
+    },
+    "Metodos-Formais-Tutor": {
+      "parser_n": 3,
+      "index_n": 2,
+      "missing_slugs": [
+        "unidade-03-verificacao-de-modelos"
+      ]
+    },
+    "Sistemas-Operacionais-Tutor": {
+      "parser_n": 7,
+      "index_n": 6,
+      "missing_slugs": [
+        "unidade-04-deadlock"
+      ]
+    },
+    "Engenharia-Software-2-Tutor": {
+      "parser_n": 3,
+      "index_n": 2,
+      "missing_slugs": [
+        "unidade-03-testes-de-software"
+      ]
+    },
+    "Inteligencia-Artifical-Tutor": {
+      "parser_n": 5,
+      "index_n": 3,
+      "missing_slugs": [
+        "unidade-de-aprendizagem-04-raciocinio-sob-incerteza",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina"
+      ]
+    }
+  }
+}

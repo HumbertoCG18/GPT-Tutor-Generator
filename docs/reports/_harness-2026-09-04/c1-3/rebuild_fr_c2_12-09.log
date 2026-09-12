@@ -1,0 +1,10 @@
+[stash] 20 entries | tipos {'pdf': 15, 'image': 1, 'zip': 4} | categorias {'cronograma': 1, 'material-de-aula': 9, 'fotos-de-prova': 1, 'listas': 5, 'codigo-professor': 4} | ignorados ['.moodle_nomes.json']
+[options] {'default_processing_mode': 'high_fidelity', 'image_description_source': 'datalab', 'skip_base_backends': False, 'profile_backends': {'math_heavy': 'datalab', 'scanned': 'datalab', 'diagram_heavy': 'datalab', 'auto': 'auto'}}
+[meta] {'course_name': 'Fundamentos de Redes de Computadores', 'course_slug': 'fundamentos-de-redes-de-computadores', 'semester': '2026/2', 'professor': 'Marcelo Veiga Neves', 'institution': 'PUCRS'} | gemini_auto_summarize: False
+  (1/20) Plano de Ensino - 20262  [5s]
+  (0/-1)   [6s]
+  (0/-1)   [7s]
+  (0/-1)   [14s]
+  (0/-1)   [14s]
+  (2/20) 01 - Protocolos de Rede  [15s]
+  (0/-1)   [20s]

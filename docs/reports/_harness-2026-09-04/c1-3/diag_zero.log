@@ -1,0 +1,117 @@
+REGIME zero
+
+[MF] com gold 66 · 100% 50 · falham 16
+    10  sub: errada
+     9  falha sub
+     7  sub: bloco sem topico da taxonomia
+     5  bloco: provider card
+     5  falha bloco
+     4  bloco: flagado
+     4  bloco: gold na janela
+     3  bloco: CONFIANTE
+     3  bloco: gold FORA da janela
+     2  bloco: provider labels
+     2  falha bloco+sub
+     2  sub: bloco nomeia OUTRO subtopico
+     2  sub: topico primario do BLOCO = gold
+     1  sub: empate
+     1  sub: secao nomeia o gold
+     1  sub: topico do bloco = gold e sub errada
+     1  sub: topico do bloco = gold e sub vazia
+     1  sub: vazia
+
+[SO] com gold 39 · 100% 27 · falham 12
+     6  falha sub
+     6  sub: bloco nomeia OUTRO subtopico
+     5  sub: errada
+     5  unidade: bloco tambem errado
+     3  falha unidade
+     2  bloco: flagado
+     2  bloco: gold FORA da janela
+     2  bloco: provider card
+     2  falha bloco+unidade
+     2  sub: vazia
+     1  bloco: CONFIANTE
+     1  bloco: provider -
+     1  bloco: sem bloco
+     1  falha bloco+sub
+     1  sub: empate
+     1  sub: titulo nomeia o gold
+
+[IA] com gold 42 · 100% 3 · falham 39
+    35  falha sub
+    35  sub: bloco sem topico da taxonomia
+    35  sub: errada
+     3  falha unidade
+     3  unidade: bloco tambem errado
+     1  bloco: flagado
+     1  bloco: gold na janela
+     1  bloco: provider labels
+     1  falha bloco
+
+[ES2] com gold 31 · 100% 6 · falham 25
+    23  sub: bloco sem topico da taxonomia
+    23  sub: errada
+    14  falha sub
+    10  unidade: bloco tambem errado
+     9  falha unidade+sub
+     1  bloco: flagado
+     1  bloco: gold FORA da janela
+     1  bloco: provider card
+     1  falha bloco
+     1  falha unidade
+
+[TCC] com gold 27 · 100% 23 · falham 4
+     3  falha sub
+     2  sub: errada
+     1  bloco: CONFIANTE
+     1  bloco: provider -
+     1  bloco: sem bloco
+     1  falha bloco
+     1  sub: bloco nomeia OUTRO subtopico
+     1  sub: bloco sem topico da taxonomia
+     1  sub: gold-vazio, motor pos
+     1  sub: secao nomeia o gold
+     1  sub: titulo nomeia o gold
+
+[CG] com gold 83 · 100% 46 · falham 37
+    35  falha sub
+    22  sub: errada
+    19  sub: bloco sem topico da taxonomia
+     8  sub: bloco nomeia OUTRO subtopico
+     8  sub: gold-vazio, motor pos
+     7  sub: vazia
+     6  sub: empate
+     2  bloco: flagado
+     2  bloco: gold na janela
+     2  bloco: provider topic
+     2  falha bloco+sub
+
+[TOTAL] com gold 288 · 100% 155 · falham 133
+   102  falha sub
+    97  sub: errada
+    85  sub: bloco sem topico da taxonomia
+    18  unidade: bloco tambem errado
+    17  sub: bloco nomeia OUTRO subtopico
+    10  bloco: flagado
+    10  sub: vazia
+     9  falha unidade+sub
+     9  sub: gold-vazio, motor pos
+     8  bloco: provider card
+     8  falha bloco
+     8  sub: empate
+     7  bloco: gold na janela
+     7  falha unidade
+     6  bloco: gold FORA da janela
+     5  bloco: CONFIANTE
+     5  falha bloco+sub
+     3  bloco: provider labels
+     2  bloco: provider -
+     2  bloco: provider topic
+     2  bloco: sem bloco
+     2  falha bloco+unidade
+     2  sub: secao nomeia o gold
+     2  sub: titulo nomeia o gold
+     2  sub: topico primario do BLOCO = gold
+     1  sub: topico do bloco = gold e sub errada
+     1  sub: topico do bloco = gold e sub vazia

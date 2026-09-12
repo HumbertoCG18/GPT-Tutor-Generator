@@ -7,11 +7,14 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from src.utils.helpers import ensure_dir, safe_rel, slugify
+from src.utils.helpers import ensure_dir, safe_rel, slugify, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
 IMG_RE = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+# Link (nao imagem) para content/images: a fonte da formula transcrita do HTML (S6b) aponta para a
+# GIF original; sem isso o arquivo era varrido como "stale" (gate do CG, 03/09).
+LINK_TO_CONTENT_IMG_RE = re.compile(r'(?<!!)\[[^\]]*\]\(([^)]*content/images/[^)]+)\)')
 
 
 def find_image(root_dir: Path, raw_path: str, md_file: Path) -> Optional[Path]:
@@ -66,6 +69,11 @@ def resolve_content_images(builder) -> None:
                 text = md_file.read_text(encoding="utf-8")
             except Exception:
                 continue
+
+            for match in LINK_TO_CONTENT_IMG_RE.finditer(text):
+                ref_path = find_image(builder.root_dir, match.group(1), md_file)
+                if ref_path and ref_path.exists():
+                    referenced_files.add(ref_path)
 
             replacements: List[tuple] = []
             for match in IMG_RE.finditer(text):
@@ -245,9 +253,7 @@ def prune_stale_image_curation(builder) -> int:
                 curation["curated_at"] = None
 
     if total_removed:
-        manifest_path.write_text(
-            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
+        write_json_manifest(manifest_path, manifest)
         logger.info("Total stale curation entries removed: %d", total_removed)
 
     return total_removed

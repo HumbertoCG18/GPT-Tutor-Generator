@@ -1,0 +1,38 @@
+1) QUANTO DO UNIVERSO CADA REGUA COBRE  (o '100%' vale dentro do gold, nao no repo inteiro)
+       materiais  gold bloco  gold unidade  gold subunid
+SO            39          39            37            15
+IA            59          42            42            39
+ES2           35          28            28            28
+TCC           27          27            18            11
+MF            66          66            65            58
+CG            93          35             0            82
+LR             7           0             0             0
+FR            22           0             0            18
+TOT          348         237           190           251
+      cobertura do gold: bloco 68% · unidade 55% · subunidade 72%
+
+2) ANATOMIA DA FILA  (fila = 'duvida' + 'mudou'; um material pode disparar 2+ motivos)
+  SO   duvida= 12 mudou=  0  {'conflito': 11, 'sub-empate': 2, 'sub-ambigua': 1}
+  IA   duvida=  5 mudou=  0  {'conflito': 4, 'sub-empate': 1}
+  ES2  duvida= 11 mudou=  0  {'conflito': 11}
+  TCC  duvida=  5 mudou=  0  {'sub-ambigua': 3, 'conflito': 2}
+  MF   duvida= 11 mudou=  0  {'conflito': 6, 'sub-ambigua': 4, 'sub-empate': 2, 'flag:due-straddle': 1}
+  CG   duvida= 25 mudou= 22  {'conflito': 13, 'flag:disamb': 6, 'sub-ambigua': 4, 'sub-empate': 4}
+  LR   duvida=  0 mudou=  0  {}
+  FR   duvida=  5 mudou=  0  {'flag:disamb': 3, 'sub-ambigua': 1, 'conflito': 1, 'sub-empate': 1}
+
+  motivo                    n   o que quer dizer
+  conflito                 48   o texto do material diz uma unidade e o bloco diz outra (o bloco decide; fica o registro)
+  sub-ambigua              13   dois ou mais subtopicos empataram acima do limiar
+  sub-empate               10   empate EXATO de score entre subtopicos
+  flag:disamb               9   o bloco saiu de um desempate, nao de sinal direto
+  flag:due-straddle         1   a data de entrega cai entre dois blocos
+  mudou (sync)             22   decisao confiante que se moveu na ultima sincronizacao; a proxima limpa se nada mover
+
+  FILA = 74 duvida + 22 mudou = 96 em 348 materiais = 27.6 por 100
+
+3) MATERIAIS SEM BLOCO HOJE
+     material                               categoria          secao                      situacao
+IA   prova-1-2024-02                        provas             TDE Trabalho Discente Efet fora do eixo temporal (nao e pendencia)
+
+  1 fora do eixo temporal por desenho · 0 sao duvida de verdade

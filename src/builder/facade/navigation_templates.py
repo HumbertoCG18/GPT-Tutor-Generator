@@ -12,6 +12,7 @@ def build_navigation_template_aliases(
     navigation_low_token_course_map_md_v2,
     navigation_course_map_md,
     navigation_file_map_md,
+    navigation_file_map_trace_md=None,
     json_str_fn,
     safe_rel_fn,
     ensure_dir_fn,
@@ -28,17 +29,8 @@ def build_navigation_template_aliases(
     assessment_conflict_section_lines,
     filter_live_manifest_entries,
     build_file_map_content_taxonomy_from_course,
-    build_file_map_unit_index_from_course,
-    iter_content_taxonomy_topics,
     merge_manual_and_auto_tags,
     resolve_entry_manual_timeline_block,
-    entry_markdown_text_for_file_map,
-    auto_map_entry_subtopic,
-    resolve_entry_manual_unit_slug,
-    unit_match_result_factory,
-    derive_unit_from_topic_match,
-    auto_map_entry_unit,
-    select_probable_period_for_entry,
     file_map_markdown_cell,
     entry_markdown_path_for_file_map,
     get_entry_sections,
@@ -46,7 +38,6 @@ def build_navigation_template_aliases(
     entry_usage_hint,
     entry_priority_label,
     collapse_ws,
-    build_unit_tag_index_fn,
 ):
     root_readme = repo_artifacts_module.root_readme
     wrap_frontmatter = partial(repo_artifacts_module.wrap_frontmatter, json_str_fn=json_str_fn)
@@ -81,18 +72,9 @@ def build_navigation_template_aliases(
     low_token_file_map_md = partial(
         navigation_low_token_file_map_md,
         build_file_map_content_taxonomy_from_course=build_file_map_content_taxonomy_from_course,
-        build_file_map_unit_index_from_course=build_file_map_unit_index_from_course,
         build_file_map_timeline_context_from_course=build_file_map_timeline_context_from_course,
-        iter_content_taxonomy_topics=iter_content_taxonomy_topics,
         merge_manual_and_auto_tags=merge_manual_and_auto_tags,
         resolve_entry_manual_timeline_block=resolve_entry_manual_timeline_block,
-        entry_markdown_text_for_file_map=entry_markdown_text_for_file_map,
-        auto_map_entry_subtopic=auto_map_entry_subtopic,
-        resolve_entry_manual_unit_slug=resolve_entry_manual_unit_slug,
-        unit_match_result_factory=unit_match_result_factory,
-        derive_unit_from_topic_match=derive_unit_from_topic_match,
-        auto_map_entry_unit=auto_map_entry_unit,
-        select_probable_period_for_entry=select_probable_period_for_entry,
         file_map_markdown_cell=file_map_markdown_cell,
         entry_markdown_path_for_file_map=entry_markdown_path_for_file_map,
         get_entry_sections=get_entry_sections,
@@ -100,7 +82,6 @@ def build_navigation_template_aliases(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
-        build_unit_tag_index=build_unit_tag_index_fn,
     )
     budgeted_file_map_md = partial(
         navigation_budgeted_file_map_md,
@@ -127,6 +108,11 @@ def build_navigation_template_aliases(
         navigation_file_map_md,
         budgeted_file_map_md_fn=budgeted_file_map_md,
     )
+    # C1 item 1 (05/09): rastreabilidade por material saiu do FILE_MAP para course/FILE_MAP_TRACE.md
+    file_map_trace_md = (
+        partial(navigation_file_map_trace_md, merge_manual_and_auto_tags=merge_manual_and_auto_tags)
+        if navigation_file_map_trace_md is not None else None
+    )
     exercise_index_md = exercise_index_md_v2
 
     return {
@@ -147,6 +133,7 @@ def build_navigation_template_aliases(
         "_exercise_index_md_v2": exercise_index_md_v2,
         "course_map_md": course_map_md,
         "file_map_md": file_map_md,
+        "file_map_trace_md": file_map_trace_md,
         "exercise_index_md": exercise_index_md,
     }
 

@@ -1,0 +1,74 @@
+== as 17 linhas, nota completa do material_gt
+  MF  eth2                                         secao='' bloco=bloco-01 u_bloco=unidade-01-metodos-formais u_material=unidade-02-verificacao-de-
+      nota: propagado de coverage_gt_MF.csv (provenance=proposto-claude, sessao 2026-08-18); CONFIRMADO ruling user 2026-08-31: u02
+  MF  aws-encryption-sdk                           secao='' bloco=bloco-01 u_bloco=unidade-01-metodos-formais u_material=unidade-02-verificacao-de-
+      nota: propagado de coverage_gt_MF.csv (provenance=proposto-claude, sessao 2026-08-18); CONFIRMADO ruling user 2026-08-31: u02
+  MF  t1-2026-1                                    secao='TDE Trabalho Discente Efetivo' bloco=bloco-11 u_bloco=unidade-02-verificacao-de- u_material=unidade-01-metodos-formais
+      nota: proposto-claude 2026-08-19: enunciado 'Provas por Inducao de Especificacoes Equacionais Recursivas' = u01
+  MF  t1-2026-1-thy                                secao='TDE Trabalho Discente Efetivo' bloco=bloco-11 u_bloco=unidade-02-verificacao-de- u_material=unidade-01-metodos-formais
+      nota: proposto-claude 2026-08-19: enunciado 'Provas por Inducao de Especificacoes Equacionais Recursivas' = u01
+  MF  t2-2026-1                                    secao='TDE Trabalho Discente Efetivo' bloco=bloco-20 u_bloco=(sem gold por bloco) u_material=unidade-02-verificacao-de-
+      nota: proposto-claude 2026-08-19 (extraido): enunciado cita 'dafny' e 'invariante' = u02
+  SO  0704-laminas-comunicacao-e-sincronizacao     secao='Sincronização e Comunicação de Processos' bloco=bloco-06 u_bloco=unidade-04-deadlock u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.2 Comunicacao e sincronizacao na u03
+  SO  0904-laminas-semaforos                       secao='Sincronização e Comunicação de Processos' bloco=bloco-06 u_bloco=unidade-04-deadlock u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.2 Comunicacao e sincronizacao na u03
+  SO  0704-exemplo-threads-em-java                 secao='Threads' bloco=bloco-06 u_bloco=unidade-04-deadlock u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  SO  3103-threads                                 secao='Threads' bloco=bloco-04 u_bloco=unidade-02-gerencia-do-pro u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  SO  biblioteca-em-c-pthread                      secao='Threads' bloco=bloco-04 u_bloco=unidade-02-gerencia-do-pro u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  SO  exemplo-threads-em-c-exemplo1                secao='Threads' bloco=bloco-04 u_bloco=unidade-02-gerencia-do-pro u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  SO  exemplo-threads-em-c-exemplo2                secao='Threads' bloco=bloco-04 u_bloco=unidade-02-gerencia-do-pro u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  SO  exemplo-threads-em-c-exemplo3                secao='Threads' bloco=bloco-04 u_bloco=unidade-02-gerencia-do-pro u_material=unidade-03-programacao-con
+      nota: plano-de-ensino (2026-08-18): topico 4.1 Programas multithreads na u03
+  ES2 microsservicos5                              secao='Microsserviços' bloco=bloco-08 u_bloco=unidade-02-integracao-de-d u_material=unidade-01-arquitetura-de-
+      nota: ruling-user 2026-08-19: a serie de microsservicos cobre a unidade que fala de microsservicos (u01)
+  ES2 microsservicos7                              secao='Microsserviços' bloco=bloco-09 u_bloco=unidade-02-integracao-de-d u_material=unidade-01-arquitetura-de-
+      nota: ruling-user 2026-08-19: a serie de microsservicos cobre a unidade que fala de microsservicos (u01)
+  ES2 azure                                        secao='Microsserviços' bloco=bloco-09 u_bloco=unidade-02-integracao-de-d u_material=unidade-01-arquitetura-de-
+      nota: ruling-user 2026-08-19: a serie de microsservicos cobre a unidade que fala de microsservicos (u01)
+  ES2 microsservicos4                              secao='Microsserviços' bloco=bloco-07 u_bloco=unidade-02-integracao-de-d u_material=unidade-01-arquitetura-de-
+      nota: ruling-user 2026-08-19: a serie de microsservicos cobre a unidade que fala de microsservicos (u01)
+== blocos envolvidos (indice do produto): id, datas, unidade, topico
+  MF  bloco-01 2026-03-02..2026-03-02 unit=unidade-01-metodos-formais conf=0.4 topic='disciplina'
+  MF  bloco-11 2026-05-06..2026-05-06 unit=- conf=0.0 topic='logica programas correcao parcial total terminacao invariantes laco en'
+  MF  bloco-20 2026-07-06..2026-07-06 unit=- conf=0.0 topic='entrega'
+  SO  bloco-04 2026-03-19..2026-03-31 unit=unidade-02-gerencia-do-pro conf=0.8 topic='gerencia processador processos chamadas sistema escalonamento threads '
+  SO  bloco-06 2026-04-07..2026-04-09 unit=unidade-04-deadlock conf=1.0 topic='gerencia processador sincronizacao deadlock'
+  ES2 bloco-07 2026-05-15..2026-05-15 unit=unidade-02-integracao-de-d conf=1.0 topic='microservicos spring circuit breaker'
+  ES2 bloco-08 2026-05-22..2026-05-29 unit=unidade-02-integracao-de-d conf=0.6 topic='implantacao microservicos conteineres'
+  ES2 bloco-09 2026-06-05..2026-06-05 unit=unidade-02-integracao-de-d conf=1.0 topic='comunicacao'
+== plano de ensino: topicos citados
+  SO  unidade-02-gerencia-do-processador       | 3.1 Conceitos básicos · 3.3 Algoritmos de escalonamento
+  SO  unidade-03-programacao-concorrente       | 4.1 Programas multithreads · 4.2 Comunicação e sincronização de process
+  SO  unidade-04-deadlock                      | 5.1 Conceitos básicos · 5.2 Caracterização · 5.3 Prevenção · 5.4 Detecção e recuperação
+  ES2 unidade-01-arquitetura-de-software       | 1.1 Conceito de arquitetura de software · 1.2 Visões arquiteturais: estrutural e din · 1.3 Estilos e padrões arquiteturais · 1.3.1 Camadas · 1.3.2 Cliente-Servidor · 1.3.3 Orientada a Serviços · 1.3.4 Orientada a Microsserviços · 1.3.5 Arquitetura Serverless
+  ES2 unidade-02-integracao-de-desenvolvimento | 2.1 Conceito de DevOps · 2.2 Gerenciamento da Configuração · 2.3 Integração contínua (CI) · 2.4 Entrega contínua (CD) · 2.5 Monitoramento Contínuo · 2.6 Plataformas de DevOps · 2.7 Estudo de Caso: integração e implantaç
+  MF  unidade-01-metodos-formais               | 1.1 Sistemas Formais · 1.2 Linguagens de Especificação e Lógicas · 1.2.1 Fundamentos de Lógica de Primeira Orde · 1.2.2 Especificação de Conjuntos Indutivos · 1.2.3 Especificação de Funções Recursivas · 1.3 Abordagens para Verificação Formal · 1.3.3 Provadores de Teoremas · 1.4 Exemplos de Aplicações
+  MF  unidade-02-verificacao-de-programas      | 2.1 Lógica de Hoare · 2.1.1 Pré e Pós Condições · 2.1.2 Correção Parcial e Total · 2.1.3 Invariante e Variante de Laço · 2.1.4 Sistema de Prova · 2.2 Softwares de Suporte à Verificação For · 1.3.2 Verificação de Programas
+  MF  unidade-03-verificacao-de-modelos        | 3.1 Máquinas de Estado · 3.1.1 Modelos de Kripke · 3.2 Fundamentos de Lógicas Temporais · 3.2.1 Lógica Temporal Linear · 3.2.2 Lógica Temporal Ramificada · 3.3 Especificação de Propriedades para Sis · 3.4 Softwares de Suporte à Verificação For · 1.3.1 Verificação de Modelos (Model Checking
+== conflito texto x bloco nas 17 (unit_block_conflict do produto)
+  MF  eth2                                     texto_queria=-                          = material_gt? -
+  MF  aws-encryption-sdk                       texto_queria=-                          = material_gt? -
+  MF  t1-2026-1                                texto_queria=unidade-01-metodos-formais = material_gt? True
+  MF  t1-2026-1-thy                            texto_queria=unidade-01-metodos-formais = material_gt? True
+  MF  t2-2026-1                                texto_queria=unidade-02-verificacao-de- = material_gt? True
+  SO  0704-laminas-comunicacao-e-sincronizacao texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  0904-laminas-semaforos                   texto_queria=-                          = material_gt? -
+  SO  0704-exemplo-threads-em-java             texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  3103-threads                             texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  biblioteca-em-c-pthread                  texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  exemplo-threads-em-c-exemplo1            texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  exemplo-threads-em-c-exemplo2            texto_queria=unidade-03-programacao-con = material_gt? True
+  SO  exemplo-threads-em-c-exemplo3            texto_queria=-                          = material_gt? -
+  ES2 microsservicos5                          texto_queria=-                          = material_gt? -
+  ES2 microsservicos7                          texto_queria=unidade-01-arquitetura-de- = material_gt? True
+  ES2 azure                                    texto_queria=-                          = material_gt? -
+  ES2 microsservicos4                          texto_queria=unidade-01-arquitetura-de- = material_gt? True
+  conflitos entre as 17: 11
+== impacto se material_gt vencer nas 17: regua de unidade (5 cursos hoje 162/162; total 274/278)
+  hoje (gold por bloco): 190/190 nos 5 cursos; com material_gt vencendo nas 16 com gold por bloco: 174/190 (o produto segue o bloco em todas)

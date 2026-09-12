@@ -1,0 +1,68 @@
+ANTES    MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+         MF: pos-processamento aplicado em 5 textos
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+DEPOIS   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  12 | conf-err  6
+ANTES    SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila  10 | conf-err  0
+         SO: pos-processamento aplicado em 0 textos
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+DEPOIS   SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila  10 | conf-err  0
+ANTES    IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+         IA: pos-processamento aplicado em 24 textos
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+DEPOIS   IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+ANTES    ES2  100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+         ES2: pos-processamento aplicado em 0 textos
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+DEPOIS   ES2  100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+ANTES    TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   7 | conf-err  0
+         TCC: pos-processamento aplicado em 0 textos
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+DEPOIS   TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   7 | conf-err  0
+ANTES    CG   100%  57/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  56/ 82 | fila  47 | conf-err 10
+         CG: pos-processamento aplicado em 24 textos
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+DEPOIS   CG   100%  57/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  56/ 82 | fila  49 | conf-err 10
+
+ANTES    TOT  100% 245/288 | bloco 235/237 | unidade 183/190 | sub 193/233 | fila  91 | conf-err 19
+DEPOIS   TOT  100% 245/288 | bloco 235/237 | unidade 183/190 | sub 193/233 | fila  94 | conf-err 19
+[fim] 283s · copias em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao\aprovado
+ANTES    MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+         MF: descricoes removidas de 11 textos (12199 chars)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+DEPOIS   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+ANTES    SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila  10 | conf-err  0
+         SO: descricoes removidas de 27 textos (73109 chars)
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+DEPOIS   SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila   9 | conf-err  0
+ANTES    IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+         IA: descricoes removidas de 23 textos (187421 chars)
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+DEPOIS   IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+ANTES    ES2  100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+         ES2: descricoes removidas de 24 textos (57717 chars)
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+DEPOIS   ES2  100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+ANTES    TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   7 | conf-err  0
+         TCC: descricoes removidas de 26 textos (57197 chars)
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+DEPOIS   TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   6 | conf-err  0
+ANTES    CG   100%  57/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  56/ 82 | fila  47 | conf-err 10
+         CG: descricoes removidas de 18 textos (71224 chars)
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+DEPOIS   CG   100%  59/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  58/ 82 | fila  47 | conf-err  9
+
+ANTES    TOT  100% 245/288 | bloco 235/237 | unidade 183/190 | sub 193/233 | fila  91 | conf-err 19
+DEPOIS   TOT  100% 247/288 | bloco 235/237 | unidade 183/190 | sub 195/233 | fila  89 | conf-err 18
+[fim] 272s · copias em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao\sem-descricao

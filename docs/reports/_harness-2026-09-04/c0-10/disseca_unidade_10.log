@@ -1,0 +1,21 @@
+== MF: unidade 66/66
+== SO: unidade 28/37
+== IA: unidade 39/42
+== ES2: unidade 28/28
+== TCC: unidade 18/18
+
+  SO 0704-laminas-comunicacao-e-sincronizacao b)  | gravada=unidade-02-gerencia-do-pro verdade=unidade-04-deadlock        texto=errado   | bloco bloco-06->bloco-06 ok  flag=S janela-1   | curada: unit=unidade-04-deadlock manual=nao bloco=bloco-06 met=janela-1 | ['winner_score=51.40', 'topic_score=33.43']
+  SO 0904-laminas-semaforos                   b)  | gravada=unidade-02-gerencia-do-pro verdade=unidade-04-deadlock        texto=errado   | bloco bloco-06->bloco-06 ok  flag=S janela-1   | curada: unit=unidade-04-deadlock manual=nao bloco=bloco-06 met=janela-1 | ['winner_score=31.85', 'topic_score=19.82']
+  SO 2306-laminas-gerencia-de-arquivos        b)  | gravada=unidade-07-gerencia-de-ent verdade=unidade-06-gerencia-de-arq texto=VERDADE  | bloco bloco-20->bloco-20 ok  flag=n janela-1   | curada: unit=unidade-06-gerencia-de-arqui manual=nao bloco=bloco-20 met=janela-1 | ['winner_score=76.73', 'topic_score=54.18']
+  SO 2306-laminas-laminas-armazenamento-em-ma b)  | gravada=unidade-07-gerencia-de-ent verdade=unidade-06-gerencia-de-arq texto=VERDADE  | bloco bloco-20->bloco-20 ok  flag=n janela-1   | curada: unit=unidade-06-gerencia-de-arqui manual=nao bloco=bloco-20 met=janela-1 | ['winner_score=79.97', 'topic_score=85.20']
+  SO exercicios-p2                            b)  | gravada=unidade-07-gerencia-de-ent verdade=unidade-06-gerencia-de-arq texto=errado   | bloco bloco-20->bloco-20 ok  flag=n prep-prova | curada: unit=unidade-06-gerencia-de-arqui manual=nao bloco=bloco-20 met=prep-prova | ['winner_score=27.05', 'topic_score=14.20']
+  SO laminas-cs-4244-internet-programming-soc a)  | gravada=unidade-02-gerencia-do-pro verdade=unidade-03-programacao-con texto=VERDADE  | bloco bloco-06->bloco-09 ERR flag=S disamb     | curada: unit=unidade-03-programacao-conco manual=nao bloco=bloco-09 met=llm | ['winner_score=17.68', 'topic_score=18.73']
+  SO laminas-sockets-material-alternativo-em- a)  | gravada=unidade-02-gerencia-do-pro verdade=unidade-03-programacao-con texto=VERDADE  | bloco bloco-06->bloco-09 ERR flag=S disamb     | curada: unit=unidade-03-programacao-conco manual=nao bloco=bloco-09 met=llm | ['winner_score=33.22', 'topic_score=28.86']
+  SO lista-exercicios-p2                      b)  | gravada=unidade-07-gerencia-de-ent verdade=unidade-06-gerencia-de-arq texto=?        | bloco bloco-20->bloco-20 ok  flag=n prep-prova | curada: unit=unidade-06-gerencia-de-arqui manual=nao bloco=bloco-20 met=prep-prova | ['winner_score=38.82', 'topic_score=21.59']
+  SO 0704-exemplo-threads-em-java             b)  | gravada=unidade-02-gerencia-do-pro verdade=unidade-04-deadlock        texto=errado   | bloco bloco-06->bloco-06 ok  flag=S janela-1   | curada: unit=unidade-04-deadlock manual=nao bloco=bloco-06 met=janela-1 | ['winner_score=23.47', 'topic_score=25.95']
+  IA ia-responsável-7c4626                    b)  | gravada=unidade-de-aprendizagem-05 verdade=unidade-de-aprendizagem-01 texto=?        | bloco bloco-01->bloco-01 ok  flag=n ref-generica | curada: unit=unidade-de-aprendizagem-01-v manual=nao bloco=bloco-01 met=ref-generica | ['winner_score=0.00', 'topic_score=0.12']
+  IA o-que-é-inteligência-artificial-ia-oracl b)  | gravada=unidade-de-aprendizagem-05 verdade=unidade-de-aprendizagem-01 texto=?        | bloco bloco-01->bloco-01 ok  flag=n ref-generica | curada: unit=unidade-de-aprendizagem-01-v manual=nao bloco=bloco-01 met=ref-generica | ['winner_score=38.45', 'topic_score=3.06']
+  IA visao-geral-introducao-e-historico       b)  | gravada=unidade-de-aprendizagem-05 verdade=unidade-de-aprendizagem-01 texto=VERDADE  | bloco bloco-02->bloco-02 ok  flag=S disamb     | curada: unit=unidade-de-aprendizagem-01-v manual=nao bloco=bloco-02 met=llm | ['winner_score=61.68', 'topic_score=27.09']
+
+BALDES: {'b) bloco certo, unidade errada': 10, 'a) bloco errado, unidade seguiu o bloco': 2}
+texto acertaria a verdade em: 5 de 12

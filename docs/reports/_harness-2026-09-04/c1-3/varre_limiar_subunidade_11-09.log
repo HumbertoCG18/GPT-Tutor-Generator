@@ -1,0 +1,12 @@
+gold 251 · confiantes 192: certos 174, errados 18 (precisao 90.6%) · fila hoje 78/348 = 22.4/100
+
+regra (confiante com subunidade -> fila)  erros pegos  certos p/ fila  fila + (348)  precisao  fila/100
+conf < 0.25                                     3/18           5/174            17     91.8%      27.3
+conf < 0.30                                     8/18           8/174            26     94.3%      29.9
+conf < 0.35                                    10/18          11/174            33     95.3%      31.9
+conf < 0.40                                    10/18          18/174            45     95.1%      35.3
+conf < 0.50                                    12/18          28/174            66     96.1%      41.4
+score < 1.5                                     5/18          13/174            24     92.5%      29.3
+score < 2.0                                     5/18          14/174            25     92.5%      29.6
+conf<0.30 ou score<1.5                         10/18          21/174            46     95.0%      35.6
+conf<0.35 ou score<1.5                         12/18          24/174            51     96.2%      37.1

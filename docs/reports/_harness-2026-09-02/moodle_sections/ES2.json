@@ -1,0 +1,93 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS. Copyright © 2026. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Tutoriais",
+  "section": 2,
+  "summary": "",
+  "labels": [
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do Moodle. Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS"
+  ]
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "TDE | Trabalho Discente Efetivo",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Trabalho Discente Efetivo | TDE Constitui um conjunto diversificado de atividades relacionadas ao ensino, que incorporam as práticas pedagógicas previstas nos mais diversos componentes curriculares, realizadas dentro ou fora de sala de aula, de forma individual ou coletiva, voltadas à integralização dos currículos dos cursos de graduação, favorecendo a apropriação do conhecimento e o desenvolvimento das competências e habilidades previstas nos projetos pedagógicos de curso (PPC).",
+   "Trabalho Final (06/07/2026):"
+  ]
+ },
+ {
+  "secao": "Revisão",
+  "section": 5,
+  "summary": "",
+  "labels": [
+   "Semana 02/03/2026 a 06/03/2026: (06/03/2026): apresentação da disciplina, revisão de conceitos.",
+   "Semana 09/03/2026 a 13/03/2026: (13/03/2026): Arquitetura Baseada em Serviços Monolítica. Estudo de Caso.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulos 6, 7. PRESSMAN, Roger S.; MAXIM, Bruce R. Engenharia de Software: uma abordagem profissional. 9 ed. Porto Alegre: AMGH, 2021. Disponível ebook . Capítulos 9, 10, 14. SOMMERVILLE, Ian. Engenharia de Software. 10 ed. São Paulo: Pearson, 2018. Disponível ebook . Capítulos 6, 7.",
+   "Arquétipos (monolitos): Spring PetClinic (oficial) Spring Framework PetClinic (fork) Spring PetClinic REST &nbsp;+&nbsp; Spring PetClinit Angular .NET&nbsp;eShopOnWeb (oficial) Node.js YelpCamp Node.js Modular Monolith NestJS Modular Monolith"
+  ]
+ },
+ {
+  "secao": "Microsserviços",
+  "section": 6,
+  "summary": "",
+  "labels": [
+   "Semana 16/03/2026 a 20/03/2026: (20/03/2026): Arquitetura Baseada em Serviços e Microserviços. Estudo de Caso.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulo 7.4, 7.5, 7.6. SOMMERVILLE, Ian. Engenharia de Software. 10 ed. São Paulo: Pearson, 2018. Disponível ebook . Capítulos 17, 18. SOMMERVILLE, I. Engineering Software Products: an introduction to modern software engineering. Pearson, 2019. Capítulos 5, 6. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulos 1, 2, 3. DAVIS, A. The False Dichotomy of Monolith vs. Microservices. In: InfoQ, nov. 2023. Disponível on-line . RICHARDS, M; FORD, N. Fundamentos da arquitetura de software: uma abordagem de engenharia. Rio de Janeiro: Alta Books, 2024. Disponível ebook . Capítulo 17.",
+   "Arquétipos: Spring PetClinic (oficial) Spring PetClinic (comunidade) Microsoft .NET Architectures Microsoft Azure Architectures Amazon AWS Architecture Center Amazon AWS Samples Google Cloud Architecture Center Google Cloud Samples",
+   "Semana 23/03/2026 a 27/03/2026: (27/03/2026): microsserviços no Spring.",
+   "Semana 30/03/2026 a 03/04/2026: (03/04/2026): feriado.",
+   "Spring Framework: Spring Microservices. Disponível on-line . Spring Boot. Disponível on-line . Spring Cloud. Disponível on-line . Spring Cloud OpenFeign on-line . OpenFeign Spring Cloud Netflix. Disponível on-line . Netflix Eureka Spring Cloud LoadBalancer. Disponível on-line . Spring Cloud Gateway. Disponível on-line . Spring Cloud Circuit Breaker. Disponível on-line . Resilience4j Spring AMQP. Disponível on-line . AMQP RabbitMQ Spring Security ( documentação , api , samples )",
+   "Semana 06/04/2026 a 10/04/2026: (10/04/2026): microsserviços no Spring - discovery.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulo 7.4, 7.5, 7.6. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulo 5.",
+   "Semana 13/04/2026 a 17/04/2026: (17/04/2026): microsserviços com Spring - api gateway.",
+   "Semana 20/04/2026 a 24/04/2026: (24/04/2026): exercícios de revisão para P1.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulo 7.4, 7.5, 7.6. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulo 5, 14. BFF Patterns. https://bff-patterns.com/",
+   "Semana 27/04/2026 a 01/05/2026: (01/05/2026): feriado.",
+   "Semana 04/05/2026 a 08/05/2026: (08/05/2026): prova P1.",
+   "Semana 11/05/2026 a 15/05/2026: (15/05/2026): microsserviços com Spring, circuit-breaker.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulo 7.4, 7.5, 7.6. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulo 12.",
+   "Semana 18/05/2026 a 22/05/2026: (22/05/2026): implantação de microsserviços em conteiners.",
+   "Semana 25/05/2026 a 29/06/2026: (29/06/2026): implantação de microsserviços em conteiners.",
+   "Tecnologias de conteiner: Docker https://www.docker.com/ Podman https://podman.io/ Docker Hub https://hub.docker.com/ Recursos Azure: Configuração Azure para alunos (acesse com seu usuário @edu.pucrs.br) Portal do Azure (usar login @edu.pucrs.br) Choose an Azure Compute Service (documentação) Azure App Service (produto) Azure Container Apps (produto) Azure Container Instances (produto) Azure for Spring Developers (portal da documentação) Get Started with Java on Azure (treinamentos gratuitos) Recursos AWS: AWS Learning Lab (solicite cadastro ao professor) Portal do AWS AWS Documentation (portal documentação) AWS Architecture Center: containers (documentação) Choosing an AWS container service (documentação) Spring Cloud AWS (portal documentação) Alternativas: Render Netlify Vercel Neon",
+   "Semana 01/06/2026 a 05/06/2026: (05/06/2026): comunicação assíncrona.",
+   "Materiais de estudo: VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível ebook . Capítulo 7.4, 7.5, 7.6. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulos 4, 5. HOHPE, G.; WOOLF, B. Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions. Addison-Wesley Professional, 2003. Disponível on-line .",
+   "Semana 08/06/2026 a 12/06/2026: (12/06/2026): autenticação e autorização."
+  ]
+ },
+ {
+  "secao": "DevOps",
+  "section": 7,
+  "summary": "",
+  "labels": [
+   "Semana 22/06/2026 a 26/06/2026: (26/06/2026): DevOps.",
+   "Materiais de estudo: AWS. O quê é DevOps? Disponível on-line . Microsoft. O quê é DevOps? Disponível on-line . Google. O quê é DevOps? Disponível on-line . VALENTE, Marco Tulio. Engenharia de Software Moderna: Princípios e Práticas para Desenvolvimento de Software com Produtividade, Editora: Independente, 2020. Disponível&nbsp; ebook . Capítulo 10. SOMMERVILLE, Ian. Engenharia de Software. 10 ed. São Paulo: Pearson, 2018. Disponível&nbsp; ebook . Capítulo 25. SOMMERVILLE, I. Engineering Software Products: an introduction to modern software engineering. Pearson, 2019. Capítulo 10. NEWMAN, S. Criando microsserviços: projetando sistemas com componentes menores e mais especializados. 2 ed. São Paulo: Novatec, 2022. Capítulos 7, 8, 10. HUMBLE, Jez; FARLEY, David. Entrega contínua: como entregar software de forma rápida e confiável. Porto Alegre: Bookman, 2014. Disponível on-line .",
+   "Semana 29/06/2026 a 03/07/2026: (03/07/2026): Prova P2, Entrega trabalho.",
+   "Semana 06/07/2026 a 10/07/2026: (10/07/2026): Prova PS."
+  ]
+ },
+ {
+  "secao": "Exercícios Revisão para Provas",
+  "section": 9,
+  "summary": "",
+  "labels": []
+ }
+]

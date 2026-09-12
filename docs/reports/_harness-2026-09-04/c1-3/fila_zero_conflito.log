@@ -1,0 +1,23 @@
+  [bloco fill/0] erro sub                  9
+  [bloco fill/0] erro unidade              1
+  [bloco fill/0] itens                     17
+  [bloco>=0.6 & secao] erro sub            4
+  [bloco>=0.6 & secao] erro unidade        0
+  [bloco>=0.6 & secao] itens               8
+  [bloco>=0.6] erro sub                    8
+  [bloco>=0.6] erro unidade                4
+  [bloco>=0.6] itens                       32
+  bloco conf>=0.6                          40
+  conflitos                                57
+  erro sub                                 21
+  erro unidade                             5
+  secao nomeia unidade                     8
+exemplos:
+   MF:eth2 bconf=0.4 uconf=0.93 reasons=['winner_score=13.77', 'topic_score=10.59'] errU=False errS=False
+   MF:exerciciosespecificaca bconf=0.4 uconf=0.64 reasons=['winner_score=31.19', 'topic_score=7.47'] errU=False errS=True
+   MF:exerciciosespecificaca bconf=0.4 uconf=0.64 reasons=['winner_score=31.19', 'topic_score=7.47'] errU=False errS=True
+   MF:t1-2026-1 bconf=0.0 uconf=0.66 reasons=['winner_score=44.81', 'topic_score=26.47'] errU=False errS=False
+   MF:t1-2026-1-thy bconf=0.0 uconf=0.95 reasons=['winner_score=18.35', 'topic_score=5.04'] errU=False errS=False
+   MF:exemplos-zip bconf=0.6 uconf=0.61 reasons=['winner_score=63.05', 'topic_score=23.39'] errU=False errS=True
+   MF:t2-2026-1 bconf=0.6 uconf=0.84 reasons=['winner_score=29.68', 'topic_score=7.70'] errU=False errS=False
+   SO:1205-laminas-gerencia- bconf=0.8 uconf=0.52 reasons=['winner_score=45.73', 'topic_score=6.40'] errU=False errS=False
