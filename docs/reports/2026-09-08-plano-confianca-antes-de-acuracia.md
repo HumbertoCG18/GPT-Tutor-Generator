@@ -1,5 +1,6 @@
 # Plano — confiança antes de acurácia
 
+> **C1 FECHADA em 12/09:** gate da Fase 1 cumprido (92,2%, unidade igual a 07/09 depois de desfeita a regressão de 11/09); subunidade 224/251; C5 aberta. Ver `pendencias.md`, seção "C1 FECHADA, C5 ABERTA".
 > **Estado em 11/09:** 2.2 (filtro do vocabulário: rótulo meta + fim do veto de título; corte por núcleo em outra unidade medido à noite, 212 → 206/251, descartado) e 2.4 (compilador nos 4 cursos, 16
 > chamadas, com os membros do zip no bundle) FECHADAS; camada 3 cortada (produtor determinístico, 142 × 137 em 151); zips sem
 > colisão. Fase 1 fechada no gate (90,6%). 2.1 medido: +1 no produto, não vira código. 2.3 medido: bloco acerta 20/22 conflitos com gold,
