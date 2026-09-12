@@ -652,8 +652,9 @@ perceptron, k-NN, MLP, k-means nem árvore de decisão uma única vez**.
 ### 16.2 As fontes posicionais do professor estão esgotadas (correção de um erro meu, §11.4)
 
 Ver a CORREÇÃO na §11.4: o teto que eu publiquei (64%) era o do produto. **O teto do regime cru é 44% primário**, o SARC
-24%, e o IA **5%** (não 95%). Como o cru está em 41,8% primário, **a folga contra as fontes do professor é de ~2 pontos,
-não 22** — e ainda em base mais fácil (227 exclui gold vazio e o FR).
+24%, e o IA **5%** (não 95%). Como o cru está em 41,8% primário, a diferença aritmética contra as fontes do professor é
+de ~2 pontos e não 22 — **mas isso NÃO é folga: ver §17.2.** Medido na mesma base, teto 100 e motor cru 99 têm só **79
+materiais em comum**; o motor acerta 20 que nenhuma fonte nomeia e erra 21 que uma fonte já nomeia.
 
 Confirmação independente pelo inventário erro a erro (`inventario_fontes_104_cru.csv`): das 8 fontes testadas
 (plano, SARC, seção, título, headings, corpo inteiro, week_label, nome original), **nenhuma alcança o gold em 72 dos 104
@@ -677,8 +678,9 @@ identificação insuficiente, **perde nos dois regimes**:
 Com a **fila congelada** o sinal é o mesmo (cru 113/77 → 109/81), então não é artefato de cobertura. Eixos bloco e
 unidade: efeito zero por construção, verificado por assert em 251×2×2 entries.
 
-**A causa do negativo é a mesma da §16.2:** no regime cru o SARC do IA **abstém em 39 de 39** materiais por "não nomeia
-nada". As sessões do SARC do IA são ricas em texto (`ml abordagem supervisionada k nn`, `ml abordagem nao supervisionada
+**A causa do negativo — CORRIGIDA pelo refutador, ver §17.1:** a regra perde onde **DECIDE**, não onde abstém. No cru o
+IA é inerte (5/5/5 aceito, 34/34/34 erros, 5/5/5 entrega) e a perda é MF (−6 aceito), SO (−2) e FR (+1 erro). O que o IA
+mostra é outra coisa: lá o SARC **abstém em 39 de 39** por "não nomeia nada". As sessões do SARC do IA são ricas em texto (`ml abordagem supervisionada k nn`, `ml abordagem nao supervisionada
 k means`) — mas nenhum rótulo do plano casa com elas sem os sinônimos do LLM.
 
 A variante B é o único braço não-negativo e é marginal: +2 entregas no cru (3 materiais, todos predição vazia que o SARC
@@ -708,3 +710,149 @@ professor estão medidas e esgotadas (teto 44% contra os 41,8% de hoje); o SARC 
 medido; e 71% dos erros são materiais cujo texto não nomeia o tópico de jeito nenhum. O vocabulário resolve (medido:
 +54 aceito com 10 tópicos), mas **hoje só sabemos escolher os tópicos olhando o gold** — e é isso que precisa ser
 resolvido antes de qualquer coisa: um seletor de tópicos carentes que não use a resposta.
+
+## 17. OS REFUTADORES RODARAM (12/09, noite, depois do limite de sessão) — duas afirmações minhas caíram
+
+Os 3 refutadores que morreram às 19h foram re-executados por `resumeFromRunId` (as medições vieram do cache; só os
+refutadores rodaram). Veredito: **1 confirmado, 2 refutados** — e os dois refutados derrubam frases que eu publiquei.
+
+### 17.1 SARC posicional: CONFIRMADO no núcleo — mas eu errei a CAUSA
+
+O refutador reproduziu **dígito a dígito**, com script próprio e usando o `_secao_nomeia_subtopico` do motor (não a
+reimplementação do agente original): os 6 braços, as 7 linhas por curso, a fila congelada e os ganhos/perdas nominais.
+O negativo do SARC está de pé, e ainda sobrevive a dois testes de robustez que ninguém tinha feito: desligar a
+abstenção "só o pai" (cru 141/100, entrega 110) e não deixar a regra se autodeclarar confiante (braço A0, cobertura
+intacta: cru 141/102, entrega 109).
+
+**O que eu errei:** escrevi que "a causa do negativo é o SARC do IA abster em 39 de 39". **É o contrário — a regra perde
+onde DECIDE, não onde abstém.** No cru o IA é inerte nos três números (aceito 5/5/5, erros confiantes 34/34/34, entrega
+5/5/5); a perda inteira é **MF (−6 aceito, −5 entrega, +5 erros), SO (−2, −1, +2) e FR (+1 erro)**, contra ES2 (+1, +2) e
+CG (+1, +1). No produto o IA é o **segundo melhor** curso do braço A (entrega 36 → 38) e a perda é ES2 −7, FR −4, SO −3,
+MF −2. A abstenção do IA em 39/39 explica por que a regra não ajuda o alvo declarado; **não** explica por que ela perde.
+
+### 17.2 A "folga de ~2 pontos" contra o teto: ERRADA, é subtração entre conjuntos que não se contêm
+
+Eu escrevi que, com o teto corrigido para 44% e o cru em 41,8% primário, "a folga é de ~2 pontos". O refutador mediu na
+**mesma base 227 e na mesma taxonomia**: teto PROFESSOR **100**, motor cru primário **99** — **mas só 79 são os mesmos
+materiais**. O motor **acerta 20 que nenhuma das 5 fontes nomeia** e **erra 21 que uma fonte do professor já nomeia**.
+A folga aritmética de 1 é o saldo de dois fluxos opostos de ~20. **44% não é teto do motor em direção nenhuma — é
+alcance de detector.**
+
+**E existe um recorte residual real, que minha frase negava:** dos 11 materiais em que uma fonte alcança e o motor erra o
+**aceito**, 3 já são colhidos pelo SARC-B, 3 vêm da coluna PLANO (o rótulo está no texto que o motor já pontua — é
+scorer, não fonte nova), e **5 vêm de SEÇÃO/TÍTULO/HEADINGS, que foram inventariados por alcance e NUNCA testados como
+regra de motor**: ES2 `microsservicos6`, ES2 `roteiro8-autenticacao-autorizacao`, ES2 `devops`,
+TCC `aula-10-linguagens-reconheciveis...`, CG `introducaoprocimg`. São **5/251 = 2,0 pp** — pequeno demais para reabrir a
+frente, mas **é esse o argumento honesto para não reabrir, não a "folga de 2 pontos"**.
+
+Menor: "a linha `--cru` é byte a byte a linha sem flag" é impreciso. Idênticas são as 5 colunas do detector mais
+PROFESSOR/QUALQUER/NENHUMA (85 · 46 · 99 · 79 · 146 · 178 · 49); AL-CURADO (163 × 28), AL-HEADING (22 × 150) e
+SEM-CURADO (149 × 178) divergem — porque a flag alimentava só o conjunto `curados`. A correção do teto continua de pé.
+
+### 17.3 "Onde está a informação": REFUTADO nos números-manchete, não na direção
+
+A alavanca de vocabulário reproduz byte a byte (147/105 → 201/163, aceito do confiante 81,3%, ganho 61 / perda 7).
+O que cai: o agente publicou "teto cru real = 85/227 = 37%", que é o modo `--cru` (tira os **dois** sidecares, curadoria
+humana inclusive). **O regime cru da régua mantém a curadoria humana, e o número dele é 44%** (`--so-llm`) — que é o que
+está publicado na §11.4 e na §2. Ou seja: a correção que eu apliquei usou o número certo; o agente é que citou o outro.
+
+### 17.4 "O vocabulário é reconstruível": REFUTADO na conclusão
+
+Os números reproduzem, a conclusão não: **alcance de fonte foi confundido com ganho de motor**, e o ganho publicado só
+existe com oráculo (a restauração devolve exatamente os aliases que a ablação já provou decisivos, filtrados por onde a
+palavra existe — um colhedor real traria também os termos que atrapalham). **O achado que sobrevive é o negativo:** o
+termo está no acervo, mas **a relação termo → tópico do plano não está em lugar nenhum** — que é exatamente o que a
+§16.1 mostra por outro caminho.
+
+## 18. A META 90/90/90 E O PLANO — o astra revisou tudo (12/09, noite)
+
+Brief: `c1-3/brief_codex_astra_plano_90.md` (256 linhas, com os 3 refutadores embutidos).
+Resposta: `c1-3/resposta_codex_astra_plano_90.md` (86.276 tokens).
+**Veredito de uma linha: "90/90/90 no cru não foi demonstrado; impossibilidade também não. O produto passa apenas se
+'90%' significar precisão dos confiantes."**
+
+### 18.1 A tabela que faltava: os 3 eixos, acurácia TOTAL × precisão do confiante
+
+O astra propôs (e eu verifiquei contra `calibra_fila_como_regua_12-09b.log`) que a meta seja cobrada como **acurácia
+total sobre todos os materiais avaliáveis**: abstenção **não** tira o material do denominador, e vazio conta como acerto
+quando o gold pede vazio.
+
+| eixo | PRODUTO: acurácia total | PRODUTO: precisão do confiante | CRU: acurácia total |
+|---|---|---|---|
+| bloco | 235/237 = **99,2%** | 188/189 = 99,5% | **não medida** |
+| unidade | 263/284 = **92,6%** | 209/216 = 96,8% | **não medida** |
+| subunidade (aceito) | 224/251 = **89,2%** | 178/193 = 92,2% | 147/251 = **58,6%** |
+| subunidade (primário) | 186/251 = 74,1% | 154/193 = 79,8% | 105/251 = 41,8% |
+
+**A conta da meta, sobre 251: 90% = 226 acertos.**
+
+| configuração | acerto | falta para 226 |
+|---|---|---|
+| produto (APIs pagas) | 224 = 89,2% | **+2** |
+| cru + 36 tópicos com vocabulário (escolhidos com gold) | 222 = 88,4% | +4 |
+| cru + 10 tópicos com vocabulário (escolhidos com gold) | 201 = 80,1% | +25 |
+| **cru** | 147 = 58,6% | **+79** |
+
+Se a meta for cobrada no **primário**, faltam **121** no cru.
+
+**O buraco que o astra aponta e eu confirmo: unidade e bloco NUNCA foram medidos em regime cru.** O replay conserva a
+unidade do manifest e recalcula a subunidade *dentro* dela — então nem os 58,6% são medição de um pipeline cru integral.
+Medir exige rodar o motor completo por configuração, em cópias novas (não na `.ablacao/` congelada).
+
+### 18.2 A terceira correção do dia (dele, sobre meu número)
+
+Dos 104 erros, **6 têm gold vazio** — neles a resposta certa é não atribuir, e acrescentar vocabulário não é a correção.
+Entre os 98 com tópico esperado, o "texto não nomeia o tópico" é **68/98 = 69,4%**, não 74/104 = 71,2%.
+E uma ressalva sobre o meu instrumento: eu medi frases dos aliases mas **tokens só do label primário**, com corte de
+tamanho e de prefixo genérico; o scorer usa tokens dos aliases, siglas e outros campos. Então **"nada" significa ausência
+segundo aquele instrumento — não prova ausência de sinal no scorer**.
+
+### 18.3 O seletor de tópicos carentes: o desenho que ele deixou
+
+**Regra de seleção:** priorizar tópicos **sem suporte nos componentes reais do scorer** e **ausentes do top-2 com score
+positivo** (empate em zero não conta). Concentração das vitórias entre irmãos entra como **sinal auxiliar**, e o número
+de materiais potencialmente afetados como **desempate**.
+
+**O que ele rejeita como gatilho sozinho:** rótulo genérico e razão materiais/tópicos. Distribuição desigual pode ser
+legítima, e tópico sem vencedor pode simplesmente não ter material ainda. A concentração por unidade só deve ser
+calculada **quando o vínculo material→unidade for confiável** — senão transforma erro de unidade em suposta carência
+lexical.
+
+**Protocolo:** escolher **top-K com orçamento fixado ANTES** do teste; entregar ao curador tópico, contexto e trechos
+representativos, pedindo relações termo→categoria justificadas; **nunca** acrescentar alias para equilibrar contagem.
+
+**A regra de ouro dele sobre o gold:** *"Gold pode entrar na avaliação; não pode orientar seleção, curadoria ou ajuste do
+curso testado."* Congelar regra, orçamento e prompt; executar em curso novo; revelar o gold só depois. Comparar contra
+três baselines: **nenhuma curadoria**, **seleção aleatória com o mesmo orçamento**, e **curadoria completa**.
+E o aviso: os 7 cursos já examinados servem para desenvolvimento e regressão; **LOCO ajuda mas não recupera
+independência depois de a regra ter sido desenhada olhando todos**.
+
+### 18.4 O plano (5 passos) e o que descartar
+
+1. Fixar o contrato de "cru", a proveniência de cada insumo e a métrica.
+2. **Medir o motor completo nos 3 eixos, em cópias novas, separadas da `.ablacao/` congelada.**
+3. Comparar curadoria **seletiva** contra curadoria **completa**.
+4. Avaliar a configuração congelada em **cursos externos com gold cego**.
+5. Escolher pelo ganho líquido e custo observado.
+
+**Descartar como justificativa:** o teto de 44%; abstenção apresentada como aumento de acurácia; precisão do confiante
+apresentada como acurácia total; ganho com oráculo apresentado como previsão para curso novo. **Despriorizar** SARC-A e
+as regras de margem, já negativas.
+
+**Datalab:** ele reproduziu (21/31 aceitos nos dois braços, 3 predições alteradas, primário 16→15). "Isso não sustenta
+comprá-lo para melhorar essa atribuição; também não demonstra inutilidade geral da extração."
+
+### 18.5 A pergunta que o usuário talvez esteja realmente fazendo
+
+Eu perguntei ao astra se o alvo não deveria ser o produto (que já bate 90/90/90 na precisão do confiante) e "quanto custa
+manter isso sem API paga". A resposta dele corrige o enquadramento: **"sem API em runtime" é diferente de "sem preparação
+por LLM"**. Medido: o replay do produto mantém os resultados **com a rede bloqueada**, usando os artefatos existentes —
+isso prova **reutilização local**, não custo zero para um curso novo. E a compilação de vocabulário faz **uma chamada por
+unidade elegível**, não uma por curso.
+
+**Custo monetário por curso: NÃO MEDIDO.** Faltam consumo faturado, retries e tempo de curadoria. **Não há base para
+prometer "uma passada offline entrega 90/90/90 por R$ X".**
+
+E um alerta de nomenclatura que vale registrar: o "cru" de hoje remove os aliases do sidecar LLM mas **conserva
+`code_curation.json`** (resumo de código do Gemini) e outros insumos já gerados. **Não é ausência de toda contribuição
+anterior de LLM** — é uma ablação de aliases.
