@@ -15,7 +15,7 @@ O motor ficou com **duas camadas LLM** (voter de bloco e vocabulário compilado)
 
 ---
 
-## 2. Estado ao terminar (tudo commitado; NADA pushed hoje)
+## 2. Estado ao terminar (tudo commitado; push feito na madrugada de 12/09 por ordem do user: gerador `feat/motor-atribuicao` + 9 tutores nas branches deles; SEM merge na `main` do gerador, 1002 commits à frente)
 
 Gerador: `feat/motor-atribuicao` @ `b6512fc` + este handoff. Suite 2345 verde, goldens verdes (SO e TCC regenerados de propósito).
 Tutores (HEAD): MF `b8eae43` · SO `8fbd818` · IA `2f4f983` · ES2 `d986c44` · TCC `cc20668` · LR `a744954` · FR `c28937a` · CG `be74ee7`.
