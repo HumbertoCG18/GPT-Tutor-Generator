@@ -25,12 +25,12 @@ FR/LR/MF/IA/TCC no remoto desde a madrugada. `main` do gerador: 1000+ commits at
 | conflitos texto × bloco | 39; com gold 33; bloco certo 21, texto certo 12 (era 31 × 1 contra o gold por bloco: circular) | — | `c1-3/mede_conflito_unidade.log` |
 | regime cru (sem vocab LLM, curadoria mantida), 251 | **147 = 58,6%** | **105 = 41,8%** | `c1-3/congela_regua_cru_12-09.log` |
 | só código de outline (o mais cru), 251 | **113 = 45,0%** | **84 = 33,5%** | idem |
-| teto das fontes cruas do professor (plano, SARC, seção, título, headings), 227 | não medido (o script só compara com o rótulo primário) | **64% = 146/227** com a taxonomia REALMENTE crua (SO 53, IA 95, ES2 71, TCC 70, MF 48, CG 60); "nenhuma" 22%. O 61% publicado media com 60% dos aliases de origem LLM dentro — ver §11.4 | `c1-3/mede_fontes_do_professor_cru_12-09.log` |
+| teto das fontes cruas do professor (plano, SARC, seção, título, headings), 227 | não medido (o script só compara com o rótulo primário) | **44% = 100/227** na taxonomia do regime cru (`--so-llm`). O 64% e o 61% publicados antes mediam com vocabulário de LLM dentro do detector — ver a CORREÇÃO em §11.4 | `c1-3/mede_fontes_do_professor_corrigido_12-09.log` |
 | FR do zero, /18 | crua 7 · só Datalab 8 · crua + vocab 18 · Datalab + vocab 18 · Datalab + LLM viva 18 · produto 18 | crua 6 · só Datalab 6 · crua + vocab 16 · Datalab + vocab 17 · Datalab + LLM viva 17 · produto 16 | `c1-3/mede_fr_sem_gold_run*_12-09.log` |
 
-**Base e métrica não se misturam:** o teto de 64% é PRIMÁRIO sobre 227 (exclui gold vazio e o FR inteiro); o cru é 58,6% aceito /
-41,8% primário sobre 251. A frase "o cru está em 39%/55% contra um teto de 61%" comparava métrica e base diferentes, e com um teto
-que nem era cru.
+**Base e métrica não se misturam:** o teto de **44%** é PRIMÁRIO sobre 227 (exclui gold vazio e o FR inteiro); o cru é 58,6% aceito /
+41,8% primário sobre 251. **A folga entre o cru e o teto das fontes do professor é de ~2 pontos, não 22** — as fontes posicionais do
+professor estão praticamente esgotadas (§11.4, correção).
 
 Suite: 2347 passed, 4 skipped. **Replay reproduz o produto material a material nos 7 cursos: 0 divergências em 251/251**
 (`c1-3/compara_replay_produto_12-09.log`), depois das duas correções do passo 0 abaixo. Antes eram 10, não 2.
@@ -236,6 +236,18 @@ vira abstenção. O CG é o caso extremo: PROFESSOR 39 → 46 (51% → 60%). Cor
 ambiguidade do detector tanto quanto ausência de informação.** O SARC do IA fica em 34/39 = 87% nos dois modos — o bolsão
 do IA é cru de verdade. Log: `c1-3/mede_fontes_do_professor_cru_12-09.log` (os 3 modos lado a lado).
 **O teto honesto passa a ser 64% primário sobre 227, contra o cru de 41,8% primário sobre 251.**
+
+> **CORREÇÃO (12/09, noite) — o teto de 64% publicado acima estava errado, e o erro era meu.** `mede_fontes_do_professor.py` fazia `tops_ev = tops_limpos if LIMPO else tops`: a flag `--cru` que eu acrescentei alimentava o conjunto `curados` mas **nunca chegava ao detector**, então `--cru` sozinho devolvia byte a byte a linha da taxonomia do PRODUTO. Corrigido (`tops_ev` passa a respeitar o modo) e com o modo novo `--so-llm` (sem o sidecar do LLM, curadoria humana mantida = a taxonomia do regime cru da régua). Medido de novo, base 227, PRIMÁRIO:
+>
+> | modo | PROFESSOR | SARC | IA |
+> |---|---|---|---|
+> | taxonomia do produto (sem flag) | 146 = 64% | 85 = 37% | 37/39 = 95% |
+> | `--limpo` (sem sidecar manual, LLM dentro) | 138 = 61% | 80 = 35% | 37 = 95% |
+> | **`--so-llm` = o regime cru da régua** | **100 = 44%** | **55 = 24%** | **2/39 = 5%** |
+> | `--cru` (sem os dois sidecares) | 85 = 37% | 44 = 19% | 0 = 0% |
+>
+> **Duas consequências.** (1) O teto das fontes cruas do professor é **44% primário**, não 64% — e o cru está em 41,8% primário: a folga é de ~2 pontos, não 22, e ainda em base mais fácil (227 exclui gold vazio e o FR). (2) A leitura de que 'o vocabulário do LLM estava SUPRIMINDO o teto (61% → 64%)' **se inverte**: os +3 pontos vieram de devolver ao detector os aliases da curadoria MANUAL, não de tirar os do LLM. Tirando o LLM de verdade, o teto CAI de 64% para 44%. E o 'bolsão do IA, cru de verdade a 87–95%' era vocabulário de LLM: no regime cru o IA vai a **5%**. Log: `c1-3/mede_fontes_do_professor_corrigido_12-09.log` (os 4 modos lado a lado).
+
 
 ### 11.5 Dívidas que o passo 0 abriu (nenhuma resolvida; nenhuma é do escopo do passo 0)
 
@@ -610,3 +622,89 @@ O único número que continua sendo escolha, e não medição, é **quanto vale 
 certa**. A medição diz: abaixo de k=2 a abstenção não generaliza; os dois primeiros degraus da fronteira compensam a
 qualquer k ≥ 1; e acima de 66,3% de precisão do cru o produto começa a pagar. **Com isso a escolha deixa de ser um peso
 abstrato e vira a escolha de um ponto numa curva com preço na mão.**
+
+## 16. "O QUE PRECISAMOS PARA AUMENTAR O CRU" (12/09, noite) — a resposta medida
+
+Três medições em paralelo. **Os três refutadores morreram por limite de sessão**, então o que está aqui é
+**medido mas NÃO refutado** — exceto o que eu reproduzi com as próprias mãos, marcado como tal.
+
+### 16.1 O rótulo certo quase nunca está escrito no material (reproduzido por mim)
+
+`c1-3/onde_esta_o_rotulo_12-09.{py,log,csv}`. Para cada um dos 104 erros de aceito do cru, o label do tópico do gold
+(e seus aliases que sobrevivem ao corte) aparece como frase no texto que o motor pontuou?
+
+| | n | leitura |
+|---|---|---|
+| label inteiro presente | 3 (2,9%) | competição: o motor viu e escolheu outro |
+| alias cru presente | 1 (1,0%) | idem |
+| só um token do label | 26 (25,0%) | parcial |
+| **nada do rótulo** | **74 (71,2%)** | **o texto não nomeia o tópico** |
+
+Nos 77 erros **confiantes**: 54 são "nada". E dos 80 que o produto acerta, 53 são "nada" — é exatamente esse buraco
+que o vocabulário do LLM preenche.
+
+**O padrão é sempre o mesmo:** o plano usa a categoria (`Modelos Preditivos`, `Provadores de Teoremas`,
+`Conceitos básicos`) e o material usa a técnica (k-NN, perceptron, MLP, árvore de decisão; Coq/Isabelle; threads).
+A relação instância → categoria é o que falta, e **não está escrita em documento nenhum do professor**: verifiquei o
+plano de ensino do IA inteiro (3.569 chars) — a ementa diz "Introdução ao Aprendizado de Máquina" e **não menciona
+perceptron, k-NN, MLP, k-means nem árvore de decisão uma única vez**.
+
+### 16.2 As fontes posicionais do professor estão esgotadas (correção de um erro meu, §11.4)
+
+Ver a CORREÇÃO na §11.4: o teto que eu publiquei (64%) era o do produto. **O teto do regime cru é 44% primário**, o SARC
+24%, e o IA **5%** (não 95%). Como o cru está em 41,8% primário, **a folga contra as fontes do professor é de ~2 pontos,
+não 22** — e ainda em base mais fácil (227 exclui gold vazio e o FR).
+
+Confirmação independente pelo inventário erro a erro (`inventario_fontes_104_cru.csv`): das 8 fontes testadas
+(plano, SARC, seção, título, headings, corpo inteiro, week_label, nome original), **nenhuma alcança o gold em 72 dos 104
+erros (69%)**; a união de todas cobre 32, e pelo critério estrito do motor, 25. E **alcance de fonte não é ganho de
+motor**: dos 32 alcançados, só 10 teriam o tópico do gold como argmax.
+
+**Em 51 dos 98 erros testáveis o tópico do gold tem score ZERO na 1ª passada** — não há o que reordenar. Em 9 o gold
+**já é** o argmax da 1ª passada: esses nascem na 2ª passada, não no scorer.
+
+### 16.3 SARC posicional: NEGATIVO MEDIDO — frente fechada
+
+`scratchpad/sarc_posicional_12-09.*`. A regra literal do astra (§12.4), com vínculos congelados e abstenção por
+identificação insuficiente, **perde nos dois regimes**:
+
+| braço | cru: aceito / entrega / erros conf. | produto: aceito / entrega / erros conf. |
+|---|---|---|
+| controle | 147 / 113 / 77 | 224 / 178 / 15 |
+| **SARC-A (sobrepõe)** | **141 / 110 / 85** | **209 / 165 / 34** |
+| SARC-B (só preenche vazio) | 149 / 115 / 78 | 225 / 179 / 16 |
+
+Com a **fila congelada** o sinal é o mesmo (cru 113/77 → 109/81), então não é artefato de cobertura. Eixos bloco e
+unidade: efeito zero por construção, verificado por assert em 251×2×2 entries.
+
+**A causa do negativo é a mesma da §16.2:** no regime cru o SARC do IA **abstém em 39 de 39** materiais por "não nomeia
+nada". As sessões do SARC do IA são ricas em texto (`ml abordagem supervisionada k nn`, `ml abordagem nao supervisionada
+k means`) — mas nenhum rótulo do plano casa com elas sem os sinônimos do LLM.
+
+A variante B é o único braço não-negativo e é marginal: +2 entregas no cru (3 materiais, todos predição vazia que o SARC
+preenche certo), e o holdout a elege em 7/7 folds mas ela **só generaliza em 1/7** (saldo fora da amostra +1 em k=1,
+0 em k=2, −2 em k=4). **Não reabrir sem dado novo.**
+
+### 16.4 A alavanca que resta, medida — e a ressalva que a desqualifica como plano
+
+`scratchpad/alavanca_vocab_por_topico.py`. Os 104 erros se concentram em 38 pares (curso, tópico); **10 pares concentram
+71 deles** e 62 dos 72 que nenhuma fonte alcança. O IA sozinho são 2 tópicos: `modelos-preditivos` (25) e
+`modelos-descritivos` (8).
+
+Devolvendo vocabulário de domínio **só nesses 10 tópicos**: cru 147 → **201 aceito**, 105 → **163 primário**, aceito do
+confiante 59,5% → **81,3%** (ganho nominal 61, perda 7). Com os 36 tópicos do gold dos erros (17% dos 217 tópicos dos 7
+cursos): **222/251 aceito e 180 primário, 90,3%** — praticamente o produto (224/186, 92,2%).
+
+**A ressalva que impede chamar isso de plano:** os 10 (e os 36) tópicos foram escolhidos **olhando o gold**. É teto de
+curadoria dirigida dentro da amostra, não ganho generalizável. **Nenhum seletor sem gold conseguiu ranquear:** "sem alias
+textual no cru" marca 144 dos 217 tópicos e "nunca vence no cru" marca 137 — a união cobre 8 dos 10 alvos mas com 171
+tópicos (79% do total). **Achar o seletor sem gold é o trabalho que falta**, e ele é pré-requisito de qualquer promessa
+de ganho em curso novo.
+
+### 16.5 A resposta em uma frase
+
+**O que falta não é fonte, é conhecimento de domínio: o mapa técnica → categoria curricular.** As fontes posicionais do
+professor estão medidas e esgotadas (teto 44% contra os 41,8% de hoje); o SARC posicional está fechado por negativo
+medido; e 71% dos erros são materiais cujo texto não nomeia o tópico de jeito nenhum. O vocabulário resolve (medido:
++54 aceito com 10 tópicos), mas **hoje só sabemos escolher os tópicos olhando o gold** — e é isso que precisa ser
+resolvido antes de qualquer coisa: um seletor de tópicos carentes que não use a resposta.

@@ -1,0 +1,179 @@
+MF ok
+SO ok
+IA ok
+ES2 ok
+TCC ok
+CG ok
+FR ok
+
+=== SARC POSICIONAL — base 251, 7 cursos, escopo=produto ===
+
+regime/braco                 aceito     primario    cobertura  aceito/conf  erros conf      entrega
+cru CONTROLE            147  58.6%  105  41.8%  190  75.7%       59.5%          77  113  45.0%
+cru SARC-A sobrepoe     141  56.2%  102  40.6%  195  77.7%       56.4%          85  110  43.8%
+cru SARC-B preenche     149  59.4%  107  42.6%  193  76.9%       59.6%          78  115  45.8%
+
+produto CONTROLE        224  89.2%  186  74.1%  193  76.9%       92.2%          15  178  70.9%
+produto SARC-A sobrepoe  209  83.3%  172  68.5%  199  79.3%       82.9%          34  165  65.7%
+produto SARC-B preenche  225  89.6%  187  74.5%  195  77.7%       91.8%          16  179  71.3%
+
+=== POR CURSO (aceito ctrl -> A -> B | primario | erros confiantes) ===
+-- cru
+curso    n       aceito c/A/B     primario c/A/B    errconf c/A/B    entrega c/A/B  mudou A/B
+MF      58    43/37  /43        23/18  /23       12/17 /12      36/31 /36      12/0   
+SO      15     9/7   /9          8/7   /8         3/5  /3        8/7  /8        3/1   
+IA      39     5/5   /5          4/4   /4        34/34 /34       5/5  /5        2/0   
+ES2     28    19/20  /21        17/18  /19        6/6  /5       13/15 /15       9/2   
+TCC     11     8/8   /8          6/6   /6         2/2  /2        8/8  /8        1/0   
+CG      82    56/57  /56        41/43  /41       10/10 /11      36/37 /36      20/3   
+FR      18     7/7   /7          6/6   /6        10/11 /11       7/7  /7        4/2   
+
+-- produto
+curso    n       aceito c/A/B     primario c/A/B    errconf c/A/B    entrega c/A/B  mudou A/B
+MF      58    55/50  /55        39/34  /39        3/7  /3       45/43 /45       7/0   
+SO      15    15/12  /15        14/11  /14        0/3  /0       12/9  /12       4/0   
+IA      39    36/38  /37        36/38  /37        0/1  /0       36/38 /37      11/1   
+ES2     28    26/19  /26        24/17  /24        2/9  /2       21/14 /21      12/0   
+TCC     11    10/10  /10         8/8   /8         1/1  /1       10/10 /10       3/0   
+CG      82    64/66  /64        49/52  /49        9/9  /10      37/38 /37      23/2   
+FR      18    18/14  /18        16/12  /16        0/4  /0       17/13 /17       5/1   
+
+=== GANHOS E PERDAS NOMINAIS (aceito), variante A ===
+  [cru] MF: +0 / -6
+     PERDE exerciciosformalizacaoalgoritmosrecursao-respostas especificacao-de-funcoes-recursivas -> especificacao-de-conjuntos-indutivos   (gold especificacao-de-funcoes-recursivas)
+     PERDE formalizacaoalgoritmos-recursao              especificacao-de-funcoes-recursivas -> especificacao-de-conjuntos-indutivos   (gold especificacao-de-funcoes-recursivas)
+     PERDE exerciciosformalizacaoalgoritmosrecursao     especificacao-de-funcoes-recursivas -> especificacao-de-conjuntos-indutivos   (gold especificacao-de-funcoes-recursivas)
+     PERDE verificacaomodelos                           especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes -> softwares-de-suporte-a-verificacao-formal-de-modelos   (gold verificacao-de-modelos-model-checking)
+     PERDE exercicioslogicatemporal                     logica-temporal-linear -> softwares-de-suporte-a-verificacao-formal-de-modelos   (gold fundamentos-de-logicas-temporais)
+     PERDE exerciciosformalizacaoalgoritmosrecursao3-respostas especificacao-de-funcoes-recursivas -> especificacao-de-conjuntos-indutivos   (gold especificacao-de-funcoes-recursivas)
+  [cru] SO: +0 / -2
+     PERDE definicao-e-historico                        servicos-dos-sistemas-operacionais -> chamadas-de-sistema   (gold evolucao-historica)
+     PERDE 2603-algoritmos-de-escalonamento             algoritmos-de-escalonamento -> escalonamento   (gold algoritmos-de-escalonamento)
+  [cru] ES2: +3 / -2
+     GANHA revisaoarquiteturapadroes                    (vazio) -> conceito-de-arquitetura-de-software
+     GANHA roteiro2-nameserver                          cliente-servidor -> estudo-de-caso-arquitetura-orientada-a-microsservicos
+     GANHA roteiro2                                     (vazio) -> estudo-de-caso-arquitetura-orientada-a-microsservicos
+     PERDE servicos                                     orientada-a-servicos -> conceito-de-arquitetura-de-software   (gold orientada-a-servicos)
+     PERDE web                                          cliente-servidor -> conceito-de-arquitetura-de-software   (gold cliente-servidor)
+  [cru] CG: +1 / -0
+     GANHA programabasico3d                             metodos-de-sombreamento-flat-gouraud-phong -> modelos-de-iluminacao-luz-pontual-direcional-spot
+  [produto] MF: +0 / -5
+     PERDE revisao                                      sistemas-formais -> fundamentos-de-logica-de-primeira-ordem   (gold sistemas-formais)
+     PERDE exerciciosespecificacao-respostas            linguagens-de-especificacao-e-logicas -> fundamentos-de-logica-de-primeira-ordem   (gold linguagens-de-especificacao-e-logicas)
+     PERDE exerciciosespecificacao                      linguagens-de-especificacao-e-logicas -> fundamentos-de-logica-de-primeira-ordem   (gold linguagens-de-especificacao-e-logicas)
+     PERDE exerciciosdafny1                             verificacao-de-programas -> correcao-parcial-e-total   (gold softwares-de-suporte-a-verificacao-formal-de-programas)
+     PERDE introducao-zip                               verificacao-de-programas -> correcao-parcial-e-total   (gold softwares-de-suporte-a-verificacao-formal-de-programas)
+  [produto] SO: +0 / -3
+     PERDE 2403-escalonamento-de-processos              escalonamento -> conceitos-basicos   (gold escalonamento)
+     PERDE 2603-algoritmos-de-escalonamento             algoritmos-de-escalonamento -> conceitos-basicos   (gold algoritmos-de-escalonamento)
+     PERDE exercicios                                   algoritmos-de-escalonamento -> conceitos-basicos   (gold algoritmos-de-escalonamento)
+  [produto] IA: +3 / -1
+     GANHA exemplo-de-programa-com-k-nn-em-java         introducao-ao-aprendizado-de-maquina -> modelos-preditivos
+     GANHA mlp-xoripynb                                 (vazio) -> modelos-preditivos
+     GANHA aula-sobre-agrupamento-parte-2-hierarquico   introducao-ao-aprendizado-de-maquina -> modelos-descritivos
+     PERDE como-analisar-resultados-acc-pr-re-e-f1      metricas-de-avaliacao -> modelos-preditivos   (gold metricas-de-avaliacao)
+  [produto] ES2: +0 / -7
+     PERDE servicos                                     orientada-a-servicos -> conceito-de-arquitetura-de-software   (gold orientada-a-servicos)
+     PERDE web                                          cliente-servidor -> conceito-de-arquitetura-de-software   (gold cliente-servidor)
+     PERDE microsservicos                               orientada-a-microsservicos -> conceito-de-arquitetura-de-software   (gold orientada-a-microsservicos)
+     PERDE roteiro2-nameserver                          estudo-de-caso-arquitetura-orientada-a-microsservicos -> orientada-a-microsservicos   (gold estudo-de-caso-arquitetura-orientada-a-microsservicos)
+     PERDE roteiro3-gateway                             estudo-de-caso-arquitetura-orientada-a-microsservicos -> orientada-a-microsservicos   (gold estudo-de-caso-arquitetura-orientada-a-microsservicos)
+     PERDE roteiro2                                     estudo-de-caso-arquitetura-orientada-a-microsservicos -> orientada-a-microsservicos   (gold estudo-de-caso-arquitetura-orientada-a-microsservicos)
+     PERDE roteiro3                                     estudo-de-caso-arquitetura-orientada-a-microsservicos -> orientada-a-microsservicos   (gold estudo-de-caso-arquitetura-orientada-a-microsservicos)
+  [produto] CG: +3 / -1
+     GANHA opengl3dcpp-vdi                              paralela -> conceito-de-camera-sintetica
+     GANHA opengl3dcpp                                  paralela -> conceito-de-camera-sintetica
+     GANHA programabasico3d                             metodos-de-sombreamento-flat-gouraud-phong -> modelos-de-iluminacao-luz-pontual-direcional-spot
+     PERDE mapeamento                                   sistema-de-coordenadas-cartesianas -> recorte   (gold sistema-de-coordenadas-cartesianas)
+  [produto] FR: +0 / -4
+     PERDE 03-tipos-de-redes                            conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia -> modelos-osi-e-tcpip   (gold conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia)
+     PERDE 08-desenvolvimento-de-aplicacoes             implementacao-de-sockets -> protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   (gold implementacao-de-sockets)
+     PERDE udp-example-java                             implementacao-de-sockets -> protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   (gold implementacao-de-sockets)
+     PERDE tcp-chat-c                                   implementacao-de-sockets -> protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   (gold implementacao-de-sockets)
+
+=== GANHOS E PERDAS NOMINAIS (aceito), variante B ===
+  [cru] ES2: +2 / -0
+     GANHA revisaoarquiteturapadroes                    (vazio) -> conceito-de-arquitetura-de-software
+     GANHA roteiro2                                     (vazio) -> estudo-de-caso-arquitetura-orientada-a-microsservicos
+  [produto] IA: +1 / -0
+     GANHA mlp-xoripynb                                 (vazio) -> modelos-preditivos
+
+=== O QUE O SARC DECIDE x o que o material ja dizia (gold, variante A) ===
+regime     decide  concorda  discorda    discorda e SARC certo  ctrl certo  ambos errados
+cru            90        55        35                        4          10             14
+produto       125        84        41                        6          21             10
+(concordancia apoiada na MESMA sessao nao conta como confirmacao independente — astra §12.4)
+
+=== ABSTENCAO DA REGRA, por motivo (materiais do gold) ===
+-- cru (total 251)
+   nenhum                      115  45.8%
+   decide                       90  35.9%
+   multiplos                    20   8.0%
+   so-o-pai                     16   6.4%
+   sessoes-discordantes         10   4.0%
+-- produto (total 251)
+   decide                      125  49.8%
+   nenhum                       51  20.3%
+   multiplos                    39  15.5%
+   so-o-pai                     19   7.6%
+   sessoes-discordantes         17   6.8%
+
+=== EIXOS BLOCO E UNIDADE ===
+Assert por entry passou: nenhum campo de bloco/unidade muda entre os bracos (o tratamento so escreve subunidade).
+Unidade LATENTE contestada (o SARC do bloco nomeia topico de OUTRA unidade), por curso: {'SO': 8, 'ES2': 4, 'CG': 9, 'FR': 3} total 24
+
+=== PINOS MANUAIS (recorte separado) ===
+  MF: 6 materiais com manual_timeline_block_id; no gold: 6 ['arvores', 'exercicioscorrecaoterminacao', 'listas', 'logicadehoare2', 'terminacao', 'tiposindutivos']
+
+=== HOLDOUT leave-one-course-out (escolha A x B por saldo = dC - k*dE) ===
+-- cru k=1: generaliza (saldo>0) em 1/7 folds; soma fora da amostra +1
+     fold MF   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +0 saldo   +0
+     fold ES2  escolhe B  (saldo dentro   -2)  fora: dC  +2 dE  -1 saldo   +3
+     fold TCC  escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -1
+     fold FR   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -1
+-- cru k=2: generaliza (saldo>0) em 1/7 folds; soma fora da amostra +0
+     fold MF   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold ES2  escolhe B  (saldo dentro   -4)  fora: dC  +2 dE  -1 saldo   +4
+     fold TCC  escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -2
+     fold FR   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -2
+-- cru k=4: generaliza (saldo>0) em 1/7 folds; soma fora da amostra -2
+     fold MF   escolhe B  (saldo dentro   -2)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   -2)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   -2)  fora: dC  +0 dE  +0 saldo   +0
+     fold ES2  escolhe B  (saldo dentro   -8)  fora: dC  +2 dE  -1 saldo   +6
+     fold TCC  escolhe B  (saldo dentro   -2)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -4
+     fold FR   escolhe B  (saldo dentro   +2)  fora: dC  +0 dE  +1 saldo   -4
+
+-- produto k=1: generaliza (saldo>0) em 1/7 folds; soma fora da amostra +0
+     fold MF   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   -1)  fora: dC  +1 dE  +0 saldo   +1
+     fold ES2  escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold TCC  escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +1 saldo   -1
+     fold FR   escolhe B  (saldo dentro   +0)  fora: dC  +0 dE  +0 saldo   +0
+-- produto k=2: generaliza (saldo>0) em 1/7 folds; soma fora da amostra -1
+     fold MF   escolhe B  (saldo dentro   -1)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   -1)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   -2)  fora: dC  +1 dE  +0 saldo   +1
+     fold ES2  escolhe B  (saldo dentro   -1)  fora: dC  +0 dE  +0 saldo   +0
+     fold TCC  escolhe B  (saldo dentro   -1)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +1 saldo   -2
+     fold FR   escolhe B  (saldo dentro   -1)  fora: dC  +0 dE  +0 saldo   +0
+-- produto k=4: generaliza (saldo>0) em 1/7 folds; soma fora da amostra -3
+     fold MF   escolhe B  (saldo dentro   -3)  fora: dC  +0 dE  +0 saldo   +0
+     fold SO   escolhe B  (saldo dentro   -3)  fora: dC  +0 dE  +0 saldo   +0
+     fold IA   escolhe B  (saldo dentro   -4)  fora: dC  +1 dE  +0 saldo   +1
+     fold ES2  escolhe B  (saldo dentro   -3)  fora: dC  +0 dE  +0 saldo   +0
+     fold TCC  escolhe B  (saldo dentro   -3)  fora: dC  +0 dE  +0 saldo   +0
+     fold CG   escolhe B  (saldo dentro   +1)  fora: dC  +0 dE  +1 saldo   -4
+     fold FR   escolhe B  (saldo dentro   -3)  fora: dC  +0 dE  +0 saldo   +0
+
+CSV: C:\Users\Humberto\AppData\Local\Temp\claude\C--Users-Humberto-Documents-GitHub-GPT-Tutor-Generator\e8e0cdeb-dc8d-48af-b3c6-ad66ad7798aa\scratchpad\sarc_posicional_12-09.csv  (502 linhas = 251 x 2 regimes)

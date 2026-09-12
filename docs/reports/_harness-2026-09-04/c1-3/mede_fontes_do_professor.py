@@ -44,6 +44,9 @@ LIMPO = "--limpo" in sys.argv  # avalia SARC/SECAO/TITULO/HEADINGS contra a taxo
 # aliases dos 6 cursos (60%) sao de origem LLM. Ou seja, o "teto das fontes cruas do professor" era medido com
 # vocabulario de LLM dentro. `--cru` tira os dois sidecares, igual ao regime `sem_llm` do replay.
 CRU = "--cru" in sys.argv
+# `--so-llm` (12/09 tarde): tira SO o sidecar do LLM e MANTEM a curadoria humana — este e o regime que a regua chama de
+# "cru" (`congela_regua_cru_12-09.py::sem_llm`). Sem ele nao havia como comparar o teto com o placar na mesma taxonomia.
+SO_LLM = "--so-llm" in sys.argv
 # `--sem-gemini` tira do TEXTO o que veio do Gemini: os blocos IMAGE_DESCRIPTION (74/227) e o resumo de codigo (33/227).
 SEM_GEMINI = "--sem-gemini" in sys.argv
 
@@ -74,13 +77,14 @@ for sig, repo in GOLD.items():
     por_unidade = collections.defaultdict(list)
     for t in eng._iter_content_taxonomy_topics(tax):
         por_unidade[t["unit_slug"]].append(t)
-    curp = root / "course/.glossary_curation.json"
     curados = set()
-    if curp.exists():
-        for k, v in json.loads(curp.read_text(encoding="utf-8")).items():
-            if not k.startswith("_"):
-                curados |= {N(s) for s in (v.get("synonyms") or [])}
-    if CRU:  # o sidecar do LLM tambem sai (ver nota do CRU la em cima)
+    if not SO_LLM:  # `--so-llm` mantem a curadoria HUMANA (e o regime cru da regua); os outros modos a tiram
+        curp = root / "course/.glossary_curation.json"
+        if curp.exists():
+            for k, v in json.loads(curp.read_text(encoding="utf-8")).items():
+                if not k.startswith("_"):
+                    curados |= {N(s) for s in (v.get("synonyms") or [])}
+    if CRU or SO_LLM:  # o sidecar do LLM sai nos dois
         llmp = root / "course/.glossary_curation.llm.json"
         if llmp.exists():
             for k, v in json.loads(llmp.read_text(encoding="utf-8")).items():
@@ -132,7 +136,12 @@ for sig, repo in GOLD.items():
         hit["AL-CURADO"] = any(f and frase_no(tn, f) for f in cur_al)
         hit["AL-HEADING"] = any(f and frase_no(tn, f) for f in outros_al)
         bid = str(e.get("manual_timeline_block_id") or e.get("temporal_block_id") or "")
-        tops_ev = tops_limpos if LIMPO else tops
+        # 12/09 tarde, CORRECAO: era `tops_limpos if LIMPO else tops`. Com isso a flag `--cru` (que acrescenta o sidecar
+        # do LLM ao conjunto `curados`) NUNCA chegava ao detector: SARC/SECAO/TITULO/HEADINGS eram avaliados contra a
+        # taxonomia CHEIA e `--cru` sozinho devolvia byte a byte a linha do modo sem flag. Foi assim que o teto saiu
+        # publicado como 64% "realmente cru" quando era o teto do PRODUTO. O detector tem que ver a MESMA taxonomia que
+        # o regime avaliado.
+        tops_ev = tops_limpos if (LIMPO or CRU or SO_LLM) else tops
         hit["SARC"] = nomeia(ses.get(bid, ""), tops_ev) == gold
         hit["SECAO"] = nomeia(str(e.get("source_section") or ""), tops_ev) == gold
         hit["TITULO"] = nomeia(f"{e.get('title') or ''} {moodle_label_text(e) or ''}", tops_ev) == gold
@@ -149,9 +158,10 @@ for sig, repo in GOLD.items():
     POR_CURSO[sig] = c
     TOT.update(c)
 
-MODO = ("[CRU: taxonomia sem os aliases dos sidecares manual E LLM]" if CRU
-        else "[TAXONOMIA LIMPA: sem aliases curados do sidecar MANUAL; os do LLM sobrevivem]" if LIMPO
-        else "[taxonomia como esta]")
+MODO = ("[SO-LLM: sem o sidecar do LLM, curadoria HUMANA mantida = a taxonomia do regime cru da regua]" if SO_LLM
+        else "[CRU: sem os aliases dos DOIS sidecares, manual e LLM]" if CRU
+        else "[LIMPO: sem o sidecar MANUAL; os do LLM sobrevivem]" if LIMPO
+        else "[taxonomia do PRODUTO, como esta em disco]")
 if SEM_GEMINI:
     MODO += " [SEM GEMINI no texto: sem IMAGE_DESCRIPTION e sem code_curation]"
 print(f"O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? {MODO}")
