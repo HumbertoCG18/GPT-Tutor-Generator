@@ -516,3 +516,97 @@ exclui combinação de sinais. É alcance daquele detector, não teto de informa
 
 **Descartar agora, sem nova rodada:** numerar artificialmente o IA; desligar toda a 2ª passada por contagem bruta; limpar
 tokens de mídia para melhorar este placar; excluir os 14 difíceis; tratar 64% como teto; repetir piso global com outro nome.
+
+## 15. "FAÇA AS MEDIÇÕES, NÃO QUERO QUE CHUTE, MESMO QUE SEJA O ASTRA CHUTANDO" (12/09, noite)
+
+O astra propôs dois números no ar: o peso "um erro confiante vale 4 entregas certas" e o piso de precisão de 80%.
+O usuário mandou medir. **Um dos dois é medível e está medido; o outro não é, e agora se sabe exatamente por quê.**
+Três medições rodaram, cada uma com um refutador independente. **Duas foram refutadas** — e as refutações são o
+resultado mais honesto da rodada.
+
+### 15.1 O peso do erro: NÃO é medível com o dado que existe (e a tentativa mostrou por quê)
+
+A ideia era medir o custo real de errar contra o custo de abster no artefato que o aluno usa, pela régua de travessia
+(`scripts/eval_travessia.py`, piso determinístico, 0 chamadas): trocar a subunidade em memória e ver quantas perguntas
+do gold quebram.
+
+**Resultado bruto:** errar nos 54 erros confiantes de CG/FR/IA custa **1 pergunta de 45** no acerto@1; abster nos mesmos
+54 não custa nada — **ganha 1**. A razão pedida é 1/0: indefinida.
+
+**E o refutador derrubou até isso, com razão:** em **31 das 45 perguntas o 1º lugar está EMPATADO** e é decidido pela
+**ordem alfabética do `entry_id`** (`escolher_sem_llm` ordena por `(-score, id)`). Trocando o desempate por outro
+igualmente arbitrário (id decrescente), o efeito inteiro evapora: D−B = 0, E−B = 0, e a própria linha de base vai de
+24/45 para 20/45. **A oscilação do instrumento vale 8 perguntas; o efeito procurado vale 1 a 2. Ruído 4× maior que o
+sinal.** Além disso, o canal medido não é o que o aluno lê: `navigation.py:686` renderiza o **label**
+("1.2 - Modelos OSI e TCP/IP"), não o slug — e no canal label errar custa MAIS que apagar (−2 contra −1), porque um slug
+errado **injeta** token falso enquanto apagar só remove.
+
+**Conclusão registrada:** o peso 4 não é confirmado nem refutado — é **inestimável com este dado**. E o bloqueador não é
+o tamanho do gold de travessia (45 perguntas, 3 cursos): é que **o piso determinístico empata em 69% das perguntas**.
+Gold maior sobre esse piso só aumenta o n do ruído. Para medir de verdade seria preciso (a) desempate com informação
+(TF-IDF/BM25 ou comprimento do hay), (b) o hay usando o label renderizado, e (c) instrumentar a fila na UI para ter o
+tempo de correção — esse último é o dado que não existe e que resolveria a pergunta de vez.
+
+Números secundários que sobrevivem: 25 dos 54 erros confiantes **nunca aparecem em nenhum top-3** (custo zero por
+construção, não por medição), e **o IA é totalmente insensível** (0 de 15 perguntas mudam) — justo o curso com 34 dos 77
+erros.
+
+### 15.2 O piso de precisão: É medível, e está medido — a fronteira inteira
+
+`c1-3/fronteira_*_12-09.py` + `fronteira_12-09.log` + `fronteira_sinais_12-09.csv` (47 colunas por material × regime).
+~200 regras de abstenção varridas sistematicamente, com holdout leave-one-course-out. **O refutador NÃO derrubou.**
+
+**A zona grátis (reproduzida por mim, à mão, no CSV):**
+
+| regra | cru | produto |
+|---|---|---|
+| base | C 113 / E 77 — entrega 45,0%, precisão 59,5% | C 178 / E 15 — entrega 70,9%, precisão 92,2% |
+| `pred vazia` | C 113 / E 74 — **60,4%** | C 178 / E 15 — 92,2% (não muda) |
+| **`cobertura do tópico entregue < 0,2 E peso do campo doador ≤ 1,1`** | **C 112 / E 57 — 66,3%** | **C 178 / E 14 — 92,7%** |
+
+Ou seja: **tira 20 dos 77 erros confiantes do cru custando 1 entrega certa, e no produto custa ZERO entregas e ainda
+tira 1 erro.** No holdout com custo limitado, é a regra escolhida em **6 dos 7 folds** e fora da amostra custa 0 entregas
+em 5 dos 7 cursos.
+
+**O piso MEDIDO que substitui o 80%:** a zona em que o produto não regride (C ≥ 178 e precisão ≥ 92,2%) tem **teto em
+66,3% de precisão do cru**, com entrega 44,6%. O ponto de quebra é o degrau seguinte (`pred vazia OU rota==2a-propagado`:
+a entrega do produto cai de 178 para 170). **Acima de 66,3%, cada ponto de precisão do cru é comprado com entrega do
+produto** — e isso é medição, não escolha.
+
+**O preço do 80% que o astra pediu, medido:** a melhor regra que cruza 80% (`rota==2a-propagado OU peso_doador ≤ 1,1`)
+leva o cru a 80,8% custando **33 das 113 entregas certas** (−29%) e **20 das 178 do produto**.
+
+**O holdout diz algo sobre o k que a medição direta não conseguiu:** a k=1 (um erro vale uma entrega) a abstenção **não
+generaliza** — ganho negativo fora da amostra em 3 dos 7 cursos, média caindo de +0,140 para +0,060 por material. A k=2 e
+k=4 generaliza em **7 de 7**, com a mesma regra escolhida em 6 dos 7 folds. Não mede o valor de k, mas **mede que abaixo
+de k=2 a abstenção não sobrevive fora da amostra**.
+
+**Taxa de troca marginal medida, degrau a degrau** (entregas certas perdidas por erro removido):
+0,00 → 0,06 → 1,50 → 0,20 → 0,33 → 0,22 → 2,20 → 1,08 → 0,50 → 0,75. **Os dois primeiros degraus compensam a qualquer
+k ≥ 1** — são os dois da zona grátis.
+
+**Controle obrigatório:** apesar de `exact_hits` e `peso_doador` terem Spearman +0,97 e +0,88 com o `winner_score`, o
+piso global de score (refutado 5×) é **DOMINADO nos 22 pontos** da varredura, perdendo 8 a 12 pontos de precisão na mesma
+entrega. **A família não é o piso refutado disfarçado.**
+
+**A rota mais frágil, medida:** `2a-propagado` decide 37 confiantes no cru com **19 erros** (51,4% contra 59,5% da média);
+no produto a mesma rota decide 9 com 1 erro.
+
+### 15.3 O preço da fila: só o do PRODUTO é medível
+
+A terceira medição (custo de revisão) foi **refutada no essencial**: a fila do "cru" é híbrida. O replay só recomputa
+`computed_subunit_slug` e `subunit_match_reasons`; `unit_block_conflict`, `sync_changed` e `temporal_block_flag` vêm
+**congelados do manifest do produto** — **59 dos 82 itens da fila do cru (72%) entram só por motivo congelado**. Então
+"preço por regime" não existe: é o mesmo numerador quase fixo dividido por três contagens de erro diferentes.
+
+**O que sobrevive, medido:** a fila do **produto** custa **58 materiais revisados por 12 erros de subunidade pegos =
+4,8 materiais por correção, com 79% de alarme falso**. E um alerta do refutador: 5 dos materiais que a fila "corrigiria"
+pelo eixo unidade são **contradições que o usuário já adjudicou** (SO threads u03, ES2 microsserviços u01) — contá-las
+como defeito seria contar decisão curricular como erro do motor.
+
+### 15.4 O que fica para decidir
+
+O único número que continua sendo escolha, e não medição, é **quanto vale um erro confiante em relação a uma entrega
+certa**. A medição diz: abaixo de k=2 a abstenção não generaliza; os dois primeiros degraus da fronteira compensam a
+qualquer k ≥ 1; e acima de 66,3% de precisão do cru o produto começa a pagar. **Com isso a escolha deixa de ser um peso
+abstrato e vira a escolha de um ponto numa curva com preço na mão.**

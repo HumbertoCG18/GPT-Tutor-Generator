@@ -1,0 +1,436 @@
+======================================================================================================================
+TODOS OS PONTOS (regime CRU), ordenados por entrega. '*' = na fronteira de Pareto do CRU
+   regra                                             C   E    Q  entrega  precis  cobert  -dC  -dE  dC/dE | PRODUTO    C   E  entrega  precis
+----------------------------------------------------------------------------------------------------------------------
+*  pred vazia                                      113  74   64   45.0%   60.4%   74.5%    0    3   0.00 |          178  15   70.9%   92.2%
+   doador in {corpo,raw,auto,legacy} E rota==2a (  113  75   63   45.0%   60.1%   74.9%    0    2   0.00 |          178  15   70.9%   92.2%
+   razao>0.95                                      113  75   63   45.0%   60.1%   74.9%    0    2   0.00 |          177  15   70.5%   92.2%
+   doador in {corpo,raw,auto,legacy} E pred_peso_  113  76   62   45.0%   59.8%   75.3%    0    1   0.00 |          178  15   70.9%   92.2%
+   rota==2a (toda) E share_score<0.35              113  76   62   45.0%   59.8%   75.3%    0    1   0.00 |          177  15   70.5%   92.2%
+   rota==2a-propagado E pred_peso_doador<=1.1      113  76   62   45.0%   59.8%   75.3%    0    1   0.00 |          178  15   70.9%   92.2%
+   (nenhuma)                                       113  77   61   45.0%   59.5%   75.7%    0    0    inf |          178  15   70.9%   92.2%
+*  pred_cobertura<0.2 E pred_peso_doador<=1.1      112  57   82   44.6%   66.3%   67.3%    1   20   0.05 |          178  14   70.9%   92.7%
+   pred_cobertura<0.2 E pred_peso_doador<=0.9      112  58   81   44.6%   65.9%   67.7%    1   19   0.05 |          178  14   70.9%   92.7%
+   pred vazia OU doador in {corpo,raw,auto,legacy  112  70   69   44.6%   61.5%   72.5%    1    7   0.14 |          178  15   70.9%   92.2%
+   pred_cobertura<0.2 E rota==2a (toda)            112  70   69   44.6%   61.5%   72.5%    1    7   0.14 |          174  14   69.3%   92.6%
+   doador in {corpo,raw,auto,legacy}               112  73   66   44.6%   60.5%   73.7%    1    4   0.25 |          178  15   70.9%   92.2%
+   win_exact_hits<=2 E share_score<0.35            112  73   66   44.6%   60.5%   73.7%    1    4   0.25 |          178  15   70.9%   92.2%
+   pred_n_alias==0                                 112  74   65   44.6%   60.2%   74.1%    1    3   0.33 |          177  15   70.5%   92.2%
+   razao>0.85 E share_score<0.35                   112  75   64   44.6%   59.9%   74.5%    1    2   0.50 |          178  14   70.9%   92.7%
+   razao>0.85 E win_exact_hits<=2                  112  75   64   44.6%   59.9%   74.5%    1    2   0.50 |          178  15   70.9%   92.2%
+   rota==2a (toda) E pred_peso_doador<=1.1         112  75   64   44.6%   59.9%   74.5%    1    2   0.50 |          177  15   70.5%   92.2%
+   doador in {corpo,raw,auto,legacy} E share_scor  112  76   63   44.6%   59.6%   74.9%    1    1   1.00 |          178  15   70.9%   92.2%
+   rota==2a-titulo                                 112  77   62   44.6%   59.3%   75.3%    1    0    inf |          177  15   70.5%   92.2%
+   pred_cobertura<0.2 E win_exact_hits<=2          111  57   83   44.2%   66.1%   66.9%    2   20   0.10 |          173  13   68.9%   93.0%
+   rota==2a (toda) E pred_cobertura<0.3            111  66   74   44.2%   62.7%   70.5%    2   11   0.18 |          172  13   68.5%   93.0%
+   rota==2a-propagado E pred_cobertura<0.3         111  67   73   44.2%   62.4%   70.9%    2   10   0.20 |          173  14   68.9%   92.5%
+   doador in {corpo,raw,auto,legacy} OU pred_n_al  111  70   70   44.2%   61.3%   72.1%    2    7   0.29 |          177  15   70.5%   92.2%
+   rota==2a (toda) E win_exact_hits<=2             111  71   69   44.2%   61.0%   72.5%    2    6   0.33 |          175  14   69.7%   92.6%
+   pred vazia OU razao>0.85                        111  73   67   44.2%   60.3%   73.3%    2    4   0.50 |          172  14   68.5%   92.5%
+   razao>0.85                                      111  74   66   44.2%   60.0%   73.7%    2    3   0.67 |          172  14   68.5%   92.5%
+   rota==2a-propagado E win_exact_hits<=2          111  74   66   44.2%   60.0%   73.7%    2    3   0.67 |          177  15   70.5%   92.2%
+   doador in {corpo,raw,auto,legacy} OU razao>0.8  110  70   71   43.8%   61.1%   71.7%    3    7   0.43 |          172  14   68.5%   92.5%
+   doador in {corpo,raw,auto,legacy} OU share_sco  110  70   71   43.8%   61.1%   71.7%    3    7   0.43 |          176  12   70.1%   93.6%
+   rota==2a (toda) E pred_exact_hits<=2            110  71   70   43.8%   60.8%   72.1%    3    6   0.50 |          174  14   69.3%   92.6%
+   pred_n_alias==0 OU razao>0.85                   110  73   68   43.8%   60.1%   72.9%    3    4   0.75 |          171  14   68.1%   92.4%
+   share_score<0.35                                110  73   68   43.8%   60.1%   72.9%    3    4   0.75 |          176  12   70.1%   93.6%
+*  pred vazia OU rota==2a-propagado                109  55   87   43.4%   66.5%   65.3%    4   22   0.18 |          170  14   67.7%   92.4%
+   rota==2a-propagado                              109  58   84   43.4%   65.3%   66.5%    4   19   0.21 |          170  14   67.7%   92.4%
+   razao>0.85 OU share_score<0.35                  109  72   70   43.4%   60.2%   72.1%    4    5   0.80 |          170  12   67.7%   93.4%
+   pred_n_alias==0 OU share_score<0.35             109  73   69   43.4%   59.9%   72.5%    4    4   1.00 |          175  12   69.7%   93.6%
+*  pred_cobertura<0.2                              108  50   93   43.0%   68.4%   62.9%    5   27   0.19 |          144  12   57.4%   92.3%
+   rota==2a-propagado OU doador in {corpo,raw,aut  108  55   88   43.0%   66.3%   64.9%    5   22   0.23 |          170  14   67.7%   92.4%
+   rota==2a-propagado OU pred_n_alias==0           108  55   88   43.0%   66.3%   64.9%    5   22   0.23 |          169  14   67.3%   92.3%
+   share_score<0.40                                108  72   71   43.0%   60.0%   71.7%    5    5   1.00 |          171  10   68.1%   94.5%
+*  pred_cobertura<0.2 OU doador in {corpo,raw,aut  107  47   97   42.6%   69.5%   61.4%    6   30   0.20 |          144  12   57.4%   92.3%
+   pred_cobertura<0.2 OU razao>0.85                107  49   95   42.6%   68.6%   62.2%    6   28   0.21 |          138  11   55.0%   92.6%
+   pred_cobertura<0.2 OU pred_n_alias==0           107  50   94   42.6%   68.2%   62.5%    6   27   0.22 |          143  12   57.0%   92.3%
+   rota==2a-propagado OU razao>0.85                107  55   89   42.6%   66.0%   64.5%    6   22   0.27 |          164  13   65.3%   92.7%
+   rota==2a-propagado OU share_score<0.35          106  54   91   42.2%   66.2%   63.7%    7   23   0.30 |          168  11   66.9%   93.9%
+   share_unid<0.10                                 106  74   71   42.2%   58.9%   71.7%    7    3   2.33 |          166  14   66.1%   92.2%
+   n_pos>=12                                       106  76   69   42.2%   58.2%   72.5%    7    1   7.00 |          171  14   68.1%   92.4%
+*  pred_cobertura<0.2 OU rota==2a-propagado        105  38  108   41.8%   73.4%   57.0%    8   39   0.21 |          139  12   55.4%   92.1%
+   pred_cobertura<0.2 OU share_score<0.35          105  49   97   41.8%   68.2%   61.4%    8   28   0.29 |          142   9   56.6%   94.0%
+   pred_cobertura<0.3 E pred_peso_doador<=1.1      105  56   90   41.8%   65.2%   64.1%    8   21   0.38 |          172  14   68.5%   92.5%
+   pred_cobertura<0.3 E pred_peso_doador<=0.9      105  57   89   41.8%   64.8%   64.5%    8   20   0.40 |          172  14   68.5%   92.5%
+   razao>0.70                                      105  71   75   41.8%   59.7%   70.1%    8    6   1.33 |          162  10   64.5%   94.2%
+   pred_cobertura<0.3 E win_exact_hits<=2          104  54   93   41.4%   65.8%   62.9%    9   23   0.39 |          166  12   66.1%   93.3%
+   n_iguais<=1                                     104  74   73   41.4%   58.4%   70.9%    9    3   3.00 |          163  12   64.9%   93.1%
+   n_pos>=10                                       104  74   73   41.4%   58.4%   70.9%    9    3   3.00 |          167  12   66.5%   93.3%
+   share_score<0.45                                103  71   77   41.0%   59.2%   69.3%   10    6   1.67 |          162  10   64.5%   94.2%
+   rota==2a-rotulo                                 102  72   77   40.6%   58.6%   69.3%   11    5   2.20 |          168  13   66.9%   92.8%
+   share_score<0.50                                101  71   79   40.2%   58.7%   68.5%   12    6   2.00 |          151  10   60.2%   93.8%
+   pred vazia OU rota in {2a-propagado,2a-rotulo}   98  50  103   39.0%   66.2%   59.0%   15   27   0.56 |          160  12   63.7%   93.0%
+   rota in {2a-propagado,2a-rotulo}                 98  53  100   39.0%   64.9%   60.2%   15   24   0.62 |          160  12   63.7%   93.0%
+   pred vazia OU rota==2a (toda)                    97  50  104   38.6%   66.0%   58.6%   16   27   0.59 |          158  12   62.9%   92.9%
+   pred_n_alias==0 OU rota in {2a-propagado,2a-ro   97  50  104   38.6%   66.0%   58.6%   16   27   0.59 |          159  12   63.3%   93.0%
+   doador in {corpo,raw,auto,legacy} OU rota in {   97  51  103   38.6%   65.5%   59.0%   16   26   0.62 |          160  12   63.7%   93.0%
+   rota==2a (toda)                                  97  53  101   38.6%   64.7%   59.8%   16   24   0.67 |          158  12   62.9%   92.9%
+   n_pos>=8                                         97  72   82   38.6%   57.4%   67.3%   16    5   3.20 |          159   9   63.3%   94.6%
+   pred_n_alias==0 OU rota==2a (toda)               96  50  105   38.2%   65.8%   58.2%   17   27   0.63 |          157  12   62.5%   92.9%
+   rota in {2a-propagado,2a-rotulo} OU razao>0.85   96  50  105   38.2%   65.8%   58.2%   17   27   0.63 |          155  11   61.8%   93.4%
+   doador in {corpo,raw,auto,legacy} OU rota==2a    96  51  104   38.2%   65.3%   58.6%   17   26   0.65 |          158  12   62.9%   92.9%
+   n_iguais<=2                                      96  67   88   38.2%   58.9%   64.9%   17   10   1.70 |          146  10   58.2%   93.6%
+   razao>0.50                                       96  68   87   38.2%   58.5%   65.3%   17    9   1.89 |          146   7   58.2%   95.4%
+   share_score<0.55                                 96  69   86   38.2%   58.2%   65.7%   17    8   2.12 |          146  10   58.2%   93.6%
+   razao>0.85 OU rota==2a (toda)                    95  50  106   37.8%   65.5%   57.8%   18   27   0.67 |          154  11   61.4%   93.3%
+   rota in {2a-propagado,2a-rotulo} OU share_scor   95  50  106   37.8%   65.5%   57.8%   18   27   0.67 |          159   9   63.3%   94.6%
+*  pred_cobertura<0.2 OU rota in {2a-propagado,2a   94  33  124   37.5%   74.0%   50.6%   19   44   0.43 |          130  10   51.8%   92.9%
+   rota==2a (toda) OU share_score<0.35              94  50  107   37.5%   65.3%   57.4%   19   27   0.70 |          157   9   62.5%   94.6%
+   pred_cobertura<0.2 OU rota==2a (toda)            93  33  125   37.1%   73.8%   50.2%   20   44   0.45 |          128  10   51.0%   92.8%
+   n_pos==n_cand (todos pontuam)                    93  65   93   37.1%   58.9%   62.9%   20   12   1.67 |          136  11   54.2%   92.5%
+   pred_n_alias<=1                                  92  59  100   36.7%   60.9%   60.2%   21   18   1.17 |          176  11   70.1%   94.1%
+   n_pos>=7                                         92  71   88   36.7%   56.4%   64.9%   21    6   3.50 |          148   8   59.0%   94.9%
+   pred_cobertura<0.3                               90  44  117   35.9%   67.2%   53.4%   23   33   0.70 |          115  11   45.8%   91.3%
+   razao>0.30                                       90  63   98   35.9%   58.8%   61.0%   23   14   1.64 |          121   3   48.2%   97.6%
+   doador in {corpo,raw,auto,legacy} OU pred_cobe   89  41  121   35.5%   68.5%   51.8%   24   36   0.67 |          115  11   45.8%   91.3%
+   razao>0.85 OU pred_cobertura<0.3                 89  43  119   35.5%   67.4%   52.6%   24   34   0.71 |          110  10   43.8%   91.7%
+   pred_n_alias==0 OU pred_cobertura<0.3            89  44  118   35.5%   66.9%   53.0%   24   33   0.73 |          114  11   45.4%   91.2%
+   share_score<0.60                                 89  66   96   35.5%   57.4%   61.8%   24   11   2.18 |          134   8   53.4%   94.4%
+   rota==2a-propagado OU pred_cobertura<0.3         88  35  128   35.1%   71.5%   49.0%   25   42   0.60 |          112  11   44.6%   91.1%
+   share_unid<0.20                                  88  67   96   35.1%   56.8%   61.8%   25   10   2.50 |          120  10   47.8%   92.3%
+   pred_cobertura<0.3 OU share_score<0.35           87  43  121   34.7%   66.9%   51.8%   26   34   0.76 |          114   8   45.4%   93.4%
+   win_exact_hits<=2 E pred_peso_doador<=0.9        86  40  125   34.3%   68.3%   50.2%   27   37   0.73 |          166  11   66.1%   93.8%
+   win_exact_hits<=0                                86  42  123   34.3%   67.2%   51.0%   27   35   0.77 |          167  11   66.5%   93.8%
+   pred_peso_doador<=1.1 E win_exact_hits<=2        85  37  129   33.9%   69.7%   48.6%   28   40   0.70 |          166  11   66.1%   93.8%
+   pred_peso_doador<=0.9                            85  40  126   33.9%   68.0%   49.8%   28   37   0.76 |          166  11   66.1%   93.8%
+   pred_exact_hits<=0                               85  41  125   33.9%   67.5%   50.2%   28   36   0.78 |          166  11   66.1%   93.8%
+   pred_n_overlap<=1                                85  58  108   33.9%   59.4%   57.0%   28   19   1.47 |          159  13   63.3%   92.4%
+   share_score<0.70                                 85  58  108   33.9%   59.4%   57.0%   28   19   1.47 |          116   5   46.2%   95.9%
+   pred_peso_doador<=1.1                            84  37  130   33.5%   69.4%   48.2%   29   40   0.72 |          166  11   66.1%   93.8%
+   razao>0.85 OU pred_peso_doador<=0.9              84  39  128   33.5%   68.3%   49.0%   29   38   0.76 |          160  10   63.7%   94.1%
+   win_exact_hits<=1                                84  40  127   33.5%   67.7%   49.4%   29   37   0.78 |          166  11   66.1%   93.8%
+   razao>0.85 OU pred_peso_doador<=1.1              83  36  132   33.1%   69.7%   47.4%   30   41   0.73 |          160  10   63.7%   94.1%
+   pred_exact_hits<=1                               83  39  129   33.1%   68.0%   48.6%   30   38   0.79 |          165  11   65.7%   93.8%
+   pred_peso_doador<=1.1 OU share_score<0.35        82  37  132   32.7%   68.9%   47.4%   31   40   0.78 |          164   8   65.3%   95.3%
+   share_score<0.35 OU pred_peso_doador<=0.9        82  39  130   32.7%   67.8%   48.2%   31   38   0.82 |          164   8   65.3%   95.3%
+*  rota==2a-propagado OU pred_peso_doador<=0.9      81  21  149   32.3%   79.4%   40.6%   32   56   0.57 |          158  10   62.9%   94.0%
+   pred_cobertura<0.2 OU pred_peso_doador<=0.9      81  32  138   32.3%   71.7%   45.0%   32   45   0.71 |          132   9   52.6%   93.6%
+   n_iguais<=3                                      81  65  105   32.3%   55.5%   58.2%   32   12   2.67 |          129   9   51.4%   93.5%
+*  rota==2a-propagado OU pred_peso_doador<=1.1      80  19  152   31.9%   80.8%   39.4%   33   58   0.57 |          158  10   62.9%   94.0%
+   pred_cobertura<0.2 OU pred_peso_doador<=1.1      80  30  141   31.9%   72.7%   43.8%   33   47   0.70 |          132   9   52.6%   93.6%
+   win_exact_hits<=2                                79  31  141   31.5%   71.8%   43.8%   34   46   0.74 |          158   9   62.9%   94.6%
+   razao>0.85 OU win_exact_hits<=2                  78  30  143   31.1%   72.2%   43.0%   35   47   0.74 |          152   8   60.6%   95.0%
+   pred_exact_hits<=2                               78  31  142   31.1%   71.6%   43.4%   35   46   0.76 |          157   9   62.5%   94.6%
+   n_pos>=6                                         78  68  105   31.1%   53.4%   58.2%   35    9   3.89 |          122   8   48.6%   93.8%
+*  rota==2a-propagado OU win_exact_hits<=2          77  15  159   30.7%   83.7%   36.7%   36   62   0.58 |          151   8   60.2%   95.0%
+   razao>0.85 OU pred_exact_hits<=2                 77  30  144   30.7%   72.0%   42.6%   36   47   0.77 |          152   8   60.6%   95.0%
+   rota in {2a-propagado,2a-rotulo} OU pred_cober   77  31  143   30.7%   71.3%   43.0%   36   46   0.78 |          103  10   41.0%   91.2%
+   win_exact_hits<=2 OU share_score<0.35            77  31  143   30.7%   71.3%   43.0%   36   46   0.78 |          156   6   62.2%   96.3%
+   rota==2a-propagado OU pred_exact_hits<=2         76  15  160   30.3%   83.5%   36.3%   37   62   0.60 |          150   8   59.8%   94.9%
+   pred_cobertura<0.2 OU win_exact_hits<=2          76  24  151   30.3%   76.0%   39.8%   37   53   0.70 |          129   8   51.4%   94.2%
+   rota==2a (toda) OU pred_cobertura<0.3            76  31  144   30.3%   71.0%   42.6%   37   46   0.80 |          101  10   40.2%   91.0%
+   share_score<0.35 OU pred_exact_hits<=2           76  31  144   30.3%   71.0%   42.6%   37   46   0.80 |          155   6   61.8%   96.3%
+   pred_cobertura<0.4                               76  37  138   30.3%   67.3%   45.0%   37   40   0.93 |           95  11   37.8%   89.6%
+   pred_cobertura<0.2 OU pred_exact_hits<=2         75  24  152   29.9%   75.8%   39.4%   38   53   0.72 |          128   8   51.0%   94.1%
+   pred_peso_doador<=2.8                            75  28  148   29.9%   72.8%   41.0%   38   49   0.78 |          146   5   58.2%   96.7%
+   pred_peso_doador<=3.8                            73  28  150   29.1%   72.3%   40.2%   40   49   0.82 |          142   5   56.6%   96.6%
+   pred_n_alias<=2                                  73  54  124   29.1%   57.5%   50.6%   40   23   1.74 |          173  10   68.9%   94.5%
+   rota==2a (toda) OU pred_peso_doador<=0.9         70  16  165   27.9%   81.4%   34.3%   43   61   0.70 |          147   8   58.6%   94.8%
+   pred_cobertura<0.3 OU pred_peso_doador<=0.9      70  27  154   27.9%   72.2%   38.6%   43   50   0.86 |          109   8   43.4%   93.2%
+   rota==2a (toda) OU pred_peso_doador<=1.1         69  15  167   27.5%   82.1%   33.5%   44   62   0.71 |          147   8   58.6%   94.8%
+   pred_cobertura<0.3 OU pred_peso_doador<=1.1      69  25  157   27.5%   73.4%   37.5%   44   52   0.85 |          109   8   43.4%   93.2%
+   share_score<0.80                                 69  54  128   27.5%   56.1%   49.0%   44   23   1.91 |           88   1   35.1%   98.9%
+   share_unid<0.30                                  69  57  125   27.5%   54.8%   50.2%   44   20   2.20 |          102   7   40.6%   93.6%
+   pred_cobertura<0.5                               68  30  153   27.1%   69.4%   39.0%   45   47   0.96 |           71  11   28.3%   86.6%
+   rota in {2a-propagado,2a-rotulo} OU win_exact_   66  13  172   26.3%   83.5%   31.5%   47   64   0.73 |          142   7   56.6%   95.3%
+   rota==2a (toda) OU win_exact_hits<=2             65  13  173   25.9%   83.3%   31.1%   48   64   0.75 |          141   7   56.2%   95.3%
+   pred_cobertura<0.3 OU win_exact_hits<=2          65  21  165   25.9%   75.6%   34.3%   48   56   0.86 |          107   8   42.6%   93.0%
+   pred_cobertura<0.3 OU pred_exact_hits<=2         64  21  166   25.5%   75.3%   33.9%   49   56   0.88 |          106   8   42.2%   93.0%
+   share_unid<0.40                                  63  52  136   25.1%   54.8%   45.8%   50   25   2.00 |           75   4   29.9%   94.9%
+   n_pos>=5                                         60  54  137   23.9%   52.6%   45.4%   53   23   2.30 |           90   5   35.9%   94.7%
+   win_exact_hits<=3                                57  26  168   22.7%   68.7%   33.1%   56   51   1.10 |          151   9   60.2%   94.4%
+   pred_n_alias<=3                                  56  52  143   22.3%   51.9%   43.0%   57   25   2.28 |          159   9   63.3%   94.6%
+   pred_cobertura<0.6                               55  16  180   21.9%   77.5%   28.3%   58   61   0.95 |           58   8   23.1%   87.9%
+   pred_n_overlap<=2                                54  39  158   21.5%   58.1%   37.1%   59   38   1.55 |          127   7   50.6%   94.8%
+   n_iguais<=5                                      54  56  141   21.5%   49.1%   43.8%   59   21   2.81 |           91   5   36.3%   94.8%
+   share_score<0.90                                 50  41  160   19.9%   54.9%   36.3%   63   36   1.75 |           59   0   23.5%  100.0%
+   win_exact_hits<=4                                49  20  182   19.5%   71.0%   27.5%   64   57   1.12 |          144   7   57.4%   95.4%
+   pred_max_tok_frase<=1                            46  15  190   18.3%   75.4%   24.3%   67   62   1.08 |          136   8   54.2%   94.4%
+   share_unid<0.50                                  46  43  162   18.3%   51.7%   35.5%   67   34   1.97 |           68   3   27.1%   95.8%
+   pred_n_overlap<=3                                44  30  177   17.5%   59.5%   29.5%   69   47   1.47 |          111   5   44.2%   95.7%
+   n_pos>=4                                         43  45  163   17.1%   48.9%   35.1%   70   32   2.19 |           64   1   25.5%   98.5%
+   pred_max_tok_frase<=2                            42  15  194   16.7%   73.7%   22.7%   71   62   1.15 |           99   7   39.4%   93.4%
+   pred_tok_doador<=1                               41  12  198   16.3%   77.4%   21.1%   72   65   1.11 |           82   4   32.7%   95.3%
+   pred_n_alias<=5                                  38  46  167   15.1%   45.2%   33.5%   75   31   2.42 |          139   7   55.4%   95.2%
+   pred_n_overlap<=4                                37  24  190   14.7%   60.7%   24.3%   76   53   1.43 |          100   4   39.8%   96.2%
+   pred_tok_doador<=2                               36  12  203   14.3%   75.0%   19.1%   77   65   1.18 |           53   3   21.1%   94.6%
+   pred_cobertura<0.8                               35  11  205   13.9%   76.1%   18.3%   78   66   1.18 |           36   8   14.3%   81.8%
+   pred_max_tok_frase<=3                            32  10  209   12.7%   76.2%   16.7%   81   67   1.21 |           55   3   21.9%   94.8%
+   n_pos>=3                                         29  35  187   11.6%   45.3%   25.5%   84   42   2.00 |           36   1   14.3%   97.3%
+   pred_tok_doador<=3                               25   8  218   10.0%   75.8%   13.1%   88   69   1.28 |           25   1   10.0%   96.2%
+   origem != label                                  22   5  224    8.8%   81.5%   10.8%   91   72   1.26 |           20   3    8.0%   87.0%
+   pred_n_overlap<=6                                18  13  220    7.2%   58.1%   12.4%   95   64   1.48 |           71   4   28.3%   94.7%
+   n_pos>=2                                         18  20  213    7.2%   47.4%   15.1%   95   57   1.67 |           13   0    5.2%  100.0%
+   rota==1a                                         16  27  208    6.4%   37.2%   17.1%   97   50   1.94 |           20   3    8.0%   87.0%
+*  pred_peso_doador<=4.4                             0   0  251    0.0%  100.0%    0.0%  113   77   1.47 |            0   0    0.0%  100.0%
+
+======================================================================================================================
+FRONTEIRA DE PARETO DO CRU (so nao dominados), por entrega decrescente
+regra                                             C   E    Q  entrega  precis  dC/dE | PROD    C   E  entrega  precis  regride?
+----------------------------------------------------------------------------------------------------------------------
+pred vazia                                      113  74   64   45.0%   60.4%   0.00 |       178  15   70.9%   92.2%         -
+pred_cobertura<0.2 E pred_peso_doador<=1.1      112  57   82   44.6%   66.3%   0.05 |       178  14   70.9%   92.7%         -
+pred vazia OU rota==2a-propagado                109  55   87   43.4%   66.5%   0.18 |       170  14   67.7%   92.4%   entrega
+pred_cobertura<0.2                              108  50   93   43.0%   68.4%   0.19 |       144  12   57.4%   92.3%   entrega
+pred_cobertura<0.2 OU doador in {corpo,raw,aut  107  47   97   42.6%   69.5%   0.20 |       144  12   57.4%   92.3%   entrega
+pred_cobertura<0.2 OU rota==2a-propagado        105  38  108   41.8%   73.4%   0.21 |       139  12   55.4%   92.1% prec+entrega
+pred_cobertura<0.2 OU rota in {2a-propagado,2a   94  33  124   37.5%   74.0%   0.43 |       130  10   51.8%   92.9%   entrega
+rota==2a-propagado OU pred_peso_doador<=0.9      81  21  149   32.3%   79.4%   0.57 |       158  10   62.9%   94.0%   entrega
+rota==2a-propagado OU pred_peso_doador<=1.1      80  19  152   31.9%   80.8%   0.57 |       158  10   62.9%   94.0%   entrega
+rota==2a-propagado OU win_exact_hits<=2          77  15  159   30.7%   83.7%   0.58 |       151   8   60.2%   95.0%   entrega
+pred_peso_doador<=4.4                             0   0  251    0.0%  100.0%   1.47 |         0   0    0.0%  100.0%   entrega
+
+PONTO DE QUEBRA DO PRODUTO (primeiro da fronteira, por entrega decrescente, que regride):
+  pred vazia OU rota==2a-propagado: produto C 170 (era 178), precisao 92.4% (era 92,2%), cru entrega 43.4% precisao 66.5%
+Regras da fronteira que NAO regridem o produto (C>=178 e precisao>=92,2%):
+  pred vazia: cru C 113 E 74 (60.4%) | produto C 178 E 15 (92.2%)
+  pred_cobertura<0.2 E pred_peso_doador<=1.1: cru C 112 E 57 (66.3%) | produto C 178 E 14 (92.7%)
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fronteira_holdout_12-09.py", line 17, in <module>
+    G = runpy.run_path(str(OUT / "fronteira.py"))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 290, in run_path
+  File "<frozen runpy>", line 254, in _get_code_from_file
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\fronteira.py'
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fronteira_controle_s1_12-09.py", line 13, in <module>
+    G = runpy.run_path(str(OUT / "fronteira.py"))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 290, in run_path
+  File "<frozen runpy>", line 254, in _get_code_from_file
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\fronteira.py'
+============================================================================================================
+1. TAXA DE TROCA MARGINAL AO LONGO DA FRONTEIRA DO CRU (o numero que substitui o '4' chutado)
+   cada degrau: quantas entregas certas se perde por erro confiante removido
+degrau (regra que fecha)                          C   E   dC   dE  dC/dE marginal  precisao
+pred vazia                                      113  74    0   -3            0.00    60.4%
+pred_cobertura<0.2 E pred_peso_doador<=1.1      112  57   -1  -17            0.06    66.3%
+pred vazia OU rota==2a-propagado                109  55   -3   -2            1.50    66.5%
+pred_cobertura<0.2                              108  50   -1   -5            0.20    68.4%
+pred_cobertura<0.2 OU doador in {corpo,raw,aut  107  47   -1   -3            0.33    69.5%
+pred_cobertura<0.2 OU rota==2a-propagado        105  38   -2   -9            0.22    73.4%
+pred_cobertura<0.2 OU rota in {2a-propagado,2a   94  33  -11   -5            2.20    74.0%
+rota==2a-propagado OU pred_peso_doador<=0.9      81  21  -13  -12            1.08    79.4%
+rota==2a-propagado OU pred_peso_doador<=1.1      80  19   -1   -2            0.50    80.8%
+rota==2a-propagado OU win_exact_hits<=2          77  15   -3   -4            0.75    83.7%
+pred_peso_doador<=4.4                             0   0  -77  -15            5.13   100.0%
+
+Leitura: um degrau so compensa se o erro confiante custar MAIS que a taxa marginal dele.
+  k=1: melhor ponto da fronteira = 'pred_cobertura<0.2 OU rota==2a-propagado' (U=67, baseline U=36, abster-tudo U=0) -> C 105 E 38
+  k=2: melhor ponto da fronteira = 'rota==2a-propagado OU win_exact_hits<=2' (U=47, baseline U=-41, abster-tudo U=0) -> C 77 E 15
+  k=4: melhor ponto da fronteira = 'rota==2a-propagado OU win_exact_hits<=2' (U=17, baseline U=-195, abster-tudo U=0) -> C 77 E 15
+  k=8: melhor ponto da fronteira = 'pred_peso_doador<=4.4' (U=0, baseline U=-503, abster-tudo U=0) -> C 0 E 0
+
+============================================================================================================
+2. HOLDOUT leave-one-course-out, criterio U_k (escolhe em 6 cursos, mede no 7o)
+
+--- k = 1 ---
+fora  regra escolhida nos 6                         ganho/mat DENTRO  ganho/mat FORA     dif  C_h  E_h   (base C/E)
+MF    rota==2a-propagado OU pred_exact_hits<=2                +0.140          -0.034  -0.174   24    2        36/12
+SO    pred_cobertura<0.2 OU rota==2a-propagado                +0.123          +0.133  +0.010    8    1          8/3
+IA    pred_cobertura<0.2 OU rota==2a-propagado                +0.047          +0.538  +0.491    3   11         5/34
+ES2   pred_cobertura<0.2 OU rota==2a-propagado                +0.148          -0.071  -0.219   10    5         13/6
+TCC   pred_cobertura<0.2 OU rota==2a-propagado                +0.125          +0.091  -0.034    8    1          8/2
+CG    rota==2a-propagado OU win_exact_hits<=2                 +0.189          -0.073  -0.263   22    2        36/10
+FR    pred_cobertura<0.2 OU rota==2a-propagado                +0.129          +0.056  -0.073    6    8         7/10
+MEDIA (ponderada por material)                                +0.140          +0.060  -0.080
+
+--- k = 2 ---
+fora  regra escolhida nos 6                         ganho/mat DENTRO  ganho/mat FORA     dif  C_h  E_h   (base C/E)
+MF    rota==2a-propagado OU pred_exact_hits<=2                +0.409          +0.138  -0.271   24    2        36/12
+SO    rota==2a-propagado OU win_exact_hits<=2                 +0.364          +0.133  -0.231    4    0          8/3
+IA    rota==2a-propagado OU win_exact_hits<=2                 +0.165          +1.359  +1.194    2    6         5/34
+ES2   rota==2a-propagado OU win_exact_hits<=2                 +0.359          +0.286  -0.073   11    1         13/6
+TCC   rota==2a-propagado OU win_exact_hits<=2                 +0.358          +0.182  -0.177    8    1          8/2
+CG    rota==2a-propagado OU win_exact_hits<=2                 +0.509          +0.024  -0.484   22    2        36/10
+FR    rota==2a-propagado OU win_exact_hits<=2                 +0.326          +0.667  +0.340    5    3         7/10
+MEDIA (ponderada por material)                                +0.387          +0.347  -0.041
+
+--- k = 4 ---
+fora  regra escolhida nos 6                         ganho/mat DENTRO  ganho/mat FORA     dif  C_h  E_h   (base C/E)
+MF    rota in {2a-propagado,2a-rotulo} OU win_exac            +0.953          +0.431  -0.522   21    2        36/12
+SO    rota==2a-propagado OU win_exact_hits<=2                 +0.864          +0.533  -0.331    4    0          8/3
+IA    rota==2a-propagado OU win_exact_hits<=2                 +0.486          +2.795  +2.309    2    6         5/34
+ES2   rota==2a-propagado OU win_exact_hits<=2                 +0.870          +0.643  -0.227   11    1         13/6
+TCC   rota==2a-propagado OU win_exact_hits<=2                 +0.867          +0.364  -0.503    8    1          8/2
+CG    rota==2a-propagado OU win_exact_hits<=2                 +1.148          +0.220  -0.928   22    2        36/10
+FR    rota==2a-propagado OU win_exact_hits<=2                 +0.798          +1.444  +0.646    5    3         7/10
+MEDIA (ponderada por material)                                +0.915          +0.829  -0.086
+
+============================================================================================================
+3. HOLDOUT com criterio de CUSTO LIMITADO (max erros removidos gastando <= D entregas nos 6)
+
+--- D = 1 entregas certas (dos 6 cursos de treino) ---
+fora  regra escolhida nos 6                         dE/dC treino  dE/dC holdout  dC_h  dE_h   prec_h   (base)
+MF    pred_cobertura<0.2 E pred_peso_doador<=0.9        13 por 0        6 por 1     1     6   85.4%   75.0%
+SO    pred_cobertura<0.2 E pred_peso_doador<=1.1        19 por 1        1 por 0     0     1   80.0%   72.7%
+IA    pred_cobertura<0.2 E pred_peso_doador<=1.1        10 por 1       10 por 0     0    10   17.2%   12.8%
+ES2   pred_cobertura<0.2 E pred_peso_doador<=1.1        19 por 1        1 por 0     0     1   72.2%   68.4%
+TCC   pred_cobertura<0.2 E pred_peso_doador<=1.1        20 por 1        0 por 0     0     0   80.0%   80.0%
+CG    pred_cobertura<0.2 E pred_peso_doador<=1.1        19 por 1        1 por 0     0     1   80.0%   78.3%
+FR    pred_cobertura<0.2 E pred_peso_doador<=1.1        20 por 1        0 por 0     0     0   41.2%   41.2%
+
+--- D = 3 entregas certas (dos 6 cursos de treino) ---
+fora  regra escolhida nos 6                         dE/dC treino  dE/dC holdout  dC_h  dE_h   prec_h   (base)
+MF    pred_cobertura<0.2 E pred_peso_doador<=0.9        13 por 0        6 por 1     1     6   85.4%   75.0%
+SO    pred_cobertura<0.2 E pred_peso_doador<=1.1        19 por 1        1 por 0     0     1   80.0%   72.7%
+IA    pred vazia OU rota==2a-propagado                  10 por 3       12 por 1     1    12   15.4%   12.8%
+ES2   pred_cobertura<0.2 OU doador in {corpo,raw,a      28 por 3        2 por 3     3     2   71.4%   68.4%
+TCC   pred_cobertura<0.2 E pred_peso_doador<=1.1        20 por 1        0 por 0     0     0   80.0%   80.0%
+CG    pred vazia OU rota==2a-propagado                  20 por 3        2 por 1     1     2   81.4%   78.3%
+FR    pred vazia OU rota==2a-propagado                  20 por 3        2 por 1     1     2   42.9%   41.2%
+
+--- D = 5 entregas certas (dos 6 cursos de treino) ---
+fora  regra escolhida nos 6                         dE/dC treino  dE/dC holdout  dC_h  dE_h   prec_h   (base)
+MF    pred_cobertura<0.2 OU doador in {corpo,raw,a      23 por 5        7 por 1     1     7   87.5%   75.0%
+SO    pred_cobertura<0.2                                26 por 5        1 por 0     0     1   80.0%   72.7%
+IA    pred_cobertura<0.2 OU doador in {corpo,raw,a      12 por 5       18 por 1     1    18   20.0%   12.8%
+ES2   pred_cobertura<0.2 OU rota==2a-propagado          38 por 5        1 por 3     3     1   66.7%   68.4%
+TCC   pred_cobertura<0.2                                27 por 5        0 por 0     0     0   80.0%   80.0%
+CG    pred_cobertura<0.2 OU doador in {corpo,raw,a      29 por 5        1 por 1     1     1   79.5%   78.3%
+FR    pred_cobertura<0.2                                27 por 5        0 por 0     0     0   41.2%   41.2%
+
+--- D = 10 entregas certas (dos 6 cursos de treino) ---
+fora  regra escolhida nos 6                         dE/dC treino  dE/dC holdout  dC_h  dE_h   prec_h   (base)
+MF    pred_cobertura<0.2 OU rota==2a-propagado          31 por 7        8 por 1     1     8   89.7%   75.0%
+SO    pred_cobertura<0.2 OU rota==2a-propagado          37 por 8        2 por 0     0     2   88.9%   72.7%
+IA    pred_cobertura<0.2 OU rota==2a-propagado          16 por 6       23 por 2     2    23   21.4%   12.8%
+ES2   pred_cobertura<0.2 OU rota==2a-propagado          38 por 5        1 por 3     3     1   66.7%   68.4%
+TCC   pred_cobertura<0.2 OU rota==2a-propagado          38 por 8        1 por 0     0     1   88.9%   80.0%
+CG    pred_cobertura<0.2 OU rota==2a-propagado          37 por 7        2 por 1     1     2   81.4%   78.3%
+FR    pred_cobertura<0.2 OU rota==2a-propagado          37 por 7        2 por 1     1     2   42.9%   41.2%
+
+============================================================================================================
+4. AS REGRAS DA FRONTEIRA, CURSO A CURSO (quem so ganha dentro da amostra aparece aqui)
+
+pred vazia   (cru total: C 113 E 74 prec 60.4%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              0     0     0      75.0%       75.0%
+  SO              1     0     1      72.7%       80.0%
+  IA              0     0     0      12.8%       12.8%
+  ES2             1     0     1      68.4%       72.2%
+  TCC             0     0     0      80.0%       80.0%
+  CG              1     0     1      78.3%       80.0%
+  FR              0     0     0      41.2%       41.2%
+
+pred_cobertura<0.2 E pred_peso_doador<=1.1   (cru total: C 112 E 57 prec 66.3%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              8     1     7      75.0%       87.5%
+  SO              1     0     1      72.7%       80.0%
+  IA             10     0    10      12.8%       17.2%
+  ES2             1     0     1      68.4%       72.2%
+  TCC             0     0     0      80.0%       80.0%
+  CG              1     0     1      78.3%       80.0%
+  FR              0     0     0      41.2%       41.2%
+
+pred vazia OU rota==2a-propagado   (cru total: C 109 E 55 prec 66.5%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              2     0     2      75.0%       78.3%
+  SO              2     0     2      72.7%       88.9%
+  IA             13     1    12      12.8%       15.4%
+  ES2             2     1     1      68.4%       70.6%
+  TCC             1     0     1      80.0%       88.9%
+  CG              3     1     2      78.3%       81.4%
+  FR              3     1     2      41.2%       42.9%
+
+pred_cobertura<0.2   (cru total: C 108 E 50 prec 68.4%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              8     1     7      75.0%       87.5%
+  SO              1     0     1      72.7%       80.0%
+  IA             18     1    17      12.8%       19.0%
+  ES2             3     2     1      68.4%       68.8%
+  TCC             0     0     0      80.0%       80.0%
+  CG              2     1     1      78.3%       79.5%
+  FR              0     0     0      41.2%       41.2%
+
+pred_cobertura<0.2 OU doador in {corpo,raw,auto,legacy}   (cru total: C 107 E 47 prec 69.5%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              8     1     7      75.0%       87.5%
+  SO              2     0     2      72.7%       88.9%
+  IA             19     1    18      12.8%       20.0%
+  ES2             5     3     2      68.4%       71.4%
+  TCC             0     0     0      80.0%       80.0%
+  CG              2     1     1      78.3%       79.5%
+  FR              0     0     0      41.2%       41.2%
+
+pred_cobertura<0.2 OU rota==2a-propagado   (cru total: C 105 E 38 prec 73.4%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF              9     1     8      75.0%       89.7%
+  SO              2     0     2      72.7%       88.9%
+  IA             25     2    23      12.8%       21.4%
+  ES2             4     3     1      68.4%       66.7%
+  TCC             1     0     1      80.0%       88.9%
+  CG              3     1     2      78.3%       81.4%
+  FR              3     1     2      41.2%       42.9%
+
+pred_cobertura<0.2 OU rota in {2a-propagado,2a-rotulo}   (cru total: C 94 E 33 prec 74.0%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF             13     5     8      75.0%       88.6%
+  SO              2     0     2      72.7%       88.9%
+  IA             25     2    23      12.8%       21.4%
+  ES2             5     3     2      68.4%       71.4%
+  TCC             2     1     1      80.0%       87.5%
+  CG              8     4     4      78.3%       84.2%
+  FR              8     4     4      41.2%       33.3%
+
+rota==2a-propagado OU pred_peso_doador<=0.9   (cru total: C 81 E 21 prec 79.4%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF             20    11     9      75.0%       89.3%
+  SO              6     4     2      72.7%       80.0%
+  IA             30     2    28      12.8%       33.3%
+  ES2             5     1     4      68.4%       85.7%
+  TCC             1     0     1      80.0%       88.9%
+  CG             18    12     6      78.3%       85.7%
+  FR              8     2     6      41.2%       55.6%
+
+rota==2a-propagado OU pred_peso_doador<=1.1   (cru total: C 80 E 19 prec 80.8%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF             20    11     9      75.0%       89.3%
+  SO              7     4     3      72.7%      100.0%
+  IA             30     2    28      12.8%       33.3%
+  ES2             7     2     5      68.4%       91.7%
+  TCC             1     0     1      80.0%       88.9%
+  CG             18    12     6      78.3%       85.7%
+  FR              8     2     6      41.2%       55.6%
+
+rota==2a-propagado OU win_exact_hits<=2   (cru total: C 77 E 15 prec 83.7%)
+  curso  dispara em   -dC   -dE  prec antes  prec depois
+  MF             21    11    10      75.0%       92.6%
+  SO              7     4     3      72.7%      100.0%
+  IA             31     3    28      12.8%       25.0%
+  ES2             7     2     5      68.4%       91.7%
+  TCC             1     0     1      80.0%       88.9%
+  CG             22    14     8      78.3%       91.7%
+  FR              9     2     7      41.2%       62.5%
+CONTROLE — piso global de winner_score (s1 < x), CRU:
+     x    C   E  entrega  precisao   dominado pela fronteira?
+   0.5  104  65   41.4%    61.5% sim: pred_cobertura<0.2 E pred_peso
+     1   96  54   38.2%    64.0% sim: pred_cobertura<0.2 E pred_peso
+   1.5   87  42   34.7%    67.4%    sim: pred_cobertura<0.2
+     2   86  42   34.3%    67.2%    sim: pred_cobertura<0.2
+   2.5   85  41   33.9%    67.5%    sim: pred_cobertura<0.2
+     3   85  38   33.9%    69.1% sim: pred_cobertura<0.2 OU doador i
+   3.5   84  36   33.5%    70.0% sim: pred_cobertura<0.2 OU rota==2a
+     4   84  36   33.5%    70.0% sim: pred_cobertura<0.2 OU rota==2a
+     5   83  32   33.1%    72.2% sim: pred_cobertura<0.2 OU rota==2a
+     6   78  31   31.1%    71.6% sim: pred_cobertura<0.2 OU rota==2a
+     7   78  31   31.1%    71.6% sim: pred_cobertura<0.2 OU rota==2a
+     8   71  28   28.3%    71.7% sim: pred_cobertura<0.2 OU rota==2a
+     9   58  22   23.1%    72.5% sim: pred_cobertura<0.2 OU rota==2a
+    10   51  22   20.3%    69.9% sim: pred_cobertura<0.2 OU rota==2a
+    12   42  17   16.7%    71.2% sim: pred_cobertura<0.2 OU rota==2a
+    14   30  16   12.0%    65.2% sim: pred_cobertura<0.2 E pred_peso
+    16   16  14    6.4%    53.3%            sim: pred vazia
+    20   12  13    4.8%    48.0%            sim: pred vazia
+    25   10  11    4.0%    47.6%            sim: pred vazia
+    30    3  10    1.2%    23.1%            sim: pred vazia
+    40    2   5    0.8%    28.6%            sim: pred vazia
+    60    1   2    0.4%    33.3%            sim: pred vazia
+
+Comparacao direta nos pontos de mesma ENTREGA (piso de s1 x regra medida):
+  pred_cobertura<0.2 OU rota in {2a-propagado, C  94 prec  74.0%  |  piso s1<1     C  96 prec  64.0%  |  regra GANHA
+  rota==2a-propagado OU pred_peso_doador<=0.9  C  81 prec  79.4%  |  piso s1<5     C  83 prec  72.2%  |  regra GANHA
+  rota==2a-propagado OU pred_peso_doador<=1.1  C  80 prec  80.8%  |  piso s1<5     C  83 prec  72.2%  |  regra GANHA
+  rota==2a-propagado OU win_exact_hits<=2      C  77 prec  83.7%  |  piso s1<6     C  78 prec  71.6%  |  regra GANHA
+  pred_peso_doador<=4.4                        C   0 prec 100.0%  |  piso s1<60    C   1 prec  33.3%  |  regra GANHA
