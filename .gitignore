@@ -264,3 +264,7 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 !.agents/
 .agents/*
 !.agents/hooks.json
+
+# nunca versionar (lei do handoff 11/09): config local do Claude Code e cache do token-savior
+.claude/settings.local.json
+.token-savior-cache.json
