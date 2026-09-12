@@ -61,8 +61,10 @@ COURSES = {
 
 
 def _load_truth(sigla: str) -> dict:
-    """entry_id -> true_unit, via ground_truth |><| gold_units. Curso SEM gold por bloco (CG, 11/09) cai para
-    `docs/reports/material_gt_<sigla>.csv` (`gold_units` por material, aprovado pelo user)."""
+    """entry_id -> true_unit. Regua CURRICULAR (12/09, C5 item 1): `docs/reports/material_gt_<sigla>.csv` (`gold_units`
+    por material, adjudicado pelo user) sobrepoe a unidade do bloco verdadeiro (ground_truth |><| gold_units), que preenche
+    o resto. Antes de 12/09 o bloco mandava e material_gt so entrava em curso sem gold por bloco (CG); as 17 contradicoes
+    (MF 5, SO 8, ES2 4) foram adjudicadas para material_gt: unidade = onde o plano poe o assunto, nao quando a aula foi dada."""
     gold_units = ROOT / "tests" / "fixtures" / "eval" / f"gold_units_{sigla}.csv"
     ground_truth = ROOT / "docs" / "reports" / f"ground_truth_{sigla}.csv"
     truth = {}
@@ -79,8 +81,7 @@ def _load_truth(sigla: str) -> dict:
             if unit:
                 truth[row["id"]] = unit
     material_gt = ROOT / "docs" / "reports" / f"material_gt_{sigla}.csv"
-    if truth or not material_gt.exists():
-        # Nao funde por id nos cursos com gold por bloco: medido em 11/09, material_gt contradiz o bloco em 16 materiais (MF 4, SO 8, ES2 4).
+    if not material_gt.exists():
         return truth
     # ponytail: linha com `|` (qualquer uma vale) fica fora porque os consumidores comparam com ==; split("|") neles se precisar.
     for row in csv.DictReader(material_gt.open(encoding="utf-8-sig", newline="")):

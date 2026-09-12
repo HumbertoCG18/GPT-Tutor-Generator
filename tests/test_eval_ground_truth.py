@@ -160,10 +160,12 @@ def test_load_labels_csv_ignora_linha_scorable_no(tmp_path):
     assert labels == {"a": "bloco-01", "c": "bloco-03"}
 
 
-def test_load_truth_cai_para_material_gt_sem_gold_por_bloco(tmp_path, monkeypatch):
-    """11/09 (plano 08/09, 3.2): curso sem gold por bloco (CG) usa `docs/reports/material_gt_<sig>.csv` (`gold_units`
-    por material) como gold de unidade. Linha com `|` (qualquer uma vale) e `scorable=no` ficam fora; com gold por bloco
-    presente, material_gt e ignorado (nos 5 cursos medidos ele contradiz o bloco em 16 materiais)."""
+def test_load_truth_material_gt_sobrepoe_o_gold_por_bloco(tmp_path, monkeypatch):
+    """11/09 (3.2): curso sem gold por bloco (CG) usa `docs/reports/material_gt_<sig>.csv` (`gold_units` por material).
+    12/09 (C5 item 1, user + astra): a regua de unidade e CURRICULAR (onde o plano poe o assunto), nao temporal (bloco em
+    que a aula foi dada): onde material_gt tem uma unidade adjudicada ele SOBREPOE o gold por bloco; o bloco preenche o
+    resto. Linha com `|` (qualquer uma vale) e `scorable=no` ficam fora. As 17 contradicoes de 12/09 foram adjudicadas
+    para material_gt (`docs/reports/contradicoes_unidade_material_gt_vs_bloco.csv`)."""
     import scripts.eval_entry_unit as eu
     monkeypatch.setattr(eu, "ROOT", tmp_path)
     (tmp_path / "docs/reports").mkdir(parents=True)
@@ -172,5 +174,5 @@ def test_load_truth_cai_para_material_gt_sem_gold_por_bloco(tmp_path, monkeypatc
         "entry_id,gold_units,scorable\na,unidade-01,yes\nb,unidade-01|unidade-02,yes\nc,unidade-03,no\nd,,yes\n", encoding="utf-8")
     assert eu._load_truth("X") == {"a": "unidade-01"}
     (tmp_path / "tests/fixtures/eval/gold_units_X.csv").write_text("block_uuid,true_unit\nu1,unidade-09\n", encoding="utf-8")
-    (tmp_path / "docs/reports/ground_truth_X.csv").write_text("id,true_block_uuid,scorable\nz,u1,yes\n", encoding="utf-8")
-    assert eu._load_truth("X") == {"z": "unidade-09"}
+    (tmp_path / "docs/reports/ground_truth_X.csv").write_text("id,true_block_uuid,scorable\na,u1,yes\nz,u1,yes\n", encoding="utf-8")
+    assert eu._load_truth("X") == {"a": "unidade-01", "z": "unidade-09"}  # a: material_gt sobrepoe o bloco (u09); z: so bloco
