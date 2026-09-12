@@ -23,7 +23,7 @@ GH = GEN.parent
 GOLD = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor", "ES2": "Engenharia-Software-2-Tutor",
         "TCC": "TCC-Tutor", "MF": "Metodos-Formais-Tutor", "CG": "Computacao-Grafica-Tutor",
         "FR": "Fundamentos-de-Redes-Tutor"}
-UNI = {"MF", "SO", "IA", "ES2", "TCC"}
+UNI = {"MF", "SO", "IA", "ES2", "TCC", "CG"}  # CG desde 11/09: material_gt_CG.csv via _load_truth
 sys.path.insert(0, str(GEN))
 sys.path.insert(0, str(GEN / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")

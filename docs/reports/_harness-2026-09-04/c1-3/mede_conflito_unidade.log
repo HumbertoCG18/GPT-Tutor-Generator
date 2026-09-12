@@ -1,18 +1,18 @@
 curso material                                       bloco decidiu                      texto queria                       gold                               veredito
-CG    morfologiamatematicapptx                       unidade-03-processamento-de-imagen unidade-06-processo-de-visualizaca (sem gold)                         -
-CG    basico3d-py-zip                                unidade-07-representacao-e-modelag unidade-06-processo-de-visualizaca (sem gold)                         -
-CG    programabasico3d                               unidade-08-sintese-de-imagens-real unidade-06-processo-de-visualizaca (sem gold)                         -
-CG    exercicios                                     unidade-02-fundamentos-matematicos unidade-04-processo-de-visualizaca (sem gold)                         -
-CG    exercicio-de-animacao-foguete                  unidade-02-fundamentos-matematicos unidade-04-processo-de-visualizaca (sem gold)                         -
-CG    matematica                                     unidade-02-fundamentos-matematicos unidade-06-processo-de-visualizaca (sem gold)                         -
-CG    transformacoesgeometricas                      unidade-04-processo-de-visualizaca unidade-01-introducao-ao-processam (sem gold)                         -
-CG    transformacoesgl                               unidade-04-processo-de-visualizaca unidade-02-fundamentos-matematicos (sem gold)                         -
-CG    bezier-cpp                                     unidade-07-representacao-e-modelag unidade-01-introducao-ao-processam (sem gold)                         -
-CG    bezier-py                                      unidade-07-representacao-e-modelag unidade-01-introducao-ao-processam (sem gold)                         -
-CG    bezier-python                                  unidade-07-representacao-e-modelag unidade-02-fundamentos-matematicos (sem gold)                         -
-CG    video-sobre-prechimento-de-areas-duracao-330-d unidade-03-processamento-de-imagen unidade-01-introducao-ao-processam (sem gold)                         -
-CG    pagina-com-videos-sobre-morfologia-matematica- unidade-03-processamento-de-imagen unidade-06-processo-de-visualizaca (sem gold)                         -
-CG    pagina-com-videos-sobre-mapeamento-de-texturas unidade-04-processo-de-visualizaca unidade-08-sintese-de-imagens-real (sem gold)                         -
+CG    morfologiamatematicapptx                       unidade-03-processamento-de-imagen unidade-06-processo-de-visualizaca unidade-03-processamento-de-imagen bloco
+CG    basico3d-py-zip                                unidade-07-representacao-e-modelag unidade-06-processo-de-visualizaca unidade-07-representacao-e-modelag bloco
+CG    programabasico3d                               unidade-08-sintese-de-imagens-real unidade-06-processo-de-visualizaca unidade-08-sintese-de-imagens-real bloco
+CG    exercicios                                     unidade-02-fundamentos-matematicos unidade-04-processo-de-visualizaca unidade-01-introducao-ao-processam nenhum
+CG    exercicio-de-animacao-foguete                  unidade-02-fundamentos-matematicos unidade-04-processo-de-visualizaca unidade-02-fundamentos-matematicos bloco
+CG    matematica                                     unidade-02-fundamentos-matematicos unidade-06-processo-de-visualizaca unidade-02-fundamentos-matematicos bloco
+CG    transformacoesgeometricas                      unidade-04-processo-de-visualizaca unidade-01-introducao-ao-processam unidade-04-processo-de-visualizaca bloco
+CG    transformacoesgl                               unidade-04-processo-de-visualizaca unidade-02-fundamentos-matematicos unidade-04-processo-de-visualizaca bloco
+CG    bezier-cpp                                     unidade-07-representacao-e-modelag unidade-01-introducao-ao-processam unidade-07-representacao-e-modelag bloco
+CG    bezier-py                                      unidade-07-representacao-e-modelag unidade-01-introducao-ao-processam unidade-07-representacao-e-modelag bloco
+CG    bezier-python                                  unidade-07-representacao-e-modelag unidade-02-fundamentos-matematicos unidade-07-representacao-e-modelag bloco
+CG    video-sobre-prechimento-de-areas-duracao-330-d unidade-03-processamento-de-imagen unidade-01-introducao-ao-processam unidade-03-processamento-de-imagen bloco
+CG    pagina-com-videos-sobre-morfologia-matematica- unidade-03-processamento-de-imagen unidade-06-processo-de-visualizaca unidade-03-processamento-de-imagen bloco
+CG    pagina-com-videos-sobre-mapeamento-de-texturas unidade-04-processo-de-visualizaca unidade-08-sintese-de-imagens-real unidade-08-sintese-de-imagens-real TEXTO
 ES2   microsservicos7                                unidade-02-integracao-de-desenvolv unidade-01-arquitetura-de-software unidade-02-integracao-de-desenvolv bloco
 ES2   roteiro5                                       unidade-02-integracao-de-desenvolv unidade-01-arquitetura-de-software unidade-02-integracao-de-desenvolv bloco
 ES2   roteiro6                                       unidade-02-integracao-de-desenvolv unidade-01-arquitetura-de-software (sem gold)                         -
@@ -43,4 +43,4 @@ SO    exercicios-p2                                  unidade-06-gerencia-de-arqu
 TCC   aula-13-teorema-de-rice-pdf                    unidade-03-problemas-indecidiveis  unidade-02-turing-computabilidade  unidade-03-problemas-indecidiveis  bloco
 TCC   aula-16-exemplo-de-prova-para-revisao          unidade-03-problemas-indecidiveis  unidade-01-conjuntos-enumeraveis-e (sem gold)                         -
 
-conflitos 43 · com gold de unidade 22 · bloco (decisao atual) certo 20 · texto certo 2
+conflitos 43 · com gold de unidade 36 · bloco (decisao atual) certo 32 · texto certo 3

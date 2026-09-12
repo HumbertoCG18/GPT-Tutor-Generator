@@ -158,3 +158,19 @@ def test_load_labels_csv_ignora_linha_scorable_no(tmp_path):
     p.write_text("id,true_block_id,scorable\na,bloco-01,yes\nb,bloco-02,no\nc,bloco-03,\n", encoding="utf-8")
     labels = load_labels_csv(p)
     assert labels == {"a": "bloco-01", "c": "bloco-03"}
+
+
+def test_load_truth_cai_para_material_gt_sem_gold_por_bloco(tmp_path, monkeypatch):
+    """11/09 (plano 08/09, 3.2): curso sem gold por bloco (CG) usa `docs/reports/material_gt_<sig>.csv` (`gold_units`
+    por material) como gold de unidade. Linha com `|` (qualquer uma vale) e `scorable=no` ficam fora; com gold por bloco
+    presente, material_gt e ignorado (nos 5 cursos medidos ele contradiz o bloco em 16 materiais)."""
+    import scripts.eval_entry_unit as eu
+    monkeypatch.setattr(eu, "ROOT", tmp_path)
+    (tmp_path / "docs/reports").mkdir(parents=True)
+    (tmp_path / "tests/fixtures/eval").mkdir(parents=True)
+    (tmp_path / "docs/reports/material_gt_X.csv").write_text(
+        "entry_id,gold_units,scorable\na,unidade-01,yes\nb,unidade-01|unidade-02,yes\nc,unidade-03,no\nd,,yes\n", encoding="utf-8")
+    assert eu._load_truth("X") == {"a": "unidade-01"}
+    (tmp_path / "tests/fixtures/eval/gold_units_X.csv").write_text("block_uuid,true_unit\nu1,unidade-09\n", encoding="utf-8")
+    (tmp_path / "docs/reports/ground_truth_X.csv").write_text("id,true_block_uuid,scorable\nz,u1,yes\n", encoding="utf-8")
+    assert eu._load_truth("X") == {"z": "unidade-09"}

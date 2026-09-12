@@ -61,23 +61,34 @@ COURSES = {
 
 
 def _load_truth(sigla: str) -> dict:
-    """entry_id -> true_unit, via ground_truth |><| gold_units."""
+    """entry_id -> true_unit, via ground_truth |><| gold_units. Curso SEM gold por bloco (CG, 11/09) cai para
+    `docs/reports/material_gt_<sigla>.csv` (`gold_units` por material, aprovado pelo user)."""
     gold_units = ROOT / "tests" / "fixtures" / "eval" / f"gold_units_{sigla}.csv"
     ground_truth = ROOT / "docs" / "reports" / f"ground_truth_{sigla}.csv"
-    if not (gold_units.exists() and ground_truth.exists()):
-        return {}
-    unit_by_uuid = {
-        (row.get("block_uuid") or "").strip(): (row.get("true_unit") or "").strip()
-        for row in csv.DictReader(gold_units.open(encoding="utf-8-sig"))
-        if (row.get("true_unit") or "").strip()
-    }
     truth = {}
-    for row in csv.DictReader(ground_truth.open(encoding="utf-8-sig")):
-        if (row.get("scorable") or "").strip().lower() != "yes":
+    if gold_units.exists() and ground_truth.exists():
+        unit_by_uuid = {
+            (row.get("block_uuid") or "").strip(): (row.get("true_unit") or "").strip()
+            for row in csv.DictReader(gold_units.open(encoding="utf-8-sig"))
+            if (row.get("true_unit") or "").strip()
+        }
+        for row in csv.DictReader(ground_truth.open(encoding="utf-8-sig")):
+            if (row.get("scorable") or "").strip().lower() != "yes":
+                continue
+            unit = unit_by_uuid.get((row.get("true_block_uuid") or "").strip())
+            if unit:
+                truth[row["id"]] = unit
+    material_gt = ROOT / "docs" / "reports" / f"material_gt_{sigla}.csv"
+    if truth or not material_gt.exists():
+        # Nao funde por id nos cursos com gold por bloco: medido em 11/09, material_gt contradiz o bloco em 16 materiais (MF 4, SO 8, ES2 4).
+        return truth
+    # ponytail: linha com `|` (qualquer uma vale) fica fora porque os consumidores comparam com ==; split("|") neles se precisar.
+    for row in csv.DictReader(material_gt.open(encoding="utf-8-sig", newline="")):
+        if (row.get("scorable") or "yes").strip().lower() != "yes":
             continue
-        unit = unit_by_uuid.get((row.get("true_block_uuid") or "").strip())
-        if unit:
-            truth[row["id"]] = unit
+        units = [u.strip() for u in str(row.get("gold_units") or "").split("|") if u.strip()]
+        if len(units) == 1:
+            truth[str(row.get("entry_id") or "").strip()] = units[0]
     return truth
 
 
