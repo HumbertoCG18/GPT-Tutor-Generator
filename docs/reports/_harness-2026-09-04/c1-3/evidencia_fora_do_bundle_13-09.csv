@@ -1,0 +1,104 @@
+﻿curso,entry_id,gold,label_do_gold,tokens,em_bundle,em_frontmatter,em_corpo,em_membros,evidencia_fora_do_bundle,classe_do_diagnostico,juizo_disse_fora
+MF,archive-of-formal-proofs-355fb8,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,D,0
+MF,revisao,sistemas-formais,Sistemas Formais,formais;sistemas,token,nada,token,nada,0,C,0
+MF,exerciciosespecificacao-respostas,linguagens-de-especificacao-e-logicas,Linguagens de Especificação e Lógicas,especificacao;linguagens;logicas,token,nada,token,nada,0,C,0
+MF,exerciciosespecificacao,linguagens-de-especificacao-e-logicas,Linguagens de Especificação e Lógicas,especificacao;linguagens;logicas,token,nada,token,nada,0,C,0
+MF,arvores,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,A,1
+MF,exemplos,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,C,1
+MF,intro,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,D,1
+MF,listas,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,A,1
+MF,provas,provadores-de-teoremas,Provadores de Teoremas,provadores;teoremas,nada,nada,nada,nada,0,C,0
+MF,hoare,logica-de-hoare,Lógica de Hoare,hoare;logica,token,nada,nada,token,0,C,0
+MF,terminacao,correcao-parcial-e-total,Correção Parcial e Total,correcao;parcial;total,nada,nada,nada,nada,0,C,0
+MF,tiposindutivos,softwares-de-suporte-a-verificacao-formal-de-programas,Softwares de Suporte à Verificação Formal de Programas,formal;programas;softwares;suporte;verificacao,nada,nada,nada,nada,0,A,1
+SO,1903-estruturas-de-controle,conceitos-basicos,Conceitos básicos,basicos;conceitos,nada,nada,nada,nada,0,A,0
+SO,3103-threads,conceitos-basicos,Conceitos básicos,basicos;conceitos,nada,nada,nada,nada,0,D,0
+SO,exercicios,algoritmos-de-escalonamento,Algoritmos de escalonamento,algoritmos;escalonamento,nada,nada,nada,nada,0,B,0
+SO,exemplo-threads-em-c-exemplo1,conceitos-basicos,Conceitos básicos,basicos;conceitos,nada,nada,nada,nada,0,D,0
+SO,exemplo-threads-em-c-exemplo2,conceitos-basicos,Conceitos básicos,basicos;conceitos,nada,nada,nada,nada,0,D,0
+SO,exemplo-threads-em-c-exemplo3,conceitos-basicos,Conceitos básicos,basicos;conceitos,nada,nada,nada,nada,0,D,0
+IA,algoritmo-de-classificacao-k-nn,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,exemplo-com-k-nn,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,exemplo-2-k-nn-com-iriscsv-mais-completo,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,exemplo-de-programa-com-k-nn-em-java,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,C,0
+IA,artigo-usando-k-nn-em-texto,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,token,nada,1,D,0
+IA,k-nn-para-classificacao-exemplo-cardio,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,k-nn-para-regressao-exemplo-imc,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,introducao-a-redes-neurais,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-classificacao-de-cliente,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-classificacao-planta-iris,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-exemplo-atualizado,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-or-em-python,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-reconhecendo-letras,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,exercicio-2-solucao-com-rede-perceptron-atualizado,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,mlp,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,token,nada,1,B,0
+IA,mlp-xoripynb,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,D,0
+IA,mlp-classificacao-iris-atualizado,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,mlp-regressao-cardio,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,rede-perceptron-e-equacao-de-reta,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,xor-backpropagation-em-python,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,como-analisar-resultados-acc-pr-re-e-f1,metricas-de-avaliacao,Métricas de Avaliação,avaliacao;metricas,token,nada,token,nada,0,C,0
+IA,arvores-de-decisao,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,token,nada,1,B,0
+IA,exemplo-1-arvores-de-decisao-classificacao-planta-iris,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,exemplo-2-arvores-de-decisao-regressao-diabetes,modelos-preditivos,Modelos Preditivos,modelos;preditivos,nada,nada,nada,nada,0,B,0
+IA,aula-sobre-agrupamento-parte-1-particional,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,agrupamento-usando-k-means-exemplo-1-ipynb,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,agrupamento-usando-k-means-exemplo-2-ipynb,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,artigo-usando-agrupamento,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,D,0
+IA,survey-on-clustering,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,aula-sobre-agrupamento-parte-2-hierarquico,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,agrupamento-hierarquico-exemplo-1,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+IA,agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris,modelos-descritivos,Modelos Descritivos,descritivos;modelos,nada,nada,nada,nada,0,B,0
+ES2,microsservicos,orientada-a-microsservicos,Orientada a Microsserviços,microsservicos;orientada,token,nada,token,nada,0,C,0
+ES2,roteiro1,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,nada,nada,nada,nada,0,A,1
+ES2,devops,conceito-de-devops,Conceito de DevOps,conceito;devops,token,nada,token,nada,0,C,0
+ES2,kubernetes,plataformas-de-devops,Plataformas de DevOps,devops;plataformas,nada,nada,nada,nada,0,B,0
+ES2,microsservicos2,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,token,nada,token,nada,0,C,0
+ES2,microsservicos3,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,token,nada,token,nada,0,C,0
+ES2,roteiro2-nameserver,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,nada,nada,token,nada,1,C,0
+ES2,roteiro3-gateway,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,nada,nada,token,nada,1,A,0
+ES2,roteiro2,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,nada,nada,nada,nada,0,A,1
+ES2,roteiro3,estudo-de-caso-arquitetura-orientada-a-microsservicos,Estudo de caso: arquitetura orientada a microsserviços,arquitetura;microsservicos;orientada,nada,nada,nada,nada,0,A,1
+ES2,microsservicos6,estudo-de-caso-integracao-e-implantacao-de-microsservicos,Estudo de Caso: integração e implantação de microsserviços,implantacao;integracao;microsservicos,nada,nada,nada,nada,0,C,0
+ES2,roteiro8-autenticacao-autorizacao,estudo-de-caso-integracao-e-implantacao-de-microsservicos,Estudo de Caso: integração e implantação de microsserviços,implantacao;integracao;microsservicos,nada,nada,nada,nada,0,C,0
+TCC,aula-09-variacoes-de-maquinas-de-turing,variacoes-de-maquinas-de-turing,Variações de Máquinas de Turing,maquinas;turing;variacoes,frase,nada,frase,nada,0,C,0
+TCC,aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf,linguagens-reconheciveis-e-decidiveis,Linguagens Reconhecíveis e Decidíveis,decidiveis;linguagens;reconheciveis,token,nada,token,nada,0,C,0
+CG,atividade,conceito-de-camera-sintetica,Conceito de Câmera Sintética,camera;conceito;sintetica,nada,nada,nada,nada,0,D,1
+CG,opengl3d,conceito-de-camera-sintetica,Conceito de Câmera Sintética,camera;conceito;sintetica,token,nada,token,nada,0,C,0
+CG,opengl3dcpp-vdi,conceito-de-camera-sintetica,Conceito de Câmera Sintética,camera;conceito;sintetica,nada,nada,nada,nada,0,A,1
+CG,opengl3dcpp,conceito-de-camera-sintetica,Conceito de Câmera Sintética,camera;conceito;sintetica,nada,nada,nada,nada,0,A,1
+CG,vis3d,projecoes,Projeções,projecoes,frase,nada,frase,nada,0,C,0
+CG,basico3d-cpp,tecnicas-de-modelagem-3d,Técnicas de Modelagem 3D,modelagem;tecnicas,nada,nada,nada,token,1,A,1
+CG,basico3d-py-zip,tecnicas-de-modelagem-3d,Técnicas de Modelagem 3D,modelagem;tecnicas,nada,nada,nada,token,1,C,0
+CG,programabasico3d,modelos-de-reflexao-ambiente-difusa-especular,"Modelos de Reflexão: ambiente, difusa, especular",ambiente;difusa;especular;modelos;reflexao,nada,nada,token,nada,1,C,1
+CG,exercicio-com-animacao,operacoes-com-vetores,Operações com vetores,operacoes;vetores,nada,nada,nada,nada,0,A,0
+CG,matematica,operacoes-com-vetores,Operações com vetores,operacoes;vetores,nada,nada,nada,nada,0,A,0
+CG,exercicios-teoricos-sobre-processo-de-visualizacao-2d,sistema-de-coordenadas-cartesianas,Sistema de Coordenadas Cartesianas,cartesianas;coordenadas;sistema,nada,nada,nada,nada,0,A,0
+CG,mapeamento,sistema-de-coordenadas-cartesianas,Sistema de Coordenadas Cartesianas,cartesianas;coordenadas;sistema,nada,nada,token,nada,1,C,1
+CG,exercicios-sobre-curvas,catmull-rom,Catmull-Rom,catmull,nada,nada,frase,nada,1,C,1
+CG,floodfill,segmentacao,Segmentação,segmentacao,nada,nada,nada,nada,0,B,0
+CG,remocaoderuido,filtros,Filtros,filtros,nada,nada,nada,nada,0,C,1
+CG,exercicios-sobre-curvas-html,catmull-rom,Catmull-Rom,catmull,nada,nada,frase,nada,1,C,1
+CG,exercicios-teoricos-sobre-processo-de-visualizacao-2d-html,sistema-de-coordenadas-cartesianas,Sistema de Coordenadas Cartesianas,cartesianas;coordenadas;sistema,nada,nada,nada,nada,0,A,0
+CG,pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9,entidades-geometricas,Entidades geométricas,entidades;geometricas,nada,nada,nada,nada,0,C,1
+CG,videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84,algoritmos-de-deteccao-e-calculo-de-interseccao,Algoritmos de detecção e cálculo de intersecção,algoritmos;calculo;deteccao;interseccao,token,nada,token,nada,0,C,0
+CG,pagina-com-videos-sobre-mapeamento-9f410e,sistema-de-coordenadas-cartesianas,Sistema de Coordenadas Cartesianas,cartesianas;coordenadas;sistema,nada,nada,nada,nada,0,A,0
+CG,video-sobre-mapeamento-em-opengl-1dad3c,sistema-de-coordenadas-cartesianas,Sistema de Coordenadas Cartesianas,cartesianas;coordenadas;sistema,nada,nada,nada,nada,0,A,0
+CG,pagina-com-videos-sobre-curvas-parametricas-63d902,representacao-de-curvas-parametricas,Representação de Curvas Paramétricas,curvas;parametricas;representacao,token,nada,token,nada,0,C,0
+CG,video-sobre-prechimento-de-areas-duracao-330-defae7,segmentacao,Segmentação,segmentacao,nada,nada,nada,nada,0,A,0
+CG,video-sobre-prechimento-de-areas-duracao-1300-d87e5f,segmentacao,Segmentação,segmentacao,nada,nada,nada,nada,0,A,1
+CG,paginas-com-videos-sobre-modelagem-geometrica-f2614a,tecnicas-de-modelagem-3d,Técnicas de Modelagem 3D,modelagem;tecnicas,token,nada,token,nada,0,C,0
+CG,pagina-com-videos-sobre-visualizacao-3d-35a833,pipeline-de-visualizacao-3d,Pipeline de visualização 3D,pipeline;visualizacao,token,nada,token,nada,0,C,0
+FR,01-protocolos-de-rede,conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia,"Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância",conceito;distancia;locais;longa;metropolitanas;pessoais;protocolo;redes,token,nada,token,nada,0,C,0
+FR,unidade1-exercicios,modelos-osi-e-tcpip,Modelos OSI e TCP/IP,modelos,token,nada,token,nada,0,C,0
+FR,04-camada-de-aplicacao,funcoes-e-caracteristicas-do-nivel-de-aplicacao,Funções e características do nível de aplicação,aplicacao;caracteristicas;funcoes;nivel,token,token,token,nada,0,C,0
+FR,04-protocolo-http,protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap,"Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)",aplicacao;http;https;imap;pop3;protocolos;smtp;usuario,token,token,token,nada,0,C,0
+FR,05-protocolo-dns,protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat,"Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)",aplicacao;dhcp;infraestrutura;protocolos;snmp,token,nada,token,nada,0,C,0
+FR,unidade2-exercicios-http,protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap,"Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)",aplicacao;http;https;imap;pop3;protocolos;smtp;usuario,token,token,token,nada,0,C,0
+FR,08-desenvolvimento-de-aplicacoes,implementacao-de-sockets,Implementação de sockets,implementacao;sockets,nada,nada,token,nada,1,C,0
+FR,udp-example-c,implementacao-de-sockets,Implementação de sockets,implementacao;sockets,nada,nada,nada,nada,0,A,1
+FR,udp-example-java,implementacao-de-sockets,Implementação de sockets,implementacao;sockets,nada,nada,nada,nada,0,A,1
+FR,tcp-chat-c,implementacao-de-sockets,Implementação de sockets,implementacao;sockets,nada,nada,nada,nada,0,A,1
+FR,tcp-example,implementacao-de-sockets,Implementação de sockets,implementacao;sockets,nada,nada,nada,nada,0,A,1

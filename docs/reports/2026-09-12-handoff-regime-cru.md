@@ -1847,3 +1847,115 @@ definição de "cru" menos urgente do que parecia ontem.
 **Ressalva que fica registrada:** C e A foram separados por leitura. A fronteira entre "a evidência já pontua e perde"
 e "não há evidência" é onde eu mais erraria; o próximo passo honesto para as 38 de C é confrontar a classificação com
 o score real do tópico do gold em cada material, que é determinístico e já está em `fronteira_sinais_12-09.csv`.
+
+## 31. A MINHA HIPÓTESE CAIU — três refutadores independentes e o meu próprio teste (13/09)
+
+Ordem do usuário: *"delegue outros modelos do agy, e vamos atacar o que tu falou em ordem, e também vamos criar
+testes para confirmar a tua hipótese de parar de tratar vocabulário como alavanca principal"*.
+
+**Os testes foram criados. Eles derrubaram a hipótese.** Registro na ordem em que a evidência chegou.
+
+### 31.1 O teste determinístico que eu construí contra mim mesmo
+
+`c1-3/evidencia_fora_do_bundle_13-09.{py,csv,log}`. Ele mede, **sem julgamento de agente**, onde o rótulo do tópico
+do gold é alcançável, em 4 camadas, com a normalização do próprio motor.
+
+| camada | frase | token | nada |
+|---|---|---|---|
+| bundle (título + label + 24 headings + nomes de membros) | 2 | 21 | **80** |
+| frontmatter | 0 | 3 | 100 |
+| corpo (markdown inteiro) | 4 | 28 | **71** |
+| membros (os `code/professor/*.md`) | 0 | 3 | 100 |
+
+**Evidência ausente no bundle e presente numa camada mais rica: 12 de 103** — não os 23 que os agentes disseram.
+E o confronto é pior que a diferença: **os dois conjuntos concordam em apenas 5**.
+
+**Ressalva honesta sobre o meu próprio instrumento:** ele procura *os tokens do rótulo do gold*; os agentes procuravam
+*expressões de domínio que pertencem ao tópico* (`@FeignClient` → microsserviços). São perguntas diferentes, então
+parte da divergência é descasamento de instrumento, não erro do agente. **Mas o número que eu publiquei como "23" era
+julgamento, e o determinístico dá 12.**
+
+E o número que mais importa nessa tabela é outro: **mesmo a camada mais rica alcança só 32 de 103.** Em ~69% dos
+erros nenhuma camada do material nomeia o tópico do gold — **isso é argumento A FAVOR do vocabulário, não contra.**
+
+### 31.2 A descoberta que mata a alavanca nº 1 como eu a formulei
+
+`src/builder/timeline/index.py:1899-1907` — os campos que o scorer de subunidade pontua:
+
+```
+markdown_headings_text · title_text · markdown_lead_text · manual_tags_text
+markdown_text · auto_tags_text · legacy_tags_text · raw_text
+```
+
+**O scorer já lê o corpo inteiro.** O *bundle* de 24 headings é a entrada do **compilador de vocabulário**
+(`vocabulary_compile._bundle`), não do motor. No regime cru não há compilação — logo **"engenharia de bundle" entrega
+ZERO no cru**. Ela é uma melhoria da *aquisição*, não uma alternativa a ela. A minha alavanca nº 1 estava no lado
+errado da conta.
+
+**Duas coisas sobrevivem dessa família, e as duas são do motor, não do bundle:**
+
+1. **`moodle_label` não está em `_campos`.** O scorer de subunidade não pontua o label do Moodle. Um dos B do CG caiu
+   exatamente por isso: *"a expressão mora num campo que o scorer de subunidade não lê"*.
+2. **15 dos 109 erros entram no motor com ZERO caractere de texto** — medido:
+
+| curso | n | classe do diagnóstico |
+|---|---|---|
+| CG | 4 | A 3, C 1 |
+| FR | 4 | A 4 |
+| ES2 | 3 | A 3 |
+| MF | 3 | C 2, A 1 |
+| IA | 1 | C 1 |
+
+**Todos os 15 são `zip`** (`base_markdown: None`, pelo `process_zip`), e o corpo deles existe em disco — de 2 a 43
+arquivos `code/professor/*.md` por material. Mediana dos que têm texto: 7.518 chars. Estes têm **zero**.
+**11 dos 15 tinham sido classificados como A ("nada a adquirir") — e agora a classe A tem explicação: não há texto.**
+
+### 31.3 Os três refutadores do agy, independentes, convergem
+
+Brief: `c1-3/brief_agy_refuta_hipotese_vocabulario.md`. Respostas em `c1-3/resposta_agy_<modelo>.json`.
+
+| modelo | veredito |
+|---|---|
+| `gemini-3.1-pro-high` | **"A hipótese cai totalmente."** |
+| `gpt-oss-120b-medium` | **"A hipótese cai."** |
+| `claude-opus-4-6-thinking` | **"Sobrevive parcialmente"** — *"'vocabulário não é alavanca única' resiste, mas 'engenharia determinística entrega mais' cai."* |
+
+**Os vetores em que os três batem no mesmo lugar:**
+
+1. **A soma 38 + 23 = 61 é dupla contagem.** As classes não são disjuntas — e a minha própria medição confirma:
+   **7 dos 12 com evidência fora do bundle são classe C.** A união honesta é 43, não 61.
+2. **O teto de 32 subestima o vocabulário.** Na classe C a evidência certa *perde a competição* — e vocabulário
+   aumenta o peso do termo certo. *"Ausência de vocabulário pode ser a causa da baixa pontuação, não a consequência."*
+   Eu tratei C como território fechado ao vocabulário sem ter medido isso.
+3. **"91% do teto é um curso" se vira contra mim.** Se o IA é 34 dos 109, a conclusão correta é **resolver o IA**, não
+   abandonar o vocabulário. *"O concentrador é o curso, não a alavanca."*
+4. **Risco de regressão assimétrico.** Vocabulário é um sidecar isolado; mexer no insumo alimenta os **três** eixos e
+   ameaça o bloco, que já bate a meta com 93,7%.
+5. **Nenhuma das duas chega a 90%.** 142 + 32 = 69,3%; 142 + 61 = 80,9%. *"Mudar de alavanca não alcança a meta."*
+
+### 31.4 A hipótese corrigida
+
+> **Nenhuma alavanca atinge 90% sozinha. Vocabulário e insumo são ambos necessários e nenhum é suficiente. O
+> concentrador do problema é o curso IA (34 dos 109), não a alavanca. A prioridade entre as duas deve ser decidida
+> por A/B no motor, não por contagem de classes.**
+
+O que eu mantinha e **mantenho**: vocabulário não é alavanca *única*. O que **cai**: "engenharia determinística
+entrega mais". E cai duas vezes — pela dupla contagem, e porque a peça que eu chamei de engenharia de bundle não
+opera no regime cru.
+
+### 31.5 O teste decisivo, que os três nomearam quase igual
+
+Rodar o motor cru em braços, **zero LLM**, e comparar taxa de conversão real em vez de contagem de classe:
+
+| braço | o que muda | hipótese que ele testa |
+|---|---|---|
+| C (feito) | nada — 142/251 | linha de base |
+| **V** | vocabulário nos 2 tópicos do IA (`Modelos Preditivos`, `Modelos Descritivos`) | o teto de 32 é real? |
+| **Z** | o texto dos membros chega aos 15 zips | 15 materiais sem texto valem quanto? |
+| **V+Z** | os dois | as alavancas somam ou se sobrepõem? |
+
+O braço Z exige uma decisão de desenho (onde injetar o corpo dos membros: `navigation._entry_markdown_text_for_file_map`
+ou o `process_zip`) e por isso **para em Gate**. O braço V é direto.
+
+**O que nenhum dos três consegue avaliar, e fica registrado:** a sobreposição exata entre as classes por material, a
+redistribuição dos 13 B derrubados, e quanto o bloco regrediria se o insumo mudasse.
