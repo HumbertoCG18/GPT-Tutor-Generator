@@ -309,7 +309,15 @@ def main(argv=None):
     ap.add_argument("--veto", choices=["texto", "fonte"], default="texto",
                     help="texto: veta todo alias do sidecar LLM (o do replay) · fonte: preserva os que tambem vem do "
                          "plano de ensino ou dos headings do acervo")
+    ap.add_argument("--braco-motor", choices=["sempropag"], default="",
+                    help="mecanismo do motor trocado por monkeypatch antes do reprocess (13/09, regressao nos 7 do que "
+                         "ganhou no FR do zero): sempropag = a 2a passada nao propaga tokens de heading; partes do rotulo, "
+                         "titulo e secao continuam")
     a = ap.parse_args(argv)
+    if a.braco_motor == "sempropag":
+        import src.builder.routing.resolver_apply as _rap
+        _rap._tokens_headings = lambda *x, **k: set()
+        print("  [braco-motor] sempropag: resolver_apply._tokens_headings -> set()", flush=True)
     sigs = [s.strip() for s in a.cursos.split(",") if s.strip()] or list(NOMES)
 
     if a.config in ("nu", "regua"):
@@ -355,7 +363,7 @@ def main(argv=None):
         # Marcador: a copia guarda UMA configuracao por vez e a seguinte sobrescreve. Sem isto e facil ler a copia
         # achando que ela esta na configuracao anterior (aconteceu em 12/09 com a lista de erros de unidade).
         (DEST / "_CONFIG_ATUAL.txt").write_text(
-            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + (", BRACO V devolve-vocab=" + a.devolve_vocab if a.devolve_vocab else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
+            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + (", BRACO V devolve-vocab=" + a.devolve_vocab if a.devolve_vocab else "") + (", braco-motor=" + a.braco_motor if a.braco_motor else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
 
     print()
     marc = DEST / "_CONFIG_ATUAL.txt"

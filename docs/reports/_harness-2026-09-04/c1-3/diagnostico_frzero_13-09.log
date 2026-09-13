@@ -1,0 +1,110 @@
+=== 01-protocolos-de-rede  (pdf, 6330 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: '01 - Protocolos de Rede' · moodle_label: 'Protocolos de Redes (Slides)'
+    GOLD  conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia  = 'Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância'
+    gold na unidade final? sim · posicao 3 · score 0.0
+    1a passada: modelos-osi-e-tcpip conf=1.000 ['winner_score=0.11']
+    final     : modelos-osi-e-tcpip ['winner_score=0.11']
+    top-3: modelos-osi-e-tcpip=0.11 · conceitos-de-redes-de-computadores=0.00 · conceito-de-protocolo-de-redes-pes=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: modelos-osi-e-tcpip
+
+=== unidade1-exercicios  (pdf, 7540 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: 'unidade1-exercicios' · moodle_label: 'Lista de exercícios - Unidade 1'
+    GOLD  modelos-osi-e-tcpip  = 'Modelos OSI e TCP/IP'
+    gold na unidade final? sim · posicao 2 · score 0.14217984000000003
+    1a passada: (vazio) conf=0.000 ['empate-exato 2x score=0.14']
+    final     : (vazio) ['empate-exato 2x score=0.14']
+    top-3: conceitos-de-redes-de-computadores=0.14 · modelos-osi-e-tcpip=0.14 · conceito-de-protocolo-de-redes-pes=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: (empate/vazio)
+
+=== 04-camada-de-aplicacao  (pdf, 3890 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: '04 - Camada de Aplicação' · moodle_label: 'Introdução camada de aplicação (Slides)'
+    GOLD  funcoes-e-caracteristicas-do-nivel-de-aplicacao  = 'Funções e características do nível de aplicação'
+    gold na unidade final? sim · posicao 4 · score 0.38776320000000003
+    1a passada: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf=0.333 ['winner_score=1.56']
+    final     : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap ['winner_score=7.16', 'rotulo-decomposto']
+    top-3: protocolos-de-aplicacao-para-o-usu=1.56 · paradigmas-clienteservidor-e-p2p=1.04 · protocolos-de-aplicacao-para-infra=1.04
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+
+=== 04-protocolo-http  (pdf, 23875 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: '04 - Protocolo HTTP' · moodle_label: 'Protocolo HTTP (Slides)'
+    GOLD  protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap  = 'Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)'
+    gold na unidade final? sim · posicao 1 · score 1.2959999999999998
+    1a passada: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf=0.300 ['winner_score=1.30']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=4.64', 'propagado-headings']
+    top-3: protocolos-de-aplicacao-para-o-usu=1.30 · paradigmas-clienteservidor-e-p2p=0.91 · protocolos-de-aplicacao-para-infra=0.91
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap  <-- o gold
+
+=== 05-protocolo-dns  (pdf, 15841 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: '05 - Protocolo DNS' · moodle_label: 'Protocolo DNS (Slides)'
+    GOLD  protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat  = 'Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)'
+    gold na unidade final? sim · posicao 2 · score 1.0368
+    1a passada: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf=0.273 ['winner_score=1.43']
+    final     : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap ['winner_score=5.18', 'rotulo-decomposto']
+    top-3: protocolos-de-aplicacao-para-o-usu=1.43 · protocolos-de-aplicacao-para-infra=1.04 · paradigmas-clienteservidor-e-p2p=0.91
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+
+=== 08-desenvolvimento-de-aplicacoes  (pdf, 5575 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: '08 - Desenvolvimento de Aplicações' · moodle_label: 'Desenvolvimento de aplicações com comunicação via rede (Slides)'
+    GOLD  implementacao-de-sockets  = 'Implementação de sockets'
+    gold na unidade final? sim · posicao 5 · score 0.12494592
+    1a passada: (vazio) conf=0.000 ['empate-exato 2x score=1.04']
+    final     : (vazio) ['empate-exato 2x score=1.04']
+    top-3: protocolos-de-aplicacao-para-infra=1.04 · protocolos-de-aplicacao-para-o-usu=1.04 · paradigmas-clienteservidor-e-p2p=0.91
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: (empate/vazio)
+
+=== lista-de-exercicios-1-camada-de-aplicacao  (pdf, 6919 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: 'LIsta de exercícios 1 - Camada de Aplicação' · moodle_label: 'Lista de exercícios - Camada de Aplicação'
+    GOLD  funcoes-e-caracteristicas-do-nivel-de-aplicacao  = 'Funções e características do nível de aplicação'
+    gold na unidade final? sim · posicao 4 · score 0.42223104
+    1a passada: (vazio) conf=0.000 ['empate-exato 2x score=1.09']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=4.72', 'propagado-headings']
+    top-3: protocolos-de-aplicacao-para-infra=1.09 · protocolos-de-aplicacao-para-o-usu=1.09 · paradigmas-clienteservidor-e-p2p=0.96
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: (empate/vazio)
+
+=== tcp-chat-c  (zip, 511 chars de texto ao scorer, resumo de codigo: sim)
+    titulo: 'tcp_chat_c' · moodle_label: 'Exemplo de socket TCP em C'
+    GOLD  implementacao-de-sockets  = 'Implementação de sockets'
+    gold na unidade final? sim · posicao 2 · score 0.01723392
+    1a passada: paradigmas-clienteservidor-e-p2p conf=0.981 ['winner_score=0.91']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=0.91']
+    top-3: paradigmas-clienteservidor-e-p2p=0.91 · implementacao-de-sockets=0.02 · funcoes-e-caracteristicas-do-nivel=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: paradigmas-clienteservidor-e-p2p
+
+=== tcp-example  (zip, 507 chars de texto ao scorer, resumo de codigo: sim)
+    titulo: 'tcp_example' · moodle_label: 'Exemplo de socket TCP em Java'
+    GOLD  implementacao-de-sockets  = 'Implementação de sockets'
+    gold na unidade final? sim · posicao 2 · score 0.01723392
+    1a passada: paradigmas-clienteservidor-e-p2p conf=0.981 ['winner_score=0.91']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=0.91']
+    top-3: paradigmas-clienteservidor-e-p2p=0.91 · implementacao-de-sockets=0.02 · funcoes-e-caracteristicas-do-nivel=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: paradigmas-clienteservidor-e-p2p
+
+=== udp-example-c  (zip, 950 chars de texto ao scorer, resumo de codigo: sim)
+    titulo: 'udp_example_c' · moodle_label: 'Exemplo de socket UDP em C'
+    GOLD  implementacao-de-sockets  = 'Implementação de sockets'
+    gold na unidade final? sim · posicao 2 · score 0.01723392
+    1a passada: paradigmas-clienteservidor-e-p2p conf=0.981 ['winner_score=0.91']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=0.91']
+    top-3: paradigmas-clienteservidor-e-p2p=0.91 · implementacao-de-sockets=0.02 · funcoes-e-caracteristicas-do-nivel=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: paradigmas-clienteservidor-e-p2p
+
+=== udp-example-java  (zip, 1090 chars de texto ao scorer, resumo de codigo: sim)
+    titulo: 'udp_example_java' · moodle_label: 'Exemplo de socket UDP em Java'
+    GOLD  implementacao-de-sockets  = 'Implementação de sockets'
+    gold na unidade final? sim · posicao 2 · score 0.01723392
+    1a passada: paradigmas-clienteservidor-e-p2p conf=0.981 ['winner_score=0.91']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=0.91']
+    top-3: paradigmas-clienteservidor-e-p2p=0.91 · implementacao-de-sockets=0.02 · funcoes-e-caracteristicas-do-nivel=0.00
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: paradigmas-clienteservidor-e-p2p
+
+=== unidade2-exercicios-http  (pdf, 7583 chars de texto ao scorer, resumo de codigo: nao)
+    titulo: 'unidade2-exercicios-http' · moodle_label: 'Lista de exercícios - HTTP'
+    GOLD  protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap  = 'Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)'
+    gold na unidade final? sim · posicao 1 · score 1.3536
+    1a passada: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf=0.287 ['winner_score=1.35']
+    final     : paradigmas-clienteservidor-e-p2p ['winner_score=4.72', 'propagado-headings']
+    top-3: protocolos-de-aplicacao-para-o-usu=1.35 · paradigmas-clienteservidor-e-p2p=0.96 · protocolos-de-aplicacao-para-infra=0.96
+    [contrafactual em memoria] com moodle_label no titulo, a 1a passada venceria: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap  <-- o gold
+
+ERROS: 12 de 18
+[contrafactual em memoria, so 1a passada, NAO e o motor] moodle_label resolveria 2 erros e quebraria 0 acertos

@@ -2171,3 +2171,116 @@ Produzir, por material, a cadeia — **congelada antes de consultar os erros**:
 
 *"Isso separa perda de entrada, falha semântica e falha de prioridade sem transformar classificação manual de erros
 em 'teto'."* — é a crítica direta ao que eu fiz hoje de manhã com os 109 erros.
+
+## 34. COMO AUMENTAR A SUBUNIDADE NUM CURSO CONSTRUÍDO DO ZERO — medido no FR do zero, mecanismo a mecanismo (13/09)
+
+Pergunta do usuário: *"Como podemos aumentar a % da subunidade em um curso construído do 0?"*
+
+O FR é o único curso construído só com as fontes do professor (stash do Moodle pelo caminho da UI, tripwire, 0
+chamadas). Cópia de trabalho em `.frzero/` (no `.gitignore`; `.ablacao/` intocada). **n = 18 no primário: diferença
+de 1–2 materiais é ruído**, e todo número desta seção precisa passar pela regressão nos 7 cursos antes de valer.
+
+### 34.1 CORREÇÃO do que publiquei na §31: os zips NÃO entram no motor sem texto
+
+Eu escrevi *"15 dos 109 erros entram no motor com ZERO caractere de texto"*. **Está errado.** Meu instrumento lia
+`navigation._entry_markdown_text_for_file_map`, e o resolver **acrescenta** o resumo de código de
+`code_curation.json` (`resolver_apply.py`, `texto_para_unidade`). Verificado nos 15: **todos têm resumo, e todos são
+`model: "determ-v3"` — determinístico, não LLM**, de 200 a 1.701 caracteres. **O braço Z, como eu o defini
+("o texto dos membros chega aos zips"), perde a premissa.** O que sobra é hipótese não medida: o teto de ~1.700
+caracteres do resumo pode estar cortando zips grandes (CG com 43 arquivos).
+
+### 34.2 Os 12 erros do FR do zero, pelo score real do motor (`c1-3/diagnostico_frzero_13-09.{py,log}`)
+
+| mecanismo | erros | evidência medida |
+|---|---|---|
+| **a 2ª passada QUEBRA acerto da 1ª** (`propagado-headings`) | 2 | `04-protocolo-http` e `unidade2-exercicios-http` saem **certos** da 1ª passada (conf 0,30 e 0,29, abaixo do corte) e a propagação sobrescreve |
+| **singular × plural na rota exata da subunidade** | 5 | 4 zips dizem "socket", o plano diz "socket**s**" (gold 0,02 × pai 0,91); `01-protocolos` diz "Protocolos de Rede", o plano "protocolo de redes" (gold 0,00) |
+| **"camada" × "nível"** | 2 | o plano diz "Nível de aplicação"; a seção do Moodle do professor diz "U2 - Camada de Aplicação" — a mesma unidade, ligada por `U2` |
+| **empate exato → vazio** | 2 | `unidade1-exercicios` 0,14×0,14; `08-desenvolvimento` 1,04×1,04 |
+| **migalha com confiança 1,000** | 1 | `01-protocolos` vence com score 0,11 |
+
+**Nenhum dos 12 é "falta de vocabulário de domínio" no sentido do IA** (técnica × categoria). O FR tem plano que
+**enumera as siglas no rótulo** ("Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)").
+
+### 34.3 Os braços no motor inteiro (`c1-3/braco_frzero_13-09.py`, 0 tentativas de rede em todos)
+
+| braço | o que muda | aceito | **primário** | erros confiantes |
+|---|---|---|---|---|
+| base (reprodução) | nada | 7/18 | **6/18** | 5 |
+| `label` | a subunidade lê o `moodle_label` com peso de título | 7/18 | **6/18** | 5 |
+| `sem2a` | 2ª passada inteira desligada | 7/18 | **7/18** | 3 |
+| `sempartes` | só as partes do rótulo composto saem | 4/18 | **3/18** | 6 |
+| **`sempropag`** | **só a propagação de tokens de heading sai** | **9/18** | **8/18** | **3** |
+
+**A base reproduz o baseline de 12/09 exatamente (7/6/5).**
+
+Leitura, material a material:
+- **`label` = zero.** O contrafactual em memória dizia +2; no motor, nada muda. (Mais uma vez: contrafactual de uma
+  passada não prevê o motor inteiro.) **E derruba a esperança do `moodle_label` como alavanca no FR** — nos casos em
+  que ele carrega a palavra certa ("Exemplo de **socket** TCP"), o plural continua bloqueando.
+- **A 2ª passada mistura duas peças de sinal oposto.** `sempartes` perde 3 (`06-dhcp`, `07-email`,
+  `unidade2-exercicios-dhcp`) — as partes do rótulo **ajudam**, e sem elas a propagação quebra até o DHCP e o e-mail.
+  `sem2a` recupera os 2 HTTP e perde o `unidade2-exercicios-dhcp`.
+- **`sempropag` isola a peça ruim:** vira **exatamente os 2 casos** em que a propagação tinha quebrado uma decisão certa
+  da 1ª passada, **com zero perdas**. É a previsão aditiva (8/18) confirmada no motor.
+
+**O mecanismo foi marcado como frágil antes do FR do zero** (§3e: `propagado-headings` com 51,4% de precisão, a rota
+mais frágil) e **é o auto-envenenamento que o astra nomeou** — *"o motor colocou o arquivo neste tópico, logo seus
+headings enriquecem este tópico"*. Não foi escolhido olhando estes 18.
+
+### 34.4 A regressão nos 7 cursos MATA o `sempropag` como alavanca
+
+Mesmo mecanismo, motor completo, na cópia dos 7 cursos, contra o braço C (cru honesto).
+`c1-3/sempropag_7cursos_13-09.log` + `c1-3/transicoes_sempropag_7cursos_13-09.{py,log}`. **0 tentativas de rede.**
+
+| eixo | C (cru honesto) | `sempropag` | delta |
+|---|---|---|---|
+| bloco (237) | 222 | 222 | 0 |
+| unidade (284) | 253 | 253 | 0 |
+| **subunidade aceito (251)** | 142 | **142** | **0** |
+| **subunidade primário (251)** | 100 | **100** | **0** |
+| erros confiantes (subunid.) | 60 | 56 | −4 |
+
+**Material a material: 5 ganhos, 5 perdas, saldo zero.**
+
+| curso | ganhos | perdas | saldo |
+|---|---|---|---|
+| FR | 2 | 0 | **+2** (os mesmos dois HTTP do FR do zero) |
+| TCC | 2 | 0 | +2 |
+| MF | 1 | 0 | +1 |
+| IA | 0 | 0 | 0 |
+| SO | 0 | 1 | −1 |
+| ES2 | 0 | 1 | −1 |
+| **CG** | 0 | **3** | **−3** |
+
+**As perdas têm mecanismo nomeável:** no CG, os 3 materiais de morfologia matemática (`morfologiamatematicapptx`,
+`aula-gravada-975b85`, `pagina-com-videos-sobre-morfologia-matem`) **só pontuavam por token propagado** — sem ele caem em
+`sem-sinal (winner_score=0)`. No SO, `2603-algoritmos-de-escalonamento` vira empate exato (15,06 × 15,06). No ES2,
+`microsservicos5` troca de tópico pela rota `rotulo-decomposto`.
+
+**Conclusão: a propagação de headings não é "ruim" — é uma TROCA.** Ela quebra acertos onde a 1ª passada acertou com
+confiança baixa (FR) e é o único sinal onde o material não nomeia o tópico (CG morfologia). Desligá-la no FR do zero dava
++2; nos 7 cursos, saldo zero. **Não promover.** O que o experimento autoriza é mais estreito e continua hipótese: impedir a
+propagação de **sobrescrever uma decisão da 1ª passada que já tinha o gold no topo** — o que, sem gold, significa não
+sobrescrever quando a 1ª passada tem vencedor com score positivo. Não medido.
+
+### 34.5 A resposta à pergunta, com o que está medido e o que não está
+
+**Medido no FR do zero (n = 18), sem LLM:** nenhuma alavanca genérica testada hoje aumenta a subunidade de forma que
+sobreviva à regressão. `label` = 0; `sem2a` = +1 no FR; `sempartes` = −3; `sempropag` = +2 no FR e **0 nos 7**.
+
+**Medido com LLM (12/09):** o vocabulário compilado leva o FR do zero de **6/18 para 16/18** — é a única alavanca com
+efeito grande já demonstrada num curso do zero, e ela depende de 1 chamada por unidade.
+
+**O que o diagnóstico do FR do zero aponta e NÃO foi medido** (em ordem de tamanho, com a ressalva de ser um curso só):
+
+| hipótese | erros do FR | por que não virou braço hoje |
+|---|---|---|
+| **singular × plural na rota exata da subunidade** | **5 de 12** | não há costura limpa: o scorer é injetado nos mapeadores na importação do engine; exige flag no código. **E há negativo anterior no mesmo espaço:** o stem6 ligado globalmente derrubou a subunidade 87→83 (`index.py:141-146`). Um singularizador restrito ao overlap de tokens da subunidade não é o mesmo mecanismo, mas o risco é conhecido |
+| **"camada" × "nível" via seção `U<n>`** | 2 | a seção do Moodle nomeia a unidade com o vocabulário do professor e o `U2` a liga ao título do plano — é a "âncora independente" que o astra pede. Mas só existe em curso com `U<n>` (FR sim; CG e SO não) |
+| **empate exato → vazio** | 2 | desempate sem critério de conteúdo é o piso global já refutado |
+| **confiança 1,000 sobre score 0,11** | 1 | é calibração da fila, não acurácia |
+
+**E a ressalva que vale para tudo isso:** o FR é o único curso construído do zero, e o que vale nele pode não valer nos
+outros — o `sempropag` acabou de mostrar isso. **O passo 1 do astra (certificar a construção do zero dos outros 6) é
+pré-requisito de qualquer resposta geral a esta pergunta.**

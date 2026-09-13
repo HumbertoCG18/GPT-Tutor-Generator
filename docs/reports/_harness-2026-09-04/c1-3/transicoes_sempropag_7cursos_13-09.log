@@ -1,0 +1,24 @@
+SUBUNIDADE ACEITO, sempropag x braco C, material a material: GANHOS 5 · PERDAS 5 · saldo +0
+
+curso   ganhos  perdas  saldo
+MF           1       0     +1
+SO           0       1     -1
+IA           0       0     +0
+ES2          0       1     -1
+TCC          2       0     +2
+CG           0       3     -3
+FR           2       0     +2
+
+GANHOS (era erro no C, agora certo):
+  MF   intro                                      fundamentos-de-logica-de-prime   -> especificacao-de-funcoes-recur ['secao-nomeia-subtopico']
+  TCC  aula-06-revisao-alfabeto-cadeia-linguage   conjuntos-enumeraveis            ->  ['revisao-sem-assunto-dominante (winner_score=1.30 < 7.0)']
+  TCC  aula-09-variacoes-de-maquinas-de-turing    maquinas-de-turing               -> variacoes-de-maquinas-de-turin ['ambiguous']
+  FR   04-protocolo-http                          paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o []
+  FR   unidade2-exercicios-http                   paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o []
+
+PERDAS (era certo no C, agora errado):
+  SO   2603-algoritmos-de-escalonamento           agora (vazio)                          gold ['algoritmos-de-escalonamento'] ['empate-exato 2x score=15.06']
+  ES2  microsservicos5                            agora entrega-continua-cd              gold ['estudo-de-caso-integracao-e-implantacao-de-microsservicos', 'plataformas-de-devops'] ['rotulo-decomposto']
+  CG   morfologiamatematicapptx                   agora (vazio)                          gold ['filtros', 'segmentacao'] ['sem-sinal (winner_score=0)']
+  CG   aula-gravada-975b85                        agora (vazio)                          gold ['filtros', 'segmentacao'] ['sem-sinal (winner_score=0)']
+  CG   pagina-com-videos-sobre-morfologia-matem   agora (vazio)                          gold ['filtros', 'segmentacao'] ['sem-sinal (winner_score=0)']
