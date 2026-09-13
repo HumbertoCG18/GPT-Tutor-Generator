@@ -1,0 +1,41 @@
+TOPICOS na taxonomia crua dos 7 cursos: 171
+  CARENTE-FORTE (nenhum material da unidade da suporte lexical): 14 = 8%
+  CARENTE-FRACO (suporte so por TOKEN, nunca por frase):        56 = 33%
+
+AVALIACAO contra os 10 pares (curso, topico) que concentram 68% dos erros:
+  # curso topico                                                frase  token  mats un  pego por
+  1 IA    modelos-preditivos                                        0      4       39  fraco
+  2 IA    modelos-descritivos                                       0      4       39  fraco
+  3 MF    provadores-de-teoremas                                    2     13       35  -
+  4 SO    conceitos-basicos                                         0      2       11  fraco
+  5 ES2   estudo-de-caso-arquitetura-orientada-a-microsservicos      6     13       15  -
+  6 CG    sistema-de-coordenadas-cartesianas                        0      8       18  fraco
+  7 FR    implementacao-de-sockets                                  0      3       16  fraco
+  8 CG    conceito-de-camera-sintetica                              0      4       10  fraco
+  9 CG    tecnicas-de-modelagem-3d                                  0      6       15  fraco
+ 10 CG    segmentacao                                               8     10       17  -
+
+  CARENTE-FORTE pega 0 dos 10 alvos, marcando 14 topicos (8% do total)
+  FORTE+FRACO   pega 7 dos 10 alvos, marcando 70 topicos (41% do total)
+
+COMPARACAO com os seletores que ja falharam (medidos em 12/09):
+  'topico sem alias textual no cru'  marcava 144 de 217 (66%) e pegava 5 dos 10
+  'topico que nunca vence no cru'    marcava 137 de 217 (63%) e pegava 6 dos 10
+
+TOP-K por dano potencial (CARENTE-FORTE, ordenado por materiais na unidade):
+   1. CG   algoritmos-de-rasterizacao                           unidade com  18 materiais
+   2. CG   entidades-geometricas                                unidade com  16 materiais
+   3. CG   superficies-limitantes                               unidade com  15 materiais
+   4. CG   digitalizacao                                        unidade com  15 materiais
+   5. SO   sistemas-monoprogramados                             unidade com   6 materiais
+   6. SO   primitivas-de-sincronizacao                          unidade com   4 materiais
+   7. SO   problemas-classicos                                  unidade com   4 materiais
+   8. SO   construcoes-concorrentes-de-alto-nivel               unidade com   4 materiais
+   9. SO   protecao                                             unidade com   4 materiais
+  10. SO   seguranca                                            unidade com   4 materiais
+  11. SO   caracterizacao                                       unidade com   3 materiais
+  12. SO   prevencao                                            unidade com   3 materiais
+  13. SO   deteccao-e-recuperacao                               unidade com   3 materiais
+  14. IA   agentes-em-logica                                    unidade com   2 materiais
+
+CSV: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\seletor_topicos_carentes_12-09.csv

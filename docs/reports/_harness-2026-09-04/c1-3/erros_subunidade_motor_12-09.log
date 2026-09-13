@@ -1,0 +1,568 @@
+copia em: regua (veto=texto)
+
+ERROS DE SUBUNIDADE no motor completo, regime cru: 105 de 251
+  o PRODUTO acerta 80 e tambem erra 25
+  na FILA (o motor avisou): 47 · confiantes e errados: 58
+  com predicao VAZIA: 14
+  DENTRO da unidade certa (dano contido): 83 · com a unidade TAMBEM errada (dano grande): 9 · sem regua de unidade: 13
+
+por rota que decidiu:
+  1a-passada                  77  (produto acerta  56)
+  propagado-headings          23  (produto acerta  21)
+  rotulo-decomposto            5  (produto acerta   3)
+
+por curso:
+  MF     12  (produto acerta   9 · na fila   3)
+  SO      6  (produto acerta   6 · na fila   3)
+  IA     34  (produto acerta  31 · na fila   6)
+  ES2    10  (produto acerta   8 · na fila   5)
+  TCC     3  (produto acerta   2 · na fila   1)
+  CG     29  (produto acerta  13 · na fila  23)
+  FR     11  (produto acerta  11 · na fila   6)
+
+CONCENTRACAO por (curso, topico do gold) — decide se a alavanca e dirigida ou difusa:
+   1. IA   modelos-preditivos                                    25   (acumulado  25 de 105 = 24%)
+   2. IA   modelos-descritivos                                    8   (acumulado  33 de 105 = 31%)
+   3. MF   provadores-de-teoremas                                 6   (acumulado  39 de 105 = 37%)
+   4. SO   conceitos-basicos                                      5   (acumulado  44 de 105 = 42%)
+   5. ES2  estudo-de-caso-arquitetura-orientada-a-microsservicos   5   (acumulado  49 de 105 = 47%)
+   6. CG                                                          5   (acumulado  54 de 105 = 51%)
+   7. CG   sistema-de-coordenadas-cartesianas                     5   (acumulado  59 de 105 = 56%)
+   8. FR   implementacao-de-sockets                               5   (acumulado  64 de 105 = 61%)
+   9. CG   conceito-de-camera-sintetica                           4   (acumulado  68 de 105 = 65%)
+  10. CG   tecnicas-de-modelagem-3d                               3   (acumulado  71 de 105 = 68%)
+  11. CG   segmentacao                                            3   (acumulado  74 de 105 = 70%)
+  12. MF   linguagens-de-especificacao-e-logicas                  2   (acumulado  76 de 105 = 72%)
+  13. ES2  estudo-de-caso-integracao-e-implantacao-de-microsservicos   2   (acumulado  78 de 105 = 74%)
+  14. CG   operacoes-com-vetores                                  2   (acumulado  80 de 105 = 76%)
+  15. FR   protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap   2   (acumulado  82 de 105 = 78%)
+  ... 38 pares no total
+
+======================================================================================================================================================
+MF   archive-of-formal-proofs-355fb8                (references/url)
+     GOLD   : provadores-de-teoremas
+     CRU    : abordagens-para-verificacao-formal                 conf 0.276 rota=propagado-headings [CONFIANTE]
+     PRODUTO: abordagens-para-verificacao-formal                 [ERRA TAMBEM]
+     unidade: unidade-01-metodos-formais [certa]
+MF   revisao                                        (material-de-aula/pdf)
+     GOLD   : sistemas-formais
+     CRU    : especificacao-de-conjuntos-indutivos               conf 0.871 rota=1a-passada [CONFIANTE]
+     PRODUTO: sistemas-formais                                   [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   exerciciosespecificacao-respostas              (gabaritos/pdf)
+     GOLD   : linguagens-de-especificacao-e-logicas
+     CRU    : fundamentos-de-logica-de-primeira-ordem            conf 0.122 rota=propagado-headings [FILA]
+     PRODUTO: linguagens-de-especificacao-e-logicas              [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   exerciciosespecificacao                        (listas/pdf)
+     GOLD   : linguagens-de-especificacao-e-logicas
+     CRU    : fundamentos-de-logica-de-primeira-ordem            conf 0.122 rota=propagado-headings [FILA]
+     PRODUTO: linguagens-de-especificacao-e-logicas              [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   arvores                                        (codigo-professor/code)
+     GOLD   : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU    : abordagens-para-verificacao-formal                 conf 0.862 rota=1a-passada [CONFIANTE]
+     PRODUTO: provadores-de-teoremas                             [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   exemplos                                       (codigo-professor/code)
+     GOLD   : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas;especificacao-de-conjuntos-indutivos]
+     CRU    : exemplos-de-aplicacoes                             conf 0.989 rota=1a-passada [CONFIANTE]
+     PRODUTO: exemplos-de-aplicacoes                             [ERRA TAMBEM]
+     unidade: unidade-01-metodos-formais [certa]
+MF   intro                                          (codigo-professor/code)
+     GOLD   : provadores-de-teoremas [extras: especificacao-de-conjuntos-indutivos;especificacao-de-funcoes-recursivas]
+     CRU    : fundamentos-de-logica-de-primeira-ordem            conf 0.169 rota=propagado-headings [CONFIANTE]
+     PRODUTO: especificacao-de-conjuntos-indutivos               [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   listas                                         (codigo-professor/code)
+     GOLD   : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU    : abordagens-para-verificacao-formal                 conf 0.862 rota=1a-passada [CONFIANTE]
+     PRODUTO: provadores-de-teoremas                             [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   provas                                         (codigo-professor/code)
+     GOLD   : provadores-de-teoremas [extras: especificacao-de-funcoes-recursivas]
+     CRU    : abordagens-para-verificacao-formal                 conf 0.862 rota=1a-passada [CONFIANTE]
+     PRODUTO: provadores-de-teoremas                             [acerta]
+     unidade: unidade-01-metodos-formais [certa]
+MF   hoare                                          (codigo-professor/zip)
+     GOLD   : logica-de-hoare [extras: softwares-de-suporte-a-verificacao-formal-de-programas;verificacao-de-programas]
+     CRU    : correcao-parcial-e-total                           conf 0.964 rota=1a-passada [CONFIANTE]
+     PRODUTO: logica-de-hoare                                    [acerta]
+     unidade: unidade-02-verificacao-de-programas [certa]
+MF   terminacao                                     (codigo-professor/zip)
+     GOLD   : correcao-parcial-e-total [extras: invariante-e-variante-de-laco]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: correcao-parcial-e-total                           [acerta]
+     unidade: unidade-02-verificacao-de-programas [certa]
+MF   tiposindutivos                                 (codigo-professor/zip)
+     GOLD   : softwares-de-suporte-a-verificacao-formal-de-programas
+     CRU    : verificacao-de-programas                           conf 0.862 rota=1a-passada [CONFIANTE]
+     PRODUTO: verificacao-de-programas                           [ERRA TAMBEM]
+     unidade: unidade-02-verificacao-de-programas [certa]
+SO   1903-estruturas-de-controle                    (material-de-aula/pdf)
+     GOLD   : conceitos-basicos
+     CRU    : escalonamento                                      conf 0.963 rota=1a-passada [CONFIANTE]
+     PRODUTO: conceitos-basicos                                  [acerta]
+     unidade: unidade-02-gerencia-do-processador [certa]
+SO   3103-threads                                   (material-de-aula/pdf)
+     GOLD   : conceitos-basicos
+     CRU    : escalonamento                                      conf 0.963 rota=1a-passada [FILA]
+     PRODUTO: conceitos-basicos                                  [acerta]
+     unidade: unidade-02-gerencia-do-processador [ERRADA]
+SO   exercicios                                     (listas/pdf)
+     GOLD   : algoritmos-de-escalonamento
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: algoritmos-de-escalonamento                        [acerta]
+     unidade: unidade-02-gerencia-do-processador [certa]
+SO   exemplo-threads-em-c-exemplo1                  (codigo-professor/code)
+     GOLD   : conceitos-basicos
+     CRU    : escalonamento                                      conf 1.000 rota=propagado-headings [FILA]
+     PRODUTO: conceitos-basicos                                  [acerta]
+     unidade: unidade-02-gerencia-do-processador [ERRADA]
+SO   exemplo-threads-em-c-exemplo2                  (codigo-professor/code)
+     GOLD   : conceitos-basicos
+     CRU    : escalonamento                                      conf 1.000 rota=propagado-headings [FILA]
+     PRODUTO: conceitos-basicos                                  [acerta]
+     unidade: unidade-02-gerencia-do-processador [ERRADA]
+SO   exemplo-threads-em-c-exemplo3                  (codigo-professor/code)
+     GOLD   : conceitos-basicos
+     CRU    : escalonamento                                      conf 1.000 rota=propagado-headings [CONFIANTE]
+     PRODUTO: conceitos-basicos                                  [acerta]
+     unidade: unidade-02-gerencia-do-processador [ERRADA]
+IA   algoritmo-de-classificacao-k-nn                (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [FILA]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exemplo-com-k-nn                               (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exemplo-2-k-nn-com-iriscsv-mais-completo       (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exemplo-de-programa-com-k-nn-em-java           (codigo-professor/zip)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: introducao-ao-aprendizado-de-maquina               [ERRA TAMBEM]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   artigo-usando-k-nn-em-texto                    (bibliografia/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.975 rota=propagado-headings [FILA]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   k-nn-para-classificacao-exemplo-cardio         (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   k-nn-para-regressao-exemplo-imc                (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   introducao-a-redes-neurais                     (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.992 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron                                (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.908 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-classificacao-de-cliente       (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-classificacao-planta-iris      (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-exemplo-atualizado             (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.896 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-or-em-python                   (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-reconhecendo-letras            (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exercicio-2-solucao-com-rede-perceptron-atualizado (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   mlp                                            (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.988 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   mlp-xoripynb                                   (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: (vazio)                                            [ERRA TAMBEM]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   mlp-classificacao-iris-atualizado              (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.896 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   mlp-regressao-cardio                           (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   rede-perceptron-e-equacao-de-reta              (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   xor-backpropagation-em-python                  (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.996 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv (codigo-professor/code)
+     GOLD   : modelos-preditivos [extras: metricas-de-avaliacao]
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.881 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   como-analisar-resultados-acc-pr-re-e-f1        (material-de-aula/pdf)
+     GOLD   : metricas-de-avaliacao
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.897 rota=1a-passada [CONFIANTE]
+     PRODUTO: metricas-de-avaliacao                              [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   arvores-de-decisao                             (material-de-aula/pdf)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.994 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exemplo-1-arvores-de-decisao-classificacao-planta-iris (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   exemplo-2-arvores-de-decisao-regressao-diabetes (codigo-professor/code)
+     GOLD   : modelos-preditivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-preditivos                                 [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   aula-sobre-agrupamento-parte-1-particional     (material-de-aula/pdf)
+     GOLD   : modelos-descritivos [extras: paradigmas-de-aprendizado]
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.945 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   agrupamento-usando-k-means-exemplo-1-ipynb     (codigo-professor/code)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.979 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   agrupamento-usando-k-means-exemplo-2-ipynb     (codigo-professor/code)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   artigo-usando-agrupamento                      (bibliografia/pdf)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.965 rota=propagado-headings [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   survey-on-clustering                           (material-de-aula/pdf)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   aula-sobre-agrupamento-parte-2-hierarquico     (material-de-aula/pdf)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [CONFIANTE]
+     PRODUTO: introducao-ao-aprendizado-de-maquina               [ERRA TAMBEM]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   agrupamento-hierarquico-exemplo-1              (codigo-professor/code)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.993 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+IA   agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris (codigo-professor/code)
+     GOLD   : modelos-descritivos
+     CRU    : introducao-ao-aprendizado-de-maquina               conf 0.995 rota=1a-passada [CONFIANTE]
+     PRODUTO: modelos-descritivos                                [acerta]
+     unidade: unidade-de-aprendizagem-05-aprendizado-de-maquina [certa]
+ES2  microsservicos                                 (material-de-aula/pdf)
+     GOLD   : orientada-a-microsservicos
+     CRU    : arquitetura-serverless                             conf 0.623 rota=1a-passada [CONFIANTE]
+     PRODUTO: orientada-a-microsservicos                         [acerta]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  roteiro1                                       (codigo-professor/zip)
+     GOLD   : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: estudo-de-caso-arquitetura-orientada-a-microsservicos [acerta]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  devops                                         (material-de-aula/pdf)
+     GOLD   : conceito-de-devops [extras: gerenciamento-da-configuracao]
+     CRU    : integracao-continua-ci                             conf 0.307 rota=rotulo-decomposto [CONFIANTE]
+     PRODUTO: gerenciamento-da-configuracao                      [acerta]
+     unidade: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [certa]
+ES2  kubernetes                                     (material-de-aula/pdf)
+     GOLD   : plataformas-de-devops
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: plataformas-de-devops                              [acerta]
+     unidade: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [sem regua]
+ES2  microsservicos2                                (material-de-aula/pdf)
+     GOLD   : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU    : arquitetura-serverless                             conf 0.773 rota=1a-passada [CONFIANTE]
+     PRODUTO: orientada-a-microsservicos                         [ERRA TAMBEM]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  microsservicos3                                (material-de-aula/pdf)
+     GOLD   : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU    : arquitetura-serverless                             conf 0.167 rota=1a-passada [CONFIANTE]
+     PRODUTO: estilos-e-padroes-arquiteturais                    [ERRA TAMBEM]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  roteiro2-nameserver                            (material-de-aula/pdf)
+     GOLD   : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU    : cliente-servidor                                   conf 0.309 rota=1a-passada [CONFIANTE]
+     PRODUTO: estudo-de-caso-arquitetura-orientada-a-microsservicos [acerta]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  roteiro2                                       (codigo-professor/zip)
+     GOLD   : estudo-de-caso-arquitetura-orientada-a-microsservicos
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: estudo-de-caso-arquitetura-orientada-a-microsservicos [acerta]
+     unidade: unidade-01-arquitetura-de-software [certa]
+ES2  microsservicos6                                (material-de-aula/pdf)
+     GOLD   : estudo-de-caso-integracao-e-implantacao-de-microsservicos
+     CRU    : gerenciamento-da-configuracao                      conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: estudo-de-caso-integracao-e-implantacao-de-microsservicos [acerta]
+     unidade: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [certa]
+ES2  roteiro8-autenticacao-autorizacao              (material-de-aula/pdf)
+     GOLD   : estudo-de-caso-integracao-e-implantacao-de-microsservicos
+     CRU    : gerenciamento-da-configuracao                      conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: estudo-de-caso-integracao-e-implantacao-de-microsservicos [acerta]
+     unidade: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [certa]
+TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos (material-de-aula/pdf)
+     GOLD   : (vazio)
+     CRU    : conjuntos-enumeraveis                              conf 0.992 rota=propagado-headings [CONFIANTE]
+     PRODUTO: maquinas-de-turing                                 [ERRA TAMBEM]
+     unidade: unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas [sem regua]
+TCC  aula-09-variacoes-de-maquinas-de-turing        (material-de-aula/pdf)
+     GOLD   : variacoes-de-maquinas-de-turing
+     CRU    : maquinas-de-turing                                 conf 0.062 rota=propagado-headings [FILA]
+     PRODUTO: variacoes-de-maquinas-de-turing                    [acerta]
+     unidade: unidade-02-turing-computabilidade [certa]
+TCC  aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf (material-de-aula/pdf)
+     GOLD   : linguagens-reconheciveis-e-decidiveis [extras: maquinas-de-turing-universais]
+     CRU    : maquinas-de-turing                                 conf 0.436 rota=propagado-headings [CONFIANTE]
+     PRODUTO: linguagens-reconheciveis-e-decidiveis              [acerta]
+     unidade: unidade-02-turing-computabilidade [certa]
+CG   atividade                                      (outros/html)
+     GOLD   : conceito-de-camera-sintetica [extras: projecoes]
+     CRU    : sistema-de-coordenadas-cartesianas                 conf 0.840 rota=1a-passada [FILA]
+     PRODUTO: conceito-de-camera-sintetica                       [acerta]
+     unidade: unidade-04-processo-de-visualizacao-2d [ERRADA]
+CG   opengl3d                                       (outros/html)
+     GOLD   : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU    : perspectiva                                        conf 0.579 rota=1a-passada [FILA]
+     PRODUTO: conceito-de-camera-sintetica                       [acerta]
+     unidade: unidade-06-processo-de-visualizacao-3d [certa]
+CG   opengl3dcpp-vdi                                (codigo-professor/zip)
+     GOLD   : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU    : algoritmo-z-buffer                                 conf 0.138 rota=1a-passada [FILA]
+     PRODUTO: paralela                                           [ERRA TAMBEM]
+     unidade: unidade-06-processo-de-visualizacao-3d [certa]
+CG   opengl3dcpp                                    (codigo-professor/zip)
+     GOLD   : conceito-de-camera-sintetica [extras: projecoes;pipeline-de-visualizacao-3d]
+     CRU    : algoritmo-z-buffer                                 conf 0.138 rota=1a-passada [FILA]
+     PRODUTO: paralela                                           [ERRA TAMBEM]
+     unidade: unidade-06-processo-de-visualizacao-3d [certa]
+CG   vis3d                                          (outros/html)
+     GOLD   : projecoes [extras: paralela;perspectiva;conceito-de-camera-sintetica;a-matematica-das-projecoes-planares]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: paralela                                           [acerta]
+     unidade: unidade-06-processo-de-visualizacao-3d [certa]
+CG   basico3d-cpp                                   (codigo-professor/zip)
+     GOLD   : tecnicas-de-modelagem-3d [extras: varredura;bezier-e-algoritmo-de-casteljau]
+     CRU    : operacoes-com-vetores                              conf 0.737 rota=propagado-headings [FILA]
+     PRODUTO: bezier-e-algoritmo-de-casteljau                    [acerta]
+     unidade: unidade-02-fundamentos-matematicos [ERRADA]
+CG   basico3d-py-zip                                (codigo-professor/zip)
+     GOLD   : tecnicas-de-modelagem-3d [extras: varredura]
+     CRU    : operacoes-com-vetores                              conf 1.000 rota=propagado-headings [FILA]
+     PRODUTO: tecnicas-de-modelagem-3d                           [acerta]
+     unidade: unidade-02-fundamentos-matematicos [ERRADA]
+CG   programabasico3d                               (codigo-professor/code)
+     GOLD   : modelos-de-reflexao-ambiente-difusa-especular [extras: modelos-de-iluminacao-luz-pontual-direcional-spot;projecoes]
+     CRU    : metodos-de-sombreamento-flat-gouraud-phong         conf 0.666 rota=rotulo-decomposto [FILA]
+     PRODUTO: metodos-de-sombreamento-flat-gouraud-phong         [ERRA TAMBEM]
+     unidade: unidade-08-sintese-de-imagens-realisticas [certa]
+CG   exercicio-com-animacao                         (listas/html)
+     GOLD   : operacoes-com-vetores [extras: entidades-geometricas]
+     CRU    : algoritmos-de-poligonos                            conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: (vazio)                                            [ERRA TAMBEM]
+     unidade: unidade-02-fundamentos-matematicos [certa]
+CG   matematica                                     (codigo-professor/code)
+     GOLD   : operacoes-com-vetores [extras: entidades-geometricas]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: entidades-geometricas                              [acerta]
+     unidade: unidade-02-fundamentos-matematicos [certa]
+CG   animacao-v2                                    (codigo-professor/zip)
+     GOLD   : (vazio)
+     CRU    : desenho-de-linhas                                  conf 0.920 rota=1a-passada [FILA]
+     PRODUTO: desenho-de-linhas                                  [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d (listas/html)
+     GOLD   : sistema-de-coordenadas-cartesianas
+     CRU    : desenho-de-linhas                                  conf 0.887 rota=1a-passada [CONFIANTE]
+     PRODUTO: desenho-de-linhas                                  [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   instanciamento                                 (outros/pdf)
+     GOLD   : (vazio)
+     CRU    : sistema-de-coordenadas-cartesianas                 conf 0.843 rota=1a-passada [FILA]
+     PRODUTO: 2d-3d-mao-direita-e-mao-esquerda                   [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   mapeamento                                     (outros/pdf)
+     GOLD   : sistema-de-coordenadas-cartesianas
+     CRU    : recorte                                            conf 0.813 rota=1a-passada [FILA]
+     PRODUTO: sistema-de-coordenadas-cartesianas                 [acerta]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   pagina-com-videos-sobre-instanciamento         (outros/html)
+     GOLD   : (vazio)
+     CRU    : desenho-de-linhas                                  conf 0.986 rota=1a-passada [CONFIANTE]
+     PRODUTO: desenho-de-linhas                                  [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   transformacoesgeometricas                      (codigo-professor/zip)
+     GOLD   : (vazio)
+     CRU    : desenho-de-linhas                                  conf 0.862 rota=1a-passada [FILA]
+     PRODUTO: desenho-de-linhas                                  [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   transformacoesgl                               (outros/html)
+     GOLD   : (vazio)
+     CRU    : sistema-de-coordenadas-cartesianas                 conf 0.840 rota=1a-passada [FILA]
+     PRODUTO: sistema-de-coordenadas-cartesianas                 [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   floodfill                                      (listas/html)
+     GOLD   : segmentacao
+     CRU    : cores-e-tipos-de-imagens                           conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: segmentacao                                        [acerta]
+     unidade: unidade-03-processamento-de-imagens-e-visao-computacional [certa]
+CG   remocaoderuido                                 (listas/html)
+     GOLD   : filtros
+     CRU    : cores-e-tipos-de-imagens                           conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: filtros                                            [acerta]
+     unidade: unidade-03-processamento-de-imagens-e-visao-computacional [certa]
+CG   exercicios-sobre-curvas-html                   (listas/html)
+     GOLD   : catmull-rom [extras: representacao-de-curvas-parametricas;bezier-e-algoritmo-de-casteljau]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: bezier-e-algoritmo-de-casteljau                    [acerta]
+     unidade: unidade-02-fundamentos-matematicos [ERRADA]
+CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d-html (listas/html)
+     GOLD   : sistema-de-coordenadas-cartesianas
+     CRU    : desenho-de-linhas                                  conf 0.887 rota=1a-passada [FILA]
+     PRODUTO: desenho-de-linhas                                  [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9 (references/html)
+     GOLD   : entidades-geometricas [extras: operacoes-com-vetores]
+     CRU    : algoritmos-de-poligonos                            conf 0.722 rota=1a-passada [CONFIANTE]
+     PRODUTO: algoritmos-de-poligonos                            [ERRA TAMBEM]
+     unidade: unidade-02-fundamentos-matematicos [certa]
+CG   videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84 (references/html)
+     GOLD   : algoritmos-de-deteccao-e-calculo-de-interseccao
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: algoritmos-de-deteccao-e-calculo-de-interseccao    [acerta]
+     unidade: unidade-02-fundamentos-matematicos [certa]
+CG   pagina-com-videos-sobre-mapeamento-9f410e      (references/html)
+     GOLD   : sistema-de-coordenadas-cartesianas
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: (vazio)                                            [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   video-sobre-mapeamento-em-opengl-1dad3c        (references/url)
+     GOLD   : sistema-de-coordenadas-cartesianas
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: 2d-3d-mao-direita-e-mao-esquerda                   [ERRA TAMBEM]
+     unidade: unidade-04-processo-de-visualizacao-2d [certa]
+CG   video-sobre-prechimento-de-areas-duracao-330-defae7 (references/url)
+     GOLD   : segmentacao
+     CRU    : areas-relacionadas                                 conf 1.000 rota=1a-passada [FILA]
+     PRODUTO: segmentacao                                        [acerta]
+     unidade: unidade-01-introducao-ao-processamento-grafico [ERRADA]
+CG   video-sobre-prechimento-de-areas-duracao-1300-d87e5f (references/url)
+     GOLD   : segmentacao
+     CRU    : cores-e-tipos-de-imagens                           conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: segmentacao                                        [acerta]
+     unidade: unidade-03-processamento-de-imagens-e-visao-computacional [certa]
+CG   paginas-com-videos-sobre-modelagem-geometrica-f2614a (references/html)
+     GOLD   : tecnicas-de-modelagem-3d [extras: formas-de-representacao]
+     CRU    : geometria-solida-construtiva-csg                   conf 0.326 rota=rotulo-decomposto [CONFIANTE]
+     PRODUTO: geometria-solida-construtiva-csg                   [ERRA TAMBEM]
+     unidade: unidade-07-representacao-e-modelagem-de-objetos [certa]
+CG   pagina-com-videos-sobre-visualizacao-3d-35a833 (references/html)
+     GOLD   : pipeline-de-visualizacao-3d [extras: projecoes;conceito-de-camera-sintetica]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: paralela                                           [ERRA TAMBEM]
+     unidade: unidade-06-processo-de-visualizacao-3d [certa]
+FR   01-protocolos-de-rede                          (material-de-aula/pdf)
+     GOLD   : conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia [extras: conceitos-de-redes-de-computadores-e-internet]
+     CRU    : modelos-osi-e-tcpip                                conf 1.000 rota=1a-passada [CONFIANTE]
+     PRODUTO: conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia [acerta]
+     unidade: unidade-01-introducao-a-redes-de-computadores [sem regua]
+FR   unidade1-exercicios                            (listas/pdf)
+     GOLD   : modelos-osi-e-tcpip [extras: conceitos-de-redes-de-computadores-e-internet;conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: modelos-osi-e-tcpip                                [acerta]
+     unidade: unidade-01-introducao-a-redes-de-computadores [sem regua]
+FR   04-camada-de-aplicacao                         (material-de-aula/pdf)
+     GOLD   : funcoes-e-caracteristicas-do-nivel-de-aplicacao [extras: paradigmas-clienteservidor-e-p2p]
+     CRU    : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf 0.673 rota=rotulo-decomposto [CONFIANTE]
+     PRODUTO: paradigmas-clienteservidor-e-p2p                   [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   04-protocolo-http                              (material-de-aula/pdf)
+     GOLD   : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.721 rota=propagado-headings [CONFIANTE]
+     PRODUTO: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   05-protocolo-dns                               (material-de-aula/pdf)
+     GOLD   : protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat
+     CRU    : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap conf 0.800 rota=rotulo-decomposto [CONFIANTE]
+     PRODUTO: protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   unidade2-exercicios-http                       (listas/pdf)
+     GOLD   : protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.713 rota=propagado-headings [CONFIANTE]
+     PRODUTO: protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   08-desenvolvimento-de-aplicacoes               (material-de-aula/pdf)
+     GOLD   : implementacao-de-sockets [extras: paradigmas-clienteservidor-e-p2p]
+     CRU    : (vazio)                                            conf 0.000 rota=1a-passada [FILA]
+     PRODUTO: implementacao-de-sockets                           [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   udp-example-c                                  (codigo-professor/zip)
+     GOLD   : implementacao-de-sockets [extras: protocolo-udp]
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.981 rota=1a-passada [FILA]
+     PRODUTO: implementacao-de-sockets                           [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   udp-example-java                               (codigo-professor/zip)
+     GOLD   : implementacao-de-sockets [extras: protocolo-udp]
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.981 rota=1a-passada [FILA]
+     PRODUTO: implementacao-de-sockets                           [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   tcp-chat-c                                     (codigo-professor/zip)
+     GOLD   : implementacao-de-sockets [extras: protocolo-tcp]
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.981 rota=1a-passada [FILA]
+     PRODUTO: implementacao-de-sockets                           [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+FR   tcp-example                                    (codigo-professor/zip)
+     GOLD   : implementacao-de-sockets [extras: protocolo-tcp]
+     CRU    : paradigmas-clienteservidor-e-p2p                   conf 0.981 rota=1a-passada [FILA]
+     PRODUTO: implementacao-de-sockets                           [acerta]
+     unidade: unidade-02-nivel-de-aplicacao [sem regua]
+
+CSV: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\erros_subunidade_motor_12-09.csv

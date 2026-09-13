@@ -1070,3 +1070,77 @@ o bloco bate a meta de 90% no cru, a unidade fica a menos de 1 ponto, e a subuni
 **O que continua NÃO resolvido, e que o astra tem razão em não deixar passar:** "resta um eixo só" continua excedendo a
 evidência, porque restringir o efeito do vocabulário à subunidade seria uma configuração nova, ainda não medida; e a
 meta **por curso** não passa (MF 89,4% no bloco, SO 73,0% na unidade).
+
+## 22. ATACAR A SUBUNIDADE: o seletor de tópicos carentes, construído e medido (12/09, noite)
+
+Ordem do usuário: *"vamos atacar a subunidade, pois 58% é bem ruim, delegue o astra"*. **O astra bateu o limite de uso
+da conta** (volta 13/09 00:38) e não terminou o plano — mas alcançou a deixar um achado, e é justamente o que destrava
+o seletor. O brief está pronto em `c1-3/brief_codex_astra_atacar_subunidade.md` para quando ele voltar.
+
+### 22.1 O achado dele, verificado: "score > 0" não prova suporte lexical
+
+> *"o scorer pode dar score positivo só pelo bônus estrutural do subtópico. O teste de presença no top-2 precisará
+> exigir contribuição lexical real; caso contrário, contará suporte inexistente."*
+
+Confirmado em `src/builder/timeline/index.py:1935`: **`if kind == "subtopic": score += 0.04`** — incondicional, sem
+nenhum casamento de texto. Os dois seletores que eu havia testado usavam "nunca vence" e "sem alias textual", ambos
+contaminados por isso.
+
+### 22.2 O anatomia dos 105 erros no motor completo (`c1-3/erros_subunidade_motor_12-09.{py,log,csv}`)
+
+105 de 251. **O produto acerta 80 e também erra 25.** 58 são confiantes e 47 estão na fila; 14 têm predição vazia.
+**83 dos 105 estão DENTRO da unidade certa** — dano contido; só 9 vêm com a unidade também errada.
+Por rota: **77 nascem na 1ª passada**, 23 na propagação por headings, 5 no rótulo decomposto.
+**Concentração: 10 pares (curso, tópico) concentram 71 dos 105 = 68%**; o IA sozinho são 2 tópicos (25 + 8).
+
+### 22.3 O seletor, com o critério corrigido (`c1-3/seletor_topicos_carentes_12-09.{py,log,csv}`)
+
+**Critério, nenhum usa gold:** um tópico tem *suporte lexical* se existe pelo menos um material da sua unidade em que o
+scorer registra `exact_hits > 0` (casou uma **frase** do rótulo/alias) ou `overlap ≥ 1` (casou um **token** específico).
+
+| seletor | tópicos marcados | pega dos 10 alvos |
+|---|---|---|
+| "sem alias textual no cru" (antigo) | 144/217 = 66% | 5 |
+| "nunca vence no cru" (antigo) | 137/217 = 63% | 6 |
+| CARENTE-FORTE (nenhum suporte lexical) | 14/171 = 8% | **0** |
+| **CARENTE-FRACO+FORTE (sem suporte por FRASE)** | **70/171 = 41%** | **7** |
+
+O critério novo **marca bem menos e pega mais**. O CARENTE-FORTE puro é inútil para este alvo (os tópicos sem nenhum
+suporte não são os que concentram erro).
+
+**Os 3 alvos que escapam têm suporte por frase** (MF `provadores-de-teoremas` 2, ES2 `estudo-de-caso-...` 6,
+CG `segmentacao` 8): neles o vocabulário existe e **perde a competição** — é outro problema, não ausência.
+
+### 22.4 O ganho do seletor, medido contra o ganho dirigido pelo gold (`c1-3/ganho_do_seletor_12-09.{py,log}`)
+
+Devolvendo vocabulário só nos K tópicos que cada critério aponta (proxy: os sinônimos que o sidecar do LLM já tem
+para aqueles tópicos). Base cru = 147/251 aceito.
+
+| K | SELETOR (sem gold) | dirigido pelo GOLD | custo de não ver o gold |
+|---|---|---|---|
+| 5 | **178 = 70,9%** | 188 = 74,9% | −10 |
+| 10 | 175 = 69,7% | 195 = 77,7% | −20 |
+| 15 | 176 = 70,1% | 202 = 80,5% | −26 |
+| 20 | 173 = 68,9% | 205 = 81,7% | −32 |
+| 30 | 184 = 73,3% | 211 = 84,1% | −27 |
+| 40 | **191 = 76,1%** | 219 = 87,3% | −28 |
+
+**Dois resultados:**
+1. **O seletor cego funciona:** com 5 tópicos curados o cru vai de 58,6% para **70,9%** (+31 materiais). Com 40, 76,1%.
+2. **A curva NÃO é monotônica** — K=10 (175) é pior que K=5 (178), e K=20 (173) é pior ainda. **Curar tópico que não
+   precisa PIORA**, porque alias a mais vira empate no detector (o mesmo mecanismo que fez o teto subir quando tiramos
+   aliases, §11.4). **O seletor tem que ser preciso, não abrangente** — e isso inverte a intuição de "curar mais é
+   melhor", que era como eu vinha pensando o problema.
+
+O top-5 do seletor, que é a fila que um curso novo receberia: IA `modelos-descritivos`, IA `modelos-preditivos`
+(os dois alvos do IA, unidade com 39 materiais), MF `sistema-de-prova`, MF `softwares-de-suporte-a-verificacao-formal`,
+ES2 `conceito-de-devops`.
+
+### 22.5 O que falta (e é o que o astra vai responder quando voltar)
+
+- **Validar o seletor fora da amostra.** O ranking usa "materiais na unidade" como dano potencial, o que não usa gold —
+  mas o *critério* foi desenhado olhando estes 7 cursos. O teste honesto é o LR, que não tem gold de subunidade.
+- **O proxy de curadoria é otimista:** devolver os sinônimos que o LLM já tem não é o mesmo que um curador escrever a
+  lista. A não-monotonicidade sugere que uma lista humana com ruído pode render menos.
+- **Os 3 alvos com suporte por frase** (competição, não ausência) precisam de outra alavanca — provavelmente no scorer.
+- **Os 25 que o produto também erra** continuam sem diagnóstico.
