@@ -856,3 +856,70 @@ prometer "uma passada offline entrega 90/90/90 por R$ X".**
 E um alerta de nomenclatura que vale registrar: o "cru" de hoje remove os aliases do sidecar LLM mas **conserva
 `code_curation.json`** (resumo de código do Gemini) e outros insumos já gerados. **Não é ausência de toda contribuição
 anterior de LLM** — é uma ablação de aliases.
+
+## 19. OS 3 EIXOS COM O MOTOR COMPLETO, POR CONFIGURAÇÃO (12/09, noite) — o buraco é UM eixo só
+
+O passo que faltava: até aqui o regime cru só tinha número de subunidade, porque o replay herda `computed_unit_slug` e
+`temporal_block_id` do manifest do produto. Aqui o motor roda **inteiro** (`reprocess_assignments.reprocess`) em cópia,
+uma configuração por vez.
+
+**Guardas:** cópia em `.motor3eixos/` (nunca `.ablacao/`, que é a régua congelada — verificado intacto depois);
+`use_llm_voter=False` nas três; **rede bloqueada no processo** (qualquer chamada levanta `RuntimeError`), e as três
+rodaram sem exceção: **0 chamadas**; voter confirmado off pelo manifest (nenhum `temporal_block_method: llm` nas cópias,
+contra 1 no produto do TCC). Instrumento: `c1-3/motor_3eixos_12-09.py` + `c1-3/mede_3eixos_12-09.py`
+(validado contra o produto: reproduz 99,2% / 92,6% / 89,2% exatos). Log: `c1-3/motor_3eixos_12-09.log`.
+
+### 19.1 A tabela
+
+Acurácia **TOTAL** (todo material avaliável no denominador; abster não tira ninguém):
+
+| eixo | (1) NU<br>sem curadoria, sem vocab | (2) RÉGUA<br>curadoria humana, sem vocab | (3) VOCAB<br>+ vocab LLM, sem voter | (4) PRODUTO<br>+ voter |
+|---|---|---|---|---|
+| **bloco** (237) | 221 = **93,2%** | 222 = **93,7%** | 221 = 93,2% | 235 = **99,2%** |
+| **unidade** (284) | 244 = 85,9% | 253 = **89,1%** | 255 = 89,8% | 263 = **92,6%** |
+| **subunidade aceito** (251) | 123 = 49,0% | 145 = 57,8% | 220 = 87,6% | 224 = **89,2%** |
+| subunidade primário (251) | 84 = 33,5% | 103 = 41,0% | 184 = 73,3% | 186 = 74,1% |
+| *cobertura (não vai para a fila)* | *54,2%* | *56,2–62,0%* | *58,2–68,4%* | *76,9–79,7%* |
+
+### 19.2 O que cada camada compra (em pontos de acurácia total)
+
+| camada | bloco | unidade | subunidade |
+|---|---|---|---|
+| curadoria humana (1 → 2) | +0,5 | **+3,2** | +8,8 |
+| vocabulário do LLM (2 → 3) | −0,5 | +0,7 | **+29,8** |
+| voter do LLM (3 → 4) | **+6,0** | +2,8 | +1,6 |
+
+**Leitura, contra a meta de 90%:**
+- **BLOCO: a meta JÁ está batida no motor cru** — 93,2% sem nada, 93,7% com curadoria humana. O voter compra os 6
+  pontos que levam a 99,2%, mas 90% não precisa dele.
+- **UNIDADE: falta menos de 1 ponto** — 89,1% no regime régua contra a meta de 90%. São **3 materiais** de 284.
+- **SUBUNIDADE: é o único eixo longe** — 57,8% contra 90%. E é o único em que o vocabulário do LLM é decisivo (+29,8).
+
+**Consequência para o plano: a frente "aumentar o cru" é, na verdade, uma frente de UM eixo.** Bloco e unidade
+praticamente já cumprem a meta sem nenhuma API; a subunidade é o buraco inteiro.
+
+### 19.3 Por curso (acurácia total), configuração RÉGUA
+
+| curso | bloco | unidade | subunidade |
+|---|---|---|---|
+| MF | 89,4% | 92,4% | 79,3% |
+| SO | 92,3% | **73,0%** | 60,0% |
+| IA | 97,6% | 100,0% | **12,8%** |
+| ES2 | 96,4% | 85,7% | 64,3% |
+| TCC | 96,3% | 100,0% | 72,7% |
+| CG | 94,3% | 87,1% | 63,4% |
+| FR | — | — | 38,9% |
+
+O IA continua sendo o caso extremo da subunidade (12,8%) **com unidade em 100%** — o material está na pasta certa e no
+subtópico errado. E a unidade do SO (73,0%) é o pior número do eixo unidade: vale olhar antes de mexer em subunidade,
+porque erro de unidade custa mais (§1 do brief do produto).
+
+### 19.4 Ressalvas honestas
+
+- **A cobertura cai muito no cru** (54–62% contra 77–80% no produto): mais material vai para a fila. A acurácia total já
+  conta isso (o que a fila acerta entra no numerador), mas o custo de revisão sobe — e o preço da fila só está medido
+  para o produto (4,8 materiais por correção, §15.3).
+- **`nu` não é "sem LLM nenhum"**: `code_curation.json` (resumo de código do Gemini) continua na cópia, e o markdown do
+  acervo já foi gerado com os pipelines de sempre. É ablação de curadoria e de vocabulário, não um gerador virgem.
+- As bases dos três eixos são diferentes (237 / 284 / 251) e **isto não mede acerto simultâneo nos três** — um material
+  pode acertar bloco e errar subunidade. A coluna "qualquer eixo" existe no calibra e não foi recalculada aqui.
