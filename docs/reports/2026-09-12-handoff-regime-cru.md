@@ -877,8 +877,8 @@ Acurácia **TOTAL** (todo material avaliável no denominador; abster não tira n
 |---|---|---|---|---|
 | **bloco** (237) | 221 = **93,2%** | 222 = **93,7%** | 221 = 93,2% | 235 = **99,2%** |
 | **unidade** (284) | 244 = 85,9% | 253 = **89,1%** | 255 = 89,8% | 263 = **92,6%** |
-| **subunidade aceito** (251) | 123 = 49,0% | 145 = 57,8% | 220 = 87,6% | 224 = **89,2%** |
-| subunidade primário (251) | 84 = 33,5% | 103 = 41,0% | 184 = 73,3% | 186 = 74,1% |
+| **subunidade aceito** (251) | 125 = 49,8% | 146 = 58,2% | 220 = 87,6% | 224 = **89,2%** | *(corrigido na §20: o cache de resumo de codigo vazava vocabulario)*
+| subunidade primário (251) | 85 = 33,9% | 103 = 41,0% | 184 = 73,3% | 186 = 74,1% |
 | *cobertura (não vai para a fila)* | *54,2%* | *56,2–62,0%* | *58,2–68,4%* | *76,9–79,7%* |
 
 ### 19.2 O que cada camada compra (em pontos de acurácia total)
@@ -923,3 +923,74 @@ porque erro de unidade custa mais (§1 do brief do produto).
   acervo já foi gerado com os pipelines de sempre. É ablação de curadoria e de vocabulário, não um gerador virgem.
 - As bases dos três eixos são diferentes (237 / 284 / 251) e **isto não mede acerto simultâneo nos três** — um material
   pode acertar bloco e errar subunidade. A coluna "qualquer eixo" existe no calibra e não foi recalculada aqui.
+
+## 20. O ASTRA REVISOU A MEDIÇÃO DOS 3 EIXOS — o isolamento estava furado, e eu consertei (12/09, noite)
+
+Brief: `c1-3/brief_codex_astra_3eixos.md`. Resposta: `c1-3/resposta_codex_astra_3eixos.md` (114.674 tokens).
+**Veredito: "as contagens conferem; a conclusão 'resta só um eixo' não. O isolamento do vocabulário está incompleto."**
+
+### 20.1 Os três furos que ele achou — os três procedem
+
+**(a) O cache de resumo de código preservava o vocabulário que eu removi.** `code_summarization.course_aliases()` lê a
+taxonomia **e** o sidecar do LLM, mas `compute_entry_hash` faz hash só do **texto do bundle** — então vetar aliases
+**não invalida o resumo salvo**. Medi eu mesmo: dos 1.453 conceitos gravados nos 42 registros dos 7 cursos, **202 são
+aliases que só existem por causa do sidecar LLM** (CG 134, ES2 45, IA 9, FR 9, MF 5), e **37 dos 42 registros estão no
+gold de 251**. Era o mesmo tipo de vazamento do bug de escopo do replay (§11.1), em outro lugar.
+
+**(b) "Terminou sem exceção ⇒ 0 chamadas" NÃO era prova.** A camada de vocabulário
+(`pedagogical_regeneration.py:104`) **captura** a exceção e deixa a execução seguir — uma tentativa bloqueada passaria
+despercebida. E a mensagem "0 chamadas" do meu driver era **texto fixo, sem contador**.
+
+**(c) O veto na taxonomia compilada não é idêntico ao veto do replay.** O reprocess reconstrói a taxonomia depois da
+edição; ele contou 30 ocorrências de termos vetados que reaparecem (MF 14, SO 4, IA 4, ES2 5, TCC 3) — podem vir
+legitimamente do plano, de headings ou da curadoria humana, mas **coincidência de texto não prova origem**, e o replay
+elimina por texto independentemente da origem. São duas intervenções diferentes.
+
+### 20.2 O conserto e a remedição
+
+`motor_3eixos_12-09.py` ganhou: **`zera_cache_de_codigo()`** (nas configurações sem vocabulário, o `code_curation.json`
+da cópia é esvaziado e o reprocess regenera os resumos com a taxonomia já vetada — `synthesize_all_code_entries` é
+determinístico) e um **contador real de tentativas de rede** (o guard registra o stack e o número impresso vem do
+contador). Log da remedição: `c1-3/motor_3eixos_v2_12-09.log`.
+
+| eixo | (1) NU | (2) RÉGUA | (3) VOCAB | (4) PRODUTO |
+|---|---|---|---|---|
+| bloco (237) | 221 = 93,2% | 222 = **93,7%** | 221 = 93,2% | 235 = **99,2%** |
+| unidade (284) | 244 = 85,9% | 253 = **89,1%** | 255 = 89,8% | 263 = **92,6%** |
+| subunidade aceito (251) | **125 = 49,8%** | **146 = 58,2%** | 220 = 87,6% | 224 = **89,2%** |
+| subunidade primário | 85 = 33,9% | 103 = 41,0% | 184 = 73,3% | 186 = 74,1% |
+
+**Tentativas de rede bloqueadas: 0, 0 e 0** — agora medido por contador, não afirmado.
+
+**Efeito do vazamento, medido:** +2 materiais no `nu` (123 → 125) e +1 na `régua` (145 → 146), **no sentido contrário ao
+esperado** — o cru ficou levemente *melhor* sem o cache contaminado. Bloco e unidade não mudaram nenhum dígito.
+**As conclusões principais sobrevivem**, e agora sobre um experimento isolado.
+
+Deltas corrigidos (o astra apontou meu arredondamento): curadoria humana **+0,4 / +3,2 / +8,4**; vocabulário
+**−0,4 / +0,7 / +29,4**; voter **+5,9 / +2,8 / +1,6**.
+
+### 20.3 O que ele derrubou nas minhas conclusões (e eu aceito)
+
+- **"Resta um eixo só" excede a evidência.** Priorizar subunidade faz sentido; concluir que só ela precisa de LLM, não —
+  os aliases alimentam taxonomia, resumos e decisões anteriores, e restringir o efeito deles à subunidade seria uma
+  configuração nova, **ainda não medida**.
+- **"Os 10 são a única alavanca da unidade" é inferência errada.** O produto também errar **não estabelece teto**: os
+  dois podem compartilhar uma falha determinística. Os 10 desacordos servem de diagnóstico, não de fronteira.
+- **"Bloco resolvido" excede o dado.** 93,7% confere e não é efeito dos pinos manuais (sem eles, 216/231 = 93,5%). Mas:
+  o CG tem **93 entradas e só 35 avaliadas em bloco** (13 linhas do CSV foram excluídas por "seção sem bloco casado" —
+  justamente casos difíceis), o FR não participa desse eixo, e **os UUIDs dos 35 golds de bloco do CG não existem no
+  índice atual** (o medidor aceita o id posicional). Isso precisa ser validado antes de tratar esses acertos como
+  identidade temporal confirmada. E o MF fica em 89,4%: **a meta agregada passa, uma meta por curso não**.
+- **A atribuição VOCAB → PRODUTO ao voter não é limpa:** a 4ª coluna é um produto salvo, sem braço contemporâneo
+  reprocessado nas mesmas condições. O delta é válido; a causa ainda não.
+- Correções numéricas dele que confirmei: cobertura de unidade no produto = **76,1%** (eu disse 76,9%); aliases vetados
+  **51–98** por curso (eu disse 85–98).
+
+### 20.4 O que ele recomenda como próximo passo
+
+**"Corrigir o experimento antes do motor"** — e os itens (a) e (b) já foram corrigidos acima. Restam três:
+1. **Validar a correspondência dos UUIDs do gold de bloco do CG** com o índice atual, antes de contar aqueles 35 acertos.
+2. **Decidir e declarar o que a ablação remove**: a *fonte* LLM, ou *qualquer termo coincidente*? São coisas diferentes,
+   e hoje o replay faz uma e o driver faz a outra.
+3. **Incluir o quarto braço equivalente**, com voter ligado e reprocessado nas mesmas condições, para a atribuição
+   causal do voter parar de depender de um produto salvo.

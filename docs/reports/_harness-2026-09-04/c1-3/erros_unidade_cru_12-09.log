@@ -1,0 +1,169 @@
+ERROS DE UNIDADE no regime cru (configuracao 'regua'): 31
+  o PRODUTO acerta 10 deles e tambem erra 21
+  na fila do cru (o motor avisou): 28 · confiantes e errados: 3
+  com conflito unidade x bloco marcado: 17
+
+por curso:
+  MF      5  (produto acerta  0 · na fila  4)
+  SO     10  (produto acerta  2 · na fila  9)
+  ES2     4  (produto acerta  0 · na fila  3)
+  CG     12  (produto acerta  8 · na fila 12)
+
+============================================================================================================================================
+MF   t1-2026-1                                    (trabalhos)
+     GOLD   : unidade-01-metodos-formais
+     CRU    : unidade-02-verificacao-de-programas                      [FILA, conflito]
+     PRODUTO: unidade-02-verificacao-de-programas                      [ERRA TAMBEM]
+     bloco  : c9f5f7cf-3477-4531-be7a-f7b68727009c (due-contain)
+MF   t1-2026-1-thy                                (codigo-professor)
+     GOLD   : unidade-01-metodos-formais
+     CRU    : unidade-02-verificacao-de-programas                      [FILA]
+     PRODUTO: unidade-02-verificacao-de-programas                      [ERRA TAMBEM]
+     bloco  : c9f5f7cf-3477-4531-be7a-f7b68727009c (due-contain)
+MF   aws-encryption-sdk                           (bibliografia)
+     GOLD   : unidade-02-verificacao-de-programas
+     CRU    : unidade-01-metodos-formais                               [CONFIANTE]
+     PRODUTO: unidade-01-metodos-formais                               [ERRA TAMBEM]
+     bloco  : c4bf9e4c-80f8-4e57-b2b1-a943c6656e52 (ref-generica)
+MF   eth2                                         (bibliografia)
+     GOLD   : unidade-02-verificacao-de-programas
+     CRU    : unidade-01-metodos-formais                               [FILA, conflito]
+     PRODUTO: unidade-01-metodos-formais                               [ERRA TAMBEM]
+     bloco  : c4bf9e4c-80f8-4e57-b2b1-a943c6656e52 (ref-generica)
+MF   t2-2026-1                                    (trabalhos)
+     GOLD   : unidade-02-verificacao-de-programas
+     CRU    : unidade-03-verificacao-de-modelos                        [FILA, conflito]
+     PRODUTO: unidade-03-verificacao-de-modelos                        [ERRA TAMBEM]
+     bloco  : 37d49c0d-3cc1-4a8b-add6-d82ea868ec52 (due-straddle)
+SO   0704-laminas-comunicacao-e-sincronizacao     (material-de-aula)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-04-deadlock                                      [FILA, conflito]
+     PRODUTO: unidade-04-deadlock                                      [ERRA TAMBEM]
+     bloco  : 1945c228-4ca2-4a76-8d63-47c804459ecd (janela-1)
+SO   0904-laminas-semaforos                       (outros)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-04-deadlock                                      [FILA, conflito]
+     PRODUTO: unidade-04-deadlock                                      [ERRA TAMBEM]
+     bloco  : 1945c228-4ca2-4a76-8d63-47c804459ecd (janela-1)
+SO   3103-threads                                 (material-de-aula)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-02-gerencia-do-processador                       [FILA, conflito]
+     PRODUTO: unidade-02-gerencia-do-processador                       [ERRA TAMBEM]
+     bloco  : e4f7e22a-e091-46f8-b70e-a65f387dbf84 (janela-1)
+SO   biblioteca-em-c-pthread                      (bibliografia)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-02-gerencia-do-processador                       [FILA, conflito]
+     PRODUTO: unidade-02-gerencia-do-processador                       [ERRA TAMBEM]
+     bloco  : e4f7e22a-e091-46f8-b70e-a65f387dbf84 (janela-1)
+SO   laminas-cs-4244-internet-programming-sockets-programming (bibliografia)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-04-deadlock                                      [FILA]
+     PRODUTO: unidade-03-programacao-concorrente                       [acerta]
+     bloco  : 1945c228-4ca2-4a76-8d63-47c804459ecd (disamb)
+SO   laminas-sockets-material-alternativo-em-pt   (bibliografia)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-04-deadlock                                      [FILA, conflito]
+     PRODUTO: unidade-03-programacao-concorrente                       [acerta]
+     bloco  : 1945c228-4ca2-4a76-8d63-47c804459ecd (disamb)
+SO   0704-exemplo-threads-em-java                 (codigo-professor)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-04-deadlock                                      [FILA, conflito]
+     PRODUTO: unidade-04-deadlock                                      [ERRA TAMBEM]
+     bloco  : 1945c228-4ca2-4a76-8d63-47c804459ecd (janela-1)
+SO   exemplo-threads-em-c-exemplo1                (codigo-professor)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-02-gerencia-do-processador                       [FILA, conflito]
+     PRODUTO: unidade-02-gerencia-do-processador                       [ERRA TAMBEM]
+     bloco  : e4f7e22a-e091-46f8-b70e-a65f387dbf84 (janela-1)
+SO   exemplo-threads-em-c-exemplo2                (codigo-professor)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-02-gerencia-do-processador                       [FILA, conflito]
+     PRODUTO: unidade-02-gerencia-do-processador                       [ERRA TAMBEM]
+     bloco  : e4f7e22a-e091-46f8-b70e-a65f387dbf84 (janela-1)
+SO   exemplo-threads-em-c-exemplo3                (codigo-professor)
+     GOLD   : unidade-03-programacao-concorrente
+     CRU    : unidade-02-gerencia-do-processador                       [CONFIANTE]
+     PRODUTO: unidade-02-gerencia-do-processador                       [ERRA TAMBEM]
+     bloco  : e4f7e22a-e091-46f8-b70e-a65f387dbf84 (janela-1)
+ES2  azure                                        (material-de-aula)
+     GOLD   : unidade-01-arquitetura-de-software
+     CRU    : unidade-02-integracao-de-desenvolvimento-e-operacao-devops [CONFIANTE]
+     PRODUTO: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [ERRA TAMBEM]
+     bloco  : a803a9f7-5aa5-4629-8b93-4531b56119bc (janela-1)
+ES2  microsservicos4                              (material-de-aula)
+     GOLD   : unidade-01-arquitetura-de-software
+     CRU    : unidade-02-integracao-de-desenvolvimento-e-operacao-devops [FILA, conflito]
+     PRODUTO: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [ERRA TAMBEM]
+     bloco  : a0d38bad-e123-4b82-b8d0-03f6724b9617 (janela-1)
+ES2  microsservicos5                              (material-de-aula)
+     GOLD   : unidade-01-arquitetura-de-software
+     CRU    : unidade-02-integracao-de-desenvolvimento-e-operacao-devops [FILA, conflito]
+     PRODUTO: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [ERRA TAMBEM]
+     bloco  : a803a9f7-5aa5-4629-8b93-4531b56119bc (janela-1)
+ES2  microsservicos7                              (material-de-aula)
+     GOLD   : unidade-01-arquitetura-de-software
+     CRU    : unidade-02-integracao-de-desenvolvimento-e-operacao-devops [FILA, conflito]
+     PRODUTO: unidade-02-integracao-de-desenvolvimento-e-operacao-devops [ERRA TAMBEM]
+     bloco  : f5d645cb-1de3-4538-a03c-a3fce86b4c41 (titulo-topico)
+CG   basico3d-cpp                                 (codigo-professor)
+     GOLD   : unidade-07-representacao-e-modelagem-de-objetos
+     CRU    : unidade-02-fundamentos-matematicos                       [FILA]
+     PRODUTO: unidade-07-representacao-e-modelagem-de-objetos          [acerta]
+     bloco  : 480eecdb-56b8-4ac5-95a5-abef623a0fd4 (disamb)
+CG   basico3d-py-zip                              (codigo-professor)
+     GOLD   : unidade-07-representacao-e-modelagem-de-objetos
+     CRU    : unidade-02-fundamentos-matematicos                       [FILA]
+     PRODUTO: unidade-07-representacao-e-modelagem-de-objetos          [acerta]
+     bloco  : 480eecdb-56b8-4ac5-95a5-abef623a0fd4 (disamb)
+CG   exemplodemanipulacaodeimagens                (codigo-professor)
+     GOLD   : unidade-03-processamento-de-imagens-e-visao-computacional
+     CRU    : unidade-02-fundamentos-matematicos                       [FILA]
+     PRODUTO: unidade-02-fundamentos-matematicos                       [ERRA TAMBEM]
+     bloco  : 0c911e45-81bf-4cfc-9342-da8d0eb7951f (disamb)
+CG   maptextures                                  (outros)
+     GOLD   : unidade-08-sintese-de-imagens-realisticas
+     CRU    : unidade-04-processo-de-visualizacao-2d                   [FILA, conflito]
+     PRODUTO: unidade-04-processo-de-visualizacao-2d                   [ERRA TAMBEM]
+     bloco  : 14a90fef-a45d-4fa9-a612-4e555445ae6f (janela-1)
+CG   pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3 (references)
+     GOLD   : unidade-08-sintese-de-imagens-realisticas
+     CRU    : unidade-04-processo-de-visualizacao-2d                   [FILA, conflito]
+     PRODUTO: unidade-04-processo-de-visualizacao-2d                   [ERRA TAMBEM]
+     bloco  : 14a90fef-a45d-4fa9-a612-4e555445ae6f (janela-1)
+CG   resolucao-de-prova-de-computacao-grafica-2d  (provas)
+     GOLD   : unidade-04-processo-de-visualizacao-2d
+     CRU    : unidade-08-sintese-de-imagens-realisticas                [FILA]
+     PRODUTO: unidade-04-processo-de-visualizacao-2d                   [acerta]
+     bloco  :  ()
+CG   resolucao-de-prova-de-computacao-grafica-2d-html (provas)
+     GOLD   : unidade-04-processo-de-visualizacao-2d
+     CRU    : unidade-08-sintese-de-imagens-realisticas                [FILA]
+     PRODUTO: unidade-04-processo-de-visualizacao-2d                   [acerta]
+     bloco  :  ()
+CG   texturas-v3                                  (codigo-professor)
+     GOLD   : unidade-08-sintese-de-imagens-realisticas
+     CRU    : unidade-01-introducao-ao-processamento-grafico           [FILA]
+     PRODUTO: unidade-01-introducao-ao-processamento-grafico           [ERRA TAMBEM]
+     bloco  : 21eb1cc4-d276-4bc2-8072-acd7e6606256 (janela-1)
+CG   exercicios-sobre-curvas-html                 (listas)
+     GOLD   : unidade-07-representacao-e-modelagem-de-objetos
+     CRU    : unidade-02-fundamentos-matematicos                       [FILA, conflito]
+     PRODUTO: unidade-07-representacao-e-modelagem-de-objetos          [acerta]
+     bloco  :  ()
+CG   atividade                                    (outros)
+     GOLD   : unidade-06-processo-de-visualizacao-3d
+     CRU    : unidade-04-processo-de-visualizacao-2d                   [FILA]
+     PRODUTO: unidade-06-processo-de-visualizacao-3d                   [acerta]
+     bloco  : 5481ee2c-d9a5-45bb-b325-ac5b378462ab (disamb-curto)
+CG   video-sobre-prechimento-de-areas-duracao-330-defae7 (references)
+     GOLD   : unidade-03-processamento-de-imagens-e-visao-computacional
+     CRU    : unidade-01-introducao-ao-processamento-grafico           [FILA]
+     PRODUTO: unidade-03-processamento-de-imagens-e-visao-computacional [acerta]
+     bloco  : 7eda873a-69bf-4af7-90c9-4507782af5bb (disamb)
+CG   resolucao-de-prova-de-computacao-grafica-3d  (provas)
+     GOLD   : unidade-06-processo-de-visualizacao-3d | unidade-07-representacao-e-modelagem-de-objetos | unidade-08-sintese-de-imagens-realisticas
+     CRU    : unidade-04-processo-de-visualizacao-2d                   [FILA]
+     PRODUTO: unidade-08-sintese-de-imagens-realisticas                [acerta]
+     bloco  :  ()
+
+CSV: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\erros_unidade_cru_12-09.csv

@@ -44,9 +44,20 @@ NOMES = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA
          "FR": "Fundamentos-de-Redes-Tutor"}
 
 
+TENTATIVAS = []
+
+
 def bloqueia_rede():
-    """Qualquer chamada de rede vira erro. E a prova de que a medicao nao gastou credito."""
+    """Qualquer chamada de rede vira erro E FICA REGISTRADA.
+
+    12/09 tarde, correcao do astra: "terminou sem excecao -> 0 chamadas" NAO e prova. A camada de vocabulario
+    (`pedagogical_regeneration.py:104`) CAPTURA a excecao e deixa a execucao continuar, entao uma tentativa bloqueada
+    passa despercebida e o driver imprimia "0 chamadas" como texto fixo. Agora o guard conta, e o numero impresso vem
+    do contador.
+    """
     def _nao(*a, **k):
+        import traceback
+        TENTATIVAS.append("".join(traceback.format_stack(limit=8)))
         raise RuntimeError("REDE BLOQUEADA: a medicao dos 3 eixos nao pode chamar API")
     socket.socket.connect = _nao
     socket.create_connection = _nao
@@ -100,6 +111,27 @@ def taxonomia_sem_llm(sig):
     return n
 
 
+def zera_cache_de_codigo(sig):
+    """Invalida o `code_curation.json` da copia nas configuracoes sem vocabulario.
+
+    12/09 noite, achado do astra e confirmado por mim: o resumo deterministico de codigo (`determ-v3`) usa
+    `code_summarization.course_aliases`, que le a taxonomia E o sidecar do LLM — mas o cache e por hash do TEXTO do
+    bundle (`compute_entry_hash`), nao dos aliases. Entao vetar aliases NAO invalida o resumo, e o regime "cru" ficava
+    com vocabulario de LLM dentro: medido, **202 conceitos** salvos nos 42 registros dos 7 cursos sao aliases que so
+    existem por causa do sidecar (CG 134, ES2 45, IA 9, FR 9, MF 5), e 37 dos 42 registros estao no gold de 251.
+    Zerando o arquivo, o reprocess regenera os resumos com a taxonomia JA vetada (`synthesize_all_code_entries` e
+    deterministico e declara "0 chamadas").
+    """
+    p = DEST / NOMES[sig] / "code_curation.json"
+    if not p.exists():
+        return 0
+    d = json.loads(p.read_text(encoding="utf-8"))
+    n = len(d.get("entries") or {})
+    d["entries"] = {}
+    p.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    return n
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", choices=["nu", "regua", "vocab"], required=True)
@@ -126,15 +158,28 @@ def main(argv=None):
         for sig in sigs:
             prepara(sig, a.config)
             n = taxonomia_sem_llm(sig) if a.config in ("nu", "regua") else 0
-            print(f"  [{a.config}] {sig}: copia pronta{f', {n} aliases do LLM vetados na taxonomia' if n else ''}", flush=True)
+            z = zera_cache_de_codigo(sig) if a.config in ("nu", "regua") else 0
+            print(f"  [{a.config}] {sig}: copia pronta"
+                  f"{f', {n} aliases do LLM vetados na taxonomia' if n else ''}"
+                  f"{f', cache de {z} resumos de codigo zerado (sera regenerado sem o vocab)' if z else ''}", flush=True)
         bloqueia_rede()   # so depois do robocopy (que e local, mas o guard e por processo)
         for sig in sigs:
             t1 = time.time()
             ra.reprocess(DEST / NOMES[sig], [])
             print(f"  [{a.config}] {sig}: reprocess {time.time() - t1:.0f}s", flush=True)
-        print(f"reprocess x{len(sigs)} em {time.time() - t0:.0f}s (rede bloqueada: 0 chamadas)", flush=True)
+        print(f"reprocess x{len(sigs)} em {time.time() - t0:.0f}s · "
+              f"TENTATIVAS DE REDE BLOQUEADAS: {len(TENTATIVAS)}", flush=True)
+        for i, tb in enumerate(TENTATIVAS[:3], 1):
+            print(f"  --- tentativa {i} (stack) ---\n{tb}", flush=True)
+        # Marcador: a copia guarda UMA configuracao por vez e a seguinte sobrescreve. Sem isto e facil ler a copia
+        # achando que ela esta na configuracao anterior (aconteceu em 12/09 com a lista de erros de unidade).
+        (DEST / "_CONFIG_ATUAL.txt").write_text(
+            a.config + "\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
 
     print()
+    marc = DEST / "_CONFIG_ATUAL.txt"
+    if a.so_medir and marc.exists():
+        print(f"(a copia em disco esta na configuracao: {marc.read_text(encoding='utf-8').splitlines()[0]})")
     print(f"=== 3 EIXOS — configuracao '{a.config}' (voter OFF), copia em {DEST} ===")
     os.environ["TUTOR_REPOS_DIR"] = str(DEST)
     import subprocess
