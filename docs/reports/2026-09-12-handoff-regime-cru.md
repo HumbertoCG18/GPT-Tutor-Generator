@@ -1666,3 +1666,90 @@ três braços."* E não reabrir precedência — medir o trajeto completo do ali
 
 **O próximo passo que as duas corridas nomeiam:** *"congelar os sidecars por entrada e proveniência. O snapshot atual
 já contradiz a premissa 'todo o preservado veio do professor, sem seleção pelo benchmark'."*
+
+## 29. OS SIDECARS CONGELADOS POR ENTRADA E PROVENIÊNCIA — e o cru perde 1,6 ponto (13/09)
+
+Ordem do usuário: *"faça agora"* — o passo que as duas corridas do astra nomearam como próximo.
+Instrumento: `c1-3/congela_sidecars_13-09.{py,csv,log}` e `c1-3/sem_curadoria_benchmark_13-09.log`.
+Rede bloqueada e contada: **0 tentativas** nos três braços. `.ablacao/` verificada intacta depois.
+
+### 29.1 O inventário: 628 pares (tópico, termo), e **0 sem proveniência**
+
+A classe sai do metadado que a própria entrada carrega — não de julgamento meu.
+
+| classe | termos | tópicos | cursos |
+|---|---|---|---|
+| `auto-professor` (script de 07/09, fontes do professor) | 60 | 9 | ES2, IA, SO, TCC |
+| **`benchmark`** (a `_nota` diz que foi MEDIDA contra a régua antes de entrar) | **6** | 5 | CG, ES2 |
+| **`veto`** (remoção, também medida) | **2** | 1 | SO |
+| `llm-compilado` (1 chamada por unidade) | 560 | 114 | os 8 |
+| `sem-metadado` | **0** | — | — |
+
+**O critério de parada nº 1 do astra passa:** *"parar se houver artefato sem origem identificável"* — não há.
+
+**Nominal, o que entrou no "cru" depois de ser medido:**
+
+| classe | curso | tópico | termo | o que a `_nota` diz |
+|---|---|---|---|---|
+| benchmark | CG | `7.1.1.4 Catmull-Rom` | `Catmull-Rom` | *"E4 curvas +2 (exercicios-sobre-curvas x2), 0 perdas"* |
+| benchmark | CG | `7.1.1.1 Bézier e Casteljau` | `Bézier`, `Casteljau` | idem |
+| benchmark | CG | `7.1.1 Curvas Paramétricas` | `Curvas Paramétricas` | idem |
+| benchmark | CG | `1.4 Aplicações` | `OpenGL` | *"ruling do user 11/09: OpenGL = u01 ... Medido: só 'OpenGL' em 1.4 -> u01"* |
+| benchmark | ES2 | `1.5 Estudo de caso` | `gateway` | *"E5 só 'gateway' +1, 0 perdas; 'microsservicos' rejeitado como ajuste ao gold"* |
+| veto | SO | `3.1 Conceitos básicos` | `Comunicação entre Processos`, `Pipes` | *"veto 12/09 (user, orch-fix-defect)"* |
+
+### 29.2 A medição: três braços do motor COMPLETO, na mesma cópia, na mesma sessão
+
+O braço A é reprodução do baseline — sem ele o delta dependeria do log de ontem.
+
+| eixo | **A: régua (baseline)** | **C: sem o que o PLACAR escolheu** | **B: sem também o ruling do usuário** |
+|---|---|---|---|
+| bloco (237) | 222 = **93,7%** | 222 = **93,7%** | 222 = **93,7%** |
+| unidade (284) | 253 = **89,1%** | 253 = **89,1%** | 248 = **87,3%** |
+| subunidade (251) | 146 = **58,2%** | **142 = 56,6%** | 137 = **54,6%** |
+| subunid. primário | 103 = 41,0% | 100 = 39,8% | 95 = 37,8% |
+
+**O braço A reproduz o log de 12/09 dígito a dígito** (222 / 253 / 146 / 103). O baseline é reprodutível.
+
+### 29.3 A separação é limpa, e cada peça faz uma coisa só
+
+| o que foi removido | unidade | subunidade | onde |
+|---|---|---|---|
+| **ruling do usuário** (`OpenGL`, 1 termo) | **−5** | **−5** | CG |
+| **curadoria escolhida pelo placar** (4 curvas do CG + `gateway` do ES2) | 0 | **−4** | CG −2, ES2 −2 |
+| **veto do SO** (2 termos) | 0 | 0 | **inerte no cru** |
+
+Três leituras que decorrem disso:
+
+1. **O eixo unidade NÃO está contaminado por seleção do benchmark.** Os 5 materiais de unidade vêm inteiros do
+   *ruling* do usuário sobre o OpenGL — decisão de produto do dono do curso, que um curso novo também teria. O
+   **89,1% se mantém**.
+2. **O eixo subunidade carrega +4 escolhidos por render ponto contra a régua.** O número honesto do cru é
+   **142/251 = 56,6%**, não 58,2%. É 1,6 ponto, mas é exatamente o tipo de ganho que o LOCO mostrou não transferir.
+3. **O veto do SO é inerte no regime cru**, como o loader já previa (`repo.py:1740-1746`: ele veta termos que o
+   compilador LLM doou, e no cru o sidecar LLM está desligado). A medição confirma: SO idêntico nos três braços.
+
+**E o efeito real é maior do que as notas declaravam.** As `_nota` diziam "+2 curvas" e "+1 gateway"; no motor
+completo os 6 termos valem **5 de unidade e 9 de subunidade**, porque o efeito propaga para a reconciliação de
+unidade — o que foi medido no replay subestima o que acontece no motor inteiro.
+
+### 29.4 O placar do cru, corrigido
+
+**Adoto o braço C como o cru de registro: 93,7% bloco · 89,1% unidade · 56,6% subunidade.**
+Critério: curadoria humana é insumo legítimo do regime (o professor/dono decide, e um curso novo também teria isso);
+curadoria **escolhida medindo contra a régua** não é — em curso novo não existe régua para escolher por ela.
+
+| eixo | cru publicado até agora | **cru honesto** | meta |
+|---|---|---|---|
+| bloco | 93,7% | **93,7%** | ✅ bate |
+| unidade | 89,1% | **89,1%** | faltam 3 materiais |
+| subunidade | 58,2% | **56,6%** | faltam **84** materiais |
+
+O buraco da subunidade cresce de 79 para **84 materiais**. Nada muda na conclusão estrutural — continua sendo um
+eixo só, e o mecanismo continua sendo vocabulário.
+
+### 29.5 O que este passo autoriza
+
+Os dois critérios de parada do passo 1 do astra estão satisfeitos: **baseline reproduz** e **não há artefato sem
+origem identificável**. O passo 2 (produzir candidatos de vocabulário com orçamento fixo) está liberado — e agora
+com a linha de base certa, que é 142, não 146.

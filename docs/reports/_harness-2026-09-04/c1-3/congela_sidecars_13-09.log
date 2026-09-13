@@ -1,0 +1,28 @@
+CONGELADO: 628 pares (topico, termo) em congela_sidecars_13-09.csv
+
+classe              termos  topicos  cursos   onde
+auto-professor          60        9       4   ES2,IA,SO,TCC
+benchmark                6        5       2   CG,ES2
+veto                     2        1       1   SO
+llm-compilado          560      114       8   CG,ES2,FR,IA,LR,MF,SO,TCC
+
+O SIDECAR QUE O REGIME CRU CONSERVA, por curso e classe:
+  curso   auto-professor       benchmark            veto
+  SO                  11               0               2
+  IA                  21               0               0
+  ES2                 21               1               0
+  TCC                  7               0               0
+  CG                   0               5               0
+
+NOMINAL — o que entrou no 'cru' DEPOIS de ser medido contra a regua (a classe que quebra a premissa):
+  [veto        ] SO   3.1 Conceitos básicos                          Comunicação entre Processo   veto 12/09 (user, orch-fix-defect): o compilador LLM de 11/09 doou estes 2 a 3.1 (u02) e o bloco-09 ('comunica
+  [veto        ] SO   3.1 Conceitos básicos                          Pipes                        veto 12/09 (user, orch-fix-defect): o compilador LLM de 11/09 doou estes 2 a 3.1 (u02) e o bloco-09 ('comunica
+  [benchmark   ] ES2  1.5 Estudo de caso: arquitetura orientada a    gateway                      12/09 (Gate 1 aprovado, 'ataque a subunidade'): medido no replay sincronizado, c1-3/replay_exp_curadoria_12-09
+  [benchmark   ] CG   1.4 Aplicações                                 OpenGL                       12/09 (ruling do user 11/09: OpenGL = u01, subunidade 1.4): o M1 tirou OpenGL de 1.2 Conceitos e o bloco-02 'i
+  [benchmark   ] CG   7.1.1.4 Catmull-Rom                            Catmull-Rom                  12/09 (Gate 1 aprovado, 'ataque a subunidade'): medido no replay sincronizado, c1-3/replay_exp_curadoria_12-09
+  [benchmark   ] CG   7.1.1.1 Bézier e Algoritmo de Casteljau        Bézier                       12/09 (Gate 1 aprovado, 'ataque a subunidade'): medido no replay sincronizado, c1-3/replay_exp_curadoria_12-09
+  [benchmark   ] CG   7.1.1.1 Bézier e Algoritmo de Casteljau        Casteljau                    12/09 (Gate 1 aprovado, 'ataque a subunidade'): medido no replay sincronizado, c1-3/replay_exp_curadoria_12-09
+  [benchmark   ] CG   7.1.1 Representação de Curvas Paramétricas     Curvas Paramétricas          12/09 (Gate 1 aprovado, 'ataque a subunidade'): medido no replay sincronizado, c1-3/replay_exp_curadoria_12-09
+
+SEM PROVENIENCIA IDENTIFICAVEL no sidecar do cru: 0 termos
+  (o passo 1 do astra manda PARAR se houver artefato sem origem identificavel)

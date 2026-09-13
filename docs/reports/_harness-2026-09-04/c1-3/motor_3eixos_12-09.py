@@ -161,6 +161,52 @@ def taxonomia_sem_llm(sig, veto="texto"):
     return n
 
 
+def tira_curadoria_do_benchmark(sig, escopo="tudo"):
+    """Tira da COPIA as entradas do sidecar manual cuja `_nota` diz que a curadoria foi MEDIDA antes de entrar.
+
+    13/09, achado do astra verificado por mim: o sidecar que o regime cru conserva tem proveniencia MISTA. A nota do
+    ARQUIVO diz "gerado automaticamente de fontes do professor, sem olhar gold nenhum", mas 5 entradas do CG e 1 do
+    ES2 carregam `_nota` propria dizendo o contrario — "medido no replay sincronizado ... E4 curvas +2, 0 perdas",
+    "E5 so 'gateway' +1, 0 perdas; 'microsservicos' rejeitado como ajuste ao gold". Isso e selecao pelo benchmark: o
+    mesmo vicio que o LOCO puniu em §27. O veto do SO (2 termos) entra junto porque tambem foi medido.
+
+    Inventario congelado em `congela_sidecars_13-09.csv` (0 termos sem proveniencia identificavel).
+    Devolve (topicos removidos, termos removidos, vetos neutralizados).
+    """
+    import re as _re
+    p = DEST / NOMES[sig] / "course/.glossary_curation.json"
+    if not p.exists():
+        return 0, 0, 0
+    d = json.loads(p.read_text(encoding="utf-8"))
+    medido = _re.compile(r"\bmedid[oa]\b|\breplay\b|\bGate 1\b|\+\d+\s*\(|0 perdas", _re.I)
+    ruling = _re.compile(r"\bruling\b|\(user[,)]|\bdo user\b|\buser,", _re.I)
+    nota_arq = str(d.get("_nota") or "")
+    fora_arq = bool(medido.search(nota_arq) or ruling.search(nota_arq))
+    ntop = nter = nvet = 0
+    for topico in [k for k in d if not k.startswith("_")]:
+        v = d[topico]
+        if not isinstance(v, dict):
+            continue
+        if v.get("veto"):
+            nvet += len(v["veto"])
+            v.pop("veto")
+        nota = str(v.get("_nota") or "")
+        eh_ruling = bool(ruling.search(nota))
+        selecionado = bool(medido.search(nota) or eh_ruling) or (not nota and not v.get("_origem") and fora_arq)
+        # escopo="puro": preserva o que foi decisao DE PRODUTO do usuario (ruling), tira so o que foi escolhido
+        # por render ponto contra a regua. Separa "o dono decidiu" de "o placar escolheu".
+        if escopo == "puro" and eh_ruling:
+            selecionado = False
+        if selecionado:
+            ntop += 1
+            nter += len(v.get("synonyms") or [])
+            d.pop(topico)
+    d["_nota_ablacao"] = ("13/09: removidas as entradas cuja proveniencia declarada e curadoria MEDIDA contra a regua "
+                          "(congela_sidecars_13-09.csv). Mede o cru sem selecao pelo benchmark.")
+    p.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    return ntop, nter, nvet
+
+
 def zera_cache_de_codigo(sig):
     """Invalida o `code_curation.json` da copia nas configuracoes sem vocabulario.
 
@@ -186,6 +232,9 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", choices=["nu", "regua", "vocab", "produto"], required=True)
     ap.add_argument("--cursos", default="", help="subconjunto, ex.: TCC,SO (default: os 7)")
+    ap.add_argument("--sem-curadoria-benchmark", nargs="?", const="tudo", choices=["tudo", "puro"], default="",
+                    help="tira do sidecar manual da copia as entradas cuja proveniencia declarada e "
+                         "curadoria MEDIDA contra a regua (6 termos + 2 vetos; congela_sidecars_13-09.csv)")
     ap.add_argument("--so-medir", action="store_true", help="pula sync/ablacao/reprocess e so remede a copia")
     ap.add_argument("--veto", choices=["texto", "fonte"], default="texto",
                     help="texto: veta todo alias do sidecar LLM (o do replay) · fonte: preserva os que tambem vem do "
@@ -217,9 +266,11 @@ def main(argv=None):
             prepara(sig, a.config)
             n = taxonomia_sem_llm(sig, a.veto) if a.config in ("nu", "regua") else 0
             z = zera_cache_de_codigo(sig) if a.config in ("nu", "regua") else 0
+            b = tira_curadoria_do_benchmark(sig, a.sem_curadoria_benchmark) if a.sem_curadoria_benchmark else (0, 0, 0)
             print(f"  [{a.config}] {sig}: copia pronta"
                   f"{f', {n} aliases do LLM vetados na taxonomia' if n else ''}"
-                  f"{f', cache de {z} resumos de codigo zerado (sera regenerado sem o vocab)' if z else ''}", flush=True)
+                  f"{f', cache de {z} resumos de codigo zerado (sera regenerado sem o vocab)' if z else ''}"
+                  f"{f', SEM curadoria do benchmark: -{b[0]} topicos/-{b[1]} termos, {b[2]} vetos neutralizados' if any(b) else ''}", flush=True)
         bloqueia_rede()   # so depois do robocopy (que e local, mas o guard e por processo)
         for sig in sigs:
             t1 = time.time()
@@ -232,7 +283,7 @@ def main(argv=None):
         # Marcador: a copia guarda UMA configuracao por vez e a seguinte sobrescreve. Sem isto e facil ler a copia
         # achando que ela esta na configuracao anterior (aconteceu em 12/09 com a lista de erros de unidade).
         (DEST / "_CONFIG_ATUAL.txt").write_text(
-            a.config + " (veto=" + a.veto + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
+            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
 
     print()
     marc = DEST / "_CONFIG_ATUAL.txt"
