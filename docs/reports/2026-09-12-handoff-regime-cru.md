@@ -994,3 +994,79 @@ Deltas corrigidos (o astra apontou meu arredondamento): curadoria humana **+0,4 
    e hoje o replay faz uma e o driver faz a outra.
 3. **Incluir o quarto braço equivalente**, com voter ligado e reprocessado nas mesmas condições, para a atribuição
    causal do voter parar de depender de um produto salvo.
+
+## 21. O EXPERIMENTO CONSERTADO — os 3 itens do astra, fechados (12/09, noite)
+
+Os três pontos que restavam da revisão (§20.4) foram executados. **Nenhum derruba a conclusão; um deles a reforça.**
+
+### 21.1 Os UUIDs do gold de bloco do CG: risco real, dissolvido por medição
+
+`c1-3/valida_gold_bloco_12-09.{py,log}`. O medidor compara o bloco do material com o `true_block_id` **posicional**
+("bloco-NN"). Se o índice tivesse sido renumerado, o acerto seria acidental.
+
+| curso | scorable | `true_block_uuid` existe no índice | tem `data_real` | **a data cai no período do bloco do gold** |
+|---|---|---|---|---|
+| MF, SO, IA, ES2, TCC | 202 | **202 (100%)** | 0 | — (âncora forte já basta) |
+| **CG** | 35 | **0** | 35 | **35 (100%)** |
+
+Nos cinco cursos a âncora forte está de pé. No CG, onde ela falha (o gold foi escrito antes do rebuild do curso), a
+verificação independente — **a data real da aula contra `period_start`/`period_end` do bloco que o id posicional
+nomeia** — bate em **35 de 35**, com zero fora. **O gold do CG foi re-chaveado corretamente; os 35 acertos são válidos.**
+
+### 21.2 O que a ablação remove: medido, e a escolha é inócua
+
+`c1-3/proveniencia_alias_12-09.{py,log}`. Para cada alias vetado, procurei o mesmo texto em fontes independentes do LLM:
+
+| | total | também no PLANO | nos HEADINGS do acervo | no sidecar MANUAL | **só no LLM** |
+|---|---|---|---|---|---|
+| aliases vetados (7 cursos) | 544 | 35 | 341 | 0 | **197** |
+
+**64% dos aliases vetados também vêm de fonte do professor.** E isso importa porque o construtor da taxonomia
+(`content_taxonomy.py:603-646`) doa headings como alias **independentemente do LLM** — ou seja, o veto por texto
+removia aliases que um curso sem LLM teria de qualquer forma, e o regime "cru" ficava **mais duro que a realidade**.
+
+Implementei os dois modos (`--veto texto` = o do replay; `--veto fonte` = preserva os que vêm do plano ou dos headings)
+e rodei os dois:
+
+| eixo | `--veto texto` (544 vetados) | `--veto fonte` (197 vetados) |
+|---|---|---|
+| bloco | 93,7% | **93,7%** |
+| unidade | 89,1% | **89,1%** |
+| subunidade | 58,2% | 57,8% |
+
+**A escolha não muda o resultado**: bloco e unidade idênticos, subunidade difere em 1 material de 251 — e no sentido
+não-monotônico (vetar menos deu 1 a menos), o que é coerente com os efeitos não-monotônicos já medidos na 2ª passada.
+**A ambiguidade que o astra levantou é real e é inócua.** Fica registrado qual modo cada número usa.
+
+### 21.3 O quarto braço, com voter ligado nas mesmas condições
+
+| eixo | VOCAB (voter off) | **PRODUTO-braço** (voter ON, reprocessado agora) | produto salvo em disco |
+|---|---|---|---|
+| bloco | 93,2% | **99,2%** | 99,2% |
+| unidade | 89,8% | **92,6%** | 92,6% |
+| subunidade | 87,6% | **89,2%** | 89,2% |
+| subunidade primário | 73,3% | **74,1%** | 74,1% |
+
+**O braço contemporâneo reproduz o produto salvo dígito a dígito.** A atribuição do delta ao voter deixa de depender de
+um artefato antigo: **+5,9 no bloco, +2,8 na unidade, +1,6 na subunidade** são efeito do voter, medidos com controle.
+
+**E um resultado que não estava na pergunta: o braço rodou com 0 tentativas de rede.** O voter foi inteiramente servido
+pelo cache `material_curation.json`. Isso **prova com contador** o que o astra tinha dito em §18.5: o produto é
+reprodutível localmente sem API — o que não diz nada sobre o custo de um curso novo, onde não há cache.
+
+### 21.4 Onde o experimento está agora
+
+| eixo | NU | RÉGUA (cru) | VOCAB | PRODUTO |
+|---|---|---|---|---|
+| bloco (237) | 93,2% | **93,7%** | 93,2% | **99,2%** |
+| unidade (284) | 85,9% | **89,1%** | 89,8% | **92,6%** |
+| subunidade aceito (251) | 49,8% | **58,2%** | 87,6% | **89,2%** |
+| subunidade primário | 33,9% | 41,0% | 73,3% | 74,1% |
+
+Tudo com **contador de rede em 0** nas quatro configurações, cache de resumo de código regenerado sem o vocabulário,
+gold de bloco validado por âncora independente e quarto braço contemporâneo. **As três leituras de fundo continuam:**
+o bloco bate a meta de 90% no cru, a unidade fica a menos de 1 ponto, e a subunidade é o eixo que precisa de vocabulário.
+
+**O que continua NÃO resolvido, e que o astra tem razão em não deixar passar:** "resta um eixo só" continua excedendo a
+evidência, porque restringir o efeito do vocabulário à subunidade seria uma configuração nova, ainda não medida; e a
+meta **por curso** não passa (MF 89,4% no bloco, SO 73,0% na unidade).

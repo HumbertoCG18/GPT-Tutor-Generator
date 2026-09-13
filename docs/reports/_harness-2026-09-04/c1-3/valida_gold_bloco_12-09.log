@@ -1,0 +1,12 @@
+raiz: C:\Users\Humberto\Documents\GitHub
+curso  scorable  uuid bate  com data_real   DATA BATE o bloco   data FORA do bloco  sem como checar
+MF           66         66              0                   0                    0               66
+SO           39         39              0                   0                    0               39
+IA           42         42              0                   0                    0               42
+ES2          28         28              0                   0                    0               28
+TCC          27         27              0                   0                    0               27
+CG           35          0             35                  35                    0                0
+TOT         237        202             35                  35                    0              202
+
+LEITURA: 'uuid bate' e a ancora forte. Onde ela falha (CG), 'DATA BATE' e a verificacao independente:
+se a data real da aula cai no periodo do bloco que o id posicional nomeia, o gold continua valido.
