@@ -2284,3 +2284,44 @@ efeito grande já demonstrada num curso do zero, e ela depende de 1 chamada por 
 **E a ressalva que vale para tudo isso:** o FR é o único curso construído do zero, e o que vale nele pode não valer nos
 outros — o `sempropag` acabou de mostrar isso. **O passo 1 do astra (certificar a construção do zero dos outros 6) é
 pré-requisito de qualquer resposta geral a esta pergunta.**
+
+## 35. SINGULAR × PLURAL NA SUBUNIDADE: não abrir braço — a alavanca vale 0 dos 5, não 5 (13/09)
+
+Ordem do usuário: *"delegue o astra no low para isso"*. Brief: `c1-3/brief_codex_astra_plural_subunidade.md` ·
+resposta: `c1-3/resposta_codex_astra_plural_subunidade.md` · `gpt-6-astra`, **reasoning effort low**, 26.038 tokens.
+
+**Veredito dele:** *"não abrir braço de plural agora. A estimativa de recuperar 1 dos 5 também não se sustenta."*
+
+### 35.1 A estimativa caiu duas vezes
+
+| quem | quantos dos 5 erros "de plural" o singularizador recuperaria |
+|---|---|
+| eu, na §34 | **5** — "o maior mecanismo" |
+| eu, refazendo a conta à mão antes do brief | **1** (`01-protocolos`) |
+| **o astra, verificado por mim** | **0** |
+
+**Zips (4):** faltou na minha conta o fator `×0,88` de `auto_tags_text` não vazio (`index.py:1929`). Singularizado, o
+filho `Implementação de sockets` fica em **0,125**; o pai `Paradigmas cliente/servidor` em **0,907**. O plural não decide:
+**o pai casa dois tokens e o filho um.**
+
+**`01-protocolos` (1):** verifiquei no `.frzero/base` — **`protocolo`, `protocolos` e `redes` são tokens GENÉRICOS do tópico**
+e saem do overlap (`index.py:1862`); `rede` não é. Singularizar `redes → rede` só "funcionaria" escapando do filtro de
+genéricos — **dois mecanismos misturados**, e um deles é tirar um genérico para salvar um exemplo.
+
+**Consequência: a linha "singular × plural — 5 de 12" da §34.2 descreve erros que CONTÊM um plural, não erros CAUSADOS
+pelo plural.** Nas palavras do astra: *"não chamar 'erro com plural' de 'erro causado pelo plural'"*.
+
+### 35.2 O que ele recomenda no lugar
+
+1. **Próximo mecanismo — hipótese, não medido:** propagação de headings que **preserva o vencedor positivo da 1ª passada**
+   e **mantém o resgate onde não havia sinal**. Esperado: recuperar os dois HTTP do FR sem perder os três resgates de
+   morfologia do CG (que eram `sem-sinal` sem a propagação). É a versão estreita que a §34.4 já deixava aberta.
+   **Ressalva de implementação que eu acrescento:** não há costura limpa por monkeypatch — marcar a decisão da 1ª passada
+   como confiante também a faria doar tokens na propagação, mudando o que se mede. Exige flag no código.
+2. **Pai × filho merece diagnóstico próprio:** os 4 zips repetem o mesmo padrão — o pai vence o filho porque casa mais
+   tokens genéricos do tema. Investigar **evidência distintiva do filho**. E: *"quatro arquivos não são quatro validações
+   independentes"* — são o mesmo professor, o mesmo padrão de nome, a mesma aula.
+3. **Aceite de qualquer braço:** ganho no FR do zero **e** nos 7 cursos, **sem regressão por curso** em bloco e unidade.
+
+**Não fazer:** stem6 global · bônus incondicional ao subtópico filho · remover genérico para salvar um exemplo ·
+chamar erro com plural de erro causado pelo plural.
