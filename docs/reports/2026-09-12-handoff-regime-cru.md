@@ -1125,6 +1125,9 @@ para aqueles tópicos). Base cru = 147/251 aceito.
 | 30 | 184 = 73,3% | 211 = 84,1% | −27 |
 | 40 | **191 = 76,1%** | 219 = 87,3% | −28 |
 
+> **CORRIGIDO na §23:** a atribuicao abaixo esta errada. O ganho nao vem do criterio do seletor — vem de DOIS topicos
+> de UM curso (IA), e o baseline ingenuo "maior unidade" chega ao mesmo 178 sem usar criterio lexical nenhum.
+
 **Dois resultados:**
 1. **O seletor cego funciona:** com 5 tópicos curados o cru vai de 58,6% para **70,9%** (+31 materiais). Com 40, 76,1%.
 2. **A curva NÃO é monotônica** — K=10 (175) é pior que K=5 (178), e K=20 (173) é pior ainda. **Curar tópico que não
@@ -1144,3 +1147,66 @@ ES2 `conceito-de-devops`.
   lista. A não-monotonicidade sugere que uma lista humana com ruído pode render menos.
 - **Os 3 alvos com suporte por frase** (competição, não ausência) precisam de outra alavanca — provavelmente no scorer.
 - **Os 25 que o produto também erra** continuam sem diagnóstico.
+
+## 23. "MAS ESSE NÚMERO SÓ AUMENTOU POR CONTA DO GOLD" — auditado, e a desconfiança achou outra coisa (12/09, noite)
+
+O usuário desconfiou do ganho do seletor (§22). Auditoria em duas frentes, cada uma com refutador adversarial.
+**Resultado: o gold não entra nos dados — mas a minha conclusão cai por um motivo pior, e as duas auditorias foram
+elas mesmas refutadas em parte.**
+
+### 23.1 O gold NÃO entra na cadeia de dados (MEDIDO)
+
+- **O motor nunca lê arquivo de gold.** Varredura em `src/builder/**`: as únicas ocorrências de "gold", "*.csv" e
+  "docs/reports" são **comentários de procedência**. Nenhum `open()`.
+- **A entrada da compilação de vocabulário é só o curso**: nome da disciplina, título da unidade, rótulos dos tópicos do
+  plano e, por material, título + label do Moodle + até 24 headings (`vocabulary_compile.py:167-180`).
+- **552 dos 560 sinônimos publicados estão literalmente nos títulos/headings do próprio curso (98,6%).** Os 5 sem
+  atestação nenhuma estão em MF/TCC/CG — **fora dos tópicos que produzem o ganho**.
+- **Os filtros que foram escolhidos olhando o gold carregam ZERO do ganho:** devolvendo `_raw` (a saída crua do LLM,
+  antes dos filtros) em vez dos `synonyms` publicados, K=5 = **178** e K=40 = **191** — idênticos. Os META_LABELS e o
+  veto de título não movem um material.
+
+**A única dependência de gold que sobra:** o **prompt** do compilador foi selecionado medindo contra o gold
+(`vocabulary_compile.py:74`: *"Prompt v2 — o unico ajuste permitido, medido (IA 34 -> 37/39)"*) — **e o IA é exatamente
+o curso que produz 100% do ganho**. Não é testável offline; exigiria recompilar o sidecar do IA com o prompt v1.
+
+### 23.2 O que derruba a minha conclusão: não são 5 tópicos, são 2 — e de um curso só
+
+| tópico liberado (meu top-5) | ganho |
+|---|---|
+| IA `modelos-preditivos` | **+23** |
+| IA `modelos-descritivos` | **+6** |
+| MF `sistema-de-prova` | **+0** |
+| MF `softwares-de-suporte-a-verificacao-formal-de-programas` | **+0** |
+| ES2 `conceito-de-devops` | **+0** |
+
+**Os dois tópicos do IA sozinhos já dão 178.** E o baseline ingênuo **"maior unidade"** — que ignora inteiramente o meu
+critério de suporte lexical — chega ao **mesmo 178** em K=5 e **ganha** em K=10 (182 × 175) e K=20 (190 × 173).
+Os dois rankings coincidem exatamente nos 2 tópicos do IA.
+
+**Conclusão honesta: o meu seletor não seleciona nada.** O que existe é **um curso com uma unidade de 39 materiais** em
+que o vocabulário faz uma diferença enorme. Qualquer ranking que ponha esses 2 tópicos no topo chega ao mesmo lugar.
+A frase que publiquei em §22 — *"5 tópicos curados levam o cru de 58,6% a 70,9%"* — está **errada na atribuição**:
+o mecanismo não é o critério, é a concentração do problema num curso.
+
+### 23.3 As auditorias também foram refutadas (e isso importa)
+
+O refutador pegou a primeira auditoria **defendendo o número**: ela apresentou como "CONTRAPROVA DECISIVA" um teste
+entre três variantes que, medidas antes de rodar o motor, **eram a mesma taxonomia** (0 aliases de diferença em K=5).
+Um teste que não podia falhar, publicado como decisivo. E testava *conhecimento externo*, que não era a hipótese do
+usuário — ele falou de **gold**, não de termo inventado.
+
+O que sobreviveu das duas: a varredura de código, a atestação dos 560 sinônimos, a medição `_raw` × `synonyms`, a
+decomposição por tópico e o baseline aleatório (7 sementes: 148,4 ± 2,6 em K=5, contra 178 do seletor e 178 do
+"maior unidade").
+
+### 23.4 O que fica de pé, com o número certo
+
+**Liberar dois tópicos de uma unidade de 39 materiais no IA leva o cru de 147 para 178 (58,6% → 70,9%).** O vocabulário
+usado é derivado do próprio curso (98,6% atestado nos headings e títulos), não do gabarito. **Mas isso é um resultado
+sobre um curso e uma unidade, não sobre um método de seleção** — e o teste que decidiria o que sobra (recompilar o
+sidecar do IA com o prompt v1, a única peça calibrada no gold) exige uma chamada de LLM e não foi feito.
+
+**O que eu levo disso:** apresentei "o seletor funciona" a partir de um agregado que era um curso. A desconfiança do
+usuário estava certa em substância, ainda que a causa fosse outra — e o baseline "maior unidade", que eu tinha rodado e
+tinha na mão, já mostrava isso antes de eu publicar a conclusão.

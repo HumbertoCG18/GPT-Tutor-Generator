@@ -1,0 +1,10 @@
+base (cru, nada curado): 147/251 aceito · 105 primario
+universo de topicos: 171 · candidatos do seletor: 70
+
+  K      ALEATORIO (media +- dp)   MAIOR-UNIDADE   SELETOR    GOLD   leitura
+  5             148.4 +- 2.6               178       178     188   SELETOR ganha do acaso (dif +29.6)
+ 10             148.9 +- 5.0               182       175     195   SELETOR ganha do acaso (dif +26.1)
+ 20             150.4 +- 4.4               190       173     205   SELETOR ganha do acaso (dif +22.6)
+
+sementes do aleatorio: [1, 2, 3, 4, 5, 6, 7]
+todos os numeros sao ACEITO na base 251.
