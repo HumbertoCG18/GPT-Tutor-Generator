@@ -32,6 +32,21 @@ UNI = {"MF", "SO", "IA", "ES2", "TCC", "CG"}   # cursos com regua de unidade
 EIXOS = ("bloco", "unidade", "subunidade", "subunid(prim)")
 
 
+def adjudicados():
+    """Os materiais em que o usuario adjudicou a unidade CURRICULAR contra a do bloco (12/09).
+
+    13/09, decisao do usuario ("o motor deveria seguir o plano, nao o bloco"): estes NAO saem do denominador — o motor
+    esta errado neles pela regua vigente. Mas eles sao uma CLASSE distinta: nao sao falha de sinal, sao a precedencia
+    bloco -> unidade (`file_map.py:802-807`) contrariando a adjudicacao. Sao a fila de trabalho da mudanca de
+    precedencia, e por isso o placar os reporta em separado, sem descontar.
+    """
+    p = GEN / "docs/reports" / "contradicoes_unidade_material_gt_vs_bloco.csv"
+    if not p.exists():
+        return set()
+    return {(r.get("entry_id") or "").strip() for r in _csv.DictReader(p.open(encoding="utf-8-sig", newline=""))
+            if (r.get("entry_id") or "").strip()}
+
+
 def golds(sig):
     p = GEN / "docs/reports" / f"ground_truth_{sig}.csv"
     gb = load_labels_csv(p) if p.exists() else {}
@@ -56,6 +71,8 @@ def main(argv=None):
 
     M = {e: collections.Counter() for e in EIXOS}
     POR_CURSO = collections.defaultdict(lambda: collections.Counter())
+    ADJ = adjudicados()
+    CLASSE = collections.Counter()
     for sig in sigs:
         root = raiz / NOMES[sig]
         if not (root / "manifest.json").exists():
@@ -91,6 +108,15 @@ def main(argv=None):
                     else:
                         alvo["conf"] += 1
                         alvo["conf_certo"] += ok
+            # classe do erro de unidade (nao desconta de nada; so separa a natureza)
+            if "unidade" in cert and not cert["unidade"]:
+                CLASSE["erros de unidade"] += 1
+                if eid in ADJ:
+                    CLASSE["  divergencia de DESENHO (bloco x plano adjudicado)"] += 1
+                elif e.get("unit_block_conflict"):
+                    CLASSE["  conflito bloco x texto nao adjudicado"] += 1
+                else:
+                    CLASSE["  falha de sinal (sem conflito registrado)"] += 1
 
     print(f"{'eixo':15} {'n':>5} {'ACURACIA TOTAL':>18} {'precisao do confiante':>24} {'cobertura':>11} {'erros conf':>11}")
     for eixo in EIXOS:
@@ -100,6 +126,21 @@ def main(argv=None):
         print(f"{eixo:15} {c['n']:>5} {c['certo']:>6}/{c['n']:<5} {c['certo']/c['n']:>6.1%} "
               f"{c['conf_certo']:>9}/{c['conf']:<5} {c['conf_certo']/max(1,c['conf']):>7.1%} "
               f"{c['conf']/c['n']:>10.1%} {c['conf']-c['conf_certo']:>11}")
+    if CLASSE["erros de unidade"]:
+        print()
+        print("NATUREZA DOS ERROS DE UNIDADE (separado para leitura; NADA e descontado do placar acima)")
+        n_un = M["unidade"]["n"]
+        certo_un = M["unidade"]["certo"]
+        for k in ("erros de unidade", "  divergencia de DESENHO (bloco x plano adjudicado)",
+                  "  conflito bloco x texto nao adjudicado", "  falha de sinal (sem conflito registrado)"):
+            if CLASSE[k]:
+                print(f"  {k:52} {CLASSE[k]:>4}")
+        d = CLASSE["  divergencia de DESENHO (bloco x plano adjudicado)"]
+        if d:
+            print(f"  --> a divergencia de desenho e a fila da mudanca de precedencia (file_map.py:802-807).")
+            print(f"      Se ela fosse resolvida, a unidade iria de {certo_un}/{n_un} = {certo_un/n_un:.1%} "
+                  f"para {certo_un + d}/{n_un} = {(certo_un + d)/n_un:.1%}.")
+            print(f"      Isto NAO e um desconto: e o teto daquela mudanca, medido.")
     print()
     print("POR CURSO (acuracia total)")
     print(f"{'curso':6} " + " ".join(f"{e:>18}" for e in EIXOS))

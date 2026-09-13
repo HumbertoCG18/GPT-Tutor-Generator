@@ -1352,3 +1352,59 @@ A decisão "o motor deve seguir o plano" tem três implementações possíveis, 
    mudar é o que a régua cobra, não o código. Sem tocar em nada, o cru vai de 89,1% para 94,8%.
 
 As opções 2 e 3 não são excludentes. A 2 mexe no motor e precisa de validação fora da amostra; a 3 é decisão de régua.
+
+## 26. OPÇÃO 3 FEITA (sem inflar nada) e o GATE 1 DA OPÇÃO 2 (13/09)
+
+O usuário pediu a 3 primeiro, depois a 2.
+
+### 26.1 A opção 3, como eu a tinha formulado, contradizia a decisão dele
+
+Eu havia escrito a opção 3 como *"se o motor está certo por desenho ao seguir o bloco, quem muda é o que a régua
+cobra"*. Mas a decisão foi **"o motor deveria seguir o plano"** — ou seja, o motor está **errado** nesses 17.
+Tirá-los do denominador seria inflar o placar escondendo erros que o próprio usuário classificou como erros.
+
+**Feito, então, na forma que não mente:** o placar principal **não muda**; o medidor passa a **separar a natureza** dos
+erros de unidade e a publicar o **teto da mudança de precedência**, que é a fila da opção 2.
+
+| natureza dos erros de unidade | CRU | PRODUTO |
+|---|---|---|
+| total | 31 | 21 |
+| **divergência de DESENHO** (bloco × plano adjudicado) | **17** | **17** |
+| conflito bloco × texto não adjudicado | 5 | 1 |
+| falha de sinal (sem conflito registrado) | 9 | 3 |
+
+**Teto da mudança de precedência, medido:** unidade no cru iria de **89,1% para 95,1%** (253 → 270) e no produto de
+92,6% para **98,6%** (263 → 280). *Isto não é desconto — é o tamanho da opção 2.*
+
+Implementado em `c1-3/mede_3eixos_12-09.py::adjudicados()`, lendo
+`docs/reports/contradicoes_unidade_material_gt_vs_bloco.csv`.
+
+### 26.2 Gate 1 da opção 2: o que a regra alcança dos 17
+
+| dos 17 adjudicados que o cru erra | n | o que a regra faria |
+|---|---|---|
+| texto certo **e** bloco veio de `janela-1`/`due-*` | **11** | corrige |
+| texto certo, mas bloco veio de `ref-generica`/`titulo-topico` | 3 | fora do corte |
+| texto **também** errado | 3 | não corrige (precisa de vocabulário) |
+
+Por método do bloco: `janela-1` 11 (9 com texto certo), `ref-generica` 2, `due-contain` 2, `due-straddle` 1,
+`titulo-topico` 1.
+
+**Efeito líquido medido do corte `janela-1`/`due-*`** (13 ganhos − 6 perdas): **+7 no cru, +5 no produto**.
+A unidade iria a **260/284 = 91,5%** no cru — **acima da meta de 90%** — e a 268/284 = 94,4% no produto.
+
+### 26.3 O que o Gate 1 precisa decidir antes de eu escrever a regra
+
+1. **O ganho é concentrado.** No cru: SO **+7**, ES2 +2, CG +1, mas MF −1, IA −1, TCC −1. **Três cursos ganham, três
+   perdem.** No produto, o CG perde 3. O saldo agregado é positivo nos dois regimes, mas a regra **não é uniforme**.
+2. **O corte foi derivado olhando a distribuição dos erros.** Tem mecanismo plausível (`janela-1` atribui o bloco por
+   proximidade no calendário, não por conteúdo; `disamb` usou sinal para desempatar) e dispara em 19 casos de 6 cursos —
+   diferente do corte dimensional que recusei em §24.3 — mas continua sendo hipótese derivada da amostra.
+3. **As 6 perdas são reais e nominais** (MF `classes-parte1`, `introducao-zip`, `classes-parte2`; IA
+   `survey-on-clustering`; TCC `aula-14-problema-da-correspondencia-de-post`; CG `colisao`). Em todas elas o bloco
+   estava certo e o texto passaria a valer errado.
+4. **Restariam 6 dos 17** fora do alcance da regra: 3 por método de bloco não coberto e 3 porque o texto também erra.
+
+**O que eu faria, e é o que levo ao gate:** implementar o corte na precedência (`file_map.py:802-807`), com o teste de
+aceitação sendo *ganha no cru e não regride o produto*, **e** um leave-one-course-out antes do commit — se a regra só
+sobrevive com o SO dentro, ela não é regra, é o SO.
