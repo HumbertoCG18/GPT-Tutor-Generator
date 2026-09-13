@@ -1210,3 +1210,71 @@ sidecar do IA com o prompt v1, a única peça calibrada no gold) exige uma chama
 **O que eu levo disso:** apresentei "o seletor funciona" a partir de um agregado que era um curso. A desconfiança do
 usuário estava certa em substância, ainda que a causa fosse outra — e o baseline "maior unidade", que eu tinha rodado e
 tinha na mão, já mostrava isso antes de eu publicar a conclusão.
+
+## 24. ATACAR A UNIDADE: "faltam 3 materiais" é verdade aritmética e armadilha de método (13/09)
+
+Ordem do usuário: *"vamos atacar a unidade primeiro, só faltam 3 materiais"*. É verdade — 253/284, e 90% exige 256.
+Mas a decomposição dos 31 erros mostra que perseguir 3 seria ajuste ao benchmark, e mostra onde está a alavanca real.
+
+### 24.1 Os 31 erros têm TRÊS naturezas, não uma
+
+| n | natureza | o que significa |
+|---|---|---|
+| **17** | **contradição ADJUDICADA** | o motor segue o BLOCO por desenho; o usuário adjudicou a unidade CURRICULAR em 12/09 |
+| **10** | alavanca de vocabulário | o produto acerta e o cru erra |
+| 4 | resto | CG texturas/mapeamento: nem adjudicado, nem o produto acerta |
+
+Os 17 são **exatamente** as linhas de `contradicoes_unidade_material_gt_vs_bloco.csv`: MF t1/t2/aws/eth2,
+SO threads/semáforos/pthread, ES2 microsserviços/azure. **Não são defeito do motor** — são a régua curricular contra o
+desenho dele. Corrigi-los exige mudar a precedência bloco → unidade, que é decisão de arquitetura, não conserto.
+
+Para dimensionar (e **isto é cenário, não resultado** — tirar do denominador é decisão do usuário sobre o que a régua
+cobra): sem os 17, o cru iria de 89,1% para **94,8%** e o produto de 92,6% para 98,5%.
+
+### 24.2 A alavanca óbvia foi medida e REFUTADA
+
+O padrão que salta nos 10 que o produto acerta: `resolucao-de-prova-de-computacao-grafica-**2d**` vai para
+`unidade-08-sintese-de-imagens` existindo `unidade-04-processo-de-visualizacao-**2d**`; e a versão `-3d` vai para a
+unidade **2D**. O título carrega o discriminante e o motor não usa.
+
+Medido (`c1-3/titulo_nomeia_unidade_12-09.{py,log}`): o título sugere exatamente uma unidade em **48 de 284** materiais
+e bate o gold em 30. Mas **sobrepor sempre PERDE**:
+
+| corte | dispara (cru) | ganha | perde | saldo cru | saldo produto |
+|---|---|---|---|---|---|
+| sempre | 23 | 4 | 13 | **−9** | **−14** |
+| só na fila | 15 | 4 | 7 | −3 | −4 |
+| só com conflito | 5 | 1 | 2 | −1 | −2 |
+| **só dimensional (2d/3d)** | 3 | 3 | 0 | **+3** | 0 |
+| só com 2+ tokens | 0 | — | — | 0 | 0 |
+
+### 24.3 Por que eu NÃO vou usar o corte que dá exatamente +3
+
+O corte dimensional dá **+3 no cru e 0 no produto** — precisamente o que falta para 90,1%. E é por isso que ele tem que
+ser recusado:
+
+1. **Eu o desenhei olhando os erros.** Vi o padrão 2d/3d na lista de erros (que vem do gold) e escrevi a regra que os
+   descreve. Ganhar 3 e perder 0 não prova generalidade — prova que descrevi bem os 3 casos que vi.
+2. **Só pode disparar em 1 dos 6 cursos.** MF, SO, IA, ES2 e TCC têm **zero** unidades com token dimensional; só o CG
+   tem duas (`...-2d` e `...-3d`).
+3. **Os 3 materiais são 2 documentos.** `resolucao-...-2d` e `resolucao-...-2d-html` apontam para o **mesmo arquivo
+   fonte** (`...-2d.html`), com o mesmo título — é a duplicata de documento que o astra já tinha apontado ao dizer que
+   "251 entradas não são 251 evidências independentes".
+
+**Ou seja: dá para cruzar a meta da unidade hoje, e seria trapaça.** Registro a regra como medida e recusada.
+
+### 24.4 A alavanca que sobra, e ela reabre uma frente fechada
+
+Os 10 em que o produto acerta e o cru erra são de novo **vocabulário** (SO: `laminas-sockets` → o cru manda para
+`deadlock`, o gold quer `programacao-concorrente`; CG: `basico3d` → o cru manda para `fundamentos-matematicos`, o gold
+quer `representacao-e-modelagem`).
+
+E os 17 adjudicados apontam para a frente que o handoff §5 deixou explicitamente em aberto:
+
+> *"'Bloco vence' 34/35 era circular (o gold de unidade era o próprio bloco); com a régua curricular: 21/33 × 12/33.
+> As refutações de 'texto vence' de 05/09 foram medidas contra o gold por bloco: reabrir só com a regra estreita
+> (seção específica mapeada ao plano, corroborada pelo material, supera bloco misto), Gate 1."*
+
+**A régua mudou de temporal para curricular em 12/09, e as refutações de "o texto vence o bloco" foram medidas contra a
+régua velha.** Os 17 adjudicados são exatamente os casos em que o texto queria uma coisa e o bloco outra. **Essa é a
+alavanca real do eixo unidade** — e é Gate 1, porque mexe na precedência do motor.
