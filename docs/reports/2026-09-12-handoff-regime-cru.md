@@ -1460,3 +1460,209 @@ cru. Registro os dois números para a decisão ser feita com o preço na mão.
    `programacao-concorrente`).
 3. **Isso reforça o que a §19 já dizia:** o eixo que precisa de trabalho é a subunidade, e o mecanismo é vocabulário —
    não precedência, não título, não SARC.
+
+## 28. AQUISIÇÃO DE VOCABULÁRIO: o astra analisou e desenhou — e derrubou 4 afirmações minhas (13/09)
+
+Ordem do usuário: *"coloque o astra para analisar e para desenhar a aquisição de vocabulário"*.
+Brief: `c1-3/brief_codex_astra_aquisicao_vocabulario.md`.
+
+**Duas corridas independentes responderam o mesmo brief** (o primeiro processo não tinha morrido e as duas terminaram):
+`c1-3/resposta_codex_astra_aquisicao_vocabulario.md` e `..._corrida2.md`. **Elas convergem nas quatro correções e no
+veredito**; divergem só nos números de ORÇAMENTO, que as duas marcam como decisão, não como parâmetro medido.
+O acidente virou réplica: quatro correções encontradas duas vezes, por caminhos independentes.
+
+**Veredito, nas palavras da corrida 2:** *"Vocabulário é a melhor alavanca demonstrada. Ainda não há evidência de que
+aquisição, sozinha, entregue 90%. O desenho precisa selecionar relações termo→tópico e controlar aliases concorrentes."*
+
+### 28.1 A descoberta que motivou o brief (minha, medida)
+
+O sidecar que o regime cru conserva (`course/.glossary_curation.json`) **não é curadoria humana**: o `_nota` dele diz
+*"GERADO automaticamente de fontes do PROFESSOR (SARC + seção do Moodle + título/headings), sem olhar gold nenhum —
+`gera_sidecar_professor.py`, 2026-09-07"*. São **66 termos em 15 tópicos** contra **560** do sidecar do LLM, e boa parte
+é token de nome de arquivo e de autor (`chiara`, `lacerda`, `luca`, `capitulo`, `demo`, `fato`, `massa`).
+
+**A diferença entre cru e vocab não é humano × LLM — é ruído × vocabulário de domínio.** Os dois adquiridores leem o
+mesmo acervo (98,6% dos sinônimos do LLM estão atestados nos headings do próprio curso); o determinístico devolve
+`chiara`, o LLM devolve `k-NN`.
+
+### 28.2 AS QUATRO CORREÇÕES — as três primeiras verificadas por mim, e procedem
+
+**(1) "Só os 5 do CG são termos de domínio" está errado.** IA tem `crossover`, `geneticos`, `implementacaominimax`;
+ES2 tem `circuitbreaker`, `fanout`, `nameserver`, `gateway`. **E o ponto é mais afiado que o meu:** `crossover` está em
+`Algoritmos de Busca com Informação`, quando o operador é de algoritmo genético — pertence a `Problemas de Otimização`.
+**Reconhecer o termo técnico não basta; ele precisa apontar para o tópico certo. A aquisição é de RELAÇÃO
+termo→tópico, não de lista de termos.**
+
+**(2) O sidecar "cru" tem proveniência MISTA, e parte dele foi escolhida medindo contra a régua. VERIFICADO.**
+Os `_nota` por entrada dizem, com todas as letras:
+
+| entrada | o que o `_nota` diz |
+|---|---|
+| ES2 `1.5 Estudo de caso` → `gateway` | *"12/09 ... medido no replay sincronizado ... E5 só 'gateway' +1 (roteiro3-gateway), 0 perdas; 'microsservicos' rejeitado como ajuste ao gold"* |
+| CG `7.1.1*` → curvas (3 entradas) | *"12/09 ... medido no replay sincronizado ... E4 curvas +2 (exercicios-sobre-curvas x2), 0 perdas"* |
+| CG `1.4 Aplicações` → `OpenGL` | *"12/09 (ruling do user 11/09) ... Medido: só 'OpenGL' em 1.4 -> u01"* |
+| SO `3.1 Conceitos básicos` → `veto` | *"veto 12/09 (user, orch-fix-defect) ... Medido: ..."* |
+
+**Consequência: minha frase "a única dependência de gold que sobra é o prompt v2" está errada.** O número do cru
+carrega **+3 de subunidade** (2 curvas + 1 gateway) de intervenções selecionadas **medindo contra a régua**, mais o
+pino de OpenGL e o veto do SO no eixo unidade. Não é leitura do arquivo de gold — é seleção pelo benchmark, o mesmo
+vício que recusei em §24.3 e que o LOCO puniu em §27.
+
+**(3) Os 10 da unidade NÃO são vocabulário. VERIFICADO, e derruba o que publiquei ontem.**
+
+| unidade (284) | NU | RÉGUA | VOCAB | PRODUTO |
+|---|---|---|---|---|
+| acertos | 244 | **253** | **255** | **263** |
+
+**RÉGUA → VOCAB é +2. VOCAB → PRODUTO é +8.** Dos 10, só 2 são vocabulário; **8 são o voter** — chamada de LLM em
+runtime, não vocabulário offline. E o exemplo que eu dei ao usuário é justamente o que não funciona: **o SO fica em
+27/37 em RÉGUA e em VOCAB** (`motor_3eixos_v2_12-09.log:42,91`), e só vai a 29/37 no produto.
+Evidência: `motor_3eixos_v2_12-09.log:35,84,133` · `motor_3eixos_produto_12-09.log:34`.
+
+**(4) Contagem dos erros compartilhados.** O produto erra **27**, não 25: os 25 compartilhados **não incluem 2
+regressões só do produto**. Dos 25, **24 estão na unidade certa**, **6 têm gold vazio** e **16 são do CG** — e nos 5
+vazios do CG as notas do gold registram *"assunto sem subtópico correspondente dentro da unidade exigida"*.
+**Acrescentar alias positivo não representa uma ausência.**
+
+### 28.3 O que separa `perceptron` de `chiara` — a resposta
+
+> *"Função no contexto e relação com a taxonomia. Um designa técnica; o outro pode aparecer como autoria. Frequência,
+> concentração e posição em heading não estabelecem essa diferença. Sobrenomes também nomeiam técnicas: banir nomes
+> próprios derrubaria termos válidos."*
+
+**É computável sem LLM quando existe conhecimento adicional:** marcação de autoria, definição explícita no texto,
+ontologia técnica com relações categoria→técnica, ou curador humano. *"Um dicionário que apenas reconhece palavras
+técnicas ainda não resolve `perceptron → Modelos Preditivos`."*
+
+**Não há declaração de impossibilidade:** *"Não demonstramos que LLM seja indispensável; tampouco demonstramos
+aquisição automática suficiente sem ele."*
+
+E corrige o meu experimento mental: os dois adquiridores **não recebem a mesma entrada** — determinístico usa até 8
+headings, tokens isolados, mínimo de 4 chars (que já derruba sigla curta), e herda o tópico da seção; o LLM usa até 24
+headings cortados em 60 chars, expressões, siglas e nomes de membros de ZIP, e classifica semanticamente.
+**Então "é só a seleção" é hipótese, não medição isolada.** (`gera_sidecar_professor.py:103-150` ·
+`vocabulary_compile.py:173,239`)
+
+### 28.4 O DESENHO (limites marcados por ele como orçamento, não como parâmetro medido)
+
+**A unidade de aquisição deixa de ser palavra e passa a ser RELAÇÃO com evidência:**
+
+```json
+{"term": "k-NN", "topic_key": "<código e rótulo do plano>", "relation": "tecnica",
+ "evidence": [{"entry_id": "<material>", "field": "heading", "quote": "<trecho literal>"}]}
+```
+
+*"Isso é mais precisamente um indicador de tópico: `k-NN` não é sinônimo de 'Modelos Preditivos'."*
+
+- **Fonte:** plano como taxonomia; título, label do Moodle e headings originais como evidência. **Não** usar previsão
+  de subunidade, alias propagado, confiança, fila, gold, nem resumo de código derivado do próprio vocabulário.
+- **Escopo: a unidade prevista organiza lotes, não exclui destinos.** Cada chamada recebe o catálogo de tópicos do
+  curso inteiro. Hoje a restrição existe em `vocabulary_compile.py:240-261` — *"um material mal colocado pode nunca
+  mostrar ao compilador seu tópico correto"*.
+- **Admissão:** expressão literal + material/campo/trecho + relação explícita (técnica, algoritmo, protocolo, conceito
+  ou ferramenta ensinada naquele tópico). Menção bibliográfica e enumeração de assuntos não bastam. **Termo
+  compartilhado entre tópicos não ganha exclusividade artificial: fica pendente.** Nome próprio **não** recebe veto
+  universal.
+- **Seleção de tópico: abandonar o "carente".** Examinar todos; publicar só onde houver relação aprovada. Ordenar lotes
+  por quantidade de materiais, desempate pelo código curricular — *"é o baseline simples já competitivo"*.
+- **Seleção dentro do tópico:** agrupar variantes do mesmo conceito; priorizar a expressão que cobre mais materiais
+  **ainda não cobertos** por outra expressão aprovada. *"Isso mede cobertura textual, não acurácia."*
+- **Gravação:** relações aprovadas em `.glossary_curation.llm.json` (formato que o loader já consome), evidência e
+  rejeições em metadados; `.glossary_curation.json` reservado para intervenção humana.
+
+**Orçamento — as duas corridas divergem, e as duas dizem que é decisão, não medida:**
+
+| | corrida 1 | corrida 2 |
+|---|---|---|
+| chamadas por curso | **B**, determinado pelo empacotamento antes da 1ª chamada | ≤ 8 |
+| publicação | 8 conceitos/tópico × 3 variantes | 3 termos/tópico, 24 relações/lote |
+| entrada | 24.000 chars por chamada | 24.000 chars por chamada |
+| saída | 4.096 tokens | 2.000 tokens |
+
+A corrida 1 recusa número fixo: *"Não existe número constante honesto para cursos de tamanhos diferentes."*
+Nas duas: **sem retry invisível**; esgotou, para com cobertura parcial **explícita**.
+
+**NÃO fazer:** aumentar K até melhorar o placar; usar `score > 0` como evidência; excluir termo porque aparece em
+outra unidade; preencher tópico sem evidência; promover heading pela própria previsão; tratar toda ocorrência de uma
+expressão como aula daquele assunto.
+
+**E a ablação que o experimento tem que ter:** `content_taxonomy.py:603` recria alias errado depois da aquisição.
+*"Comparar, como ablação previamente definida, ADIÇÃO versus SUBSTITUIÇÃO dos aliases adquiridos automaticamente.
+Não presumir que desligar a doação melhora o resultado."*
+
+### 28.5 O contrato de LLM e os 4 defeitos do compilador atual (com linha)
+
+| defeito | linha |
+|---|---|
+| qualquer arquivo "manual" bloqueia TODA a compilação, mesmo parcial | `vocabulary_compile.py:227` |
+| cache é a existência do arquivo, **sem chave de conteúdo** | `:230` |
+| sem unidade prevista, não compila e espera outro reprocessamento | `:245` |
+| `_raw` guarda termos mas **não conserva bundle, citação nem versão do prompt** | `:197` |
+
+**Contrato proposto:** uma versão publicada por snapshot de entrada; cache por hash de (taxonomia + materiais
+apresentados + prompt + schema + modelo); conservar entrada exata, resposta bruta, relações aprovadas **e rejeitadas**
+com motivo, tentativas e consumo. *"A existência do arquivo manual deve proteger decisões humanas, não significar
+'curso inteiro já coberto'."* — sem isso não há aquisição incremental.
+
+**O curador humano pode substituir a chamada** — mesmo material, mesmo contrato de evidência. **Mas copiar
+`.llm.json` para `.json` não dá comportamento idêntico:** o loader filtra nome de seção **só no arquivo LLM**
+(`src/builder/artifacts/repo.py:1728,1732,1753`).
+
+**"LLM é necessário?"** — *"Não necessariamente. Necessária é alguma fonte de competência semântica. O LLM é a
+alternativa automatizada com sinal positivo disponível."* O número sem ele: **146/251 = 58,2%**, com a ressalva de que
+*"não existe medição que autorize afirmar um teto para curadoria humana, glossário externo ou novo classificador
+determinístico"*. A campanha determinística antiga (146/233 = 62,7%) **é outra base e não substitui esse número**.
+
+**A frase que o usuário precisa decidir:** *"Atribuição determinística usando vocabulário previamente compilado por LLM
+é possível. Porém, no experimento atual, isso corresponde ao braço VOCAB, não à RÉGUA. Se 'cru' proíbe LLM em toda a
+cadeia, a alternativa é curador/ontologia; ainda não existe resultado que assegure 90% nessa condição."*
+
+### 28.6 A validação — e por que o LR não basta
+
+*"Não existe validação de '90% correto' sem alguma verdade de referência. Sem adjudicação, podemos verificar
+procedência, cobertura, estabilidade e colisões. Nenhuma dessas medidas substitui acurácia."*
+
+**O LR tem 7 entradas, 1 é cronograma → 6 materiais instrucionais, todos na mesma unidade** (verificado no manifest).
+**E ele JÁ TEM `.glossary_curation.llm.json`** — *"portanto não é um teste de partida sem artefatos"*; os braços
+precisam ser reconstruídos das fontes, sem herdar o sidecar. Adjudicar com dois julgamentos independentes e cegos
+(unidade, tópico primário, alternativas aceitáveis, ausência legítima, trecho de sustentação), com o contrato de
+elegibilidade escrito **antes**.
+
+**Mas 6 materiais não validam transferência:** *"mesmo 6/6 resulta em limite inferior unilateral de 95% de
+aproximadamente 60,7%"*. LR serve para verificar o **procedimento**, não a acurácia.
+
+**Orçamento de avaliação — as duas corridas:** corrida 1 pede **300 materiais em 6 cursos novos, 50 por curso**;
+corrida 2 pede **200 em pelo menos 4**. As duas marcam como compromisso operacional, não tamanho mágico.
+A corrida 1 dá a conta: **279/300 = 93% passa o teste unilateral de 5% contra 90%; 270/300 só atinge a meta pontual** —
+e avisa que material do mesmo curso é correlacionado, então isso não é certificado de generalização.
+
+**Braços obrigatórios no mesmo snapshot:** base congelada · compilador v2 atual · **maior unidade** · aleatório com
+sementes fixas · **todos os termos admissíveis** (para testar se a esparsidade evita dano). Orçamento igual, não só K
+igual. Abstenção fica no denominador.
+
+**Sobre o prompt v2:** congelar e testar prospectivamente mede transferência do v2, **não torna o desenvolvimento dele
+independente do benchmark**. Para isolar v1→v2: recuperar o v1 exato do histórico, compilar os dois em cursos novos com
+corpus/modelo/orçamento pareados, congelar e só então abrir a adjudicação. *"Recompilar o IA mede sensibilidade dentro
+da amostra, não transferência."* E: *"a dependência não se limita ao prompt: há curadorias posteriores medidas no
+benchmark, como `gateway`."*
+
+### 28.7 A meta, e os 5 passos com parada
+
+**90% = 226/251 na subunidade e 256/284 na unidade.** O VOCAB completo entrega **220/251**; a seleção dirigida por gold
+entrega 222/251 — *"um resultado de uma seleção, não um teto matemático"*. **Faltam 6 na subunidade e 3 na unidade.**
+*"Nenhum dado demonstra que o desenho proposto os entregará."* A faixa 87,6–88,4% é **capacidade histórica observada
+com vocabulário, não previsão para curso novo**.
+
+1. Congelar proveniência e denominadores. **Parar** se o baseline não reproduzir ou houver artefato sem origem.
+2. Produzir candidatos com orçamento fixo. **Parar** ao esgotá-lo; publicar só relação com evidência válida.
+3. Medir no motor completo dos 7 cursos, **separando aquisição de retirada de alias**. Não chamar isso de transferência.
+4. Avaliar prospectivamente: LR primeiro, cursos novos como transferência. **Abrir os rótulos uma vez.**
+5. Decidir pelo resultado. Se o resíduo for competição, ausência válida ou falta de conteúdo, **encerrar aquisição como
+   explicação** e tratar a classe demonstrada.
+
+**Sobre a unidade, ele desaconselha peça nova:** *"Não proporia peça nova de unidade antes de decompor esses 10 nos
+três braços."* E não reabrir precedência — medir o trajeto completo do alias até a unidade final
+(`file_map.py:788-789`).
+
+**O próximo passo que as duas corridas nomeiam:** *"congelar os sidecars por entrada e proveniência. O snapshot atual
+já contradiz a premissa 'todo o preservado veio do professor, sem seleção pelo benchmark'."*
