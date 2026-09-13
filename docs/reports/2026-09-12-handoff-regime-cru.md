@@ -1408,3 +1408,55 @@ A unidade iria a **260/284 = 91,5%** no cru — **acima da meta de 90%** — e a
 **O que eu faria, e é o que levo ao gate:** implementar o corte na precedência (`file_map.py:802-807`), com o teste de
 aceitação sendo *ganha no cru e não regride o produto*, **e** um leave-one-course-out antes do commit — se a regra só
 sobrevive com o SO dentro, ela não é regra, é o SO.
+
+## 27. O LEAVE-ONE-COURSE-OUT MATA A OPÇÃO 2 COMO DESENHADA (13/09)
+
+O usuário pediu o LOCO antes de decidir. Ele foi feito, e o veredito é negativo e limpo.
+
+### 27.1 O desenho do teste
+
+A regra tem **um** parâmetro: quais métodos de bloco contam como "fracos". Eu escolhi `{janela-1, due-contain,
+due-straddle}` **olhando a distribuição nos 6 cursos**. O LOCO refaz essa escolha por fold:
+
+> para cada curso c: escolhe os métodos com saldo > 0 usando **só os outros 5**, aplica no curso c e mede lá.
+
+### 27.2 O resultado
+
+| regime | dentro da amostra | **fora da amostra** |
+|---|---|---|
+| CRU | +38 | **−3** |
+| PRODUTO | +29 | **−4** |
+
+Por fold, no CRU: MF **−3**, SO 0, IA **−2**, ES2 +2, TCC **−1**, CG +1 → **2 positivos, 3 negativos, 1 neutro**.
+No PRODUTO: MF 0, SO 0, IA 0, ES2 0, TCC −1, CG **−3** → **nenhum fold positivo**.
+
+**E não é instabilidade de seleção:** o conjunto escolhido é o mesmo em 5 dos 6 folds (`janela-1`, `due-contain`,
+`due-straddle`). A escolha é estável; **o que não transfere é o ganho**. A diferença dentro × fora é de **41 pontos** no
+cru — isso é a medida do overfitting do meu corte.
+
+### 27.3 O que isso fecha e o que deixa aberto
+
+**FECHADO por negativo medido:** a mudança de precedência `bloco → unidade` restrita a método de bloco fraco. Não
+implementar. Os +7 do cru e +5 do produto eram ganho dentro da amostra; fora dela o saldo é negativo nos dois regimes.
+
+**Continua de pé o que veio antes:** "texto vence sempre" já estava refutado (−15 no cru, −7 no produto), agora com a
+versão restrita também refutada, **a família inteira de "trocar a precedência por regra derivada do método do bloco"
+está fechada.**
+
+**O que NÃO foi testado e continua aberto:** a mudança de precedência por **princípio de produto**, aceitando o custo.
+A decisão do usuário — *"o motor deveria seguir o plano, não o bloco"* — pode ser um princípio de arquitetura, e não uma
+busca por ganho de placar. Nesse caso o número honesto é: **o cru cairia de 89,1% para 83,8%** (253 → 238, o saldo −15) e
+o produto de 92,6% para 90,2% (263 → 256). **Os 17 adjudicados seriam corrigidos, e outros 32 casos passariam a errar.**
+
+Isso é escolha de produto, não medição: seguir o plano é conceitualmente o que o usuário quer, e custa 15 materiais no
+cru. Registro os dois números para a decisão ser feita com o preço na mão.
+
+### 27.4 O que sobra para o eixo unidade
+
+1. **A unidade já está em 89,1% no cru e 92,6% no produto.** A meta de 90% no cru fica a 3 materiais — e nenhuma das
+   duas alavancas testadas (título, precedência) os entrega honestamente.
+2. **A única alavanca que resta com sinal positivo são os 10 em que o produto acerta e o cru erra** — e ela é
+   vocabulário, o mesmo mecanismo da subunidade (SO `laminas-sockets` → o cru manda para `deadlock`, o gold quer
+   `programacao-concorrente`).
+3. **Isso reforça o que a §19 já dizia:** o eixo que precisa de trabalho é a subunidade, e o mecanismo é vocabulário —
+   não precedência, não título, não SARC.

@@ -1,0 +1,39 @@
+================ CRU — 53 conflitos ================
+  fold (curso de fora)   conjunto escolhido nos outros 5                DENTRO    FORA
+  MF                     janela-1                                           +8      -3
+  SO                     due-contain, due-straddle                          +2      +0
+  IA                     due-contain, due-straddle, janela-1, ref-gen       +9      -2
+  ES2                    due-contain, due-straddle, janela-1                +5      +2
+  TCC                    due-contain, due-straddle, janela-1                +8      -1
+  CG                     due-contain, due-straddle, janela-1                +6      +1
+  AGREGADO                                                                 +38      -3   <- FORA e o numero honesto
+
+  para comparar, na amostra inteira:
+    conjunto FIXO que eu escolhi ['due-contain', 'due-straddle', 'janela-1']: saldo +7 (dispara em 19)
+    texto vence SEMPRE: saldo -15 (dispara em 53)
+
+  estabilidade do conjunto entre os folds:
+    janela-1             escolhido em 5 dos 6 folds
+    due-contain          escolhido em 5 dos 6 folds
+    due-straddle         escolhido em 5 dos 6 folds
+    ref-generica         escolhido em 1 dos 6 folds
+
+================ PRODUTO — 33 conflitos ================
+  fold (curso de fora)   conjunto escolhido nos outros 5                DENTRO    FORA
+  MF                     janela-1                                           +2      +0
+  SO                     due-contain, due-straddle                          +3      +0
+  IA                     due-contain, due-straddle, janela-1                +5      +0
+  ES2                    due-contain, due-straddle, janela-1                +5      +0
+  TCC                    due-contain, due-straddle, janela-1                +6      -1
+  CG                     due-contain, due-straddle, janela-1                +8      -3
+  AGREGADO                                                                 +29      -4   <- FORA e o numero honesto
+
+  para comparar, na amostra inteira:
+    conjunto FIXO que eu escolhi ['due-contain', 'due-straddle', 'janela-1']: saldo +5 (dispara em 15)
+    texto vence SEMPRE: saldo -7 (dispara em 33)
+
+  estabilidade do conjunto entre os folds:
+    janela-1             escolhido em 5 dos 6 folds
+    due-contain          escolhido em 5 dos 6 folds
+    due-straddle         escolhido em 5 dos 6 folds
+
