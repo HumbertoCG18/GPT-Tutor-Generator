@@ -1753,3 +1753,97 @@ eixo só, e o mecanismo continua sendo vocabulário.
 Os dois critérios de parada do passo 1 do astra estão satisfeitos: **baseline reproduz** e **não há artefato sem
 origem identificável**. O passo 2 (produzir candidatos de vocabulário com orçamento fixo) está liberado — e agora
 com a linha de base certa, que é 142, não 146.
+
+## 30. O TETO DA AQUISIÇÃO DE VOCABULÁRIO: 32 de 84 — ela não chega à meta (13/09)
+
+Pergunta do usuário: *"O que devemos fazer agora?"*. Antes de gastar orçamento construindo a aquisição que o astra
+desenhou, medir **quantos dos 109 erros ela consegue entregar**.
+
+Instrumento: `c1-3/dossie_erros_subunidade_13-09.py` (monta, por erro, **o bundle exato que o adquiridor receberia** —
+título, label do Moodle, até 24 headings, igual a `vocabulary_compile._bundle` — mais o catálogo completo de tópicos do
+curso). Depois, 13 agentes: 7 diagnosticadores (um por curso) e 6 refutadores que **só atacam a classe otimista**.
+Saída auditável: `c1-3/teto_aquisicao_13-09.{json,csv}` (109 linhas, uma por material).
+
+**Natureza deste número:** é **diagnóstico por leitura com refutação adversarial**, não ganho medido no motor.
+Nenhuma das alavancas abaixo pode ser publicada como ganho antes de rodar no motor completo.
+
+### 30.1 O placar, depois de 13 alegações derrubadas
+
+| classe | o que é | n | aquisição resolve? |
+|---|---|---|---|
+| **C** | competição: a evidência já pontua e perde | **38** | não — é ordenação/scorer |
+| **B** | expressão presente, relação termo→tópico ausente | **32** | **sim — é o teto** |
+| **A** | nenhuma expressão do material liga ao tópico do gold | **23** | não — não há o que adquirir |
+| **D** | gold vazio, cronograma, assunto sem subtópico | **16** | sai do alvo |
+
+**O teto da aquisição é 32 materiais. Faltam 84 para os 90%.** O cru iria de 142 para no máximo
+**174/251 = 69,3%** — não 90%.
+
+### 30.2 E 91% do teto é um curso só
+
+| curso | n | A | **B** | C | D | derrubados |
+|---|---|---|---|---|---|---|
+| IA | 34 | 0 | **29** | 2 | 3 | 4 |
+| CG | 31 | 11 | **1** | 13 | 6 | 2 |
+| MF | 12 | 3 | **0** | 7 | 2 | 4 |
+| ES2 | 12 | 4 | **1** | 7 | 0 | 1 |
+| FR | 11 | 4 | **0** | 7 | 0 | 1 |
+| SO | 6 | 1 | **1** | 0 | 4 | 1 |
+| TCC | 3 | 0 | **0** | 2 | 1 | 0 |
+
+**29 dos 32 são o IA**, e são todos a mesma relação faltando: nome de algoritmo (k-NN, perceptron, MLP, árvore de
+decisão, k-Means, agrupamento) → `Modelos Preditivos` / `Modelos Descritivos`. É **exatamente** o achado da §23, agora
+medido erro a erro e com refutação. **MF, FR e TCC têm ZERO.**
+
+E o refutador do MF fecha o caso de orçamento naquele curso: *"três das expressões alegadas já estão verbatim como
+sinônimos do próprio tópico do gold em `.glossary_curation.llm.json` ... Em MF a aquisição não é gasto futuro, é gasto
+já feito: pedir orçamento com estes quatro casos seria refaturar trabalho entregue."*
+
+### 30.3 A descoberta lateral, e ela vale mais que a resposta pedida
+
+**Em 23 dos 109 materiais a evidência decisiva existe no arquivo e NUNCA CHEGA AO BUNDLE** — não é falta de
+vocabulário, é o insumo sendo jogado fora antes do adquiridor ver:
+
+| curso | n | o que fica de fora |
+|---|---|---|
+| CG | 11 | o termo decisivo está no corpo; o corte em 24 headings esconde `ProgramaDeModelagem3D.cpp` (arquivo 26 de 43) |
+| MF | 5 | `language: "isabelle"` está no frontmatter, campo que o bundle não lê; no AFP o corte do heading tirou o *"in Isabelle HOL"* |
+| FR | 4 | os 4 zips dizem `socket` de 2 a 5 vezes por arquivo; o bundle só expõe nome de zip e nome de arquivo |
+| ES2 | 3 | `@FeignClient`, `@EnableEurekaServer`, `spring.cloud.netflix.eureka` estão nos `.java`; o bundle é um manifesto de nomes |
+| IA | 0 | — |
+
+Nas palavras do diagnosticador do FR: *"a correção barata ali é extrair identificadores do corpo do código para o
+bundle, não ensinar vocabulário novo ao motor."*
+
+### 30.4 As alavancas concretas que o diagnóstico nomeou (nenhuma medida ainda)
+
+1. **Engenharia de bundle** — 23 materiais em 4 cursos. Extrair identificadores do corpo do código, ler o
+   `language:` do frontmatter, subir o corte de 24 headings. **Determinístico, sem LLM.**
+2. **ES2: um bug só vale 5 dos 12** — `arquitetura-serverless` engolindo material que grita MICROSSERVIÇOS no título,
+   no label e nos headings.
+3. **Normalização** — `microserviços` (1 s) × `microsserviços` (2 s) no ES2; `deteção`~`detecção` no CG.
+4. **CG: o `moodle_label` não é pontuado pelo scorer de subunidade** — um dos B do CG caiu por isso: *"a expressão
+   mora num campo que o scorer de subunidade não lê"*.
+5. **FR: empate no piso** — rótulo curto e siglado (`Modelos OSI e TCP/IP`) vira 1–2 tokens e empata 0,1422 × 0,1422
+   com o irmão, devolvendo vazio. *"O que falta é critério de desempate no piso do score, não vocabulário."*
+6. **IA: fallback silencioso** — confiança 1,000 sobre bundles sem nenhum token de "aprendizado"
+   (`Rede Perceptron - OR em Python`, `MLP - XOR.ipynb`) indica queda para o primeiro tópico da unidade.
+
+E dois que **não** são alavanca: **SO** — 4 dos 6 erros são lacuna de **taxonomia**, não de léxico (a unidade 02 não
+tem subtópico de threads; o gold usou `conceitos-basicos` como encaixe menos ruim, e *"aquisição só pioraria: o termo
+'thread' puxa para 'Programas multithreads' na Unidade 03"*). **TCC** — os 2 erros reais têm o rótulo do gold repetido
+palavra por palavra no título e mesmo assim perdem para o irmão.
+
+### 30.5 O que isto muda no plano
+
+**A aquisição de vocabulário não é o caminho para 90% na subunidade.** Ela vale 32 materiais, 29 deles num curso.
+O desenho do astra continua correto como desenho — a unidade de aquisição *deve* ser relação termo→tópico com
+evidência — mas o tamanho do prêmio agora está medido, e é um terço do que falta.
+
+**A classe maior é C (38): competição.** Somada às 23 de bundle, há mais material nas alavancas de engenharia
+determinística do que na aquisição. **E nenhuma delas precisa de LLM** — o que torna a decisão pendente sobre a
+definição de "cru" menos urgente do que parecia ontem.
+
+**Ressalva que fica registrada:** C e A foram separados por leitura. A fronteira entre "a evidência já pontua e perde"
+e "não há evidência" é onde eu mais erraria; o próximo passo honesto para as 38 de C é confrontar a classificação com
+o score real do tópico do gold em cada material, que é determinístico e já está em `fronteira_sinais_12-09.csv`.
