@@ -2026,3 +2026,148 @@ onde o V não chega.
 
 Contra: o Z mexe no **insumo**, que alimenta os três eixos. O risco de regressão no bloco (93,7%) é real e o V não
 diz nada sobre ele, porque o V é sidecar isolado e o Z não é.
+
+## 33. A CAUSA REAL E O MOTOR CRU ≥95%: o parecer do astra, e o dado do FR que já responde parte dele (13/09)
+
+Ordem do usuário: *"estamos fazendo fixes específicos e não atacando a causa real... busco bloco, unidade e
+subunidade ≥ 95%, e primário > 95%... LLM totalmente opcional, nada pode se sustentar em LLM, API ou gold... o motor
+tem que ser modular, pois cada professor rotula de um jeito."*
+
+Brief: `c1-3/brief_codex_astra_motor_cru_95.md` · Resposta: `c1-3/resposta_codex_astra_motor_cru_95.md`.
+
+**Veredito dele, primeira linha:** *"≥95% sem LLM não foi demonstrado nem refutado. O brief confunde melhor placar
+observado com teto de informação."*
+
+### 33.1 A distância até o alvo, e a implicação que o usuário precisa ver
+
+| eixo | base | 95% exige | cru honesto | cru + V | **PRODUTO (APIs pagas)** |
+|---|---|---|---|---|---|
+| bloco | 237 | 226 | 222 | 222 | **235** ✅ |
+| unidade | 284 | 270 | 253 | 253 | **263** ❌ faltam 7 |
+| **subunidade PRIMÁRIO** | 251 | 239 | 100 | 134 | **186** ❌ **faltam 53** |
+
+**A configuração com APIs pagas não alcança 95% primário em dois dos três eixos.** O pedido não é "tirar o LLM e
+manter o número" — é **superar o melhor número já medido, sem LLM**.
+
+### 33.2 DUAS CORREÇÕES DELE AO MEU BRIEF — as duas verificadas, as duas procedem
+
+**(1) O eixo unidade JÁ TEM cascata nomeada. Eu escrevi que não tinha.** `routing/file_map.py:785-807` tem sete
+saídas nomeadas, e **a unidade explícita já vence o bloco**:
+
+```
+block_is_manual          -> unidade_do_bloco_manual
+has_manual_unit          -> unidade manual
+sem bloco/sem unit-bloco -> unidade computada
+sem unidade computada    -> herdada_do_bloco=<id>
+concordam                -> ok
+unit_is_explicit         -> explicita-vence-bloco=<id>      <-- a exceção que eu omiti
+senão                    -> reconciliada_do_bloco=<id>
+```
+
+O comentário registra a medição que a criou: *"Medido no FR reconstruído do zero: os 9 erros de unidade eram todos
+explícita sobreposta por bloco flagado ou herdado do vizinho."* **Minha afirmação "unidade não é modular" estava
+errada; o eixo sem cascata nomeada é a subunidade.**
+
+**(2) O `moodle_label_text` chega ao coletor e o scorer não o consome** — `extraction/entry_signals.py:173` produz,
+`timeline/index.py:1835` não lê. Ele localizou o ponto exato; eu só sabia que faltava.
+
+### 33.3 A correção mais importante: o que o braço V provou, e o que não provou
+
+> *"V escolheu os tópicos olhando os erros **e importou as relações de um sidecar de LLM**. Provou efeito da relação
+> fornecida; não provou aquisição automática elegível."*
+
+**Aceito integralmente.** O braço V mediu o efeito de uma relação *dada*; não mediu nenhuma capacidade de *obtê-la*
+nas condições que o usuário exige (sem LLM, sem gold).
+
+E ele aponta um vício de origem que eu não tinha visto: **o "cru honesto" parte de uma CÓPIA DO PRODUTO**
+(`motor_3eixos_12-09.py:66`, `ab.sync(src, dst)`). Tirar termos selecionados pelo benchmark **não certifica que o
+curso seria construível apenas com as fontes do professor.** Os markdowns, a taxonomia e a timeline da cópia foram
+produzidos pelo pipeline completo.
+
+### 33.4 O DADO QUE JÁ RESPONDE PARTE DISSO: o FR construído do zero (12/09)
+
+A certificação que o astra pede como passo 1 **existe para um curso**. O FR foi reconstruído do zero a partir do
+stash do Moodle, pelo caminho da UI, com Gemini e Datalab sob tripwire e **0 tentativas de chamada**:
+
+| run (FR do zero) | subunidade PRIMÁRIO (18) | unidade | erros confiantes | fila |
+|---|---|---|---|---|
+| **1 crua** (sem vocab, sem voter, sem curadoria) | **6/18 = 33%** | 19/19 | 5 | 10/20 |
+| 2 só Datalab | 6/18 | 19/19 | 5 | 9/20 |
+| **crua + vocab compilado** (1 chamada/unidade, uma vez) | **16/18 = 89%** | 19/19 | 0 | 10/20 |
+| Datalab + vocab | 17/18 | 19/19 | 0 | — |
+| produto | 16/18 | 19/19 | 0 | 1/22 |
+
+**Este é o dado mais duro que temos sobre a pergunta do usuário:** num curso construído **do zero, com zero
+chamadas**, a subunidade primário fica em **33%**. O vocabulário compilado leva a 89%. O Datalab vale 0 sem vocab e
++1 com. O voter não muda acerto — muda a fila (10 → 1) e o bloco.
+
+**E a ressalva que o astra já tinha feito sobre esse mesmo dado, e que continua valendo:** o 19/19 de unidade é
+**reprodução do sinal explícito** (`U<n>` em `source_section`) — o motor lê a mesma seção que a régua. **CG e SO não
+têm `U<n>`**, e é exatamente lá que a unidade é pior (SO 73,0%).
+
+### 33.5 A arquitetura que ele propõe
+
+```
+Fontes do professor
+  → extração com origem e vínculo entre objetos
+  → relações curriculares comprovadas
+  → candidatos por eixo
+  → decisão com método + evidência + conflitos
+```
+
+**Cada método declara: quando se aplica · qual candidato propõe · qual trecho/vínculo sustenta a proposta.**
+Bloco temporal e unidade curricular conservam decisões **separadas** — o bloco pode ajudar a unidade, não redefinir
+seu significado. *"Isso não implica 'texto sempre vence', regra já refutada."*
+
+**A distinção que ele quer no vocabulário:** separar **sinônimo** de **técnica pertencente a uma categoria**.
+*"'Árvore de decisão' não é sinônimo de 'modelo preditivo'; é uma relação de pertencimento. Guardar essa relação
+evita transformar toda menção em equivalência."*
+
+**Promoção de método novo:** entra primeiro em comparação, preservando a decisão atual; exige ganho, ausência de
+regressão no recorte congelado, **e validação em professor não usado no desenvolvimento**. *"Sete cursos verdes
+comprovam compatibilidade nesses sete; não garantem generalização."*
+
+### 33.6 Sobre o seletor de tópicos carentes — ele inverte a pergunta
+
+> *"A primeira tentativa sem LLM deve aproveitar relações explícitas em TODOS os tópicos... Sem chamadas pagas,
+> selecionar apenas K tópicos pode ser uma otimização desnecessária."*
+
+O requisito que ele põe no centro é **âncora independente**: *"'O motor colocou o arquivo neste tópico, logo seus
+headings enriquecem este tópico' reproduz a circularidade atual"* — que é exatamente
+`content_taxonomy.py:603-646`. E fecha a porta do paliativo: *"curadoria pelo aluno violaria o caminho feliz pedido...
+uma interface de curadoria não satisfaz o requisito original."*
+
+### 33.7 O primário: os 42 não são uma coisa só, e corrigi-los não basta
+
+Ele decompôs com exemplo nominal:
+- **MF**: lógica proposicional tem nota explícita de **ausência de tópico próprio na taxonomia** → problema de
+  representação (`subunit_gt_MF.csv:11`).
+- **IA**: MLP com GridSearchCV recebe modelo preditivo como principal e métricas como extra, **por decisão registrada
+  do usuário** → política de prioridade (`subunit_gt_IA.csv:27`).
+
+**E a aritmética que mata o atalho: mesmo corrigindo os 42, chegaríamos a 142/251 primários. Faltariam ainda 97
+correções entre os materiais hoje fora do aceito, sem perder nenhum acerto.**
+
+### 33.8 A ordem que ele dá, com critério de parada
+
+1. **Certificar o baseline de criação** — partir dos arquivos e fontes autorizadas, com política explícita de
+   primário. **Para quando** toda entrada tiver proveniência e o resultado for reproduzível sem artefato derivado de
+   LLM ou de curadoria por material.
+2. **Medir sinais disponíveis que não chegam ao decisor** — `moodle_label` e conteúdo de ZIP, **em braços separados**.
+   Não promover braço sem ganho líquido; **não estimar ganho pela contagem de arquivos afetados**.
+3. **Testar aquisição de relações explícitas para TODOS os tópicos** — congelar o extrator antes da avaliação.
+   **Encerrar a hipótese** se não produzir relações válidas e ganho fora dos cursos de desenvolvimento.
+4. **Modularizar só a decisão necessária às evidências aprovadas** — preservar fallback, testar criação × resync.
+5. **Cobrar a meta no processo completo** — os três mínimos, sem excluir abstenções, validando em professor novo.
+
+**Não fazer:** reescrita geral agora · outra regra global de precedência · novo seletor baseado só em incerteza ·
+bundle (refutado) · curadoria dirigida disfarçada de aquisição · **promessa de precisão por modularização**.
+
+### 33.9 A medição que ele diz faltar
+
+Produzir, por material, a cadeia — **congelada antes de consultar os erros**:
+
+> **disponível na fonte → extraído → consumido → relação curricular sustentada → principal escolhido**
+
+*"Isso separa perda de entrada, falha semântica e falha de prioridade sem transformar classificação manual de erros
+em 'teto'."* — é a crítica direta ao que eu fiz hoje de manhã com os 109 erros.
