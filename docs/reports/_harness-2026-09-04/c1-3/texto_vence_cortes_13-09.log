@@ -1,0 +1,32 @@
+=== CRU — 53 conflitos texto x bloco ===
+  corte                         dispara   GANHA   PERDE  neutro   saldo
+  A sempre                           53      17      32       4     -15
+  B bloco misto                       0       0       0       0      +0
+  C bloco de metodo fraco            30       3      24       3     -21
+  D texto confiante (>=0,60)         48      17      27       4     -10
+  E misto E confiante                 0       0       0       0      +0
+  F fraco E confiante                27       3      21       3     -18
+  G (misto ou fraco) E conf          27       3      21       3     -18
+
+=== PRODUTO — 33 conflitos texto x bloco ===
+  corte                         dispara   GANHA   PERDE  neutro   saldo
+  A sempre                           33      12      19       2      -7
+  B bloco misto                       0       0       0       0      +0
+  C bloco de metodo fraco             6       0       4       2      -4
+  D texto confiante (>=0,60)         28       9      17       2      -8
+  E misto E confiante                 0       0       0       0      +0
+  F fraco E confiante                 6       0       4       2      -4
+  G (misto ou fraco) E conf           6       0       4       2      -4
+
+DISTRIBUICAO dos conflitos do CRU por metodo do bloco (quem ganha em cada um):
+  metodo do bloco         texto certo  bloco certo   neutro
+  disamb                            1           19        1
+  janela-1                         11            6        0
+  irmao-card                        0            2        2
+  titulo-topico                     1            1        1
+  ref-generica                      1            1        0
+  (sem metodo)                      1            1        0
+  due-contain                       1            0        0
+  due-straddle                      1            0        0
+  prep-prova                        0            1        0
+  disamb-curto                      0            1        0

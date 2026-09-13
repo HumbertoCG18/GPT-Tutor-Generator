@@ -1278,3 +1278,77 @@ E os 17 adjudicados apontam para a frente que o handoff §5 deixou explicitament
 **A régua mudou de temporal para curricular em 12/09, e as refutações de "o texto vence o bloco" foram medidas contra a
 régua velha.** Os 17 adjudicados são exatamente os casos em que o texto queria uma coisa e o bloco outra. **Essa é a
 alavanca real do eixo unidade** — e é Gate 1, porque mexe na precedência do motor.
+
+## 25. "O MOTOR DEVERIA SEGUIR O PLANO, NÃO O BLOCO" — medido, e a implementação ingênua perde (13/09)
+
+Decisão do usuário. Antes de desenhar a mudança, a medição — e ela muda o que a decisão significa na prática.
+
+### 25.1 Onde a precedência mora, e por que ela é como é
+
+`src/builder/routing/file_map.py:802-807`. Quando o texto e o bloco discordam, **o bloco decide** e o texto vira
+registro de conflito. O comentário diz por quê:
+
+> *"2026-08-21: a verdade de unidade é, por construção, a unidade do bloco (ground_truth |><| gold_units). Medido nos 5
+> cursos (188 entries): scorer de texto 130, unidade do bloco temporal 162 ... O bloco decide; o texto discordante vira
+> registro de conflito para auditoria, nunca decisão."*
+
+**A medição que sustenta a precedência é circular por admissão própria** — a régua *era* a unidade do bloco. Em 12/09 a
+régua virou CURRICULAR. Refiz a comparação contra ela.
+
+### 25.2 "Texto vence sempre": REFUTADO, mesmo contra a régua curricular
+
+| | conflitos | texto certo | bloco certo | trocar a precedência |
+|---|---|---|---|---|
+| CRU | 53 | 17 | **32** | **−15 materiais** |
+| PRODUTO | 33 | 12 | **19** | **−7 materiais** |
+
+Mesmo com a régua que o usuário adjudicou, **o bloco acerta quase o dobro** nos conflitos. A decisão está certa como
+princípio; a implementação literal piora o motor.
+
+### 25.3 A regra estreita: os cortes que eu supus falharam, os dados apontaram outro
+
+Testei "bloco misto", "bloco de método fraco" e "texto confiante" — **todos perdem**. A distribuição por método do bloco
+mostrou que eu tinha classificado ao contrário:
+
+| método do bloco | texto certo | bloco certo | leitura |
+|---|---|---|---|
+| `disamb` (desempate ativo) | 1 | **19** | o bloco usou sinal: é forte |
+| **`janela-1`** (proximidade temporal) | **11** | 6 | o bloco veio de proximidade, não de conteúdo: é fraco |
+
+Cortes derivados disso, com o teste de aprovação (ganhar no cru **e** não regredir o produto):
+
+| corte | cru | produto | passa? |
+|---|---|---|---|
+| sempre | −15 | −7 | não |
+| só `janela-1` | +5 | +2 | **passa** |
+| `janela-1` e texto confiante | +6 | +1 | **passa** |
+| **`janela-1` ou `due-*`** | **+7** | **+5** | **passa** |
+| tudo menos `disamb*` | +4 | −3 | não |
+
+### 25.4 Por que eu NÃO chamo isso de regra pronta
+
+**O ganho é concentrado e o sinal não é consistente por curso.** No corte melhor (J), no CRU:
+
+| | MF | SO | IA | ES2 | TCC | CG |
+|---|---|---|---|---|---|---|
+| saldo | −1 | **+7** | −1 | +2 | −1 | +1 |
+
+**3 cursos positivos, 3 negativos** — o +7 agregado é essencialmente o SO. E no produto o CG perde 3. É o mesmo padrão
+que me enganou no seletor de tópicos (§23): agregado positivo, mecanismo concentrado num curso.
+
+Além disso, **o corte foi derivado olhando a distribuição dos erros**, que vem do gold. A diferença em relação ao corte
+dimensional que recusei em §24.3 é real mas não suficiente: aqui há **mecanismo plausível** (`janela-1` atribui por
+proximidade temporal, não por conteúdo; `disamb` usou sinal para desempatar), dispara em **19 casos e 6 cursos** (contra
+3 casos e 1 curso), e **não regride o produto**. Mas continua sendo hipótese, não regra validada.
+
+### 25.5 O que isto deixa para decidir
+
+A decisão "o motor deve seguir o plano" tem três implementações possíveis, e os números dizem coisas diferentes:
+
+1. **Texto vence sempre** — o que a frase diz literalmente. **Medido: −15 no cru, −7 no produto.** Não fazer.
+2. **Texto vence quando o bloco veio de proximidade temporal** (`janela-1`/`due-*`). **Medido: +7 no cru, +5 no
+   produto**, mas concentrado no SO e negativo em 3 dos 6 cursos. É a única família com saldo positivo.
+3. **A régua para de cobrar os 17 adjudicados** — se o motor está certo por desenho ao seguir o bloco, quem precisa
+   mudar é o que a régua cobra, não o código. Sem tocar em nada, o cru vai de 89,1% para 94,8%.
+
+As opções 2 e 3 não são excludentes. A 2 mexe no motor e precisa de validação fora da amostra; a 3 é decisão de régua.

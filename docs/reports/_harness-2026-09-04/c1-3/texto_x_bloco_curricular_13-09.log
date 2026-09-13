@@ -1,0 +1,117 @@
+A comparacao que a precedencia atual cita foi feita contra uma regua construida DO BLOCO.
+Aqui ela e refeita contra a regua CURRICULAR (material_gt adjudicado pelo usuario em 12/09).
+
+=== REGIME CRU (copia .motor3eixos) ===
+  n                 284
+  conflitos          53
+  TEXTO certo        17
+  BLOCO certo        32
+  ambos certos        3
+  ambos errados       1
+  --> trocar a precedencia (texto vence): -15 materiais (ganha 17, perde 32)
+
+=== PRODUTO ===
+  n                 284
+  conflitos          33
+  TEXTO certo        12
+  BLOCO certo        19
+  ambos certos        2
+  ambos errados       0
+  --> trocar a precedencia (texto vence): -7 materiais (ganha 12, perde 19)
+
+CASOS NO PRODUTO em que o TEXTO estava certo e o bloco venceu (o que a mudanca corrigiria):
+  MF   t1-2026-1                                   
+        texto queria : unidade-01-metodos-formais
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   t1-2026-1-thy                               
+        texto queria : unidade-01-metodos-formais
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   t2-2026-1                                   
+        texto queria : unidade-02-verificacao-de-programas
+        bloco impos  : unidade-03-verificacao-de-modelos
+  SO   0704-laminas-comunicacao-e-sincronizacao    
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-04-deadlock
+  SO   0704-exemplo-threads-em-java                
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-04-deadlock
+  SO   3103-threads                                
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-02-gerencia-do-processador
+  SO   biblioteca-em-c-pthread                     
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-02-gerencia-do-processador
+  SO   exemplo-threads-em-c-exemplo1               
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-02-gerencia-do-processador
+  SO   exemplo-threads-em-c-exemplo2               
+        texto queria : unidade-03-programacao-concorrente
+        bloco impos  : unidade-02-gerencia-do-processador
+  ES2  microsservicos7                             
+        texto queria : unidade-01-arquitetura-de-software
+        bloco impos  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+  ES2  microsservicos4                             
+        texto queria : unidade-01-arquitetura-de-software
+        bloco impos  : unidade-02-integracao-de-desenvolvimento-e-operacao-devops
+  CG   pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3
+        texto queria : unidade-08-sintese-de-imagens-realisticas
+        bloco impos  : unidade-04-processo-de-visualizacao-2d
+
+CASOS NO PRODUTO em que o BLOCO estava certo (o que a mudanca QUEBRARIA):
+  MF   exerciciosformalizacaoalgoritmosrecursao-respostas
+        texto queria : unidade-02-verificacao-de-programas  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-01-metodos-formais
+  MF   classes-parte1                              
+        texto queria : unidade-01-metodos-formais  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   colecoes-arrays                             
+        texto queria : unidade-01-metodos-formais  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   colecoes-conjuntos                          
+        texto queria : unidade-01-metodos-formais  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   exercicios-conjuntos                        
+        texto queria : unidade-03-verificacao-de-modelos  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   introducao-zip                              
+        texto queria : unidade-01-metodos-formais  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  MF   classes-parte2                              
+        texto queria : unidade-01-metodos-formais  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-verificacao-de-programas
+  SO   exercicios-p2                               
+        texto queria : unidade-05-gerencia-de-memoria  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-06-gerencia-de-arquivos
+  TCC  aula-13-teorema-de-rice-pdf                 
+        texto queria : unidade-02-turing-computabilidade  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-03-problemas-indecidiveis
+  CG   morfologiamatematicapptx                    
+        texto queria : unidade-06-processo-de-visualizacao-3d  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-03-processamento-de-imagens-e-visao-computacional
+  CG   basico3d-py-zip                             
+        texto queria : unidade-06-processo-de-visualizacao-3d  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-07-representacao-e-modelagem-de-objetos
+  CG   exercicio-de-animacao-foguete               
+        texto queria : unidade-04-processo-de-visualizacao-2d  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-fundamentos-matematicos
+  CG   matematica                                  
+        texto queria : unidade-06-processo-de-visualizacao-3d  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-02-fundamentos-matematicos
+  CG   animacao-v2                                 
+        texto queria : unidade-01-introducao-ao-processamento-grafico  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-04-processo-de-visualizacao-2d
+  CG   transformacoesgeometricas                   
+        texto queria : unidade-01-introducao-ao-processamento-grafico  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-04-processo-de-visualizacao-2d
+  CG   transformacoesgl                            
+        texto queria : unidade-02-fundamentos-matematicos  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-04-processo-de-visualizacao-2d
+  CG   video-sobre-mapeamento-em-opengl-1dad3c     
+        texto queria : unidade-01-introducao-ao-processamento-grafico  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-04-processo-de-visualizacao-2d
+  CG   video-sobre-prechimento-de-areas-duracao-330-defae7
+        texto queria : unidade-01-introducao-ao-processamento-grafico  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-03-processamento-de-imagens-e-visao-computacional
+  CG   pagina-com-videos-sobre-morfologia-matematica-06265a
+        texto queria : unidade-06-processo-de-visualizacao-3d  <-- passaria a valer, e esta ERRADO
+        bloco impos  : unidade-03-processamento-de-imagens-e-visao-computacional
