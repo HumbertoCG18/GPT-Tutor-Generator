@@ -1959,3 +1959,70 @@ ou o `process_zip`) e por isso **para em Gate**. O braço V é direto.
 
 **O que nenhum dos três consegue avaliar, e fica registrado:** a sobreposição exata entre as classes por material, a
 redistribuição dos 13 B derrubados, e quanto o bloco regrediria se o insumo mudasse.
+
+## 32. BRAÇO V MEDIDO: 18 termos em 2 tópicos valem +33 materiais — e o teto por contagem de classe estava errado (13/09)
+
+Ordem do usuário: *"vamos fazer o braço V, medir, depois decidir sobre o braço Z"*.
+Instrumento: `motor_3eixos_12-09.py --config regua --sem-curadoria-benchmark puro --devolve-vocab "IA:Modelos
+Preditivos;Modelos Descritivos"`. Log: `c1-3/braco_V_13-09.log`. **0 tentativas de rede.**
+
+### 32.1 O resultado
+
+| eixo | C (baseline) | **V (+18 termos, 2 tópicos, 1 curso)** | delta |
+|---|---|---|---|
+| bloco (237) | 222 = 93,7% | 222 = 93,7% | **0** |
+| unidade (284) | 253 = 89,1% | 253 = 89,1% | **0** |
+| **subunidade (251)** | 142 = 56,6% | **175 = 69,7%** | **+33** |
+| subunidade primário | 100 = 39,8% | 134 = 53,4% | **+34** |
+| erros confiantes (subunid.) | 60 | **32** | **−28** |
+
+**Isolamento perfeito.** Por curso, a subunidade dos outros seis é idêntica ao material: MF 46/58, SO 9/15,
+ES2 16/28, TCC 8/11, CG 51/82, FR 7/18. **Todo o movimento é o IA: 5/39 = 12,8% → 38/39 = 97,4%.**
+O curso que era o pior do placar passa a ser o melhor.
+
+### 32.2 O que isso corrige no que eu publiquei há duas horas
+
+**O "teto de 32 materiais" era uma subestimação, e os três refutadores do agy tinham apontado exatamente este vetor.**
+
+A classificação dizia, para o IA: **B 29 · C 2 · D 3 · A 0**. Eu tratei B como o teto e declarei C e D fechados ao
+vocabulário. **Medido: o vocabulário corrigiu 33 dos 34** — ou seja, corrigiu os 29 de B **e também os 2 de C e 2 dos
+3 de D**.
+
+> *"Na classe C a evidência certa perde a competição — e vocabulário aumenta o peso do termo certo. Ausência de
+> vocabulário pode ser a CAUSA da baixa pontuação, não a consequência."* — o vetor 2, nos três refutadores.
+
+**Consequência metodológica, e ela vale além deste caso: contagem de classe por leitura não mede teto.** O teto real
+para estes dois tópicos era 33, não 29 — 14% acima. O número "32 materiais" que publiquei como teto da aquisição
+**não é teto**; é um piso mal calibrado. O teto verdadeiro é desconhecido e maior.
+
+### 32.3 O que NÃO se pode concluir daqui
+
+**Isto é teto de aquisição DIRIGIDA, não ganho transferível.** Os dois tópicos foram escolhidos olhando a análise de
+erros, que usa o gold. É o mesmo vício da §22/§23, e o LOCO da §27 já mostrou o que acontece com ganho escolhido
+dentro da amostra. **Num curso novo ninguém sabe que `Modelos Preditivos` é o tópico a curar.**
+
+O que o braço V prova é diferente, e é útil: **quando o tópico certo é curado, a conversão é quase total** (33 de 34).
+O problema da aquisição nunca foi a eficácia do vocabulário — é a **seleção** de onde aplicá-lo sem o gabarito.
+
+### 32.4 A aritmética, honesta
+
+| | subunidade | falta para 226 |
+|---|---|---|
+| cru honesto (C) | 142 = 56,6% | 84 |
+| **+ 2 tópicos do IA (V)** | **175 = 69,7%** | **51** |
+| produto (APIs pagas, com voter) | 224 = 89,2% | 2 |
+
+**Um curso resolvido de sete, e ainda faltam 51.** Os 51 restantes estão em 6 cursos — MF 12, CG 31, ES2 12, FR 11,
+SO 6, TCC 3 — e lá a concentração por tópico é muito menor que a do IA.
+
+### 32.5 O que o braço V autoriza sobre o braço Z
+
+**Duas coisas mudam a favor do Z, e uma contra.**
+
+A favor: (1) o braço V mostrou que **o regime cru tem isolamento limpo** — devolver vocabulário não mexeu em bloco
+nem em unidade, nem em nenhum outro curso; o harness é confiável para medir uma alavanca de cada vez. (2) Os 15 zips
+sem texto estão em **5 cursos diferentes** (CG 4, FR 4, ES2 3, MF 3, IA 1), e o IA já saiu da conta — então o Z ataca
+onde o V não chega.
+
+Contra: o Z mexe no **insumo**, que alimenta os três eixos. O risco de regressão no bloco (93,7%) é real e o V não
+diz nada sobre ele, porque o V é sidecar isolado e o Z não é.

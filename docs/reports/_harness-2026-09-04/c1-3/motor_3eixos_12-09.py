@@ -161,6 +161,73 @@ def taxonomia_sem_llm(sig, veto="texto"):
     return n
 
 
+def devolve_vocab(spec):
+    """BRACO V (13/09): devolve ao regime cru o vocabulario de topicos ESCOLHIDOS, e so deles.
+
+    Os tres refutadores do agy convergiram no mesmo teste: o "teto de 32 materiais" da aquisicao foi obtido por
+    CONTAGEM DE CLASSE, com julgamento de agente. O teste honesto e devolver o vocabulario e medir a conversao real
+    no motor. Se 29 dos 32 sao dois topicos do IA, devolver esses dois diz quanto a aquisicao de fato entrega.
+
+    Roda DEPOIS de `taxonomia_sem_llm` (que acabou de vetar todos os aliases de origem LLM) e devolve por dois
+    caminhos, porque o motor le os dois: o sidecar manual da copia (que o loader funde) e os `aliases` da taxonomia
+    ja compilada. Sem o segundo, o veto anula a devolucao sem aviso.
+
+    spec: "IA:Modelos Preditivos;Modelos Descritivos" (varios cursos separados por virgula).
+    Devolve {sig: (n_topicos, n_termos)}.
+    """
+    from src.builder.core.vocabulary_compile import _norm, _strip_code
+    feito = {}
+    for parte in [p for p in spec.split(",") if p.strip()]:
+        sig, _, rotulos = parte.partition(":")
+        sig = sig.strip()
+        alvos = {_norm(_strip_code(r)) for r in rotulos.split(";") if r.strip()}
+        if sig not in NOMES or not alvos:
+            continue
+        fonte = ORIG / NOMES[sig] / "course/.glossary_curation.llm.json"
+        if not fonte.exists():
+            continue
+        llm = json.loads(fonte.read_text(encoding="utf-8"))
+        devolver = {k: (v.get("synonyms") or []) for k, v in llm.items()
+                    if not k.startswith("_") and _norm(_strip_code(k)) in alvos}
+        if not devolver:
+            print(f"  [braco V] {sig}: NENHUM topico casou com {sorted(alvos)} — verifique o rotulo", flush=True)
+            continue
+
+        # 1. sidecar manual da copia (simula o curador humano escrevendo a lista)
+        pm = DEST / NOMES[sig] / "course/.glossary_curation.json"
+        man = json.loads(pm.read_text(encoding="utf-8")) if pm.exists() else {}
+        for k, syns in devolver.items():
+            man[k] = {"synonyms": list(syns),
+                      "_nota": "BRACO V 13/09 (experimento): vocabulario devolvido a ESTE topico para medir a conversao "
+                               "real da aquisicao. Nao e curadoria: e ablacao. Nao copiar para o produto."}
+        pm.parent.mkdir(parents=True, exist_ok=True)
+        pm.write_text(json.dumps(man, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        # 2. aliases da taxonomia ja compilada — sem isto o veto de `taxonomia_sem_llm` anula o passo 1
+        pt = DEST / NOMES[sig] / "course/.content_taxonomy.json"
+        n_top = n_ter = 0
+        if pt.exists():
+            tax = json.loads(pt.read_text(encoding="utf-8"))
+            for u in tax.get("units") or []:
+                for t in u.get("topics") or []:
+                    if _norm(_strip_code(str(t.get("label") or ""))) not in alvos:
+                        continue
+                    chave = next((k for k in devolver if _norm(_strip_code(k)) == _norm(_strip_code(str(t.get("label") or "")))), None)
+                    if not chave:
+                        continue
+                    atuais = list(t.get("aliases") or [])
+                    vistos = {_norm(a) for a in atuais}
+                    novos = [s for s in devolver[chave] if _norm(s) and _norm(s) not in vistos]
+                    t["aliases"] = atuais + novos
+                    n_top += 1
+                    n_ter += len(novos)
+            pt.write_text(json.dumps(tax, ensure_ascii=False, indent=2), encoding="utf-8")
+        feito[sig] = (n_top, n_ter)
+        print(f"  [braco V] {sig}: {n_top} topicos, {n_ter} termos devolvidos "
+              f"({', '.join(sorted(devolver))})", flush=True)
+    return feito
+
+
 def tira_curadoria_do_benchmark(sig, escopo="tudo"):
     """Tira da COPIA as entradas do sidecar manual cuja `_nota` diz que a curadoria foi MEDIDA antes de entrar.
 
@@ -235,6 +302,9 @@ def main(argv=None):
     ap.add_argument("--sem-curadoria-benchmark", nargs="?", const="tudo", choices=["tudo", "puro"], default="",
                     help="tira do sidecar manual da copia as entradas cuja proveniencia declarada e "
                          "curadoria MEDIDA contra a regua (6 termos + 2 vetos; congela_sidecars_13-09.csv)")
+    ap.add_argument("--devolve-vocab", default="",
+                    help="BRACO V: devolve o vocabulario SO dos topicos dados, no formato \"IA:Modelos "
+                         "Preditivos;Modelos Descritivos\". Mede a conversao real da aquisicao.")
     ap.add_argument("--so-medir", action="store_true", help="pula sync/ablacao/reprocess e so remede a copia")
     ap.add_argument("--veto", choices=["texto", "fonte"], default="texto",
                     help="texto: veta todo alias do sidecar LLM (o do replay) · fonte: preserva os que tambem vem do "
@@ -271,6 +341,8 @@ def main(argv=None):
                   f"{f', {n} aliases do LLM vetados na taxonomia' if n else ''}"
                   f"{f', cache de {z} resumos de codigo zerado (sera regenerado sem o vocab)' if z else ''}"
                   f"{f', SEM curadoria do benchmark: -{b[0]} topicos/-{b[1]} termos, {b[2]} vetos neutralizados' if any(b) else ''}", flush=True)
+        if a.devolve_vocab:
+            devolve_vocab(a.devolve_vocab)
         bloqueia_rede()   # so depois do robocopy (que e local, mas o guard e por processo)
         for sig in sigs:
             t1 = time.time()
@@ -283,7 +355,7 @@ def main(argv=None):
         # Marcador: a copia guarda UMA configuracao por vez e a seguinte sobrescreve. Sem isto e facil ler a copia
         # achando que ela esta na configuracao anterior (aconteceu em 12/09 com a lista de erros de unidade).
         (DEST / "_CONFIG_ATUAL.txt").write_text(
-            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
+            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + (", BRACO V devolve-vocab=" + a.devolve_vocab if a.devolve_vocab else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
 
     print()
     marc = DEST / "_CONFIG_ATUAL.txt"
