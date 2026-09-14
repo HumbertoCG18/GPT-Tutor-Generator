@@ -23,6 +23,7 @@ Uso:
     python -B docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_12-09.py --so-medir --config nu     # so remede
 """
 import argparse
+import collections
 import json
 import os
 import socket
@@ -228,6 +229,47 @@ def devolve_vocab(spec):
     return feito
 
 
+def injeta_relacoes(caminho):
+    """BRACO R (14/09): relacoes EXPLICITAS extraidas das fontes do professor, sem LLM e sem gold.
+
+    Protocolo e codigo congelados pelo astra (`extrator_relacoes_14-09.py`); so as relacoes que sobreviveram a auditoria dele
+    (`relacoes_auditadas_14-09.json`). Cada termo vira alias do topico (curso + code) pelos dois caminhos que o motor le — o
+    sidecar manual da copia e os `aliases` da taxonomia compilada —, como o braco V. Roda DEPOIS do veto do LLM.
+    Devolve {sig: n de aliases acrescentados}.
+    """
+    from src.builder.core.vocabulary_compile import _norm
+    rel = json.loads(Path(caminho).read_text(encoding="utf-8"))["relacoes"]
+    feito = collections.Counter()
+    por_curso = collections.defaultdict(list)
+    for r in rel:
+        por_curso[r["curso"]].append(r)
+    for sig, rs in por_curso.items():
+        if sig not in NOMES:
+            continue
+        pt = DEST / NOMES[sig] / "course/.content_taxonomy.json"
+        pm = DEST / NOMES[sig] / "course/.glossary_curation.json"
+        tax = json.loads(pt.read_text(encoding="utf-8"))
+        man = json.loads(pm.read_text(encoding="utf-8")) if pm.exists() else {}
+        for r in rs:
+            alvo = next((t for u in tax.get("units") or [] for t in (u.get("topics") or [])
+                         if str(t.get("code") or "") == r["topic_code"]), None)
+            if not alvo:
+                print(f"  [braco R] {sig}: topico {r['topic_code']} NAO encontrado", flush=True)
+                continue
+            if _norm(r["termo"]) not in {_norm(a) for a in (alvo.get("aliases") or [])}:
+                alvo["aliases"] = list(alvo.get("aliases") or []) + [r["termo"]]
+                feito[sig] += 1
+            chave = f"{alvo.get('code')} {alvo.get('label')}".strip()
+            ent = man.setdefault(chave, {"synonyms": []})
+            if r["termo"] not in ent.setdefault("synonyms", []):
+                ent["synonyms"].append(r["termo"])
+            ent["_nota"] = "BRACO R 14/09 (experimento): relacao explicita extraida sem LLM/gold. Nao copiar para o produto."
+        pt.write_text(json.dumps(tax, ensure_ascii=False, indent=2), encoding="utf-8")
+        pm.write_text(json.dumps(man, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"  [braco R] {sig}: {feito[sig]} aliases acrescentados", flush=True)
+    return dict(feito)
+
+
 def tira_curadoria_do_benchmark(sig, escopo="tudo"):
     """Tira da COPIA as entradas do sidecar manual cuja `_nota` diz que a curadoria foi MEDIDA antes de entrar.
 
@@ -305,6 +347,7 @@ def main(argv=None):
     ap.add_argument("--devolve-vocab", default="",
                     help="BRACO V: devolve o vocabulario SO dos topicos dados, no formato \"IA:Modelos "
                          "Preditivos;Modelos Descritivos\". Mede a conversao real da aquisicao.")
+    ap.add_argument("--relacoes", default="", help="BRACO R: JSON de relacoes explicitas auditadas (injeta como alias)")
     ap.add_argument("--so-medir", action="store_true", help="pula sync/ablacao/reprocess e so remede a copia")
     ap.add_argument("--veto", choices=["texto", "fonte"], default="texto",
                     help="texto: veta todo alias do sidecar LLM (o do replay) · fonte: preserva os que tambem vem do "
@@ -351,6 +394,8 @@ def main(argv=None):
                   f"{f', SEM curadoria do benchmark: -{b[0]} topicos/-{b[1]} termos, {b[2]} vetos neutralizados' if any(b) else ''}", flush=True)
         if a.devolve_vocab:
             devolve_vocab(a.devolve_vocab)
+        if a.relacoes:
+            injeta_relacoes(a.relacoes)
         bloqueia_rede()   # so depois do robocopy (que e local, mas o guard e por processo)
         for sig in sigs:
             t1 = time.time()
@@ -363,7 +408,7 @@ def main(argv=None):
         # Marcador: a copia guarda UMA configuracao por vez e a seguinte sobrescreve. Sem isto e facil ler a copia
         # achando que ela esta na configuracao anterior (aconteceu em 12/09 com a lista de erros de unidade).
         (DEST / "_CONFIG_ATUAL.txt").write_text(
-            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + (", BRACO V devolve-vocab=" + a.devolve_vocab if a.devolve_vocab else "") + (", braco-motor=" + a.braco_motor if a.braco_motor else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
+            a.config + " (veto=" + a.veto + (", SEM curadoria do benchmark=" + a.sem_curadoria_benchmark if a.sem_curadoria_benchmark else "") + (", BRACO V devolve-vocab=" + a.devolve_vocab if a.devolve_vocab else "") + (", braco-motor=" + a.braco_motor if a.braco_motor else "") + (", BRACO R relacoes=" + Path(a.relacoes).name if a.relacoes else "") + ")\ncursos: " + ",".join(sigs) + "\n", encoding="utf-8")
 
     print()
     marc = DEST / "_CONFIG_ATUAL.txt"

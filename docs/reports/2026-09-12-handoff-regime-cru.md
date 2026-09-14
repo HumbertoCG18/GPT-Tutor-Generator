@@ -2616,3 +2616,120 @@ semântica adicional."*
 **Não fazer:** regra especial para `perceptron`/`k-NN`/`supervisionado → preditivo` no motor · doar todos os termos de um
 documento classificado com confiança · tratar proximidade vetorial, coocorrência ou mesma aula como sinonímia · declarar regime
 sem LLM só por "zero chamadas" ou `determ-v3` · fundir os métodos agora · ajustar o extrator olhando o gold.
+
+## 39. O EXTRATOR DE RELAÇÕES EXPLÍCITAS: 25 candidatas, 3 relações novas, 0 no IA — e o braço R no motor (14/09)
+
+Ordem do usuário: *"1 - Embedding conta como LLM, mas temos que levar em consideração que, dependendo do aluno, ele não vai ter
+um computador bom o suficiente para rodar uma LLM local. E pode rodar o experimento, delegue o astra no low para isso."*
+
+### 39.1 Duas decisões do usuário — não reabrir
+
+1. **Embedding conta como LLM.** SBERT, word2vec pré-treinado e afins estão fora do regime cru.
+2. **O caminho padrão tem que rodar em máquina fraca.** Modelo local não é pré-requisito do motor, mesmo que opcional.
+
+**Consequência para qualquer aquisição de vocabulário no cru: processamento de texto puro** — regex, estrutura do documento,
+normalização. Nenhum modelo.
+
+### 39.2 A divisão do trabalho, e por quê
+
+O astra roda em sandbox read-only (regra do `CLAUDE.md`), então não pode reprocessar o motor. **Ele fez os passos 1–3** da
+§38.6 (congelar o protocolo, extrair, auditar sem gold); **eu salvei o código dele verbatim, reproduzi e rodei os passos 4–5**.
+Brief: `c1-3/brief_codex_astra_extrator_relacoes.md` · resposta: `c1-3/resposta_codex_astra_extrator_relacoes.md`
+(`gpt-6-astra`, **low**, 35.879 tokens).
+
+### 39.3 O protocolo congelado (dele)
+
+- **Fontes permitidas:** tópicos do plano só por `label`/`code`/`kind`/`unit_slug` (nunca os `aliases`); `COURSE_MAP.md`;
+  `source_section` e `moodle_label` do manifest; markdown do material (`approved`/`curated`/`base`) **com os blocos
+  `IMAGE_DESCRIPTION` removidos** (são descrição de imagem gerada por LLM).
+- **Proibidas:** todo gabarito, toda análise de erro de hoje, `GLOSSARY.md`, os sidecars, `code_curation.json`, predições
+  `computed_*` do motor.
+- **Padrões:** `categoria: itens`, `categoria (itens)`, e bullets sob um heading que é a categoria.
+- **Âncora:** igualdade normalizada com o rótulo completo do tópico, ou com o prefixo antes de um parêntese final que enumera.
+  **Sem equivalência semântica.** Âncora ambígua é rejeitada.
+- **Item:** 2–80 caracteres, 1–8 palavras; rejeita genéricos, negação, verbos, sintaxe de frase.
+
+### 39.4 A execução, reproduzida por mim
+
+`c1-3/extrator_relacoes_14-09.py` (código do astra, verbatim; roda em 2,6 s) → `extrator_relacoes_14-09.jsonl`.
+Precisou de `PYTHONUTF8=1` no Windows para gravar a saída — **o código não foi tocado**.
+
+| curso | candidatas | admissíveis (filtro automático) | **admissíveis após auditoria** | **novas** |
+|---|---|---|---|---|
+| MF | 10 | 4 | 2 | **2** |
+| SO | 8 | 5 | 1 | **1** |
+| ES2 | 3 | 1 | 0 | 0 |
+| TCC | 4 | 2 | 0 | 0 |
+| **IA** | **0** | 0 | 0 | **0** |
+| CG · FR · FR do zero | 0 | 0 | 0 | 0 |
+| **total** | **25** | **12** | **3** | **3** |
+
+**A reprodução bate com o astra nos dois números (25 e 12).** Os 9 que a auditoria dele descartou, conferidos por mim na saída:
+prosa em bullet (*"É baseado em modelos"*, *"Proteção de acesso é garantida por definição"*...), uma lista de links do ES2,
+a citação *"Turing"* no TCC e uma definição de classe NP.
+
+**As 3 relações que entraram no braço** (`c1-3/relacoes_auditadas_14-09.json`):
+
+| curso · tópico | categoria (o heading) | termo literal | fonte |
+|---|---|---|---|
+| MF `1.3` | Abordagens para Verificação Formal | `Verificação de Modelos (Model Checking):` | `introducao.md:190` |
+| MF `1.3` | Abordagens para Verificação Formal | `Verificação Dedutiva:` | `introducao.md:198` |
+| SO `7.4` | Proteção | `Bit de validade:` | `2105-laminas-paginacao.md:266` |
+
+**Conferência de leitura proibida no log do astra:** as únicas menções fora do eco do brief são uma linha de contexto injetada
+por hook e a regex `FORBIDDEN` dentro do próprio extrator. **Nenhum comando executado tocou fonte proibida.**
+
+**IA: zero.** O padrão explícito do professor que existe no IA (*"Tarefas Supervisionadas: classificação e regressão"*) não
+casa com nenhum rótulo do plano — a categoria que ele escreve não é a que o plano nomeia. É o elo que faltava na §38.3, agora
+confirmado pelo extrator: **o protocolo estrito não atravessa o IA**.
+
+**Risco declarado antes de rodar:** as duas relações do MF reforçam o tópico PAI `1.3`, que já vence o filho `1.3.3` em 4 dos
+8 erros pai × filho (§36). Mais evidência para o pai pode virar perda.
+
+### 39.5 O braço R no motor completo (passos 4–5)
+
+Braço C + as 3 relações injetadas como alias do tópico (`motor_3eixos_12-09.py --relacoes`), cache de código zerado pelo
+driver, rede bloqueada. **Corte fixado ANTES de rodar** (`c1-3/compara_snapshots_14-09.py`, validado contra a própria base):
+**≥ 5 ganhos no primário E ≥ 5 no aceito nos 7 cursos, com ZERO perdas em qualquer eixo.** Linha de base do braço C refeita e
+registrada material a material (`snapshot_bracoC_14-09.csv`, 316 materiais): reproduz 222 / 253 / 142 / 100, 0 tentativas de rede.
+O FR do zero recebeu 0 relações — o braço seria idêntico à base por construção e não rodou.
+
+### 39.6 O resultado: +1 primário, e esse +1 é o próprio documento doador — o corte ENCERRA
+
+`c1-3/bracoR_7cursos_14-09.log` · `snapshot_bracoR_14-09.{csv,log}` · `compara_bracoR_x_C_14-09.log`. **0 tentativas de rede.**
+A injeção foi confirmada no log: MF 2 aliases, SO 1.
+
+| eixo | C (base) | R (+3 relações) | ganhos | perdas |
+|---|---|---|---|---|
+| bloco (237) | 222 | 222 | 0 | 0 |
+| unidade (284) | 253 | 253 | 0 | 0 |
+| subunidade aceito (251) | 142 | 142 | 0 | 0 |
+| subunidade primário (251) | 100 | **101** | **1** | 0 |
+
+**CORTE (≥ 5 primário, ≥ 5 aceito, 0 perdas): ENCERRA** — primário +1, aceito +0, perdas 0.
+
+**O único ganho é autodoação.** MF `introducao`: `exemplos-de-aplicacoes` → `abordagens-para-verificacao-formal`. Verificado: a
+entry `introducao` lê `content/curated/introducao.md` — **o mesmo arquivo de onde saíram as duas relações do MF** (linhas 190 e
+198). O material passou a pontuar pelos termos que ele mesmo doou. É o vício que o experimento co-heading de 02/09 evitava com
+leave-one-out ("doação do próprio doc não vale para ele"). **Ganho transferível: zero.**
+
+O risco declarado antes de rodar — as relações do MF reforçarem o pai `1.3` e custarem acertos — **não se materializou**: 0 perdas.
+
+### 39.7 O que isto fecha, e o que diz sobre a meta
+
+**Fechado por medição: a aquisição por relação EXPLÍCITA LOCAL** (`categoria: itens`, `categoria (itens)`, bullets sob heading
+que é a categoria), no protocolo estrito. Nos 8 corpora ela acha 25 candidatas, 3 relações novas, **0 no IA**, e no motor rende
+**0 transferível**.
+
+**O que o resultado mostra, e é o que o astra previu como "resultado útil" (§38.6):** a evidência explícita do professor
+**termina antes do rótulo do plano**. Onde o professor escreve a categoria, ele a escreve com o nome DELE (*"Tarefas
+Supervisionadas"*, *"Abordagens para Verificação Formal"* — que por acaso coincide com um rótulo do MF), e o plano usa outro
+(*"Modelos Preditivos"*). O extrator estrito só atravessa quando os dois nomes coincidem — e quando coincidem, o motor já
+pontuava.
+
+**Consequência: o elo que falta não é extraível por padrão literal.** Fechar "tarefa preditiva → Modelos Preditivos" exige
+equivalência entre o nome do professor e o nome do plano — que é correspondência semântica. Com as duas decisões do usuário
+(embedding conta como LLM; máquina fraca), as opções que sobram para esse elo são: **(a)** correspondência lexical fraca
+(radical compartilhado `preditiv`, que o astra alertou produzir falso positivo como "estatística descritiva"); **(b)** uma
+declaração humana única por curso (o professor ou o aluno liga a categoria dele ao rótulo do plano — mas o astra já disse que
+curadoria pelo aluno viola o caminho feliz); **(c)** LLM opcional, fora do regime cru.
