@@ -2484,3 +2484,135 @@ são teorias em Isabelle), mas **não na forma em que o plano nomeia o filho**. 
 
 **A frente "pai × filho" está fechada por medição.** Não criar flag, não criar bônus ao filho, não criar desempate por
 parentesco. Os 8 erros voltam para a mesma fila dos outros: **o texto tem a evidência, o plano não tem o termo**.
+
+## 38. AUDITORIA DO ASTRA: "termo pertence a tópico" sem LLM — o que existe, o que o acervo sustenta, onde entra (14/09)
+
+Ordem do usuário: *"Delegue o astra para fazer uma auditoria se já existe algo parecido hoje em dia, e como poderíamos fazer
+isso, sem criarmos mais um eixo sem sentido, ou ter muitos eixos e deixar o motor sujo."*
+Brief: `c1-3/brief_codex_astra_relacao_termo_topico.md` · resposta: `c1-3/resposta_codex_astra_relacao_termo_topico.md`
+(`gpt-6-astra`, esforço padrão do perfil, high).
+
+**Veredito, primeira linha:** *"Existe técnica sem LLM para extrair essas relações. O acervo contém evidências úteis, mas
+ainda não sustenta uma solução automática completa para 'perceptron → Modelos Preditivos'. Recomendo ampliar a aquisição de
+vocabulário por curso, preservando um único consumidor no motor."*
+
+### 38.1 O inventário auditado — o que cada mecanismo realmente faz
+
+| mecanismo | relação que produz | parecer |
+|---|---|---|
+| 1 canal do glossário | **transporta** relação de outras fontes; não descobre | **manter o canal**; `GLOSSARY.md` é derivado — a persistência está nos sidecars |
+| 2 seed fixo em `src/` | definições e associações escritas à mão (MF/IA) | **conhecimento de domínio em `src/`: candidato a sair para dado por curso** |
+| 3 evidência do glossário | frase que define um termo **que o plano já tem** | útil para definição; não adquire relação nova |
+| 4 sidecar "do professor" | associação pela seção/sessão, doa tokens | **protótipo com ruído — e circular**: escolhe a unidade pelo `computed_unit_slug` do próprio motor |
+| 5 compilador LLM | classifica termos nos tópicos, **mas grava pertencimento como `synonyms`** | aquisição opcional; identificável e excluível do cru |
+| 6 doação de headings | semelhança lexical com o rótulo | **perde autoridade autônoma** |
+| 7 2ª passada | mistura aquisição (partes do rótulo) com arbitragem (título/seção sobrescrevendo) | não é peça única; preservar a distinção |
+| 8 correções aprendidas | relação supervisionada por humano | manter; registra subunidade, mas só a unidade é usada |
+| 9 perfil semântico | filtro de ferramentas | `domain_cues` e `tool_aliases` **sem consumidor em `src/`**; cues fixos do MF (`content_taxonomy.py:258`) a externalizar |
+| 10 co-heading | associação pela estrutura do documento | **"experimento insuficiente, não refutação universal da técnica"** — comparar 31/93 com 37/39 misturava universos |
+| 11 resumo de código | extração; reconhece aliases existentes | manter, com a ressalva de cache abaixo |
+| 12 siglas do plano | normalização lexical | manter |
+
+### 38.2 Achados novos, verificados por mim
+
+1. **O seed tem 28 regras de termo + 8 dicas de unidade**, não 36 regras termo→tópico como eu escrevi. Verificado.
+2. **O cache do resumo de código fica desatualizado por construção**: `compute_entry_hash` (`code_summarization.py:134`) usa só
+   o bundle; mudar o vocabulário não regenera o resumo (`:647`). **Os braços de hoje não foram afetados** — o
+   `motor_3eixos_12-09.py` zera esse cache nas configurações sem vocab antes do reprocess —, mas qualquer experimento de
+   aquisição tem que invalidar esse cache. Impacto no produto: não medido.
+3. **O sidecar "do professor" é circular** — `gera_sidecar_professor.py:103` escolhe a unidade da seção pela predição do
+   motor. Verificado.
+4. **O canal perde expressão**: o parser do glossário divide em `/` (`content_taxonomy.py:407`), então `TCP/IP` vira `TCP` e
+   `IP`. Não prova perda de acurácia; prova que o canal não preserva qualquer expressão.
+5. **`determ-v3` não é garantia de independência de LLM**: o produtor é determinístico, mas `course_aliases` lê o
+   `.glossary_curation.llm.json` como insumo.
+
+**E duas correções sobre o que eu escrevi:**
+- *"36 de 38 = quando o filho tem token, acerta"* (§37) **inverte a condicional**: o número mede presença de token entre os
+  acertos do filho. Também há token nos 5 erros do filho e em 8 acertos do pai. A associação existe; a causal forte não está
+  demonstrada.
+- *"O scorer não lê `moodle_label`"* precisa de escopo: para zips, o sintetizador de código **incorpora o label ao título**
+  que chega ao scorer (`code_summarization.py:629`).
+
+### 38.3 O que o acervo do professor sustenta — verificado por mim nos markdowns
+
+**A evidência da relação EXISTE nos slides, mas só até metade do caminho:**
+
+| cadeia | onde | verificado |
+|---|---|---|
+| Perceptron, MLP → "Redes Feed Forward: **Tarefas Supervisionadas**: classificação e regressão" | `content/curated/rede-perceptron.md:188`, `mlp.md:137` | sim |
+| Aprendizado Supervisionado → "**Tarefa preditiva**: encontra uma função (modelo)... para prever um rótulo" | `introducao-a-ml.md:713` | sim |
+| Aprendizado Não Supervisionado → "Executa **tarefas descritivas**... Agrupamento" | `introducao-a-ml.md:935` | sim |
+| **"modelos preditivos" / "modelos descritivos" literal** | nos md curados do IA | **0 arquivos** (radical `preditiv` em 6, `descritiv` em 10) |
+
+**O elo que falta é o último**: *tarefa preditiva* → *Modelos Preditivos* (o rótulo do plano). O astra: *"ainda falta ancorar
+essas expressões nos rótulos exatos do plano"*, e *"não inserir silenciosamente `supervisionado = preditivo`"*.
+
+**No FR, a relação já está no próprio plano** (`COURSE_MAP.md:21`: *"Protocolos de aplicação para infraestrutura (DNS, DHCP,
+SNMP, NAT)"*) — lá não há o que adquirir de fora.
+
+**Técnicas sem LLM, pelo que o acervo sustenta:**
+
+| técnica | sustentação |
+|---|---|
+| **estrutura local do professor** (listas, subtítulos, "categoria: itens") | **melhor evidência encontrada** — mas exige preservar a hierarquia local; "mesmo arquivo" não basta |
+| extração de definição | ponte parcial (supervisionado → preditiva) |
+| padrões de Hearst ("X, incluindo Y") | parcial; "é um tipo de" não ocorreu nos PDFs examinados |
+| tesauro/ontologia externa (WordNet, CSO) | não validado para estes rótulos curriculares |
+| coocorrência, TF-IDF/LSA, embeddings | nenhum ganho medido; similaridade não dá direção nem granularidade |
+
+**Sobre embedding local — a fronteira, que o usuário decide:** *"'local' informa onde roda, não que modelo é."* TF-IDF/LSA não
+usam modelo pré-treinado; word2vec é aprendizado estatístico; **SBERT usa modelo de linguagem pré-treinado**. Se a regra é
+"nenhum conhecimento aprendido em modelo de linguagem", SBERT fica fora; se é "nenhuma chamada a LLM generativo", pode entrar.
+**O primeiro experimento proposto dispensa todos.**
+
+### 38.4 Onde entra sem multiplicar decisões
+
+**Um extrator novo É uma fonte de sinal nova — isso não dá para evitar.** O que dá para evitar é **mais um voto, peso especial
+ou fallback no resolvedor**. Recomendação: **o mesmo canal de vocabulário por curso, com relações distintas dentro dele**:
+
+- `synonyms` — nomes equivalentes do conceito
+- `topic_terms` — técnicas/conceitos associados ao tópico naquele curso, **com trecho e origem que sustentam**
+
+*"O scorer existente pode consumir as expressões admitidas como evidência textual."* **Não publicar k-NN como sinônimo de
+Modelos Preditivos.** Referência conceitual: SKOS separa rótulo alternativo, relação hierárquica e associativa — sem adotar
+RDF. Para o resync: cada relação automática registra fonte, localização e hash do insumo.
+
+### 38.5 O mapa de consolidação (sem executar)
+
+*"Sua leitura está majoritariamente correta: nºs 1, 2, 4, 5, 6 e parte do 7 convergem para vocabulário do tópico. Mas misturam
+armazenamento, aquisição e decisão."*
+
+| camada possível | o que reunir | o que precisa sobreviver |
+|---|---|---|
+| **aquisição de vocabulário** | seed externalizado, extração do professor, compilação LLM, candidatos de headings | origem, tipo de relação, evidência; uma origem não valida outra circularmente |
+| **vocabulário por curso** | canal do glossário e os aliases espalhados | sinônimo × associação curricular × parte do rótulo |
+| **evidência do material** | título, headings, corpo, label, resumo de código | são representações do MESMO documento, não confirmações independentes |
+| **estrutura e arbitragem** | datas/SARC, seção, card, heranças, correções, precedências | tempo, pertencimento estrutural e autoridade humana **não são vocabulário**; não fundir num peso único |
+
+**Candidatos a sair:** regras de MF/IA em `src/`; placeholders sem consumidor; doação autônoma de headings sem evidência
+rastreável; propagação apoiada só na confiança da própria previsão. **Cada retirada com ablação individual** — *"saldo agregado
+zero já escondeu perdas por curso."*
+
+### 38.6 O primeiro experimento (falsificável, 0 LLM, não escolhido pelo gold)
+
+**Hipótese:** enumerações explicitamente ancoradas nas fontes acrescentam relações úteis ao vocabulário, sem mudar regra de
+decisão.
+
+1. **Congelar o protocolo antes da régua**: plano, estrutura original do Moodle/SARC e texto nativo dos materiais. **Excluir**
+   glossário compilado, descrições de LLM e aliases derivados de previsão.
+2. **Extrair só relações locais explícitas**: `categoria: itens`, `categoria (itens)`, exemplificação delimitada. A categoria
+   precisa casar com rótulo do plano ou equivalência documental admissível. Registrar arquivo, página/linha, trecho.
+3. **Auditar os candidatos sem o gold.** **Zero relação nova admissível → encerrar o extrator**, sem afrouxar a regra depois.
+4. **Motor completo**, baseline reproduzido, só o vocabulário extraído como diferença, **cache de código invalidado**.
+   FR do zero + 7 cursos, por material, nos 3 eixos.
+5. **Corte declarado antes:** continuar com **≥ 5 novos acertos primários e ≥ 5 aceitos nos 7 cursos, sem perder nenhum
+   acerto anterior em nenhum eixo**; no FR do zero, preservar ≥ 6/18 primário e ≥ 7/18 aceito.
+
+**O limite esperado, dito por ele:** *"o extrator estrito pode recuperar relações já conhecidas no FR e nenhuma ponte completa no
+IA. Esse resultado seria útil: mostraria exatamente onde termina a evidência explícita e começa a necessidade de correspondência
+semântica adicional."*
+
+**Não fazer:** regra especial para `perceptron`/`k-NN`/`supervisionado → preditivo` no motor · doar todos os termos de um
+documento classificado com confiança · tratar proximidade vetorial, coocorrência ou mesma aula como sinonímia · declarar regime
+sem LLM só por "zero chamadas" ou `determ-v3` · fundir os métodos agora · ajustar o extrator olhando o gold.
