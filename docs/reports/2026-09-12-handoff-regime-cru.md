@@ -2981,3 +2981,16 @@ não fica só de fora: **apaga os aliases dos últimos tópicos do plano**. **E 
 
 **No CG, 14 tópicos do fim do plano estão sem nenhum alias no produto** — o vocabulário que o CG tem para eles não chega ao scorer.
 **O efeito no placar do CG não foi medido.** É defeito para `orch-fix-defect` (teste vermelho primeiro) — decisão do usuário.
+
+## 41. Handoff para o Codex (14/09 tarde)
+
+Pedido do usuário: *"Crie um handoff, para eu colocar no codex, para eu continuar a discussão e desenvolvimento."*
+**`docs/reports/2026-09-14-handoff-codex-regime-cru.md` passa a ser o ponto de entrada.** Ele é autocontido e reúne:
+- meta literal e meta revista;
+- decisões e leis;
+- placar e alavancas fechadas;
+- as 3 opções e o teto do glossário;
+- decisões em aberto e próximo passo recomendado;
+- receita do harness, armadilhas e índice de relatórios e artefatos.
+
+Este arquivo continua como a referência detalhada que ele cita por §. Nenhuma medição nova nesta seção.
