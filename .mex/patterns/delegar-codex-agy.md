@@ -55,6 +55,13 @@ Nenhum deles escreve no repo.
 - `-p` e stdin sao exclusivos: com `-p "<texto>"` o stdin e ignorado; `--print` sem valor quebra o parse.
 - O settings.json do agy (pasta ~/.gemini) tem `permissions.allow: ["read_file(*)"]`; a leitura usa `view_file`
   nativo. Nao liberar `command(pwsh)`.
+- Tarefa de CONTAGEM/CLASSIFICACAO sobre arquivo (13/09, 109 linhas de CSV): com `-p` + `--add-dir` para ler os arquivos,
+  Gemini 3.1 Pro e Opus 4.6 tentaram rodar script ("vou processar com Python para garantir precisao"), o `command` foi
+  negado e os dois sairam SEM o JSON. Refeito com brief + CSV inline pelo stdin e "nao use nenhuma ferramenta": o Gemini
+  devolveu 109/109 no schema. Em tarefa de contagem, mandar inline e proibir ferramenta; e tratar o numero como leitura,
+  nao como medicao (o Codex reproduz com codigo).
+- `status: SUCCESS` nao prova saida util: nas duas falhas acima veio `SUCCESS` com `denied_actions: [RunCommand]` e
+  `response` em prosa. Conferir `denied_actions` vazio e fazer parse do `response` antes de usar.
 - Cada chamada do agy custa ~20k tokens de contexto fixo (skills + system prompt) antes do conteudo.
 - A cota do agy e por grupo, nao por modelo (`/quota`, 11/09): Gemini (Flash 3.6-3.8 + Pro 3.1)
   e "Claude and GPT" (Opus, Sonnet, GPT-OSS) tem cada um sua janela de 5h e semanal, consumidas

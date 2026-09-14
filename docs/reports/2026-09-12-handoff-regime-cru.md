@@ -2325,3 +2325,105 @@ pelo plural.** Nas palavras do astra: *"não chamar 'erro com plural' de 'erro c
 
 **Não fazer:** stem6 global · bônus incondicional ao subtópico filho · remover genérico para salvar um exemplo ·
 chamar erro com plural de erro causado pelo plural.
+
+## 36. PAI × FILHO NOS 7 CURSOS: o AGY contou, o astra revisou (13-14/09)
+
+Ordem do usuário: *"Delegue o AGY para fazer isso, e depois, para o astra revisar e corrigir alguma coisa caso precise"* —
+"isso" = medir nos 7 cursos quantos erros de subunidade são o PAI vencendo o próprio FILHO, antes de decidir a flag em
+`src/` que o astra mencionou (§35).
+
+### 36.1 Insumo e definição
+
+- Erros: `c1-3/erros_subunidade_cru_honesto_13-09.csv` (109 erros de aceito do cru honesto, braço C, 142/251).
+- Tópicos: `c1-3/pai_filho_topicos_13-09.csv` — 217 tópicos dos 7 cursos, extraídos das taxonomias da cópia.
+- **Estrutura verificada antes do brief:** as 7 taxonomias são listas PLANAS (0 subtópicos aninhados); parentesco só existe
+  pelo `code`. **O IA não tem nenhum `code`** e todos os 20 tópicos são `kind=topic`. O FR tem `3.21` com `kind=topic`.
+- Definição dada ao AGY: A é ancestral de B se `B.code` começa com `A.code + "."`; ordem de classificação fixa (gold vazio →
+  predição vazia → slug ausente → sem código → unidade diferente → pai vence filho → filho vence pai → irmãos de
+  subtópico → mesma unidade sem parentesco). Brief: `c1-3/brief_agy_pai_filho_13-09.md`; schema:
+  `c1-3/pai_filho_schema_13-09.json`.
+
+### 36.2 A execução do AGY — e as duas falhas antes dela
+
+**1ª rodada, os dois modelos falharam igual.** Com `-p` + `--add-dir` para ler os CSV, `gemini-3.1-pro-high` e
+`claude-opus-4-6-thinking` tentaram rodar script — o Opus escreveu *"vou processar com um script Python para garantir
+precisão"* —, o modo headless negou `command` e os dois devolveram `status: SUCCESS` **sem o JSON** (arquivados como
+`*.FALHOU-command.json`). Não liberei `command`: a regra do projeto é não abrir shell ao AGY.
+
+**2ª rodada: brief + os dois CSV inline pelo stdin, com "não use nenhuma ferramenta".** As duas saídas válidas:
+
+| modelo | linhas | totais somam | tokens |
+|---|---|---|---|
+| `gemini-3.1-pro-high` | 109 | 109 | 71.352 |
+| `claude-opus-4-6-thinking` | 109 | 109 | 89.475 |
+
+**Concordância entre os dois: 109 de 109, zero divergências.**
+
+| relação | n |
+|---|---|
+| **pai vence filho** | **8** (FR 4, MF 4) |
+| filho vence pai | 5 |
+| irmãos de subtópico | 2 |
+| mesma unidade sem parentesco | 35 |
+| unidade diferente | 4 |
+| predição vazia | 15 |
+| gold vazio | 6 |
+| sem código (o IA inteiro) | 34 |
+
+**Concordância não é correção**: os dois aplicaram a mesma definição sobre o mesmo texto, por leitura. E o Opus registrou
+duas anomalias que atacam a própria definição:
+1. MF: `verificacao-de-programas` tem `code 1.3.2` mas vive na **unidade 02** (o code sugere a unidade 01) — um parentesco
+   por prefixo que atravessa unidade.
+2. SO: o slug `conceitos-basicos` existe em **duas unidades** (`3.1` na 02 e `5.1` na 04) — a busca por (curso, slug) é
+   ambígua, e **5 erros do SO têm esse gold**.
+
+### 36.3 O astra revisou (low, 41.069 tokens) — reproduziu com código e achou uma falha no MEU brief
+
+Brief: `c1-3/brief_codex_astra_revisa_pai_filho_13-09.md` · resposta: `c1-3/resposta_codex_astra_revisa_pai_filho_13-09.md`.
+
+**Veredito, primeira linha:** *"MEDIDO: 8/109 erros (7,34%) são ancestral vencendo descendente; `extras` acrescenta 0.
+MF=4, FR=4. Há uma falha no brief: 5 linhas têm gold ambíguo."*
+
+**A falha era minha:** o brief dizia que o slug é único dentro do curso. **Não é.** No SO, `conceitos-basicos` existe em duas
+unidades (`3.1` na 02, `5.1` na 04), e **5 erros têm esse gold** (linhas 14, 15, 17, 18, 19 — os de threads e estruturas de
+controle). Os dois modelos do AGY assumiram `3.1` sem dizer. Correção dele:
+
+| relação | AGY (os dois) | **astra** |
+|---|---|---|
+| pai vence filho | 8 | **8** |
+| filho vence pai | 5 | 5 |
+| irmãos de subtópico | 2 | 2 |
+| mesma unidade sem parentesco | 35 | **30** |
+| unidade diferente | 4 | **4** |
+| **indeterminado (gold ambíguo)** | — | **5** |
+| predição vazia · gold vazio · sem código | 15 · 6 · 34 | 15 · 6 · 34 |
+
+*"Os totais 35/4 são condicionais; trocar silenciosamente pela última ocorrência produziria 30/9, igualmente injustificado."*
+
+**Sobre as definições:** o prefixo com ponto mede ancestralidade **codificada** (inclui avô → neto), não parentesco
+semântico. O `3.21` do FR **não** vira filho de `3.2` sem fonte, e não afeta nenhum dos 109. **O IA fica fora**: o
+`SYLLABUS.md` disponível é cronograma e não estabelece hierarquia — *"zero detectável não prova ausência de parentesco"*.
+
+### 36.4 Verificado por mim
+
+1. **Os 8, nominalmente — batem com o astra:** MF `archive-of-formal-proofs-355fb8`, `arvores`, `listas`, `provas`
+   (o motor escolheu `1.3`, o gold é `1.3.3`) e FR `udp-example-c`, `udp-example-java`, `tcp-chat-c`, `tcp-example`
+   (`2.2` sobre `2.2.1`). **São 2 pares pai-filho, um por curso — não 8 casos independentes.**
+2. **As 5 linhas ambíguas do SO — batem.**
+3. **A consequência que eu fui checar além da contagem:** a régua de subunidade compara **só o slug**. Com slug repetido
+   entre unidades, um "acerto" poderia ser o tópico homônimo da unidade errada. **O SO tem 2 slugs repetidos**
+   (`conceitos-basicos` em 2 unidades; `estudo-de-casos` em 5). **Medido na cópia atual (braço `sempropag`, mesmo agregado
+   de 142 do braço C): 0 acertos de subunidade contados em slug repetido** — hoje a régua não está inflada por isso. O
+   risco é estrutural, não do número atual.
+
+### 36.5 Conclusão
+
+**Pai vencendo filho é 8 de 109 erros (7,3%), em 2 cursos, concentrados em 2 pares de tópicos.** O astra: *"insuficiente
+para justificar flag em `src/`"*. Concordo — um mecanismo que corrigisse os 8 inteiros levaria a subunidade de 142 a 150/251
+(59,8%), e os 8 são 2 casos com repetição.
+
+**O que NÃO concluir:** *"esses 8 casos não provam vitória por tokens genéricos, nem que favorecer filhos corrigiria os
+erros sem regressões."* A contagem é estrutural; o porquê só o score mostra.
+
+**Próximo passo que ele nomeia:** inspecionar os scores pai × filho nesses 8 **e em controles corretos** (casos em que o
+filho venceu o pai e acertou), antes de qualquer regra.

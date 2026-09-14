@@ -1,0 +1,218 @@
+﻿curso,unit_slug,slug,code,kind,label
+MF,unidade-01-metodos-formais,sistemas-formais,1.1,topic,Sistemas Formais
+MF,unidade-01-metodos-formais,linguagens-de-especificacao-e-logicas,1.2,topic,Linguagens de Especificação e Lógicas
+MF,unidade-01-metodos-formais,fundamentos-de-logica-de-primeira-ordem,1.2.1,subtopic,Fundamentos de Lógica de Primeira Ordem
+MF,unidade-01-metodos-formais,especificacao-de-conjuntos-indutivos,1.2.2,subtopic,Especificação de Conjuntos Indutivos
+MF,unidade-01-metodos-formais,especificacao-de-funcoes-recursivas,1.2.3,subtopic,Especificação de Funções Recursivas
+MF,unidade-01-metodos-formais,abordagens-para-verificacao-formal,1.3,topic,Abordagens para Verificação Formal
+MF,unidade-01-metodos-formais,provadores-de-teoremas,1.3.3,subtopic,Provadores de Teoremas
+MF,unidade-01-metodos-formais,exemplos-de-aplicacoes,1.4,topic,Exemplos de Aplicações
+MF,unidade-02-verificacao-de-programas,logica-de-hoare,2.1,topic,Lógica de Hoare
+MF,unidade-02-verificacao-de-programas,pre-e-pos-condicoes,2.1.1,subtopic,Pré e Pós Condições
+MF,unidade-02-verificacao-de-programas,correcao-parcial-e-total,2.1.2,subtopic,Correção Parcial e Total
+MF,unidade-02-verificacao-de-programas,invariante-e-variante-de-laco,2.1.3,subtopic,Invariante e Variante de Laço
+MF,unidade-02-verificacao-de-programas,sistema-de-prova,2.1.4,subtopic,Sistema de Prova
+MF,unidade-02-verificacao-de-programas,softwares-de-suporte-a-verificacao-formal-de-programas,2.2,topic,Softwares de Suporte à Verificação Formal de Programas
+MF,unidade-02-verificacao-de-programas,verificacao-de-programas,1.3.2,subtopic,Verificação de Programas
+MF,unidade-03-verificacao-de-modelos,maquinas-de-estado,3.1,topic,Máquinas de Estado
+MF,unidade-03-verificacao-de-modelos,modelos-de-kripke,3.1.1,subtopic,Modelos de Kripke
+MF,unidade-03-verificacao-de-modelos,fundamentos-de-logicas-temporais,3.2,topic,Fundamentos de Lógicas Temporais
+MF,unidade-03-verificacao-de-modelos,logica-temporal-linear,3.2.1,subtopic,Lógica Temporal Linear
+MF,unidade-03-verificacao-de-modelos,logica-temporal-ramificada,3.2.2,subtopic,Lógica Temporal Ramificada
+MF,unidade-03-verificacao-de-modelos,especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes,3.3,topic,Especificação de Propriedades para Sistemas Sequenciais e Concorrentes
+MF,unidade-03-verificacao-de-modelos,softwares-de-suporte-a-verificacao-formal-de-modelos,3.4,topic,Softwares de Suporte à Verificação Formal de Modelos
+MF,unidade-03-verificacao-de-modelos,verificacao-de-modelos-model-checking,1.3.1,subtopic,Verificação de Modelos (Model Checking)
+SO,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,evolucao-historica,1.1,topic,Evolução histórica
+SO,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,servicos-dos-sistemas-operacionais,1.1,topic,Serviços dos sistemas operacionais
+SO,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,chamadas-de-sistema,1.2,topic,Chamadas de sistema
+SO,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,estudo-de-casos,1.3,topic,Estudo de casos
+SO,unidade-02-gerencia-do-processador,conceitos-basicos,3.1,topic,Conceitos básicos
+SO,unidade-02-gerencia-do-processador,escalonamento,3.2,topic,Escalonamento
+SO,unidade-02-gerencia-do-processador,algoritmos-de-escalonamento,3.3,topic,Algoritmos de escalonamento
+SO,unidade-02-gerencia-do-processador,estudo-de-casos,3.4,topic,Estudo de casos
+SO,unidade-03-programacao-concorrente,programas-multithreads,4.1,topic,Programas multithreads
+SO,unidade-03-programacao-concorrente,comunicacao-e-sincronizacao-de-processos,4.2,topic,Comunicação e sincronização de processos
+SO,unidade-03-programacao-concorrente,primitivas-de-sincronizacao,4.3,topic,Primitivas de sincronização
+SO,unidade-03-programacao-concorrente,problemas-classicos,4.4,topic,Problemas clássicos
+SO,unidade-03-programacao-concorrente,construcoes-concorrentes-de-alto-nivel,4.5,topic,Construções concorrentes de alto nível
+SO,unidade-04-deadlock,conceitos-basicos,5.1,topic,Conceitos básicos
+SO,unidade-04-deadlock,caracterizacao,5.2,topic,Caracterização
+SO,unidade-04-deadlock,prevencao,5.3,topic,Prevenção
+SO,unidade-04-deadlock,deteccao-e-recuperacao,5.4,topic,Detecção e recuperação
+SO,unidade-05-gerencia-de-memoria,politicas-basicas,6.1,topic,Políticas básicas
+SO,unidade-05-gerencia-de-memoria,sistemas-monoprogramados,6.1.1,subtopic,Sistemas monoprogramados
+SO,unidade-05-gerencia-de-memoria,particoes-fixas,6.1.2,subtopic,Partições fixas
+SO,unidade-05-gerencia-de-memoria,particoes-variaveis,6.1.3,subtopic,Partições variáveis
+SO,unidade-05-gerencia-de-memoria,swapping,6.1.4,subtopic,Swapping
+SO,unidade-05-gerencia-de-memoria,memoria-virtual,6.2,topic,Memória virtual
+SO,unidade-05-gerencia-de-memoria,paginacao,6.2.1,subtopic,Paginação
+SO,unidade-05-gerencia-de-memoria,segmentacao,6.2.2,subtopic,Segmentação
+SO,unidade-05-gerencia-de-memoria,estudo-de-casos,6.3,topic,Estudo de casos
+SO,unidade-06-gerencia-de-arquivos,arquivos,7.1,topic,Arquivos
+SO,unidade-06-gerencia-de-arquivos,diretorios,7.2,topic,Diretórios
+SO,unidade-06-gerencia-de-arquivos,implementacao-de-sistemas-de-arquivos,7.3,topic,Implementação de sistemas de arquivos
+SO,unidade-06-gerencia-de-arquivos,protecao,7.4,topic,Proteção
+SO,unidade-06-gerencia-de-arquivos,seguranca,7.5,topic,Segurança
+SO,unidade-06-gerencia-de-arquivos,estudo-de-casos,7.6,topic,Estudo de casos
+SO,unidade-07-gerencia-de-entrada-e-saida,dispositivos-de-entrada-e-saida,2.1,topic,Dispositivos de entrada e saída
+SO,unidade-07-gerencia-de-entrada-e-saida,controladores-dos-dispositivos,2.2,topic,Controladores dos dispositivos
+SO,unidade-07-gerencia-de-entrada-e-saida,drivers-dos-dispositivos,2.3,topic,Drivers dos dispositivos
+SO,unidade-07-gerencia-de-entrada-e-saida,estudo-de-casos,2.4,topic,Estudo de casos
+IA,unidade-de-aprendizagem-01-visao-geral,conceituacao,,topic,Conceituação
+IA,unidade-de-aprendizagem-01-visao-geral,breve-historico-de-ia,,topic,Breve Histórico de IA
+IA,unidade-de-aprendizagem-01-visao-geral,subareas-e-disciplinas-afins,,topic,Subáreas e disciplinas afins
+IA,unidade-de-aprendizagem-01-visao-geral,questoes-filosoficas-de-ia,,topic,Questões filosóficas de IA
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,introducao-a-agentes-em-ambientes-deterministicos,,topic,Introdução a agentes em ambientes determinísticos
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,representacao-de-problemas,,topic,Representação de problemas
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,busca-informada-heuristica,,topic,Busca informada (heurística)
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,algoritmos-de-busca-com-informacao,,topic,Algoritmos de Busca com Informação
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,problemas-de-otimizacao,,topic,Problemas de Otimização
+IA,unidade-de-aprendizagem-02-solucao-de-problemas,busca-adversaria,,topic,Busca Adversária
+IA,unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento,agentes-em-logica,,topic,Agentes em Lógica
+IA,unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento,planejamento-classico,,topic,Planejamento Clássico
+IA,unidade-de-aprendizagem-04-raciocinio-sob-incerteza,revisao-de-probabilidade,,topic,Revisão de probabilidade
+IA,unidade-de-aprendizagem-04-raciocinio-sob-incerteza,independencia-e-permutabilidade,,topic,Independência e Permutabilidade
+IA,unidade-de-aprendizagem-04-raciocinio-sob-incerteza,regra-de-bayes,,topic,Regra de Bayes
+IA,unidade-de-aprendizagem-05-aprendizado-de-maquina,introducao-ao-aprendizado-de-maquina,,topic,Introdução ao aprendizado de máquina
+IA,unidade-de-aprendizagem-05-aprendizado-de-maquina,paradigmas-de-aprendizado,,topic,Paradigmas de aprendizado
+IA,unidade-de-aprendizagem-05-aprendizado-de-maquina,modelos-preditivos,,topic,Modelos Preditivos
+IA,unidade-de-aprendizagem-05-aprendizado-de-maquina,modelos-descritivos,,topic,Modelos Descritivos
+IA,unidade-de-aprendizagem-05-aprendizado-de-maquina,metricas-de-avaliacao,,topic,Métricas de Avaliação
+ES2,unidade-01-arquitetura-de-software,conceito-de-arquitetura-de-software,1.1,topic,Conceito de arquitetura de software
+ES2,unidade-01-arquitetura-de-software,visoes-arquiteturais-estrutural-e-dinamica,1.2,topic,Visões arquiteturais: estrutural e dinâmica
+ES2,unidade-01-arquitetura-de-software,estilos-e-padroes-arquiteturais,1.3,topic,Estilos e padrões arquiteturais
+ES2,unidade-01-arquitetura-de-software,camadas,1.3.1,subtopic,Camadas
+ES2,unidade-01-arquitetura-de-software,cliente-servidor,1.3.2,subtopic,Cliente-Servidor
+ES2,unidade-01-arquitetura-de-software,orientada-a-servicos,1.3.3,subtopic,Orientada a Serviços
+ES2,unidade-01-arquitetura-de-software,orientada-a-microsservicos,1.3.4,subtopic,Orientada a Microsserviços
+ES2,unidade-01-arquitetura-de-software,arquitetura-serverless,1.3.5,subtopic,Arquitetura Serverless
+ES2,unidade-01-arquitetura-de-software,estrategias-de-construcao-de-arquitetura,1.4,topic,Estratégias de Construção de Arquitetura
+ES2,unidade-01-arquitetura-de-software,estudo-de-caso-arquitetura-orientada-a-microsservicos,1.5,topic,Estudo de caso: arquitetura orientada a microsserviços
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,conceito-de-devops,2.1,topic,Conceito de DevOps
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,gerenciamento-da-configuracao,2.2,topic,Gerenciamento da Configuração
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,integracao-continua-ci,2.3,topic,Integração contínua (CI)
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,entrega-continua-cd,2.4,topic,Entrega contínua (CD)
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,monitoramento-continuo,2.5,topic,Monitoramento Contínuo
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,plataformas-de-devops,2.6,topic,Plataformas de DevOps
+ES2,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,estudo-de-caso-integracao-e-implantacao-de-microsservicos,2.7,topic,Estudo de Caso: integração e implantação de microsserviços
+ES2,unidade-03-testes-de-software,conceitos-e-o-processo-de-testes-de-software,3.1,topic,Conceitos e o Processo de Testes de Software
+ES2,unidade-03-testes-de-software,testes-unitarios,3.1.1,subtopic,Testes Unitários
+ES2,unidade-03-testes-de-software,teste-de-integracao,3.1.2,subtopic,Teste de integração
+ES2,unidade-03-testes-de-software,teste-de-sistema,3.1.3,subtopic,Teste de sistema
+TCC,unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas,conjuntos-enumeraveis,1.1,topic,Conjuntos Enumeráveis
+TCC,unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas,argumento-diagonal-de-cantor-e-conjuntos-incontaveis,1.2,topic,Argumento Diagonal de Cantor e Conjuntos Incontáveis
+TCC,unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas,funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais,1.3,topic,Funções Recursivas Primitivas e Funções Recursivas Parciais
+TCC,unidade-02-turing-computabilidade,maquinas-de-turing,2.1,topic,Máquinas de Turing
+TCC,unidade-02-turing-computabilidade,linguagens-reconheciveis-e-decidiveis,2.2,topic,Linguagens Reconhecíveis e Decidíveis
+TCC,unidade-02-turing-computabilidade,variacoes-de-maquinas-de-turing,2.3,topic,Variações de Máquinas de Turing
+TCC,unidade-02-turing-computabilidade,conjectura-de-church-turing,2.4,topic,Conjectura de Church-Turing
+TCC,unidade-02-turing-computabilidade,maquinas-de-turing-universais,2.5,topic,Máquinas de Turing Universais
+TCC,unidade-03-problemas-indecidiveis,prova-da-indecidibilidade-do-problema-da-parada,3.1,topic,Prova da Indecidibilidade do Problema da Parada
+TCC,unidade-03-problemas-indecidiveis,entscheidungsproblem-e-introducao-a-reducibilidade-de-problemas,3.2,topic,Entscheidungsproblem e Introdução à Reducibilidade de Problemas
+TCC,unidade-03-problemas-indecidiveis,decidibilidade-de-teorias-logicas,3.3,topic,Decidibilidade de Teorias Lógicas
+TCC,unidade-03-problemas-indecidiveis,teoremas-de-godel,3.4,topic,Teoremas de Gödel
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,tipos-de-problemas-computacionais,4.1,topic,Tipos de Problemas Computacionais
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,complexidade-de-tempo-e-de-espaco,4.2,topic,Complexidade de Tempo e de Espaço
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,hierarquia-de-classes-de-complexidade-de-problemas,4.3,topic,Hierarquia de Classes de Complexidade de Problemas
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,classe-p-e-exemplos-de-problemas-em-p,4.4,topic,Classe P e exemplos de Problemas em P
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,classe-np,4.5,topic,Classe NP
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,definicao-da-classe,4.5.1,subtopic,Definição da Classe
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais,4.5.2,subtopic,Exemplos de Problemas Importantes em NP e suas aplicações industriais
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,teorema-de-cook-levin,4.5.3,subtopic,Teorema de Cook-Levin
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,reducao-polinomial-de-problemas,4.5.4,subtopic,Redução Polinomial de Problemas
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,provas-de-np-completude,4.5.5,subtopic,Provas de NP-Completude
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,classe-pspace,4.6,topic,Classe PSPACE
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,exemplos-de-problemas-em-pspace,4.6.2,subtopic,Exemplos de Problemas em PSPACE
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,provas-de-pspace-completude,4.6.3,subtopic,Provas de PSPACE-Completude
+TCC,unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais,intratabilidade,4.7,topic,Intratabilidade
+CG,unidade-01-introducao-ao-processamento-grafico,origens,1.1,topic,Origens
+CG,unidade-01-introducao-ao-processamento-grafico,conceitos,1.2,topic,Conceitos
+CG,unidade-01-introducao-ao-processamento-grafico,areas-relacionadas,1.3,topic,Áreas relacionadas
+CG,unidade-01-introducao-ao-processamento-grafico,aplicacoes,1.4,topic,Aplicações
+CG,unidade-02-fundamentos-matematicos,entidades-geometricas,2.1,topic,Entidades geométricas
+CG,unidade-02-fundamentos-matematicos,operacoes-com-vetores,2.2,topic,Operações com vetores
+CG,unidade-02-fundamentos-matematicos,algoritmos-de-deteccao-e-calculo-de-interseccao,2.3,topic,Algoritmos de detecção e cálculo de intersecção
+CG,unidade-02-fundamentos-matematicos,algoritmos-de-poligonos,2.4,topic,Algoritmos de polígonos
+CG,unidade-02-fundamentos-matematicos,algoritmos-de-geometria-computacional,2.5,topic,Algoritmos de Geometria Computacional
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,introducao-e-exemplos-de-aplicacoes,3.1,topic,Introdução e Exemplos de Aplicações
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,cores-e-tipos-de-imagens,3.2,topic,Cores e tipos de imagens
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,algoritmos-de-quantizacao-e-amostragem,3.3,topic,Algoritmos de Quantização e Amostragem
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,filtros,3.4,topic,Filtros
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,segmentacao,3.5,topic,Segmentação
+CG,unidade-03-processamento-de-imagens-e-visao-computacional,visao-computacional-e-conceito-de-reconhecimento-de-padroes,3.6,topic,Visão Computacional e conceito de reconhecimento de padrões
+CG,unidade-04-processo-de-visualizacao-2d,sistema-de-coordenadas-cartesianas,4.1,topic,Sistema de Coordenadas Cartesianas
+CG,unidade-04-processo-de-visualizacao-2d,2d-3d-mao-direita-e-mao-esquerda,4.1.1,subtopic,"2D, 3D (mão direita) e (mão esquerda)"
+CG,unidade-04-processo-de-visualizacao-2d,algoritmos-de-rasterizacao,4.2,topic,Algoritmos de Rasterização
+CG,unidade-04-processo-de-visualizacao-2d,desenho-de-linhas,4.2.1,subtopic,Desenho de Linhas
+CG,unidade-04-processo-de-visualizacao-2d,preenchimento-de-poligonos,4.2.2,subtopic,Preenchimento de Polígonos
+CG,unidade-04-processo-de-visualizacao-2d,recorte,4.2.3,subtopic,Recorte
+CG,unidade-05-transformacoes-geometricas,transformacoes-geometricas-e-coordenadas-homogeneas-2d,5.1,topic,Transformações Geométricas e coordenadas homogêneas 2D
+CG,unidade-05-transformacoes-geometricas,mapeamento-window-e-viewport,5.2,topic,Mapeamento Window e Viewport
+CG,unidade-05-transformacoes-geometricas,pipeline-de-visualizacao-2d,5.3,topic,Pipeline de visualização 2D
+CG,unidade-05-transformacoes-geometricas,composicao-de-transformacoes-2d,5.4,topic,Composição de transformações 2D
+CG,unidade-05-transformacoes-geometricas,representacao-matricial-das-transformacoes-3d,5.5,topic,Representação matricial das transformações 3D
+CG,unidade-05-transformacoes-geometricas,composicao-de-transformacoes-3d,5.6,topic,Composição de transformações 3D
+CG,unidade-06-processo-de-visualizacao-3d,pipeline-de-visualizacao-3d,6.1,topic,Pipeline de visualização 3D
+CG,unidade-06-processo-de-visualizacao-3d,conceito-de-camera-sintetica,6.2,topic,Conceito de Câmera Sintética
+CG,unidade-06-processo-de-visualizacao-3d,projecoes,6.3,topic,Projeções
+CG,unidade-06-processo-de-visualizacao-3d,paralela,6.3.1,subtopic,Paralela
+CG,unidade-06-processo-de-visualizacao-3d,perspectiva,6.3.2,subtopic,Perspectiva
+CG,unidade-06-processo-de-visualizacao-3d,a-matematica-das-projecoes-planares,6.3.3,subtopic,A matemática das projeções planares
+CG,unidade-06-processo-de-visualizacao-3d,algoritmos-de-remocao-de-elementos-ocultos,6.4,topic,Algoritmos de Remoção de Elementos Ocultos
+CG,unidade-06-processo-de-visualizacao-3d,eliminacao-de-faces-traseiras,6.4.1,subtopic,Eliminação de Faces Traseiras
+CG,unidade-06-processo-de-visualizacao-3d,algoritmo-do-pintor,6.4.2,subtopic,Algoritmo do Pintor
+CG,unidade-06-processo-de-visualizacao-3d,algoritmo-z-buffer,6.4.3,subtopic,Algoritmo Z-Buffer
+CG,unidade-06-processo-de-visualizacao-3d,arvores-bsp,6.4.4,subtopic,Árvores BSP
+CG,unidade-07-representacao-e-modelagem-de-objetos,formas-de-representacao,7.1,topic,Formas de Representação
+CG,unidade-07-representacao-e-modelagem-de-objetos,representacao-de-curvas-parametricas,7.1.1,subtopic,Representação de Curvas Paramétricas
+CG,unidade-07-representacao-e-modelagem-de-objetos,bezier-e-algoritmo-de-casteljau,7.1.1.1,subtopic,Bézier e Algoritmo de Casteljau
+CG,unidade-07-representacao-e-modelagem-de-objetos,hermite,7.1.1.2,subtopic,Hermite
+CG,unidade-07-representacao-e-modelagem-de-objetos,b-spline,7.1.1.3,subtopic,B-Spline
+CG,unidade-07-representacao-e-modelagem-de-objetos,catmull-rom,7.1.1.4,subtopic,Catmull-Rom
+CG,unidade-07-representacao-e-modelagem-de-objetos,vetorial-ou-matricial,7.1.2,subtopic,Vetorial ou Matricial
+CG,unidade-07-representacao-e-modelagem-de-objetos,enumeracao-espacial,7.1.3,subtopic,Enumeração Espacial
+CG,unidade-07-representacao-e-modelagem-de-objetos,representacao-aramada,7.1.4,subtopic,Representação Aramada
+CG,unidade-07-representacao-e-modelagem-de-objetos,superficies-limitantes,7.1.5,subtopic,Superfícies Limitantes
+CG,unidade-07-representacao-e-modelagem-de-objetos,tecnicas-de-modelagem-3d,7.2,topic,Técnicas de Modelagem 3D
+CG,unidade-07-representacao-e-modelagem-de-objetos,digitalizacao,7.2.1,subtopic,Digitalização
+CG,unidade-07-representacao-e-modelagem-de-objetos,varredura,7.2.2,subtopic,Varredura
+CG,unidade-07-representacao-e-modelagem-de-objetos,geometria-solida-construtiva-csg,7.2.3,subtopic,Geometria Sólida Construtiva (CSG)
+CG,unidade-07-representacao-e-modelagem-de-objetos,instanciamento-de-primitivas,7.2.4,subtopic,Instanciamento de Primitivas
+CG,unidade-08-sintese-de-imagens-realisticas,modelos-de-iluminacao-luz-pontual-direcional-spot,8.1,topic,"Modelos de Iluminação: luz pontual, direcional, spot"
+CG,unidade-08-sintese-de-imagens-realisticas,modelos-de-reflexao-ambiente-difusa-especular,8.2,topic,"Modelos de Reflexão: ambiente, difusa, especular"
+CG,unidade-08-sintese-de-imagens-realisticas,metodos-de-sombreamento-flat-gouraud-phong,8.3,topic,"Métodos de sombreamento: Flat , Gouraud, Phong"
+CG,unidade-08-sintese-de-imagens-realisticas,mapeamento-de-textura,8.4,topic,Mapeamento de Textura
+CG,unidade-08-sintese-de-imagens-realisticas,conceitos-basicos-de-ray-tracing-e-radiosidade,8.5,topic,Conceitos Básicos de Ray Tracing e Radiosidade
+CG,unidade-09-topicos-especiais-em-pesquisa-em-cg,temas-atuais-e-avancados-de-computacao-grafica,9.1,topic,Temas atuais e avançados de Computação Gráfica
+FR,unidade-01-introducao-a-redes-de-computadores,conceitos-de-redes-de-computadores-e-internet,1.1,topic,Conceitos de redes de computadores e Internet
+FR,unidade-01-introducao-a-redes-de-computadores,modelos-osi-e-tcpip,1.2,topic,Modelos OSI e TCP/IP
+FR,unidade-01-introducao-a-redes-de-computadores,conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia,1.3,topic,"Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância"
+FR,unidade-02-nivel-de-aplicacao,funcoes-e-caracteristicas-do-nivel-de-aplicacao,2.1,topic,Funções e características do nível de aplicação
+FR,unidade-02-nivel-de-aplicacao,paradigmas-clienteservidor-e-p2p,2.2,topic,Paradigmas cliente/servidor e P2P
+FR,unidade-02-nivel-de-aplicacao,implementacao-de-sockets,2.2.1,subtopic,Implementação de sockets
+FR,unidade-02-nivel-de-aplicacao,protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat,2.3,topic,"Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)"
+FR,unidade-02-nivel-de-aplicacao,protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap,2.4,topic,"Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)"
+FR,unidade-03-nivel-de-transporte,funcoes-e-caracteristicas-do-nivel-de-transporte,3.1,topic,Funções e características do nível de transporte
+FR,unidade-03-nivel-de-transporte,protocolo-tcp,3.2,topic,Protocolo TCP
+FR,unidade-03-nivel-de-transporte,controle-de-congestionamento-tcp,3.21,topic,Controle de congestionamento TCP
+FR,unidade-03-nivel-de-transporte,protocolo-udp,3.3,topic,Protocolo UDP
+FR,unidade-04-nivel-de-rede,tipos-de-servicos,4.1,topic,Tipos de serviços
+FR,unidade-04-nivel-de-rede,protocolo-ipv4,4.2,topic,Protocolo IPv4
+FR,unidade-04-nivel-de-rede,funcoes,4.2.1,subtopic,Funções
+FR,unidade-04-nivel-de-rede,enderecamento,4.2.2,subtopic,Endereçamento
+FR,unidade-04-nivel-de-rede,fragmentacao,4.2.3,subtopic,Fragmentação
+FR,unidade-04-nivel-de-rede,protocolo-arp,4.2.4,subtopic,Protocolo ARP
+FR,unidade-04-nivel-de-rede,protocolo-icmp,4.2.5,subtopic,Protocolo ICMP
+FR,unidade-04-nivel-de-rede,protocolo-ipv6,4.3,topic,Protocolo IPv6
+FR,unidade-04-nivel-de-rede,protocolo-icmpv6,4.4,topic,Protocolo ICMPv6
+FR,unidade-04-nivel-de-rede,roteamento-estatico-e-dinamico,4.5,topic,Roteamento estático e dinâmico
+FR,unidade-04-nivel-de-rede,algoritmos-de-roteamento,4.5.1,subtopic,Algoritmos de roteamento
+FR,unidade-04-nivel-de-rede,protocolos-de-roteamento,4.5.2,subtopic,Protocolos de roteamento
+FR,unidade-05-nivel-de-enlace,funcoes-e-caracteristicas-do-nivel-de-enlace,5.1,topic,Funções e características do nível de enlace
+FR,unidade-05-nivel-de-enlace,protocolos-de-enlace-para-redes-locais-cabeadas-ethernet,5.2,topic,Protocolos de enlace para redes locais cabeadas (Ethernet)
+FR,unidade-05-nivel-de-enlace,protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth,5.3,topic,Protocolos de enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)
+FR,unidade-06-nivel-fisico,classificacao-e-topologias-de-redes-de-computadores,6.1,topic,Classificação e topologias de redes de computadores
+FR,unidade-06-nivel-fisico,fundamentos-de-comunicacao-de-dados,6.2,topic,Fundamentos de comunicação de dados
+FR,unidade-06-nivel-fisico,calculo-da-capacidade-do-canal,6.2.1,subtopic,Cálculo da capacidade do canal
+FR,unidade-06-nivel-fisico,hierarquias-digitais,6.2.2,subtopic,Hierarquias digitais
+FR,unidade-06-nivel-fisico,equipamentos-de-interconexao,6.3,topic,Equipamentos de interconexão
