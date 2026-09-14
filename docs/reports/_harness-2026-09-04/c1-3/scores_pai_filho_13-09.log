@@ -1,0 +1,68 @@
+copia em: regua (veto=texto, SEM curadoria do benchmark=puro, braco-motor=sempropag)
+
+62 materiais em disputa pai x filho (6 cursos; IA fora por nao ter code)
+
+grupo            n  score gold (med)  score rival (med)  frase do filho casa  filho tem token distintivo
+E-pai            8             0.017              0.907            0 de 8                       0 de 8
+C-filho         38             9.086              0.000            8 de 38                     36 de 38
+E-filho          5             0.422              4.578            2 de 5                       5 de 5
+C-pai           11             1.483              1.390            1 de 11                      8 de 11
+
+por curso: {'CG:C-filho': 12, 'CG:C-pai': 4, 'CG:E-filho': 2, 'ES2:C-filho': 2, 'FR:E-pai': 4, 'MF:C-filho': 24, 'MF:C-pai': 7, 'MF:E-filho': 3, 'MF:E-pai': 4}
+
+OS ERROS, material a material:
+  [E-pai] MF   archive-of-formal-proofs-355fb8    gold 1.3.3     0.017 x rival 1.3       9.506 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-filho] MF   exerciciosespecificacao-resposta   gold 1.2       0.422 x rival 1.2.1     4.578 · frase filho 0 · distintivos do filho no texto: ordem;predicados
+  [E-filho] MF   exerciciosespecificacao            gold 1.2       0.422 x rival 1.2.1     4.578 · frase filho 0 · distintivos do filho no texto: ordem;predicados
+  [E-pai] MF   arvores                            gold 1.3.3     0.017 x rival 1.3       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-pai] MF   listas                             gold 1.3.3     0.017 x rival 1.3       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-pai] MF   provas                             gold 1.3.3     0.017 x rival 1.3       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-filho] MF   hoare                              gold 2.1       0.108 x rival 2.1.2     3.488 · frase filho 0 · distintivos do filho no texto: correcao
+  [E-filho] CG   pagina-com-videos-sobre-curvas-p   gold 7.1.1     0.936 x rival 7.1.1.2   4.840 · frase filho 1 · distintivos do filho no texto: hermite
+  [E-filho] CG   paginas-com-videos-sobre-modelag   gold 7.2       0.907 x rival 7.2.3     5.380 · frase filho 1 · distintivos do filho no texto: construtiva;geometria;solida
+  [E-pai] FR   tcp-chat-c                         gold 2.2.1     0.017 x rival 2.2       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-pai] FR   tcp-example                        gold 2.2.1     0.017 x rival 2.2       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-pai] FR   udp-example-c                      gold 2.2.1     0.017 x rival 2.2       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+  [E-pai] FR   udp-example-java                   gold 2.2.1     0.017 x rival 2.2       0.907 · frase filho 0 · distintivos do filho no texto: (nenhum)
+
+OS CONTROLES C-filho (o filho venceu o pai e acertou):
+  MF   exerciciosformalizacaoalgoritmos   gold 1.2.3     9.446 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmo;algoritmos;arvores;como;equacoes;formalizacao;listas;recursivas;sobre
+  MF   formalizacaoalgoritmos-recursao2   gold 1.2.3     9.546 x pai 1.2       0.388 · frase filho 0 · distintivos: algoritmos;como;equacoes;formalizacao;funcoes;listas;polimorficas;recursivas;sobre
+  MF   exerciciosconjuntosindutivos       gold 1.2.2    11.842 x pai 1.2       0.000 · frase filho 0 · distintivos: arvores;conjuntos;indutivos;listas
+  MF   conjuntosindutivos                 gold 1.2.2    12.302 x pai 1.2       0.388 · frase filho 0 · distintivos: arvores;conjuntos;definicao;indutiva;indutivos;listas;polimorficas
+  MF   logicapredicados-semantica         gold 1.2.1     7.096 x pai 1.2       0.000 · frase filho 0 · distintivos: predicados
+  MF   logicapredicados-sintaxe           gold 1.2.1    11.664 x pai 1.2       0.000 · frase filho 0 · distintivos: ordem;predicados;primeira;proposicional
+  MF   provasindutivas-especificacoesre   gold 1.2.3     9.366 x pai 1.2       0.000 · frase filho 0 · distintivos: arvores;como;especificacoes;funcoes;inducao;listas;provas;recursivas;sobre
+  MF   provasindutivas-especificacoesre   gold 1.2.3     1.584 x pai 1.2       0.000 · frase filho 0 · distintivos: arvores;como;especificacoes;inducao;provas;recursivas;sobre
+  MF   provasindutivas-especificacoesre   gold 1.2.3     1.584 x pai 1.2       0.000 · frase filho 0 · distintivos: como;especificacoes;inducao;listas;provas;recursivas;sobre
+  MF   exercicioscorrecaoinducaomatemat   gold 1.2.3     9.086 x pai 1.2       0.000 · frase filho 0 · distintivos: equacionais;equacoes;especificacoes;inducao;listas;provas;recursivas
+  MF   exerciciosformalizacaoalgoritmos   gold 1.2.3     9.086 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmos;como;equacoes;formalizacao;listas;recursivas;sobre
+  MF   exerciciosisabelle2                gold 1.3.3     0.159 x pai 1.3       0.142 · frase filho 0 · distintivos: prova
+  MF   exerciciosformalizacaoalgoritmos   gold 1.2.3     1.123 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmos;como;formalizacao
+  MF   formalizacaoalgoritmos-recursao    gold 1.2.3     9.906 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmo;algoritmos;como;equacionais;equacoes;especificacoes;formalizacao;formalizando;funcoes;nocao;recursivas;sobre
+  MF   formalizacaoalgoritmos-recursao3   gold 1.2.3    16.352 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmo;algoritmos;arvores;equacoes;formalizacao;funcoes;polimorficas;recursivas;sobre
+  MF   exerciciosisabelle                 gold 1.3.3     0.994 x pai 1.3       0.142 · frase filho 0 · distintivos: prova;teoremas
+  MF   exerciciosformalizacaoalgoritmos   gold 1.2.3     9.086 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmos;como;equacoes;formalizacao;funcoes;listas;recursivas
+  MF   correcaoterminacao                 gold 2.1.2    26.655 x pai 2.1       4.458 · frase filho 1 · distintivos: algoritmos;correcao;parcial;terminacao;total
+  MF   exercicioscorrecaoterminacao       gold 2.1.2    18.288 x pai 2.1       0.142 · frase filho 0 · distintivos: correcao;terminacao
+  MF   exerciciosformalizacaoalgoritmos   gold 2.1.3    18.910 x pai 2.1       0.142 · frase filho 0 · distintivos: algoritmos;formalizacao;invariante;invariantes;laco
+  MF   formalizacaoalgoritmos-invariant   gold 2.1.3    15.632 x pai 2.1       0.108 · frase filho 0 · distintivos: algoritmos;formalizacao;invariante;invariantes;laco
+  MF   classes-parte1                     gold 2.1.1     0.017 x pai 2.1       0.000 · frase filho 0 · distintivos: (nenhum)
+  MF   invariantes                        gold 2.1.3     8.106 x pai 2.1       0.000 · frase filho 0 · distintivos: invariantes;laco
+  MF   exerciciosformalizacaoalgoritmos   gold 1.2.3     8.726 x pai 1.2       0.000 · frase filho 0 · distintivos: algoritmos;equacoes;formalizacao;listas;recursivas
+  ES2  servicos                           gold 1.3.3    17.606 x pai 1.3       0.108 · frase filho 1 · distintivos: arquitetura;orientada;servicos
+  ES2  web                                gold 1.3.2    10.180 x pai 1.3       0.907 · frase filho 1 · distintivos: cliente;servidor
+  CG   csg                                gold 7.2.3     6.220 x pai 7.2       0.122 · frase filho 1 · distintivos: construtiva;csg;geometria;solida
+  CG   exerciciodemodelagem               gold 7.2.2     0.017 x pai 7.2       0.965 · frase filho 0 · distintivos: (nenhum)
+  CG   exemplozbuffer                     gold 6.4.3     0.142 x pai 6.4       0.000 · frase filho 0 · distintivos: buffer
+  CG   recorte                            gold 4.2.3    14.160 x pai 4.2       0.000 · frase filho 1 · distintivos: recorte
+  CG   bezier-animacao                    gold 7.1.1.1   0.125 x pai 7.1.1     0.125 · frase filho 0 · distintivos: bezier
+  CG   bezier-cpp                         gold 7.1.1.1   0.125 x pai 7.1.1     0.125 · frase filho 0 · distintivos: bezier
+  CG   bezier-py                          gold 7.1.1.1   0.125 x pai 7.1.1     0.125 · frase filho 0 · distintivos: bezier
+  CG   bezier-python                      gold 7.1.1.1   0.125 x pai 7.1.1     0.125 · frase filho 0 · distintivos: bezier
+  CG   curvas                             gold 7.1.1     1.512 x pai 7.1       1.325 · frase filho 0 · distintivos: curvas;parametricas
+  CG   curvasparametricas                 gold 7.1.1     2.320 x pai 7.1       1.325 · frase filho 1 · distintivos: curvas;parametricas
+  CG   video-sobre-o-algoritmo-de-recor   gold 4.2.3    13.260 x pai 4.2       0.000 · frase filho 1 · distintivos: recorte
+  CG   pagina-com-videos-sobre-recorte-   gold 4.2.3    14.160 x pai 4.2       0.000 · frase filho 1 · distintivos: recorte
+
+Detalhe em scores_pai_filho_13-09.csv

@@ -2427,3 +2427,60 @@ erros sem regressões."* A contagem é estrutural; o porquê só o score mostra.
 
 **Próximo passo que ele nomeia:** inspecionar os scores pai × filho nesses 8 **e em controles corretos** (casos em que o
 filho venceu o pai e acertou), antes de qualquer regra.
+
+## 37. PAI × FILHO PELOS SCORES: não existe regra estrutural — os 8 erros são filho SEM evidência no texto (14/09)
+
+Ordem do usuário: *"vamos para o próximo passo"* — o que o astra nomeou na §36: inspecionar os scores pai × filho nos 8
+erros **e em controles corretos**, antes de qualquer regra.
+
+Instrumento: `c1-3/scores_pai_filho_13-09.{py,csv,log}`. Funções reais do motor (`_score_entry_against_taxonomy_topic`,
+`_matches_normalized_phrase`), texto como o resolver monta (markdown + resumo determinístico de código). **0 chamadas.**
+Referência de acerto: os 109 erros do braço C. A cópia está no braço `sempropag` (mesmo agregado); **nenhum dos 62
+materiais caiu em `indeterminado`** — nenhum está entre as 10 transições daquele braço.
+
+### 37.1 O resultado
+
+62 materiais em disputa pai × filho, 6 cursos (IA fora: sem `code`).
+
+| grupo | n | score do gold (mediana) | score do rival (mediana) | rótulo do filho casa como frase | **filho tem token DISTINTIVO no texto** |
+|---|---|---|---|---|---|
+| **E-pai** — erro, o motor escolheu o pai | **8** | **0,017** | 0,907 | 0 de 8 | **0 de 8** |
+| **C-filho** — o filho venceu o pai e acertou | **38** | 9,086 | 0,000 | 8 de 38 | **36 de 38** |
+| E-filho — erro, o motor escolheu o filho | 5 | 0,422 | 4,578 | 2 de 5 | 5 de 5 |
+| C-pai — o pai venceu o filho e acertou | 11 | 1,483 | 1,390 | 1 de 11 | 8 de 11 |
+
+(*token distintivo* = token do rótulo/alias do filho que o pai não tem, presente no texto — **aproximação** do conjunto de
+tokens do scorer, sem o descarte de fusão do slug.)
+
+### 37.2 A leitura
+
+**Nos 8 erros, o filho não tem NENHUMA evidência própria no texto.** O score 0,017 é exatamente o bônus incondicional de
+subtópico (`+0,04`) depois das penalidades de "sem casamento" (`×0,72 ×0,68`, `index.py:1935-1941`). Não é o pai
+"vencendo por tokens genéricos" num texto que falava do filho — **o texto não fala do filho em termos que o plano
+reconheça**.
+
+**Quando o filho tem evidência própria, ele vence e acerta: 36 de 38.** O mecanismo pai × filho do scorer **funciona**.
+
+E os dois grupos restantes fecham a porta de uma regra estrutural:
+- **Favorecer o filho** não conserta os 8 (não há sinal do filho para favorecer) e **arrisca os 11 do C-pai**, onde o
+  filho TEM token distintivo em 8 e mesmo assim o pai é a resposta certa (scores 1,48 × 1,39 — disputa fina).
+- **Favorecer o pai quando o filho tem evidência** consertaria os 5 do E-filho e **quebraria os 36 do C-filho**.
+
+**Conclusão: não existe regra de parentesco que separe os erros dos controles.** A disputa pai × filho é o **mesmo
+problema de sempre visto por outro ângulo** — a evidência do filho existe no material (os zips dizem "socket"; os de MF
+são teorias em Isabelle), mas **não na forma em que o plano nomeia o filho**. É vocabulário, não estrutura.
+
+### 37.3 Detalhes que valem registro
+
+- `archive-of-formal-proofs` (MF): o pai `1.3` pontua **9,506** — ali o texto fala muito do tópico pai.
+- **4 controles de Bézier (CG) acertam com empate 0,125 × 0,125 na 1ª passada** e 2 controles têm o pai à frente
+  (`exerciciodemodelagem` 0,017 × 0,965; `classes-parte1` 0,017 × 0,000): **o acerto veio de outra rota** (título/seção
+  da 2ª passada), não do score. "Acerto" do C-filho não é sempre vitória da 1ª passada.
+- E-filho do CG (`pagina-com-videos-sobre-curvas`, `paginas-com-videos-sobre-modelag`): o rótulo do filho casa como frase
+  (Hermite; geometria sólida construtiva) e o gold é o pai — **páginas que citam o subtópico mas cobrem o tópico inteiro**.
+  É política de granularidade do gold, não defeito de score.
+
+### 37.4 O que isto fecha
+
+**A frente "pai × filho" está fechada por medição.** Não criar flag, não criar bônus ao filho, não criar desempate por
+parentesco. Os 8 erros voltam para a mesma fila dos outros: **o texto tem a evidência, o plano não tem o termo**.
