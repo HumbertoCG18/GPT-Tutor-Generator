@@ -2,6 +2,96 @@
 
 last_updated: 2026-09-14 (EXTRATOR DE RELACOES EXPLICITAS FECHADO POR MEDICAO: o astra congelou o protocolo sem gold e achou 25 candidatas, 3 relacoes novas (MF 2, SO 1) e 0 no IA; no motor, +1 primario e 0 perdas, mas o +1 e autodoacao (o material que ganhou e o proprio documento de onde as relacoes sairam) - ganho transferivel zero, o corte ENCERRA. A evidencia explicita do professor termina antes do rotulo do plano: o elo que falta e correspondencia semantica. DECISOES DO USER: embedding conta como LLM; o motor roda em maquina fraca. AUDITORIA DO ASTRA - relacao termo->topico sem LLM: a evidencia existe nos slides do professor ate metade do caminho (perceptron/MLP -> tarefas supervisionadas -> tarefa preditiva), e falta o ultimo elo ate o rotulo do plano (modelos preditivos: 0 arquivos literais). Entra pelo canal de vocabulario que ja existe, separando synonyms de topic_terms, sem voto novo no resolvedor. Primeiro experimento: extrair so relacoes locais explicitas (categoria: itens), 0 LLM, corte >= 5 primarios sem perder acerto. Achados: cache de resumo de codigo desatualiza por construcao; sidecar do professor e circular; seed em src tem 28 regras de curso. PAI x FILHO FECHADO POR MEDICAO: nos 8 erros o filho tem ZERO token distintivo no texto (score 0,017 = so o bonus de subtopico); quando o filho tem evidencia propria ele vence e acerta 36 de 38. Nao existe regra de parentesco que separe erros de controles - favorecer o filho arrisca os 11 do C-pai, favorecer o pai quebra os 36 do C-filho. E vocabulario, nao estrutura. PAI x FILHO NOS 7 CURSOS (AGY contou, astra revisou com codigo, eu verifiquei): 8 de 109 erros (7,3%), MF 4 e FR 4, concentrados em 2 PARES de topicos - nao justifica flag em src (corrigir os 8 levaria a subunidade a 59,8%). O astra achou falha no meu brief: slug NAO e unico no curso (SO conceitos-basicos em 2 unidades), 5 linhas ficam indeterminadas. A regua de subunidade compara so o slug; medido 0 acertos contados em slug repetido hoje. A 1a rodada dos dois modelos do AGY falhou tentando rodar script; a 2a, inline e sem ferramenta, concordou 109/109. SINGULAR x PLURAL NAO VALE BRACO (astra low, verificado): recupera 0 dos 5 erros, nao 5 - nos 4 zips o pai casa dois tokens e o filho um (0,907 x 0,125 mesmo singularizado), e no 01-protocolos protocolo/protocolos/redes sao tokens GENERICOS do topico. Erro que contem plural nao e erro causado por plural. Proximo mecanismo (hipotese): propagacao que preserva o vencedor positivo da 1a passada; e a competicao pai x filho merece diagnostico proprio. SUBUNIDADE NO CURSO DO ZERO, MEDIDA NO FR DO ZERO: os 12 erros sao singular x plural 5, a 2a passada quebrando acerto 2, camada x nivel 2, empate 2, migalha 1 - nenhum e vocabulario de dominio. Bracos sem LLM: moodle_label 0, sem2a +1, sempartes -3, sempropag +2 no FR (6 -> 8/18) MAS saldo ZERO nos 7 cursos (5 ganhos, 5 perdas; CG -3) - nao promover. Correcao da 31: os 15 zips TEM texto no motor (resumo deterministico determ-v3). Unica alavanca grande num curso do zero continua o vocab compilado por LLM (6 -> 16/18). ASTRA SOBRE A CAUSA REAL E O MOTOR CRU >=95%: "nao foi demonstrado nem refutado; o brief confunde melhor placar observado com teto de informacao". A config com APIs PAGAS nao bate 95% primario em 2 dos 3 eixos (unidade faltam 7, subunidade primario faltam 53) — o pedido e SUPERAR o melhor numero ja medido, sem LLM. Duas correcoes minhas: o eixo UNIDADE JA TEM cascata nomeada e a unidade explicita ja vence o bloco (file_map.py:785-807) — o eixo sem cascata e a SUBUNIDADE; e o moodle_label chega ao coletor (entry_signals.py:173) e o scorer nao consome (index.py:1835). O braco V provou o efeito da relacao FORNECIDA, nao aquisicao automatica — e o cru parte de COPIA DO PRODUTO, nunca certificado como construivel do zero. O FR do zero com 0 chamadas da subunidade primario 6/18 = 33%, e o vocab compilado leva a 16/18 = 89%. BRACO V MEDIDO: 18 termos em 2 topicos do IA valem **+33 materiais** (subunidade 142 -> 175/251 = 69,7%), com ZERO regressao em bloco e unidade e os outros 6 cursos identicos — o IA vai de 12,8% a 97,4%. **E isso derruba o meu "teto de 32" PARA CIMA: o vocabulario corrigiu tambem 2 de classe C e 2 de classe D, que eu havia declarado fechadas — contagem de classe por leitura NAO mede teto.** Ressalva: e teto de aquisicao DIRIGIDA (os 2 topicos vieram da analise de erros, que usa gold), nao ganho transferivel; o que o V prova e que quando o topico certo e curado a conversao e quase total (33 de 34) — o problema e a SELECAO sem gabarito. Faltam 51 para a meta, em 6 cursos. A MINHA HIPOTESE CAIU: 3 refutadores do agy (gemini-3.1-pro, gpt-oss-120b, claude-opus-4-6) e o meu proprio teste deterministico a derrubaram — 38+23 era DUPLA CONTAGEM (a uniao honesta e 43), o teto de 32 SUBESTIMA o vocabulario (na classe C a evidencia perde por falta de peso), e o concentrador e o CURSO IA (34 dos 109), nao a alavanca. E a engenharia de BUNDLE entrega ZERO no cru: o scorer ja le o corpo inteiro (index.py:1899-1907); o bundle e a entrada do COMPILADOR. O que sobrevive e medido: 15 dos 109 erros entram no motor com ZERO caractere de texto (todos zip, corpo em disco) e o moodle_label nao e pontuado. TETO DA AQUISICAO DE VOCABULARIO MEDIDO: **32 dos 84 materiais que faltam** (C competicao 38 / B aquisicao 32 / A nada a adquirir 23 / D fora do alvo 16), e **29 dos 32 sao o IA** — a aquisicao leva o cru a no maximo 69,3%, NAO a 90%. Em 23 dos 109 a evidencia decisiva nunca chega ao bundle (CG 11, MF 5, FR 4, ES2 3): ha mais material nas alavancas de engenharia DETERMINISTICA (bundle + desempate) do que na aquisicao. SIDECARS CONGELADOS POR ENTRADA E PROVENIENCIA (0 sem origem identificavel, 628 pares): o CRU HONESTO e **93,7% bloco / 89,1% unidade / 56,6% subunidade** — a subunidade carrega +4 materiais de curadoria escolhida MEDINDO contra a regua (4 curvas do CG + gateway do ES2), e o buraco cresce de 79 para 84 materiais; a unidade NAO esta contaminada (os 5 do CG vem inteiros do ruling do usuario sobre OpenGL) e o veto do SO e inerte no cru. O braco de baseline reproduz o log de 12/09 digito a digito. AQUISICAO DE VOCABULARIO DESENHADA e 4 afirmacoes minhas caem: o sidecar do "cru" NAO e curadoria humana (gerado por script em 07/09, 66 termos contra 560 do LLM) e tem PROVENIENCIA MISTA - CG curvas, ES2 gateway, CG OpenGL e o veto do SO foram escolhidos MEDINDO CONTRA A REGUA, entao "a unica dependencia de gold e o prompt v2" esta errada; OS 10 DA UNIDADE NAO SAO VOCABULARIO (REGUA 253 -> VOCAB 255 = +2; o voter da +8), e o SO fica 27/37 nos dois; o produto erra 27, nao 25. Veredito do astra: aquisicao sozinha NAO tem evidencia de entregar 90%; a unidade de aquisicao tem que ser RELACAO termo->topico com evidencia, nao lista de termos. LOCO MATOU A OPCAO 2: a regra de precedencia restrita a metodo de bloco fraco tem saldo +38 DENTRO da amostra e -3 FORA (cru) / -4 (produto), com 0 folds positivos no produto — nao implementar. A familia "trocar a precedencia por regra derivada do metodo do bloco" esta FECHADA. OPCAO 3 FEITA sem inflar: o placar nao muda (89,1%) e o medidor separa a natureza dos 31 erros de unidade — 17 sao divergencia de DESENHO, e o teto da mudanca de precedencia esta medido: cru 89,1% -> 95,1%, produto 92,6% -> 98,6%. GATE 1 DA OPCAO 2 aberto. DECISAO DO USER: o motor deve seguir o PLANO, nao o bloco. Medido: "texto vence sempre" PERDE mesmo contra a regua curricular (-15 cru, -7 produto); o unico corte positivo e restringir a / (+7 cru, +5 produto) mas com ganho concentrado no SO e negativo em 3 dos 6 cursos. EIXO UNIDADE: os 31 erros do cru sao 17 contradicoes ADJUDICADAS + 10 de vocabulario + 4 resto; a regra do titulo foi medida e REFUTADA (-9 no cru, -14 no produto) e o unico corte que da +3 foi recusado por ser ajuste ao benchmark; a alavanca real e reabrir "texto vence o bloco" contra a regua CURRICULAR — Gate 1. ATAQUE A SUBUNIDADE: o seletor NAO seleciona — auditado a pedido do user, o ganho de 147 para 178 vem de DOIS topicos de UM curso (IA) e o baseline "maior unidade" chega ao mesmo numero sem criterio lexical; o gold NAO entra nos dados (552 de 560 sinonimos atestados no proprio curso; filtros gold-dirigidos carregam ZERO do ganho), so no prompt do compilador, calibrado no IA; astra bateu limite de uso, volta 13/09 00:38, brief pronto. 3 EIXOS no motor completo, experimento consertado nos 3 itens do astra: gold de bloco do CG validado por data (35/35), veto por proveniencia medido (inocuo), 4o braco com voter reproduz o produto com 0 chamadas; isolamento corrigido depois da revisao do astra (cache de resumo de codigo vazava vocab; contador de rede agora e real: 0/0/0): no cru o BLOCO ja bate a meta (93,2%) e a UNIDADE fica a 1 ponto (89,1%); a SUBUNIDADE (57,8%) e o buraco inteiro. META 90/90/90 posta pelo user; produto 99,2% bloco / 92,6% unidade / 89,2% subunidade, cru 58,6% e faltam +79 materiais; 3 refutadores rodaram e derrubaram 2 frases minhas; TETO CORRIGIDO 64% -> 44%; fontes do professor esgotadas; SARC posicional FECHADO por negativo medido; fronteira: zona gratis tira 20 dos 77 erros confiantes por 1 entrega, e no produto de graca; piso medido 66,3%: regua congelada, replay = produto em 251/251, cru 147 aceito/105 primario, **aceito do confiante no cru 59,5% com 77 erros confiantes**; suite 2348 passed, 4 skipped). **PONTO DE ENTRADA =
 `2026-09-12-handoff-regime-cru.md`**; o `2026-09-11-handoff-camada3.md` passa a ser historico.
+
+> **Bloco redigido pelo Gemini 3.8 Flash** (agy, `conversation_id 5d026aa8-987d-4d6e-8bf7-8d16eccee73a`, brief
+> `c1-3/brief_agy_atualiza_pendencias_14-09.md`), **números conferidos contra o handoff e corrigidos pelo Claude** em 7 pontos:
+> SARC (a "folga de ~2 pontos" já tinha sido retirada na §17.2), abstenção, LOCO, decisões do usuário, pai × filho,
+> singular × plural e citações.
+
+## ESTADO DA FRENTE "REGIME CRU" EM 14/09 — o que está medido e o que está fechado
+
+| eixo | cru honesto (C) | VOCAB (LLM, sem voter) | produto (com voter) | 95% exige | § |
+|---|---|---|---|---|---|
+| bloco (237) | 222 = 93,7% | 221 = 93,2% | 235 = 99,2% | 226 | §29.2, §19 |
+| unidade (284) | 253 = 89,1% | 255 = 89,8% | 263 = 92,6% | 270 | §29.2, §19 |
+| subunidade aceito (251) | 142 = 56,6% | 220 = 87,6% | 224 = 89,2% | 239 | §29.2, §19 |
+| subunidade primário (251) | 100 = 39,8% | 184 = 73,3% | 186 = 74,1% | 239 | §29.2, §19 |
+
+- **Braço V (+18 termos em 2 tópicos do IA, vindos do sidecar LLM)**: subunidade 142 → 175 (69,7%), primário 100 → 134 (53,4%);
+  IA 5/39 → 38/39; zero regressão em bloco, unidade e nos outros 6 cursos (§32.1). Prova o efeito da relação **fornecida**, não a
+  aquisição (§33.3).
+- **FR construído do zero** (18 materiais, 0 chamadas): subunidade primário **6/18** no cru; **16/18** com vocabulário compilado por
+  LLM; Datalab vale 0 sem vocabulário e +1 com (§33.4).
+
+| alavanca fechada | resultado medido | § |
+|---|---|---|
+| precedência "texto vence sempre" | −15 no cru, −7 no produto contra a régua curricular | §25.2 |
+| precedência por método do bloco (`janela-1`/`due-*`) | +38 dentro da amostra; **fora: −3 no cru, −4 no produto**; nenhum fold positivo no produto | §27.2 |
+| regra do título (unidade) | −9 no cru, −14 no produto | §24 |
+| SARC posicional (SARC-A) | cru aceito 147 → 141, entrega 113 → 110, erros confiantes 77 → 85; produto 224 → 209 | §16 |
+| abstenção / fronteira de corte | a zona grátis tira 20 erros confiantes por 1 entrega (113 → 112); teto da fronteira 66,3% de precisão com 44,6% de entrega | §15 |
+| limpar tokens de mídia da doação | a doação ganha 3 e perde 1; removê-la custa −2 aceito no cru e −3 no produto | §14.3 |
+| Datalab como alavanca de atribuição | 0 sem vocabulário no FR do zero (6/18); +1 com vocabulário | §33.4 |
+| seletor de tópicos carentes | não seleciona: o baseline "maior unidade" empata em K=5 e ganha em K=10 e K=20 | §23.2 |
+| engenharia de bundle | 0 no cru: o scorer já lê o corpo inteiro (`index.py:1899`); o bundle só alimenta o compilador LLM | §31.2 |
+| `moodle_label` na subunidade | braço `label` no FR do zero: 0 | §34.3 |
+| desligar a propagação de headings (`sempropag`) | +2 no FR do zero; nos 7 cursos 5 ganhos e 5 perdas, saldo 0 (CG −3) | §34.4 |
+| singular × plural | 0 de 5: nos zips o pai casa 2 tokens e o filho 1 (0,907 × 0,125); em `01-protocolos`, `protocolo`/`protocolos`/`redes` são tokens genéricos | §35.1 |
+| regra de parentesco pai × filho | 8 de 109 erros (2 pares); nos 8 o filho tem 0 token distintivo; favorecer o filho arrisca os 11 do C-pai, favorecer o pai quebra os 36 do C-filho | §36, §37 |
+| extrator de relações explícitas | 25 candidatas, 3 relações novas (MF 2, SO 1, IA 0); no motor +1 primário, 0 perdas — e o +1 é autodoação; corte ENCERRA | §39.4–§39.7 |
+
+**Decisões do usuário — não reabrir:**
+- LLM e API totalmente opcionais: nenhum eixo se sustenta neles (§33).
+- Nada se sustenta em gold (§33).
+- Motor modular por professor (§33).
+- Resync: arquivo novo é categorizado pelo mesmo caminho (§33).
+- O aluno só processa o arquivo (§33). *(Astra: curadoria pelo aluno viola esse caminho, §33.6.)*
+- **Embedding conta como LLM** (§39.1).
+- **O motor tem que rodar em máquina fraca**; modelo local não é pré-requisito (§39.1).
+
+**Correções de afirmações do Claude (registradas):**
+- "Só os 5 termos do CG são de domínio" → IA e ES2 também têm, e o ponto é a relação com o tópico certo (§28.2).
+- "A única dependência de gold é o prompt v2" → o cru carregava +4 de subunidade em curadoria escolhida medindo contra a régua (§29).
+- "Os 10 da unidade são vocabulário" → régua → vocab dá +2; os outros +8 são o voter (§28.2).
+- "Teto da aquisição = 32 materiais" → era piso: o braço V corrigiu também erros de competição (33 de 34 no IA) (§32.2).
+- "23 erros com evidência fora do bundle" → o teste determinístico deu 12, e engenharia de bundle entrega 0 no cru (§31).
+- "Soma 38 + 23 = 61" → dupla contagem; a união honesta é 43 (§31).
+- "15 zips entram no motor sem texto" → os 15 recebem resumo determinístico `determ-v3` (§34.1).
+- "A unidade não tem cascata nomeada" → tem 7 saídas em `file_map.py:785` e a explícita vence o bloco (§33.2).
+- "Singular × plural recupera 5 de 12" → recupera 0 (§35.1).
+- "36 de 38 = quando o filho tem token, acerta" → inverte a condicional (§37 corrigido na §38.2).
+- "O seed tem 36 regras termo → tópico" → 28 regras de termo + 8 dicas de unidade (§38.2).
+- "O slug é único no curso" → o SO repete `conceitos-basicos` (2 unidades) e `estudo-de-casos` (5) (§36.3).
+- "O scorer não lê `moodle_label`" → em zip, o sintetizador põe o label no título (§38.2).
+
+## MAPA DE CONSOLIDAÇÃO — 4 camadas (astra, 14/09): MAPEAR, NÃO FUNDIR AGORA
+
+> Para a fusão que o usuário quer fazer depois, o astra separou 4 camadas, sem mexer em nada agora:
+> - **aquisição de vocabulário**: de onde vêm os termos;
+> - **vocabulário do curso**: o que o motor lê;
+> - **evidência do material**: título, headings e corpo, que são o mesmo documento e não confirmações independentes;
+> - **estrutura e decisão**: datas, SARC, seção, heranças e correções humanas. Isto não é vocabulário e não deve virar um peso único.
+
+| camada | o que reunir (mecanismos atuais) | o que precisa sobreviver à fusão |
+|---|---|---|
+| **aquisição de vocabulário** | seed em `repo.py:1464`, sidecar "do professor" (`gera_sidecar_professor.py`), compilação LLM (`vocabulary_compile.py`), doação de headings (`content_taxonomy.py:603`) | origem, tipo de relação e evidência rastreável; uma origem não valida outra circularmente |
+| **vocabulário do curso** | canal do glossário (`repo.py:1713`, `content_taxonomy.py:431`) e os aliases espalhados | sinônimo × associação curricular (`topic_terms`) × parte literal do rótulo; deduplicar sem apagar proveniência |
+| **evidência do material** | título, headings, corpo, `moodle_label` (`entry_signals.py:173`), resumo de código (`code_summarization.py`) | são representações do MESMO documento, não confirmações independentes |
+| **estrutura e decisão** | datas/SARC, seção, card, heranças, correções humanas (`tag_profile.py:159`), precedências (`file_map.py:785`) | tempo, pertencimento estrutural e autoridade humana não são vocabulário; não fundir num peso único |
+
+**Candidatos a sair (§38.5):** regras de curso em `src/` (`repo.py:1464`, `content_taxonomy.py:258`); placeholders sem consumidor
+(`domain_cues`, `tool_aliases`); doação autônoma de headings sem evidência rastreável; propagação apoiada só na confiança da
+própria previsão. **Regra: cada retirada com ablação individual** — saldo agregado zero já escondeu perdas por curso.
+
+## DECISÃO EM ABERTO (14/09)
+
+Para o elo "nome da categoria do professor → rótulo do plano" (§39.7):
+1. **correspondência lexical fraca** — radical compartilhado (`preditiv`); o astra alertou falso positivo como "estatística descritiva";
+2. **declaração humana única por curso** — ligar a categoria do professor ao rótulo do plano, uma vez; curadoria pelo aluno viola o
+   caminho feliz;
+3. **LLM opcional** — fora do regime cru; é o único caminho que já fechou o elo.
+
+**A meta (≥ 95% nos 3 eixos, primário, no cru) está sendo revista pelo astra antes de medir as 3 opções.**
 **Plano a REVISAR antes de executar: `2026-09-08-plano-confianca-antes-de-acuracia.md`.**
 
 **Reguas no produto (08/09, Gemini bloqueado):** materiais 100% certos **199/288** · bloco **235/237** · unidade
