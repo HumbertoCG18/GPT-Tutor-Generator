@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "mapeamentos": {
+      "type": "array",
+      "description": "Uma entrada para CADA id da lista de categorias do lote.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "topic_code": {"type": "string", "description": "codigo de um topico da lista, ou SEM"}
+        },
+        "required": ["id", "topic_code"]
+      }
+    }
+  },
+  "required": ["mapeamentos"]
+}

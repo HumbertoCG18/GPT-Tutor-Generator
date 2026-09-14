@@ -1,0 +1,1503 @@
+{
+ "totais": {
+  "CORRETA": 68,
+  "RUIDO": 89,
+  "INCORRETA": 6
+ },
+ "por_curso": {
+  "MF": {
+   "CORRETA": 3,
+   "RUIDO": 2
+  },
+  "SO": {
+   "RUIDO": 48,
+   "CORRETA": 50,
+   "INCORRETA": 5
+  },
+  "ES2": {
+   "CORRETA": 6,
+   "RUIDO": 3
+  },
+  "TCC": {
+   "RUIDO": 15,
+   "CORRETA": 7,
+   "INCORRETA": 1
+  },
+  "CG": {
+   "CORRETA": 2,
+   "RUIDO": 19
+  },
+  "FR": {
+   "RUIDO": 2
+  }
+ },
+ "relacoes": [
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação de Modelos (Model Checking):",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:190",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "É baseado em modelos",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:193",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação Dedutiva:",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:198",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação baseada em inferência (portanto, em provas)",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:202",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "2.1",
+   "categoria": "Lógica de Floyd-Hoare",
+   "termo": "Abordagem que usaremos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicadehoare.md:47",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Aspectos de proteção e compartilhamento",
+   "termo": "Problema associado:",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:280",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (1)",
+   "termo": "Constituídos de 2 partes:",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:164",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (1)",
+   "termo": "Mecânica",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:165",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (1)",
+   "termo": "Eletrônica – Controladora ou Adaptadora",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:166",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (1)",
+   "termo": "Controladora",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:167",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Controladora (cont.)",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:182",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Também tratar o acesso do dispositivo ao barramento",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:184",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Tarefas típicas",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:185",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Correção de erros",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:187",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Possui registradores usados para comunicar com o SO",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:189",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Tipicamente tem memória interna (buffer)",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:191",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Compatibilizar velocidades",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:192",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Orientado a caractere",
+   "termo": "stream",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:429",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Orientado a caractere",
+   "termo": "character device",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:429",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Orientado a caractere",
+   "termo": "unbuffered",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:429",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diagrama de árvore de diretórios mostrando a estrutura de nomes de dispositivos em UNIX. O nó raiz é /dev, que aponta para quatro nós filhos",
+   "termo": "llyS0",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:487",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diagrama de árvore de diretórios mostrando a estrutura de nomes de dispositivos em UNIX. O nó raiz é /dev, que aponta para quatro nós filhos",
+   "termo": "llyS1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:487",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diagrama de árvore de diretórios mostrando a estrutura de nomes de dispositivos em UNIX. O nó raiz é /dev, que aponta para quatro nós filhos",
+   "termo": "llyS2 e llyS3",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:487",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "O diagrama ilustra a arquitetura de software para o subsistema de entrada e saída. No topo, um bloco retangular rotulado \"Independente do dispositivo\" envia setas para três blocos adjacentes",
+   "termo": "\"Driver IDE\"",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:526",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "O diagrama ilustra a arquitetura de software para o subsistema de entrada e saída. No topo, um bloco retangular rotulado \"Independente do dispositivo\" envia setas para três blocos adjacentes",
+   "termo": "há ícones representando um disco rígido",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:526",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "O diagrama ilustra a arquitetura de software para o subsistema de entrada e saída. No topo, um bloco retangular rotulado \"Independente do dispositivo\" envia setas para três blocos adjacentes",
+   "termo": "uma disquete e um CD-ROM. À direita",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:526",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Fundamentos",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:85",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Paginação sob Demanda",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:86",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Criação de Processos",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:87",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Substituição de Páginas",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:88",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Alocação de Blocos (frames)",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:89",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Paginação Excessiva (Thrashing)",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:90",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Segmentação sob Demanda",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:91",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Paginação é um tipo de relocação (via hardware)",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:221",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Fragmentação interna é restrita apenas a última página",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:223",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Importante:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:224",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Visão do usuário: espaço de endereçamento contíguo",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:225",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Tabela de páginas",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:228",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Características da paginação",
+   "termo": "Facilita implementação de proteção e compartilhamento",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:229",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Proteção de acesso é garantida por definição:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:260",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Processos acessam somente suas páginas end. válidos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:261",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Endereço inválido apenas na última página",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:262",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "▶ Se houver fragmentação interna",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:263",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Bit de validade:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:266",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "Oferece a abstração de arquivos (e diretórios)",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:49",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "criar, deletar – create(), unlink()",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:52",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "abrir, fechar – open(), close()",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:53",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "ler, escrever – read(), write()",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:54",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "posicionar – lseek()",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:55",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Sistema de Arquivos",
+   "termo": "Arquivo",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:94",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Sistema de Arquivos",
+   "termo": "É composto por:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:96",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Sistema de Arquivos",
+   "termo": "Nome: identifica o arquivo perante o utilizador",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:97",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Descritor de arquivo",
+   "termo": "datas de criação",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:98",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Descritor de arquivo",
+   "termo": "modificação e acesso",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:98",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Descritor de arquivo",
+   "termo": "dono",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:98",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Descritor de arquivo",
+   "termo": "autorizações de acesso)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:98",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Sistema de Arquivos",
+   "termo": "Informação: dados guardados em memória secundária",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:99",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Arquivos Regulares",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:104",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Arquivos ASCII",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:105",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Binários",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:106",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Apresentam uma estrutura interna conhecida pelo S.O",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:107",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Diretórios",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:108",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Arquivos do sistema",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:109",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Tipos de Arquivos (1)",
+   "termo": "Mantêm a estrutura do Sistemas de Arquivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:110",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "Dependem do tipo",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:115",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "create",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:116",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "delete",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:117",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "open",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:118",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "close",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:119",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "read",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:120",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "write",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:121",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "append",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:122",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "seek",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:123",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "get attributes",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:124",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "set attributes",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:125",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "rename",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:126",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios <sup>(1)</sup>",
+   "termo": "localização física, nome, organização e demais atributos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:133",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (2)",
+   "termo": "Sistemas de Diretório em Nível Único",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:141",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (2)",
+   "termo": "Implementação mais simples",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:142",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (2)",
+   "termo": "Isso ocasionaria um conflito no acesso aos arquivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:145",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (3)",
+   "termo": "Estrutura de diretórios com dois níveis",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:150",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (3)",
+   "termo": "Cada entrada aponta para o diretório pessoal",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:153",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (4)",
+   "termo": "Estrutura de diretórios Hierárquicos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:167",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (4)",
+   "termo": "Adotado pela maioria dos sistemas operacionais",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:168",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (4)",
+   "termo": "Logicamente melhor organizado",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:169",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Diretórios (4)",
+   "termo": "É possível criar quantos diretórios quiser",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:170",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Esquema do Sistema de Arquivos (2)",
+   "termo": "As informações sobre os blocos livres",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:219",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (4)",
+   "termo": "Alocação por Lista Encadeada",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:281",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (4)",
+   "termo": "É necessário que o disco seja desfragmentado periodicamente",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:285",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (6)",
+   "termo": "Alocação por Lista Encadeada usando Tabela na Memória",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:305",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (6)",
+   "termo": "FAT (File Allocation Table)",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:307",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (6)",
+   "termo": "Vantagens:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:308",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (6)",
+   "termo": "Permitir o acesso direto aos blocos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:309",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (7)",
+   "termo": "Desvantagem",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:318",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (8)",
+   "termo": "i-nodes",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:366",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (8)",
+   "termo": "Ocupa menos espaço que a FAT",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:369",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Implementação de Arquivos (8)",
+   "termo": "Usados por sistemas baseados no UNIX",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:372",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.2",
+   "categoria": "Relação entre Diretórios e i-nodes (2)",
+   "termo": "Passos para alcançar /usr/ast/mbox",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:546",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Exemplo de Programa Multithread (1)",
+   "termo": "Editor de Texto",
+   "padrao": "subtitulo_lista",
+   "fonte": "3103-threads.md:47",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Exemplo de Programa Multithread (1)",
+   "termo": "Processamento assíncrono (salvamento periódico)",
+   "padrao": "subtitulo_lista",
+   "fonte": "3103-threads.md:49",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Útil para aplicações que requerem características avançadas de sistemas operacionais",
+   "termo": "ex: multimídia",
+   "padrao": "categoria_parenteses",
+   "fonte": "definicao-e-historico.md:414",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "5.2",
+   "categoria": "Útil para aplicações que requerem características avançadas de sistemas operacionais",
+   "termo": "realidade virtual",
+   "padrao": "categoria_parenteses",
+   "fonte": "definicao-e-historico.md:414",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.1 Arquivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:52",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.2 Diretórios",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:53",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.3 Implementação de sistemas de arquivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:54",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.4 Proteção",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:55",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.5 Segurança",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:56",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Unidade 06 — Gerência de arquivos",
+   "termo": "[ ] 7.6 Estudo de casos",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:57",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Gerência de versões e mudanças",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:279",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Git",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:280",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Gerência de dependências internas e automação de construção",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:281",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Maven, Gradle, Npm, Yarn",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:282",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Gerência de pacotes",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:283",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Gerência de configuração",
+   "termo": "Apt, Homebrew, Windows package manager",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:284",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.3",
+   "categoria": "Integração contínua (CI)",
+   "termo": "[GitHub actions](#), [Jenkins](#), [Travis CI](#)",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:405",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Princípios e padrões de arquitetura de sistemas. Descrição estrutural e comportamental de arquiteturas de software. Requisitos transversais em arquiteturas de software. Sistemas em nuvem. Estudos de serviços e microsserviços. Gerência de configuração. Estudo dos níveis de teste de sistema",
+   "termo": "integração",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "plano.md:51",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.2",
+   "categoria": "Princípios e padrões de arquitetura de sistemas. Descrição estrutural e comportamental de arquiteturas de software. Requisitos transversais em arquiteturas de software. Sistemas em nuvem. Estudos de serviços e microsserviços. Gerência de configuração. Estudo dos níveis de teste de sistema",
+   "termo": "de sistema",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "plano.md:51",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Uma função é efetivamente computável se e somente se é computável por uma Máquina de Turing",
+   "termo": "ou equivalentemente",
+   "padrao": "categoria_parenteses",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:133",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Uma função é efetivamente computável se e somente se é computável por uma Máquina de Turing",
+   "termo": "é uma função recursiva",
+   "padrao": "categoria_parenteses",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:133",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Componentes de uma Máquina de Turing",
+   "termo": "1 Fita: memória infinita dividida em células",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:159",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Componentes de uma Máquina de Turing",
+   "termo": "3 Controle: estados que determinam o comportamento",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:161",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.5",
+   "categoria": "Classe NP",
+   "termo": "Linguagens decidíveis por MTN em tempo polinomial",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-09-variacoes-de-maquinas-de-turing.md:340",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "Evidências de Intratabilidade",
+   "termo": "2 Problema é PSPACE-hard",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:568",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "Evidências de Intratabilidade",
+   "termo": "3 Problema é EXPTIME-complete",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:569",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "Evidências de Intratabilidade",
+   "termo": "4 Problema requer tempo/espço super-polinomial (provado)",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:570",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.1",
+   "categoria": "Estudo dos conjuntos enumeráveis e provas por diagonalização. Estudo da teoria das funções recursivas. Definições equivalentes de computabilidade. Discussão da tese de Church- Turing. Estudo dos problemas decidíveis e do problema da parada. Estudo do conceito de redutibilidade e sua aplicação na determinação da indecidibilidade de problemas lógicos e computacionais. Estudo e aplicação das classes de complexidade de tempo",
+   "termo": "classe P",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "plano-de-ensino.md:43",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.1",
+   "categoria": "UNIDADE 01: Conjuntos Enumeráveis e Funções Recursivas",
+   "termo": "1.1. Conjuntos Enumeráveis",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:56",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.1. Tipos de Problemas Computacionais",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:77",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.2. Complexidade de Tempo e de Espaço",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:78",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.5. Classe NP",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:81",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.5.1. Definição da Classe",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:82",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.5.3 Teorema de Cook-Levin",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:84",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.5.4 Redução Polinomial de Problemas",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:85",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.5.5 Provas de NP-Completeness",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:86",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.6 Classe PSPACE",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:87",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.6.1 Definição da Classe",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:88",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.6.3 Provas de PSPACE-Completeness",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:90",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "UNIDADE 04: Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "4.7 Intratabilidade",
+   "padrao": "subtitulo_lista",
+   "fonte": "plano-de-ensino.md:91",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "Unidade 04 — Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "[ ] 4.5.5 Provas de NP-Completude",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:38",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "Unidade 04 — Hierarquia de Classes de Complexidade de Problemas Computacionais",
+   "termo": "[ ] 4.6.3 Provas de PSPACE-Completude",
+   "padrao": "subtitulo_lista",
+   "fonte": "COURSE_MAP.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "6.3",
+   "categoria": "Tipos mais comuns de projeções ortográficas são",
+   "termo": "FRONTAL",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis3d.md:30",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "6.3",
+   "categoria": "Tipos mais comuns de projeções ortográficas são",
+   "termo": "LATERAL e SUPERIOR",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis3d.md:30",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "6.3",
+   "categoria": "Tipos mais comuns de projeções ortográficas são",
+   "termo": "z):",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis3d.md:30",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "n Depende da aplicação",
+   "termo": "complexidade da cena",
+   "padrao": "categoria_parenteses",
+   "fonte": "elemoculto.md:83",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "n Depende da aplicação",
+   "termo": "tipos de objetos",
+   "padrao": "categoria_parenteses",
+   "fonte": "elemoculto.md:83",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "n Depende da aplicação",
+   "termo": "equipamento disponível",
+   "padrao": "categoria_parenteses",
+   "fonte": "elemoculto.md:83",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "Em uma aplicação, muitas vezes, temos objetos que são derivados de um mesmo modelo, por exemplo",
+   "termo": "\"numa planta baixa temos várias mesas",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "instanciamento.md:13",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "Em uma aplicação, muitas vezes, temos objetos que são derivados de um mesmo modelo, por exemplo",
+   "termo": "com a mesma estrutura básica",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "instanciamento.md:13",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.4",
+   "categoria": "Em uma aplicação, muitas vezes, temos objetos que são derivados de um mesmo modelo, por exemplo",
+   "termo": "na cor e no posicionamento dentro da casa\"",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "instanciamento.md:13",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "3.5",
+   "categoria": "O desenho desses dois segmentos é feito com a primitiva GLLINES , com a qual o OpenGL interpreta cada par de vértices como uma linha independente",
+   "termo": "os dois primeiros vértices formam o eixo X",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "openglbasico.md:196",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "3.5",
+   "categoria": "O desenho desses dois segmentos é feito com a primitiva GLLINES , com a qual o OpenGL interpreta cada par de vértices como uma linha independente",
+   "termo": "e os dois seguintes formam o eixo Y",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "openglbasico.md:196",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.3",
+   "categoria": "1.3. Áreas relacionadas",
+   "termo": "1.4. Aplicações",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:49",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "5.1. Transformações Geométricas e coordenadas homogêneas 2D",
+   "termo": "5.2. Mapeamento Window e Viewport",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:97",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "5.1. Transformações Geométricas e coordenadas homogêneas 2D",
+   "termo": "5.3. Pipeline de visualização 2D",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:99",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "5.1. Transformações Geométricas e coordenadas homogêneas 2D",
+   "termo": "5.4. Composição de transformações 2D",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:101",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "5.1. Transformações Geométricas e coordenadas homogêneas 2D",
+   "termo": "5.5. Representação matricial das transformações 3D",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:103",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "5.1. Transformações Geométricas e coordenadas homogêneas 2D",
+   "termo": "5.6. Composição de transformações 3D",
+   "padrao": "subtitulo_lista",
+   "fonte": "planodeensino-4645z-04-fundamentos-de-computacao-grafica.md:105",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "3.5",
+   "categoria": "Tomando o segmento de reta",
+   "termo": "yf)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "recorte.md:52",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.2",
+   "categoria": "Da definição acima devem ser bem entendidos e diferenciados dois conceitos",
+   "termo": "normalmente",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis2d.md:25",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.2",
+   "categoria": "Da definição acima devem ser bem entendidos e diferenciados dois conceitos",
+   "termo": "um possível modelo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis2d.md:25",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "1.2",
+   "categoria": "Da definição acima devem ser bem entendidos e diferenciados dois conceitos",
+   "termo": "é o seguinte:",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "vis2d.md:25",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "3.2",
+   "categoria": "FOROUZAN, B.; FEGAN, S. Protocolo TCP/IP. 3ª ed. Porto Alegre",
+   "termo": "Bookman",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "plano-de-ensino-20262.md:169",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "3.2",
+   "categoria": "FOROUZAN, B.; FEGAN, S. Protocolo TCP/IP. 3ª ed. Porto Alegre",
+   "termo": "2010 (recurso online)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "plano-de-ensino-20262.md:169",
+   "classe": "RUIDO"
+  }
+ ]
+}

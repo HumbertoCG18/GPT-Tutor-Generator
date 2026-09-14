@@ -87,9 +87,36 @@ def aplica_braco(braco):
         rap._tokens_headings = sem_tokens
 
 
+def injeta_relacoes_fr(dst, caminho):
+    """Braco `relacoes` (14/09): as relacoes do curso FR de um arquivo `relacoes_<regime>_14-09.json` viram alias do topico
+    (por code) na taxonomia e no sidecar manual da copia do FR do zero — o mesmo consumidor do `motor_3eixos --relacoes`."""
+    import json as _json
+    from src.builder.core.vocabulary_compile import _norm
+    rel = [r for r in _json.loads(Path(caminho).read_text(encoding="utf-8"))["relacoes"] if r["curso"] == "FR"]
+    pt, pm = dst / "course/.content_taxonomy.json", dst / "course/.glossary_curation.json"
+    tax = _json.loads(pt.read_text(encoding="utf-8"))
+    man = _json.loads(pm.read_text(encoding="utf-8")) if pm.exists() else {}
+    n = 0
+    for r in rel:
+        alvo = next((t for u in tax.get("units") or [] for t in (u.get("topics") or []) if str(t.get("code") or "") == r["topic_code"]), None)
+        if not alvo:
+            continue
+        if _norm(r["termo"]) not in {_norm(x) for x in (alvo.get("aliases") or [])}:
+            alvo["aliases"] = list(alvo.get("aliases") or []) + [r["termo"]]
+            n += 1
+        ent = man.setdefault(f"{alvo.get('code')} {alvo.get('label')}".strip(), {"synonyms": []})
+        if r["termo"] not in ent["synonyms"]:
+            ent["synonyms"].append(r["termo"])
+    pt.write_text(_json.dumps(tax, ensure_ascii=False, indent=2), encoding="utf-8")
+    pm.write_text(_json.dumps(man, ensure_ascii=False, indent=2), encoding="utf-8")
+    CALLS["relacoes_injetadas"] += n
+    return n
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--braco", choices=["base", "label", "sem2a", "sempartes", "sempropag"], required=True)
+    ap.add_argument("--braco", choices=["base", "label", "sem2a", "sempartes", "sempropag", "relacoes"], required=True)
+    ap.add_argument("--relacoes", default="", help="arquivo relacoes_<regime>_14-09.json (braco relacoes)")
     a = ap.parse_args(argv)
 
     dst = GEN / ".frzero" / a.braco
@@ -118,13 +145,20 @@ def main(argv=None):
     store.find_by_repo_root = lambda root: sp
 
     aplica_braco(a.braco)
+    if a.braco == "relacoes":
+        dst_final = GEN / ".frzero" / ("relacoes-" + Path(a.relacoes).stem)
+        if dst_final.exists():
+            shutil.rmtree(dst_final)
+        dst.rename(dst_final)
+        dst = dst_final
+        print(f"[relacoes] {injeta_relacoes_fr(dst, a.relacoes)} aliases injetados no FR do zero ({Path(a.relacoes).name})")
     socket.socket.connect = _rede
     socket.create_connection = _rede
 
     t0 = time.time()
     ra.reprocess(dst, [], store=store)
     print(f"[{a.braco}] reprocess {time.time() - t0:.0f}s · contadores: {dict(CALLS) or '{}'}")
-    if a.braco != "base" and not any(k in CALLS for k in ("label_injetado", "2a_desligada", "partes_desligadas", "propagacao_desligada")):
+    if a.braco != "base" and not any(k in CALLS for k in ("label_injetado", "2a_desligada", "partes_desligadas", "propagacao_desligada", "relacoes_injetadas")):
         print(f"[{a.braco}] ATENCAO: o monkeypatch NAO foi exercido — o braco mediria a base. Resultado invalido.")
     print("n = 18 no primario: diferenca de 1-2 materiais e ruido.\n")
     r = subprocess.run([sys.executable, "-B", str(Path(__file__).with_name("mede_fr_sem_gold.py")), str(dst)],

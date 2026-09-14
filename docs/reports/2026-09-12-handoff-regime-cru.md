@@ -2733,3 +2733,147 @@ equivalência entre o nome do professor e o nome do plano — que é correspond�
 (radical compartilhado `preditiv`, que o astra alertou produzir falso positivo como "estatística descritiva"); **(b)** uma
 declaração humana única por curso (o professor ou o aluno liga a categoria dele ao rótulo do plano — mas o astra já disse que
 curadoria pelo aluno viola o caminho feliz); **(c)** LLM opcional, fora do regime cru.
+
+## 40. A META REVISTA PELO ASTRA, e as 3 opções medidas pelo protocolo dele (14/09)
+
+Ordem do usuário: *"...vamos usar o resto do limite do astra hoje, para rever a meta, e depois de revermos a meta, meça os 3."*
+Brief: `c1-3/brief_codex_astra_rever_meta_14-09.md` · resposta: `c1-3/resposta_codex_astra_rever_meta_14-09.md`
+(`gpt-6-astra`, esforço **high**, 141.927 tokens).
+
+### 40.1 A meta que ele propõe — DECISÃO DO USUÁRIO, não adotada ainda
+
+> **"Motor local sem modelos nem APIs obrigatórios; buscar ≥95% de precisão nas atribuições automáticas, com ≥80% de cobertura
+> por eixo, em cursos inéditos; declaração do professor e LLM serão regimes opcionais, avaliados separadamente."**
+
+*"Isso reduz a exigência original de acurácia total. É uma meta proposta, ainda não demonstrada."*
+
+- **Veredito sobre a meta original:** *"não está demonstrada; os experimentos não provaram impossibilidade."* Retirar a promessa
+  universal de 95% de acurácia total; manter como objetivo de pesquisa.
+- **Três regimes com a mesma régua:** *cru automático* (fontes originais + regras gerais congeladas) · *cru com declaração* (mapa
+  curricular do professor responsável, versionado) · *LLM opcional* (relações de modelo com origem; desligar preserva o cru).
+- **Métricas publicadas sempre, por eixo e regime:** acurácia total · precisão automática · cobertura automática · fila e erros
+  liberados por 100 materiais · e **acerto conjunto por material** (*"três eixos com 95% individualmente não significam 95% dos
+  materiais inteiramente corretos"*).
+- **Subunidade: primário continua a métrica principal**; aceito é diagnóstico.
+- **Os 17 erros de desenho da unidade continuam erros** — tirá-los contradiz a decisão do usuário de que o plano prevalece.
+- **O contrato numérico só depois da validação** em população declarada: **6 cursos de professores ainda não usados, ≥ 300
+  materiais**, dois avaliadores independentes. *"300 arquivos não são 300 experiências independentes de generalização."*
+
+### 40.2 As correções dele — verificadas
+
+1. **As 25 candidatas da §39 foram contadas DEPOIS da âncora.** `extrator_relacoes_14-09.py:171`:
+   `matched = anchors.get(norm(category), [])` logo após o `scan` — o que o professor escreveu e não casou nunca foi guardado.
+   Verificado. **E um limite a mais que eu achei na verificação: a linha 123 só ancora `kind == "topic"` — nenhum SUBTÓPICO
+   pode ser alvo** (`2.2.1 Implementação de sockets`, `1.3.3` nunca). O protocolo congela esse universo; o limite fica registrado.
+2. **"Cru honesto" não é "criação só com fontes"**: mantém o ruling humano do OpenGL (sem ele, unidade 253 → 248 e primário
+   100 → 95, §29) e o driver copia o produto.
+3. **"Nenhuma alavanca sobrevive" vale para as versões testadas**, não para toda técnica determinística.
+4. **Autodoação não é contaminação por gold**: o próprio documento é entrada legítima; o +1 da §39 pode ser acerto local
+   válido — só não é transferível.
+
+### 40.3 O protocolo das 3 opções
+
+Quatro braços **independentes**, mesmos candidatos, mesmos filtros, mesmo consumidor: **base estrita · base + A · base + B ·
+base + C**. Os 7 cursos são desenvolvimento e regressão — **nada aqui é validação inédita**.
+
+- **A** — regra lexical congelada: igualdade de `anchor_names`; senão tokens sem `a o as os de da do das dos e em para por com um
+  uma modelo modelos tarefa tarefas`, casamento por igualdade ou **prefixo comum ≥ 7 caracteres**, todo token do rótulo precisa
+  casar, **um só tópico no curso inteiro**. *"Isso admite `tarefa preditiva → modelos preditivos`. Também pode admitir
+  indevidamente `estatística descritiva → modelos descritivos`: esse risco faz parte da hipótese."*
+- **B** — declaração do **professor responsável**, com o mesmo pacote (plano, categorias, termos, trechos), sessão de até 30 min por
+  curso, sem segunda rodada. **Para simular: especialista que não acompanhou estes cursos, briefings ou gold.** *"Alguém que já
+  conhece os erros não recupera cegamento apenas deixando de abrir o CSV."* **Eu (Claude) e o astra estamos contaminados.**
+- **C** — **LLM como fornecedor do mapa categoria → tópico**, com o mesmo pacote de B. Sem voter, resumo de código, descrição de
+  imagem. Provedor, modelo, prompt, schema e lotes congelados; primeira resposta vale; resposta inválida = sem correspondência.
+
+### 40.4 O inventário antes da âncora (`c1-3/inventario_relacoes_14-09.{py,jsonl,log}`)
+
+Reaproveita o extrator congelado sem editá-lo e muda só a ligação categoria → tópico.
+
+| curso | categorias do professor | ligadas no estrito | ligadas por A | **relações admissíveis NOVAS por A** |
+|---|---|---|---|---|
+| MF | 205 | 1 | 2 | 1 |
+| SO | 466 | 1 | 31 | 98 |
+| **IA** | **602** | **0** | **0** | **0** |
+| ES2 | 376 | 1 | 3 | 8 |
+| TCC | 597 | 2 | 10 | 32 |
+| CG | 152 | 0 | 9 | 21 |
+| FR | 215 | 0 | 4 | 20 |
+
+**O estrito liga 5 de ~2.600 categorias. A regra A liga 59 — e continua 0 no IA**: "Tarefa preditiva" aparece no slide como
+bullet com explicação, não como categoria com itens listados; nenhuma das duas regras chega lá.
+
+**Amostra das ligações A** — acertos e ruído, como o astra previu, **sem ajuste depois de ver**: acertos — *"Diretórios (2)"* →
+`7.2 Diretórios`, *"Capítulo 9: Memória Virtual"* → `6.2`, *"Evidências de Intratabilidade"* → `4.7`, *"OSI versus TCP/IP"* →
+`1.2`; ruído — *"Características da paginação"* → `5.2 Caracterização` (prefixo `caracte`), *"FOROUZAN… Protocolo TCP/IP"* → `3.2`
+(bibliografia), *"O diagrama ilustra a arquitetura…"* → `2.1` (resto de descrição de imagem).
+
+**Decisão de comparabilidade:** o braço R da §39 usou a auditoria manual do astra (12 → 3). O protocolo exige mesmo filtro e mesmo
+consumidor, então **todos os braços daqui usam só o filtro automático congelado (`classify`)** — inclusive uma **base estrita auto,
+com 11 relações** (MF 4, SO 5, ES2 1, TCC 1). A **base + A** tem **163** (SO 103, TCC 23, CG 21, ES2 9, MF 5, FR 2). A auditoria de
+correção das relações é medida à parte, sem ver o placar.
+
+**Pacote B/C** (`c1-3/pacotes_mapeamento_14-09/`): só categorias com ≥ 1 relação admissível — **MF 136 · SO 375 · IA 412 · ES2 280 ·
+TCC 424 · CG 118 · FR 166 (≈ 1.900)**. **Para B, isso torna os 30 minutos por curso irreais** (6 s por categoria no TCC). O
+formulário `B_<curso>.md` está pronto; **B fica bloqueado até existir um professor ou especialista não contaminado.**
+**C:** 20 lotes de até 120 categorias, prompt congelado (`prompt_C_mapeamento_14-09.md`), modelo `gemini-3.8-flash-high` via agy
+(conta Google do usuário — alinhado com a ideia dele de OAuth em vez de chave), schema `schema_C_mapeamento_14-09.json`.
+
+### 40.5 Auditoria de correção das relações A — sem placar, sem gold
+
+`c1-3/auditoria_relacoes_14-09.py` monta a entrada e consolida; quem julga é `claude-opus-4-6-thinking` via agy, sessão limpa,
+insumo inline, sem ferramenta (`auditoria_A_resposta.json`: SUCCESS, 0 ações negadas, 35.005 tokens). **É julgamento de LLM,
+não medição** — serve para ler os braços, nunca para filtrar relação antes do motor.
+
+| classe | n |
+|---|---|
+| CORRETA | **68 (42%)** |
+| RUÍDO (prosa, bibliografia, descrição de imagem) | **89 (55%)** |
+| INCORRETA | 6 (4%) |
+
+Por curso: SO 50 corretas / 48 ruído / 5 incorretas · TCC 7 / 15 / 1 · CG 2 / 19 · ES2 6 / 3 · MF 3 / 2 · FR 0 / 2.
+**Mais da metade do que a regra A liga é ruído do filtro automático** (bullets de prosa passam no `classify`); **a ligação em si
+erra pouco (6)**.
+
+### 40.6 Os braços base estrita (auto) e base + A — motor completo, 7 cursos, contra o braço C
+
+Mesma cópia, mesmo driver (`motor_3eixos_12-09.py --relacoes`), cache de código zerado, **0 tentativas de rede** nos dois.
+Logs: `braco_{estrito,A}_7cursos_14-09.log` · `snapshot_braco_{estrito,A}_14-09.csv` · `compara_braco_{estrito,A}_x_C_14-09.log`.
+
+| braço | relações | bloco | unidade | sub. aceito | **sub. primário** | perdas (qualquer eixo) | corte |
+|---|---|---|---|---|---|---|---|
+| C (base) | 0 | 222 | 253 | 142 | 100 | — | — |
+| **base estrita (auto)** | 11 | 222 | 253 | **144** (+2) | **102** (+2) | **0** | ENCERRA |
+| **base + A** | 163 | 222 | 253 | 142 (+3 −3) | **99** (+2 −3) | **6** | ENCERRA |
+
+### 40.7 Autodoação × ganho transferível — cada mudança conferida contra o documento de onde veio a relação
+
+Critério: o material que mudou lê o MESMO arquivo que doou alguma relação para o tópico que ele passou a escolher?
+
+| braço | ganho transferível | autodoação | perda transferível |
+|---|---|---|---|
+| base estrita | **ES2 `roteiro8-autenticacao-autorizacao`** (primário + aceito) · **MF `intro`** (aceito) | MF `introducao` (a mesma da §39) | **0** |
+| base + A | MF `intro` (aceito) | CG `vis3d`, ES2 `devops`, MF `introducao` | **ES2 `roteiro4`, `roteiro5`, `roteiro6`** (primário + aceito) |
+
+**Saldo transferível:**
+- **base estrita: primário +1, aceito +2, 0 perdas.** Pequeno, e real.
+- **base + A: primário 0 − 3 = −3, aceito +1 − 3 = −2.** As 3 perdas do ES2 foram todas para `gerenciamento-da-configuracao`,
+  puxadas pela ligação A *"Gerência de configuração / Princípios e padrões de arquitetura de sistemas"* → `2.2` — **ruído**.
+
+**E A move material SEM gold na direção errada, onde a régua não vê:** 5 materiais do SO sobre threads, semáforos e sockets
+(`0704-exemplo-threads-em-java`, `0704-laminas-comunicacao-e-sincronizacao`, `0904-laminas-semaforos`, `laminas-cs-4244-internet-
+programming`, `laminas-sockets-material-alternativo`) foram para `5.2 Caracterização`, carregados pela ligação A *"Características da
+paginação"* → `Caracterização` (prefixo comum `caracte`). **O SO recebeu 102 aliases e não mudou nenhum material com gold** — mudou os
+sem gold, para um tópico que não parece o certo. Isso não entra no placar, e é exatamente o dano que a régua esconde.
+
+**FR construído do zero, base + A** (`braco_frzero_relacoesA_14-09.log`): 2 aliases injetados; **aceito 7/18, primário 6/18, 5 erros
+confiantes, unidade 19/19 — idêntico à base**. Nem ganho nem perda.
+
+### 40.8 O que A mostra, antes de C
+
+**A regra lexical fraca não é uma alavanca: é uma troca de erro, com saldo transferível negativo.** A ligação em si erra pouco (6 de
+163 pela auditoria), mas o filtro automático deixa passar ruído (89 de 163), e o ruído que ganha tópico **custa acerto** (ES2) e
+**espalha atribuição errada em material sem gold** (SO). **E continua 0 no IA**, onde está o buraco.
+
+**A base estrita (auto) é a primeira coisa hoje com saldo transferível positivo e zero perdas** — +1 primário. É longe do corte
+(≥ 5), e é 1 material.
