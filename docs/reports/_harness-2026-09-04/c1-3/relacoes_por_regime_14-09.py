@@ -43,7 +43,7 @@ def main():
     rotulos = {}
     for c in CURSOS_MOTOR:
         t = json.loads((BASES[c] / "course/.content_taxonomy.json").read_text(encoding="utf-8-sig"))
-        rotulos[c] = {x["code"]: x["label"] for u in t["units"] for x in u["topics"]}
+        rotulos[c] = {(x.get("code") or x.get("slug")): x["label"] for u in t["units"] for x in u["topics"]}
     saida, vistos = [], set()
     por = collections.Counter()
     for linha in (HERE / "inventario_relacoes_14-09.jsonl").read_text(encoding="utf-8").splitlines():

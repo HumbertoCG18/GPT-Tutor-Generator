@@ -1,26 +1,26 @@
 CURSO: IA
 
 TOPICOS DO PLANO (use somente estes codigos):
-- `(sem codigo)` Conceituação
-- `(sem codigo)` Breve Histórico de IA
-- `(sem codigo)` Subáreas e disciplinas afins
-- `(sem codigo)` Questões filosóficas de IA
-- `(sem codigo)` Introdução a agentes em ambientes determinísticos
-- `(sem codigo)` Representação de problemas
-- `(sem codigo)` Busca informada (heurística)
-- `(sem codigo)` Algoritmos de Busca com Informação
-- `(sem codigo)` Problemas de Otimização
-- `(sem codigo)` Busca Adversária
-- `(sem codigo)` Agentes em Lógica
-- `(sem codigo)` Planejamento Clássico
-- `(sem codigo)` Revisão de probabilidade
-- `(sem codigo)` Independência e Permutabilidade
-- `(sem codigo)` Regra de Bayes
-- `(sem codigo)` Introdução ao aprendizado de máquina
-- `(sem codigo)` Paradigmas de aprendizado
-- `(sem codigo)` Modelos Preditivos
-- `(sem codigo)` Modelos Descritivos
-- `(sem codigo)` Métricas de Avaliação
+- `conceituacao` Conceituação
+- `breve-historico-de-ia` Breve Histórico de IA
+- `subareas-e-disciplinas-afins` Subáreas e disciplinas afins
+- `questoes-filosoficas-de-ia` Questões filosóficas de IA
+- `introducao-a-agentes-em-ambientes-deterministicos` Introdução a agentes em ambientes determinísticos
+- `representacao-de-problemas` Representação de problemas
+- `busca-informada-heuristica` Busca informada (heurística)
+- `algoritmos-de-busca-com-informacao` Algoritmos de Busca com Informação
+- `problemas-de-otimizacao` Problemas de Otimização
+- `busca-adversaria` Busca Adversária
+- `agentes-em-logica` Agentes em Lógica
+- `planejamento-classico` Planejamento Clássico
+- `revisao-de-probabilidade` Revisão de probabilidade
+- `independencia-e-permutabilidade` Independência e Permutabilidade
+- `regra-de-bayes` Regra de Bayes
+- `introducao-ao-aprendizado-de-maquina` Introdução ao aprendizado de máquina
+- `paradigmas-de-aprendizado` Paradigmas de aprendizado
+- `modelos-preditivos` Modelos Preditivos
+- `modelos-descritivos` Modelos Descritivos
+- `metricas-de-avaliacao` Métricas de Avaliação
 
 CATEGORIAS (lote 4):
 [361] categoria: teste | termos: usado para verificar a solução; ou seja; a versão final do modelo; após o treinamento | trecho: - **teste**: usado para verificar a solução, ou seja, a versão final do modelo, após o treinamento .

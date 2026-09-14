@@ -252,7 +252,7 @@ def injeta_relacoes(caminho):
         man = json.loads(pm.read_text(encoding="utf-8")) if pm.exists() else {}
         for r in rs:
             alvo = next((t for u in tax.get("units") or [] for t in (u.get("topics") or [])
-                         if str(t.get("code") or "") == r["topic_code"]), None)
+                         if (str(t.get("code") or "") or str(t.get("slug") or "")) == r["topic_code"]), None)
             if not alvo:
                 print(f"  [braco R] {sig}: topico {r['topic_code']} NAO encontrado", flush=True)
                 continue

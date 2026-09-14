@@ -40,9 +40,11 @@ def main():
             d["termos"].append(r["termo"])
         if not d["trecho"]:
             d["trecho"] = " ".join(r["trecho"].split())[:180]
-    for curso in CURSOS:
+    so = [c for c in sys.argv[1:] if c in CURSOS]  # 14/09: regerar so os cursos pedidos (a cadeia C le os outros)
+    for curso in (so or CURSOS):
         t = json.loads((BASES[curso] / "course/.content_taxonomy.json").read_text(encoding="utf-8-sig"))
-        topicos = [(x["code"], x["label"]) for u in t["units"] for x in u["topics"] if x.get("kind") == "topic"]
+        # 14/09: topico SEM code (o IA inteiro) usa o slug como identificador — sem isso o LLM nao tem o que responder
+        topicos = [(x.get("code") or x.get("slug"), x["label"]) for u in t["units"] for x in u["topics"] if x.get("kind") == "topic"]
         plano = "\n".join(f"- `{c or '(sem codigo)'}` {l}" for c, l in topicos)
         itens = list(cats[curso].items())
         ids = {}

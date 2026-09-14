@@ -1,0 +1,141 @@
+curso material                               eixo         mudanca  tipo           base -> braco
+CG   basico3d-py                            sub_aceito   perda    transferivel   pipeline-de-visualizacao -> algoritmos-de-remocao-de
+CG   elemoculto                             sub_primario ganho    autodoacao     algoritmo-z-buffer -> algoritmos-de-remocao-de
+CG   exemplodemanipulacaodeimagens          (sem gold)            transferivel   operacoes-com-vetores -> algoritmos-de-deteccao-e
+CG   exercicio-com-poligonos                sub_primario perda    transferivel   algoritmos-de-poligonos -> 
+CG   exercicio-com-poligonos                sub_aceito   perda    transferivel   algoritmos-de-poligonos -> 
+CG   exercicio-de-animacao-foguete          sub_aceito   perda    transferivel   algoritmos-de-poligonos -> 
+CG   maptextures                            (sem gold)            transferivel   sistema-de-coordenadas-c -> pipeline-de-visualizacao
+CG   matematica                             sub_aceito   ganho    transferivel    -> entidades-geometricas
+CG   pagina-com-videos-sobre-fundamentos-   sub_aceito   ganho    transferivel   algoritmos-de-poligonos -> operacoes-com-vetores
+CG   pagina-com-videos-sobre-mapeamento-d   (sem gold)            transferivel    -> pipeline-de-visualizacao
+CG   pagina-com-videos-sobre-recorte-e257   sub_primario perda    transferivel   recorte -> pipeline-de-visualizacao
+CG   pagina-com-videos-sobre-recorte-e257   sub_aceito   perda    transferivel   recorte -> pipeline-de-visualizacao
+CG   recorte                                sub_primario perda    transferivel   recorte -> segmentacao
+CG   recorte                                sub_aceito   perda    transferivel   recorte -> segmentacao
+CG   resolucao-de-prova-de-computacao-gra   (sem gold)            autodoacao     recorte -> pipeline-de-visualizacao
+CG   texturas-v3                            (sem gold)            transferivel   aplicacoes -> conceitos
+CG   video-sobre-o-algoritmo-de-recorte-p   sub_primario perda    transferivel   recorte -> pipeline-de-visualizacao
+CG   video-sobre-o-algoritmo-de-recorte-p   sub_aceito   perda    transferivel   recorte -> pipeline-de-visualizacao
+CG   vis2d                                  sub_aceito   perda    autodoacao     recorte -> pipeline-de-visualizacao
+CG   vis3d                                  sub_primario ganho    autodoacao      -> projecoes
+CG   vis3d                                  sub_aceito   ganho    autodoacao      -> projecoes
+ES2  microsservicos5                        sub_aceito   perda    autodoacao     estudo-de-caso-integraca -> entrega-continua-cd
+ES2  microsservicos7                        sub_primario perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  microsservicos7                        sub_aceito   perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  revisaoarquiteturapadroes              sub_primario perda    autodoacao     conceito-de-arquitetura- -> estilos-e-padroes-arquit
+ES2  roteiro1-introducao                    sub_aceito   perda    transferivel   orientada-a-microsservic -> estilos-e-padroes-arquit
+ES2  roteiro4-circuitbreaker                sub_primario perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  roteiro4-circuitbreaker                sub_aceito   perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  roteiro6-conteiners-composicao         sub_primario perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  roteiro6-conteiners-composicao         sub_aceito   perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  roteiro7-filas                         sub_primario perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  roteiro7-filas                         sub_aceito   perda    autodoacao     estudo-de-caso-integraca -> gerenciamento-da-configu
+ES2  servicos                               sub_primario perda    autodoacao     orientada-a-servicos -> estilos-e-padroes-arquit
+ES2  servicos                               sub_aceito   perda    autodoacao     orientada-a-servicos -> estilos-e-padroes-arquit
+ES2  web                                    sub_primario perda    autodoacao     cliente-servidor -> estilos-e-padroes-arquit
+ES2  web                                    sub_aceito   perda    autodoacao     cliente-servidor -> estilos-e-padroes-arquit
+FR   04-protocolo-http                      sub_primario ganho    autodoacao     paradigmas-clienteservid -> protocolos-de-aplicacao-
+FR   04-protocolo-http                      sub_aceito   ganho    autodoacao     paradigmas-clienteservid -> protocolos-de-aplicacao-
+FR   05-protocolo-dns                       sub_primario ganho    autodoacao     protocolos-de-aplicacao- -> protocolos-de-aplicacao-
+FR   05-protocolo-dns                       sub_aceito   ganho    autodoacao     protocolos-de-aplicacao- -> protocolos-de-aplicacao-
+FR   unidade1-exercicios                    sub_primario ganho    transferivel    -> modelos-osi-e-tcpip
+FR   unidade1-exercicios                    sub_aceito   ganho    transferivel    -> modelos-osi-e-tcpip
+FR   unidade2-exercicios-http               sub_primario ganho    autodoacao     paradigmas-clienteservid -> protocolos-de-aplicacao-
+FR   unidade2-exercicios-http               sub_aceito   ganho    autodoacao     paradigmas-clienteservid -> protocolos-de-aplicacao-
+IA   o-que-é-inteligência-artificial-ia-o   (sem gold)            transferivel   breve-historico-de-ia -> conceituacao
+MF   aws-encryption-sdk                     (sem gold)            transferivel   abordagens-para-verifica -> 
+MF   classes-parte1                         sub_aceito   perda    transferivel   verificacao-de-programas -> invariante-e-variante-de
+MF   colecoes-arrays                        sub_primario ganho    transferivel   verificacao-de-programas -> softwares-de-suporte-a-v
+MF   colecoes-conjuntos                     sub_aceito   perda    transferivel   verificacao-de-programas -> logica-de-hoare
+MF   conjuntosindutivos                     sub_primario perda    autodoacao     especificacao-de-conjunt -> linguagens-de-especifica
+MF   conjuntosindutivos                     sub_aceito   perda    autodoacao     especificacao-de-conjunt -> linguagens-de-especifica
+MF   eth2                                   (sem gold)            autodoacao     abordagens-para-verifica -> linguagens-de-especifica
+MF   exemplos-zip                           sub_aceito   perda    transferivel   verificacao-de-modelos-m -> fundamentos-de-logicas-t
+MF   exercicios-arrays                      sub_primario ganho    transferivel   verificacao-de-programas -> softwares-de-suporte-a-v
+MF   exercicios-conjuntos                   sub_aceito   perda    transferivel   verificacao-de-programas -> logica-de-hoare
+MF   exerciciosconjuntosindutivos           sub_primario perda    autodoacao     especificacao-de-conjunt -> sistemas-formais
+MF   exerciciosconjuntosindutivos           sub_aceito   perda    autodoacao     especificacao-de-conjunt -> sistemas-formais
+MF   exercicioscorrecaoinducaomatematica    sub_primario perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   exercicioscorrecaoinducaomatematica    sub_aceito   perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   exerciciosdafny1                       sub_primario ganho    autodoacao     verificacao-de-programas -> softwares-de-suporte-a-v
+MF   exerciciosdafny2                       sub_primario ganho    autodoacao     verificacao-de-programas -> softwares-de-suporte-a-v
+MF   exerciciosdafny4                       sub_primario ganho    autodoacao     verificacao-de-programas -> softwares-de-suporte-a-v
+MF   exerciciosespecificacao                sub_primario ganho    transferivel   fundamentos-de-logica-de -> linguagens-de-especifica
+MF   exerciciosespecificacao                sub_aceito   ganho    transferivel   fundamentos-de-logica-de -> linguagens-de-especifica
+MF   exerciciosespecificacao-respostas      sub_primario ganho    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   exerciciosespecificacao-respostas      sub_aceito   ganho    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   exerciciosisabelle                     sub_aceito   perda    transferivel   especificacao-de-funcoes -> linguagens-de-especifica
+MF   exerciciosisabelle2                    sub_aceito   perda    transferivel   especificacao-de-funcoes -> linguagens-de-especifica
+MF   exercicioslogicatemporal               sub_aceito   perda    autodoacao     logica-temporal-linear -> maquinas-de-estado
+MF   formalizacaoalgoritmos-recursao        sub_primario perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   formalizacaoalgoritmos-recursao        sub_aceito   perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   introducao-zip                         sub_aceito   perda    transferivel   verificacao-de-programas -> logica-de-hoare
+MF   logicapredicados-semantica             sub_primario perda    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   logicapredicados-semantica             sub_aceito   perda    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   logicapredicados-sintaxe               sub_primario perda    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   logicapredicados-sintaxe               sub_aceito   perda    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   logicaproposicional-semantica          sub_primario ganho    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   logicaproposicional-sintaxe            sub_primario ganho    autodoacao     fundamentos-de-logica-de -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_primario perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_aceito   perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_primario perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_aceito   perda    autodoacao     especificacao-de-funcoes -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_primario perda    transferivel   especificacao-de-funcoes -> linguagens-de-especifica
+MF   provasindutivas-especificacoesrecurs   sub_aceito   perda    transferivel   especificacao-de-funcoes -> linguagens-de-especifica
+MF   revisao-p1                             (sem gold)            transferivel    -> linguagens-de-especifica
+MF   revisao-p1-gabarito                    (sem gold)            autodoacao      -> linguagens-de-especifica
+MF   t1-2026-1                              (sem gold)            transferivel   sistema-de-prova -> softwares-de-suporte-a-v
+MF   t1-2026-1-thy                          (sem gold)            transferivel    -> logica-de-hoare
+MF   t2-2026-1                              (sem gold)            transferivel   modelos-de-kripke -> especificacao-de-proprie
+MF   verificacaomodelos                     sub_primario perda    autodoacao     verificacao-de-modelos-m -> fundamentos-de-logicas-t
+SO   0206-laminas-gerencia-de-i-o-livro-t   (sem gold)            autodoacao     paginacao -> 
+SO   0206-laminas-mecanismos-de-interrupc   (sem gold)            autodoacao     paginacao -> memoria-virtual
+SO   0206-laminas-memoria-virtual-livro-t   (sem gold)            autodoacao     paginacao -> memoria-virtual
+SO   1203-processos                         sub_primario perda    autodoacao     chamadas-de-sistema -> evolucao-historica
+SO   1203-processos                         sub_aceito   perda    autodoacao     chamadas-de-sistema -> evolucao-historica
+SO   1205-laminas-gerencia-de-memoria       (sem gold)            autodoacao     paginacao -> politicas-basicas
+SO   14-04-troca-de-mensagens               (sem gold)            autodoacao     escalonamento -> conceitos-basicos
+SO   1404-laminas-ipc                       (sem gold)            autodoacao     escalonamento -> conceitos-basicos
+SO   1703-chamada-de-sistema                sub_primario perda    autodoacao     chamadas-de-sistema -> evolucao-historica
+SO   1703-chamada-de-sistema                sub_aceito   perda    autodoacao     chamadas-de-sistema -> evolucao-historica
+SO   1903-estruturas-de-controle            sub_primario ganho    autodoacao     escalonamento -> conceitos-basicos
+SO   1903-estruturas-de-controle            sub_aceito   ganho    autodoacao     escalonamento -> conceitos-basicos
+SO   3103-threads                           sub_primario ganho    autodoacao     escalonamento -> conceitos-basicos
+SO   3103-threads                           sub_aceito   ganho    autodoacao     escalonamento -> conceitos-basicos
+SO   biblioteca-em-c-pthread                (sem gold)            autodoacao     escalonamento -> conceitos-basicos
+SO   definicao-e-historico                  sub_primario ganho    autodoacao     servicos-dos-sistemas-op -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_primario perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_aceito   perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_primario perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_aceito   perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_primario perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_aceito   perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_primario perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-criacao-de-processos-no-unix   sub_aceito   perda    transferivel   chamadas-de-sistema -> evolucao-historica
+SO   exemplo-threads-em-c-exemplo1          sub_primario ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exemplo-threads-em-c-exemplo1          sub_aceito   ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exemplo-threads-em-c-exemplo2          sub_primario ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exemplo-threads-em-c-exemplo2          sub_aceito   ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exemplo-threads-em-c-exemplo3          sub_primario ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exemplo-threads-em-c-exemplo3          sub_aceito   ganho    transferivel   escalonamento -> conceitos-basicos
+SO   exercicios                             sub_primario ganho    autodoacao      -> algoritmos-de-escaloname
+SO   exercicios                             sub_aceito   ganho    autodoacao      -> algoritmos-de-escaloname
+SO   lista-exercicios-p1                    (sem gold)            transferivel   programas-multithreads -> conceitos-basicos
+SO   lista-exercicios-p1-gabarito           (sem gold)            autodoacao     programas-multithreads -> conceitos-basicos
+SO   questoes-do-enade-sobre-sisop          (sem gold)            transferivel   chamadas-de-sistema -> evolucao-historica
+TCC  aula-01-apresentacao-da-disciplina-r   sub_primario perda    autodoacao     conjuntos-enumeraveis -> argumento-diagonal-de-ca
+TCC  aula-01-apresentacao-da-disciplina-r   sub_aceito   perda    autodoacao     conjuntos-enumeraveis -> argumento-diagonal-de-ca
+TCC  aula-09-variacoes-de-maquinas-de-tur   sub_primario ganho    autodoacao     maquinas-de-turing -> variacoes-de-maquinas-de
+TCC  aula-09-variacoes-de-maquinas-de-tur   sub_aceito   ganho    autodoacao     maquinas-de-turing -> variacoes-de-maquinas-de
+TCC  aula-10-linguagens-reconhecıveis-e-l   sub_primario ganho    autodoacao     maquinas-de-turing -> linguagens-reconheciveis
+TCC  aula-10-linguagens-reconhecıveis-e-l   sub_aceito   ganho    autodoacao     maquinas-de-turing -> linguagens-reconheciveis
+TCC  aula-12-entscheidungsproblem-pdf       (sem gold)            autodoacao     prova-da-indecidibilidad -> entscheidungsproblem-e-i
+TCC  aula-13-teorema-de-rice-pdf            (sem gold)            autodoacao     prova-da-indecidibilidad -> entscheidungsproblem-e-i
+TCC  aula-14-problema-da-correspondencia-   (sem gold)            autodoacao     prova-da-indecidibilidad -> maquinas-de-turing
+TCC  aula-17-complexidade-de-tempo-classe   (sem gold)            autodoacao     hierarquia-de-classes-de -> definicao-da-classe
+
+RESUMO C: {'sub_aceito_perda_transferivel': 19, 'sub_primario_ganho_autodoacao': 17, 'mudou_sem_gold': 27, 'sub_primario_perda_transferivel': 9, 'sub_aceito_ganho_transferivel': 7, 'sub_aceito_perda_autodoacao': 20, 'sub_aceito_ganho_autodoacao': 10, 'sub_primario_perda_autodoacao': 19, 'sub_primario_ganho_transferivel': 7}
+  sub_primario: transferivel +7 -9 = -2 · autodoacao +17 -19
+  sub_aceito: transferivel +7 -19 = -12 · autodoacao +10 -20
+  materiais SEM gold que mudaram: 27

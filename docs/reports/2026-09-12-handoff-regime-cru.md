@@ -2877,3 +2877,107 @@ confiantes, unidade 19/19 — idêntico à base**. Nem ganho nem perda.
 
 **A base estrita (auto) é a primeira coisa hoje com saldo transferível positivo e zero perdas** — +1 primário. É longe do corte
 (≥ 5), e é 1 material.
+
+### 40.9 O braço C — execução, desvios e o mapa
+
+**Prompt, modelo e schema congelados** (`prompt_C_mapeamento_14-09.md`, `gemini-3.8-flash-high` via agy, `schema_C_mapeamento_14-09.json`),
+20 lotes em ordem fixa, primeira resposta vale. **Três desvios, todos registrados, nenhum escolhido por placar:**
+
+1. **Os 4 lotes do IA falharam na 1ª execução** — o modelo ignorou "não use ferramentas", tentou `RunCommand`/`GrepSearch`, o
+   headless negou e o `response` veio vazio (`respostas_C_14-09/C_IA_n.FALHOU-ferramenta.*`). O usuário escolheu rerodar (opção 1).
+2. **O rerun falhou igual, e a causa era minha, não do modelo:** os 20 tópicos do IA **não têm `code`**; o pacote mostrava
+   `(sem codigo)` e o prompt exige "use somente estes códigos" — não havia o que responder, então o modelo procurava
+   (`C_IA_n.FALHOU-sem-codigo.*`). **Correção:** tópico sem `code` usa o `slug` como identificador, no pacote, no montador do mapa,
+   no gerador de relações, na injeção do motor e na auditoria; os cursos com code ficam idênticos. Só o pacote do IA foi regerado.
+   **Com slug, os 4 lotes do IA saíram válidos** (347 de 412 categorias mapeadas, 0 código inventado).
+3. **2 lotes ficaram inválidos pela regra congelada, e ficaram "SEM":** `C_ES2_1` (agy `status: ERROR`; o `response` abre com o
+   raciocínio do modelo vazado e tem o JSON dos 120 mapeamentos embutido no meio) e `C_TCC_4` (`SUCCESS`, mas JSON dentro de cerca
+   ```` ```json ```` seguido de um fragmento duplicado). **120 categorias do ES2 e 64 do TCC viraram "SEM".** Não recuperei: o braço já
+   rodava com a regra congelada, e mudar depois de ver seria post hoc. **Limite de sensibilidade: no ES2 e no TCC o braço C pode estar
+   subestimando relações.**
+
+**O mapa** (`mapa_C_14-09.json`, `monta_mapa_C_14-09.py`):
+
+| curso | categorias | mapeadas | SEM | código inventado | tokens |
+|---|---|---|---|---|---|
+| MF | 136 | 101 | 35 | 0 | 179.225 |
+| SO | 375 | 312 | 63 | 0 | 342.897 |
+| **IA** | **412** | **347** | 65 | 0 | 395.829 |
+| ES2 | 280 | 139 | 141 (120 do lote inválido) | 0 | 317.510 |
+| TCC | 424 | 216 | 208 (64 do lote inválido) | 0 | 438.123 |
+| CG | 118 | 44 | 74 | 0 | 86.575 |
+| FR | 166 | 135 | 31 | 0 | 181.675 |
+
+**O LLM mapeia com generosidade** — o lote 3 do IA mapeou 120 de 120; categorias genéricas ("base", "axioma", "regra") ganham tópico.
+**Relações geradas para o motor: 3.705** (SO 1.058 · IA 956 · ES2 450 · TCC 424 · FR 374 · MF 269 · CG 174) — **cerca de 23× a regra A**.
+Custo total do braço C: ~1,94 milhão de tokens no grupo Gemini (cota de 5h ainda em 93,7% no início).
+
+**Auditoria de correção:** 3.705 > 400 → **amostra aleatória de 400, semente 14, regra fixada ANTES de existirem as relações C**
+(`auditoria_C_ids.json`); juiz `claude-opus-4-6-thinking` via agy, sessão limpa, sem placar.
+
+**Resultado da auditoria C** (`auditoria_C_14-09.{json,log}`; SUCCESS, 0 ações negadas, 81.915 tokens; **leitura de LLM, amostra**):
+
+| classe | n (de 400) |
+|---|---|
+| RUÍDO | **305 (76%)** |
+| CORRETA | 93 (23%) |
+| INCORRETA | 1 |
+| INDETERMINADA | 1 |
+
+Por curso: IA 8 corretas / 93 ruído · SO 35 / 88 · ES2 18 / 31 · FR 14 / 24 · TCC 11 / 28 · MF 4 / 24 · CG 3 / 17.
+**O LLM quase nunca liga a categoria ao tópico errado (1 de 400). O que está errado é o conteúdo que vai junto**: as categorias do
+professor carregam bullets de prosa que o filtro automático deixa passar, e o mapeamento generoso liga até categoria genérica. Na
+regra A o ruído foi 55%; no C, 76%.
+
+### 40.10 O braço C no motor — e por que o número NÃO mede o efeito das relações
+
+`braco_C_7cursos_14-09.log` · `snapshot_braco_C_14-09.csv` · `compara_braco_C_x_C_14-09.log` · `autodoacao_C_14-09.log`. 0 tentativas de rede.
+
+| braço | bloco | unidade | sub. aceito | sub. primário | perdas | primário transferível |
+|---|---|---|---|---|---|---|
+| C (base) | 222 | 253 | 142 | 100 | — | — |
+| base estrita auto | 222 | 253 | 144 | 102 | 0 | **+1** |
+| base + A | 222 | 253 | 142 | 99 | 6 | **−3** |
+| **base + C (LLM)** | **219** | **237** | **120** | **96** | **87** | **−2** (aceito −12) |
+
+Por curso no C: CG unidade **−14** e bloco −3; MF primário +9/−10 e aceito +2/−17; SO +7/−6; ES2 −7; FR +4 (3 são autodoação); TCC
++2/−1; **IA 0/0 — com 956 relações injetadas**. 27 materiais sem gold mudaram de tópico. Corte: ENCERRA.
+**FR construído do zero, base + C:** 372 aliases; primário 6 → **10/18**, aceito 7 → **11/18**, erros confiantes 5 → 3.
+
+**O número está contaminado por um corte do produto — verificado antes de ler o placar como efeito do LLM.** O log diz "IA: 956
+aliases acrescentados", mas depois do reprocess `modelos-preditivos`, `modelos-descritivos` e `paradigmas-de-aprendizado` estavam com
+**0 aliases** — nem o alias do rótulo que existia em 13/09. Causa, medida:
+
+1. O reprocess reescreve a taxonomia a partir do glossário (`ops/pedagogical_regeneration.py:462`).
+2. O `GLOSSARY.md` passa por `clamp_navigation_artifact` com **`max_chars=14000` fixo** (`artifacts/repo.py:1136` e `:1854`), que corta o fim.
+3. Com milhares de sinônimos, os tópicos do começo do plano incham o glossário, **os do fim são cortados e perdem TODOS os aliases** —
+   inclusive os que já tinham.
+
+| curso (cópia do braço C) | glossário | termos que sobraram | tópicos | tópicos com **0 alias** |
+|---|---|---|---|---|
+| MF | 13,4k, **não truncado** | 24 | 23 | 0 |
+| SO | truncado | 11 | 36 | **21** |
+| IA | truncado | 15 | 20 | 5 (os de aprendizado de máquina) |
+| ES2 | truncado | 11 | 21 | 10 |
+| TCC | truncado | 13 | 26 | 8 |
+| CG | truncado | 40 | 59 | **20** |
+| FR | truncado | 10 | 32 | **23** |
+
+**Conclusão: o braço C mediu "o glossário cortando os tópicos do fim", não "o efeito das relações do LLM".** As perdas (CG unidade −14) e
+o zero no IA vêm desse corte. **O braço A pode ter sido atingido também** (102 relações só no SO) — não verificado, a cópia foi
+sobrescrita. **Só a base estrita (11 relações) está fora de suspeita.**
+
+### 40.11 Defeito do PRODUTO achado no caminho — independente do experimento
+
+O canal que o astra recomendou para o vocabulário (glossário → alias, §38.4) **tem teto de 14.000 caracteres**, e o que passa do teto
+não fica só de fora: **apaga os aliases dos últimos tópicos do plano**. **E o produto já sofre isso hoje:**
+
+| produto | GLOSSARY.md (chars) | truncado | tópicos com 0 alias |
+|---|---|---|---|
+| **CG** | **13.974** | **SIM** | **14 de 59** |
+| SO | 11.665 | não (perto do teto) | 0 |
+| TCC | 10.714 | não | 0 |
+| FR · MF · IA · ES2 · LR | 3,7k–9,8k | não | 0 |
+
+**No CG, 14 tópicos do fim do plano estão sem nenhum alias no produto** — o vocabulário que o CG tem para eles não chega ao scorer.
+**O efeito no placar do CG não foi medido.** É defeito para `orch-fix-defect` (teste vermelho primeiro) — decisão do usuário.

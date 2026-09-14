@@ -1,0 +1,3642 @@
+{
+ "totais": {
+  "RUIDO": 305,
+  "CORRETA": 93,
+  "INDETERMINADA": 1,
+  "INCORRETA": 1
+ },
+ "por_curso": {
+  "MF": {
+   "RUIDO": 24,
+   "CORRETA": 4
+  },
+  "SO": {
+   "CORRETA": 35,
+   "RUIDO": 88,
+   "INDETERMINADA": 1,
+   "INCORRETA": 1
+  },
+  "IA": {
+   "RUIDO": 93,
+   "CORRETA": 8
+  },
+  "ES2": {
+   "RUIDO": 31,
+   "CORRETA": 18
+  },
+  "TCC": {
+   "RUIDO": 28,
+   "CORRETA": 11
+  },
+  "CG": {
+   "RUIDO": 17,
+   "CORRETA": 3
+  },
+  "FR": {
+   "RUIDO": 24,
+   "CORRETA": 14
+  }
+ },
+ "relacoes": [
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Base",
+   "termo": "listar alguns elementos específicos de I",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "conjuntosindutivos.md:169",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Axioma:",
+   "termo": "o Definição de um conjunto base {/ $\\in$ }",
+   "padrao": "subtitulo_lista",
+   "fonte": "conjuntosindutivos.md:176",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Regra:",
+   "termo": "o Representação gráfica: 1$\\ldots$ $\\in$ $\\in$ [ ]",
+   "padrao": "subtitulo_lista",
+   "fonte": "conjuntosindutivos.md:183",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Indução",
+   "termo": "se\\ h1\\in I",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "conjuntosindutivos.md:197",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "&= 15 \\quad",
+   "termo": "[x \\rightarrow 0",
+   "padrao": "categoria_parenteses",
+   "fonte": "formalizacaoalgoritmos-recursao.md:122",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Lógicas de Segunda Ordem",
+   "termo": "HOL",
+   "padrao": "categoria_parenteses",
+   "fonte": "introducao.md:160",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "2.1",
+   "categoria": "Lógica de Floyd-Hoare",
+   "termo": "Abordagem que usaremos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicadehoare.md:47",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Assinatura",
+   "termo": "Dividida em duas partes:",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicapredicados-sintaxe.md:32",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Termos",
+   "termo": "Toda constante $\\in$ é um termo",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicapredicados-sintaxe.md:79",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "$$\\frac{t1",
+   "termo": "tn):T{\\Sigma}(X)} f \\in F",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "logicapredicados-sintaxe.md:84",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "LÓGICA DE PREDICADOS",
+   "termo": "L(j)",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicapredicados-sintaxe.md:163",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Classificação de Conjunto de Fórmulas",
+   "termo": "Seja  $\\{A1, \\dots, An\\}$  um conjunto de fórmulas",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicaproposicional-semantica.md:148",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Classificação de Conjunto de Fórmulas",
+   "termo": "$mod(\\{p, p \\rightarrow q, q\\})$",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicaproposicional-semantica.md:157",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Proposição",
+   "termo": "O numero 712 é ímpar (F)",
+   "padrao": "subtitulo_lista",
+   "fonte": "logicaproposicional-sintaxe.md:35",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Caso Indutivo",
+   "termo": "R \\rangle)$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "provasindutivas-especificacoesrecursivas-arvores.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Caso base",
+   "termo": "$P(m)$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "provasindutivas-especificacoesrecursivas.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Relações",
+   "termo": "Seja uma relação binária R:A$\\leftrightarrow$B",
+   "padrao": "subtitulo_lista",
+   "fonte": "revisao.md:67",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.2",
+   "categoria": "Transitiva",
+   "termo": "yA",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisao.md:80",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.3",
+   "categoria": "Propriedades",
+   "termo": "Terminação é uma propriedade de vivacidade",
+   "padrao": "subtitulo_lista",
+   "fonte": "verificacaomodelos.md:176",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.3",
+   "categoria": "Propriedades",
+   "termo": "Um programa termina",
+   "padrao": "subtitulo_lista",
+   "fonte": "verificacaomodelos.md:177",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "$F\\varphi$  é uma fórmula",
+   "termo": "“future”",
+   "padrao": "categoria_parenteses",
+   "fonte": "verificacaomodelos.md:477",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "Observação",
+   "termo": "$\\diamond$  e  $\\square$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "verificacaomodelos.md:480",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "eventually  $\\diamond a$",
+   "termo": "The first three states are labeled  $\\neg a$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "verificacaomodelos.md:594",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "CTL - Sintaxe",
+   "termo": "$AX\\varphi$  é uma fórmula",
+   "padrao": "subtitulo_lista",
+   "fonte": "verificacaomodelos.md:656",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "CTL - Sintaxe",
+   "termo": "$A[\\varphi U\\psi]$  é uma fórmula",
+   "padrao": "subtitulo_lista",
+   "fonte": "verificacaomodelos.md:659",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "A tree diagram illustrating the semantics of the CTL formula EG f. The root node is labeled 'f'. It has three children",
+   "termo": "a left child",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "verificacaomodelos.md:700",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "3.2",
+   "categoria": "LTL versus CTL",
+   "termo": "$FX p$  é válido em ambos modelos",
+   "padrao": "subtitulo_lista",
+   "fonte": "verificacaomodelos.md:865",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "2.2",
+   "categoria": "Programação e Verificação com Dafny (Arrays)",
+   "termo": "Quantifiers",
+   "padrao": "subtitulo_lista",
+   "fonte": "exerciciosdafny2.md:22",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Introdução",
+   "termo": "Dados alocados dinamicamente",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:47",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Endereço lógico em segmentação",
+   "termo": "Deslocamento dentro do segmento",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:83",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Endereço lógico em segmentação",
+   "termo": "Segmentação é similar a alocação particionada dinâmica",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:85",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Tradução de endereço lógico em endereço físico",
+   "termo": "limite: tamanho do segmento",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:95",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Implementação da tabela de segmentos",
+   "termo": "Construção de uma tabela de segmentos",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:201",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Problemas com implementação da tabela em memória",
+   "termo": "Solução:",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:232",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Solução para fragmentação externa",
+   "termo": "Analisar o problema sob dois pontos extremos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:295",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Solução para fragmentação externa",
+   "termo": "▶ Similar a página de 1 byte",
+   "padrao": "subtitulo_lista",
+   "fonte": "0205-laminas-segmentacao.md:300",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "I/O Hardware",
+   "termo": "Common concepts",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:283",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Direct Memory Access",
+   "termo": "Requires DMA controller",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:568",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Device Drivers",
+   "termo": "A row of drivers including SCSI device driver",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:706",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Network Devices",
+   "termo": "Separates network protocol from network operation",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:771",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Network Devices",
+   "termo": "Includes select functionality",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:772",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Clocks and Timers",
+   "termo": "Provide current time, elapsed time, timer",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:786",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Clocks and Timers",
+   "termo": "Programmable interval timer used for timings, periodic interrupts",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:787",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "The diagram illustrates two I/O methods",
+   "termo": "kernel (interrupt handler and hardware)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:831",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Kernel I/O Subsystem",
+   "termo": "To cope with device transfer size mismatch",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:864",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "device",
+   "termo": "keyboard",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:888",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "device",
+   "termo": "status: idle",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:888",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "device",
+   "termo": "status: busy",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:889",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "request for disk unit 2",
+   "termo": "file: xxx",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:898",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "request for disk unit 2",
+   "termo": "file: yyy",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:899",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Each record contains pointers to various functions",
+   "termo": "pointer to ioctl function",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:1008",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "I/O Requests to Hardware Operations",
+   "termo": "Translate name to device representation",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:1035",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Interrupt Handling",
+   "termo": "which then leads to 'interrupt generated' (rectangle)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-gerencia-de-i-o-livro-texto.md:1150",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "The diagram shows four concentric circles representing protection rings. The innermost circle is labeled \"Kernel\". The next ring is labeled \"Device drivers\". The third ring is labeled \"Device drivers\". The outermost ring is labeled \"Applications\". To the right of the rings is a vertical color bar with four segments",
+   "termo": "green",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:105",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Dispositivos de Entrada e Saída (2)",
+   "termo": "Compatibilizar velocidades",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:192",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Tipos de interfaces (dados)",
+   "termo": "Barramentos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:200",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Opcodes separados",
+   "termo": "reg",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:210",
+   "classe": "INDETERMINADA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Técnicas para realização de E/S <sup>(1)</sup>",
+   "termo": "Acesso Direto à Memória",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:238",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Técnicas para realização de E/S <sup>(3)</sup>",
+   "termo": "Define a prioridade das interrupções",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:264",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.2",
+   "categoria": "Controlador de DMA",
+   "termo": "Contador e Controle",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:322",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Dispositivo",
+   "termo": "Representado por um cilindro no topo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:325",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Subsistema (Software) de Entrada e Saída (1)",
+   "termo": "Facilitar a correção de erros gerados pelo dispositivo",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:352",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Subsistema (Software) de Entrada e Saída (1)",
+   "termo": "Desempenho",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:354",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Software",
+   "termo": "\"E/S independente do dispositivo\"",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:393",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Orientado a caractere",
+   "termo": "stream",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:429",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.1",
+   "categoria": "Subsistema (Software) de Entrada e Saída (6)",
+   "termo": "Organiza dados em blocos de tamanho fixo",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:440",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Diagrama de árvore de diretórios mostrando a estrutura de nomes de dispositivos em UNIX. O nó raiz é /dev, que aponta para quatro nós filhos",
+   "termo": "llyS0",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:487",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "2.3",
+   "categoria": "Dentro da camada de drivers, há cinco boxes rotulados",
+   "termo": "driver floppy",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-mecanismos-de-interrupcao.md:500",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Capítulo 9: Memória Virtual",
+   "termo": "Segmentação sob Demanda",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:91",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "Paginação sob Demanda",
+   "termo": "Ocupa menos memória",
+   "padrao": "subtitulo_lista",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:416",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "logical memory for user 1",
+   "termo": "2 (J)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:734",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "logical memory for user 2",
+   "termo": "2 (D)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:747",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.2",
+   "categoria": "map",
+   "termo": "position",
+   "padrao": "categoria_parenteses",
+   "fonte": "0206-laminas-memoria-virtual-livro-texto.md:949",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.2",
+   "categoria": "Overhead",
+   "termo": "O tempo depende muito do hardware",
+   "padrao": "subtitulo_lista",
+   "fonte": "1203-processos.md:174",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Figure 3.6",
+   "termo": "a trace of system events is shown",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "1203-processos.md:330",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Figure 3.6",
+   "termo": "and I/O requests",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "1203-processos.md:330",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Transições de Estados (3)",
+   "termo": "Running to Ready:",
+   "padrao": "subtitulo_lista",
+   "fonte": "1203-processos.md:370",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Considerações gerais",
+   "termo": "Memória principal: acessada pela CPU",
+   "padrao": "subtitulo_lista",
+   "fonte": "1205-laminas-gerencia-de-memoria.md:56",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Endereço lógico versus endereço físico",
+   "termo": "Endereço físico: endereços enviados para a memória RAM",
+   "padrao": "subtitulo_lista",
+   "fonte": "1205-laminas-gerencia-de-memoria.md:80",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Comparison 1",
+   "termo": "which triggers an Interrupção (Endereço ilegal)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "1205-laminas-gerencia-de-memoria.md:125",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "send",
+   "termo": "destination",
+   "padrao": "categoria_parenteses",
+   "fonte": "14-04-troca-de-mensagens.md:68",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Endereçamento Indireto (2)",
+   "termo": "Muitos-para-um: útil para interação cliente-servidor",
+   "padrao": "subtitulo_lista",
+   "fonte": "14-04-troca-de-mensagens.md:93",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Comunicação entre Processos (4)",
+   "termo": "Rápida",
+   "padrao": "subtitulo_lista",
+   "fonte": "1404-laminas-ipc.md:86",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Comunicação entre Processos (4)",
+   "termo": "Funcione igualmente em ambientes distribuídos",
+   "padrao": "subtitulo_lista",
+   "fonte": "1404-laminas-ipc.md:90",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Uso de Pipes",
+   "termo": "who | sort | lpr",
+   "padrao": "subtitulo_lista",
+   "fonte": "1404-laminas-ipc.md:247",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "The diagram illustrates the flow of data through a pipeline of programs and their connection to a Text terminal and a Display. A vertical grey bar on the left represents the 'Text terminal', containing a 'Keyboard' box at the top and a 'Display' box at the bottom. The pipeline consists of three programs",
+   "termo": "and Program3",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "1404-laminas-ipc.md:262",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Comunicação Pai-Filho Bi-Direcional",
+   "termo": "Pai fecha descritor de escrita de pipe2",
+   "padrao": "subtitulo_lista",
+   "fonte": "1404-laminas-ipc.md:399",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Escrita e Leitura em Pipes (2)",
+   "termo": "Leitura para descritor fechado retorna valor 0",
+   "padrao": "subtitulo_lista",
+   "fonte": "1404-laminas-ipc.md:487",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "As permissões de acesso também podem ser indicados por 3 dígitos octais, cada um representando os valores binários de rwx",
+   "termo": "Read",
+   "padrao": "categoria_parenteses",
+   "fonte": "1404-laminas-ipc.md:516",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "As permissões de acesso também podem ser indicados por 3 dígitos octais, cada um representando os valores binários de rwx",
+   "termo": "eXecute",
+   "padrao": "categoria_parenteses",
+   "fonte": "1404-laminas-ipc.md:516",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "O diagrama ilustra a criação e execução de três processos",
+   "termo": "Processo A",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "1703-chamada-de-sistema.md:47",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Bloco de Controle do Processo (PCB)",
+   "termo": "Process Control Block",
+   "padrao": "subtitulo_lista",
+   "fonte": "1903-estruturas-de-controle.md:69",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Informações de controle do processo (2)",
+   "termo": "Comunicação entre processos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "1903-estruturas-de-controle.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Exemplo de paginação (1)",
+   "termo": "Características do sistema:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Processos acessam somente suas páginas end. válidos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:261",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "6.1",
+   "categoria": "Process 2",
+   "termo": "5 (P3)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2105-laminas-paginacao.md:285",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Necessidade de Armazenamento",
+   "termo": "Grandes quantidades de informação têm de ser armazenadas",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:39",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Necessidade de Armazenamento",
+   "termo": "Definição de estruturas (organização, hierarquia, relação entre informação)",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:40",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Gerência de Arquivos",
+   "termo": "abrir, fechar – open(), close()",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:53",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Permitem estruturar o armazenamento e a recuperação de dados persistentes em um ou mais dispositivos de memória secundária",
+   "termo": "discos",
+   "padrao": "categoria_parenteses",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:93",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.1",
+   "categoria": "Operações sobre Arquivos",
+   "termo": "read",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:120",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.3",
+   "categoria": "- Alocação Contígua",
+   "termo": "Pré-alocação (fragmentação interna)",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:231",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.3",
+   "categoria": "Diagram illustrating contiguous file allocation. A table lists files",
+   "termo": "3 blocks)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:245",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.3",
+   "categoria": "Diagram illustrating contiguous file allocation. A table lists files",
+   "termo": "5 blocks). Below",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:245",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.3",
+   "categoria": "Relação entre Diretórios e i-nodes (2)",
+   "termo": "Passos para alcançar /usr/ast/mbox",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-gerencia-de-arquivos.md:546",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Definição (1)",
+   "termo": "O SO tenta usar o hardware com eficiência",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:67",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the SSTF disk scheduling algorithm. The horizontal axis represents cylinder numbers",
+   "termo": "then to 65 (distance 12)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the SSTF disk scheduling algorithm. The horizontal axis represents cylinder numbers",
+   "termo": "then to 67 (distance 2)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the SSTF disk scheduling algorithm. The horizontal axis represents cylinder numbers",
+   "termo": "then to 98 (distance 31)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the SSTF disk scheduling algorithm. The horizontal axis represents cylinder numbers",
+   "termo": "illustrating the shortest seek time at each step",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "SCAN",
+   "termo": "Às vezes chamado de algoritmo Elevator",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:126",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "C-SCAN",
+   "termo": "atende requisições durante movimentação",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:144",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "C-SCAN",
+   "termo": "▶ Nenhuma requisição é atendida na viagem de volta",
+   "padrao": "subtitulo_lista",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:146",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the C-LOOK disk scheduling algorithm. A horizontal axis represents the disk tracks, with values 0, 14, 37, 53, 65, 67, 98, 122, 124, 183, and 199. A blue line with arrows shows the head's path",
+   "termo": "moves right to 65",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:168",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Diagram illustrating the C-LOOK disk scheduling algorithm. A horizontal axis represents the disk tracks, with values 0, 14, 37, 53, 65, 67, 98, 122, 124, 183, and 199. A blue line with arrows shows the head's path",
+   "termo": "moves left to 14",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2306-laminas-laminas-armazenamento-em-massa.md:168",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.2",
+   "categoria": "Definição",
+   "termo": "Muda do estado esperando para pronto",
+   "padrao": "subtitulo_lista",
+   "fonte": "2403-escalonamento-de-processos.md:109",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.2",
+   "categoria": "Dispatcher",
+   "termo": "Latência de Despacho",
+   "padrao": "subtitulo_lista",
+   "fonte": "2403-escalonamento-de-processos.md:120",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.2",
+   "categoria": "Critérios de Otimização",
+   "termo": "Minimizar o tempo de processamento",
+   "padrao": "subtitulo_lista",
+   "fonte": "2403-escalonamento-de-processos.md:136",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.2",
+   "categoria": "Critérios de Otimização",
+   "termo": "Minimizar o tempo de espera",
+   "padrao": "subtitulo_lista",
+   "fonte": "2403-escalonamento-de-processos.md:137",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Gantt chart illustrating FCFS scheduling for four processes",
+   "termo": "UCP",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2603-algoritmos-de-escalonamento.md:85",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Gantt chart illustrating FCFS scheduling for four processes",
+   "termo": "Processo A",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2603-algoritmos-de-escalonamento.md:85",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Gantt chart illustrating SJF scheduling for four processes",
+   "termo": "25 for A",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "2603-algoritmos-de-escalonamento.md:135",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Exemplo de Programa Multithread (1)",
+   "termo": "Processamento assíncrono (salvamento periódico)",
+   "padrao": "subtitulo_lista",
+   "fonte": "3103-threads.md:49",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Estado de execução",
+   "termo": "ready",
+   "padrao": "categoria_parenteses",
+   "fonte": "3103-threads.md:108",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Diagram illustrating four process/thread configurations",
+   "termo": "1. one process",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "3103-threads.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Diagram illustrating four process/thread configurations",
+   "termo": "3. multiple processes",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "3103-threads.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Threads vs Processos (1)",
+   "termo": "Propriedade de recursos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "3103-threads.md:160",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Threads vs Processos (2)",
+   "termo": "Tradicionalmente o processo está associado a:",
+   "padrao": "subtitulo_lista",
+   "fonte": "3103-threads.md:170",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Bibliotecas de Threads (2)",
+   "termo": "Incluir o arquivo pthreads.h",
+   "padrao": "subtitulo_lista",
+   "fonte": "biblioteca-em-c-pthread.md:83",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Bibliotecas de Threads (2)",
+   "termo": "“Linkar” a biblioteca lpthread",
+   "padrao": "subtitulo_lista",
+   "fonte": "biblioteca-em-c-pthread.md:84",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.1",
+   "categoria": "Bibliotecas de Threads <sup>(1)</sup>",
+   "termo": "libpthread (padrão POSIX/IEEE 1003.1c)",
+   "padrao": "subtitulo_lista",
+   "fonte": "biblioteca-em-c-pthread.md:121",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Sistema de Computação",
+   "termo": "Programas de aplicação",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:52",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Sistema de Computação",
+   "termo": "Usuários",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:54",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Definição (1)",
+   "termo": "Gerenciamento de recursos",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:108",
+   "classe": "INCORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Organização Típica",
+   "termo": "Sistema de Arquivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:141",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "The diagram shows a single vertical stack of components. At the top is a green box labeled 'Application'. Below it is a large blue box representing the kernel, which is divided into four horizontal sections",
+   "termo": "'VFS",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "definicao-e-historico.md:152",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "The diagram shows a single vertical stack of components. At the top is a green box labeled 'Application'. Below it is a large blue box representing the kernel, which is divided into four horizontal sections",
+   "termo": "'IPC",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "definicao-e-historico.md:152",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "The diagram shows a single vertical stack of components. At the top is a green box labeled 'Application'. Below it is a large blue box representing the kernel, which is divided into four horizontal sections",
+   "termo": "File System'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "definicao-e-historico.md:152",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "The diagram shows a single vertical stack of components. At the top is a green box labeled 'Application'. Below it is a large blue box representing the kernel, which is divided into four horizontal sections",
+   "termo": "Virtual Memory'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "definicao-e-historico.md:152",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "The diagram shows a single vertical stack of components. At the top is a green box labeled 'Application'. Below it is a large blue box representing the kernel, which is divided into four horizontal sections",
+   "termo": "Dispatcher",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "definicao-e-historico.md:152",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Sistemas Mainframes",
+   "termo": "Arquitetura de hardware complexa",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:421",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Sistemas Mainframes",
+   "termo": "Trabalham em multimodo (usualmente “batch” e “time- sharing”)",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:422",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Pode rodar diferentes tipos de S.O",
+   "termo": "UNIX",
+   "padrao": "categoria_parenteses",
+   "fonte": "definicao-e-historico.md:432",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Sistemas Paralelos(1)",
+   "termo": "Principais vantagens:",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:470",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Multiprogramação (cont.)",
+   "termo": "Maximização do uso do processador e da memória",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:568",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "1.1",
+   "categoria": "Multiprogramação (cont.)",
+   "termo": "Mecanismo de interrupção (sinalização de eventos)",
+   "padrao": "subtitulo_lista",
+   "fonte": "definicao-e-historico.md:572",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Socket API",
+   "termo": "❖ unreliable datagram",
+   "padrao": "subtitulo_lista",
+   "fonte": "laminas-cs-4244-internet-programming-sockets-programming.md:85",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Client",
+   "termo": "Create a TCP socket",
+   "padrao": "subtitulo_lista",
+   "fonte": "laminas-cs-4244-internet-programming-sockets-programming.md:384",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Server",
+   "termo": "c. Close the connection",
+   "padrao": "subtitulo_lista",
+   "fonte": "laminas-cs-4244-internet-programming-sockets-programming.md:393",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Closing a Connection",
+   "termo": "close() used to delimit communication",
+   "padrao": "subtitulo_lista",
+   "fonte": "laminas-cs-4244-internet-programming-sockets-programming.md:583",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "4.2",
+   "categoria": "Cria datagrama para enviar ao cliente",
+   "termo": "sendData.length",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "laminas-sockets-material-alternativo-em-pt.md:417",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.1",
+   "categoria": "Pronto",
+   "termo": "processo está apto a executar",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "lista-exercicios-p1-gabarito.md:38",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "3.3",
+   "categoria": "Quantum = 10, quando aplicável. Ordem de chegada",
+   "termo": "P1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "lista-exercicios-p1-gabarito.md:370",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Algoritmo k-NN",
+   "termo": "Etapa de Generalização:",
+   "padrao": "subtitulo_lista",
+   "fonte": "algoritmo-de-classificacao-k-nn.md:596",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Características",
+   "termo": "partem de soluções propostas e tentam melhorá-las",
+   "padrao": "subtitulo_lista",
+   "fonte": "algoritmo-genetico.md:94",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Passo 3",
+   "termo": "Logo após a geração de uma população",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "algoritmo-genetico.md:294",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Genético: Crossover",
+   "termo": "O operador genético crossover é responsável por",
+   "padrao": "subtitulo_lista",
+   "fonte": "algoritmo-genetico.md:407",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Genético: Crossover",
+   "termo": "Há vários tipos de cruzamento:",
+   "padrao": "subtitulo_lista",
+   "fonte": "algoritmo-genetico.md:410",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Indução Top-Down",
+   "termo": "Determinar quando parar de particionar",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:934",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Como filtrar os dados com base em um atributo?",
+   "termo": "Múltipla",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:945",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Atributos Contínuos: Calculando o Índice GINI",
+   "termo": "Para a eficiência computacional: para cada atributo,",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:1616",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Vantagens e Desvantagens de Árvores de Decisão",
+   "termo": "Sujeitas a overfitting (super-ajuste aos dados)",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:1835",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Espaço de Hipóteses",
+   "termo": "Intersecção de hiper-retângulos é vazia",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:2070",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Espaço de Hipóteses",
+   "termo": "União é o espaço total",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:2071",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Árvores de Decisão para Problemas de Regressão",
+   "termo": "Árvores de Modelos",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:2216",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Exemplos de Algoritmos",
+   "termo": "Divisões sempre binárias (agrega categorias)",
+   "padrao": "subtitulo_lista",
+   "fonte": "arvores-de-decisao.md:2964",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "Grupos",
+   "termo": "diferentes níveis de refinamento)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-1-particional.md:183",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "- Etapas:",
+   "termo": "validação e",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-sobre-agrupamento-parte-1-particional.md:195",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "- Proximidade: Medidas para Atributos Quantitativos:",
+   "termo": "Medidas de Similaridade:",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-sobre-agrupamento-parte-1-particional.md:266",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "interpretação",
+   "termo": "indicando a natureza do grupo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-1-particional.md:298",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates two types of clustering. On the left, a vertical line separates two examples of partitional clustering. The left side shows three disjoint groups",
+   "termo": "a group of four blue dots",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-1-particional.md:304",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates the agglomerative clustering process. It shows a hierarchy of clusters represented by blue rounded rectangles. At the bottom level, there are five individual data points labeled 1, 2, 3, 4, and 5. In the middle level, two clusters are formed",
+   "termo": "one containing points 1 and 2",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:357",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "Diagrama de agrupamento hierárquico aglomerativo. O diagrama mostra a formação de clusters a partir de elementos individuais. No nível inferior, há cinco elementos",
+   "termo": "o cluster '1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:409",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "A dendrogram illustrating the hierarchical clustering of elements 1 through 6. The x-axis represents the elements in the order 1, 3, 2, 5, 4, 6. The y-axis represents the distance or similarity, ranging from 0 to 0.2. The dendrogram shows the following fusion steps",
+   "termo": "the cluster {1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:447",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "Podem corresponder a taxonomias úteis. Exemplos em ciências biológicas",
+   "termo": "e.g",
+   "padrao": "categoria_parenteses",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:472",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "Podem corresponder a taxonomias úteis. Exemplos em ciências biológicas",
+   "termo": "reconstrução filogenética",
+   "padrao": "categoria_parenteses",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:472",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates a hierarchical clustering process. At the top, two clusters are shown",
+   "termo": "C4",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:930",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates a hierarchical clustering process. At the top, two clusters are shown",
+   "termo": "C6",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:930",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates a hierarchical clustering process. At the top level, three clusters are shown",
+   "termo": "4). Below these clusters",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:1101",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates a hierarchical clustering process. At the bottom, seven individual data points are labeled C1 through C7, each with its coordinates",
+   "termo": "3). Above these",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:1224",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The diagram illustrates a hierarchical clustering process. At the bottom, seven individual data points are labeled C1 through C7, each with its coordinates",
+   "termo": "4). At the top",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:1224",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "A dendrogram illustrating hierarchical clustering. The x-axis represents 7 data points, labeled 0, 1, 6, 4, 5, 2, and 3. The y-axis represents the distance, ranging from 0 to 5. The dendrogram shows the following merging process",
+   "termo": "3} and two singletons)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-sobre-agrupamento-parte-2-hierarquico.md:1773",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "A seleção pode ser feita pelo seguinte procedimento prático",
+   "termo": "\\text{SOMATOTAL}]$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "cap-sobre-algoritmos-geneticos-lacerda-e-outros.md:163",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Fenótipo",
+   "termo": "representa o objeto",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "cap-sobre-algoritmos-geneticos-lacerda-e-outros.md:441",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "É interessante notar que o cromossomo pode ser interpretado como um anel formado pela união de suas extremidades, como ilustra a Figura 3.14. Observando o anel, nota-se que o crossover de 1 ponto é um caso particular do de 2 pontos quando um dos pontos de corte é fixo sobre a junção do anel. Portanto, o crossover de 2 pontos desempenha também a função do de 1 ponto. Este é um dos motivos pelo qual o crossover de 2 pontos é considerado melhor do que o crossover de 1 ponto",
+   "termo": "Beasley",
+   "padrao": "categoria_parenteses",
+   "fonte": "cap-sobre-algoritmos-geneticos-lacerda-e-outros.md:506",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-ao-aprendizado-de-maquina",
+   "categoria": "A line graph showing three time series",
+   "termo": "'Série aleatória (esquerda)' (red line)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "caracteristicas-dos-dados.md:47",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-ao-aprendizado-de-maquina",
+   "categoria": "Line graph showing three data series",
+   "termo": "and 'Série sazonal (temporada)'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "caracteristicas-dos-dados.md:145",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-ao-aprendizado-de-maquina",
+   "categoria": "Caracterização dos Dados",
+   "termo": "Intervalares e racionais: para os quantitativos;",
+   "padrao": "subtitulo_lista",
+   "fonte": "caracteristicas-dos-dados.md:578",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-ao-aprendizado-de-maquina",
+   "categoria": "Bar chart showing the frequency of height categories",
+   "termo": "and Medio (2)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "caracteristicas-dos-dados.md:1182",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "metricas-de-avaliacao",
+   "categoria": "É sempre uma matriz quadrada",
+   "termo": "os resultados gerados pelo preditor",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "como-analisar-resultados-acc-pr-re-e-f1.md:114",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "metricas-de-avaliacao",
+   "categoria": "Classificação: Accuracy",
+   "termo": "FP (Falso-Positivo): 2",
+   "padrao": "subtitulo_lista",
+   "fonte": "como-analisar-resultados-acc-pr-re-e-f1.md:250",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Precisa de uma função sucessor que gera uma solução próxima à atual",
+   "termo": "introduz uma “perturbação” (modificação) na solução atual",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "hill-climbing-e-simulated-annealing.md:136",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Hill-Climbing",
+   "termo": "Vizinhos ao estado atual",
+   "padrao": "subtitulo_lista",
+   "fonte": "hill-climbing-e-simulated-annealing.md:143",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Hill-Climbing",
+   "termo": "Boa estratégia, quando há muitos sucessores (ex: milhares)",
+   "padrao": "subtitulo_lista",
+   "fonte": "hill-climbing-e-simulated-annealing.md:299",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Simulated Annealing",
+   "termo": "$\\Delta E$ : é chamado de variação de energia",
+   "padrao": "subtitulo_lista",
+   "fonte": "hill-climbing-e-simulated-annealing.md:365",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Simulated Annealing",
+   "termo": "O método termina quando",
+   "padrao": "subtitulo_lista",
+   "fonte": "hill-climbing-e-simulated-annealing.md:401",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Algoritmo Simulated Annealing",
+   "termo": "ausência de melhora",
+   "padrao": "subtitulo_lista",
+   "fonte": "hill-climbing-e-simulated-annealing.md:416",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-a-agentes-em-ambientes-deterministicos",
+   "categoria": "| <b>Atuadores",
+   "termo": "escrita em arquivo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-agentes.md:75",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-a-agentes-em-ambientes-deterministicos",
+   "categoria": "Agente baseado em objetivos",
+   "termo": "Características",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-agentes.md:373",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-a-agentes-em-ambientes-deterministicos",
+   "categoria": "Agente baseado em utilidade",
+   "termo": "Compara diferentes alternativas",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-agentes.md:404",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-a-agentes-em-ambientes-deterministicos",
+   "categoria": "Agente baseado em utilidade",
+   "termo": "Escolhe a opção que maximiza a utilidade esperada",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-agentes.md:405",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-a-agentes-em-ambientes-deterministicos",
+   "categoria": "- Vantagens",
+   "termo": "É adequado para ambientes dinâmicos e complexos",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-agentes.md:446",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "Agentes e Algoritmos de Busca",
+   "termo": "▶ Aspirar sujeira ou",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-busca-informada.md:47",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "Estados de mundo",
+   "termo": "▶ [B,Suja,Suja]",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-busca-informada.md:71",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "Estados de mundo",
+   "termo": "▶ [B,Limpa,Suja]",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-busca-informada.md:73",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "![A search tree diagram for a vacuum cleaner problem. The root node is [A,Suja,Suja]. It has three children",
+   "termo": "Suja",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "![A search tree diagram for a vacuum cleaner problem. The root node is [A,Suja,Suja]. It has three children",
+   "termo": "Limpa] (labeled 'aspirar')",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "![A search tree diagram for a vacuum cleaner problem. The root node is [A,Suja,Suja]. It has three children",
+   "termo": "[B",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "![A search tree diagram for a vacuum cleaner problem. The root node is [A,Suja,Suja]. It has three children",
+   "termo": "Suja] (labeled 'direita')",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:147",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "▶ custo do caminho",
+   "termo": "cada passo custa 1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:185",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "representacao-de-problemas",
+   "categoria": "▶ Se o problema fosse estendido para mais salas, da seguinte forma",
+   "termo": "2 salas no térreo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-busca-informada.md:204",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "introducao-ao-aprendizado-de-maquina",
+   "categoria": "Deep Learning",
+   "termo": "Capacidade de trabalhar com grandes volumes de dados",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao-a-ml.md:439",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "paradigmas-de-aprendizado",
+   "categoria": "A pile of mixed-colored potatoes",
+   "termo": "and purple",
+   "padrao": "categoria_parenteses",
+   "fonte": "introducao-a-ml.md:1038",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "paradigmas-de-aprendizado",
+   "categoria": "Three separate groups of potatoes",
+   "termo": "illustrating the result of clustering",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-ml.md:1042",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "X",
+   "termo": "\\dots",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:333",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "W",
+   "termo": "wp$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:385",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Diagrama de dois neurônios biológicos conectados por uma sinapse. O neurônio à esquerda possui um corpo celular com dendritos e um axônio que se estende para a direita. O neurônio à direita possui um corpo celular com dendritos e um axônio que se estende para a esquerda. A conexão entre os axônios dos dois neurônios é rotulada como 'Sinapse' dentro de um oval verde. As estruturas são rotuladas com linhas apontando para elas",
+   "termo": "'Corpo celular' (o corpo central do neurônio)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:467",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "The diagram illustrates the internal structure of an artificial neuron j. On the left, a vertical column of inputs is shown",
+   "termo": "followed by three vertical dots",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:530",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "The diagram illustrates the internal structure of an artificial neuron j. On the left, a vertical column of inputs is shown",
+   "termo": "$w{3j}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:530",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "The diagram illustrates the internal structure of an artificial neuron j. On the left, a vertical column of inputs is shown",
+   "termo": "representing the final output of the neuron",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "introducao-a-redes-neurais.md:530",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "busca-adversaria",
+   "categoria": "Teoria dos Jogos: Algoritmos por turnos",
+   "termo": "“Informações perfeitas”",
+   "padrao": "subtitulo_lista",
+   "fonte": "minimax-teoria.md:162",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "busca-adversaria",
+   "categoria": "Função sucessor",
+   "termo": "estado)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "minimax-teoria.md:271",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "busca-adversaria",
+   "categoria": "The diagram shows a minimax search tree with four levels. The levels are labeled MAX, MIN, MAX, and MIN from top to bottom. The root node is a MAX node. It has three children, all MIN nodes. The left MIN node has two children, both MAX nodes. The middle MIN node has two children, both MAX nodes. The right MIN node has two children, both MAX nodes. The leaves are MIN nodes with values",
+   "termo": "going to the left MIN node",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "minimax-teoria.md:315",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "busca-adversaria",
+   "categoria": "Diagram illustrating a minimax search tree for a 3x3 tic-tac-toe game. The tree has four levels",
+   "termo": "Level 2 (oponente (MIN))",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "minimax-teoria.md:1810",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "From hidden nodes 1, 2, 3 to hidden nodes 4, 5",
+   "termo": "$W{51}$  to node 5",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:310",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "From hidden nodes 1, 2, 3 to hidden nodes 4, 5",
+   "termo": "$W{42}$  to node 4",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:310",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "From hidden nodes 4, 5 to output nodes 6, 7",
+   "termo": "$W{75}$  to node 7",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:311",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "From hidden nodes 4, 5 to output nodes 6, 7",
+   "termo": "$W{40}$  to node 4",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:312",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Como definir a topologia de uma rede MLP?",
+   "termo": "A topologia mais simples possui 3 camadas:",
+   "padrao": "subtitulo_lista",
+   "fonte": "mlp.md:350",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Diagrama de uma rede MLP com 3 camadas",
+   "termo": "oculta e saída",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:357",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Output Layer",
+   "termo": "labeled  $y1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:384",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Diagram of an Iris flower with labels for its parts",
+   "termo": "and Cálice (conjunto de sépalas)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:620",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Below the layers, the dimensions are labeled",
+   "termo": "$n$  for the input layer",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:999",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Below the layers, the dimensions are labeled",
+   "termo": "$p$  for the hidden layer",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:999",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "X é o conjunto de entrada",
+   "termo": "xZ\\}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:1771",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "D é o conjunto de saídas desejadas",
+   "termo": "dM\\}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "mlp.md:1772",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Camada Oculta",
+   "termo": "Gradiente Neurônio 3: 0.03803417896970686",
+   "padrao": "subtitulo_lista",
+   "fonte": "mlp.md:2864",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Operações Genéticas",
+   "termo": "Operadores baseados em permutações",
+   "padrao": "subtitulo_lista",
+   "fonte": "outros-operadores.md:36",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "Crossover PBX",
+   "termo": "Da mesma forma, selecione aleatoriamente  $n$  posições",
+   "padrao": "subtitulo_lista",
+   "fonte": "outros-operadores.md:101",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "problemas-de-otimizacao",
+   "categoria": "- Da mesma forma, copia G pois está na mesma posição de C (cromossomo 2)",
+   "termo": "Filho 1.....: A           C                   G",
+   "padrao": "subtitulo_lista",
+   "fonte": "outros-operadores.md:250",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Inclinação e Pesos",
+   "termo": "Quando se tem duas entradas",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron-e-equacao-de-reta.md:92",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "3 classes",
+   "termo": "Iris-versicolor",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron.md:679",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "A scatter plot showing the distribution of three Iris species based on four attributes",
+   "termo": "petal\\length",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron.md:729",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Diagram illustrating a neural network structure for Iris plant classification. The input layer consists of four nodes representing attributes",
+   "termo": "$x1$  (Comprimento da sépala)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron.md:807",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Grid 3",
+   "termo": "The first column is green",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron.md:923",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-preditivos",
+   "categoria": "Diagram of a single-layer perceptron simulation. A blue circle node contains the value '1'. Three arrows point into it from the left",
+   "termo": "a horizontal arrow points to the right",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "rede-perceptron.md:1569",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "| Clustering algorithm based on ensemble              | Methods for generating the set of clusters",
+   "termo": "sMCLA",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "survey-on-clustering.md:367",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "modelos-descritivos",
+   "categoria": "The basic idea of this kind of clustering algorithms is to simulate the changing process of the biological population. Typical algorithms include the 4 main categories",
+   "termo": "the typical algorithm of the ACO\\based",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "survey-on-clustering.md:436",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "conceituacao",
+   "categoria": "Cloudpainter",
+   "termo": "robô criado por Pindar VanArman",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "visao-geral-introducao-e-historico.md:361",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "conceituacao",
+   "categoria": "O estudo de computações que tornam possível perceber, raciocinar e agir",
+   "termo": "Winston",
+   "padrao": "categoria_parenteses",
+   "fonte": "visao-geral-introducao-e-historico.md:1185",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "conceituacao",
+   "categoria": "Estrutural",
+   "termo": "entre objetos",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "visao-geral-introducao-e-historico.md:1387",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "subareas-e-disciplinas-afins",
+   "categoria": "A woman wearing glasses and a white sweater is speaking into a microphone, likely recording a podcast or video. In the background, there is a book with text visible, including phrases like 'worryes Woolard already had from watching Amelio', 'described to current directors how he cal', 'with Gil as CEO, I think there's a', 'uptcy,' he said. 'If we fire hi', 'have a 60% chance', 'have to see', 'CEO, then w', 'The', 'an authority to ask Jobs', 'where they were planning to', 'some of the tennis', 'his suite', 'Inn', 'Park', 'it was daytime. By the end of his', 'going to fire Amelio, he said,', 'EO. Jobs had been aggressive', 'own ideas about where to take', 'cup, he became coy. 'I will', 'r him to become at least the', 'be an advisor,' he said. 'Un-', 'ember—that was something', 'board chairman. 'That's all', 'an circulating, he emailed a', 'temporarily, and I wasn't sure it was legal. I didn't know what I', 'wanted to do. I was enjoying spending more time with my family. I was', 'torn. I knew Apple was a mess, so I wondered",
+   "termo": "'trophy",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "visao-geral-introducao-e-historico.md:1540",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "subareas-e-disciplinas-afins",
+   "categoria": "A woman wearing glasses and a white sweater is speaking into a microphone, likely recording a podcast or video. In the background, there is a book with text visible, including phrases like 'worryes Woolard already had from watching Amelio', 'described to current directors how he cal', 'with Gil as CEO, I think there's a', 'uptcy,' he said. 'If we fire hi', 'have a 60% chance', 'have to see', 'CEO, then w', 'The', 'an authority to ask Jobs', 'where they were planning to', 'some of the tennis', 'his suite', 'Inn', 'Park', 'it was daytime. By the end of his', 'going to fire Amelio, he said,', 'EO. Jobs had been aggressive', 'own ideas about where to take', 'cup, he became coy. 'I will', 'r him to become at least the', 'be an advisor,' he said. 'Un-', 'ember—that was something', 'board chairman. 'That's all', 'an circulating, he emailed a', 'temporarily, and I wasn't sure it was legal. I didn't know what I', 'wanted to do. I was enjoying spending more time with my family. I was', 'torn. I knew Apple was a mess, so I wondered",
+   "termo": "and'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "visao-geral-introducao-e-historico.md:1540",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "IA",
+   "topic_code": "metricas-de-avaliacao",
+   "categoria": "Como analisar resultados",
+   "termo": "Re e F1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "manifest.json:1",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Service Discovery",
+   "termo": "Serviços necessitam realizar comunicação entre si",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos2.md:110",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Associated with the arrow are the actions",
+   "termo": "heartbeat()",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos2.md:162",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "The diagram illustrates the Netflix Eureka architecture across three availability zones",
+   "termo": "us-east-1c",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos2.md:262",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "The diagram illustrates a system architecture where different frontend applications interact with various backend services through dedicated API gateways. On the left, three light green boxes represent the frontends",
+   "termo": "'Mobile app'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos3.md:297",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "State transition diagram for a three-state failure handling protocol",
+   "termo": "Closed",
+   "padrao": "categoria_parenteses",
+   "fonte": "microsservicos4.md:277",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "State transition diagram for a three-state failure handling protocol",
+   "termo": "Half-Open",
+   "padrao": "categoria_parenteses",
+   "fonte": "microsservicos4.md:277",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Data patterns",
+   "termo": "'Aggregate'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos5.md:67",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "The diagram illustrates the Docker architecture, divided into three main sections",
+   "termo": "Docker Host",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos5.md:239",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Client",
+   "termo": "and docker pull",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos5.md:241",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Registry",
+   "termo": "and Plugins",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos5.md:245",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "The diagram illustrates the Auth0 authentication flow involving three main components",
+   "termo": "the API Consumer Application",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos6.md:394",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "3. Request with JWT",
+   "termo": "including the JWT",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "microsservicos6.md:398",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Spring Security",
+   "termo": "Ataques de “Cross Site Request Forgery” (CSRF)",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos6.md:463",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Autenticação",
+   "termo": "Java Authentication and Authorization Service (JAAS)",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos6.md:517",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Arquitetura Orientada a Mensagens",
+   "termo": "Arquitetura para aplicações distribuídas",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos7.md:374",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Arquitetura Publish/Subscribe",
+   "termo": "(2) assinar eventos",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos7.md:398",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Implementação",
+   "termo": "Cenário de comunicação:",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos7.md:413",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Implementação",
+   "termo": "Assíncrona",
+   "padrao": "subtitulo_lista",
+   "fonte": "microsservicos7.md:415",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.1",
+   "categoria": "Aplicações Corporativas",
+   "termo": "Aplicações de serviços",
+   "padrao": "subtitulo_lista",
+   "fonte": "revisaoarquiteturapadroes.md:143",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.1",
+   "categoria": "Arquitetura de Software",
+   "termo": "Descrição dos subsistemas mais críticos",
+   "padrao": "subtitulo_lista",
+   "fonte": "revisaoarquiteturapadroes.md:216",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.1",
+   "categoria": "Arquitetura de Software",
+   "termo": "Aplicação “stand alone” (executa em um PC)",
+   "padrao": "subtitulo_lista",
+   "fonte": "revisaoarquiteturapadroes.md:359",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.1",
+   "categoria": "Arquitetura de Software",
+   "termo": "Log de eventos",
+   "padrao": "subtitulo_lista",
+   "fonte": "revisaoarquiteturapadroes.md:397",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.4",
+   "categoria": "Component 1",
+   "termo": "S2",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:495",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.4",
+   "categoria": "Component 1",
+   "termo": "and S3",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:495",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Onion Architecture diagram showing concentric layers",
+   "termo": "Object Services",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:956",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Onion Architecture diagram showing concentric layers",
+   "termo": "UserSession",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:956",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Diagram of Hexagonal Architecture showing the Business Model at the center, surrounded by three layers",
+   "termo": "SOAP Server",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:980",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "The diagram illustrates the user journey for Pedro, a user interacting with a system. The journey is divided into four main layers",
+   "termo": "Serviços",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisaoarquiteturapadroes.md:1064",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "System Status",
+   "termo": "'default'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "roteiro2-nameserver.md:209",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Instances currently registered with Eureka",
+   "termo": "and 'Status'. It shows 'No instances available'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "roteiro2-nameserver.md:211",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Route",
+   "termo": "é composto por um id",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "roteiro3-gateway.md:65",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Diagrama de arquitetura mostrando o fluxo de dados entre componentes",
+   "termo": "Cliente",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "roteiro6-conteiners-composicao.md:26",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "Topic",
+   "termo": "ideal para comunicação multicast",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "roteiro7-filas.md:83",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura orientada a serviços",
+   "termo": "Arquiteturas SOA compreendem 5 elementos:",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:40",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura orientada a serviços",
+   "termo": "Prover conectividade",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:101",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura orientada a serviços",
+   "termo": "Lidar com segurança",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:104",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura orientada a serviços",
+   "termo": "Gerenciamento de serviços",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:106",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura orientada a serviços",
+   "termo": "Monitoramento e logging",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:107",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Web Services",
+   "termo": "Trabalham sobre o modelo de requisição/resposta",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:143",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "HTTP",
+   "termo": "2 (RFC [7540](#))",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:208",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "REST",
+   "termo": "Identificação dos recursos através de URIs;",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:296",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "REST",
+   "termo": "DELETE: remove a coleção inteira",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:340",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "REST",
+   "termo": "DELETE: remove o elemento da coleção",
+   "padrao": "subtitulo_lista",
+   "fonte": "servicos.md:351",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "- Dois padrões de web services/APIs",
+   "termo": "Usam REST ou qualquer outra coisa",
+   "padrao": "subtitulo_lista",
+   "fonte": "web.md:117",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "- Dois padrões de web services/APIs",
+   "termo": "Usam JSON para transferência de dados",
+   "padrao": "subtitulo_lista",
+   "fonte": "web.md:118",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Arquitetura em camadas lógicas",
+   "termo": "Negócio",
+   "padrao": "subtitulo_lista",
+   "fonte": "web.md:138",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "- Vantagens",
+   "termo": "Simples de implementar se comparada com outras abordagens",
+   "padrao": "subtitulo_lista",
+   "fonte": "web.md:194",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.3",
+   "categoria": "Camada Física Média",
+   "termo": "que contém a LogicaSistFuncionarios (ícone de documento)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "web.md:274",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "1.5",
+   "categoria": "O diagrama ilustra a arquitetura de um aplicativo de comércio eletrônico monolítico. No topo à esquerda, há uma caixa para 'Sellers' com um ícone de pessoa. Uma seta aponta de 'Sellers' para uma caixa rotulada 'Web, mobile, or REST interface'. Outra seta aponta desta interface para um bloco centralizado rotulado 'Order management'. Abaixo de 'Sellers', há uma caixa para 'Users' com um ícone de pessoa. Uma seta aponta de 'Users' para uma caixa rotulada 'Web UI or mobile app', que também aponta para o bloco 'Order management'. Na base do diagrama, há uma caixa para '3rd parties' com um ícone de pessoa. Uma seta aponta de '3rd parties' para uma caixa rotulada 'Adapters', que por sua vez aponta para o bloco 'Order management'. À direita do bloco 'Order management', há uma seta apontando para um cilindro rotulado 'Database'. O bloco 'Order management' contém submódulos",
+   "termo": "'Payment'",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "revisao-p1-respostas.md:78",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "Diagram illustrating a perfect matching between three groups",
+   "termo": "Y (enfermeiros)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "3d-matching.md:60",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "The diagram shows three columns of circles representing the sets X, Y, and Z. Column X is labeled 'médicos' and contains circles x1, x2, and x3. Column Y is labeled 'enfermeiros' and contains circles y1, y2, and y3. Column Z is labeled 'hospitais' and contains circles z1, z2, and z3. Three horizontal green lines connect the circles in a one-to-one correspondence",
+   "termo": "x1 to y1 to z1",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "3dm-caetano-gabriel-e-gustavo.md:68",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.2",
+   "categoria": "Significado",
+   "termo": "$\\mathbb{R}$  é “maior” que  $\\mathbb{N}$",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor.md:281",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.2",
+   "categoria": "Consequência Fundamental",
+   "termo": "Existem apenas  $\\aleph0$  programas (strings finitas)",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor.md:409",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Trabalharemos com funções  $f",
+   "termo": "onde:",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:162",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Notação",
+   "termo": "$\\vec{x}$  denota  $(x1, x2, \\dots, xk)$",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:170",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Axiomas de Peano (simplificado)",
+   "termo": "1 0 é um número natural",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:219",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.2",
+   "categoria": "“Prova”",
+   "termo": "Composição de funções totais é total",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:337",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Ideia",
+   "termo": "incrementa o resto",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:512",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Aritmética básica",
+   "termo": "$\\times$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:573",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Aritmética básica",
+   "termo": "$\\dot{-}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes.md:573",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.3",
+   "categoria": "Isto é",
+   "termo": "então  $a \\circ b \\in S$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf.md:289",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "“Se está em  $q1$  lendo  $a$",
+   "termo": "move à direita",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:257",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Convenções",
+   "termo": "Estado de aceitação: círculo duplo",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:325",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Convenções",
+   "termo": "Transições: setas rotuladas  $a \\rightarrow b, D$",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:326",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Transições",
+   "termo": "setas rotuladas  $a \\rightarrow b",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:326",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Transições",
+   "termo": "D$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:326",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "q<sub>acc</sub>",
+   "termo": "Estado de aceitação",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:332",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "De q<sub>1</sub> para q<sub>acc</sub>",
+   "termo": "L$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:338",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.2",
+   "categoria": "Interseção",
+   "termo": "então  $L1 \\cap L2$  é r.e",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis.md:539",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.5",
+   "categoria": "Finitos estados",
+   "termo": "qn$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes.md:223",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.5",
+   "categoria": "4 Atualize",
+   "termo": "posição",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes.md:303",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.5",
+   "categoria": "4 Atualize",
+   "termo": "estado na Fita 3",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes.md:303",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.4",
+   "categoria": "Evidências",
+   "termo": "Máquinas de Post",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes.md:391",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.1",
+   "categoria": "Função de Parada",
+   "termo": "0 caso contrário",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes.md:443",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.3",
+   "categoria": "Consequência para Complexidade",
+   "termo": "Para computabilidade:  $\\text{MTN} \\equiv \\text{MTD}$",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-09-variacoes-de-maquinas-de-turing.md:330",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.3",
+   "categoria": "Demonstração de Equivalência",
+   "termo": "Utilize duas fitas",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-09-variacoes-de-maquinas-de-turing.md:360",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.2",
+   "categoria": "Construa redução  $f$",
+   "termo": "dado  $\\langle M",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf.md:454",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.2",
+   "categoria": "Decidíveis",
+   "termo": "$E{DFA}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf.md:487",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.4",
+   "categoria": "Alonzo Church (1903–1995)",
+   "termo": "Sua prova foi publicada meses antes de Turing",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-12-entscheidungsproblem-pdf.md:264",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.2",
+   "categoria": "Predicados de estado",
+   "termo": "$Qi(t)$  — “no tempo  $t$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-12-entscheidungsproblem-pdf.md:385",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.3",
+   "categoria": "Exemplos Decidíveis",
+   "termo": "Lógica Proposicional: tabelas-verdade, DPLL, SAT solvers",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-12-entscheidungsproblem-pdf.md:463",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "2.1",
+   "categoria": "Alfabeto",
+   "termo": "\\sqcup\\}$",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-12-entscheidungsproblem-pdf.md:527",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.4",
+   "categoria": "Caso 1: Suponha $S \\vdash G$",
+   "termo": "Isso significa que  $S$  prova uma falsidade",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-15-teoremas-de-incompletude-de-godel.md:284",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "3.4",
+   "categoria": "Exemplos de Sentenças Indecidíveis",
+   "termo": "A própria sentença de Gödel  $G$",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-15-teoremas-de-incompletude-de-godel.md:329",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.3",
+   "categoria": "Hierarquias Estritas Estabelecidas",
+   "termo": "$P \\subsetneq \\text{EXPTIME}$  (tempo: gaps hierárquicos)",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:425",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.7",
+   "categoria": "Evidências de Intratabilidade",
+   "termo": "2 Problema é PSPACE-hard",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:568",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.5",
+   "categoria": "NP-complete",
+   "termo": "SAT",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-16-classes-de-problemas-e-complexidade-pdf.md:608",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "1.2",
+   "categoria": "Prova",
+   "termo": "Compute-se  $f(w)$  em tempo polinomial e",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "aula-17-np-completude-pdf.md:131",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "C e D",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "domina.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "5.1",
+   "categoria": "Translação X",
+   "termo": "Translação Y: 0",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html.md:18",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.2",
+   "categoria": "o produto vetorial ![Figura",
+   "termo": "z2) onde z2 é negativo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "exerciciosfundamentosmatematicos.md:11",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "um cubo azul com um bule de chá",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "iluminacao.md:162",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "um segmento vertical íngreme",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "modelagem3d.md:151",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "Desenha()",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "resolucao-de-prova-de-computacao-grafica-2d-html.md:4",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "no frame 50",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "resolucao-de-prova-de-computacao-grafica-3d.md:28",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "![Figura",
+   "termo": "C (inferior esquerdo)",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "slab.md:20",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curvas Paramétricas",
+   "termo": "t: tempo decorrido",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:151",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curvas Paramétricas",
+   "termo": "Chamadas de Interpolação, aproximação ou composição ponderada",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:199",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curvas Paramétricas",
+   "termo": "Ponto Inicial + Vetor colocado no ponto",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:219",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curva Bèzier",
+   "termo": "Formas alternativas de traçado",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:313",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curvas Bèzier",
+   "termo": "A derivada é igual nas duas curvas",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:370",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "7.1",
+   "categoria": "Curva Hermite",
+   "termo": "Dois pontos de controle, P0 e P3",
+   "padrao": "subtitulo_lista",
+   "fonte": "curvasparametricas.md:401",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "6.4",
+   "categoria": "Algoritmo do Pintor",
+   "termo": "n Solução para o problema da ambiguidade",
+   "padrao": "subtitulo_lista",
+   "fonte": "elemoculto.md:544",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.2",
+   "categoria": "Vetores",
+   "termo": "Definem uma direção",
+   "padrao": "subtitulo_lista",
+   "fonte": "fundamentosmatematicos.md:86",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.2",
+   "categoria": "• Operações",
+   "termo": "Produto Vetorial",
+   "padrao": "subtitulo_lista",
+   "fonte": "fundamentosmatematicos.md:309",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.1",
+   "categoria": "Retas",
+   "termo": "Equação paramétrica da reta",
+   "padrao": "subtitulo_lista",
+   "fonte": "fundamentosmatematicos.md:398",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.3",
+   "categoria": "int intersec2d",
+   "termo": "Ponto k",
+   "padrao": "categoria_parenteses",
+   "fonte": "fundamentosmatematicos.md:439",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "CG",
+   "topic_code": "2.3",
+   "categoria": "int intersec2d",
+   "termo": "Ponto n",
+   "padrao": "categoria_parenteses",
+   "fonte": "fundamentosmatematicos.md:439",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.3",
+   "categoria": "Protocolos de Comunicação",
+   "termo": "Para um protocolo funcionar é necessário que:",
+   "padrao": "subtitulo_lista",
+   "fonte": "01-protocolos-de-rede.md:32",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.2",
+   "categoria": "OSI - Camada de Transporte",
+   "termo": "erros que entrega mensagens ou bytes ordem enviada",
+   "padrao": "subtitulo_lista",
+   "fonte": "02-modelos-de-referencia.md:114",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.2",
+   "categoria": "● Define um formato de pacote oficial e um protocolo chamado IP (Internet Protocol)",
+   "termo": "Importante função de roteamento",
+   "padrao": "subtitulo_lista",
+   "fonte": "02-modelos-de-referencia.md:221",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "6.1",
+   "categoria": "Redes de difusão",
+   "termo": "Formas de endereçamento:",
+   "padrao": "subtitulo_lista",
+   "fonte": "03-tipos-de-redes.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "6.1",
+   "categoria": "Redes de difusão",
+   "termo": "Unicast",
+   "padrao": "subtitulo_lista",
+   "fonte": "03-tipos-de-redes.md:44",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.3",
+   "categoria": "Redes Locais (LAN)",
+   "termo": "Local Area Network (LAN)",
+   "padrao": "subtitulo_lista",
+   "fonte": "03-tipos-de-redes.md:116",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.3",
+   "categoria": "Redes Locais (LAN)",
+   "termo": "Rede de um laboratório de informática",
+   "padrao": "subtitulo_lista",
+   "fonte": "03-tipos-de-redes.md:132",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "1.3",
+   "categoria": "Redes Geograficamente Distribuídas (WAN)",
+   "termo": "Maiores taxas de erros",
+   "padrao": "subtitulo_lista",
+   "fonte": "03-tipos-de-redes.md:184",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Cliente",
+   "termo": "browser que solicita",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "04-protocolo-http.md:25",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "3xx – Redirecionamento",
+   "termo": "• 301 Moved Permanently",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:366",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "3xx – Redirecionamento",
+   "termo": "303 See Other",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:370",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "3xx – Redirecionamento",
+   "termo": "• 417 Expectation Failed",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:384",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "3xx – Redirecionamento",
+   "termo": "201 Created",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:392",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Persistência de Conexões",
+   "termo": "HTTP 1.1 é persistente por padrão",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:514",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Cookies",
+   "termo": "4 componentes",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:536",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Cookies",
+   "termo": "Rastreamento cross-site",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:565",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "• ISPs: universidades, empresas, provedores",
+   "termo": "Desnecessário aumentar largura de banda da instituição",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:658",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Age",
+   "termo": "tempo",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "04-protocolo-http.md:753",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Age",
+   "termo": "em segundos",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "04-protocolo-http.md:753",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "HTTPS",
+   "termo": "Hyper Text Transfer Protocol Secure",
+   "padrao": "subtitulo_lista",
+   "fonte": "04-protocolo-http.md:918",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "• Máquinas são endereçadas por endereços IP",
+   "termo": "www.pucrs.br",
+   "padrao": "subtitulo_lista",
+   "fonte": "05-protocolo-dns.md:31",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Tradução de nomes",
+   "termo": "Problema:",
+   "padrao": "subtitulo_lista",
+   "fonte": "05-protocolo-dns.md:42",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Servidores Autoritativos",
+   "termo": "Implementar seu próprio DNS (ex: BIND)",
+   "padrao": "subtitulo_lista",
+   "fonte": "05-protocolo-dns.md:256",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Pode ter subdomínios",
+   "termo": "mail.google.com",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "05-protocolo-dns.md:380",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Pode ter subdomínios",
+   "termo": "aluno.pucrs.br",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "05-protocolo-dns.md:380",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Tipos de Registros",
+   "termo": "(foo.com, relay1.bar.foo.com, CNAME)",
+   "padrao": "subtitulo_lista",
+   "fonte": "05-protocolo-dns.md:458",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Contém um cabeçalho com informações de controle",
+   "termo": "flags",
+   "padrao": "categoria_parenteses",
+   "fonte": "05-protocolo-dns.md:471",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Registro de Domínio",
+   "termo": "ICANN (Internet Corporation for Assigned Names and Numbers):",
+   "padrao": "subtitulo_lista",
+   "fonte": "05-protocolo-dns.md:595",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Funcionamento do DHCP",
+   "termo": "distribuição",
+   "padrao": "subtitulo_lista",
+   "fonte": "06-protocolo-dhcp.md:71",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Cada endereço concedido tem um lease time",
+   "termo": "vida útil",
+   "padrao": "categoria_parenteses",
+   "fonte": "06-protocolo-dhcp.md:73",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Funcionamento do DHCP",
+   "termo": "vencimento (T1/T2)",
+   "padrao": "subtitulo_lista",
+   "fonte": "06-protocolo-dhcp.md:81",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.3",
+   "categoria": "Obtenção de nova configuração",
+   "termo": "Todos servidores respondem com OFFER",
+   "padrao": "subtitulo_lista",
+   "fonte": "06-protocolo-dhcp.md:153",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Agentes de Usuário",
+   "termo": "Apple Mail",
+   "padrao": "categoria_dois_pontos",
+   "fonte": "07-protocolos-de-e-mail.md:64",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Comandos SMTP",
+   "termo": "RCPT TO: – Informa o endereço do destinatário",
+   "padrao": "subtitulo_lista",
+   "fonte": "07-protocolos-de-e-mail.md:156",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "4xx – Erro temporário",
+   "termo": "451 – Erro de processamento",
+   "padrao": "subtitulo_lista",
+   "fonte": "07-protocolos-de-e-mail.md:195",
+   "classe": "CORRETA"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "IMAP – Internet Message Access Protocol",
+   "termo": "Funcionamento:",
+   "padrao": "subtitulo_lista",
+   "fonte": "07-protocolos-de-e-mail.md:336",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "IMAP – Internet Message Access Protocol",
+   "termo": "Vantagem: ideal para quem usa vários dispositivos",
+   "padrao": "subtitulo_lista",
+   "fonte": "07-protocolos-de-e-mail.md:352",
+   "classe": "RUIDO"
+  },
+  {
+   "curso": "FR",
+   "topic_code": "2.4",
+   "categoria": "Comparação entre IMAP e POP3",
+   "termo": "Acesso no mesmo local",
+   "padrao": "subtitulo_lista",
+   "fonte": "07-protocolos-de-e-mail.md:361",
+   "classe": "RUIDO"
+  }
+ ]
+}

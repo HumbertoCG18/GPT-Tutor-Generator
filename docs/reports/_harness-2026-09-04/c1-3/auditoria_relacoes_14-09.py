@@ -49,16 +49,26 @@ def rotulos():
         p = b / "course/.content_taxonomy.json"
         if p.exists():
             t = json.loads(p.read_text(encoding="utf-8-sig"))
-            out[c] = {x["code"]: x["label"] for u in t["units"] for x in u["topics"]}
+            out[c] = {(x.get("code") or x.get("slug")): x["label"] for u in t["units"] for x in u["topics"]}  # 14/09: IA sem code
     return out
 
 
+AMOSTRA_MAX, SEMENTE = 400, 14  # 14/09, fixado ANTES de existir relacoes_C: acima de 400 relacoes, amostra aleatoria de 400
+
+
 def monta(arquivo):
+    import random
     rel = json.loads((HERE / arquivo).read_text(encoding="utf-8"))["relacoes"]
     rot = rotulos()
     X = Path(arquivo).stem.replace("relacoes_", "").replace("_14-09", "")
+    idx = list(range(len(rel)))
+    if len(rel) > AMOSTRA_MAX:
+        idx = sorted(random.Random(SEMENTE).sample(idx, AMOSTRA_MAX))
+        print(f"{len(rel)} relacoes > {AMOSTRA_MAX}: amostra aleatoria de {AMOSTRA_MAX} (semente {SEMENTE})")
+    (HERE / f"auditoria_{X}_ids.json").write_text(json.dumps(idx), encoding="utf-8")
     linhas = [PROMPT, "", "RELACOES:"]
-    for i, r in enumerate(rel, 1):
+    for i, j in enumerate(idx, 1):
+        r = rel[j]
         linhas.append(f"[{i}] curso {r['curso']} | TOPICO {r['topic_code']} {rot[r['curso']].get(r['topic_code'], '?')} | "
                       f"CATEGORIA: {r['categoria'][:90]} | TERMO: {r['termo'][:120]}")
     (HERE / f"auditoria_{X}_entrada.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
@@ -72,6 +82,9 @@ def consolida(X):
     r = env.get("response")
     d = json.loads(r) if isinstance(r, str) else r
     ver = {int(v["id"]): v["classe"] for v in d["vereditos"]}
+    idp = HERE / f"auditoria_{X}_ids.json"
+    idx = json.loads(idp.read_text(encoding="utf-8")) if idp.exists() else list(range(len(rel)))
+    rel = [rel[j] for j in idx]  # so as auditadas (amostra, se houve)
     tot = collections.Counter()
     por = collections.defaultdict(collections.Counter)
     saida = []

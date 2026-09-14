@@ -31,10 +31,10 @@ def main():
     for curso in CURSOS:
         ids = {int(k): v for k, v in json.loads((PAC / f"ids_{curso}.json").read_text(encoding="utf-8")).items()}
         t = json.loads((BASES[curso] / "course/.content_taxonomy.json").read_text(encoding="utf-8-sig"))
-        codigos = {x["code"] for u in t["units"] for x in u["topics"] if x.get("kind") == "topic" and x.get("code")}
+        codigos = {(x.get("code") or x.get("slug")) for u in t["units"] for x in u["topics"] if x.get("kind") == "topic"}
         c = collections.Counter(categorias=len(ids))
         escolha = {}
-        for arq in sorted(RESP.glob(f"C_{curso}_*.json")):
+        for arq in sorted(x for x in RESP.glob(f"C_{curso}_*.json") if "." not in x.stem):  # 14/09: ignora C_*.FALHOU-*.json arquivados
             c["lotes"] += 1
             try:
                 env = json.loads(arq.read_text(encoding="utf-8"))
