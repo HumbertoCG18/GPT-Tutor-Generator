@@ -87,3 +87,10 @@ S37 Deep diagnostic of SO unit assignment failures revealing 5 interconnected ro
 
 Access 321k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
+
+<!-- shared-workflow-start -->
+Antes de executar ou continuar uma tarefa, ler `.workflow/README.md` e seguir a política
+ali apontada. Ela define Fable padrão, escalada automática limitada para Astra e retomada
+pelo estado local; prevalece sobre receitas antigas de delegação. Escolha explícita do
+usuário e restrições de escopo continuam prevalecendo.
+<!-- shared-workflow-end -->
