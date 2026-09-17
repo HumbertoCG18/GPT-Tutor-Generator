@@ -131,6 +131,45 @@ class TestCodeExtensions:
         assert auto_detect_category("Aula01.ipynb") == "codigo-professor"
 
 
+_PROVAS_INDUTIVAS_MF = [
+    "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+    "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+    "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+]
+
+
+class TestAutoDetectCategoryProvaMatematica:
+    """Prova matematica (inducao) e material de aula, nao avaliacao (defeito 17/09, helpers.py:682)."""
+
+    @pytest.mark.parametrize("name", _PROVAS_INDUTIVAS_MF + ["Provas por indução.pdf"])
+    def test_prova_matematica_e_material_de_aula(self, name):
+        assert auto_detect_category(name) == "material-de-aula"
+
+    @pytest.mark.parametrize("name", [f"{prefix}{target}" for prefix in ("P1 - ", "Prova 1 - ", "Exames - ", "Prova final - ")
+                                      for target in _PROVAS_INDUTIVAS_MF])
+    def test_marcador_explicito_de_avaliacao_vence_o_tema(self, name):
+        assert auto_detect_category(name) == "provas"
+
+    @pytest.mark.parametrize("name", [
+        "Prova 2 - indução.pdf",
+        "P2 2024.01.pdf",
+        "P2 2024.02.pdf",
+        "Prova 1 2024 02.pdf",
+        "Prova 1 2024.02.pdf",
+        "revisao_p1.pdf",
+        "Exame final - Provas por indução.pdf",
+        "Avaliação 1 - ProvasIndutivas.pdf",
+    ])
+    def test_avaliacao_real_continua_provas(self, name):
+        assert auto_detect_category(name) == "provas"
+
+    def test_fronteiras_decididas_antes_da_regra(self):
+        assert auto_detect_category("ExerciciosCorrecaoInducaoMatematica.pdf") == "listas"
+        assert auto_detect_category("provas.thy") == "codigo-professor"
+        # dialogs.py:3623 chama por nome tambem para .zip; so stash_import.py:99 forca codigo-professor antes.
+        assert auto_detect_category("ProvasIndutivas.zip") == "material-de-aula"
+
+
 class TestMarkerHybridMarkdownRescue:
     def test_recovers_accented_plain_text_without_touching_math_lines(self):
         base = (

@@ -678,8 +678,18 @@ def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None
         return "codigo-professor"
 
     # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
-    _wb = lambda pattern: bool(_re.search(r'(?:^|[\W_])' + pattern + r'(?:$|[\W_])', name))
-    if any(k in name for k in ["prova", "exame"]) or _wb("test") or _wb("p1") or _wb("p2") or _wb("p3") or _wb("av1") or _wb("av2"):
+    _wb = lambda pattern, s=name: bool(_re.search(r'(?:^|[\W_])' + pattern + r'(?:$|[\W_])', s))
+    _exam_cue = lambda s: any(k in s for k in ["prova", "exame"]) or any(_wb(p, s) for p in ("test", "p1", "p2", "p3", "av1", "av2"))
+    if _exam_cue(name):
+        # Prova matematica ("ProvasIndutivas_...", "Provas por inducao") e material de aula, nao avaliacao (MF 17/09).
+        # Remove o tema e reaplica as cues ao residuo: sobrou marcador de avaliacao ("P1 - ", "Prova final - ",
+        # "Exames - ") continua prova. Substitui a protecao por palavra inteira de candidate() em
+        # c1-3/verifica_categoria_prova_15-09.py, que deixava "Exames"/"Prova final" passar (Astra 17/09).
+        import unicodedata as _ud
+        ascii_name = "".join(c for c in _ud.normalize("NFD", name) if not _ud.combining(c))
+        residual, n = _re.subn(r"provas?[\W_]*(?:indutiv\w*|por[\W_]+induc\w*)", " ", ascii_name)
+        if n and not _exam_cue(residual) and "avaliac" not in residual:
+            return "material-de-aula"
         return "provas"
     if any(k in name for k in ["lista", "exerc", "quest", "trab", "exer"]):
         return "listas"

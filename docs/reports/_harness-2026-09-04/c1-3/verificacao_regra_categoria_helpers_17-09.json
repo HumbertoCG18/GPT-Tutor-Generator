@@ -1,0 +1,54 @@
+{
+  "courses": {
+    "Computacao-Grafica-Tutor": {
+      "inputs": 86,
+      "changes": []
+    },
+    "Engenharia-Software-2-Tutor": {
+      "inputs": 35,
+      "changes": []
+    },
+    "Fundamentos-de-Redes-Tutor": {
+      "inputs": 20,
+      "changes": []
+    },
+    "Inteligencia-Artifical-Tutor": {
+      "inputs": 61,
+      "changes": []
+    },
+    "Metodos-Formais-Tutor": {
+      "inputs": 67,
+      "changes": [
+        {
+          "file": "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+          "before": "provas",
+          "after": "material-de-aula"
+        },
+        {
+          "file": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+          "before": "provas",
+          "after": "material-de-aula"
+        },
+        {
+          "file": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+          "before": "provas",
+          "after": "material-de-aula"
+        }
+      ]
+    },
+    "Sistemas-Operacionais-Tutor": {
+      "inputs": 42,
+      "changes": []
+    },
+    "TCC-Tutor": {
+      "inputs": 27,
+      "changes": []
+    }
+  },
+  "total_inputs": 338,
+  "changes": 3,
+  "scope": "replay de classificacao; sem build, sem rede (so helpers e teaching_plan importados)"
+}

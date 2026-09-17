@@ -1,5 +1,32 @@
 # Pendências — tracker vivo
 
+## Concluído: prova matemática não é avaliação (17/09)
+
+- `orch-fix-defect` em `src/utils/helpers.py:682` (`auto_detect_category`): a cue `prova` casava
+  `provasindutivas` e mandava material de aula sobre provas matemáticas para `provas`. Teste
+  vermelho primeiro (`TestAutoDetectCategoryProvaMatematica`, 4 failed / 13 passed, exatamente os
+  3 nomes MF + "Provas por indução.pdf"). Correção: dentro do ramo `provas`, normaliza NFD,
+  remove o tema (`provas? indutiv*` / `provas? por induc*`) e reaplica as cues de avaliação ao
+  resíduo; sobrou marcador ("P1 - ", "Prova final - ", "Exames - ", "Avaliação 1 - ") continua
+  `provas`, senão `material-de-aula`. Imagem, código e ZIP do stash decididos antes; motor intocado.
+- Replay de `auto_detect_category` sobre os 338 inputs de 15/09 (7 cursos, `moodle_label + nome`,
+  `frases_do_plano`): exatamente 3 mudanças, os 3 `ProvasIndutivas_*` do MF, 0 nos outros 6 cursos,
+  0 rede. Script `c1-3/verifica_regra_categoria_helpers_17-09.py`, JSON ao lado. Suíte
+  2382 passed / 4 skipped (2357 + 25 casos novos).
+- Astra (read-only, `01a0b080`, 4 min 21 s): REPROVAR com 1 BLOQUEIA + 2 AJUSTE, verificados na
+  fonte e aplicados: o porte literal de `candidate()` deixava "Exames - …" e "Prova final - …"
+  virarem material de aula (regra trocada para resíduo, sondas ampliadas); `dialogs.py:3623`
+  chama a heurística por nome também para `.zip` (só `stash_import.py:99` força
+  `codigo-professor`; asserção adicionada). 2 NOTA. Cópia em `c1-3/astra_revisao_categoria_17-09.md`.
+- Efeito futuro, medido e não tratado aqui: `raw/pdfs/<categoria>` deriva da categoria na
+  importação (`entry_processing.py:105`) e o diálogo preserva `initial.category`; rebuild de
+  entrada antiga não reclassifica. `EXAM_INDEX.md` só é reescrito se restar avaliação
+  (`bootstrap_ops.py:172`, `pedagogical_regeneration.py:624`): curso que ficar sem prova conserva o
+  índice antigo. Wrapper `c1-3/pacote_categoria_17-09.py` agora redundante com o produto; fica
+  como histórico.
+- Limites: 3 positivos reais sem holdout; os 338 são replay de classificação, não build; rebuild
+  dos tutores do produto não fez parte da tarefa.
+
 ## Concluído: DeepTutor fora do builder (17/09)
 
 - Decisão do usuário: DeepTutor é projeto distinto, usado só como inspiração, nunca rodado de
