@@ -8,7 +8,8 @@ do estado do git, do tracker e do rollout da sessão Codex "Testar cuidados do r
 
 ## 0. Leia nesta ordem
 
-1. `.mex/AGENTS.md`, `.mex/ROUTER.md`, `.workflow/README.md`.
+1. `.mex/AGENTS.md`, `.mex/ROUTER.md`, `.workflow/README.md` e `.workflow/HANDOFF.md` (política de papéis: Fable executa,
+   Astra revisa read-only uma vez por tarefa; commit `f535537`).
 2. Este arquivo inteiro.
 3. `2026-09-15-handoff-regime-cru.md` §3–§11: achados, placar dos regimes, decisões do usuário, defeitos do produto e
    armadilhas de 15/09 **não são repetidos aqui**.
@@ -28,10 +29,11 @@ política de workflow; a frente continua exatamente onde a sessão Codex parou e
 
 - Branch `feat/motor-atribuicao` = `origin/feat/motor-atribuicao`; árvore limpa após `d495c66`. O push de 16/09 subiu 41 commits.
 - **Sessão Codex em paralelo (16/09 23:41 BRT, medido: 3 processos `codex.exe`, tracker regravado às 23:42).** A sessão
-  `01a0a824` ("Continuar diagnóstico do handoff") roda o piloto Fable × Astra, escreveu
-  `Feitos/workflow-medicao-fable-astra_16-09.md` e edita o bloco "Aceite pendente: workflow" do tracker. Nada disso foi
-  commitado por mim; a próxima sessão vai encontrar a árvore suja com esse trabalho. Resultado parcial lido no relatório:
-  ambos os modelos 23/23 e 12/12, sem turno de reparo; decisão registrada lá: manter Fable padrão, Astra por necessidade.
+  `01a0a824` ("Continuar diagnóstico do handoff") rodou o piloto Fable × Astra (ambos 23/23 e 12/12, sem turno de reparo;
+  `Feitos/workflow-medicao-fable-astra_16-09.md`) e fechou a política de papéis. Ela mesma commitou: `f535537` na branch
+  (`.workflow/*`, `CLAUDE.md`, `AGENTS.md`, o relatório) e `e551bbf` na `main`, replicado às branches locais, **sem push**
+  (`main` fica 2 commits à frente de `origin/main`). O hunk dela no tracker entrou no commit seguinte, do Claude, depois
+  que o usuário fechou o Codex.
 - Commits de 16/09, em ordem cronológica:
 
 | commit | conteúdo |
@@ -91,8 +93,8 @@ Tudo acima com 0 chamadas de LLM, sem Astra, sem edição em `src/` fora do Gate
 
 ## 4. Decisões em aberto (do usuário): herdadas de 15/09 §7, atualizadas
 
-1. ~~Gate 2 e commit da taxonomia direta~~ → commit feito. **Review independente do diff `d495c66`** (`ecc:santa-loop`
-   read-only ou agent `ecc:python-reviewer`) é opcional e não foi feita.
+1. ~~Gate 2 e commit da taxonomia direta~~ → commit feito. **Review independente do diff `d495c66`** não foi feita; pela
+   política de `f535537` ela é Astra no Codex, read-only, uma chamada; santa-loop/Terra deixou de ser o padrão.
 2. Categoria prova: reconstrução em cópia com a categoria corrigida na entrada, medindo unidade e subunidade; só então
    `orch-fix-defect` em `helpers.py:682`.
 3. Remedir estrito, A e C do 14/09 §8 sobre `d495c66`: o bloqueio do teto deixou de existir nesse código.
@@ -126,8 +128,10 @@ mudar o importador do produto.
 ## 7. Primeira mensagem sugerida
 
 ```
-Leia .mex/AGENTS.md, .mex/ROUTER.md, .workflow/README.md e docs/reports/2026-09-16-handoff-regime-cru.md inteiro
-(o de 15/09 §3–§11 sob demanda). Árvore limpa em d495c66; não mude src/ nem rode medição ainda.
+Leia .mex/AGENTS.md, .mex/ROUTER.md, .workflow/README.md, .workflow/HANDOFF.md e
+docs/reports/2026-09-16-handoff-regime-cru.md inteiro (o de 15/09 §3–§11 sob demanda).
+Confira branch e HEAD antes de tudo; não mude src/ nem rode medição ainda.
 Resuma em 5 linhas as decisões em aberto da §4, separando medido de hipótese, e proponha o plano do item 4.2
-(cópia nova, MF + controle IA, 0 LLM) para eu aprovar antes de rodar. Astra só por ordem minha.
+(cópia nova, MF + controle IA, 0 chamadas de LLM) para eu aprovar antes de rodar.
+Astra só como revisor read-only, conforme .workflow/workflow.md.
 ```

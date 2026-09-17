@@ -28,13 +28,23 @@
 
 ## Aceite pendente: workflow Claude Code / Codex / AGY (15/09)
 
+- Concluído: preferência após o piloto aplicada: Fable executor; Astra revisor read-only,
+  uma chamada automática por tarefa relevante, substituindo Terra/santa-loop padrão.
+  Fable corrige achados; Astra não assume implementação automaticamente. Três instruções
+  pessoais sincronizadas; fonte do laboratório e snapshot desta branch atualizados.
+- Concluído: revisão de papéis commitada e propagada às 13 branches locais com pacote
+  idêntico: main e551bbf, feat/motor-atribuicao f535537; laboratório a7abf84.
+  Handoff da próxima sessão: .workflow/HANDOFF.md. Sem push.
 - Concluído (16/09): política manual registrada em agent-workflow-lab/workflow.md: Fable
   executor padrão; uma escalada automática Astra por tarefa, por necessidade concreta;
   revisão proporcional ao risco. Sem automação nova de hooks ou mudança do modelo global.
-- [USER] Após o reset do limite do Fable, confirmar disponibilidade para medir Fable versus
-  Astra em tarefas representativas, com mesmo contrato e verificações, cópias isoladas e
-  registro de resultado, retrabalho, tempo e uso reportado. Data de reset desconhecida;
-  nenhuma avaliação iniciada. Fixar escopo e orçamento antes das chamadas.
+- Concluído (16/09, 23:38): piloto Fable/Astra medium, quatro invocações principais,
+  sem retries. Ambos: parser 23/23 e roteamento 12/12; Fable 40,422 s, Astra 44,406 s.
+  Contextos/cache distintos; não mede economia de quota nem delegação autônoma.
+  Fable disponível nas duas chamadas. [Medição](Feitos/workflow-medicao-fable-astra_16-09.md).
+- [CODE] Primeira escalada/retomada real ainda não validada. Codex emitiu aviso de
+  claude-mem antes do JSON final nos dois braços; consumidor deve usar a mensagem final,
+  sem concatenar eventos. Manter política vigente; amostra pequena não autoriza expansão.
 - Concluído: portabilidade operacional por contratos inline no laboratório, incluindo
   doc-updater adaptado ao MEX/Graphify. Frontmatter model/tools de origem não é executado.
   Registro nativo AGY permanece não comprovado e não é requisito do caminho adotado.
