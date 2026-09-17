@@ -57,7 +57,7 @@ automatizar a curadoria de MD e trocar o backend de extracao (Marker correto, Mi
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "**Consolidacao das duplicacoes (07/09, commits",
         "**Texto que o motor le (07/09):** approved > curated > base > advanced; CG/LR/FR leem `staging/` (MD nao aprovado). O `advanced_markdown` do **Datalab nunca foi lido pelo "
         "motor** (198/198 aprovados vieram do pymupdf4llm), mas o Datalab ENTRA pelas descricoes de imagem injetadas no texto lido (142/305). A aprovacao individual injeta um sumario com todos os "

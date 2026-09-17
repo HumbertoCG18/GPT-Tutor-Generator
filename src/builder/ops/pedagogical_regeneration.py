@@ -347,7 +347,7 @@ def _guard_units_not_silently_lost(
     (``parsed_unit_count>0``), e reducao AUTORADA (usuario editou o plano) -- loga
     info, nao bloqueia. Se ``parsed_unit_count==0`` (plano ausente ou parser nao
     reconheceu o formato), e o mecanismo exato da perda silenciosa da u3 do MF
-    (docs/reports/2026-08-05-unit-sources-investigacao.md) -> levanta
+    (docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md) -> levanta
     ``UnitsShrinkError`` ANTES do write.
 
     Generico: recebe ``root_dir``/``course_name`` como parametros, sem hardcode por

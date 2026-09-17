@@ -3,7 +3,7 @@
 date: 2026-06-29
 status: design (pré-implementação)
 rev: 2026-06-29b — incorpora probes read-only dos 5 cursos (F-TCC, restrições de plataforma, mapa de WindowProvider). Mudanças load-bearing: Contrato 1 vira CASCATA de providers (card_block_map não é universal); Disambiguator ganha SESSION-LABEL como sinal de primeira-classe.
-relacionado: log de decisões `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` (D0–D12, F-MF, F-TCC, Restrições de Plataforma, Mapa de Providers, SÍNTESE — FONTE-DE-VERDADE), handoff `docs/reports/2026-06-29-handoff-motor-atribuicao-impl.md`, signal-registry `docs/superpowers/specs/2026-06-17-signal-registry-design.md`
+relacionado: log de decisões `docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md` (D0–D12, F-MF, F-TCC, Restrições de Plataforma, Mapa de Providers, SÍNTESE — FONTE-DE-VERDADE), handoff `docs/reports/2026-06-29-handoff-motor-atribuicao-impl.md`, signal-registry `docs/superpowers/specs/2026-06-17-signal-registry-design.md`
 
 > Este spec NÃO re-decide nada. Consolida D0–D12 + SÍNTESE + os probes em requisitos
 > VERIFICÁVEIS (contratos, invariantes, critérios de aceite por tier) para o plano de

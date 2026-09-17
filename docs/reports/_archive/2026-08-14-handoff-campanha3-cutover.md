@@ -7,7 +7,7 @@ sessão anterior: auditoria-enxame executada + desempates + quick wins + sentine
 ## Boot da nova sessão (ordem)
 
 1. `mem-search` (regra global) · ler `.mex/ROUTER.md` · ler este handoff · tracker `docs/reports/pendencias.md` (header + "Mapa de deleção do cutover").
-2. Insumo PRINCIPAL da campanha: `docs/reports/2026-08-14-auditoria-enxame.md` **seção 1 (Pré-cutover)** — 6 achados verificados adversarialmente, com file:line.
+2. Insumo PRINCIPAL da campanha: `docs/reports/Feitos/2026-08-14-auditoria-enxame.md` **seção 1 (Pré-cutover)** — 6 achados verificados adversarialmente, com file:line.
 3. Spec de referência da família índice: `docs/superpowers/specs/2026-08-06-gerador-indice-unico-design.md` §8.
 
 ## Estado verificado (as-of 2026-08-14, HEAD 11402b2)

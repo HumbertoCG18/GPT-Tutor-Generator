@@ -19,7 +19,7 @@ SARC vivo; WARN-baseline permanente).
 1. **Review T10** (Approved; golden ES2 editado à mão verificado BYTE A BYTE vs índice vivo;
    `pytest -k ES2` é NO-OP — filtro certo `-k "Engenharia-Software-2"`, no tracker).
 2. **T11 — ruling IA (user: opção B, pinos gold-backed)**: relatório
-   `2026-08-11-t11-ruling-ia-opcoes.md`; refresh gated (25→23 blocos) + 4 pinos u05 nos
+   `docs/reports/Feitos/2026-08-11-t11-ruling-ia-opcoes.md`; refresh gated (25→23 blocos) + 4 pinos u05 nos
    blocos ML + bloco-16 `manual_kind_override=class`+pino u03 (falso positivo 'planejamento'
    no TEMA). IA-Tutor `dd9967d`+`458f744`; projeto `96dfb3e` (gold IA 23 blocos/régua 10,
    goldens re-baselined). Snapshot 13 sidecars sha256 em
@@ -30,7 +30,7 @@ SARC vivo; WARN-baseline permanente).
    slugs IA u01/u02 migrados no índice ANTES do freeze do gold.
 4. **T12 — sandbox aula-13 TCC**: resíduo VIVO (sem pino → bloco-13 via card, band alta
    0.85, winner=48.76/topic=8.83). Guard C6-equivalente = item [CODE] com RED pronto;
-   pino segura produção. Report `2026-08-11-t12-sandbox-aula13-tcc.md` (`e7b6f09`).
+   pino segura produção. Report `docs/reports/Feitos/2026-08-11-t12-sandbox-aula13-tcc.md` (`e7b6f09`).
 5. **T13 — fechamento**: tracker `pendencias.md` atualizado (entrada Concluído campanha 2 +
    2 seções de dívida nova); spec/plano → `Feitos/`; este handoff.
 

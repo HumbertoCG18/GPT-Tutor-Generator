@@ -39,7 +39,7 @@ edit(T, "## CG UNIDADE SEM LLM E SEM PINO — RADICAL-FALLBACK", SEC + "## CG UN
 edit(T, "CG unidade automatica 6/93 erradas; radical-fallback no motor;",
         "CG unidade automatica 6/93 erradas; radical-fallback no motor; propagacao por headings no motor: sub puro 82 -> 87/93;")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Gerador `feat/motor-atribuicao` @ `ff21cab` (codigo: higiene do glossario `e0c433c` + radical-fallback `ff21cab`) + docs da sessao 6.",
         "Gerador `feat/motor-atribuicao` @ `4a239d9` (codigo: higiene `e0c433c` + radical-fallback `ff21cab` + propagacao por headings `4a239d9`) + docs da sessao 6.")
 edit(H, "· `ff21cab` (feat radical-fallback + teste). Suite 2326.", "· `ff21cab` (feat radical-fallback + teste) · `4a239d9` (feat propagacao por headings + teste). Suite 2328.")

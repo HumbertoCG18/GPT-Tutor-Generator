@@ -1,6 +1,6 @@
 # Handoff 12/09 — C1 fechada, C5 aberta, regime cru como frente nova
 
-last_updated: 2026-09-12 **tarde** (passo 0 feito, régua congelada, astra refez a análise: §§11 e 12). **Este é o ponto de entrada vivo**; `2026-09-11-handoff-camada3.md` passa a ser histórico.
+last_updated: 2026-09-12 **tarde** (passo 0 feito, régua congelada, astra refez a análise: §§11 e 12). **Este é o ponto de entrada vivo**; `docs/reports/_archive/2026-09-11-handoff-camada3.md` passa a ser histórico.
 Tracker: `docs/reports/pendencias.md` (seções de 11 e 12/09, do topo para baixo). Plano: `2026-09-08-plano-confianca-antes-de-acuracia.md`.
 Placar publicado (12/09): https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8e0ec91de
 

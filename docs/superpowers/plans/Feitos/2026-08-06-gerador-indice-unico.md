@@ -601,7 +601,7 @@ git commit -m "docs(tracker): familia dual-source R2-R12 registrada com evidenci
 - Nenhum arquivo do projeto; escreve no repo-tutor `C:\Users\Humberto\Documents\GitHub\TCC-Tutor` e em `subjects.json`. ÚNICA task com escrita em repo-tutor.
 
 **Interfaces:**
-- Consumes: Tasks 1-6 verdes; cache `TCC-Tutor/material_curation.json` (16 votos, untracked); rito registrado em `docs/reports/2026-08-06-tcc-reflip-fail-report.md` (a tentativa 3 é o template do rito e do rollback).
+- Consumes: Tasks 1-6 verdes; cache `TCC-Tutor/material_curation.json` (16 votos, untracked); rito registrado em `docs/reports/Feitos/2026-08-06-tcc-reflip-fail-report.md` (a tentativa 3 é o template do rito e do rollback).
 - Produces: TCC flag-ON commitado OU FAIL honesto com rollback sha256 e diagnóstico.
 
 - [x] **Step 1: Backup completo (tracked + gitignored, com verificação)**

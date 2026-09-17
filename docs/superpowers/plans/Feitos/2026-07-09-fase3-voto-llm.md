@@ -40,7 +40,7 @@
 | Create `scripts/fase3_prova_LLM_MF.py` | Régua HARD FASE 3 (exit 0/1/2), `--dry-run`, seed, cap |
 | Create `tests/test_motor_llm_vote.py` | Unidade do módulo (cache, chave, série, voto bounded, cap) |
 | Modify `tests/test_motor_anchor_engine.py` | Wiring TIER 3 (voter=None byte-idêntico; aceitação; escopo) |
-| Create `docs/reports/2026-07-09-fase3-llm-report.md` | Report de fechamento (Task 6) |
+| Create `docs/reports/Feitos/2026-07-09-fase3-llm-report.md` | Report de fechamento (Task 6) |
 
 Dependências entre módulos (sem ciclo): `llm_vote` importa `contracts` + `anchor_engine.is_out_of_disamb_scope` (lazy, dentro da função) + `text/normalize`; `anchor_engine` NÃO importa `llm_vote` (recebe o voter pronto). `gemini_client` só via import lazy dentro de método.
 
@@ -984,7 +984,7 @@ git commit -m "feat(motor): regua HARD fase3_prova_LLM_MF — lift do voto TIER 
 Esta task GASTA API (~escopo − seed ≈ 20-40 chamadas, ≤ US$1) e depende de `GEMINI_API_KEY`/config. **Confirmar com o user antes da primeira rodada real.**
 
 **Files:**
-- Create: `docs/reports/2026-07-09-fase3-llm-report.md`
+- Create: `docs/reports/Feitos/2026-07-09-fase3-llm-report.md`
 - Modify: `docs/reports/pendencias.md` (tracker — entrada FASE 3)
 - (gerado) `docs/reports/material_curation_MF.json` — cache commitável (votos são insumo de medição, como `marco1_votes_MF.json`)
 
@@ -1019,7 +1019,7 @@ python scripts/fase0_prova_motor_MF.py && python scripts/fase1_recall_gate_MF.py
 ```
 Expected: 5× PASS + suite 0 failed. (fase0-2 rodam SEM voter — números FASE 2 intactos por construção.)
 
-- [ ] **Step 6: Report de fechamento** — criar `docs/reports/2026-07-09-fase3-llm-report.md` com: números finais (lift, chamadas totais, custo estimado, confiante-errado, acc global par-colapsada antes/depois), tabela det vs llm por row do escopo, decisões de calibração tomadas na fase (o que ficou do §12: sem-janela não vota — classe plano.pdf documentada como perdida), riscos residuais com dono (ex.: prompt generalizado vs MARCO 1; série same-theme votando sobre band alta — medido nesta fase), e o que fica para FASE 4 (sidecar `material_curation.json` no repo-tutor via reprocess, background-thread na GUI, prune stale por chave órfã, cap/opt-in por flag de curso via `SubjectProfile.feature_flags`).
+- [ ] **Step 6: Report de fechamento** — criar `docs/reports/Feitos/2026-07-09-fase3-llm-report.md` com: números finais (lift, chamadas totais, custo estimado, confiante-errado, acc global par-colapsada antes/depois), tabela det vs llm por row do escopo, decisões de calibração tomadas na fase (o que ficou do §12: sem-janela não vota — classe plano.pdf documentada como perdida), riscos residuais com dono (ex.: prompt generalizado vs MARCO 1; série same-theme votando sobre band alta — medido nesta fase), e o que fica para FASE 4 (sidecar `material_curation.json` no repo-tutor via reprocess, background-thread na GUI, prune stale por chave órfã, cap/opt-in por flag de curso via `SubjectProfile.feature_flags`).
 
 - [ ] **Step 7: Tracker + grafo**
 
@@ -1029,7 +1029,7 @@ Atualizar `docs/reports/pendencias.md`: FASE 3 com número final; dívida #1 (ba
 - [ ] **Step 8: Commit final (se autorizado)**
 
 ```bash
-git add docs/reports/2026-07-09-fase3-llm-report.md docs/reports/material_curation_MF.json docs/reports/pendencias.md
+git add docs/reports/Feitos/2026-07-09-fase3-llm-report.md docs/reports/material_curation_MF.json docs/reports/pendencias.md
 git commit -m "docs(motor): fechamento FASE 3 — voto TIER 3 medido no gold MF"
 ```
 

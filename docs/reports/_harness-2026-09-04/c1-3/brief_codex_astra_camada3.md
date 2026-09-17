@@ -104,7 +104,7 @@ esses 7 em qualquer regime. A lista de errados deste regime está no fim do log.
 - `_bundle` corta cada heading em 60 caracteres (`vocabulary_compile.py`, função `_bundle`).
 - Os tutores SO, IA, ES2, TCC ainda NÃO foram reprocessados com o vocabulário novo; só as cópias de medição foram.
 
-## 6. O que NÃO repropor (refutado por medição, `docs/reports/2026-09-08-handoff-confianca.md` §4)
+## 6. O que NÃO repropor (refutado por medição, `docs/reports/_archive/2026-09-08-handoff-confianca.md` §4)
 
 Agrupar por palavras-chave no lugar do scorer; título do vídeo no lugar do hash; piso de score; título com vocabulário
 completo; página-índice pelo cabeçalho; triagem da chamada de LLM por sinal determinístico (o sinal não prediz);
@@ -125,6 +125,6 @@ pai × filho; piso de força na 1ª passada; seção → unidade dona; zero-pad;
 5. Os 8 roteiros do ES2: o determ recupera 4 dos 5 que o Gemini recupera. O que falta ao determinístico, no texto que
    ele produz (`shim_codigo.py`, função `_sintetico`), para pegar o resto sem LLM.
 
-Arquivos para ler primeiro: `docs/reports/2026-09-08-handoff-confianca.md`,
+Arquivos para ler primeiro: `docs/reports/_archive/2026-09-08-handoff-confianca.md`,
 `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` (§1, §2.2, §2.4), `docs/reports/pendencias.md` (seção
 "NO MAXIMO DUAS CAMADAS LLM", 06/09), e os scripts e logs citados acima.

@@ -19,7 +19,7 @@ FAIL honesto → experimento 3.5-flash → **ACEITA com sign-off**), tudo nesta 
   Variante flagged-only medida offline e DESCARTADA (+2, conf-errado 1) — escopo
   flagged∪série do spec confirmado ótimo. Piso renegociado ≥+4→**≥+3** (`LIFT_MIN=3`,
   sign-off user 09/07). Dívida band-no-ramo-flagado → N/A. Adendo completo:
-  `docs/reports/2026-07-09-fase3-llm-report.md`.
+  `docs/reports/Feitos/2026-07-09-fase3-llm-report.md`.
 - **Config do user pinado `gemini-3.5-flash`** (`~/.gpt_tutor_config.json`, não-alias,
   reprodutibilidade). O CÓDIGO ainda referencia o modelo morto — item 0 abaixo.
 

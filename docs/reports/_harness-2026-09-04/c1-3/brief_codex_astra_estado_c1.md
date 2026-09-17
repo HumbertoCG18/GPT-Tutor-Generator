@@ -16,7 +16,7 @@ DÍVIDAS DE DADOS (não C3), porque C3 tem 14% de erro contra 34% do resto, e a 
 zips com colisão de nome, 122 materiais sem gold de unidade (CG 93, FR 22, LR 7), insumo pdf 94% · zip 66% · html 62% ·
 vídeo 57%. Ressalva do plano: "o ganho de acurácia que corrigi-los traz não foi medido".
 
-## 2. Estado item a item (MEDIDO, tracker `docs/reports/pendencias.md` e handoff `2026-09-11-handoff-camada3.md`)
+## 2. Estado item a item (MEDIDO, tracker `docs/reports/pendencias.md` e handoff `docs/reports/_archive/2026-09-11-handoff-camada3.md`)
 
 | item | estado | número |
 |---|---|---|

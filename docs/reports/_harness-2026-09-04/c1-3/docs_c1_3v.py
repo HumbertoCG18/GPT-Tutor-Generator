@@ -31,7 +31,7 @@ ES2 Trabalho Final (vencimento 06/07 dentro do bloco-13 "prova P2, entrega traba
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "**Aberto:** gold do MF `t2-2026-1` (SARC: entrega do T2 em 06/07 dentro do bloco da P2; gold bloco-18 sem evidencia do professor).\n",
         "**Decidido (06/09 noite): bloco de prova hospeda entrega.** Gold do MF `t2-2026-1` -> bloco-20; produto bloco 197/199 (o due-window ancora na aula "
         "anterior por desenho T17: candidata C no tracker). Placar: zero 155 · automatica 230 · produto 245 / 288; unidade 183/190; sub 193/233.\n")

@@ -4,7 +4,7 @@
 
 **Goal:** Recuperar as unidades perdidas nos índices dos repos-tutor (MF u03 · SO u04 · ES2 u03 · IA u04/u05, este condicionado a ruling) matando a colisão de rótulo na fonte + desempate do DP, com gold de unidade como régua e curas gated por curso.
 
-**Architecture:** Fix na taxonomia (`build_content_taxonomy`: exclusividade de núcleo de título por TOKENS + higiene de heading) → desempate por sinal concentrado no DP (`assign_units_positional`) → sonda canônica = caminho de produção (padrão `rebuild_diff`) → gold 82 blocos rotulado pelo user → curas por curso com snapshot+sha256 e gates. Spec: `docs/superpowers/specs/2026-08-07-campanha-unidades-design.md` (v2, 2 rodadas de revisão com dados reais). Evidência: `docs/reports/2026-08-07-spec-review-unidades.md`.
+**Architecture:** Fix na taxonomia (`build_content_taxonomy`: exclusividade de núcleo de título por TOKENS + higiene de heading) → desempate por sinal concentrado no DP (`assign_units_positional`) → sonda canônica = caminho de produção (padrão `rebuild_diff`) → gold 82 blocos rotulado pelo user → curas por curso com snapshot+sha256 e gates. Spec: `docs/superpowers/specs/2026-08-07-campanha-unidades-design.md` (v2, 2 rodadas de revisão com dados reais). Evidência: `docs/reports/Feitos/2026-08-07-spec-review-unidades.md`.
 
 **Tech Stack:** Python 3.13 stdlib + pytest. Sem dependência nova.
 
@@ -57,7 +57,7 @@ Adicionar na 1ª linha do teste (comentário): proveniência = `%APPDATA%/GPTTut
 # Headings REAIS coletados do repo MF (audit 2026-08-07, spec-review §F3).
 # Caso: bullets-preview "1.3.1. Verificacao de Modelos" / "1.3.2. Verificacao de
 # Programas" na abertura da u01 contaminavam a assinatura da u01 (empate 4x4 no
-# bloco-16 — docs/reports/2026-08-06-task3-colisao-rotulo-mf.md).
+# bloco-16 — docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md).
 from pathlib import Path
 
 from src.builder.extraction.content_taxonomy import (
@@ -315,8 +315,8 @@ git commit -m "feat(taxonomia): higiene de heading — decoracao markdown e admi
 ```python
 # tests/test_unit_matcher_desempate.py
 # Fixture destilada do caso REAL bloco-15/16/17/20 do MF pos-U1
-# (docs/reports/2026-08-07-spec-review-unidades.md §A2/A3: empate de CAMINHO
-# 4+0+0 vs 3+1+0; matriz real em 2026-08-06-task3-colisao-rotulo-mf.md).
+# (docs/reports/Feitos/2026-08-07-spec-review-unidades.md §A2/A3: empate de CAMINHO
+# 4+0+0 vs 3+1+0; matriz real em docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md).
 from src.builder.timeline.unit_matcher import assign_units_positional
 
 

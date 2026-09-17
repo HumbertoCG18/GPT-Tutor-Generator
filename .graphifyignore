@@ -4,3 +4,10 @@
 docs/vendor/
 *.min.js
 *.min.css
+
+# Índices, caches e cópias de avaliação não são fontes do projeto.
+graphify-out/
+.codebase-memory/
+.cache/
+__pycache__/
+docs/reports/_codegraph-benchmark/

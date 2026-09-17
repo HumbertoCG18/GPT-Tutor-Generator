@@ -9,7 +9,7 @@ A verdade nao precisa de rotulo novo: e a composicao de dois golds JA APROVADOS.
 CAVEAT: a verdade e a unidade do bloco TEMPORAL. Material transversal (uma serie
 de laboratorio entregue ao longo do semestre) tem unidade de COBERTURA diferente
 da temporal por design — nesses cursos a regua SUPERESTIMA o erro. Ver
-`docs/reports/2026-08-18-achados-eixo-unidade.md`, achado A-3.
+`docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md`, achado A-3.
 
 Uso:
     python scripts/eval_entry_unit.py                 # os 5 cursos

@@ -57,7 +57,7 @@ como fidelidade; a referencia contra o original dava 56 arquivos por isso + data
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "**Placar por material (06/09 noite, gold do ES2 corrigido pelo oraculo):**",
         f"**Consolidacao das duplicacoes (07/09, commits {HASHES}):** gate `c1-3/zero_diff.py --base` (referencia do dia) / `--check` (0 arquivos = comportamento "
         "preservado); tokenizador de card unico, leitor unico de moodle_label, legado anchor_placement removido, listas em `text/stopwords.py`, regex em "

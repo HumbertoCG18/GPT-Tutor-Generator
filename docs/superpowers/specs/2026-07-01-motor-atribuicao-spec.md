@@ -3,7 +3,7 @@
 date: 2026-07-03 (nome do arquivo conforme handoff de partida)
 status: SPEC (consolidação final pré-plano)
 supersede: `docs/superpowers/specs/2026-06-29-motor-atribuicao-design.md` (rev 2026-06-29b — pré-MARCO)
-fontes: log de decisões `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` (D0–D13, F-MF, F-TCC,
+fontes: log de decisões `docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md` (D0–D13, F-MF, F-TCC,
 Restrições de Plataforma, Mapa de Providers, SÍNTESE, "Validação EXECUTADA" no D8),
 handoff `docs/reports/2026-07-01-handoff-spec-motor.md` (§4 = achados medidos),
 revisão de sincronização 2026-07-03 (itens 1–12, incorporados na seção "Resoluções da revisão"),

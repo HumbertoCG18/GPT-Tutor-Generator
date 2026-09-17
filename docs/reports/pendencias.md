@@ -1,7 +1,250 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-14 (HANDOFF PARA O CODEX: `2026-09-14-handoff-codex-regime-cru.md` é o novo ponto de entrada, autocontido — meta, decisões, placar, alavancas fechadas, as 3 opções, teto do glossário, decisões em aberto, receita do harness e índice de relatórios e artefatos. BRACO C MEDIDO E INVALIDO COMO EFEITO DO LLM: o GLOSSARY.md tem teto fixo de 14.000 chars e os milhares de sinonimos cortaram os topicos do fim do plano, que perderam todos os aliases (CG unidade -14, IA 0/0); o braco A pode ter sido atingido. DEFEITO DO PRODUTO: o glossario do CG ja esta truncado hoje, 14 topicos sem alias. META REVISTA PELO ASTRA (proposta, decisao do usuario): >=95% de precisao automatica com >=80% de cobertura em cursos ineditos, com declaracao do professor e LLM como regimes opcionais. As 3 opcoes em medicao: base estrita auto +1 primario transferivel e 0 perdas; regra A lexical com saldo transferivel -3 e 6 perdas; C (LLM) rodando; B bloqueado sem especialista nao contaminado. EXTRATOR DE RELACOES EXPLICITAS FECHADO POR MEDICAO: o astra congelou o protocolo sem gold e achou 25 candidatas, 3 relacoes novas (MF 2, SO 1) e 0 no IA; no motor, +1 primario e 0 perdas, mas o +1 e autodoacao (o material que ganhou e o proprio documento de onde as relacoes sairam) - ganho transferivel zero, o corte ENCERRA. A evidencia explicita do professor termina antes do rotulo do plano: o elo que falta e correspondencia semantica. DECISOES DO USER: embedding conta como LLM; o motor roda em maquina fraca. AUDITORIA DO ASTRA - relacao termo->topico sem LLM: a evidencia existe nos slides do professor ate metade do caminho (perceptron/MLP -> tarefas supervisionadas -> tarefa preditiva), e falta o ultimo elo ate o rotulo do plano (modelos preditivos: 0 arquivos literais). Entra pelo canal de vocabulario que ja existe, separando synonyms de topic_terms, sem voto novo no resolvedor. Primeiro experimento: extrair so relacoes locais explicitas (categoria: itens), 0 LLM, corte >= 5 primarios sem perder acerto. Achados: cache de resumo de codigo desatualiza por construcao; sidecar do professor e circular; seed em src tem 28 regras de curso. PAI x FILHO FECHADO POR MEDICAO: nos 8 erros o filho tem ZERO token distintivo no texto (score 0,017 = so o bonus de subtopico); quando o filho tem evidencia propria ele vence e acerta 36 de 38. Nao existe regra de parentesco que separe erros de controles - favorecer o filho arrisca os 11 do C-pai, favorecer o pai quebra os 36 do C-filho. E vocabulario, nao estrutura. PAI x FILHO NOS 7 CURSOS (AGY contou, astra revisou com codigo, eu verifiquei): 8 de 109 erros (7,3%), MF 4 e FR 4, concentrados em 2 PARES de topicos - nao justifica flag em src (corrigir os 8 levaria a subunidade a 59,8%). O astra achou falha no meu brief: slug NAO e unico no curso (SO conceitos-basicos em 2 unidades), 5 linhas ficam indeterminadas. A regua de subunidade compara so o slug; medido 0 acertos contados em slug repetido hoje. A 1a rodada dos dois modelos do AGY falhou tentando rodar script; a 2a, inline e sem ferramenta, concordou 109/109. SINGULAR x PLURAL NAO VALE BRACO (astra low, verificado): recupera 0 dos 5 erros, nao 5 - nos 4 zips o pai casa dois tokens e o filho um (0,907 x 0,125 mesmo singularizado), e no 01-protocolos protocolo/protocolos/redes sao tokens GENERICOS do topico. Erro que contem plural nao e erro causado por plural. Proximo mecanismo (hipotese): propagacao que preserva o vencedor positivo da 1a passada; e a competicao pai x filho merece diagnostico proprio. SUBUNIDADE NO CURSO DO ZERO, MEDIDA NO FR DO ZERO: os 12 erros sao singular x plural 5, a 2a passada quebrando acerto 2, camada x nivel 2, empate 2, migalha 1 - nenhum e vocabulario de dominio. Bracos sem LLM: moodle_label 0, sem2a +1, sempartes -3, sempropag +2 no FR (6 -> 8/18) MAS saldo ZERO nos 7 cursos (5 ganhos, 5 perdas; CG -3) - nao promover. Correcao da 31: os 15 zips TEM texto no motor (resumo deterministico determ-v3). Unica alavanca grande num curso do zero continua o vocab compilado por LLM (6 -> 16/18). ASTRA SOBRE A CAUSA REAL E O MOTOR CRU >=95%: "nao foi demonstrado nem refutado; o brief confunde melhor placar observado com teto de informacao". A config com APIs PAGAS nao bate 95% primario em 2 dos 3 eixos (unidade faltam 7, subunidade primario faltam 53) — o pedido e SUPERAR o melhor numero ja medido, sem LLM. Duas correcoes minhas: o eixo UNIDADE JA TEM cascata nomeada e a unidade explicita ja vence o bloco (file_map.py:785-807) — o eixo sem cascata e a SUBUNIDADE; e o moodle_label chega ao coletor (entry_signals.py:173) e o scorer nao consome (index.py:1835). O braco V provou o efeito da relacao FORNECIDA, nao aquisicao automatica — e o cru parte de COPIA DO PRODUTO, nunca certificado como construivel do zero. O FR do zero com 0 chamadas da subunidade primario 6/18 = 33%, e o vocab compilado leva a 16/18 = 89%. BRACO V MEDIDO: 18 termos em 2 topicos do IA valem **+33 materiais** (subunidade 142 -> 175/251 = 69,7%), com ZERO regressao em bloco e unidade e os outros 6 cursos identicos — o IA vai de 12,8% a 97,4%. **E isso derruba o meu "teto de 32" PARA CIMA: o vocabulario corrigiu tambem 2 de classe C e 2 de classe D, que eu havia declarado fechadas — contagem de classe por leitura NAO mede teto.** Ressalva: e teto de aquisicao DIRIGIDA (os 2 topicos vieram da analise de erros, que usa gold), nao ganho transferivel; o que o V prova e que quando o topico certo e curado a conversao e quase total (33 de 34) — o problema e a SELECAO sem gabarito. Faltam 51 para a meta, em 6 cursos. A MINHA HIPOTESE CAIU: 3 refutadores do agy (gemini-3.1-pro, gpt-oss-120b, claude-opus-4-6) e o meu proprio teste deterministico a derrubaram — 38+23 era DUPLA CONTAGEM (a uniao honesta e 43), o teto de 32 SUBESTIMA o vocabulario (na classe C a evidencia perde por falta de peso), e o concentrador e o CURSO IA (34 dos 109), nao a alavanca. E a engenharia de BUNDLE entrega ZERO no cru: o scorer ja le o corpo inteiro (index.py:1899-1907); o bundle e a entrada do COMPILADOR. O que sobrevive e medido: 15 dos 109 erros entram no motor com ZERO caractere de texto (todos zip, corpo em disco) e o moodle_label nao e pontuado. TETO DA AQUISICAO DE VOCABULARIO MEDIDO: **32 dos 84 materiais que faltam** (C competicao 38 / B aquisicao 32 / A nada a adquirir 23 / D fora do alvo 16), e **29 dos 32 sao o IA** — a aquisicao leva o cru a no maximo 69,3%, NAO a 90%. Em 23 dos 109 a evidencia decisiva nunca chega ao bundle (CG 11, MF 5, FR 4, ES2 3): ha mais material nas alavancas de engenharia DETERMINISTICA (bundle + desempate) do que na aquisicao. SIDECARS CONGELADOS POR ENTRADA E PROVENIENCIA (0 sem origem identificavel, 628 pares): o CRU HONESTO e **93,7% bloco / 89,1% unidade / 56,6% subunidade** — a subunidade carrega +4 materiais de curadoria escolhida MEDINDO contra a regua (4 curvas do CG + gateway do ES2), e o buraco cresce de 79 para 84 materiais; a unidade NAO esta contaminada (os 5 do CG vem inteiros do ruling do usuario sobre OpenGL) e o veto do SO e inerte no cru. O braco de baseline reproduz o log de 12/09 digito a digito. AQUISICAO DE VOCABULARIO DESENHADA e 4 afirmacoes minhas caem: o sidecar do "cru" NAO e curadoria humana (gerado por script em 07/09, 66 termos contra 560 do LLM) e tem PROVENIENCIA MISTA - CG curvas, ES2 gateway, CG OpenGL e o veto do SO foram escolhidos MEDINDO CONTRA A REGUA, entao "a unica dependencia de gold e o prompt v2" esta errada; OS 10 DA UNIDADE NAO SAO VOCABULARIO (REGUA 253 -> VOCAB 255 = +2; o voter da +8), e o SO fica 27/37 nos dois; o produto erra 27, nao 25. Veredito do astra: aquisicao sozinha NAO tem evidencia de entregar 90%; a unidade de aquisicao tem que ser RELACAO termo->topico com evidencia, nao lista de termos. LOCO MATOU A OPCAO 2: a regra de precedencia restrita a metodo de bloco fraco tem saldo +38 DENTRO da amostra e -3 FORA (cru) / -4 (produto), com 0 folds positivos no produto — nao implementar. A familia "trocar a precedencia por regra derivada do metodo do bloco" esta FECHADA. OPCAO 3 FEITA sem inflar: o placar nao muda (89,1%) e o medidor separa a natureza dos 31 erros de unidade — 17 sao divergencia de DESENHO, e o teto da mudanca de precedencia esta medido: cru 89,1% -> 95,1%, produto 92,6% -> 98,6%. GATE 1 DA OPCAO 2 aberto. DECISAO DO USER: o motor deve seguir o PLANO, nao o bloco. Medido: "texto vence sempre" PERDE mesmo contra a regua curricular (-15 cru, -7 produto); o unico corte positivo e restringir a / (+7 cru, +5 produto) mas com ganho concentrado no SO e negativo em 3 dos 6 cursos. EIXO UNIDADE: os 31 erros do cru sao 17 contradicoes ADJUDICADAS + 10 de vocabulario + 4 resto; a regra do titulo foi medida e REFUTADA (-9 no cru, -14 no produto) e o unico corte que da +3 foi recusado por ser ajuste ao benchmark; a alavanca real e reabrir "texto vence o bloco" contra a regua CURRICULAR — Gate 1. ATAQUE A SUBUNIDADE: o seletor NAO seleciona — auditado a pedido do user, o ganho de 147 para 178 vem de DOIS topicos de UM curso (IA) e o baseline "maior unidade" chega ao mesmo numero sem criterio lexical; o gold NAO entra nos dados (552 de 560 sinonimos atestados no proprio curso; filtros gold-dirigidos carregam ZERO do ganho), so no prompt do compilador, calibrado no IA; astra bateu limite de uso, volta 13/09 00:38, brief pronto. 3 EIXOS no motor completo, experimento consertado nos 3 itens do astra: gold de bloco do CG validado por data (35/35), veto por proveniencia medido (inocuo), 4o braco com voter reproduz o produto com 0 chamadas; isolamento corrigido depois da revisao do astra (cache de resumo de codigo vazava vocab; contador de rede agora e real: 0/0/0): no cru o BLOCO ja bate a meta (93,2%) e a UNIDADE fica a 1 ponto (89,1%); a SUBUNIDADE (57,8%) e o buraco inteiro. META 90/90/90 posta pelo user; produto 99,2% bloco / 92,6% unidade / 89,2% subunidade, cru 58,6% e faltam +79 materiais; 3 refutadores rodaram e derrubaram 2 frases minhas; TETO CORRIGIDO 64% -> 44%; fontes do professor esgotadas; SARC posicional FECHADO por negativo medido; fronteira: zona gratis tira 20 dos 77 erros confiantes por 1 entrega, e no produto de graca; piso medido 66,3%: regua congelada, replay = produto em 251/251, cru 147 aceito/105 primario, **aceito do confiante no cru 59,5% com 77 erros confiantes**; suite 2348 passed, 4 skipped). **PONTO DE ENTRADA =
-`2026-09-14-handoff-codex-regime-cru.md`** (autocontido, para o Codex); o `2026-09-12-handoff-regime-cru.md` vira a referência detalhada por § (§1–§41); o `2026-09-11-handoff-camada3.md` é histórico.
+## Concluído: organização de `docs/reports` (16/09)
+
+- Raiz reduzida de 51 para 9 Markdown: somente tracker, handoffs/planos vivos,
+  gold canônico e campanhas ainda abertas.
+- 36 entregas encerradas movidas para `Feitos/` (34 rastreadas com `git mv`);
+  seis estados, planos ou handoffs substituídos movidos para `_archive/`.
+- Referências diretas e relativas atualizadas; zero caminho antigo restante.
+- Verificação: 29 testes passaram, 26 arquivos compilaram, JSON válido,
+  `git diff --check` limpo e Ruff preservou o baseline de 154 achados.
+- [CODE] Índice Graphify não atualizado: detecção incremental encontrou backlog
+  prévio de 1.320 arquivos novos/alterados e 42 removidos, incluindo 423 documentos
+  e 27 imagens. Atualizar em tarefa própria; nenhuma extração semântica foi iniciada.
+
+## Aceite pendente: workflow Claude Code / Codex / AGY (15/09)
+
+- Concluído (16/09): política manual registrada em agent-workflow-lab/workflow.md: Fable
+  executor padrão; uma escalada automática Astra por tarefa, por necessidade concreta;
+  revisão proporcional ao risco. Sem automação nova de hooks ou mudança do modelo global.
+- [USER] Após o reset do limite do Fable, confirmar disponibilidade para medir Fable versus
+  Astra em tarefas representativas, com mesmo contrato e verificações, cópias isoladas e
+  registro de resultado, retrabalho, tempo e uso reportado. Data de reset desconhecida;
+  nenhuma avaliação iniciada. Fixar escopo e orçamento antes das chamadas.
+- Concluído: portabilidade operacional por contratos inline no laboratório, incluindo
+  doc-updater adaptado ao MEX/Graphify. Frontmatter model/tools de origem não é executado.
+  Registro nativo AGY permanece não comprovado e não é requisito do caminho adotado.
+- Concluído: roteamento supervisionado Claude principal, Codex execução/revisão separada e
+  AGY pesquisa/documentação registrado no laboratório; quatro passos validados em cópias isoladas.
+  [Resultado integrado](Feitos/workflow-validacao-integrada_16-09.md).
+- Concluído: piloto AGY de síntese com fonte fornecida (3/3 fatos) e edição documental
+  isolada (somente parágrafo autorizado, original preservado). Quatro chamadas incluindo
+  controle e pesquisa bloqueada; [resultados e limites](Feitos/workflow-validacao-agy_16-09.md).
+- Concluído: permissão Context7 validada no projeto AGY isolado com duas ferramentas
+  explicitamente autorizadas; nenhuma ampliação global. [Piloto](Feitos/workflow-context7-piloto_16-09.md).
+- Concluído: usuário substituiu chave Context7 no AGY; autenticação validada. Piloto encerrou
+  com 2/3 pesquisas úteis, 5/5 fatos corretos nas respostas úteis e 6/20 tentativas acumuladas
+  conservadoramente. Nova chave ausente dos 15 arquivos de saída/log/trajetória examinados.
+- Concluído: contrato AGY inline corrigido; regressão pytest e holdout json.skipkeys passaram.
+  Context7 autenticado em sessões novas Claude e Codex. Piloto acumulado: 12/20 tentativas; 8 restantes.
+- Concluído: solo versus três Sol low medidos; enxame 21,29% mais lento e 2,36× tokens reportados.
+  Não promovido. Revisão Terra encontrou CRLF; regressão reproduzida e corrigida nos dois braços.
+- Concluído: autorização persistente de escalada única e retomada configurada nas instruções.
+  Estado/limites em .workflow/; primeira execução real permanece pendente de medição.
+  Definição nativa docs-lookup não comprovada; contratos usados inline.
+  Google Docs/Sheets/Drive excluídos pelo usuário desta validação.
+- Implementação autorizada aplicada nas três CLIs. Relatório e limites:
+  [workflow-implantacao_15-09.md](workflow-implantacao_15-09.md).
+  Plano: [workflow-tres-clis](../superpowers/plans/2026-09-15-workflow-tres-clis.md).
+- Concluído: curadoria Codex, skills pessoais comuns, CBM nas três configurações,
+  RTK explícito para pytest, verificador de drift e instruções pessoais idênticas.
+- Skillfile não promovido: atualização de fonte local deixou destino antigo;
+  fonte comum/manual com hashes adotada. Nenhum hook geral de reescrita instalado.
+- [USER] Abrir novas sessões das três CLIs pelo Alethe e confirmar ausência do
+  aviso; depois rodar verify.py no agent-workflow-lab. Sessões diretas Codex passaram.
+- [CODE] Usuário reportou o aviso novamente. Sem drift nos arquivos monitorados;
+  conversa importada atual contém 94 descrições, enquanto nova instância local
+  retorna 24 habilitadas. Teste interativo 0.154.0 também iniciou sem aviso.
+  Usuário confirmou conversa retomada no Alethe e ocorrência também no terminal.
+  Retomada paralela bloqueada pela conversa aberta nesta aplicação; sem forçar lock.
+  Handoff para teste em sessão nova: workflow-handoff-sessao-nova.md.
+  Não declarar resolvido nem remover mais skills por suposição. Evidência local:
+  agent-workflow-lab/warning-diagnosis.json.
+- Concluído nesta retomada: sessão nova `01a0a824-59b4-72f1-ab1b-fcf3c39bdb36`,
+  `codex-tui`/CLI `0.154.0`, catálogo recebido de 44 skills (JSONL).
+  Usuário confirmou ausência do aviso. Terminal novo validado neste caso;
+  causa anterior e aceite de conversa nova no Alethe permanecem abertos.
+  Proveniência: [workflow-handoff-sessao-nova.md](workflow-handoff-sessao-nova.md).
+- [USER] Uso MCP no AGY headless exige permissão normal; não ampliada nesta tarefa.
+  Descoberta e transporte CBM verificados. Não confundir configuração com autorização.
+
+## Concluído: ajustes dos avisos de inicialização do Codex (15/09)
+
+- Quatro cópias byte a byte idênticas desativadas via skills.config pessoal:
+  heredoc-git-bash-windows, mex-check-falso-positivo, troglodita e troglodita-help.
+  Cópias em .agents/skills preservadas; nenhuma skill apagada.
+- Plugin codex 1.0.6: SessionEnd timeout 5→3; SessionStart=5 e Stop=900 preservados.
+  JSON/TOML relidos e validados. Backups com sufixo .bak-warnings-20260915-213703.
+- Auditoria posterior confirmou as quatro desativações, mas o usuário ainda
+  recebe o aviso de orçamento. Próxima correção no plano acima. Atualização
+  do plugin pode sobrescrever a correção de timeout no cache.
+
+## Concluído: CBM somente sob demanda (15/09)
+
+- auto_watch=false aplicado na configuração pessoal; auto_index=false confirmado.
+  Escopo: todos os projetos do usuário que usam esse CBM.
+- Política exige index_repository antes do primeiro fallback da sessão e após
+  mudança de fontes; consultas seguintes reutilizam o índice ainda atual.
+- Graphify mantém os hooks. Bancos existentes preservados: sobreposição em disco
+  permanece, atualização contínua duplicada desabilitada na configuração.
+- Substitui o watcher CBM da integração abaixo; testes anteriores são históricos.
+
+## Concluído: Graphify com fallback CBM (15/09)
+
+- Roteamento aprovado aplicado no ROUTER; política em codegraph-fallback.md.
+  Nenhum hook novo; índices e benchmark excluídos dos dois indexadores.
+- Teste isolado: edição+commit, exclusão+commit e troca de branch acompanhados
+  pelos dois índices. Nome canônico necessário para o watcher CBM; evitar alias.
+- Índices vivos atualizados; benchmark ausente nos dois. Na validação inicial,
+  auto_index=false e auto_watch=true. CBM registrado somente no Codex.
+- Limites: Graphify exige update antes de consultar mudanças sem commit;
+  o watcher CBM testado exigia sessão MCP ativa na raiz correta; política atual
+  sob demanda registrada acima. Relatório: Feitos/codegraph-fallback_15-09.md.
+
+## Concluído: piloto Graphify × codebase-memory-mcp (15/09)
+
+- 130 fontes congelados; 12 perguntas × 4 braços × 3 repetições: 144 respostas
+  válidas. rg/leitura, Graphify, candidato e combinado: 36/36 completos cada.
+- Zero ganho complementar medido. Manter Graphify como referência; candidato
+  v0.10.8 instalado somente no Codex para avaliação. O piloto não mudou o
+  roteamento; adoção posterior como fallback registrada acima.
+- Ambos passaram na adição/remoção de chamada em cópia isolada. Sem fontes vivos
+  alterados. Harness e fontes congeladas em `docs/reports/_codegraph-benchmark/`.
+- Relatório: `Feitos/benchmark-codegraph_15-09.md`. Limite: recuperação fixa com
+  leitura de fonte, não agente autônomo nem validação de todas as arestas.
+
+## Concluído: verificação de categoria prova matemática (15/09)
+
+- Regra restrita testada em memória nos 338 inputs: somente três categorias
+  alteradas. Replay temporal MF50→53/66; total210→213/237 (+3/0). Outros335
+  materiais sem alteração temporal; dois resultados finais idênticos.
+- Controles: quatro entradas de provas reais IA (três PDFs únicos), 14 materiais
+  de revisão/resolução e uma imagem preservados; seis nomes sintéticos com
+  marcadores P1/Prova1 mantidos como provas. 56 hashes de artefatos inalterados.
+- Zero LLM; sem src/tutores regravados. Relatório
+  `Feitos/categoria-prova-verificacao_15-09.md`; evidência no harness:
+  verificacao_categoria_prova_verificada_15-09.json.
+- [DECISION] Antes de promover: reconstrução em cópia com categoria na entrada
+  e medição de unidade/subtemas. Replay temporal não valida esses eixos.
+  Três positivos conhecidos, sem holdout matemático independente; não generalizar.
+
+## Concluído: reconstrução com pacote completo (15/09)
+
+- Usuário autorizou documentos originais + payload Moodle local + plano/SARC,
+  sem transplante de decisões. Protocolo `Feitos/protocolo-pacote-fontes_15-09.md`.
+- Destinos novos em .frzero/pacote_fontes_15-09; captura validada por hash,
+  parsers/backfills existentes, zero LLM. Regime documental local mantido.
+- Sete cursos: blocos169→210/237 (+47/-6), unidades234→239/284 (+9/-4),
+  aceitos99→108/251 (+9/0), primários76→84/251 (+8/0). 303 comuns/13 ausentes.
+- 338 entradas: conteúdo idêntico após normalizar apenas caminho do repositório
+  nas imagens. Fontes, perfil, entradas e cronograma passaram nos gates. Sete
+  builds concluídos, nenhuma falha/chamada LLM, nenhum processo pendente.
+- Replay MF: 134 entradas, temporal idêntico. Três ProvasIndutivas já eram
+  categoria provas pela heurística de nome; janela [05]→[05,06,07] causa abstenção
+  com lexical=False/sem voter. Probe lexical=True recupera 05 nos três; retirar
+  só datas de cards não recupera. Evidência replay_abstencoes_pacote_raiz_15-09.json.
+- Relatório `Feitos/pacote-fontes_15-09.md`; placar verificacao_pacote_7cursos_15-09.json.
+- [DECISION] Próximo teste proposto: categoria de prova matemática versus avaliação,
+  preservando o comportamento de provas reais. Não habilitar lexical globalmente.
+  Nenhuma promoção/correção em src autorizada nesta etapa; régua intacta.
+
+## Concluído: raiz da cadeia captura → currículo (15/09)
+
+- Correção da premissa de recaptura: payload Moodle existe nos sete tutores da
+  cópia herdada, SHA256 igual ao produto local. Reconstrução carregou apenas CG/FR;
+  os outros cinco não tinham payload no local procurado pelo driver. Parte da
+  herança era captura bruta omitida, não curadoria.
+- Parsing recupera estrutura histórica exata em 303/326 entradas de origem comum;
+  23 sem match. Datas/formato iguais em 23/24 cards; TDE ES2 diverge 03/07 vs 06/07.
+- Unidade inferida do bloco gold concorda com currículo em 203/220, diverge em17.
+  Controles confirmam sinais úteis e perdas: não remover metadados nem trocar
+  precedência global. Relatório `Feitos/raiz-cadeia-metadados_15-09.md`.
+- [DECISION] Próximo: reconstrução com pacote completo de fontes locais e parsing,
+  sem transplantar derivados. Não requer recaptura remota neste ponto. Depois
+  avaliar granularidade/incerteza entre seção, arquivo, bloco e unidade curricular.
+- [CODE] Diagnosticar 23 vínculos ausentes e divergência histórica do TDE, sem
+  preenchimento forçado. Zero LLM; nenhuma correção em src nesta etapa.
+
+## Concluído: diagnóstico das perdas de metadados (15/09)
+
+- Replay read-only: 445 entradas em nove raízes, campos temporais idênticos;
+  nove casos/braço, oito materiais. Retirada isolada do sinal devolve bloco anterior
+  nos nove casos. Zero chamadas LLM/rede; src e cópias sem alterações nesta etapa.
+- Causas: card inferido exclui acerto e substitui decisão ainda incerta (MF/SO);
+  datas de seção ampliam competição lexical (ES2/IA); unidade do bloco sobrepõe
+  ou preenche unidade curricular (ES2/SO). Datalab não foi fator deste contraste.
+- Relatório: `Feitos/diagnostico-perdas-metadados_15-09.md`; evidência no harness:
+  `diagnostico_perdas_metadados_verificado_15-09.json`.
+- [DECISION] Próximo teste proposto: SO, alternativa com dois scores zero substitui
+  acerto anterior. Não promover correção nem reabrir precedência global sem medida.
+  Contrato de unidade curricular segue pendente; captura local encontrada depois,
+  conforme a seção acima, substitui a premissa de recaptura obrigatória.
+
+## Concluído: contraste de metadados e perda de blocos (15/09)
+
+- Estrutura/semana Moodle nos sete cursos: bloco 169→195/237 (+29/-3), unidade
+  234→239/284 (+9/-4), aceita 99→105/251 (+6/0), primária 76→81/251 (+5/0).
+  Datas de cards, braço separado: IA 25→38/42 (+14/-1), ES2 11→19/28 (+9/-1).
+  Não somar braços; combinação não medida. Nenhum aprovado para produto.
+- 22 rodadas válidas, sete controles idênticos; texto, taxonomia e entradas
+  invariantes; zero chamadas LLM/rede registradas e zero mudanças manual/pinned.
+  Controle inicial sem ZIPs inválido preservado. Relatório: `Feitos/metadados-blocos_15-09.md`.
+- [DECISION] Ingestão original: payloads locais encontrados na auditoria da cadeia
+  acima; próximo contraste deve rederivar metadados deles. Transplante histórico
+  mediu dependência, não aquisição autônoma. Sem correção em src nesta medição.
+- Preferência permanente do usuário: MD Datalab existente primeiro, com arquivo
+  e proveniência verificados. Entre 50 perdas, quatro com evidência direta; não
+  houve troca de corpo nem medição de superioridade Datalab. Metadados de seção/
+  semana Moodle são outra fonte, não substituída pelo Markdown do documento.
+
+## Pendências após medir heranças do produto (15/09)
+
+- [DECISION] Herança estrutural: coletor de títulos ignora `staging/`; TCC perde
+  54 candidatos e SO 72 na reconstrução, com redução dos aliases. Ainda sem
+  ablação causal isolada de texto, metadados e pinos; não corrigir nem aprovar
+  staging automaticamente. Decidir o próximo contraste antes de alterar o produto.
+- [CODE] HTML offline: `_PageImages.replace` tenta Datalab mesmo com
+  `image_description_source=none`; chamadas impedidas pelo tripwire no CG.
+  Medição limpa exige cap zero no harness; correção de produto não autorizada nesta etapa.
+
+## Concluído: dependência das heranças do produto (15/09)
+
+- Sete cursos desde fontes locais, 338 entradas importadas; 316 materiais na régua,
+  303 comuns e 13 ausentes. Zero vínculos ambíguos, 342 hashes preservados,
+  estrutura temporal igual. Perfil salvo permanece entrada herdada declarada.
+- Base completa: bloco 222→169/237, unidade 253→234/284, aceitos 142→99/251,
+  primários 100→76/251. Nos comuns: 216→169/231, 244→234/271, 138→99/243,
+  96→76/243. Ausências não explicam toda regressão; resultado não certifica cru do zero.
+- Sete rodadas finais: zero tentativas de rede e zero falhas de importação.
+  Sete PDFs marcados `scanned-pages`; importação não garante qualidade de texto.
+  CG original teve tentativas Datalab bloqueadas, foi interrompido e não avaliado.
+- Relatório e protocolo em `Feitos/herancas-cru_15-09.md` e
+  `Feitos/protocolo-herancas-cru_15-09.md`. Evidência consolidada:
+  `_harness-2026-09-04/c1-3/auditoria_herancas_15-09.json` e `.log`.
+  Sem correção em src nesta medição, sem commit/push; `.motor3eixos` preservada.
+
+## Concluído: cópia limpa e taxonomia direta (15/09)
+
+- Gate 1 aprovado e implementação verificada: destino experimental novo,
+  produtor estruturado único e consumidores independentes do glossário renderizado.
+  Plano e evidências em `Feitos/plano-taxonomia-direta_15-09.md` e
+  `Feitos/taxonomia-direta-implementacao_15-09.md`.
+- Suite: 2357 passed, 4 skipped. Implementação: 316 materiais, 0 ganhos/0 perdas;
+  CG 59/59 tópicos com alias. Tags, perfil semântico e atribuições preservados.
+  Motor: 0 tentativas de rede. Sem commit/push.
+- Concluído nas medições: fluxo direto versus baseline nova, 316 materiais,
+  0 ganhos/0 perdas; CG 51/59 → 59/59 tópicos com alias. Evidência:
+  `_harness-2026-09-04/c1-3/compara_fluxo_direto_x_base_15-09.log` e
+  `_harness-2026-09-04/c1-3/fluxo_direto_7cursos_15-09.log`.
+- Concluído: resíduos de curadoria MF/FR movidos para
+  `.frzero/contaminantes_motor3eixos_15-09/`; baseline restaurada em `.motor3eixos/`
+  e idêntica a 14-09 em todos os materiais, conforme
+  `_harness-2026-09-04/c1-3/compara_restauracao_x_14-09_15-09.log`.
+  Esse resultado substitui o estado da cópia descrito nos registros históricos abaixo.
+
+last_updated: 2026-09-15 (HANDOFF 15/09: `2026-09-15-handoff-regime-cru.md` é o novo ponto de entrada — taxonomia direta em src sem commit (0 ganhos/0 perdas, Gate 2 pendente), construção desde fontes 169 → pacote completo 210 → categoria prova 213 no replay, defeitos achados e fila. Registro anterior: 2026-09-14 — HANDOFF PARA O CODEX: `2026-09-14-handoff-codex-regime-cru.md` é o novo ponto de entrada, autocontido — meta, decisões, placar, alavancas fechadas, as 3 opções, teto do glossário, decisões em aberto, receita do harness e índice de relatórios e artefatos. BRACO C MEDIDO E INVALIDO COMO EFEITO DO LLM: o GLOSSARY.md tem teto fixo de 14.000 chars e os milhares de sinonimos cortaram os topicos do fim do plano, que perderam todos os aliases (CG unidade -14, IA 0/0); o braco A pode ter sido atingido. DEFEITO DO PRODUTO: o glossario do CG ja esta truncado hoje, 14 topicos sem alias. META REVISTA PELO ASTRA (proposta, decisao do usuario): >=95% de precisao automatica com >=80% de cobertura em cursos ineditos, com declaracao do professor e LLM como regimes opcionais. As 3 opcoes em medicao: base estrita auto +1 primario transferivel e 0 perdas; regra A lexical com saldo transferivel -3 e 6 perdas; C (LLM) rodando; B bloqueado sem especialista nao contaminado. EXTRATOR DE RELACOES EXPLICITAS FECHADO POR MEDICAO: o astra congelou o protocolo sem gold e achou 25 candidatas, 3 relacoes novas (MF 2, SO 1) e 0 no IA; no motor, +1 primario e 0 perdas, mas o +1 e autodoacao (o material que ganhou e o proprio documento de onde as relacoes sairam) - ganho transferivel zero, o corte ENCERRA. A evidencia explicita do professor termina antes do rotulo do plano: o elo que falta e correspondencia semantica. DECISOES DO USER: embedding conta como LLM; o motor roda em maquina fraca. AUDITORIA DO ASTRA - relacao termo->topico sem LLM: a evidencia existe nos slides do professor ate metade do caminho (perceptron/MLP -> tarefas supervisionadas -> tarefa preditiva), e falta o ultimo elo ate o rotulo do plano (modelos preditivos: 0 arquivos literais). Entra pelo canal de vocabulario que ja existe, separando synonyms de topic_terms, sem voto novo no resolvedor. Primeiro experimento: extrair so relacoes locais explicitas (categoria: itens), 0 LLM, corte >= 5 primarios sem perder acerto. Achados: cache de resumo de codigo desatualiza por construcao; sidecar do professor e circular; seed em src tem 28 regras de curso. PAI x FILHO FECHADO POR MEDICAO: nos 8 erros o filho tem ZERO token distintivo no texto (score 0,017 = so o bonus de subtopico); quando o filho tem evidencia propria ele vence e acerta 36 de 38. Nao existe regra de parentesco que separe erros de controles - favorecer o filho arrisca os 11 do C-pai, favorecer o pai quebra os 36 do C-filho. E vocabulario, nao estrutura. PAI x FILHO NOS 7 CURSOS (AGY contou, astra revisou com codigo, eu verifiquei): 8 de 109 erros (7,3%), MF 4 e FR 4, concentrados em 2 PARES de topicos - nao justifica flag em src (corrigir os 8 levaria a subunidade a 59,8%). O astra achou falha no meu brief: slug NAO e unico no curso (SO conceitos-basicos em 2 unidades), 5 linhas ficam indeterminadas. A regua de subunidade compara so o slug; medido 0 acertos contados em slug repetido hoje. A 1a rodada dos dois modelos do AGY falhou tentando rodar script; a 2a, inline e sem ferramenta, concordou 109/109. SINGULAR x PLURAL NAO VALE BRACO (astra low, verificado): recupera 0 dos 5 erros, nao 5 - nos 4 zips o pai casa dois tokens e o filho um (0,907 x 0,125 mesmo singularizado), e no 01-protocolos protocolo/protocolos/redes sao tokens GENERICOS do topico. Erro que contem plural nao e erro causado por plural. Proximo mecanismo (hipotese): propagacao que preserva o vencedor positivo da 1a passada; e a competicao pai x filho merece diagnostico proprio. SUBUNIDADE NO CURSO DO ZERO, MEDIDA NO FR DO ZERO: os 12 erros sao singular x plural 5, a 2a passada quebrando acerto 2, camada x nivel 2, empate 2, migalha 1 - nenhum e vocabulario de dominio. Bracos sem LLM: moodle_label 0, sem2a +1, sempartes -3, sempropag +2 no FR (6 -> 8/18) MAS saldo ZERO nos 7 cursos (5 ganhos, 5 perdas; CG -3) - nao promover. Correcao da 31: os 15 zips TEM texto no motor (resumo deterministico determ-v3). Unica alavanca grande num curso do zero continua o vocab compilado por LLM (6 -> 16/18). ASTRA SOBRE A CAUSA REAL E O MOTOR CRU >=95%: "nao foi demonstrado nem refutado; o brief confunde melhor placar observado com teto de informacao". A config com APIs PAGAS nao bate 95% primario em 2 dos 3 eixos (unidade faltam 7, subunidade primario faltam 53) — o pedido e SUPERAR o melhor numero ja medido, sem LLM. Duas correcoes minhas: o eixo UNIDADE JA TEM cascata nomeada e a unidade explicita ja vence o bloco (file_map.py:785-807) — o eixo sem cascata e a SUBUNIDADE; e o moodle_label chega ao coletor (entry_signals.py:173) e o scorer nao consome (index.py:1835). O braco V provou o efeito da relacao FORNECIDA, nao aquisicao automatica — e o cru parte de COPIA DO PRODUTO, nunca certificado como construivel do zero. O FR do zero com 0 chamadas da subunidade primario 6/18 = 33%, e o vocab compilado leva a 16/18 = 89%. BRACO V MEDIDO: 18 termos em 2 topicos do IA valem **+33 materiais** (subunidade 142 -> 175/251 = 69,7%), com ZERO regressao em bloco e unidade e os outros 6 cursos identicos — o IA vai de 12,8% a 97,4%. **E isso derruba o meu "teto de 32" PARA CIMA: o vocabulario corrigiu tambem 2 de classe C e 2 de classe D, que eu havia declarado fechadas — contagem de classe por leitura NAO mede teto.** Ressalva: e teto de aquisicao DIRIGIDA (os 2 topicos vieram da analise de erros, que usa gold), nao ganho transferivel; o que o V prova e que quando o topico certo e curado a conversao e quase total (33 de 34) — o problema e a SELECAO sem gabarito. Faltam 51 para a meta, em 6 cursos. A MINHA HIPOTESE CAIU: 3 refutadores do agy (gemini-3.1-pro, gpt-oss-120b, claude-opus-4-6) e o meu proprio teste deterministico a derrubaram — 38+23 era DUPLA CONTAGEM (a uniao honesta e 43), o teto de 32 SUBESTIMA o vocabulario (na classe C a evidencia perde por falta de peso), e o concentrador e o CURSO IA (34 dos 109), nao a alavanca. E a engenharia de BUNDLE entrega ZERO no cru: o scorer ja le o corpo inteiro (index.py:1899-1907); o bundle e a entrada do COMPILADOR. O que sobrevive e medido: 15 dos 109 erros entram no motor com ZERO caractere de texto (todos zip, corpo em disco) e o moodle_label nao e pontuado. TETO DA AQUISICAO DE VOCABULARIO MEDIDO: **32 dos 84 materiais que faltam** (C competicao 38 / B aquisicao 32 / A nada a adquirir 23 / D fora do alvo 16), e **29 dos 32 sao o IA** — a aquisicao leva o cru a no maximo 69,3%, NAO a 90%. Em 23 dos 109 a evidencia decisiva nunca chega ao bundle (CG 11, MF 5, FR 4, ES2 3): ha mais material nas alavancas de engenharia DETERMINISTICA (bundle + desempate) do que na aquisicao. SIDECARS CONGELADOS POR ENTRADA E PROVENIENCIA (0 sem origem identificavel, 628 pares): o CRU HONESTO e **93,7% bloco / 89,1% unidade / 56,6% subunidade** — a subunidade carrega +4 materiais de curadoria escolhida MEDINDO contra a regua (4 curvas do CG + gateway do ES2), e o buraco cresce de 79 para 84 materiais; a unidade NAO esta contaminada (os 5 do CG vem inteiros do ruling do usuario sobre OpenGL) e o veto do SO e inerte no cru. O braco de baseline reproduz o log de 12/09 digito a digito. AQUISICAO DE VOCABULARIO DESENHADA e 4 afirmacoes minhas caem: o sidecar do "cru" NAO e curadoria humana (gerado por script em 07/09, 66 termos contra 560 do LLM) e tem PROVENIENCIA MISTA - CG curvas, ES2 gateway, CG OpenGL e o veto do SO foram escolhidos MEDINDO CONTRA A REGUA, entao "a unica dependencia de gold e o prompt v2" esta errada; OS 10 DA UNIDADE NAO SAO VOCABULARIO (REGUA 253 -> VOCAB 255 = +2; o voter da +8), e o SO fica 27/37 nos dois; o produto erra 27, nao 25. Veredito do astra: aquisicao sozinha NAO tem evidencia de entregar 90%; a unidade de aquisicao tem que ser RELACAO termo->topico com evidencia, nao lista de termos. LOCO MATOU A OPCAO 2: a regra de precedencia restrita a metodo de bloco fraco tem saldo +38 DENTRO da amostra e -3 FORA (cru) / -4 (produto), com 0 folds positivos no produto — nao implementar. A familia "trocar a precedencia por regra derivada do metodo do bloco" esta FECHADA. OPCAO 3 FEITA sem inflar: o placar nao muda (89,1%) e o medidor separa a natureza dos 31 erros de unidade — 17 sao divergencia de DESENHO, e o teto da mudanca de precedencia esta medido: cru 89,1% -> 95,1%, produto 92,6% -> 98,6%. GATE 1 DA OPCAO 2 aberto. DECISAO DO USER: o motor deve seguir o PLANO, nao o bloco. Medido: "texto vence sempre" PERDE mesmo contra a regua curricular (-15 cru, -7 produto); o unico corte positivo e restringir a / (+7 cru, +5 produto) mas com ganho concentrado no SO e negativo em 3 dos 6 cursos. EIXO UNIDADE: os 31 erros do cru sao 17 contradicoes ADJUDICADAS + 10 de vocabulario + 4 resto; a regra do titulo foi medida e REFUTADA (-9 no cru, -14 no produto) e o unico corte que da +3 foi recusado por ser ajuste ao benchmark; a alavanca real e reabrir "texto vence o bloco" contra a regua CURRICULAR — Gate 1. ATAQUE A SUBUNIDADE: o seletor NAO seleciona — auditado a pedido do user, o ganho de 147 para 178 vem de DOIS topicos de UM curso (IA) e o baseline "maior unidade" chega ao mesmo numero sem criterio lexical; o gold NAO entra nos dados (552 de 560 sinonimos atestados no proprio curso; filtros gold-dirigidos carregam ZERO do ganho), so no prompt do compilador, calibrado no IA; astra bateu limite de uso, volta 13/09 00:38, brief pronto. 3 EIXOS no motor completo, experimento consertado nos 3 itens do astra: gold de bloco do CG validado por data (35/35), veto por proveniencia medido (inocuo), 4o braco com voter reproduz o produto com 0 chamadas; isolamento corrigido depois da revisao do astra (cache de resumo de codigo vazava vocab; contador de rede agora e real: 0/0/0): no cru o BLOCO ja bate a meta (93,2%) e a UNIDADE fica a 1 ponto (89,1%); a SUBUNIDADE (57,8%) e o buraco inteiro. META 90/90/90 posta pelo user; produto 99,2% bloco / 92,6% unidade / 89,2% subunidade, cru 58,6% e faltam +79 materiais; 3 refutadores rodaram e derrubaram 2 frases minhas; TETO CORRIGIDO 64% -> 44%; fontes do professor esgotadas; SARC posicional FECHADO por negativo medido; fronteira: zona gratis tira 20 dos 77 erros confiantes por 1 entrega, e no produto de graca; piso medido 66,3%: regua congelada, replay = produto em 251/251, cru 147 aceito/105 primario, **aceito do confiante no cru 59,5% com 77 erros confiantes**; suite 2348 passed, 4 skipped). **PONTO DE ENTRADA =
+`2026-09-14-handoff-codex-regime-cru.md`** (autocontido, para o Codex); o `2026-09-12-handoff-regime-cru.md` vira a referência detalhada por § (§1–§41); o `docs/reports/_archive/2026-09-11-handoff-camada3.md` é histórico.
 
 > **Bloco redigido pelo Gemini 3.8 Flash** (agy, `conversation_id 5d026aa8-987d-4d6e-8bf7-8d16eccee73a`, brief
 > `c1-3/brief_agy_atualiza_pendencias_14-09.md`), **números conferidos contra o handoff e corrigidos pelo Claude** em 7 pontos:
@@ -538,7 +781,7 @@ alias igual a parte CamelCase do identificador, zip com `.md` proprio tambem sin
 deterministico. Decisao do user: liberar os 10 (cap 20) ou aceitar. Golden regenerados de proposito: SO `divisao_blocos`, TCC `casos_chave`.
 Orfaos de codigo apagados nos tutores (nao referenciados pelo manifest; `exemplo1..3.md` do SO estavam orfaos desde 21/06).
 **Votos liberados (user):** `c1-3/libera_votos.py` CG 6, FR 3, IA 1 = 10 chamadas, **0 blocos mudaram**. 8 tutores commitados, arvores limpas.
-Handoff novo: `2026-09-11-handoff-camada3.md` (ROUTER aponta).
+Handoff novo: `docs/reports/_archive/2026-09-11-handoff-camada3.md` (ROUTER aponta).
 **De onde vem o 214 (medido, `c1-3/mede_contribuicao_llm.py`, 3 regimes x 8 tutores em copia, rota do produto, 0 chamadas):**
 produto 214 · sem vocab LLM 138 · sem vocab LLM e sem voter 137. Deterministico de ponta a ponta = **137/214 = 64%**; vocabulario
 compilado por LLM = **76 = 36%** (1 chamada por unidade, em cache: nao ha chamada na atribuicao); voter = **1 = 0,5%**.
@@ -1996,7 +2239,7 @@ flag 14 (igual) · curada 198/199 conf-err 0 · 191/191 · 55/57 (igual) · sent
 determinismo pos-higiene: **8/8, 0 arquivos nao deterministicos** (`c1-3/determinismo_higiene.log`, tripwire; 0 chamadas nos originais e nas copias).
 **Gold de subunidade v2 (proposto, aguarda aprovacao):** CG 93 materiais, **82 pontuaveis** (1 unidade errada + 2 bloco errado + 8 meta), produto acerta
 49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
-`2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
+`docs/reports/Feitos/2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
 
 ## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **APROVADO PELO USER EM 06/09**, ver secao acima) + BUG: ZIPS DO MF COLIDEM
 **Arquivos:** `docs/reports/subunit_gt_CG.csv` (93 materiais, **63 pontuaveis**, 22 com UNIDADE computada errada -> `scorable=no` com a unidade
@@ -2865,7 +3108,7 @@ https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f; harness `_
 
 ## FASE 0 — regua oficial + fila `revisar` (2026-09-02, sessao 3)
 
-Plano `2026-09-02-plano-fechar-o-motor.md` Fase 0, os 3 itens feitos. Suite 2201 (+23) · sentinela nos 8 =
+Plano `docs/reports/_archive/2026-09-02-plano-fechar-o-motor.md` Fase 0, os 3 itens feitos. Suite 2201 (+23) · sentinela nos 8 =
 so o campo novo `revisar` · regua curada intacta (199/200 · 191/191 · 56/57 · 93/93) · motor puro reproduzido.
 
 **1. Promovidos** (`docs/reports/_harness-2026-09-02/` -> `scripts/`, paths por `__file__`, `main()`):

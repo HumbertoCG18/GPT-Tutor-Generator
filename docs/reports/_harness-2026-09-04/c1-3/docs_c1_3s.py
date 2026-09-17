@@ -41,7 +41,7 @@ subunidade. Candidata: sem janela + unidade nomeada -> janela = blocos da unidad
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Unidade explicita da secao vence bloco (`1b41003`):",
         f"Janela ∩ unidade da secao (`8856d89`+`b421e92`) + fila sem janela-1 flagada/funil com voto: holdout CG puro 31 -> 33/35, FR do zero fila 11 -> 10, {FILA}/100; produto {PROD[:100]}.\n"
         "Unidade explicita da secao vence bloco (`1b41003`):")

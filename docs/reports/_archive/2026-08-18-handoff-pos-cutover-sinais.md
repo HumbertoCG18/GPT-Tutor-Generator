@@ -12,9 +12,9 @@ working tree: **limpa** · 5 repos-tutor: **limpos**, todos em "indice v4"
 
 1. `mem-search` · `.mex/ROUTER.md` · este handoff · tracker `docs/reports/pendencias.md`
    (header + Concluído 2026-08-17c).
-2. Fecho do cutover: `docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`
+2. Fecho do cutover: `docs/reports/Feitos/2026-08-17-passo3-flip-delecao-fechado.md`
    (flip, deleção, serializador v4, achado do viés P3.1).
-3. Medição pré-flip: `docs/reports/2026-08-17-medicao-pre-flip-5cursos.md`.
+3. Medição pré-flip: `docs/reports/Feitos/2026-08-17-medicao-pre-flip-5cursos.md`.
 
 ## Estado verificado (as-of 2026-08-18, HEAD `f61db40`)
 

@@ -6,6 +6,9 @@ Lookup table for all pattern files in this directory. Check here before starting
 
 | Pattern | Use when |
 |---------|----------|
+| [workflow-tres-clis.md](workflow-tres-clis.md) | Alterar skills, MCPs e hooks em Claude Code, Codex e AGY, com validação de descoberta e drift |
+| [benchmark-codegraph.md](benchmark-codegraph.md) | Comparar índices de código com corpus congelado, gabarito independente e custos medidos |
+| [codegraph-fallback.md](codegraph-fallback.md) | Consultar Graphify primeiro e CBM como fallback, sem sincronização entre índices |
 | [add-build-artifact.md](add-build-artifact.md) | Adding a new generated file to the output repository |
 | [add-builder-submodule.md](add-builder-submodule.md) | Adding new processing logic to any `src/builder/` subpackage |
 | [add-ui-feature.md](add-ui-feature.md) | Adding dialogs, tabs, dashboard widgets, or new entry controls to the Tkinter UI |

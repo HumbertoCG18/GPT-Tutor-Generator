@@ -3,7 +3,7 @@
 # Handoff 2026-09-02 — EXECUTAR o plano "fechar o motor": Fase 0 + Fase 1b, depois run real do FR
 
 **Para a proxima sessao. Leia nesta ordem:**
-1. `docs/reports/2026-09-02-plano-fechar-o-motor.md` — decisoes do user, fases, alvos, decisoes fechadas
+1. `docs/reports/_archive/2026-09-02-plano-fechar-o-motor.md` — decisoes do user, fases, alvos, decisoes fechadas
    (A, B, C, D, G) e adiadas (E, F, H, I). E a fonte unica do "o que fazer".
 2. `docs/reports/pendencias.md` secao "MOTOR PURO — o numero honesto" — os numeros-base.
 3. Artifact "Anatomia do Bloco" (https://claude.ai/code/artifact/ba1de7bf-a802-49fc-b88b-6be358d4b796)

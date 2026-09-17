@@ -36,7 +36,7 @@ ate a subunidade do CG melhorar (ele e hoje o unico que pega 7 dos erros de sub 
 """
 edit(T, "## GOLDS CG E MF APROVADOS — REGUA DE SUBUNIDADE PASSA A 233", SEC + "## GOLDS CG E MF APROVADOS — REGUA DE SUBUNIDADE PASSA A 233")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). Corrigir a extracao dos zips (2).",
         "- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). **Fila de revisao: cortar a camada `llm` da metrica (57,5 -> 34,8; perde 2 de 41 erros;\n"
         "  tracker §FILA DE REVISAO)** — decisao do user, muda metrica de produto (decisao B 02/09). Corrigir a extracao dos zips (2).")

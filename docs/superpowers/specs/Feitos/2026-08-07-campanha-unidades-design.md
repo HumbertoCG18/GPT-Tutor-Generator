@@ -1,12 +1,12 @@
 # Spec — Unidades (campanha unificação, subprojeto 2/3)
 
 data: 2026-08-07 · v2 (pós spec-review com dados reais,
-`docs/reports/2026-08-07-spec-review-unidades.md` — TODA afirmação de mecanismo abaixo foi
+`docs/reports/Feitos/2026-08-07-spec-review-unidades.md` — TODA afirmação de mecanismo abaixo foi
 verificada executavelmente, READ-ONLY, contra taxonomia recomputada em memória + índices reais).
 Aprovado pelo user nesta sessão (abordagem A — exclusividade de título na FONTE/taxonomia; gold
 de unidade nos 5 cursos completos; merge `unit_index`→projeção de `content_taxonomy` FORA,
 trilho próprio pós-curas). Ordem da campanha aprovada: Índice (FECHADA) → **Unidades** → SO.
-Insumos primários: `docs/reports/2026-08-06-task3-colisao-rotulo-mf.md` · spec-review acima ·
+Insumos primários: `docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md` · spec-review acima ·
 tracker `docs/reports/pendencias.md` · handoff `2026-08-07-handoff-campanha-indice-fechada.md` §4.1.
 
 ## 1. Problema
@@ -202,4 +202,4 @@ Re-medir aula-13 TCC em sandbox sem pino: persiste → guard C6-equivalente; mor
   (fonte/taxonomia).
 - Spec-review delegado ao CC (2026-08-07): 9 claims verificados, 6 achados (A1-A6), 1 previsão
   falsificada (V5 — U1 sozinho não move bloco-16) → U1b criado, IA re-classificado como ruling.
-  Evidência completa: `docs/reports/2026-08-07-spec-review-unidades.md`.
+  Evidência completa: `docs/reports/Feitos/2026-08-07-spec-review-unidades.md`.

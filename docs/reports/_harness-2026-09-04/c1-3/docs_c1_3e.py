@@ -12,7 +12,7 @@ def edit(p: Path, old: str, new: str) -> None:
 
 T = GEN / "docs/reports/pendencias.md"
 edit(T, "**Ponto de entrada = `2026-09-05-handoff-fila-campanhas.md`.** **Ponto de entrada = handoff `2026-09-05-handoff-fila-campanhas.md`**",
-        "**Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`)")
+        "**Ponto de entrada = handoff `docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`)")
 SEC = """## CURADORIA DE UNIDADE DO CG + HIGIENE DO VOCAB (05/09 tarde, sessao 6, FEITO; CG `2c5e01e`, gerador `e0c433c`)
 **Codigo (`e0c433c`, `load_glossary_curation`):** sinonimo COMPILADO por LLM igual a nome de secao do Moodle (sem numeracao) nao vira alias; manual fica.
 Teste `tests/test_glossary_curation.py::test_sinonimo_compilado_igual_a_secao_do_moodle_nao_entra`. Remove exatamente os 3 do CG; 0 nos outros.
@@ -30,7 +30,7 @@ flag 14 (igual) · curada 198/199 conf-err 0 · 191/191 · 55/57 (igual) · sent
 determinismo pos-higiene: DETERMINISMO_PLACEHOLDER.
 **Gold de subunidade v2 (proposto, aguarda aprovacao):** CG 93 materiais, **82 pontuaveis** (1 unidade errada + 2 bloco errado + 8 meta), produto acerta
 49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
-`2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
+`docs/reports/Feitos/2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
 
 """
 edit(T, "## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE", SEC + "## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE")

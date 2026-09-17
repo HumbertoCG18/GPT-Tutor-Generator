@@ -1,6 +1,6 @@
 """Medicao pre/pos-flip `use_concept_resolver` em sandbox (mecanica F4, agora
 reprodutivel — licao da F4: scripts ad-hoc de medicao nao commitados sao
-irreprodutiveis, `docs/reports/2026-08-14-f4-medicao-unit-motor.md` §Limitacoes).
+irreprodutiveis, `docs/reports/Feitos/2026-08-14-f4-medicao-unit-motor.md` §Limitacoes).
 
 Uso:
     robocopy "<repo-tutor producao>" "<SANDBOX_DIR>/sandbox-<SIGLA>" /E /XD .git

@@ -23,7 +23,7 @@ edit(T, "Candidata a entrar: S1b (ultimo recurso; mesma rota da 2a passada; reas
         f"reproduziu no motor: o filtro de genericos do motor e o do curso, nao a lista da simulacao.)\n"
         f"**Reprocess registrado dos 8 (`c1-3/reprocess_8_secao.py`):** {REP}. **Produto x 6 golds: {PROD}.** Fila {FILA} por 100.\n")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto",
         f"Regra da secao S1b (`4d649c4`, +3 -0 simulado, +2 no motor): automatica x 233 196 (84,1%), CG 58/82; produto {PROD}; gold `intro` corrigido pelo oraculo (origens).\n"
         "Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto")

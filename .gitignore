@@ -224,6 +224,7 @@ __marimo__/
 
 # LLM context dirs (ferramentas internas, não commitadas)
 graphify-out/
+.codebase-memory/
 .LLM_Context/
 .agents/
 .claude/

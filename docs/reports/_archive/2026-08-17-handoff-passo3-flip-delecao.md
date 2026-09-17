@@ -9,8 +9,8 @@ sessão anterior: F4 (unit/subunit no motor) + passo 2 (C1 pinos + gaps 1.2/1.3)
 1. `mem-search` (regra global) · ler `.mex/ROUTER.md` · ler este handoff · tracker
    `docs/reports/pendencias.md` (header + "Mapa de deleção do cutover" ~linha 302 + os dois
    Concluído de 2026-08-17 e 2026-08-14-F4).
-2. Insumos do flip: `docs/reports/2026-08-14-f4-medicao-unit-motor.md` (metodologia sandbox +
-   limitações) · auditoria `docs/reports/2026-08-14-auditoria-enxame.md` §1 itens 1.4/1.5/1.6
+2. Insumos do flip: `docs/reports/Feitos/2026-08-14-f4-medicao-unit-motor.md` (metodologia sandbox +
+   limitações) · auditoria `docs/reports/Feitos/2026-08-14-auditoria-enxame.md` §1 itens 1.4/1.5/1.6
    (scripts condenados + mapa de deleção de testes) · spec motor
    `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` §7 FASE 5.
 3. Planos executados (referência de interface): `docs/superpowers/plans/2026-08-14-fase4-unit-subunit-motor.md`

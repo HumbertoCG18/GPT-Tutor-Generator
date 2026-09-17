@@ -117,7 +117,7 @@ esses 7 em qualquer regime. A lista de errados deste regime está no fim do log.
 - `_bundle` corta cada heading em 60 caracteres (`vocabulary_compile.py`, função `_bundle`).
 - Os tutores SO, IA, ES2, TCC ainda NÃO foram reprocessados com o vocabulário novo; só as cópias de medição foram.
 
-## 6. O que NÃO repropor (refutado por medição, `docs/reports/2026-09-08-handoff-confianca.md` §4)
+## 6. O que NÃO repropor (refutado por medição, `docs/reports/_archive/2026-09-08-handoff-confianca.md` §4)
 
 Agrupar por palavras-chave no lugar do scorer; título do vídeo no lugar do hash; piso de score; título com vocabulário
 completo; página-índice pelo cabeçalho; triagem da chamada de LLM por sinal determinístico (o sinal não prediz);
@@ -138,7 +138,7 @@ pai × filho; piso de força na 1ª passada; seção → unidade dona; zero-pad;
 5. Os 8 roteiros do ES2: o determ recupera 4 dos 5 que o Gemini recupera. O que falta ao determinístico, no texto que
    ele produz (`shim_codigo.py`, função `_sintetico`), para pegar o resto sem LLM.
 
-Arquivos para ler primeiro: `docs/reports/2026-09-08-handoff-confianca.md`,
+Arquivos para ler primeiro: `docs/reports/_archive/2026-09-08-handoff-confianca.md`,
 `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` (§1, §2.2, §2.4), `docs/reports/pendencias.md` (seção
 "NO MAXIMO DUAS CAMADAS LLM", 06/09), e os scripts e logs citados acima.
 
@@ -1101,7 +1101,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Fato | Fonte única |
 |---|---|
 | Estado vivo, pendências, dívidas, números de gate | `docs/reports/pendencias.md` (tracker, sempre atualizado) |
-| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-08-handoff-confianca.md`** (ponto de entrada vivo) |
+| O que a última sessão fez e a fila decidida | **`docs/reports/_archive/2026-09-08-handoff-confianca.md`** (ponto de entrada vivo) |
 | O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
 | Estrutura do código (quem chama quem, onde vive) | `graphify explain "<símbolo>"` ou `graphify path "A" "B"`; `query` aberto só com `--budget` |
 | Segunda opinião de diff (Codex) ou leitura de corpus (agy) | `patterns/delegar-codex-agy.md` |
@@ -1219,7 +1219,7 @@ A investigação deve ultrapassar 20 chamadas locais de leitura/medição.
 [35m[3mexec[0m[0m
 [1m"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "Get-Content docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md; rg -n -A 65 -B 5 'DUAS CAMADAS' docs/reports/pendencias.md; Get-Content C:/Users/Humberto/.codex/skills/graphify/references/query.md; Test-Path graphify-out/graph.json; Get-Content C:/Users/Humberto/.agents/skills/using-superpowers/references/codex-tools.md"[0m in C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
 [35m[3mexec[0m[0m
-[1m"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'git status --short; git diff -- src/builder/core/vocabulary_compile.py; Get-Content docs/reports/2026-09-08-handoff-confianca.md'[0m in C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
+[1m"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'git status --short; git diff -- src/builder/core/vocabulary_compile.py; Get-Content docs/reports/_archive/2026-09-08-handoff-confianca.md'[0m in C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
 [32m succeeded in 295ms:[0m
 warning: unable to access 'C:\Users\Humberto/.config/git/ignore': Permission denied
 warning: unable to access 'C:\Users\Humberto/.config/git/ignore': Permission denied
@@ -1271,7 +1271,7 @@ index 4a9bc9c..ab4e949 100644
                        + " | ".join(h[:60] for h in heads[:24]))
 # Handoff 2026-09-08 — PONTO DE ENTRADA: revisar o plano "confiança antes de acurácia" antes de executar
 
-Único handoff vivo. Substitui `2026-09-05b-handoff-fila-campanhas.md` (que passa a ser histórico).
+Único handoff vivo. Substitui `docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md` (que passa a ser histórico).
 **Leia nesta ordem:** (1) este arquivo; (2) `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` — o plano a
 revisar; (3) `pendencias.md`, seções datadas 07 e 08/09; (4) `.mex/context/audit-2026-09-07.md`.
 Rode `mem-search` para as sessões de 07 e 08/09.

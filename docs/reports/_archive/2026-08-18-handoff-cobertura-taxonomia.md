@@ -12,7 +12,7 @@ working tree: **limpa** · 5 repos-tutor: **limpos** e reprocessados
 
 1. `mem-search` · `.mex/ROUTER.md` · este handoff · tracker `docs/reports/pendencias.md`
    (header + seção `## CODE — camada de COBERTURA`).
-2. Medição desta sessão (3 rodadas + rollout): `docs/reports/2026-08-18-medicao-fix-taxonomia.md`.
+2. Medição desta sessão (3 rodadas + rollout): `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md`.
 3. Handoff anterior (contexto do motor e do cutover): `2026-08-18-handoff-pos-cutover-sinais.md`.
 
 ## O que esta sessão estabeleceu (a ideia central)

@@ -136,4 +136,4 @@ Pendente. Depende da refatoração de atribuição.
 - `docs/reports/gold_templates/gold_IA_rotular.predropdown-20260628-021507.bak.xlsx` = backup da versão pré-modificação do xlsx. Denominator do backup = 33 scorable (obsoleto).
 - Branch atual: `feat/block-stable-id`. Não criou commit novo nesta sessão (só shims em scripts não-commitados).
 - `M docs/reports/pendencias.md` e `M docs/reports/gold_templates/gold_IA_rotular.xlsx` no git status = modificados por sessão anterior ao gap, ainda não commitados pelo user.
-- Arquivos novos desta sessão (`2026-06-28-probe-resolver-recuperado.md`, `ground_truth_IA.csv`, `build_ground_truth_IA.py`, `classify_discriminant_IA.py`, `diff_pinfix_IA.py`) são `??` (untracked) — user vai separar à mão.
+- Arquivos novos desta sessão (`docs/reports/Feitos/2026-06-28-probe-resolver-recuperado.md`, `ground_truth_IA.csv`, `build_ground_truth_IA.py`, `classify_discriminant_IA.py`, `diff_pinfix_IA.py`) são `??` (untracked) — user vai separar à mão.

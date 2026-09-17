@@ -4,7 +4,7 @@ as-of: 2026-08-17 · HEAD `b4d119d` · sandbox read-only · produção intocada
 
 ## Método
 
-Mecânica da F4 (`docs/reports/2026-08-14-f4-medicao-unit-motor.md`), agora com driver
+Mecânica da F4 (`docs/reports/Feitos/2026-08-14-f4-medicao-unit-motor.md`), agora com driver
 COMMITADO (`scripts/measure_flip.py` — fecha a limitação "scripts ad-hoc irreprodutíveis"
 registrada na F4). Por curso (MF/SO/ES2/IA/TCC):
 

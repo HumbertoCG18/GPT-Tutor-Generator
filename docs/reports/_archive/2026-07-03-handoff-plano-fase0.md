@@ -76,7 +76,7 @@ Sugestão de separação de commits (user decide): (1) rename tracker + refs; (2
 1. `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` — spec FECHADO (contratos, tiers, fases com
    número, aceite §6, ambiguidades pro plano na §12).
 2. `docs/reports/pendencias.md` — tracker vivo (baselines 5/5, conflitos do cutover, decisões da sessão).
-3. `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` — log D0–D13 (o spec NÃO re-decide; consulta de racional).
+3. `docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md` — log D0–D13 (o spec NÃO re-decide; consulta de racional).
 4. `docs/reports/2026-07-01-handoff-spec-motor.md` §4 — achados medidos (MARCO 0/1).
 5. Régua: `scripts/eval_ground_truth.py` (pair_key) + golden MF `tests/fixtures/eval/metodos_formais_golden.json`.
 

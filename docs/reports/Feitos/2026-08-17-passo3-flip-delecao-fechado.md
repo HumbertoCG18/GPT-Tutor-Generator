@@ -9,7 +9,7 @@ commitados. Suite 1852 passed / 1 skipped / 0 failed.**
 
 ## Etapa 1 — Medição pré-flip (relatório próprio)
 
-`docs/reports/2026-08-17-medicao-pre-flip-5cursos.md` — 4 gates verdes
+`docs/reports/Feitos/2026-08-17-medicao-pre-flip-5cursos.md` — 4 gates verdes
 (golds unit 5/5 sem regressão, pinos 29/29, rebuild_diff 5/5 = 0, M7 caso
 único). Driver commitado: `scripts/measure_flip.py`.
 

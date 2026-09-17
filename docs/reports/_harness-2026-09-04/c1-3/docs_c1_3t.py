@@ -57,7 +57,7 @@ Gold: so mede; o aluno nunca cria gold.
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Tutores (06/09 noite, apos fila + decomposicao): **MF `ed31d99`",
         "Tutores (06/09 noite, apos o reparo do CG): **MF `ed31d99` · SO `c60e2d1` · IA `d88cc53` · ES2 `0fe0f53` · TCC `79a9696` · LR `5201deb` · FR `5c9372a` · CG `404f5f9`** "
         "(reparo registrado das 16 paginas do Moodle, `c1-3/repara_paginas_cg.py`, 0 chamadas; gerador `6d68578` corrige a sync). Historico — Tutores (06/09 noite, apos fila + decomposicao): **MF `ed31d99`")

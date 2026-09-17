@@ -59,7 +59,7 @@ Apos a decomposicao: **fila 115/348 = 33,0 por 100** (duvida 102 + mudou 13; sub
 """
 edit(T, "## FILA DE REVISAO (`revisar`/100 = 57,5) — RENDIMENTO MEDIDO CONTRA OS GOLDS", SEC + "## FILA DE REVISAO (`revisar`/100 = 57,5) — RENDIMENTO MEDIDO CONTRA OS GOLDS")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "**Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):**",
         "**06/09 noite — golds CG/MF aprovados (regua 233) · fila sem a camada llm (57,5 -> 33,0 por 100; `0673150`) · decomposicao de rotulos na 2a passada\n"
         "(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.**\n"

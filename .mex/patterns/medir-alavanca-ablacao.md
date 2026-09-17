@@ -24,6 +24,21 @@ regra de banda) e medida numa COPIA, com baseline reproduzido na mesma rodada, a
    versionar scripts e logs em `docs/reports/_harness-<data>/<item>/` com README.
 
 ## Gotchas
+- **Reconstrução desde fontes, 15/09:** cópia nova do produto não equivale a
+  construção nova. Usar `cru_fontes_15-09.py` para importar stash em destino novo;
+  comparar depois por origem única com `compara_herancas_15-09.py`. Manter ausentes
+  no denominador completo e publicar também os comuns. Conferir estrutura temporal
+  antes de reutilizar gold ordinal. Perfis salvos continuam herança declarada.
+  O coletor de títulos ignora `staging/`; aprovação/curadoria herdada pode fornecer
+  sinais ausentes na construção local. Não atribuir deltas isoladamente a aliases
+  quando texto, metadados e pinos mudaram juntos. HTML exige tripwire mesmo com
+  `image_description_source=none`: o caminho de imagens pode tentar Datalab.
+- **Regime cru, 15/09:** `.ablacao/` fica congelada. Usar o driver
+  `docs/reports/_harness-2026-09-04/c1-3/motor_copia_nova_15-09.py --destino .frzero/<nome-novo>`.
+  Ele exige destino novo e usa `sync_fresh`; o `sync` incremental com `robocopy /E`
+  preserva arquivos ausentes da origem e não certifica limpeza. Um `_CONFIG_ATUAL.txt`
+  correto não prova ausência de resíduos. Falha de cópia inutiliza aquele destino;
+  executar novamente com outro nome, sem apagar ou reutilizar a saída parcial.
 - **O reprocess chama Gemini** (auto-resumo de codigo e referencias, `_run_auto_code_summarization`) para toda entry cujo hash muda quando a UI tem
   `gemini_auto_summarize` ligado — 60 chamadas nao autorizadas em 05/09 por title := label. Shim SEMPRE com o tripwire de
   `docs/reports/_harness-2026-09-04/c1-3/shim_b.py` e `check_gemini_hoje.py` como pos-check; o tripwire tambem protege a medicao de resumo novo (contaminacao).

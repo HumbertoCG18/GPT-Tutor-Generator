@@ -24,7 +24,7 @@ edit(T, "**BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.*
         "resolve), valor = proximo curso sem pino. `c1-3/simula_radical_fallback.py`.\n"
         "**BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.**")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "- **Prompt do voter sem o `moodle_label`**",
         "- **Radical (6 chars) so como fallback no mapa bloco->unidade** (tokens exatos decidem; sem ancora exata, ancora por radical exclusivo) · 1 bloco muda\n"
         "  nos 8 (CG bloco-15 = pino), 0 colateral, unidade 183 = 183 · ~15 linhas em `assign_units_positional` · ganho hoje 0 (pino), valor = proximo curso sem pino · C4/C5.\n"

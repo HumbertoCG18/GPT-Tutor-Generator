@@ -46,7 +46,7 @@ T.write_text(t[:i] + SEC + t[i:], encoding="utf-8")
 R = GEN / "docs/reports/_harness-2026-09-04/c1-3/README.md"
 R.write_text(R.read_text(encoding="utf-8").rstrip("\n") + "\n- `reprocess_8_taxonomia.py` (reprocess registrado da taxonomia padronizada nos 8) · logs `reprocess_8_taxonomia.log`, `formatacao_taxonomia.log`, `anomalias_numeracao.log`, `numeracao_plano.log`, `unidade_vazia_sub_cheia.log` · `gera_tabela_cenarios.py` + `dados_cenarios.json` (matriz por cenario).\n", encoding="utf-8")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Tutores (06/09 noite, apos o reparo do CG):",
         "Tutores (07/09, apos o reprocess da taxonomia padronizada): **MF `1c33ca0` · SO `d0c135e` · IA `e1540df` · ES2 `5640abe` · TCC `f296ab3` · "
         "LR `3348864` · FR `eb347d2` · CG `3775b1a`** (topicos 229 -> 228, subunidade 1, unidade 0, bloco 0; reguas intactas: 197/199, 183/190, 193/233, fila 27,6). "

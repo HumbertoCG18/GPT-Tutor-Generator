@@ -10,7 +10,7 @@ Uma PERDA (slug no parser que nao esta no indice) ja registrada em
 tests/fixtures/eval/units_baseline.json = WARN, exit 0 (fato conhecido; a cura,
 fio Task 3, atualiza o baseline quando resolve). Uma perda NOVA (fora do baseline)
 = FAIL, exit != 0 -- e exatamente o bug que motivou este guard
-(docs/reports/2026-08-05-unit-sources-investigacao.md): reprocess sem subject_profile
+(docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md): reprocess sem subject_profile
 derruba unidades do indice sem nenhum log.
 
 Alem do parser e do indice em disco, reporta a SONDA (scripts/course_probe.py --

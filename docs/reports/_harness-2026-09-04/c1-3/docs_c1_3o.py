@@ -36,7 +36,7 @@ montante) · 5 confiantes entre dois assuntos presentes · curvasparametricas (e
 """
 edit(T, "## CG SUBUNIDADE 60% — DIAGNOSTICO DOS 33 E DECOMPOSICAO DE ROTULOS NO MOTOR", SEC + "## CG SUBUNIDADE 60% — DIAGNOSTICO DOS 33 E DECOMPOSICAO DE ROTULOS NO MOTOR")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.**",
         "(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.\n"
         f"Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto {PROD}; tracker §CG CONFIANTES ERRADOS. Teto do CG sem LLM/sem dado novo ~56-58/82.**")

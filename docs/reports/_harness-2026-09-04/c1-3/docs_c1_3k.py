@@ -43,7 +43,7 @@ acrescenta informacao — o teto e o vocabulario, nao a funcao de similaridade. 
 """
 edit(T, "## CONTRIBUICAO POR CAMADA (06/09, pedido do user:", SEC + "## CONTRIBUICAO POR CAMADA (06/09, pedido do user:")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).\n\n## COMECE POR",
         "unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).\n"
         "**Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):** so a subunidade a sente: 87 -> 71 sem resumo, 79/78 com substituto\n"

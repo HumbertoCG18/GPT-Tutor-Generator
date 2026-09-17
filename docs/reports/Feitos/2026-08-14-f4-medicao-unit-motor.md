@@ -8,7 +8,7 @@ Cópia integral do `Metodos-Formais-Tutor` pro scratchpad (sem `.git`, robocopy 
 Reprocessado headless 2x via `scripts/reprocess_assignments.reprocess()` (mesmo motor do botão
 "Reprocessar Repositorio"), com **perfil real da MF** (`SubjectStore().get("Metodos-Formais")`,
 leitura read-only do `subjects.json` de produção — sem gravação) e `root_dir` trocado pro sandbox
-(precedente T12, `docs/reports/2026-08-11-t12-sandbox-aula13-tcc.md`):
+(precedente T12, `docs/reports/Feitos/2026-08-11-t12-sandbox-aula13-tcc.md`):
 
 1. **BEFORE** (flag OFF, código atual): `reprocess(sandbox, [], store=<store que sempre devolve
    o perfil real>)` → `manifest.json` + `course/.timeline_index.json` copiados pra

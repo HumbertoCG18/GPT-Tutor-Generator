@@ -44,7 +44,7 @@ scorer lexical → próximo ponto de acurácia = FASE 2/pinos, não calibração
 ## 3. Artefatos-chave
 
 - Spec (governa tudo): `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` (§7 fases; §6 aceite)
-- Report FASE 1 + adendos: `docs/reports/2026-07-07-fase1-recall-report.md`
+- Report FASE 1 + adendos: `docs/reports/Feitos/2026-07-07-fase1-recall-report.md`
 - Planos executados: `docs/superpowers/plans/Feitos/2026-07-03-fase0-motor-atribuicao.md` e
   `Feitos/2026-07-07-fase1-gate-d4-recall.md`
 - Tracker: `docs/reports/pendencias.md` (entradas FASE 0/FASE 1 + adendo auditoria)

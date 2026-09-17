@@ -22,7 +22,7 @@
 
 ## File Structure
 
-- **Create** `docs/reports/2026-06-11-auditoria-artefatos.md` — doc de auditoria (Task 1). Tabela de inventário + nota de manutenção + registro da ação.
+- **Create** `docs/reports/Feitos/2026-06-11-auditoria-artefatos.md` — doc de auditoria (Task 1). Tabela de inventário + nota de manutenção + registro da ação.
 - **Modify (Task 2):**
   - `src/builder/artifacts/repo.py` — remover gerador `progress_schema_md`.
   - `src/builder/facade/repo_docs.py` — remover alias + entrada no dict.
@@ -37,13 +37,13 @@
 ### Task 1: Documento de auditoria de artefatos
 
 **Files:**
-- Create: `docs/reports/2026-06-11-auditoria-artefatos.md`
+- Create: `docs/reports/Feitos/2026-06-11-auditoria-artefatos.md`
 
 Não há teste de código (é um documento). A validação é revisão humana.
 
 - [ ] **Step 1: Criar o documento com o conteúdo abaixo (exato)**
 
-Crie `docs/reports/2026-06-11-auditoria-artefatos.md` com este conteúdo:
+Crie `docs/reports/Feitos/2026-06-11-auditoria-artefatos.md` com este conteúdo:
 
 ```markdown
 # Auditoria de artefatos de build
@@ -133,7 +133,7 @@ ao stale-delete para limpar repos já construídos no próximo build.
 - [ ] **Step 2: Commit**
 
 ```bash
-git add docs/reports/2026-06-11-auditoria-artefatos.md
+git add docs/reports/Feitos/2026-06-11-auditoria-artefatos.md
 git commit -m "docs(audit): inventario de artefatos de build (#18)"
 ```
 Verifique: `git log -1 --oneline` (o hook pode imprimir UnicodeEncodeError inofensivo).

@@ -21,7 +21,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Fato | Fonte única |
 |---|---|
 | Estado vivo, pendências, dívidas, números de gate | `docs/reports/pendencias.md` (tracker, sempre atualizado) |
-| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-14-handoff-codex-regime-cru.md`** (ponto de entrada vivo, autocontido; `2026-09-12-handoff-regime-cru.md` é a referência detalhada por §; o de 11/09 é histórico) |
+| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-15-handoff-regime-cru.md`** (ponto de entrada vivo; o `2026-09-14-handoff-codex-regime-cru.md` segue valendo para meta, decisões, leis e alavancas fechadas; `2026-09-12-handoff-regime-cru.md` é a referência detalhada por §; o de 11/09 é histórico) |
 | O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
 | Estrutura do código (quem chama quem, onde vive) | `graphify explain "<símbolo>"` ou `graphify path "A" "B"`; `query` aberto só com `--budget` |
 | Segunda opinião de diff (Codex) ou leitura de corpus (agy) | `patterns/delegar-codex-agy.md` |
@@ -88,14 +88,21 @@ os impõe. O risco é pular o gate, não travar nele.
 Deriva de acurácia agregada não é defeito reproduzível e não vai por
 `orch-fix-defect`. Vai por harness de medição (`ecc:eval-harness`).
 
-MCP ativo no Claude Code: `context7` e, desde 10/09, `graphify` (`.mcp.json` do
-projeto, gitignored; servidor `python -m graphify.serve graph.json`). `code-review-graph`
-foi removido em 08/09 por uso zero medido em 15.840 chamadas de ferramenta registradas.
-No agy o mesmo servidor entrou via `agy mcp add`. No Codex está `enabled = false` no
-config.toml global do Codex (pasta ~/.codex): o Alethe reescreve a entrada do projeto com um comando
-que não existe; a skill `$graphify-windows` cobre. Detalhes em
-`patterns/debug-graphify-mcp.md`. Estrutura de código continua no `graphify`, conforme
-a tabela de fonte única acima.
+Estrutura de código: `graphify`; `code-review-graph` e `google-developer-knowledge`
+foram retirados das configurações de MCP por decisão do usuário. A fonte do que está
+ligado é a config de cada CLI: `~/.claude.json` no Claude Code,
+`~/.gemini/config/mcp_config.json` no agy e `~/.codex/config.toml` no Codex.
+Claude Code e agy usam `python -m graphify.serve <graph.json>`.
+No Codex, o MCP graphify fica com `enabled = false` na config global por causa da
+reescrita do comando pelo Alethe; o uso local segue pela skill `$graphify-windows`.
+Diagnóstico e condição para religar: `patterns/debug-graphify-mcp.md`.
+
+Graphify é a primeira consulta; `codebase-memory-mcp` é fallback quando houver
+lacuna, ambiguidade ou indisponibilidade. Não repetir automaticamente a pergunta
+nos dois. CBM atualizado sob demanda antes do fallback, sem watcher contínuo.
+Atualização, exclusões e resolução de divergências:
+`patterns/codegraph-fallback.md`. Essa regra prevalece sobre sugestões de
+ferramentas que peçam uso exclusivo do próprio índice.
 
 Busca estrutural, ordem medida em 08/09: `Grep` para localizar o símbolo, então
 `graphify explain` ou `graphify path`, e `Read` com offset só no que sobrar.

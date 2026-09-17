@@ -19,7 +19,7 @@ suite: **1902 passed / 1 skipped / 0 failed**
 1. `mem-search` · `.mex/ROUTER.md` · este handoff · tracker `docs/reports/pendencias.md`
    (cabeçalho + seções `## CODE — REALIMENTACAO`, `## CODE — eixo de UNIDADE`,
    `## CODE — SUBUNIDADE`, `## CODE — o eixo N:N e ESCRITO e NUNCA LIDO`).
-2. Relatório completo com todas as tabelas: `docs/reports/2026-08-18-achados-eixo-unidade.md`.
+2. Relatório completo com todas as tabelas: `docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md`.
 3. Handoff anterior (dois eixos, taxonomia, camada de referência):
    `2026-08-18-handoff-cobertura-taxonomia.md`.
 4. Réguas: `scripts/eval_entry_unit.py` (nova) · `scripts/eval_subunit_health.py` (nova) ·

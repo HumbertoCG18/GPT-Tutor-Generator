@@ -62,7 +62,7 @@ Critério de DONE (inalterado): sem-regressão vs gold; IA não pode cair.
 
 ## 5. Fontes de verdade (ler nesta ordem antes do spec)
 
-1. `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` — D0-D13 + SÍNTESE + **"Validação EXECUTADA" no D8** (números do MARCO 0/1).
+1. `docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md` — D0-D13 + SÍNTESE + **"Validação EXECUTADA" no D8** (números do MARCO 0/1).
 2. Este handoff (seção 4).
 3. `docs/reports/pendencias.md` — tracker vivo (baselines, superseded, cobertura de janela).
 4. `scripts/marco0_prova_deterministica.py` + `scripts/marco1_voto_llm.py` — provas reproduzíveis; sidecars `marco0_flagged_MF.json`/`marco1_votes_MF.json`.

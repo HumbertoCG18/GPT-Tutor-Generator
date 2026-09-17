@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3, pytest. Sem dependências novas.
 
-**Spec:** review final F4 (achados C1/I2, ledger 2026-08-14) + `docs/reports/2026-08-14-auditoria-enxame.md` §1 (1.2/1.3) + `docs/reports/2026-08-14-handoff-campanha3-cutover.md` (passo 2). Itens C1/M4-M8 registrados em `docs/reports/pendencias.md` (Concluído F4 + itens [CODE] da review final).
+**Spec:** review final F4 (achados C1/I2, ledger 2026-08-14) + `docs/reports/Feitos/2026-08-14-auditoria-enxame.md` §1 (1.2/1.3) + `docs/reports/2026-08-14-handoff-campanha3-cutover.md` (passo 2). Itens C1/M4-M8 registrados em `docs/reports/pendencias.md` (Concluído F4 + itens [CODE] da review final).
 
 ## Global Constraints
 

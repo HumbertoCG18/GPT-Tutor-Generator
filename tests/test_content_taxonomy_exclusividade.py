@@ -4,7 +4,7 @@
 # Headings REAIS coletados do repo MF (audit 2026-08-07, spec-review §F3).
 # Caso: bullets-preview "1.3.1. Verificacao de Modelos" / "1.3.2. Verificacao de
 # Programas" na abertura da u01 contaminavam a assinatura da u01 (empate 4x4 no
-# bloco-16 — docs/reports/2026-08-06-task3-colisao-rotulo-mf.md).
+# bloco-16 — docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md).
 from pathlib import Path
 
 from src.builder.extraction.content_taxonomy import (

@@ -24,7 +24,7 @@ edit(T, "**BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.*
         "temporal (MF: tudo postado em 18/02) empurra 30/66 para o LLM.\n"
         "**BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.**")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "- **Zips extraidos sem subpasta colidem nomes** (MF 5 zips x `ex1.dfy`; `.smv` ignorado) · `<id>/<membro>` + `.smv` como codigo · SYNC/C5.",
         "- **Zips extraidos sem subpasta colidem nomes** — nos 8: CG 168 nomes repetidos entre 14 zips, ES2 38, MF 10, SO 3; `.smv` ignorado · `<id>/<membro>` + `.smv` como codigo · SYNC/C5 · codigo e resumo certos por zip.\n"
         "- **Paginas do Moodle (`mod/page`) capturadas como tela de login** (CG 16/16; unico tutor com paginas) · capturar com sessao autenticada no pull · SYNC/C5 · conteudo real para rotear.\n"

@@ -3,7 +3,7 @@
 date: 2026-06-29
 branch: `feat/block-stable-id`
 status: design FECHADO (D0-D12 + SÍNTESE). Próximo: spec → plano → implementação SubAgent-Driven.
-fonte-de-verdade do design: `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` (D0-D12, Falsificação F-MF, SÍNTESE)
+fonte-de-verdade do design: `docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md` (D0-D12, Falsificação F-MF, SÍNTESE)
 
 > Este handoff NÃO repete o log de decisões. Ele orienta quem vai escrever o spec,
 > o plano e executar a refatoração. Leia o log de decisões inteiro antes do spec.

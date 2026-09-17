@@ -1,6 +1,6 @@
 # Fixture destilada do caso REAL bloco-15/16/17/20 do MF pos-U1
-# (docs/reports/2026-08-07-spec-review-unidades.md §A2/A3: empate de CAMINHO
-# 4+0+0 vs 3+1+0; matriz real em 2026-08-06-task3-colisao-rotulo-mf.md).
+# (docs/reports/Feitos/2026-08-07-spec-review-unidades.md §A2/A3: empate de CAMINHO
+# 4+0+0 vs 3+1+0; matriz real em docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md).
 from src.builder.timeline.unit_matcher import assign_units_positional
 
 

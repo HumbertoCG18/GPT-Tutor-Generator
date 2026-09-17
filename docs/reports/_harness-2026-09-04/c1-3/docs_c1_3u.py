@@ -50,7 +50,7 @@ sem vocab, que preenche por posicao, estava certo. Nos 93 dos 4 cursos afinados 
 """
 edit(T, anchor, SEC + anchor)
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "**Placar por material (06/09 noite):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; "
         "zero LLM 155/288 · automatica 238/288 · produto 253/288 com todos os golds certos; CG automatica 56/83). Tracker §PLACAR CONSISTENTE.\n",
         "**Placar por material (06/09 noite, gold do ES2 corrigido pelo oraculo):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` "

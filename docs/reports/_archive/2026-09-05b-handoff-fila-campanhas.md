@@ -146,7 +146,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
 - **Paginas do Moodle (`mod/page`) capturadas como tela de login** (CG 16/16; unico tutor com paginas) · capturar com sessao autenticada no pull · SYNC/C5 · conteudo real para rotear.
 - **Saude de curso novo sem gold**: revisar/100 (CG 74-76 x media 58) + fracao de blocos preenchidos por posicao + conflitos texto x bloco no CRONOGRAMA_HEALTH · sim, so leitura · C4/C6 · sinal de 'olhar este curso' sem gold.
 - **GLOSSARY.md para no ultimo termo que o parser do plano entende** (CG: 7.1.2; u08/u09 sem termo) · investigar o parser do plano do CG · C5 · sinonimo manual para texturas.
-- **Gold de unidade do CG** (22 erros vieram a luz pelo gold de subunidade) · proposto-claude a partir de `2026-09-05-cg-atribuicoes.md` · C5.
+- **Gold de unidade do CG** (22 erros vieram a luz pelo gold de subunidade) · proposto-claude a partir de `docs/reports/Feitos/2026-09-05-cg-atribuicoes.md` · C5.
 - Custo do Gemini (Datalab para imagens, Gemini so fallback; medir chamadas por funcao) · C7/C3. Tempo de reprocess (CG 111 s, 83% em `normalize_match_text`
   sem cache) · C4. Data de entrega (`duedate`) dos trabalhos pela API · SYNC/C3. Conferencia das 37 formulas do CG por LLM · C3. Reprocess registrado
   commita so `updated_at` · C4. Apagar `.ablacao/CG-*` (805 MB) · agora, decisao do user. Merge/push dos ~840 commits em `main` · fronteira.
@@ -180,4 +180,4 @@ para o Datalab · rastrear `Aulas/` do site do professor · `unit_block_conflict
 **Sessao 6 (`_harness-2026-09-04/c1-3/`, README la):** `shim_b.py` (tripwire para copias) · `check_gemini_hoje.py` · `snapshot.py`/`diff_b.py` · `medicao_a_piso.py` ·
 `leitores_title.py` · `simula_sub_card.py` · `simula_idf_sub.py` · `simula_propaga_headings{,_weak,_semgold}.py` · `simula_unidade_sem_alias.py` ·
 `simula_raiz_unidade.py` · `gera_gold_subunidade.py` · `reprocess_cg_unidade.py` (tripwire de produto) · `determinismo_tripwire.py`.
-Relatorio das atribuicoes do CG: `docs/reports/2026-09-05-cg-atribuicoes.md`. Padrao: `.mex/patterns/medir-alavanca-ablacao.md`.
+Relatorio das atribuicoes do CG: `docs/reports/Feitos/2026-09-05-cg-atribuicoes.md`. Padrao: `.mex/patterns/medir-alavanca-ablacao.md`.

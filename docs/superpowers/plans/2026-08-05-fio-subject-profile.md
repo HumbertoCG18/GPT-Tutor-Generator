@@ -4,7 +4,7 @@
 
 **Goal:** Injetar o `subject_profile` (que carrega o plano de ensino) nos 3 call-sites que constroem `RepoBuilder` sem ele, restaurando a camada bloco→unidade (perda da unidade-03 do MF), com verificação nos 5 cursos e cura do repo MF.
 
-**Architecture:** Spec-companion OBRIGATÓRIA: `docs/reports/2026-08-05-unit-sources-investigacao.md` (causa-raiz FATO: `reprocess_assignments.py` monta builder sem profile → `teaching_plan=""` em `engine.py:350` → `content_taxonomy["units"]=[]` → `assign_units_positional` early-return `m<2` → scorer legado com índice 2-unidades; matcher INOCENTADO: com as 3 unidades reais, bloco-16→unidade-03 conf 0.6). Resolução canônica de perfil por repo_root vira método de `SubjectStore` (fonte única); os 2 resolvedores existentes (`retag_manifest._resolve_subject_profile`, `reprocess_assignments._find_subject_profile`) delegam para ele; os 3 sites furados passam a usar.
+**Architecture:** Spec-companion OBRIGATÓRIA: `docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md` (causa-raiz FATO: `reprocess_assignments.py` monta builder sem profile → `teaching_plan=""` em `engine.py:350` → `content_taxonomy["units"]=[]` → `assign_units_positional` early-return `m<2` → scorer legado com índice 2-unidades; matcher INOCENTADO: com as 3 unidades reais, bloco-16→unidade-03 conf 0.6). Resolução canônica de perfil por repo_root vira método de `SubjectStore` (fonte única); os 2 resolvedores existentes (`retag_manifest._resolve_subject_profile`, `reprocess_assignments._find_subject_profile`) delegam para ele; os 3 sites furados passam a usar.
 
 **Tech Stack:** Python 3, pytest, probes `scripts/fase{0..5}_*.py`.
 

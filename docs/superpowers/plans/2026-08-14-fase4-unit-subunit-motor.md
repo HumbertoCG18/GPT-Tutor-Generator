@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3, pytest. Sem dependências novas.
 
-**Spec:** `docs/reports/2026-08-14-auditoria-enxame.md` §1 (achados 1.1/1.2, contrato + file:line) + `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` §7-8 + `docs/reports/2026-08-14-handoff-campanha3-cutover.md` (ordem da campanha).
+**Spec:** `docs/reports/Feitos/2026-08-14-auditoria-enxame.md` §1 (achados 1.1/1.2, contrato + file:line) + `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` §7-8 + `docs/reports/2026-08-14-handoff-campanha3-cutover.md` (ordem da campanha).
 
 ## Global Constraints
 

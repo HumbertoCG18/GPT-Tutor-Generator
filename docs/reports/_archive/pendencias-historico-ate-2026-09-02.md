@@ -834,7 +834,7 @@ unidade, frase ubiqua, travessao virando alias); (3) normalizacao por tamanho de
 REJEITADA pela medicao. Suite 1901 passed / 1 skipped.
 PONTA-A-PONTA: 126 certo / 46 errado / 19 vazio -> **132 / 47 / 12**.
 Achados novos nas duas secoes CODE abaixo (eixo de UNIDADE e `known_tools`); relatorio com todas
-as tabelas e as CORRECOES: `docs/reports/2026-08-18-achados-eixo-unidade.md`.
+as tabelas e as CORRECOES: `docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md`.
 PENDENTE: reprocessar os 5 repos-tutor — os fixes de glossario so entram na taxonomia em disco
 no proximo reprocess, e o gate novo so vale para o que for regravado.
 VEREDITO `known_tools`: **dano medido = ZERO nos dois eixos** (taxonomia byte-identica com o
@@ -857,10 +857,10 @@ destino do entry fantasma, granularidade da cobertura de avaliacoes.
 Antes: **CAMPANHA 3 / PASSO 3 FECHADO — FLIP + DELEÇÃO COMPLETOS: motor é o
 atribuidor ÚNICO em 100% do sistema, funil legado deletado (-4747 linhas), serializador único
 v4, 5 cursos reprocessados/commitados**, ver Concluído 2026-08-17c e relatório
-`docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`. Antes no mesmo dia: etapa 1 medição
+`docs/reports/Feitos/2026-08-17-passo3-flip-delecao-fechado.md`. Antes no mesmo dia: etapa 1 medição
 pré-flip (Concluído 2026-08-17b); PASSO 2 C1 pinos + gaps 1.2/1.3 (Concluído 2026-08-17). Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
 verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
-relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
+relatório ranqueado em `docs/reports/Feitos/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
 Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
 > histórico 2026-08-11b: 3 decisões batch executadas — freshness 5/5 verde, kind-override
 > promove auto_unit [pino IA removido, 11 pinos], guard C6 resolvido por medição; suite
@@ -1829,7 +1829,7 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   > recontagem `as-of 2026-08-06` (varredura): **46** entradas em `git status --porcelain -uall`
   > (33 M + 13 ??, incluindo `course/.timeline_index.json.bak` e `manifest.json.apibak`).
   > IA-Tutor no mesmo estado: **48** entradas, idêntico ao catalogado em 2026-08-05.
-  > **DOSSIÊ PRONTO (2026-08-06, `docs/reports/2026-08-06-dossie-triagem-es2-ia.md`) — VEREDITO
+  > **DOSSIÊ PRONTO (2026-08-06, `docs/reports/Feitos/2026-08-06-dossie-triagem-es2-ia.md`) — VEREDITO
   > INVERTE A HIPÓTESE: não é lixo, são sessões VÁLIDAS nunca commitadas** (ES2: import 01/07
   > com +10 materiais, 6 curated referenciados no manifest; IA: poda 23/06 executada + import
   > de 21 notebooks 25/06 + reprocess 01/07). Ação certa = COMMITAR (sem os .bak), nunca
@@ -2231,9 +2231,9 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   migrador declara turma no escopo S0. Sem gap restante.
 - ~~[CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]`
   divergem → fallback vira load-bearing.~~ **CONFIRMADO EM PRODUÇÃO (2026-08-05, investigação
-  `docs/reports/2026-08-05-unit-sources-investigacao.md`) — vira o item [CODE] PRIORITÁRIO abaixo.**
+  `docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md`) — vira o item [CODE] PRIORITÁRIO abaixo.**
 - [CODE] **PRIORITÁRIO — campanha u3/subject_profile** (`as-of 2026-08-05`, investigação
-  `docs/reports/2026-08-05-unit-sources-investigacao.md`). Causa-raiz FATO: `scripts/
+  `docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md`). Causa-raiz FATO: `scripts/
   reprocess_assignments.py:81` monta `RepoBuilder` SEM `subject_profile` → `teaching_plan=""` →
   `content_taxonomy["units"]=[]` (`file_map.py:1500-1501`) → `assign_units_positional` retorna `[]`
   no guard `m<2` (`unit_matcher.py:66-67`) → cai no scorer legado alimentado pelo índice de 2
@@ -2329,7 +2329,7 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
 Regua NOVA `entry -> unidade` criada e commitada: `scripts/eval_entry_unit.py`. Verdade =
 composicao de dois golds ja aprovados (`ground_truth_<C>.csv` |><| `gold_units_<C>.csv`),
 191 entries nos 5 cursos, sem rotular nada novo. Relatorio completo com todas as tabelas e as
-hipoteses refutadas: `docs/reports/2026-08-18-achados-eixo-unidade.md`.
+hipoteses refutadas: `docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md`.
 
 BASELINE INICIAL (`as-of 2026-08-18`, HEAD `419aaff`, gate 0.65): certo **95/191 (50%)** ·
 sem resposta 57 (30%) · confiante-e-errado 39 (20%). Ponta-a-ponta: 126 certo / 46 errado /
@@ -2419,7 +2419,7 @@ Regua nova `scripts/eval_subunit_health.py` — **nao precisa de gold**. Nao med
 o SINAL EXISTE: COLAPSO (concentracao >=60% num subtopico, unidade com >=4 entries e >=3
 topicos), IMA (topico com >=2,5x a mediana de aliases dos irmaos), INTEGRIDADE (subtopico stale
 ou de outra unidade). Exit 1 em colapso/integridade — serve de gate. Detalhe em
-`docs/reports/2026-08-18-achados-eixo-unidade.md` secao G.
+`docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md` secao G.
 
 TETO DE ACERTO da subunidade (condicao NECESSARIA — subtopico pertence a unidade verdadeira;
 derivado dos golds existentes, sem rotular nada): **133/191 = 70%**. Por curso: IA 91% · MF 87% ·
@@ -2488,7 +2488,7 @@ o bypass do `topic_code` cobre 100% dos topicos do plano, o filtro nunca e alcan
 eixo de BLOCO 0 flips (com e sem voto do LLM); eixo de UNIDADE 0 delta em 4 bracos
 (sem `ferramenta:` poluida / sem `bloco:` / sem `topico:` / `topico:` com prefixo corrigido).
 **Arma carregada com a trava acionada: higiene, nao urgencia.** Detalhe em
-`docs/reports/2026-08-18-achados-eixo-unidade.md` secao B.
+`docs/reports/Feitos/2026-08-18-achados-eixo-unidade.md` secao B.
 
 DEFINICAO OPERACIONAL DE FERRAMENTA (extraida do proprio codigo, `concept_resolver.py:158` e
 `:218`): **instrumento com que a unidade inteira e ensinada, uniformemente — discrimina UNIDADE,
@@ -3504,7 +3504,7 @@ gerador `scripts/make_coverage_labels.py`.
 - [DERIVADO] **FASE 1 do motor de atribuição FECHADA (as-of 2026-07-07; 8 commits `2e49ceb..ccea93c`
   na branch `feat/motor-atribuicao`, review final fable "Ready to merge: Yes" pós fix-wave)** —
   gate D4 calibrado COM RECALL MEDIDO (spec §7 fase 1). Report completo:
-  `docs/reports/2026-07-07-fase1-recall-report.md`. Números: **recall do gate 0.824 (14/17)** vs
+  `docs/reports/Feitos/2026-07-07-fase1-recall-report.md`. Números: **recall do gate 0.824 (14/17)** vs
   referência proxy MARCO 1 0.577 (15/26); **confiante-errado 7→3**; **acurácia escopo-disamb
   62.1%→70.7%** (par-colapsada; piso HARD 59.7%); contenção-fora 2 (inalterada, pendência USER
   bloco-09 — agora custa também 1 confiante-errado). Gold embutido inviolado (contenção 100%,
@@ -3547,7 +3547,7 @@ gerador `scripts/make_coverage_labels.py`.
 - [DERIVADO] **FASE 2 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO em 9
   commits `985351b..9119ac4` — 6 tasks + 3 fix-waves de review — na branch `feat/motor-atribuicao`)** — providers P3 (SO, data-no-nome)
   e P4 (TCC, topic-bridge) implementados + provados por réguas externas HARD. Report completo:
-  `docs/reports/2026-07-09-fase2-providers-report.md`.
+  `docs/reports/Feitos/2026-07-09-fase2-providers-report.md`.
   **P3/SO** (`scripts/fase2_prova_SO.py`): cobertura **45.2% (19/42)**, colisões **0**, matriz gate
   {alta-ok 13, resto-ok 2, resto-err 4}, confiante-errado **0**, acurácia par-colapsada **77.8%**
   (14/18) vs baseline funil 47.4%; 100% das decisões via provider `data`. `DATE_DF_MAX` recalibrado
@@ -3576,7 +3576,7 @@ gerador `scripts/make_coverage_labels.py`.
 - [DERIVADO] **FASE 3 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO Tasks 1-5
   `512afcd..c70c272` na branch `feat/motor-atribuicao`; Task 6 = esta medição real, uncommitted até
   este commit) — VEREDITO: FAIL HONESTO.** Report completo:
-  `docs/reports/2026-07-09-fase3-llm-report.md`. Rodada real (3 rodadas, cap 20/rodada):
+  `docs/reports/Feitos/2026-07-09-fase3-llm-report.md`. Rodada real (3 rodadas, cap 20/rodada):
   **50 chamadas API tentadas, 30 úteis** (rodada 1 = 20/20 erro 404 — bloqueio de infra, não
   conteúdo: `gemini-2.5-flash` aposentado neste ambiente para `generateContent`; fix = trocar
   `gemini_model` pra `gemini-flash-latest` no `~/.gpt_tutor_config.json` pessoal, sem tocar
@@ -3926,7 +3926,7 @@ gerador `scripts/make_coverage_labels.py`.
 - [DERIVADO/DECISION] **Fix round 1 — rollout flag-ON TCC (2026-08-04): controller ACEITOU condicionalmente a exceção do gate (b) e pediu critério decisivo mensurável; critério decisivo FALHOU → flip TCC ADIADO (bug funil-base, mesmo tratamento do SO), rollback completo, sem commit.** Ruling do controller sobre o BLOCKED anterior: experimento de controle (drift reproduzido com flags OFF) aceito como prova de causa ortogonal — não é aceitação cega, decisão final condicionada a medição. Executado: **(1)** re-flip TCC (`feature_flags={use_anchor_engine:true, use_llm_voter:true}`), MF confirmado ON no mesmo round-trip. **(2)** reprocess retry sem traceback (`bloco 27/27 → 27/27`); `material_curation.json` **16→16 votos, 0 chamadas novas** (diff de chaves: `novas={}`, `removidas={}` — cache cobriu 100%, dentro da tolerância ≤2). **(3)** gate a/c/d PASS de novo (idênticos ao round anterior); gate (b) restrito: drift bateu **exatamente** as mesmas 4 entries do experimento de controle (`3dm-caetano-gabriel-e-gustavo`, `cubic-3-edge-coloring`, `integer-programming-0001`, `programacao-inteira-01-20260617-154423-0000`), nenhuma entry adicional — condição do controller satisfeita nesse ponto. **(4) CRITÉRIO DECISIVO — MISTO:** `audit_gold_freshness.py --course TCC` pós-reprocess = **hard=0** (idêntico, mesmas 8 suspeitas ZERO_OVERLAP) → PASS; mas `fase2_prova_TCC.py` pós-reprocess **NÃO bateu idêntico**: pinos seguem 5/5 e cobertura 83.3%, porém **`confiante-e-errado` foi de 0 para 1** (`aula-01-apresentacao-da-disciplina-...`, computado=bloco-02, gold true=bloco-01, provider=`topic`) e a acurácia par-colapsada subiu 84.2%→89.5% (par-colapsada 16/19=84.2%→17/19=89.5%; acc topic bruta 16/20→17/20) — **VEREDITO FASE2: FAIL**. Isso viola a letra do critério ("AMBOS idênticos") → **rollback obrigatório**. **Fato registrado sobre as 4 entries do gate (b):** todas têm row no gold TCC (`scorable=yes`, `true_block_id=bloco-24`), mas o `computed_block_id` congelado no CSV já era bloco-22/26/13/13 (ERRADO vs bloco-24) **antes** desta task tocar qualquer coisa — a drift do funil-base trocou um valor errado por outro valor errado (bloco-16), não mudou o veredito de correção dessas 4 linhas especificamente. **O achado novo e mais sério é `aula-01`:** seu `auto_tags bloco:` no manifest (`bloco-02`) ficou byte-idêntico nas 3 fotografias comparadas (pristine pré-reprocess, 1º run flag-ON, retry flag-ON) — a mudança NÃO é no funil-base desta vez. O que mudou foi que `aula-01` passou a ter `temporal_block_id` populado via voter LLM (`provider=llm`, `band=media`, voto cacheado do 1º run) nesta rodada, e isso por si só empurrou o cálculo de confiança do `fase2_prova_TCC.py` para "confiante" sobre uma resposta que já estava errada e antes não era contada como confiante — **este efeito É causado pelo flip** (voter tocando uma entry cuja resposta de base já era errada e endossando-a com confiança), diferente da drift das 4 entries (comprovadamente ortogonal). **Ação (rollback completo, sem mandato para seguir com desvio no critério decisivo):** `TCC-Tutor` revertido (`git checkout -- .`) pro snapshot `28bb29f` (confirmado: 0 `temporal_block_id` no manifest pós-revert); `material_curation.json` (16 votos) **preservado untracked** para retry futuro sem custo; `subjects.json` revertido (`Teoria da Computabilidade e Complexidade.feature_flags = {}`, MF/SO/IA/ES2 confirmados intocados). **Nenhum commit em `TCC-Tutor`.** **Decisão: TCC flip ADIADO, mesmo tratamento do SO** — pendente de investigação/fix do bug de instabilidade do funil-base (ver item de dívida técnica abaixo) antes de reautorizar novo retry. **Report completo (todos os números, diffs, evidência):** `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-7-report.md`.
 - [DERIVADO/DECISION] **TCC re-flip tentativa 3 (2026-08-06): FAIL honesto do critério decisivo →
   rollback completo sha256-verificado, flags revertidas, sem commit.** Report:
-  `docs/reports/2026-08-06-tcc-reflip-fail-report.md`. Resumo: gates a/c/d PASS (pinos 2/2;
+  `docs/reports/Feitos/2026-08-06-tcc-reflip-fail-report.md`. Resumo: gates a/c/d PASS (pinos 2/2;
   temporal 19/27 idêntico à referência {llm:16,manual:1,topic:2}, fila 0; votos 16→16, 0 API);
   gate (b) 1 drift `cubic` bloco-26→22 = materialização esperada do fix 2b (integer/programacao
   ESTÁVEIS — instabilidade antiga do funil-base NÃO reproduziu, fix 2b estabilizou); MAS
@@ -4064,7 +4064,7 @@ TCC melhora confiante-e-errado 2->1); golds de unidade ES2 7/7 · IA 9/10 · MF 
 SO 9/11 · TCC 13/13; 0 pinos violados; suite 1886 passed / 1 skipped;
 `scripts/audit_taxonomy_losses.py` = 0 ausentes nos 5 (era TCC 11/27, SO 3/34, ES2 1/21).
 Taxonomia em disco: SO 31->36 topicos, TCC 14->26, ES2 20->21.
-Medicao completa (2 rodadas): `docs/reports/2026-08-18-medicao-fix-taxonomia.md`.
+Medicao completa (2 rodadas): `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md`.
 Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.patch`.
 
 - [CODE] **CAUSA RAIZ DO MATCHING FRACO DE UNIDADE: `_topic_text` serializa dict**
@@ -4090,7 +4090,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   titulo de OUTRA unidade (sem este, o card regredia 6 entries do MF). Gates verdes nos 5, suite
   1886. Saldo julgado caso a caso: 13 ganhos, 9 neutros, 1 regressao isolada
   (`Cap. sobre Algoritmos Geneticos` no IA — candidato a pino). Detalhe:
-  `docs/reports/2026-08-18-medicao-fix-taxonomia.md` §Rodada 2.
+  `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md` §Rodada 2.
 - [HISTORICO] **Card: primeira tentativa revertida no mesmo dia.**
   Patch guardado: `docs/reports/2026-08-18-card-signal-tentativa.patch` (`card_text` nos sinais
   + peso 2.5 exato / 0.40 parcial no scorer de unidade; testes inclusos). Medicao em sandbox nos
@@ -4126,7 +4126,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   (card e evidencia auxiliar); algoritmo pode usar card; a regua mede quando o card mente.
 - [CODE→USER] **TAXONOMIA PERDE TOPICOS DO PLANO DE ENSINO — CORRIGIDO E MEDIDO 2026-08-18,
   FALTA APLICAR EM PRODUCAO.** Medicao em sandbox nos 5 cursos:
-  `docs/reports/2026-08-18-medicao-fix-taxonomia.md` (driver `scripts/measure_taxonomy_fix.py`).
+  `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md` (driver `scripts/measure_taxonomy_fix.py`).
   Gates verdes: nenhuma regua regride, 0 pinos violados, TCC melhora 1 confiante-e-errado.
   Ganhos qualitativos: SO corrige 4 entries de threads (erros ja catalogados no handoff §B),
   TCC corrige PCP e os subtopicos de complexidade (inclusive "Aula 16 - Classes de Problemas",
@@ -4396,7 +4396,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   u03-testes-de-software). IA 5→3 (faltam
   u04-raciocinio-sob-incerteza e u05-aprendizado-de-maquina). Todos os 5 repos TÊM
   `.timeline_index.json` (a suposição "IA pode não ter índice" estava desatualizada). Mesmo
-  mecanismo da investigação MF (`2026-08-05-unit-sources-investigacao.md`): qualquer reprocess
+  mecanismo da investigação MF (`docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md`): qualquer reprocess
   headless sem `subject_profile` (pré-Task-1) perde parte das unidades em QUALQUER curso com plano
   de ensino real — não é peculiaridade do MF. **Eleva o escopo da Fio Task 3**: reprocess real +
   gold/medição pré-pós precisam cobrir SO/ES2/IA também, não só o MF.
@@ -4438,7 +4438,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   produziu o `.content_taxonomy.json` envenenado) — não é staleness de meses, é a última rodada
   real, sem mecanismo de divergência identificado.
   > **AMENDMENT 2026-08-06** (task-3, reprocess real do MF; detalhe completo, matriz de afinidade
-  > e reconstrução do DP em `docs/reports/2026-08-06-task3-colisao-rotulo-mf.md`) — a HIPÓTESE
+  > e reconstrução do DP em `docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md`) — a HIPÓTESE
   > ABERTA acima ("A CAUSA REAL da divergência disco-vs-recompute é HIPÓTESE ABERTA — resolver na
   > Task 3 com o diff pré/pós do reprocess real") está **FECHADA**: 0/67 `computed_block_id` mudou
   > no reprocess REAL (pipeline completo `RepoBuilder.incremental_build()`), incluindo os 3 IDs
@@ -4484,7 +4484,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
 - [DERIVADO] **Fio Task 3 (cura MF, reprocess real, GATED) — STATUS FINAL: BLOCKED → ROLLED_BACK**
   (`as-of 2026-08-06`, sign-off user SATISFIED, escrita real autorizada e executada no MF-Tutor;
   detalhe completo, matriz de afinidade e reconstrução do DP:
-  `docs/reports/2026-08-06-task3-colisao-rotulo-mf.md`). O fio funcionou até a camada de
+  `docs/reports/Feitos/2026-08-06-task3-colisao-rotulo-mf.md`). O fio funcionou até a camada de
   taxonomia (`content_taxonomy.json` com as 3 unidades corretas, títulos acentuados), mas o
   objetivo central — bloco-16 carregar `unit_slug=unidade-03-verificacao-de-modelos` — **não
   aconteceu**: matcher posicional manteve bloco-16 em unidade-02, conf 0.4, por **colisão de
@@ -4562,7 +4562,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   bloco-18 SO T9c, bloco-16 IA T11).
 - [CODE] ~~Guard C6-equivalente no scorer de card (aula-13 TCC)~~ **RESOLVIDO POR MEDIÇÃO
   2026-08-11 (ruling user, zero código — report
-  `2026-08-11-guard-c6-resolvido-por-medicao.md`)**: o motor novo pra aula-13 sem pino dá
+  `docs/reports/Feitos/2026-08-11-guard-c6-resolvido-por-medicao.md`)**: o motor novo pra aula-13 sem pino dá
   conf 0.08 band BAIXA (honesto; card_term=0 em todos os blocos); o confiante-e-errado
   0.85-alta do T12 era o resolver LEGADO, que só decidiu porque `apply_concept_resolver`
   pula entry com computed_block_id vazio (resolver_apply.py:116). Legado morre no cutover
@@ -4597,7 +4597,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
 ## USER/DECISION — dívida da campanha 2 (unidades, 2026-08-11)
 
 - [USER] ~~Remendo dos golds antigos~~ **PARTE MECÂNICA FECHADA 2026-08-12** (dossiê
-  `2026-08-12-remendo-golds-dossie.md`): 32 remendos Tier-A (uuid vivo→display novo,
+  `docs/reports/Feitos/2026-08-12-remendo-golds-dossie.md`): 32 remendos Tier-A (uuid vivo→display novo,
   SO 25 · TCC 6 · IA 1) aplicados; **audit hard=0 nos 5/5** (era SO 13 + IA 1).
   ACHADO: eval SO honesto = **17/38 (44.7%)** — baseline real pro cutover julgar
   (materiais "Lâminas" sem sinal; 19 ZERO_OVERLAP). RESTA [USER] opcional sem urgência:
@@ -4671,7 +4671,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   síntese ranqueada; mix de modelos sonnet/fable adotado após 3 estouros de limite em 48h),
   ~2.03M tokens, 0 erros. Placar: **32 confirmados / 5 refutados**. Relatório completo ranqueado
   (Pré-cutover / Quick wins / Estrutural / Registrar-ignorar):
-  `docs/reports/2026-08-14-auditoria-enxame.md`. Destaques que ALIMENTAM a campanha 3:
+  `docs/reports/Feitos/2026-08-14-auditoria-enxame.md`. Destaques que ALIMENTAM a campanha 3:
   **1.1 BLOQUEANTE** — campos de unidade 100% do legado (resolver_apply.py:132-137 descarta o
   `unit_slug` que o motor novo calcula; Fase 4 vira pré-req duro do cutover) · **1.2** gap de
   reconciliação unidade×bloco pós-apply (dormente, ativa no cutover) · **1.3** drift REAL do
@@ -4719,7 +4719,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   0 diffs. Testes: 12 arquivos-fantasma deletados, invariantes migrados pro motor (M8 parcial:
   learned boosts coberto). Gates finais: suite **1852/1/0**, golds unit **5/5**, régua MF
   **50/57**, pinos **0 violados**, rebuild_diff **5/5=0**, guard verde. Relatório:
-  `docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`. **Candidatos a pino (rótulo
+  `docs/reports/Feitos/2026-08-17-passo3-flip-delecao-fechado.md`. **Candidatos a pino (rótulo
   user)**: SO `0704-threads`, IA `introducao-a-busca-informada`. **Próximo: campanha web
   (backlog no fim do tracker) — motor estável e único, fundação pronta.**
 
@@ -4736,7 +4736,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   23/67 · 15/42 · 17/35 · 31/62 · 17/27 (100% troca, 0 mudança de cobertura) = o diff
   esperado das sentinelas no flip. Driver COMMITADO `scripts/measure_flip.py` (fecha
   limitação F4 "scripts ad-hoc irreprodutíveis"). Relatório:
-  `docs/reports/2026-08-17-medicao-pre-flip-5cursos.md`. **VEREDITO: GO pra etapa 2
+  `docs/reports/Feitos/2026-08-17-medicao-pre-flip-5cursos.md`. **VEREDITO: GO pra etapa 2
   (flip default ON)** — protocolo: snapshot antes de reprocess, sentinelas re-versionadas
   conscientemente.
 
@@ -4768,7 +4768,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   byte-idêntico), régua MF **50/57**, golds unit MF **12/14 BEFORE=AFTER**. Medição sandbox MF
   (67 entries): 12 unit divergentes (11 slug-alterado rastreando bloco motor ≠ legado — território
   pré-F4; 1 só-conflict), 11 subunit (design). **GO pro flip** após gaps 1.2/1.3.
-  Relatório: `docs/reports/2026-08-14-f4-medicao-unit-motor.md`. Plano:
+  Relatório: `docs/reports/Feitos/2026-08-14-f4-medicao-unit-motor.md`. Plano:
   `docs/superpowers/plans/2026-08-14-fase4-unit-subunit-motor.md`. Limitação registrada: sem gold
   por-material pras 12 reatribuições (só gold por bloco); scripts ad-hoc da medição não commitados.
   **Review final (Opus 5) pós-fecho**: C1+I2 corrigidos na fix wave (`bd43430` block_is_manual lê

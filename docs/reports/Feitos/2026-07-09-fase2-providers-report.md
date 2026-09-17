@@ -132,4 +132,4 @@ diretamente.
 - `docs/superpowers/sdd/task-6-report.md` — probe TCC + fix de contrato + breakdown de providers.
 - `scripts/fase2_prova_SO.py`, `scripts/fase2_prova_TCC.py` — réguas HARD permanentes (exit 0/1),
   parte da infraestrutura de regressão do motor, re-executadas a cada fase futura.
-- `docs/reports/2026-07-07-fase1-recall-report.md` — baseline MF (recall do gate, fila de flag 37).
+- `docs/reports/Feitos/2026-07-07-fase1-recall-report.md` — baseline MF (recall do gate, fila de flag 37).

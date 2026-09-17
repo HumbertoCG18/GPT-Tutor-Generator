@@ -2,7 +2,7 @@
 
 date: 2026-06-17
 status: SUPERSEDED (2026-07-01) — o sinal (.lessons_index.json) virou 1ª classe no disambiguator do
-motor de atribuição (D3/D5, log 2026-06-28-motor-atribuicao-decisoes.md); o termo-β no fusor velho
+motor de atribuição (D3/D5, log docs/reports/_archive/2026-06-28-motor-atribuicao-decisoes.md); o termo-β no fusor velho
 mira caminho que morre no cutover 3.4. Caso-alvo (card Verificação de Programas MF) herdado pelo spec
 do motor como requisito de lesson-matching fino.
 branch: `feat/reconciliar-unit-bloco`

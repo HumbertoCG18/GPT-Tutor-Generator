@@ -37,7 +37,7 @@ edit(T, "## CURADORIA DE UNIDADE DO CG + HIGIENE DO VOCAB", SEC + "## CURADORIA 
 edit(T, "last_updated: 2026-09-05 tarde (sessao 6; C0 FECHADA 11/11; C1 itens 1-3 FEITOS — o 3 por medicao, REFUTADO; gold pelo oraculo;",
         "last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; C1 itens 1-3 FEITOS; gold pelo oraculo;")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo",
         """## REGUA OFICIAL A PARTIR DE AGORA: a AUTOMATICA (user, 05/09 tarde: "gold so mede; nao criar curadoria por curso")
 Motor + voter com cache, sem pino, sem glossario manual, com vocab LLM (`_harness-2026-09-04/c1-3/motor_auto.py`): **bloco 192/199 = 96,5% conf-err 0 ·

@@ -41,7 +41,7 @@ edit(T, "## REGUA AUTOMATICA (05/09 tarde, sessao 6;", SEC + "## REGUA AUTOMATIC
 edit(T, "last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93;",
         "last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; CG unidade automatica 6/93 erradas; radical-fallback no motor;")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Gerador `feat/motor-atribuicao` @ `e0c433c` (codigo: higiene do glossario) + docs da sessao 6.",
         "Gerador `feat/motor-atribuicao` @ `ff21cab` (codigo: higiene do glossario `e0c433c` + radical-fallback `ff21cab`) + docs da sessao 6.")
 edit(H, "`75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste). Suite 2325.",

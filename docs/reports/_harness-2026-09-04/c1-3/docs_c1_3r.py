@@ -27,7 +27,7 @@ edit(T, "**Run B (Gemini so para o FR, ~20 chamadas) aguarda liberacao.** Sandbo
         f"**Run B do FR (`rebuild_fr_b.py --fresh`, Gemini liberado pelo user so para o FR, contado; Datalab bloqueado):** {RUNB}\n"
         "Sandboxes: `.ablacao/FR-rebuild/` (A2) e `.ablacao/FR-rebuild-B/` (B); o FR original nao foi apagado.\n")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "Regra da secao S1b (`4d649c4`, +3 -0 simulado, +2 no motor):",
         f"Unidade explicita da secao vence bloco (`1b41003`): FR do zero unidade x secao 10/19 -> 19/19; 7 cursos iguais. FR run A2 fila 11/20; run B (Gemini, so FR): {RUNB[:120]}.\n"
         "Regra da secao S1b (`4d649c4`, +3 -0 simulado, +2 no motor):")

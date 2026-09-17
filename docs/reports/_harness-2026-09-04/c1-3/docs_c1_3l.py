@@ -36,7 +36,7 @@ edit(T, "## NO MAXIMO DUAS CAMADAS LLM — CAMADA 3", SEC + "## NO MAXIMO DUAS C
 edit(T, "## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **AGUARDA APROVACAO DO USER**) + BUG: ZIPS DO MF COLIDEM",
         "## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **APROVADO PELO USER EM 06/09**, ver secao acima) + BUG: ZIPS DO MF COLIDEM")
 
-H = GEN / "docs/reports/2026-09-05b-handoff-fila-campanhas.md"
+H = GEN / "docs/reports/_archive/2026-09-05b-handoff-fila-campanhas.md"
 edit(H, "1. **APROVAR os golds de subunidade propostos** (`docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`, coluna `ok?`): CG 82 pontuaveis",
         "1. ~~APROVAR os golds de subunidade propostos~~ **FEITO 06/09: aprovados pelo user, ligados na regua (MF em `motor_puro.py`, CG em `holdout_cg.py`,\n"
         "   scorer `ablacao_rapida.score_subunit`); automatica x 233 = 187 (80,3%), CG 49/82, MF 51/58; causas no tracker §GOLDS CG E MF APROVADOS.**\n"

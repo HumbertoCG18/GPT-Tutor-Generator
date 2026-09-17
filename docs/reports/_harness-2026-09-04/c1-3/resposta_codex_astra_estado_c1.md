@@ -17,7 +17,7 @@ MEDIDO abaixo identifica contas conferidas ou registros citados; não reexecutei
 | 3.2 | **MEDIDO:** rotulagem 93/93; avaliação integrada 88/93. Brief §2, linha 3.2. | Separar **gold concluído** de **cobertura incompleta**; pontuar os cinco conjuntos `|` conforme contrato aprovado. |
 | `_load_truth` | **MEDIDO:** testes verdes, Gate 2 pendente. Brief §4. | Confirmar diff e commitar; testes não substituem esse gate. |
 
-**MEDIDO:** há conflito de escopo: o plano ainda atribui 3.x à C5, enquanto o handoff cobra Fase 3 na C1. Reconciliar antes de declarar “100%”. Evidência: `plano*:149`; `2026-09-11-handoff-camada3.md:128–130`.
+**MEDIDO:** há conflito de escopo: o plano ainda atribui 3.x à C5, enquanto o handoff cobra Fase 3 na C1. Reconciliar antes de declarar “100%”. Evidência: `plano*:149`; `docs/reports/_archive/2026-09-11-handoff-camada3.md:128–130`.
 
 2. **Gate: passa o número, falta cumprir a conjunção**
 

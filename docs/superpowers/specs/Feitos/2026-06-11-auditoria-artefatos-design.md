@@ -39,7 +39,7 @@ pequena de propósito; não há outros artefatos mortos.
 
 ## Entregável 1 — Documento de auditoria
 
-Arquivo: `docs/reports/2026-06-11-auditoria-artefatos.md` (Markdown, versionado).
+Arquivo: `docs/reports/Feitos/2026-06-11-auditoria-artefatos.md` (Markdown, versionado).
 
 Conteúdo: tabela única com TODOS os artefatos gerados, colunas:
 `artefato (path) | gerador (file:line) | consumidor | classe | verdito | razão`.

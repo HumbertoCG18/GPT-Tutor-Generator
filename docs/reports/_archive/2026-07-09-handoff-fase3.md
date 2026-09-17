@@ -18,7 +18,7 @@ sessões anteriores: FASE 0 (07/07) + FASE 1 + auditoria gold MF (08/07) + FASE 
 - **Pré-gate de medição** (decisão user 08/07): `scripts/audit_gold_freshness.py` roda ANTES de
   qualquer medição contra ground_truth_* (especialmente pós-reprocess). Golds 4/4 auditados FRESCOS
   em 08/07; falso-alarme conhecido: SO `lista2` ADMIN_TRUE (gêmea da Lista P2, rótulo correto).
-- Report de fechamento: `docs/reports/2026-07-09-fase2-providers-report.md` (aceite §6 lado a lado,
+- Report de fechamento: `docs/reports/Feitos/2026-07-09-fase2-providers-report.md` (aceite §6 lado a lado,
   constantes calibradas com grades, riscos residuais com dono, fila humana consolidada).
 
 ## 2. Números vigentes (verificados por review independente, 09/07)
