@@ -41,6 +41,9 @@
   seriais se completar). Próximo: `orch-fix-defect` em `helpers.py:682`, Gate 1 próprio,
   teste vermelho primeiro (3 nomes MF, 6 sondas sintéticas, 4 provas IA, 338 classificações
   de 15/09).
+- Novo ponto de entrada: `2026-09-17-handoff-regime-cru.md` (ROUTER atualizado). Gate 1 do
+  `orch-fix-defect` da categoria está pronto na §5 dele; nada de código escrito; estado local
+  `fix-categoria-prova-20260917` em `planejando`.
 - Sessão Claude `78faa17a` caiu com "Connection lost mid-response" às 01:15 (socket fechado
   no streaming; Windows sem evento de rede; status page sem incidente) antes de escrever
   arquivo; zero efeito colateral, retomada de `active-task.md`.

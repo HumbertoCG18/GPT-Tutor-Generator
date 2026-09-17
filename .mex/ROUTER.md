@@ -21,7 +21,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Fato | Fonte única |
 |---|---|
 | Estado vivo, pendências, dívidas, números de gate | `docs/reports/pendencias.md` (tracker, sempre atualizado) |
-| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-16-handoff-regime-cru.md`** (ponto de entrada vivo; o `2026-09-15-handoff-regime-cru.md` guarda achados, placar dos regimes e armadilhas de 15/09; o `2026-09-14-handoff-codex-regime-cru.md` segue valendo para meta, decisões, leis e alavancas fechadas; `2026-09-12-handoff-regime-cru.md` é a referência detalhada por §; o de 11/09 é histórico) |
+| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-17-handoff-regime-cru.md`** (ponto de entrada vivo; `2026-09-16-…` e `2026-09-15-handoff-regime-cru.md` guardam achados, placar dos regimes e armadilhas de 15/09; o `2026-09-14-handoff-codex-regime-cru.md` segue valendo para meta, decisões, leis e alavancas fechadas; `2026-09-12-handoff-regime-cru.md` é a referência detalhada por §; o de 11/09 é histórico) |
 | O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
 | Estrutura do código (quem chama quem, onde vive) | `graphify explain "<símbolo>"` ou `graphify path "A" "B"`; `query` aberto só com `--budget` |
 | Segunda opinião de diff (Codex) ou leitura de corpus (agy) | `patterns/delegar-codex-agy.md` |
