@@ -1,5 +1,18 @@
 # Pendências — tracker vivo
 
+## Concluído: árvore fechada, push e handoff (16/09)
+
+- 4 commits separados por natureza: `c392e7c` docs(reports), `e1133a4` chore(harness),
+  `6742ac4` docs(tracker) ideia de imagens no chat, `d495c66` feat(glossary) taxonomia
+  direta. Suíte 2357 passed / 4 skipped medida antes do commit de código. Push feito:
+  `origin/feat/motor-atribuicao` = `d495c66` (41 commits subiram).
+- Gate 2 formal não houve: commit por ordem do usuário; review independente do diff
+  `d495c66` fica opcional (handoff 16/09 §4.1).
+- Novo ponto de entrada: `2026-09-16-handoff-regime-cru.md`, reconstruído do git, do
+  tracker e do rollout da sessão Codex "Testar cuidados do regime cru" (`01a0a109`).
+  Nenhuma medição do motor em 16/09.
+
+
 ## Concluído: organização de `docs/reports` (16/09)
 
 - Raiz reduzida de 51 para 9 Markdown: somente tracker, handoffs/planos vivos,
