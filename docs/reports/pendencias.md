@@ -3325,6 +3325,38 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     repos-tutor/subjects.json são locais e acoplados; empacotar exige o "Settings —
     one control plane" (config única apontando pros dados do usuário) e garantir que
     NENHUM dado pessoal/material de curso vai dentro do pacote/imagem.
+  Ideias adicionadas 2026-09-16:
+  - **Renderização de imagens dos materiais diretamente no chat** [IDEIA FUTURA /
+    NÃO IMPLEMENTAR AGORA]: hoje as imagens extraídas de PDFs/documentos entram
+    principalmente como descrição textual (`<!-- IMAGE_DESCRIPTION -->`, 142 de 305
+    materiais — ver `.mex/context/text-chain.md`). Futuro: preservar a imagem
+    original extraída, armazená-la e referenciá-la pelo motor via identificador
+    interno (`image_id`), para a LLM incluir referências a essas imagens nas
+    respostas e o frontend web renderizá-las diretamente dentro do chat.
+    Arquitetura sugerida:
+    - Extrair e preservar a imagem original do documento.
+    - Associar cada imagem a um `image_id` estável.
+    - Armazenar metadados: documento de origem, página, descrição/caption e contexto
+      textual relacionado.
+    - A LLM nunca depende de caminho físico local; trabalha só com `image_id` ou
+      referência lógica.
+    - O backend resolve `image_id` → localização/URL da imagem.
+    - O frontend interpreta blocos estruturados de imagem e renderiza a imagem no
+      meio da resposta.
+    - Considerar mensagens multimodais estruturadas: text, image, code, table, quiz,
+      citation etc.
+    - Futuramente: ampliar a imagem, abrir a página original do documento e fazer
+      perguntas especificamente sobre aquela imagem.
+    - Manter a descrição textual da imagem para busca semântica/RAG, mas preservar
+      também a imagem original para não perder informação visual.
+    - Avaliar suporte a modelos multimodais, para o próprio modelo analisar a imagem
+      original quando necessário.
+    Objetivo: transformar imagens em elementos de conhecimento de primeira classe
+    dentro do AlexandrIA (nome dado pelo user ao produto web + chat desta campanha),
+    em vez de tratá-las apenas como descrições textuais.
+    Relação com o existente: C7 imagens (galeria curada + dHash, `decisions.md`) cuida
+    de dedup/logos, não de exibição no chat; "Citação por página" acima é o par
+    natural (página de origem por imagem).
 
 ## HARNESS 10/09 — GRAPHIFY MCP NOS 3 CLIs (user: "quero usar ele no claude code, no codex e no agy")
 Estado: Claude Code via `.mcp.json` (local) · agy via `agy mcp add` · Codex `enabled = false` no global porque o
