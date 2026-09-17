@@ -5,6 +5,7 @@
 - branch_e_head:
 - coordenador_e_sessao:
 - executor: Fable
+- revisor: Astra (somente leitura)
 - restricoes_explicitas:
 - gate_1: pendente
 - gate_2: pendente
