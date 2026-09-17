@@ -1,0 +1,78 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_on_sweep",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5174139000009745,
+    "returncode": 0,
+    "stdout": "Node: ._on_sweep()\n  ID:        src_ui_maintenance_panel_maintenancepanel_on_sweep\n  Source:    src/ui/maintenance_panel.py L147\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L147\n  --> Path [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166\n  --> ._log_line() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166\n  --> ._clear_log() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L165\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5510289000012563,
+    "returncode": 1,
+    "stdout": "Ambiguous: 'sweep_orphans' matches 2 nodes in different files.\n  src/builder/engine.py\n    id: src_builder_engine_repobuilder_sweep_orphans\n  src/builder/ops/lifecycle_ops.py\n    id: src_builder_ops_lifecycle_ops_sweep_orphans\nRetry with the repo-relative path or the full node id.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "path",
+      "_on_sweep",
+      "sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6521921999956248,
+    "returncode": 0,
+    "stdout": "No directed path found between '_on_sweep' and 'sweep_orphans'. Re-run with --undirected to search ignoring edge direction.\n",
+    "stderr": "warning: target match was ambiguous (top score 73869.2, runner-up 67160.5)\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "src_builder_engine_repobuilder_sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5612619000021368,
+    "returncode": 0,
+    "stdout": "Node: .sweep_orphans()\n  ID:        src_builder_engine_repobuilder_sweep_orphans\n  Source:    src/builder/engine.py L2218\n  Type:      code\n  Community: \n  Degree:    1\n\nConnections (1):\n  <-- RepoBuilder [method] [EXTRACTED] src/builder/engine.py:L2218\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "src_builder_ops_lifecycle_ops_sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5435053999972297,
+    "returncode": 0,
+    "stdout": "Node: sweep_orphans()\n  ID:        src_builder_ops_lifecycle_ops_sweep_orphans\n  Source:    src/builder/ops/lifecycle_ops.py L263\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L149\n  --> write_json_manifest() [calls] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L298\n  <-- lifecycle_ops.py [contains] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L263\n  <-- Retroativo: pruna curations + regenera sidecars derivativos. Não reprocessa… [rationale_for] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L264\n",
+    "stderr": ""
+  }
+]

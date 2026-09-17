@@ -1,0 +1,104 @@
+[MF] inventario=67 tipos={'zip': 13, 'pdf': 48, 'code': 6} metadata=[]
+[MF] 0/67 exemplos
+[MF] 1/67 ExerciciosLogicaTemporal
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 2/67 ExerciciosNusmv
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 3/67 verificacaomodelos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 4/67 ConjuntosIndutivos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 5/67 ExerciciosConjuntosIndutivos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 6/67 ExerciciosFormalizacaoAlgoritmosRecursao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 7/67 ExerciciosFormalizacaoAlgoritmosRecursao2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 8/67 ExerciciosFormalizacaoAlgoritmosRecursao3
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 9/67 ExerciciosFormalizacaoAlgoritmosRecursao3_respostas
+[MF] -1/-1 
+[MF] 10/67 ExerciciosFormalizacaoAlgoritmosRecursao_respostas
+[MF] -1/-1 
+[MF] 11/67 FormalizacaoAlgoritmos_Recursao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 12/67 FormalizacaoAlgoritmos_Recursao2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 13/67 FormalizacaoAlgoritmos_Recursao3
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 14/67 revisao_p1
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 15/67 revisao_p1_gabarito
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 16/67 introducao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 17/67 RigorousSoftwareDevelopment-chapters-1-2
+[MF] -1/-1 
+[MF] 18/67 plano
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 19/67 arvores
+[MF] 20/67 exemplos
+Entry id collision: exemplos -> exemplos-thy (ext=thy folder=Provas por Indução)
+[MF] 21/67 ExerciciosCorrecaoInducaoMatematica
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 22/67 ExerciciosIsabelle
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 23/67 ExerciciosIsabelle2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 24/67 intro
+[MF] 25/67 listas
+[MF] 26/67 mcs

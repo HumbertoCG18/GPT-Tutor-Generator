@@ -1,0 +1,26 @@
+materiais: base 316 · braco 316 · em comum 316
+
+eixo            ganhos  perdas  saldo
+bloco                0       0     +0
+unidade              0       0     +0
+sub_aceito           2       0     +2
+sub_primario         2       0     +2
+
+por curso (ganhos/perdas):
+  CG   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  ES2  bloco +0/-0 · unidade +0/-0 · sub_aceito +1/-0 · sub_primario +1/-0
+  FR   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  IA   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  MF   bloco +0/-0 · unidade +0/-0 · sub_aceito +1/-0 · sub_primario +1/-0
+  SO   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  TCC  bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+
+GANHOS:
+  [sub_aceito  ] ES2  roteiro8-autenticacao-autorizacao              gerenciamento-da-configuracao    -> estudo-de-caso-integracao-e-im
+  [sub_aceito  ] MF   intro                                          fundamentos-de-logica-de-prime   -> especificacao-de-funcoes-recur
+  [sub_primario] ES2  roteiro8-autenticacao-autorizacao              gerenciamento-da-configuracao    -> estudo-de-caso-integracao-e-im
+  [sub_primario] MF   introducao                                     exemplos-de-aplicacoes           -> abordagens-para-verificacao-fo
+
+PERDAS:
+
+CORTE (>= 5 ganhos primario, >= 5 ganhos aceito, 0 perdas em qualquer eixo): ENCERRA — primario +2, aceito +2, perdas 0

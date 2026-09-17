@@ -1,0 +1,204 @@
+"""Regua de TRAVESSIA do tutor (02/09): pergunta do aluno -> arquivo/bloco esperado, medida sobre os
+indices Markdown que o tutor recebe (COURSE_MAP, SYLLABUS, CRONOGRAMA_DETALHADO, FILE_MAP). LLM so para
+MEDIR (baseline), cacheado; piso deterministico por sobreposicao de tokens. Sem chamada real no pytest."""
+import json
+
+from scripts.eval_travessia import (
+    Resposta, casar, chave_cache, contexto_navegacao, escolher_sem_llm, pontuar, rodar,
+)
+
+ENTRIES = [
+    {"id": "algoritmo-de-classificacao-k-nn", "title": "Algoritmo de Classificação k-NN", "category": "material-de-aula",
+     "raw_target": "raw/pdfs/material-de-aula/algoritmo-de-classificacao-k-nn.pdf", "moodle_label": "Algoritmo de Classificação k-NN",
+     "temporal_block_id": "u-5", "computed_subunit_slug": "modelos-preditivos"},
+    {"id": "analise-exploratoria-de-dados-exemplo-1", "title": "Análise Exploratória de Dados - Exemplo 1", "category": "codigo-professor",
+     "raw_target": "raw/code/analise-exploratoria-de-dados-exemplo-1.ipynb", "moodle_label": "AED exemplo 1",
+     "temporal_block_id": "u-4", "computed_subunit_slug": "introducao-ao-aprendizado-de-maquina"},
+    {"id": "plano-de-ensino", "title": "Plano de Ensino", "category": "cronograma", "raw_target": "raw/pdfs/cronograma/plano.pdf",
+     "temporal_block_id": "u-1", "computed_subunit_slug": ""},
+]
+BLOCKS = [{"id": "bloco-01", "block_uuid": "u-1"}, {"id": "bloco-04", "block_uuid": "u-4"}, {"id": "bloco-05", "block_uuid": "u-5"}]
+
+
+# --- casamento esperado/escolha -> ids ------------------------------------------
+
+def test_casar_por_id_titulo_ou_raw():
+    assert casar("algoritmo-de-classificacao-k-nn", ENTRIES) == {"algoritmo-de-classificacao-k-nn"}
+    assert casar("Classificação k-NN", ENTRIES) == {"algoritmo-de-classificacao-k-nn"}
+    assert casar("raw/code/analise-exploratoria-de-dados-exemplo-1.ipynb", ENTRIES) == {"analise-exploratoria-de-dados-exemplo-1"}
+    assert casar("k-NN | Plano de Ensino", ENTRIES) == {"algoritmo-de-classificacao-k-nn", "plano-de-ensino"}
+    assert casar("nao existe", ENTRIES) == set()
+
+
+def test_pontuar_hit1_hit3_e_bloco():
+    esperado = {"algoritmo-de-classificacao-k-nn"}
+    assert pontuar(esperado, ["algoritmo-de-classificacao-k-nn", "plano-de-ensino"]) == (True, True)
+    assert pontuar(esperado, ["plano-de-ensino", "algoritmo-de-classificacao-k-nn"]) == (False, True)
+    assert pontuar(esperado, ["plano-de-ensino"]) == (False, False)
+    assert pontuar(esperado, []) == (False, False)
+
+
+# --- piso deterministico ------------------------------------------------------------
+
+def test_escolher_sem_llm_rankeia_por_sobreposicao_de_tokens():
+    picks = escolher_sem_llm("como funciona o algoritmo k-NN para classificação?", ENTRIES, k=3)
+    assert picks[0] == "algoritmo-de-classificacao-k-nn"
+
+
+# --- contexto e cache -----------------------------------------------------------------
+
+def test_contexto_navegacao_le_os_indices_na_ordem_do_tutor(tmp_path):
+    (tmp_path / "course").mkdir()
+    for n in ("COURSE_MAP.md", "SYLLABUS.md", "CRONOGRAMA_DETALHADO.md", "FILE_MAP.md"):
+        (tmp_path / "course" / n).write_text(f"# {n}\n", encoding="utf-8")
+    ctx = contexto_navegacao(tmp_path)
+    assert ctx.index("COURSE_MAP") < ctx.index("SYLLABUS") < ctx.index("CRONOGRAMA_DETALHADO") < ctx.index("FILE_MAP")
+
+
+def test_chave_cache_muda_com_contexto_e_pergunta():
+    a = chave_cache("IA", "q1", "ctx")
+    assert a == chave_cache("IA", "q1", "ctx")
+    assert a != chave_cache("IA", "q1", "ctx2") and a != chave_cache("IA", "q2", "ctx")
+
+
+# --- rodada com client fake --------------------------------------------------------------
+
+class FakeClient:
+    model = "fake"
+
+    def __init__(self):
+        self.calls = 0
+
+    def summarize_bundle(self, bundle_text, schema, system_instruction):
+        self.calls += 1
+        assert schema is Resposta
+        if "k-NN" in bundle_text.split("PERGUNTA:")[-1]:
+            return Resposta(arquivos=["Algoritmo de Classificação k-NN"], bloco="bloco-05", porque="titulo")
+        return Resposta(arquivos=["Plano de Ensino"], bloco="bloco-01", porque="chute")
+
+
+def test_rodar_mede_e_cacheia(tmp_path):
+    (tmp_path / "course").mkdir()
+    for n in ("COURSE_MAP.md", "SYLLABUS.md", "CRONOGRAMA_DETALHADO.md", "FILE_MAP.md"):
+        (tmp_path / "course" / n).write_text(f"# {n}\n", encoding="utf-8")
+    (tmp_path / "manifest.json").write_text(json.dumps({"entries": ENTRIES}), encoding="utf-8")
+    (tmp_path / "course" / ".timeline_index.json").write_text(json.dumps({"blocks": BLOCKS}), encoding="utf-8")
+    gold = [{"pergunta": "o que é o algoritmo k-NN?", "esperado": "k-NN", "bloco": "bloco-05", "tipo": "conteudo"},
+            {"pergunta": "quando é a prova?", "esperado": "Plano de Ensino", "bloco": "", "tipo": "prova"},
+            {"pergunta": "exemplo de análise exploratória", "esperado": "exemplo-1", "bloco": "bloco-04", "tipo": "codigo"}]
+    client = FakeClient(); cache = tmp_path / "cache.json"
+    r = rodar("IA", tmp_path, gold, client=client, cache_path=cache)
+    assert (r["hit1"], r["hit3"], r["n"]) == (2, 2, 3)
+    assert r["bloco_ok"] == 1 and r["bloco_n"] == 2          # bloco so conta onde o gold tem bloco
+    assert client.calls == 3
+    r2 = rodar("IA", tmp_path, gold, client=client, cache_path=cache)
+    assert client.calls == 3 and r2["hit1"] == 2             # cache: 0 chamadas novas
+    r3 = rodar("IA", tmp_path, gold, client=None, cache_path=None)
+    assert r3["modo"] == "sem-llm" and r3["n"] == 3 and r3["hit3"] >= 2
+
+
+# --- escolha do LLM: casamento fuzzy (o tutor cita o texto do CRONOGRAMA, nao o Titulo) ---
+
+def test_casar_escolha_fuzzy_por_tokens():
+    from scripts.eval_travessia import casar_escolha
+    ents = ENTRIES + [{"id": "exemplo-2-k-nn-com-iriscsv-mais-completo", "title": "Exemplo 2 k-NN (com IRIS.csv) - mais completo",
+                       "category": "codigo-professor", "raw_target": "raw/code/exemplo-2-k-nn.ipynb", "moodle_label": ""}]
+    assert casar_escolha("Algoritmo de Classificação k-NN", ents) == "algoritmo-de-classificacao-k-nn"          # exato
+    assert casar_escolha("Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris", ents) == "algoritmo-de-classificacao-k-nn"
+    assert casar_escolha("Análise Exploratória de Dados - Exemplo 1.ipynb", ents) == "analise-exploratoria-de-dados-exemplo-1"
+    assert casar_escolha("Teoria dos grafos planares", ents) == ""                                                # < limiar: nada
+
+
+# --- estilo da pergunta (estruturada / ambigua / malformada): o aluno cansado pergunta pior ---
+
+def test_resumo_por_estilo():
+    from scripts.eval_travessia import resumo_por_estilo
+    linhas = [{"estilo": "estruturada", "hit1": True, "hit3": True}, {"estilo": "estruturada", "hit1": False, "hit3": True},
+              {"estilo": "malformada", "hit1": False, "hit3": False}, {"pulada": "cap", "estilo": "ambigua"}]
+    assert resumo_por_estilo(linhas) == {"estruturada": {"n": 2, "hit1": 1, "hit3": 2}, "malformada": {"n": 1, "hit1": 0, "hit3": 0}}
+
+
+# --- o tutor cita a LINHA do FILE_MAP (descricao/"linha N"), nao o Titulo -------------------
+
+FILEMAP = """| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Subtópico | Confiança | Período |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 18 | tcp_chat_c | codigo-professor | Chat cliente-servidor TCP em C | alta | ok | main.c | u02 | sockets | Alta | 1 dia |
+|  | ↳ rastreabilidade |  | raw: `raw/code/tcp-chat-c.zip`; tags: `x` |  |  |  |  |  |  |  |
+| 19 | udp_example_c | codigo-professor | Comunicação Cliente-Servidor com Sockets UDP em C | alta | ok | client.c server.c | u02 | sockets | Alta | 1 dia |
+|  | ↳ rastreabilidade |  | raw: `raw/code/udp-example-c.zip`; tags: `x` |  |  |  |  |  |  |  |
+"""
+ENTS_FM = [{"id": "tcp-chat-c", "title": "tcp_chat_c", "category": "codigo-professor", "raw_target": "raw/code/tcp-chat-c.zip"},
+           {"id": "udp-example-c", "title": "udp_example_c", "category": "codigo-professor", "raw_target": "raw/code/udp-example-c.zip"}]
+
+
+def test_filemap_rows_mapeia_numero_e_texto_da_linha_para_entry(tmp_path):
+    from scripts.eval_travessia import filemap_rows
+    (tmp_path / "course").mkdir(); (tmp_path / "course" / "FILE_MAP.md").write_text(FILEMAP, encoding="utf-8")
+    rows = filemap_rows(tmp_path, ENTS_FM)
+    assert rows["udp-example-c"]["num"] == 19 and "Sockets UDP em C" in rows["udp-example-c"]["texto"]
+
+
+def test_casar_escolha_usa_linha_do_filemap_e_referencia_linha_n():
+    from scripts.eval_travessia import casar_escolha
+    rows = {"udp-example-c": {"num": 19, "texto": "udp_example_c codigo-professor Comunicação Cliente-Servidor com Sockets UDP em C client.c server.c"},
+            "tcp-chat-c": {"num": 18, "texto": "tcp_chat_c codigo-professor Chat cliente-servidor TCP em C main.c"}}
+    assert casar_escolha("Comunicação Cliente-Servidor com Sockets UDP em C", ENTS_FM, rows) == "udp-example-c"
+    assert casar_escolha("linha 18 do FILE_MAP", ENTS_FM, rows) == "tcp-chat-c"
+    assert casar_escolha("#19", ENTS_FM, rows) == "udp-example-c"
+
+
+# --- contexto COMPLETO do tutor: README + politica + indices por tipo -------------------------
+
+def test_contexto_completo_inclui_politica_e_indices_por_tipo(tmp_path):
+    from scripts.eval_travessia import contexto_navegacao
+    for rel in ("course/COURSE_MAP.md", "course/FILE_MAP.md", "README.md", "system/TUTOR_POLICY.md", "code/CODE_INDEX.md", "exams/EXAM_INDEX.md"):
+        p = tmp_path / rel; p.parent.mkdir(parents=True, exist_ok=True); p.write_text(f"# {rel}\n", encoding="utf-8")
+    basico = contexto_navegacao(tmp_path)
+    assert "CODE_INDEX" not in basico and "TUTOR_POLICY" not in basico
+    completo = contexto_navegacao(tmp_path, completo=True)
+    assert "TUTOR_POLICY" in completo and "CODE_INDEX" in completo and "EXAM_INDEX" in completo
+    assert completo.index("README") < completo.index("COURSE_MAP") < completo.index("CODE_INDEX")
+
+
+# --- o tutor tambem cita o CODE_INDEX (titulo-resumo do Gemini + `arquivo`) -------------------
+
+CODEINDEX = """| Título | Linguagem | Conceitos | Arquivo |
+|---|---|---|---|
+| Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados | java | k-NN, Iris | `Exemplo de programa com k-NN (em java).zip` |
+"""
+
+
+def test_filemap_rows_inclui_code_index_por_arquivo(tmp_path):
+    from scripts.eval_travessia import casar_escolha, filemap_rows
+    (tmp_path / "course").mkdir(); (tmp_path / "code").mkdir()
+    (tmp_path / "course" / "FILE_MAP.md").write_text("", encoding="utf-8")
+    (tmp_path / "code" / "CODE_INDEX.md").write_text(CODEINDEX, encoding="utf-8")
+    ents = [{"id": "exemplo-de-programa-com-k-nn-em-java", "title": "Exemplo de programa com k-NN (em java)",
+             "source_path": "C:/stash/Semana 3/Exemplo de programa com k-NN (em java).zip", "raw_target": "raw/code/exemplo.zip"},
+            {"id": "algoritmo-de-classificacao-k-nn", "title": "Algoritmo de Classificação k-NN", "raw_target": "raw/pdfs/knn.pdf"}]
+    rows = filemap_rows(tmp_path, ents)
+    assert "K-Nearest Neighbors" in rows["exemplo-de-programa-com-k-nn-em-java"]["texto"]
+    assert casar_escolha("Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados", ents, rows) == "exemplo-de-programa-com-k-nn-em-java"
+
+
+def test_filemap_rows_casa_pelo_label_e_pelo_trace_sem_linha_de_rastreabilidade(tmp_path):
+    """C1 item 1 (05/09): o FILE_MAP mostra o moodle_label e a rastreabilidade mora em FILE_MAP_TRACE.md
+    (mesma numeracao). O harness tem de mapear linha -> material sem a antiga linha '↳ rastreabilidade'."""
+    from scripts.eval_travessia import filemap_rows
+    (tmp_path / "course").mkdir()
+    (tmp_path / "course" / "FILE_MAP.md").write_text(
+        "| # | Título | Categoria |\n|---|---|---|\n"
+        "| 1 | Visualização 3D - Projeção | outros |\n"
+        "| 2 | Recorte | material-de-aula |\n", encoding="utf-8")
+    (tmp_path / "course" / "FILE_MAP_TRACE.md").write_text(
+        "| # | Título | Rastreabilidade |\n|---|---|---|\n"
+        "| 1 | Visualização 3D - Projeção | raw: `raw/html/vis3d.htm`; tags: `x` |\n"
+        "| 2 | Recorte | raw: `raw/pdfs/recorte.pdf` |\n", encoding="utf-8")
+    entries = [
+        {"id": "vis3d", "title": "Vis3d", "moodle_label": "Visualização 3D - Projeção", "raw_target": "raw/html/vis3d.htm"},
+        {"id": "recorte", "title": "Recorte", "raw_target": "raw/pdfs/recorte.pdf"},
+        {"id": "outro", "title": "Outro", "raw_target": "raw/pdfs/outro.pdf"},
+    ]
+    rows = filemap_rows(tmp_path, entries)
+    assert rows["vis3d"]["num"] == 1 and rows["recorte"]["num"] == 2 and "outro" not in rows
+    assert "Visualização 3D - Projeção" in rows["vis3d"]["texto"]

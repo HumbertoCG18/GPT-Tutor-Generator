@@ -1,0 +1,17 @@
+pergunta;esperado;bloco;tipo;estilo;nota
+# gold proposto-claude 02/09 (revisar). esperado = ids do cardapio, | = qualquer um vale. estilo = estruturada | ambigua | malformada
+Como funciona o algoritmo de recorte de retas de Cohen-Sutherland?;recorte|vis2d;bloco-06;conteudo;estruturada;
+Quais são os fundamentos matemáticos (vetores, produto escalar) usados em computação gráfica?;fundamentosmatematicos;bloco-03;conteudo;estruturada;
+Como detectar colisão entre dois objetos usando envelopes (AABB e OOBB)?;colisao;bloco-04;conteudo;estruturada;
+Como funciona o algoritmo Z-Buffer para remoção de elementos ocultos?;exemplozbuffer|elemoculto;bloco-20;conteudo;estruturada;
+Tem algum código de exemplo de curva de Bézier em Python?;bezier-py|bezier-python|bezier-animacao;bloco-13;codigo;estruturada;
+me explica visualização 3D;computacao-grafica-visualizacao-3d|opengl-3d|biblioteca-grafica-opengl;;conteudo;ambigua;
+tem exercício de imagem?;exercicios-de-processamento-de-imagens|computacao-grafica-i-exercicio-sobre-filtros|computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens|computacao-grafica-exercicio-de-prenchimento-de-area;;exercicio;ambigua;
+como eu começo com OpenGL?;openglbasico|opengl-cpp|opengl-py|biblioteca-grafica-opengl;bloco-02;codigo;ambigua;
+o que é modelagem de sólidos?;computacao-grafica-modelagem-de-solidos|csg;bloco-15;conteudo;ambigua;
+o que cai na P1?;resolucao-de-prova-de-computacao-grafica-2d|planodeensino-4645z-04-fundamentos-de-computacao-grafica|cronograma2026-2;;prova;ambigua;
+segmentacao imagem;segmentacaopptx|segmentacaodetexturas;bloco-07;conteudo;malformada;
+iluminacao phong;modelos-de-iluminacao;bloco-21;conteudo;malformada;
+filtro passa baixa exercicio;computacao-grafica-i-exercicio-sobre-filtros;;exercicio;malformada;
+geometria computacional plane sweep;computacao-grafica-geometria-computacional-plane-sweep;bloco-05;conteudo;malformada;
+transformacoes opengl codigo;transformacoesgeometricas|transformacoes-geometricas-em-opengl;bloco-06;codigo;malformada;

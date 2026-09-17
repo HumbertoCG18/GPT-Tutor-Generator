@@ -111,6 +111,8 @@ def generated_repo_gitignore_text() -> str:
         "# Backups de consolidação e migração",
         "build/consolidation-backup/",
         "build/migration-v1-backup/",
+        "# Backups locais de scripts (retag/reprocess), nao versionados",
+        "*.bak",
         "# Workspace de revisão manual",
         "manual-review/",
         "# Scripts utilitários locais",

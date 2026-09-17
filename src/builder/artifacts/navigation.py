@@ -18,6 +18,24 @@ from src.builder.core.reference_navigation import (
     _ref_support_line,
     _REF_CAP_PER_ANCHOR,
 )
+from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
+from src.models.core import moodle_label_text  # leitor unico (07/09)
+
+
+def _display_subunit_slug(entry: dict) -> str:
+    """Subunidade exibida no FILE_MAP: manual > tag gated `subunit:`.
+
+    NAO cai no computed_subunit_slug (best-effort ungated) — o FILE_MAP so
+    mostra atribuicoes reais (igual ao tier 'Automatico' do editor). O
+    best-effort fica so no editor, rotulado como sugestao.
+    """
+    manual = str(entry.get("manual_subunit_slug") or "").strip()
+    if manual:
+        return manual
+    for tag in entry.get("auto_tags") or []:
+        if tag.startswith("subunit:"):
+            return tag[len("subunit:"):]
+    return ""
 
 
 def _entry_priority_label(entry: dict) -> str:
@@ -166,8 +184,11 @@ def _inject_executive_summary(md_path: Path) -> bool:
         return False
 
     content = md_path.read_text(encoding="utf-8")
+    # O `\n?` inicial consome a linha em branco que a insercao prefixa ao bloco
+    # (`"\n" + block`); sem ele cada build deixava +1 linha em branco no md
+    # (md curado do TCC acumulou 36). Remover + reinserir agora e idempotente.
     summary_re = re.compile(
-        r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?",
+        r"\n?<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?",
         flags=re.DOTALL,
     )
     clean = summary_re.sub("", content)
@@ -274,7 +295,10 @@ def _clean_extraction_noise(content: str) -> str:
     return "\n".join(result)
 
 
-def _get_entry_sections(md_path: Path, max_h2: int = 4) -> str:
+_SECTIONS_MAX_CHARS = 80   # C1 item 1 (05/09): coluna Secoes magra — 62/157 linhas passavam de 80 chars (max 321)
+
+
+def _get_entry_sections(md_path: Path, max_h2: int = 3) -> str:
     if not md_path or not md_path.exists():
         return ""
     try:
@@ -282,7 +306,8 @@ def _get_entry_sections(md_path: Path, max_h2: int = 4) -> str:
     except Exception:
         return ""
     h2 = [header["title"] for header in _extract_section_headers(text) if header["level"] == 2][:max_h2]
-    return "  ".join(h2) if h2 else ""
+    out = "  ".join(h2) if h2 else ""
+    return out[:_SECTIONS_MAX_CHARS].rstrip() if len(out) > _SECTIONS_MAX_CHARS else out
 
 
 def _emit_support_lines(lines, refs, shown_ids, indent):
@@ -337,6 +362,7 @@ def render_low_token_course_map_md(
     ref_index = course_meta.get("_reference_nav_index") or {}
     ref_by_unit = ref_index.get("by_unit", {}) or {}
     ref_by_topic = ref_index.get("by_topic", {}) or {}
+    material_by_unit = ref_index.get("material_by_unit", {}) or {}
 
     lines += ["## Estrutura do curso", ""]
     if units:
@@ -360,6 +386,15 @@ def render_low_token_course_map_md(
             leftovers = [r for r in ref_by_unit.get(unit_slug, [])
                          if r["entry_id"] not in shown_ids and r["entry_id"] not in topic_anchored]
             _emit_support_lines(lines, leftovers, shown_ids, "")
+            # material cuja cobertura N:N alcanca esta unidade sem morar nela
+            cobre = material_by_unit.get(unit_slug, [])
+            if cobre:
+                head = cobre[:_REF_CAP_PER_ANCHOR]
+                nomes = ", ".join(f"`{m['title']}`" for m in head)
+                sobra = len(cobre) - len(head)
+                if sobra:
+                    nomes += f" (+{sobra})"
+                lines.append(f"- 🧪 Tambem cobre esta unidade: {nomes}")
             lines.append("")
     else:
         # Tenta renderizar unidades reais do timeline_index quando não há teaching_plan
@@ -483,18 +518,9 @@ def render_low_token_file_map_md(
     subject_profile=None,
     *,
     build_file_map_content_taxonomy_from_course: Callable[[dict, object, list], dict],
-    build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
-    iter_content_taxonomy_topics: Callable[[dict], list],
     merge_manual_and_auto_tags: Callable[..., str],
     resolve_entry_manual_timeline_block: Callable[[dict, dict], object],
-    entry_markdown_text_for_file_map: Callable[[object, dict], str],
-    auto_map_entry_subtopic: Callable[[dict, dict, str], object],
-    resolve_entry_manual_unit_slug: Callable[[dict, list], str],
-    unit_match_result_factory: Callable[..., object],
-    derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[..., object],
-    select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -502,9 +528,9 @@ def render_low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
-    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
+    # Taxonomia só para LABELS de subtópico — o slug em si vem do manifest.
     content_taxonomy = dict(
         course_meta.get("_content_taxonomy")
         or course_meta.get("_content_taxonomy_for_tests")
@@ -514,25 +540,34 @@ def render_low_token_file_map_md(
             manifest_entries,
         )
     )
-    unit_index = build_file_map_unit_index_from_course(course_meta, subject_profile)
     temporal_context = dict(
         course_meta.get("_timeline_context")
         or course_meta.get("_timeline_context_for_tests")
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
-    topic_index = iter_content_taxonomy_topics(content_taxonomy)
-    unit_tag_index = build_unit_tag_index(content_taxonomy)
+    # Rotulos de LEITURA (07/09): "03 - Nome" e "3.5 - Nome", compostos de code + label pelo text/rotulos.
+    # So a celula exibida muda; slug, label, code e todo o matching seguem intactos.
+    from src.builder.text.rotulos import mapa_rotulos
     _bold_re = re.compile(r"\*\*([^*]+)\*\*")
-    topic_labels: dict = {}
-    for _u in content_taxonomy.get("units", []) or []:
-        for _t in (_u.get("topics", []) or []):
-            _slug = str(_t.get("slug", "") or "")
-            _label = str(_t.get("label", "") or "")
-            if _slug and _label:
-                topic_labels[_slug] = _bold_re.sub(r"\1", _label).strip()
+    _unit_labels, _topic_rotulos = mapa_rotulos(content_taxonomy)
+    topic_labels: dict = {k: _bold_re.sub(r"\1", v).strip() for k, v in _topic_rotulos.items() if k and v}
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
-    unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
+    # Lookup id->period_label cobrindo TODOS os blocos do timeline (atribuídos e
+    # não atribuídos). A coluna Período espelha o computed_block_id do manifest
+    # (fonte única da atribuição), nunca recomputa via scorer.
+    period_label_by_block_id: dict = {}
+    for _block_group in list(blocks_by_unit.values()) + [unassigned_blocks]:
+        for _block in _block_group or []:
+            _bid = str(_block.get("id", "") or "").strip()
+            _buuid = str(_block.get("block_uuid", "") or "").strip()
+            _label = str(_block.get("period_label", "") or "").strip()
+            # Re-key por uuid também: computed_block_id agora é uuid, mas refs
+            # legadas (bloco-NN) ainda devem casar — ambas as chaves dão o label.
+            if _bid and _bid not in period_label_by_block_id:
+                period_label_by_block_id[_bid] = _label
+            if _buuid and _buuid not in period_label_by_block_id:
+                period_label_by_block_id[_buuid] = _label
     lines = [
         "---",
         f"course: {course_name}",
@@ -581,7 +616,10 @@ def render_low_token_file_map_md(
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
-        title = entry.get("title", "")
+        # C1 item 1 (05/09): o rebuild grava title = nome do arquivo ("Vis3d", "PlaneSweep");
+        # o nome humano do Moodle esta em moodle_label (288/348 materiais) — e o que o tutor
+        # e o aluno reconhecem. Fallback: title. Curadoria de codigo (inferred_title) segue acima.
+        title = _file_map_title(entry)
         category = entry.get("category", "")
         # Override with inferred_title from code curation when available.
         if category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
@@ -589,13 +627,6 @@ def render_low_token_file_map_md(
             _inferred = (((_code_curation_entries.get(_eid) or {}).get("summary") or {}).get("inferred_title") or "")
             if _inferred:
                 title = _inferred
-        tags = entry.get("tags", "")
-        effective_tags = merge_manual_and_auto_tags(
-            list(entry.get("manual_tags") or []),
-            list(entry.get("auto_tags") or []),
-            fallback_tags=tags,
-            limit=3,
-        )
         md_path = (
             entry.get("approved_markdown")
             or entry.get("curated_markdown")
@@ -603,8 +634,6 @@ def render_low_token_file_map_md(
             or entry.get("advanced_markdown")
             or ""
         )
-        raw_path = entry.get("raw_target") or ""
-        _NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias", "references"}
         if category in _NO_TIMELINE_CATEGORIES:
             unit = "curso-inteiro"
             skip_timeline = True
@@ -612,121 +641,64 @@ def render_low_token_file_map_md(
             unit = ""
             skip_timeline = False
         period = ""
-        match = unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=[])
         preferred_topic_slug = ""
         manual_timeline_block = resolve_entry_manual_timeline_block(entry, temporal_context)
-        markdown_text = entry_markdown_text_for_file_map(course_meta.get("_repo_root"), entry)
-        if not skip_timeline and not unit and unit_index:
-            topic_match = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text)
-            if topic_match.topic_slug and not topic_match.ambiguous and topic_match.confidence >= 0.45:
-                preferred_topic_slug = topic_match.topic_slug
-            manual_unit_slug = resolve_entry_manual_unit_slug(entry, unit_index)
-            if manual_unit_slug:
-                match = unit_match_result_factory(
-                    slug=manual_unit_slug,
-                    confidence=1.0,
-                    ambiguous=False,
-                    reasons=["manual-unit-override"],
-                )
-            else:
-                derived_unit_slug = derive_unit_from_topic_match(topic_match, content_taxonomy)
-                if topic_match.topic_slug and derived_unit_slug and not topic_match.ambiguous and topic_match.confidence >= 0.45:
-                    match = unit_match_result_factory(
-                        slug=derived_unit_slug,
-                        confidence=topic_match.confidence,
-                        ambiguous=topic_match.ambiguous,
-                        reasons=[f"topic={topic_match.topic_slug}", *topic_match.reasons],
-                    )
-                else:
-                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index, unit_tag_index=unit_tag_index)
-                    if not preferred_topic_slug and match.slug and not match.ambiguous and match.confidence >= 0.45:
-                        refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
-                        if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
-                            preferred_topic_slug = refined.topic_slug
-            # Low-confidence suffix dropped: redundant with the Confiança column
-            # (which renders "Baixa"). Only the distinct "ambíguo" reason is kept.
+        # Unidade/Subtópico espelham o manifest (fonte única, mesmo padrão da
+        # coluna Período): manual_* > computed_* persistidos pelo funil
+        # (resolve_unit_block_tags). O FILE_MAP nunca recomputa via matcher —
+        # sem atribuição no manifest, a coluna fica em branco. O sufixo
+        # "_(ambíguo)_" morreu: computed_unit_slug nunca é gravado ambíguo.
+        if not skip_timeline and not unit:
             unit = (
-                f"{match.slug} _(ambíguo)_"
-                if match.slug and match.ambiguous
-                else match.slug
+                str(entry.get("manual_unit_slug") or "").strip()
+                or str(entry.get("computed_unit_slug") or "").strip()
             )
-            unit_blocks = list(blocks_by_unit.get(match.slug, [])) if match.slug else []
-            if match.slug and not match.ambiguous and match.confidence >= 0.45 and unit_blocks:
-                probable_period, period_confidence, period_ambiguous, _ = select_probable_period_for_entry(
-                    entry=entry,
-                    unit=unit_by_slug.get(match.slug, {}),
-                    candidate_rows=unit_blocks,
-                    markdown_text=markdown_text,
-                    preferred_topic_slug=preferred_topic_slug,
-                )
-                if probable_period and not period_ambiguous and period_confidence >= 0.5:
-                    period = probable_period
-            if (
-                not period
-                and match.slug
-                and not match.ambiguous
-                and match.confidence >= 0.55
-                and unassigned_blocks
-            ):
-                probable_period, period_confidence, period_ambiguous, _ = select_probable_period_for_entry(
-                    entry=entry,
-                    unit=unit_by_slug.get(match.slug, {}),
-                    candidate_rows=unassigned_blocks,
-                    markdown_text=markdown_text,
-                    preferred_topic_slug=preferred_topic_slug,
-                )
-                if probable_period and not period_ambiguous and period_confidence >= 0.5:
-                    period = probable_period
-            if not period and manual_timeline_block:
+            preferred_topic_slug = _display_subunit_slug(entry)
+        # Período espelha o manifest (fonte única): manual > computed_block_id.
+        # Sem atribuição no manifest, a coluna fica em branco — nunca recomputa.
+        if not skip_timeline:
+            if manual_timeline_block:
                 period = str(manual_timeline_block.get("period_label", "") or "").strip()
-        if not skip_timeline and not period and manual_timeline_block:
-            period = str(manual_timeline_block.get("period_label", "") or "").strip()
-        if skip_timeline:
-            period = ""
+            # TEMPORAL: âncora entre manual e computed; ausente com flag OFF ->
+            # cai no computed (coluna idêntica à de antes).
+            if not period:
+                _temporal_block_id = str(entry.get("temporal_block_id") or "").strip()
+                if _temporal_block_id:
+                    period = period_label_by_block_id.get(_temporal_block_id, "")
+            if not period:
+                _computed_block_id = str(entry.get("computed_block_id") or "").strip()
+                if _computed_block_id:
+                    period = period_label_by_block_id.get(_computed_block_id, "")
         md_cell = file_map_markdown_cell(md_path)
         md_abs = entry_markdown_path_for_file_map(course_meta.get("_repo_root"), entry)
         sections = get_entry_sections(md_abs) if md_abs else ""
+        # Confiança: sem transiente de match — _infer_unit_confidence cai no
+        # `unit_match_confidence` persistido no manifest (fonte única).
         confidence = infer_unit_confidence(
             {
                 **entry,
-                "_resolved_unit_slug": match.slug or unit,
-                "_unit_match_confidence": match.confidence,
-                "_unit_match_ambiguous": match.ambiguous,
+                "_resolved_unit_slug": unit,
                 "_resolved_topic_slug": preferred_topic_slug,
                 "_resolved_period": period,
             }
         )
 
-        subtopic_label = topic_labels.get(preferred_topic_slug, "")
+        subtopic_label = topic_labels.get(preferred_topic_slug, preferred_topic_slug)
         lines.append(
             f"| {i} | {title} | {category} | {entry_usage_hint(entry)} | "
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
-            f"{unit or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
+            f"{_unit_labels.get(unit, unit) or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
         )
-        if (
-            raw_path
-            or effective_tags
-            or str(entry.get("manual_unit_slug") or "").strip()
-            or str(entry.get("manual_timeline_block_id") or "").strip()
-            or (md_path and md_path.replace('\\', '/').startswith("staging/"))
-        ):
-            details = []
-            if raw_path:
-                details.append(f"raw: `{raw_path}`")
-            if effective_tags:
-                details.append(f"tags: `{effective_tags}`")
-            if str(entry.get("manual_unit_slug") or "").strip():
-                details.append(f"unidade-manual: `{entry.get('manual_unit_slug')}`")
-            if str(entry.get("manual_timeline_block_id") or "").strip():
-                details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
-            if md_path and md_path.replace('\\', '/').startswith("staging/"):
-                details.append(f"markdown-base: `{md_path}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |  |")
+        # C1 item 1 (05/09): a linha "↳ rastreabilidade" (raw, tags, markdown-base; ~230 chars
+        # por material) saiu daqui para course/FILE_MAP_TRACE.md (file_map_trace_md). Com ela,
+        # cada material custava ~480 chars e o clamp de 12 KB deixava 20-30 materiais visiveis
+        # (CG 26/93, IA 22/59); sem ela e com Secoes limitada, os 8 tutores cabem em 3-21 KB.
 
     lines += [
         "",
         "## Legenda",
         "",
+        "- **Rastreabilidade** (raw, tags, markdown-base, pinos manuais): em `course/FILE_MAP_TRACE.md`, um por material.",
         "- **Quando abrir**: atalho semântico para reduzir leitura desnecessária.",
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
         "- **Seções**: principais headers `##` do markdown aprovado/curado.",
@@ -741,9 +713,55 @@ def render_low_token_file_map_md(
     result = "\n".join(lines)
     return clamp_navigation_artifact(
         result,
-        max_chars=12000,
+        max_chars=FILE_MAP_MAX_CHARS,
         label="course/FILE_MAP.md",
     )
+
+
+# C1 item 1 (05/09): 12 KB cortava pela cauda, sem relevancia (CG 26/93, IA 22/59, MF 31/66 visiveis;
+# travessia do CG: 8/8 erros com alvo fora do corte). Medido nos 8 tutores, o FILE_MAP completo e magro
+# vai de 3 a 21 KB; 80 KB e teto de seguranca, e o clamp continua avisando quando cortar.
+FILE_MAP_MAX_CHARS = 80_000
+
+
+def _file_map_title(entry: dict) -> str:
+    title = moodle_label_text(entry).strip() or str(entry.get("title") or "")
+    # "|" dentro do titulo quebra a celula da tabela (IA: "O que e IA? | Oracle Brasil" deslocava 10 colunas)
+    return title.replace("|", "/")
+
+
+def _trace_details(entry: dict, effective_tags: str) -> list:
+    """Rastreabilidade de um material (era a linha "↳" do FILE_MAP)."""
+    md_path = (entry.get("approved_markdown") or entry.get("curated_markdown") or entry.get("base_markdown")
+               or entry.get("advanced_markdown") or "")
+    details = []
+    if entry.get("raw_target"):
+        details.append(f"raw: `{entry.get('raw_target')}`")
+    if effective_tags:
+        details.append(f"tags: `{effective_tags}`")
+    if str(entry.get("manual_unit_slug") or "").strip():
+        details.append(f"unidade-manual: `{entry.get('manual_unit_slug')}`")
+    if str(entry.get("manual_timeline_block_id") or "").strip():
+        details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
+    if md_path and str(md_path).replace("\\", "/").startswith("staging/"):
+        details.append(f"markdown-base: `{md_path}`")
+    return details
+
+
+def file_map_trace_md(course_meta: dict, manifest_entries: list, *, merge_manual_and_auto_tags: Callable[..., str]) -> str:
+    """course/FILE_MAP_TRACE.md — rastreabilidade por material, na MESMA ordem e numeracao do FILE_MAP.
+    Para humano/auditoria; o tutor le o FILE_MAP (magro). Sem clamp: e registro, nao roteador."""
+    course_name = course_meta.get("course_name", "Curso")
+    lines = [f"# FILE_MAP_TRACE — {course_name}", "",
+             "> Rastreabilidade de cada linha do `course/FILE_MAP.md` (mesmo número): arquivo bruto, tags, markdown-base e pinos manuais.",
+             "", "| # | Título | Rastreabilidade |", "|---|---|---|"]
+    for i, entry in enumerate(manifest_entries or [], 1):
+        effective_tags = merge_manual_and_auto_tags(
+            list(entry.get("manual_tags") or []), list(entry.get("auto_tags") or []),
+            fallback_tags=entry.get("tags", ""), limit=3,
+        )
+        lines.append(f"| {i} | {_file_map_title(entry)} | {'; '.join(_trace_details(entry, effective_tags)) or '—'} |")
+    return "\n".join(lines) + "\n"
 
 
 def low_token_course_map_md(
@@ -796,18 +814,9 @@ def low_token_file_map_md(
     subject_profile=None,
     *,
     build_file_map_content_taxonomy_from_course: Callable[[dict, object, list], dict],
-    build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
-    iter_content_taxonomy_topics: Callable[[dict], list],
     merge_manual_and_auto_tags: Callable[..., str],
     resolve_entry_manual_timeline_block: Callable[[dict, dict], object],
-    entry_markdown_text_for_file_map: Callable[[object, dict], str],
-    auto_map_entry_subtopic: Callable[[dict, dict, str], object],
-    resolve_entry_manual_unit_slug: Callable[[dict, list], str],
-    unit_match_result_factory: Callable[..., object],
-    derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[..., object],    
-    select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -815,25 +824,15 @@ def low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
-    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     return render_low_token_file_map_md(
         course_meta,
         manifest_entries,
         subject_profile,
         build_file_map_content_taxonomy_from_course=build_file_map_content_taxonomy_from_course,
-        build_file_map_unit_index_from_course=build_file_map_unit_index_from_course,
         build_file_map_timeline_context_from_course=build_file_map_timeline_context_from_course,
-        iter_content_taxonomy_topics=iter_content_taxonomy_topics,
         merge_manual_and_auto_tags=merge_manual_and_auto_tags,
         resolve_entry_manual_timeline_block=resolve_entry_manual_timeline_block,
-        entry_markdown_text_for_file_map=entry_markdown_text_for_file_map,
-        auto_map_entry_subtopic=auto_map_entry_subtopic,
-        resolve_entry_manual_unit_slug=resolve_entry_manual_unit_slug,
-        unit_match_result_factory=unit_match_result_factory,
-        derive_unit_from_topic_match=derive_unit_from_topic_match,
-        auto_map_entry_unit=auto_map_entry_unit,
-        select_probable_period_for_entry=select_probable_period_for_entry,
         file_map_markdown_cell=file_map_markdown_cell,
         entry_markdown_path_for_file_map=entry_markdown_path_for_file_map,
         get_entry_sections=get_entry_sections,
@@ -841,7 +840,6 @@ def low_token_file_map_md(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
-        build_unit_tag_index=build_unit_tag_index,
     )
 
 
@@ -860,7 +858,7 @@ def budgeted_file_map_md(
             filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
             subject_profile=subject_profile,
         ),
-        max_chars=12000,
+        max_chars=FILE_MAP_MAX_CHARS,
         label="course/FILE_MAP.md",
     )
 

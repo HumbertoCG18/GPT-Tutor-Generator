@@ -1,0 +1,43 @@
+== Metodos-Formais-Tutor: 66 entries | flagadas 1 | git sujo: 0
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 1 -> 1 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 7f17ccf
+== Sistemas-Operacionais-Tutor: 39 entries | flagadas 9 | git sujo: 0
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 9 -> 9 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 9c0b1bb
+== Inteligencia-Artifical-Tutor: 59 entries | flagadas 2 | git sujo: 0
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 2 -> 2 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 270975d
+== Engenharia-Software-2-Tutor: 35 entries | flagadas 0 | git sujo: 0
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 0 -> 0 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD d5f96a5
+== TCC-Tutor: 27 entries | flagadas 5 | git sujo: 0
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 5 -> 5 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD a438a52
+== Laboratorio-de-Redes-Tutor: 7 entries | flagadas 2 | git sujo: 0
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 2 -> 2 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD c0df4a6
+== Fundamentos-de-Redes-Tutor: 22 entries | flagadas 4 | git sujo: 0
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+   unidade mudou em 0: []
+   flagadas 4 -> 4 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD a6f3db0
+== Computacao-Grafica-Tutor: 93 entries | flagadas 15 | git sujo: 0
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+   unidade mudou em 12: [('morfologiamatematicapptx', '06-processo-de', '01-introducao-'), ('bezier-animacao', '06-processo-de', '07-representac'), ('bezier-cpp', '06-processo-de', '07-representac'), ('bezier-py', '06-processo-de', '07-representac'), ('bezier-python', '06-processo-de', '07-representac'), ('curvas', '06-processo-de', '07-representac'), ('curvasparametricas', '06-processo-de', '07-r
+   flagadas 15 -> 15 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 2efddcb
+TOTAL 8 tutores: flagadas 38 -> 38 (+0) | blocos mudados 0 | unidades mudadas 12
+[fim]
+exit 0

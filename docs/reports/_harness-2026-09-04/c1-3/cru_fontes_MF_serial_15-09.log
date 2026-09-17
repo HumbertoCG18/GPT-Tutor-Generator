@@ -1,0 +1,252 @@
+[MF] inventario=67 tipos={'zip': 13, 'pdf': 48, 'code': 6} metadata=[]
+[MF] 0/67 exemplos
+[MF] 1/67 ExerciciosLogicaTemporal
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 2/67 ExerciciosNusmv
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 3/67 verificacaomodelos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 4/67 ConjuntosIndutivos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 5/67 ExerciciosConjuntosIndutivos
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 6/67 ExerciciosFormalizacaoAlgoritmosRecursao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 7/67 ExerciciosFormalizacaoAlgoritmosRecursao2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 8/67 ExerciciosFormalizacaoAlgoritmosRecursao3
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 9/67 ExerciciosFormalizacaoAlgoritmosRecursao3_respostas
+[MF] -1/-1 
+[MF] 10/67 ExerciciosFormalizacaoAlgoritmosRecursao_respostas
+[MF] -1/-1 
+[MF] 11/67 FormalizacaoAlgoritmos_Recursao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 12/67 FormalizacaoAlgoritmos_Recursao2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 13/67 FormalizacaoAlgoritmos_Recursao3
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 14/67 revisao_p1
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 15/67 revisao_p1_gabarito
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 16/67 introducao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 17/67 RigorousSoftwareDevelopment-chapters-1-2
+[MF] -1/-1 
+[MF] 18/67 plano
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 19/67 arvores
+[MF] 20/67 exemplos
+Entry id collision: exemplos -> exemplos-thy (ext=thy folder=Provas por Indução)
+[MF] 21/67 ExerciciosCorrecaoInducaoMatematica
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 22/67 ExerciciosIsabelle
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 23/67 ExerciciosIsabelle2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 24/67 intro
+[MF] 25/67 listas
+[MF] 26/67 mcs
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+  [latex-check] LaTeX possivelmente corrompido em mcs (score: 66/100).
+[MF] 27/67 provas
+[MF] 28/67 ProvasIndutivas_EspecificaçõesRecursivas
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 29/67 ProvasIndutivas_EspecificaçõesRecursivas_Arvores
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 30/67 ProvasIndutivas_EspecificaçõesRecursivas_Listas
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 31/67 ExerciciosEspecificacao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 32/67 ExerciciosEspecificacao_respostas
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 33/67 logicaPredicados_semantica
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 34/67 logicaPredicados_sintaxe
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 35/67 logicaProposicional_semantica
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 36/67 logicaProposicional_sintaxe
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 37/67 revisao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 38/67 t1_2026_1
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 39/67 T1_2026_1
+Entry id collision: t1-2026-1 -> t1-2026-1-thy (ext=thy folder=TDE Trabalho Discente Efetivo)
+[MF] 40/67 t2_2026_1
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 41/67 classes_parte1
+[MF] 42/67 classes_parte2
+[MF] 43/67 colecoes_arrays
+[MF] 44/67 colecoes_conjuntos
+[MF] 45/67 colecoes_sequences
+[MF] 46/67 CorrecaoTerminacao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 47/67 exercicios_arrays
+[MF] 48/67 exercicios_conjuntos
+[MF] 49/67 ExerciciosCorrecaoTerminacao
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 50/67 ExerciciosDafny1
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 51/67 ExerciciosDafny2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 52/67 ExerciciosDafny3
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 53/67 ExerciciosDafny4
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 54/67 ExerciciosDafny5
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 55/67 ExerciciosFormalizacaoAlgoritmosInvariantes
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 56/67 FormalizacaoAlgoritmos_InvariantesLaco
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 57/67 hoare
+[MF] 58/67 ieeesoftwaredafny2017
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+  [latex-check] LaTeX possivelmente corrompido em ieeesoftwaredafny2017 (score: 30/100).
+[MF] 59/67 introducao
+Entry id collision: introducao -> introducao-zip (ext=zip folder=Verificação de Programas)
+[MF] 60/67 invariantes
+[MF] 61/67 LogicaDeHoare
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 62/67 LogicaDeHoare1_exercicios_respostas
+[MF] -1/-1 
+[MF] 63/67 LogicaDeHoare2
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] -1/-1 
+[MF] 64/67 LogicaDeHoare_exercicios_respostas
+[MF] -1/-1 
+[MF] 65/67 terminacao
+[MF] 66/67 tiposindutivos
+[MF] 67/67 
+[MF] resultado={'seconds': 3052.77, 'calls': {}, 'failed_entries': [], 'completed': True}

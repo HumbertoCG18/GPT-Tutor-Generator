@@ -1,0 +1,4 @@
+  1.3 Estudo de casos: -['Linux', 'Unix', 'Unix/Linux', 'Linux kernel map'] +[]
+  3.4 Estudo de casos: -['Linux Threads', 'S.O. Solaris', 'Pthreads', 'pthread_create', 'pthread_exit', 'pthread_join', 'pthread_self', 'threads em C'] +[]
+  7.6 Estudo de casos: -['Kernel UNIX'] +[]
+SO: termos 112 -> 99; backup .glossary_curation.llm.json.bak-11-09

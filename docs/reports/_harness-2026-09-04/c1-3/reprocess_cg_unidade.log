@@ -1,0 +1,24 @@
+== CG antes: 93 entries | votos em cache 42 | flagadas 15 | git sujo: ?? course/.glossary_curation.json ; ?? course/.timeline_curation.json
+   unidade mudou 9: [('morfologiamatematicapptx', '01-introducao-ao', '03-processamento'), ('csg', '06-processo-de-v', '07-representacao'), ('modelagem3d', '06-processo-de-v', '07-representacao'), ('basico3d-cpp', '06-processo-de-v', '07-representacao'), ('basico3d-py-zip', '06-processo-de-v', '07-representacao'), ('exerciciodemodelagem', '06-processo-de-v', '07-representacao'), ('aula-gravada-975b85', '01-introducao-ao', '03-processamento'), ('pagina-com-videos-sobre-morfologia-matematica-06265a', '01-introducao-ao', '03-processamento'), ('paginas-com-videos-sobre-modelagem-geometrica-f2614a', '06-processo-de-v', '07-representacao')]
+   bloco mudou 0: []
+   metodo mudou {} | flagadas 15 -> 15 | subunidade mudou 10: [('intro', 'areas-relacionadas', ''), ('morfologiamatematicapptx', 'areas-relacionadas', 'cores-e-tipos-de-image'), ('csg', 'conceito-de-camera-sin', 'geometria-solida-const'), ('modelagem3d', 'conceito-de-camera-sin', 'representacao-aramada'), ('basico3d-cpp', 'projecoes', 'representacao-de-curva'), ('basico3d-py-zip', 'perspectiva', 'tecnicas-de-modelagem-'), ('exerciciodemodelagem', 'eliminacao-de-faces-tr', 'tecnicas-de-modelagem-'), ('aula-gravada-975b85', 'areas-relacionadas', ''), ('pagina-com-videos-sobre-morfologia-matematica-06265a', 'areas-relacionadas', ''), ('paginas-com-videos-sobre-modelagem-geometrica-f2614a', '', 'tecnicas-de-modelagem-')]
+   votos 42 -> 42 | resumos de codigo hoje 0
+   commit: ok | HEAD c566dc3
+== CG antes: 93 entries | votos em cache 42 | flagadas 15 | git sujo: M course/.glossary_curation.json
+   unidade mudou 0: []
+   bloco mudou 4: [('segmentacaopptx', 'b5092bac', '5b32aadd'), ('segmentacaodetexturas', 'b5092bac', '5b32aadd'), ('pagina-com-videos-sobre-segmentacao-de-imagens-d0627f', 'b5092bac', '5b32aadd'), ('pagina-com-videos-sobre-segmentacao-por-texturas-e03566', 'b5092bac', '5b32aadd')]
+   metodo mudou {'llm->titulo-topico': 4} | flagadas 15 -> 15 | subunidade mudou 3: [('morfologiamatematicapptx', 'cores-e-tipos-de-image', 'segmentacao'), ('aula-gravada-975b85', '', 'segmentacao'), ('pagina-com-videos-sobre-morfologia-matematica-06265a', '', 'segmentacao')]
+   votos 42 -> 42 | resumos de codigo hoje 0
+   commit: ok | HEAD ee4c276
+== CG antes: 93 entries | votos em cache 42 | flagadas 15 | git sujo: M course/.glossary_curation.json
+   unidade mudou 0: []
+   bloco mudou 4: [('segmentacaopptx', '5b32aadd', 'b5092bac'), ('segmentacaodetexturas', '5b32aadd', 'b5092bac'), ('pagina-com-videos-sobre-segmentacao-de-imagens-d0627f', '5b32aadd', 'b5092bac'), ('pagina-com-videos-sobre-segmentacao-por-texturas-e03566', '5b32aadd', 'b5092bac')]
+   metodo mudou {'titulo-topico->llm': 4} | flagadas 15 -> 15 | subunidade mudou 3: [('morfologiamatematicapptx', 'segmentacao', 'cores-e-tipos-de-image'), ('aula-gravada-975b85', 'segmentacao', ''), ('pagina-com-videos-sobre-morfologia-matematica-06265a', 'segmentacao', '')]
+   votos 42 -> 42 | resumos de codigo hoje 0
+   commit: ok | HEAD 2c5e01e
+== CG antes: 93 entries | votos em cache 42 | flagadas 15 | git sujo: M course/.timeline_curation.json
+   unidade mudou 0: []
+   bloco mudou 0: []
+   metodo mudou {} | flagadas 15 -> 15 | subunidade mudou 0: []
+   votos 42 -> 42 | resumos de codigo hoje 0
+   commit: ok | HEAD 0d2020a

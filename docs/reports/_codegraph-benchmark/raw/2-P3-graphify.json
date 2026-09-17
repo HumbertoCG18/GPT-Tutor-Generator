@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_on_sweep",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5218337000042084,
+    "returncode": 0,
+    "stdout": "Node: ._on_sweep()\n  ID:        src_ui_maintenance_panel_maintenancepanel_on_sweep\n  Source:    src/ui/maintenance_panel.py L147\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L147\n  --> Path [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166\n  --> ._log_line() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166\n  --> ._clear_log() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L165\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.48180149999825517,
+    "returncode": 1,
+    "stdout": "Ambiguous: 'sweep_orphans' matches 2 nodes in different files.\n  src/builder/engine.py\n    id: src_builder_engine_repobuilder_sweep_orphans\n  src/builder/ops/lifecycle_ops.py\n    id: src_builder_ops_lifecycle_ops_sweep_orphans\nRetry with the repo-relative path or the full node id.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "path",
+      "_on_sweep",
+      "sweep_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6045009000008577,
+    "returncode": 0,
+    "stdout": "No directed path found between '_on_sweep' and 'sweep_orphans'. Re-run with --undirected to search ignoring edge direction.\n",
+    "stderr": "warning: target match was ambiguous (top score 73869.2, runner-up 67160.5)\n"
+  }
+]

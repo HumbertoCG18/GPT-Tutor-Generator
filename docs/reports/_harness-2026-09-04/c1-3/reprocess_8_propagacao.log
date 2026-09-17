@@ -1,0 +1,26 @@
+== Metodos-Formais-Tutor: 66 entries | votos 52 | git sujo: 0
+   subunidade mudou 4 [('t1-2026-1-thy', '', 'verificacao-de-programas'), ('hoare', 'logica-de-hoare', 'verificacao-de-programas'), ('invariantes', '', 'verificacao-de-programas'), ('terminacao', '', 'verificacao-de-programas')] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 1 -> 1 | propagados 6
+   commit: ok | HEAD 7a8707a
+== Sistemas-Operacionais-Tutor: 39 entries | votos 20 | git sujo: 0
+   subunidade mudou 0 [] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 9 -> 9 | propagados 1
+   commit: pulado (so updated_at); working tree restaurado
+== Inteligencia-Artifical-Tutor: 59 entries | votos 22 | git sujo: 0
+   subunidade mudou 2 [('lista-de-exercicios-i', 'algoritmos-de-busca-com-', 'busca-adversaria'), ('p2-202401', 'algoritmos-de-busca-com-', 'busca-adversaria')] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 2 -> 2 | propagados 7
+   commit: ok | HEAD 0075334
+== Engenharia-Software-2-Tutor: 35 entries | votos 32 | git sujo: 0
+   subunidade mudou 6 [('revisao-p1', '', 'estudo-de-caso-integraca'), ('microsservicos5', 'plataformas-de-devops', 'estudo-de-caso-integraca'), ('roteiro5-conteiners', 'plataformas-de-devops', 'estudo-de-caso-integraca'), ('revisao-p1-respostas', '', 'estudo-de-caso-integraca'), ('revisao-p2', '', 'estudo-de-caso-integraca'), ('revisao-p2-respostas', '', 'estudo-de-caso-integraca')] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 0 -> 0 | propagados 8
+   commit: ok | HEAD 4c8011b
+== TCC-Tutor: 27 entries | votos 22 | git sujo: 0
+   subunidade mudou 1 [('aula-16-exemplo-de-prova-para-revisao', '', 'prova-da-indecidibilidad')] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 5 -> 5 | propagados 4
+   commit: ok | HEAD 621c292
+== Laboratorio-de-Redes-Tutor: 7 entries | votos 2 | git sujo: 0
+   subunidade mudou 0 [] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 2 -> 2 | propagados 0
+   commit: pulado (so updated_at); working tree restaurado
+== Fundamentos-de-Redes-Tutor: 22 entries | votos 13 | git sujo: 0
+   subunidade mudou 0 [] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 4 -> 4 | propagados 0
+   commit: pulado (so updated_at); working tree restaurado
+== Computacao-Grafica-Tutor: 93 entries | votos 42 | git sujo: 0
+   subunidade mudou 0 [] | bloco mudou 0 [] | unidade mudou 0 [] | flagadas 15 -> 15 | propagados 0
+   commit: pulado (so updated_at); working tree restaurado
+TOTAL 8 tutores: subunidade mudou 13 | bloco 0 | unidade 0 | propagados 26
+[fim]

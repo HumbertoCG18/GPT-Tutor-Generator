@@ -1,0 +1,6 @@
+SO: comuns=39 ausentes=0 ambiguos=0 novas_origens=3
+  bloco: base=36/39 novo=29/39 ganhos=1 perdas=8 | comuns=36->29/39
+  unidade: base=27/37 novo=23/37 ganhos=1 perdas=5 | comuns=27->23/37
+  sub_aceito: base=9/15 novo=5/15 ganhos=0 perdas=4 | comuns=9->5/15
+  sub_primario: base=8/15 novo=4/15 ganhos=0 perdas=4 | comuns=8->4/15
+  diferencas observadas (nao causas isoladas): {'category': 25, 'moodle_label': 37, 'posting_date': 37, 'texto_extraido': 31, 'manual_timeline_block_id': 1, 'base_backend': 1}

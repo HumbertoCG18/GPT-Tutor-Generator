@@ -1,0 +1,13 @@
+{
+  "id": "C1",
+  "arm": "baseline",
+  "rep": 1,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 6.521162700002606,
+  "returncode": 0,
+  "evidence_sha256": "43d16fa8cb5ed311b72bf76065dd0047c6abaeb026279aeb8fa3f7bb61b9c302",
+  "prompt_chars": 19993,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76b-89c6-7e81-80f8-69b393124325\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[],\\\"evidence\\\":[\\\"src/builder/timeline/unit_labels.py:26\\\"],\\\"caveat\\\":\\\"A evidência mostra a chamada a unit_number, mas não identifica a função que contém essa linha.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":24319,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":48,\"reasoning_output_tokens\":0}}\n",
+  "stderr": "2026-09-15T23:34:02.825527Z ERROR codex_models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n"
+}

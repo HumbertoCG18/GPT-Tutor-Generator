@@ -1,0 +1,34 @@
+base (regime cru, nenhum topico curado): 147/251 aceito · 105 primario
+
+   K           SELETOR (sem gold)            GOLD (com gold)    custo de nao ver o gold
+           aceito      primario       aceito      primario
+   5      178  70.9%      137  54.6%      188  74.9%      150  59.8%            -10 aceito
+  10      175  69.7%      134  53.4%      195  77.7%      156  62.2%            -20 aceito
+  15      176  70.1%      135  53.8%      202  80.5%      163  64.9%            -26 aceito
+  20      173  68.9%      134  53.4%      205  81.7%      166  66.1%            -32 aceito
+  30      184  73.3%      143  57.0%      211  84.1%      171  68.1%            -27 aceito
+  40      191  76.1%      149  59.4%      219  87.3%      179  71.3%            -28 aceito
+
+topicos candidatos do seletor: 70 · pares com erro no gold: 36
+
+TOP-20 do seletor (a fila de curadoria que um curso NOVO receberia):
+   1. IA   modelos-descritivos                                  unidade com  39 materiais   <== esta nos 10 do gold
+   2. IA   modelos-preditivos                                   unidade com  39 materiais   <== esta nos 10 do gold
+   3. MF   sistema-de-prova                                     unidade com  26 materiais
+   4. MF   softwares-de-suporte-a-verificacao-formal-de-programas unidade com  26 materiais
+   5. ES2  conceito-de-devops                                   unidade com  20 materiais
+   6. ES2  entrega-continua-cd                                  unidade com  20 materiais
+   7. ES2  gerenciamento-da-configuracao                        unidade com  20 materiais
+   8. ES2  monitoramento-continuo                               unidade com  20 materiais
+   9. ES2  plataformas-de-devops                                unidade com  20 materiais
+  10. CG   2d-3d-mao-direita-e-mao-esquerda                     unidade com  18 materiais
+  11. CG   algoritmos-de-rasterizacao                           unidade com  18 materiais
+  12. CG   desenho-de-linhas                                    unidade com  18 materiais
+  13. CG   preenchimento-de-poligonos                           unidade com  18 materiais
+  14. CG   sistema-de-coordenadas-cartesianas                   unidade com  18 materiais   <== esta nos 10 do gold
+  15. CG   algoritmos-de-quantizacao-e-amostragem               unidade com  17 materiais
+  16. CG   cores-e-tipos-de-imagens                             unidade com  17 materiais
+  17. CG   introducao-e-exemplos-de-aplicacoes                  unidade com  17 materiais
+  18. CG   visao-computacional-e-conceito-de-reconhecimento-de-padroes unidade com  17 materiais
+  19. CG   algoritmos-de-deteccao-e-calculo-de-interseccao      unidade com  16 materiais
+  20. CG   algoritmos-de-poligonos                              unidade com  16 materiais

@@ -1,0 +1,193 @@
+[IA] inventario=61 tipos={'pdf': 32, 'zip': 4, 'code': 25} metadata=[]
+[IA] 0/61 Future of Jobs Report 2025
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 1/61 Visão Geral - Introdução e Histórico
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 2/61 Algoritmo Genetico
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 3/61 Cap. sobre Algoritmos Geneticos (Lacerda e outros)
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 4/61 Introducao a busca informada
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 5/61 Outros operadores
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 6/61 programa-exemplo AG
+[IA] 7/61 AG feito em aula pelo Luca
+[IA] 8/61 Algoritmo Dijkstra
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 9/61 Hill Climbing e Simulated Annealing
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 10/61 Programas-exemplo HC, SA (versão para NRainhas e Distribuição de 
+[IA] 11/61 ImplementacaoMinimax
+[IA] 12/61 Lista de Exercicios I
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 13/61 lista1
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 14/61 minimax-teoria
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 15/61 Minimax
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 16/61 Respostas da lista I (feito pela aluna Chiara)
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 17/61 Introducao a agentes
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 18/61 Características dos Dados
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 19/61 Introdução a ML
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 20/61 Algoritmo de Classificação k-NN
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 21/61 Analise Exploratória dos Dados - Exemplo 2
+[IA] 22/61 Análise Exploratória de Dados - Exemplo 1
+[IA] 23/61 Artigo usando k-NN em texto
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 24/61 Exemplo 2 k-NN (com IRIS.csv) - mais completo
+[IA] 25/61 Exemplo com k-NN
+[IA] 26/61 Exemplo de programa com k-NN (em java)
+[IA] 27/61 Exercicio 2 - Solução com rede Perceptron (atualizado)
+[IA] 28/61 Introducao a redes neurais
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 29/61 K-NN para Classificação Exemplo Cardio
+[IA] 30/61 K-NN para Regressão exemplo IMC
+[IA] 31/61 Rede Perceptron - Classificacao - Planta Iris
+[IA] 32/61 Rede Perceptron - Classificacao de Cliente
+[IA] 33/61 Rede Perceptron - Exemplo Atualizado
+[IA] 34/61 Rede Perceptron - OR em Python
+[IA] 35/61 Rede Perceptron - Reconhecendo Letras
+[IA] 36/61 Rede Perceptron
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 37/61 MLP - XOR.ipynb
+[IA] 38/61 MLP Classificação - Inadimplência (normalização e GridSearchCV)
+[IA] 39/61 MLP Classificação - IRIS atualizado
+[IA] 40/61 MLP Regressão - Cardio
+[IA] 41/61 MLP
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 42/61 Rede Perceptron e Equação de Reta
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 43/61 XOR - Backpropagation em python
+[IA] 44/61 Como analisar resultados Acc, Pr, Re e F1
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 45/61 Exemplo 1 - Árvores de Decisão Classificação - Planta Iris
+[IA] 46/61 Exemplo 2 - Arvores de Decisão - Regressão - Diabetes
+[IA] 47/61 Exemplo Complementar - Classificação com Árvores de Decisão
+[IA] 48/61 Árvores de Decisão
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 49/61 agrupamento usando k-Means exemplo 1 (.ipynb)
+[IA] 50/61 agrupamento usando k-Means exemplo 2 (.ipynb)
+[IA] 51/61 Artigo usando agrupamento
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 52/61 Aula sobre Agrupamento - parte 1 (particional)
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 53/61 Survey on Clustering
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 54/61 agrupamento hierarquico - exemplo 1
+[IA] 55/61 agrupamento hierarquico - exemplo 2 (use o dataset da planta IRIS
+[IA] 56/61 Aula sobre Agrupamento - parte 2 (hierarquico)
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 57/61 P2 2024.01
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 58/61 P2 2024.02
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 59/61 Prova 1 2024 02
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 60/61 Prova 1 2024.02
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] -1/-1 
+[IA] 61/61 
+[IA] capture backfills: {'labels': 58, 'posting': 58, 'lessons': 35} {'sections': 1, 'card_labels': 19}
+[IA] resultado={'seconds': 3502.43, 'calls': {}, 'failed_entries': [], 'completed': True}

@@ -1,0 +1,47 @@
+########## A) modo --limpo (o que produziu o 61% publicado) ##########
+O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? [TAXONOMIA LIMPA: sem aliases curados do sidecar MANUAL; os do LLM sobrevivem]
+         n      PLANO  AL-CURADO  AL-HEADIN       SARC      SECAO     TITULO   HEADINGS  PLANO+SAR  SEM-CURAD  PROFESSOR   QUALQUER    NENHUMA
+SO      15    3   20%    0    0%    8   53%    0    0%    0    0%    2   13%    4   27%    5   33%    8   53%    8   53%    8   53%    7   47%
+IA      39    0    0%    2    5%   38   97%   34   87%    2    5%   32   82%   21   54%   36   92%   39  100%   37   95%   39  100%    0    0%
+ES2     28    2    7%   12   43%   28  100%    9   32%   13   46%    3   11%   11   39%   16   57%   28  100%   19   68%   28  100%    0    0%
+TCC     10    2   20%    0    0%    9   90%    4   40%    3   30%    5   50%    4   40%    7   70%    9   90%    7   70%    9   90%    1   10%
+MF      58    3    5%    0    0%   42   72%    7   12%    4    7%   20   34%   18   31%   27   47%   42   72%   28   48%   42   72%   16   28%
+CG      77   17   22%   14   18%   25   32%   26   34%   19   25%   21   27%   17   22%   39   51%   45   58%   39   51%   52   68%   25   32%
+TOT    227   27   12%   28   12%  150   66%   80   35%   41   18%   83   37%   75   33%  130   57%  171   75%  138   61%  178   78%   49   22%
+
+gold fora da unidade computada (nao contam acima): 0
+
+LEITURA: 'PLANO' e o que o motor ja tem hoje pelo texto. As colunas SARC/SECAO/TITULO/HEADINGS sao o que as
+fontes do professor acrescentariam. 'NENHUMA' e o piso: nenhuma fonte do professor nomeia o subtopico certo.
+
+########## B) modo --cru (sem aliases do sidecar LLM tambem) ##########
+O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? [CRU: taxonomia sem os aliases dos sidecares manual E LLM]
+         n      PLANO  AL-CURADO  AL-HEADIN       SARC      SECAO     TITULO   HEADINGS  PLANO+SAR  SEM-CURAD  PROFESSOR   QUALQUER    NENHUMA
+SO      15    3   20%    8   53%    1    7%    0    0%    0    0%    2   13%    4   27%    5   33%    8   53%    8   53%    8   53%    7   47%
+IA      39    0    0%   38   97%    0    0%   34   87%    2    5%   32   82%   21   54%   36   92%   37   95%   37   95%   39  100%    0    0%
+ES2     28    2    7%   28  100%    0    0%    9   32%   13   46%    8   29%   12   43%   17   61%   20   71%   20   71%   28  100%    0    0%
+TCC     10    2   20%    9   90%    7   70%    4   40%    3   30%    5   50%    4   40%    7   70%    8   80%    7   70%    9   90%    1   10%
+MF      58    3    5%   41   71%   12   21%    7   12%    4    7%   20   34%   18   31%   27   47%   30   52%   28   48%   42   72%   16   28%
+CG      77   17   22%   39   51%    2    3%   31   40%   24   31%   32   42%   20   26%   46   60%   46   60%   46   60%   52   68%   25   32%
+TOT    227   27   12%  163   72%   22   10%   85   37%   46   20%   99   44%   79   35%  138   61%  149   66%  146   64%  178   78%   49   22%
+
+gold fora da unidade computada (nao contam acima): 0
+
+LEITURA: 'PLANO' e o que o motor ja tem hoje pelo texto. As colunas SARC/SECAO/TITULO/HEADINGS sao o que as
+fontes do professor acrescentariam. 'NENHUMA' e o piso: nenhuma fonte do professor nomeia o subtopico certo.
+
+########## C) modo --cru --sem-gemini (tambem sem texto do Gemini) ##########
+O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? [CRU: taxonomia sem os aliases dos sidecares manual E LLM] [SEM GEMINI no texto: sem IMAGE_DESCRIPTION e sem code_curation]
+         n      PLANO  AL-CURADO  AL-HEADIN       SARC      SECAO     TITULO   HEADINGS  PLANO+SAR  SEM-CURAD  PROFESSOR   QUALQUER    NENHUMA
+SO      15    3   20%    8   53%    1    7%    0    0%    0    0%    2   13%    4   27%    5   33%    8   53%    8   53%    8   53%    7   47%
+IA      39    0    0%   37   95%    0    0%   34   87%    2    5%   32   82%   21   54%   36   92%   37   95%   37   95%   39  100%    0    0%
+ES2     28    2    7%   20   71%    0    0%    9   32%   13   46%    8   29%   12   43%   17   61%   20   71%   20   71%   25   89%    3   11%
+TCC     10    2   20%    9   90%    7   70%    4   40%    3   30%    5   50%    4   40%    7   70%    8   80%    7   70%    9   90%    1   10%
+MF      58    3    5%   37   64%   12   21%    7   12%    4    7%   20   34%   18   31%   27   47%   30   52%   28   48%   42   72%   16   28%
+CG      77   16   21%   31   40%    2    3%   31   40%   24   31%   32   42%   20   26%   46   60%   46   60%   46   60%   52   68%   25   32%
+TOT    227   26   11%  142   63%   22   10%   85   37%   46   20%   99   44%   79   35%  138   61%  149   66%  146   64%  175   77%   52   23%
+
+gold fora da unidade computada (nao contam acima): 0
+
+LEITURA: 'PLANO' e o que o motor ja tem hoje pelo texto. As colunas SARC/SECAO/TITULO/HEADINGS sao o que as
+fontes do professor acrescentariam. 'NENHUMA' e o piso: nenhuma fonte do professor nomeia o subtopico certo.

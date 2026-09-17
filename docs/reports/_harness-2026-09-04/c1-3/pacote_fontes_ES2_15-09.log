@@ -1,0 +1,147 @@
+[ES2] inventario=35 tipos={'pdf': 27, 'zip': 8} metadata=[]
+[ES2] 0/35 devops
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 1/35 Kubernetes
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 2/35 revisao_p1
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 3/35 revisao_p1_respostas
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 4/35 revisao_p2
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 5/35 revisao_p2_respostas
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 6/35 Azure
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 7/35 microsservicos
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 8/35 microsservicos2
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 9/35 microsservicos3
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 10/35 microsservicos4
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 11/35 microsservicos5
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 12/35 microsservicos6
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 13/35 microsservicos7
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 14/35 roteiro1
+[ES2] 15/35 Roteiro1_introducao
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 16/35 roteiro2
+[ES2] 17/35 Roteiro2_nameserver
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 18/35 roteiro3
+[ES2] 19/35 Roteiro3_gateway
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 20/35 roteiro4
+[ES2] 21/35 Roteiro4_circuitbreaker
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 22/35 roteiro5
+[ES2] 23/35 Roteiro5_conteiners
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 24/35 roteiro6
+[ES2] 25/35 Roteiro6_conteiners_composicao
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 26/35 roteiro7
+[ES2] 27/35 Roteiro7_filas
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 28/35 roteiro7_history-service
+[ES2] 29/35 Roteiro8_autenticacao_autorizacao
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 30/35 plano
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 31/35 RevisaoArquiteturaPadroes
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 32/35 servicos
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 33/35 web
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 34/35 t1_2026_1
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] -1/-1 
+[ES2] 35/35 
+[ES2] capture backfills: {'labels': 35, 'posting': 35, 'lessons': 18} {'sections': 35, 'card_labels': 4}
+[ES2] resultado={'seconds': 2281.0, 'calls': {}, 'failed_entries': [], 'completed': True}

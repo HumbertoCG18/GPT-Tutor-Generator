@@ -17,6 +17,7 @@ _PERSISTED_ENTRY_FIELDS = (
     "unit_match_reasons",
     "subunit_match_confidence",
     "subunit_match_reasons",
+    "computed_subunit_slug",
 )
 
 
@@ -31,6 +32,7 @@ def _make_entry_dict() -> dict:
         "unit_match_reasons": ["winner_score=3.50", "date_boost"],
         "subunit_match_confidence": 0.63,
         "subunit_match_reasons": ["topic_overlap"],
+        "computed_subunit_slug": "subunidade-02-inducao",
     }
 
 
@@ -43,6 +45,17 @@ def test_fileentry_roundtrip_preserves_persisted_match_fields():
     for name in _PERSISTED_ENTRY_FIELDS:
         assert name in second, f"campo {name!r} sumiu no round-trip"
         assert second[name] == payload[name], f"campo {name!r} divergiu: {second[name]!r}"
+
+
+def test_fileentry_roundtrip_preserves_moodle_label():
+    """alavanca 1: o label do modulo Moodle (mod.name) sobrevive ao round-trip."""
+    payload = {
+        "source_path": "staging/invariantes.zip", "file_type": "pdf",
+        "category": "material", "title": "invariantes",
+        "moodle_label": "Exemplos (Logica de Floyd-Hoare)",
+    }
+    out = FileEntry.from_dict(payload).to_dict()
+    assert out.get("moodle_label") == "Exemplos (Logica de Floyd-Hoare)"
 
 
 def test_fileentry_reason_lists_default_to_empty_list():
@@ -119,7 +132,8 @@ _KEPT_BLOCK_FIELDS = (
 
 
 def test_serialize_timeline_index_keeps_fields_with_live_readers():
-    from src.builder.timeline.index import _serialize_timeline_index
+    # Cutover passo 3: serializador unico = persist_enriched_timeline_index.
+    from src.builder.core.core_utils import persist_enriched_timeline_index
 
     timeline_index = {
         "version": 4,
@@ -139,17 +153,20 @@ def test_serialize_timeline_index_keeps_fields_with_live_readers():
         ],
     }
 
-    serialized = _serialize_timeline_index(timeline_index)
+    serialized = persist_enriched_timeline_index(timeline_index)
     assert serialized["blocks"], "bloco instrucional nao deveria ser filtrado"
     payload = serialized["blocks"][0]
     for name in _KEPT_BLOCK_FIELDS:
         assert name in payload, f"campo {name!r} tem leitor vivo e nao pode sumir"
+    assert "rows" not in payload, "rows sao runtime-only e nao persistem"
 
 
 def test_block_scope_unit_key_not_entry_scoped_in_serialization():
     """O bloco serializado NUNCA expoe a chave entry-scoped `manual_unit_slug`;
-    o override de unidade em escopo bloco usa `block_manual_unit_slug`."""
-    from src.builder.timeline.index import _serialize_timeline_index
+    o override de unidade em escopo bloco usa `block_manual_unit_slug`. Pos-morte
+    do fantasma, a garantia vive nos builders de bloco (o persist copia o dict) —
+    o teste documenta o contrato sobre um bloco producao-like."""
+    from src.builder.core.core_utils import persist_enriched_timeline_index
 
     timeline_index = {
         "version": 4,
@@ -165,6 +182,6 @@ def test_block_scope_unit_key_not_entry_scoped_in_serialization():
         ],
     }
 
-    payload = _serialize_timeline_index(timeline_index)["blocks"][0]
+    payload = persist_enriched_timeline_index(timeline_index)["blocks"][0]
     assert payload["block_manual_unit_slug"] == "unidade-01"
     assert "manual_unit_slug" not in payload

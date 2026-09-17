@@ -1,0 +1,2935 @@
+[
+ {
+  "id": 7674463,
+  "name": "Informações Gerais",
+  "visible": 1,
+  "summary": "<ul>\r\n<li>4647D-04 -&nbsp;Sistemas Operacionais</li>\r\n<li>Prof. Dr. Miguel Xavier (miguel.xavier@pucrs.br)</li>\r\n<li>Avaliação:\r\n<ul>\r\n<li>G1 = (P1 + P2 + TP) / 3</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<div class=\"O1\">\r\n<ul>\r\n<li>Bibliografia básica:</li>\r\n<ul>\r\n<li>SILBERSCHATZ, GAVIN e GAGNE, Fundamentos de Sistemas Operacionais.</li>\r\n<li>SILBERSCHATZ, Abraham, GALVIN, Peter B, GAGNE, Greg. Sistemas Operacionais com Java.&nbsp;</li>\r\n<li>TANENBAUM, Sistemas Operacionais Modernos.</li></ul></ul>\r\n</div>",
+  "summaryformat": 1,
+  "section": 0,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668813,
+    "url": "https://moodle.pucrs.br/mod/forum/view.php?id=3668813",
+    "name": "Fórum",
+    "instance": 205104,
+    "contextid": 5876820,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/forum/1788184683/monologo?filtericon=1",
+    "modname": "forum",
+    "purpose": "collaboration",
+    "branded": false,
+    "modplural": "Fóruns",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"trackingtype\":\"1\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668814,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668814",
+    "name": "Programa",
+    "instance": 1840376,
+    "contextid": 5876821,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668814&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "4637H-04.pdf",
+      "filepath": "/",
+      "filesize": 426632,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876821/mod_resource/content/1/4637H-04.pdf?forcedownload=1",
+      "timecreated": 1773179989,
+      "timemodified": 1773179989,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 426632,
+     "lastmodified": 1773179989,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668816,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668816",
+    "name": "Apresentação da Disciplina",
+    "instance": 1840378,
+    "contextid": 5876823,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668816&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1776984271,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "00 - Apresentação da Disciplina.pdf",
+      "filepath": "/",
+      "filesize": 791049,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876823/mod_resource/content/2/00%20-%20Apresentac%CC%A7a%CC%83o%20da%20Disciplina.pdf?forcedownload=1",
+      "timecreated": 1773179989,
+      "timemodified": 1773179989,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 791049,
+     "lastmodified": 1773179989,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668818,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3668818",
+    "name": "Cronograma",
+    "instance": 477924,
+    "contextid": 5876825,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3668818&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Cronograma",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://sarc.pucrs.br/Default/Export.aspx?id=03badbfe-3e60-49ed-8460-8ec3daa6ec3f&ano=2026&sem=1",
+      "timecreated": null,
+      "timemodified": 1773180147,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1773180147,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668820,
+    "name": "\nTrabalho(s)",
+    "instance": 617680,
+    "contextid": 5876827,
+    "description": "<div class=\"no-overflow\"><p></p>\n<p><strong>Trabalho(s)</strong></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3702247,
+    "url": "https://moodle.pucrs.br/mod/groupselect/view.php?id=3702247",
+    "name": "Grupos de trabalho",
+    "instance": 8145,
+    "contextid": 5926889,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/groupselect/1788184683/monologo?filtericon=1",
+    "modname": "groupselect",
+    "purpose": "collaboration",
+    "branded": false,
+    "modplural": "Escolha de grupos",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3711791,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3711791",
+    "name": "Trabalho 1 - Entrega 14/05",
+    "instance": 213660,
+    "contextid": 5938576,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "{\"customcompletionrules\":{\"completionsubmit\":\"0\"},\"duedate\":1778796900}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 0,
+     "timecompleted": 0,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      },
+      {
+       "rulename": "completionusegrade",
+       "rulevalue": {
+        "status": 0,
+        "description": "Receber uma nota"
+       }
+      }
+     ],
+     "isoverallcomplete": false
+    },
+    "downloadcontent": 1,
+    "dates": [
+     {
+      "label": "Vencimento:",
+      "timestamp": 1778796900,
+      "dataid": "duedate"
+     }
+    ],
+    "groupmode": 0
+   },
+   {
+    "id": 3713918,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3713918",
+    "name": "Entrada: prog1",
+    "instance": 1865613,
+    "contextid": 5941378,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/text?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3713918&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "prog1.txt",
+      "filepath": "/",
+      "filesize": 109,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5941378/mod_resource/content/1/prog1.txt?forcedownload=1",
+      "timecreated": 1778800880,
+      "timemodified": 1778800883,
+      "sortorder": 1,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 109,
+     "lastmodified": 1778800883,
+     "mimetypes": [
+      "text/plain"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3713920,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3713920",
+    "name": "Entrada: prog2",
+    "instance": 1865615,
+    "contextid": 5941380,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/text?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3713920&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "prog2.txt",
+      "filepath": "/",
+      "filesize": 544,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5941380/mod_resource/content/1/prog2.txt?forcedownload=1",
+      "timecreated": 1778800913,
+      "timemodified": 1778800915,
+      "sortorder": 1,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 544,
+     "lastmodified": 1778800915,
+     "mimetypes": [
+      "text/plain"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3727402,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3727402",
+    "name": "Trabalho 2 - Entrega 02/07",
+    "instance": 214929,
+    "contextid": 5959463,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "{\"customcompletionrules\":{\"completionsubmit\":\"0\"},\"duedate\":1783030500}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 0,
+     "timecompleted": 0,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      },
+      {
+       "rulename": "completionusegrade",
+       "rulevalue": {
+        "status": 0,
+        "description": "Receber uma nota"
+       }
+      }
+     ],
+     "isoverallcomplete": false
+    },
+    "downloadcontent": 1,
+    "dates": [
+     {
+      "label": "Vencimento:",
+      "timestamp": 1783030500,
+      "dataid": "duedate"
+     }
+    ],
+    "groupmode": 0
+   },
+   {
+    "id": 3668833,
+    "name": "Material de Apoio",
+    "instance": 617681,
+    "contextid": 5876840,
+    "description": "<div class=\"no-overflow\"><p><br /><b>Material de Apoio</b></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668835,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3668835",
+    "name": "Livro-texto: Fundamentos de Sistemas Operacionais, 9ª edição (SILBERSCHATZ, GAVIN e GAGNE, 2013) (copiado)",
+    "instance": 477926,
+    "contextid": 5876842,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3668835&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1774472530,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Livro-texto Fundamentos de Sistemas Operacionais, 9ª edição (SILBERSCHATZ, GAVIN e GAGNE, 2013) (copiado)",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311",
+      "timecreated": null,
+      "timemodified": 1534942168,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1534942168,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668837,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3668837",
+    "name": "Template para relatórios (IEEE Procedings)",
+    "instance": 477927,
+    "contextid": 5876844,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3668837&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1774472538,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Template para relatórios (IEEE Procedings)",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://www.ieee.org/conferences/publishing/templates.html",
+      "timecreated": null,
+      "timemodified": 1567815742,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1567815742,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3708474,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3708474",
+    "name": "Lista Exercícios P1",
+    "instance": 1862283,
+    "contextid": 5934500,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3708474&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "lista1.pdf",
+      "filepath": "/",
+      "filesize": 88033,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5934500/mod_resource/content/1/lista1.pdf?forcedownload=1",
+      "timecreated": 1778020164,
+      "timemodified": 1778020170,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 88033,
+     "lastmodified": 1778020170,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3708477,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3708477",
+    "name": "Lista Exercícios P1 Gabarito",
+    "instance": 1862285,
+    "contextid": 5934503,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3708477&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "lista1_gab.pdf",
+      "filepath": "/",
+      "filesize": 187315,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5934503/mod_resource/content/2/lista1_gab.pdf?forcedownload=1",
+      "timecreated": 1778020620,
+      "timemodified": 1778020629,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 187315,
+     "lastmodified": 1778020629,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668846,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668846",
+    "name": "Questões do ENADE sobre SISOP",
+    "instance": 1840387,
+    "contextid": 5876853,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668846&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Questões ENADE - SISOP.pdf",
+      "filepath": "/",
+      "filesize": 483302,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876853/mod_resource/content/1/Quest%C3%B5es%20ENADE%20-%20SISOP.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 483302,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668848,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668848",
+    "name": "Lista Exercícios P2",
+    "instance": 1840389,
+    "contextid": 5876855,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668848&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "lista2.pdf",
+      "filepath": "/",
+      "filesize": 96222,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876855/mod_resource/content/1/lista2.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 96222,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668849,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668849",
+    "name": "Exercícios P2",
+    "instance": 1840390,
+    "contextid": 5876856,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668849&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "P2 (1).pdf",
+      "filepath": "/",
+      "filesize": 85114,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876856/mod_resource/content/2/P2%20%281%29.pdf?forcedownload=1",
+      "timecreated": 1782258484,
+      "timemodified": 1782258489,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 85114,
+     "lastmodified": 1782258489,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674464,
+  "name": "Introdução aos Sistemas Operacionais",
+  "visible": 1,
+  "summary": "<p></p>\n<p></p>\n<p></p>\n<p></p>",
+  "summaryformat": 1,
+  "section": 1,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668855,
+    "name": "Leitura indicada: Capítulo 1 do livro Sistemas Ope...",
+    "instance": 617684,
+    "contextid": 5876862,
+    "description": "<div class=\"no-overflow\"><p><span style=\"text-decoration: underline;\">Leitura indicada:</span> Capítulo 1 do livro <a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" target=\"_blank\">Sistemas Operacionais, 9ª edição</a> (SILBERSCHATZ, GAVIN, GAGNE, 2012).</p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505478,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668856,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668856",
+    "name": "Definição e Histórico",
+    "instance": 1840394,
+    "contextid": 5876863,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668856&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1774473183,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "aula02_introducao.pdf",
+      "filepath": "/",
+      "filesize": 663841,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876863/mod_resource/content/8/aula02_introducao.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 663841,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668862,
+    "name": "\nUm Sistema Operacional, por mais complexo que po...",
+    "instance": 617686,
+    "contextid": 5876869,
+    "description": "<div class=\"no-overflow\"><p></p>\n<p>Um Sistema Operacional, por mais complexo que possa parecer, <em>“é apenas um conjunto de rotinas executado pelo processador, de forma semelhante aos programas de usuário.”</em> (MACHADO, MAIA, 2007).</p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1776542836,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   }
+  ]
+ },
+ {
+  "id": 7674465,
+  "name": "Processo e Estruturas de Controle",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 2,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668863,
+    "name": "Leitura indicada:&nbsp;Seções &nbsp;2.1 a 2.7 e&amp;nb...",
+    "instance": 617687,
+    "contextid": 5876870,
+    "description": "<div class=\"no-overflow\"><p><u><span style=\"font-size: 0.9375rem;\">Leitura indicada</span><span style=\"font-size: 0.9375rem;\">:</span></u><span style=\"font-size: 0.9375rem;\">&nbsp;</span><span style=\"font-size: 0.9375rem;\">Seções &nbsp;</span><span style=\"font-size: 0.9375rem;\">2.1 a 2.7 e&nbsp;3.1 a 3.3&nbsp;</span><span style=\"font-size: 0.9375rem;\">do livro&nbsp;</span><span style=\"font-size: 0.9375rem;\"><a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" target=\"_blank\">Fundamentos de Sistemas Operacionais, 9ª edição</a></span><span style=\"font-size: 0.9375rem;\">&nbsp;(SILBERSCHATZ, GAVIN, GAGNE, 2013)</span><br></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668864,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668864",
+    "name": "12/03 Processos",
+    "instance": 1840397,
+    "contextid": 5876871,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668864&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505487,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 471583,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876871/mod_resource/content/4/slides.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 471583,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668865,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668865",
+    "name": "17/03 Chamada de Sistema",
+    "instance": 1840398,
+    "contextid": 5876872,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668865&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505488,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 140611,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876872/mod_resource/content/7/slides.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 140611,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668866,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668866",
+    "name": "19/03 Estruturas de Controle",
+    "instance": 1840399,
+    "contextid": 5876873,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668866&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505489,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 123742,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876873/mod_resource/content/8/slides.pdf?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 123742,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668867,
+    "url": "https://moodle.pucrs.br/mod/folder/view.php?id=3668867",
+    "name": "Exemplo: Criação de Processos no Unix/Linux",
+    "instance": 40328,
+    "contextid": 5876874,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/folder/1788184683/monologo?filtericon=1",
+    "modname": "folder",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Pastas",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1773969563,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "filho.c",
+      "filepath": "/",
+      "filesize": 182,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/filho.c?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     },
+     {
+      "type": "file",
+      "filename": "teste03.c",
+      "filepath": "/",
+      "filesize": 540,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste03.c?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     },
+     {
+      "type": "file",
+      "filename": "teste02.c",
+      "filepath": "/",
+      "filesize": 376,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste02.c?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     },
+     {
+      "type": "file",
+      "filename": "teste01.c",
+      "filepath": "/",
+      "filesize": 126,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste01.c?forcedownload=1",
+      "timecreated": 1773179991,
+      "timemodified": 1773179991,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 4,
+     "filessize": 1224,
+     "lastmodified": 1773179991,
+     "mimetypes": [
+      "text/plain"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674466,
+  "name": "Gerência de Processos / CPU",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 3,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668870,
+    "name": "Leitura indicada:&nbsp;Seções 6.1 a 6.3 e 6.8&amp;nbsp...",
+    "instance": 617688,
+    "contextid": 5876877,
+    "description": "<div class=\"no-overflow\"><p><span style=\"text-decoration: underline;\">Leitura indicada</span>:<span style=\"text-decoration: underline;\">&nbsp;</span>Seções 6.1 a 6.3 e 6.8<span></span>&nbsp;do livro&nbsp;<span style=\"background-color: rgb(255, 255, 255); font-size: 0.9375rem;\"><a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" target=\"_blank\">Fundamentos de Sistemas Operacionais, 9ª edição</a></span><span style=\"font-size: 0.9375rem;\">&nbsp;(SILBERSCHATZ, GAVIN, GAGNE, 2013)</span></p><p></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668871,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668871",
+    "name": "24/03 Escalonamento de Processos",
+    "instance": 1840401,
+    "contextid": 5876878,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668871&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1782673601,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 128817,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876878/mod_resource/content/12/slides.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 128817,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668872,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668872",
+    "name": "26/03 Algoritmos de Escalonamento",
+    "instance": 1840402,
+    "contextid": 5876879,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668872&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505759,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "pucrs-si-sop-algoritmos_de_escalonamento-laminas-convertido (1).pdf",
+      "filepath": "/",
+      "filesize": 416964,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876879/mod_resource/content/9/pucrs-si-sop-algoritmos_de_escalonamento-laminas-convertido%20%281%29.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 416964,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668873,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668873",
+    "name": "Exercícios",
+    "instance": 1840403,
+    "contextid": 5876880,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668873&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "homework-4.pdf",
+      "filepath": "/",
+      "filesize": 65252,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876880/mod_resource/content/1/homework-4.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 65252,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674467,
+  "name": "Threads",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 4,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668874,
+    "name": "Leitura indicada: Seções 4.1 a 4.4 do livro Fundam...",
+    "instance": 617689,
+    "contextid": 5876881,
+    "description": "<div class=\"no-overflow\"><p><span style=\"text-decoration: underline;\">Leitura indicada:</span> Seções 4.1 a 4.4 do livro <a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" title=\"Fundamentos de Sistemas Operacionais, 9ª edição\" target=\"_blank\">Fundamentos de Sistemas Operacionais, 9ª edição</a> (SILBERSCHATZ, GAVIN, GAGNE, 2013).</p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505819,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668875,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668875",
+    "name": "31/03 Threads",
+    "instance": 1840404,
+    "contextid": 5876882,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668875&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505822,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 240800,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876882/mod_resource/content/4/slides.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 240800,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668876,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668876",
+    "name": "Biblioteca em C - pthread",
+    "instance": 1840405,
+    "contextid": 5876883,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668876&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "C threads.pdf",
+      "filepath": "/",
+      "filesize": 217455,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876883/mod_resource/content/3/C%20threads.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "MIGUEL GOMES XAVIER",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 217455,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668877,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3668877",
+    "name": "Biblioteca em Java - Javathread",
+    "instance": 477932,
+    "contextid": 5876884,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3668877&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Biblioteca em Java - Javathread",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html",
+      "timecreated": null,
+      "timemodified": 1774999306,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1774999306,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668878,
+    "url": "https://moodle.pucrs.br/mod/folder/view.php?id=3668878",
+    "name": "Exemplo: threads em C",
+    "instance": 40329,
+    "contextid": 5876885,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/folder/1788184683/monologo?filtericon=1",
+    "modname": "folder",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Pastas",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1775580348,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "exemplo3.c",
+      "filepath": "/",
+      "filesize": 1257,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876885/mod_folder/content/4/exemplo3.c?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     },
+     {
+      "type": "file",
+      "filename": "exemplo2.c",
+      "filepath": "/",
+      "filesize": 869,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876885/mod_folder/content/4/exemplo2.c?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     },
+     {
+      "type": "file",
+      "filename": "exemplo1.c",
+      "filepath": "/",
+      "filesize": 976,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876885/mod_folder/content/4/exemplo1.c?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 0,
+      "mimetype": "text/plain",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "ROLAND TEODOROWITSCH",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 3,
+     "filessize": 3102,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "text/plain"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668879,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668879",
+    "name": "07/04 Exemplo: threads em Java",
+    "instance": 1840406,
+    "contextid": 5876886,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/archive?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668879&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "JavaThread.zip",
+      "filepath": "/",
+      "filesize": 27370,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876886/mod_resource/content/4/JavaThread.zip?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/zip",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "MIGUEL GOMES XAVIER",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 27370,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/zip"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674468,
+  "name": "Sincronização e Comunicação de Processos",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 5,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668882,
+    "name": "Leitura indicada: Seções 5.1 a 5.10 do livro Funda...",
+    "instance": 617690,
+    "contextid": 5876889,
+    "description": "<div class=\"no-overflow\"><p><span style=\"text-decoration: underline;\">Leitura indicada:</span> Seções 5.1 a 5.10 do livro <a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" title=\"Fundamentos de Sistemas Operacionais, 9ª edição\" target=\"_blank\">Fundamentos de Sistemas Operacionais, 9ª edição</a> (SILBERSCHATZ, GAVIN, GAGNE, 2013).</p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1776202746,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668883,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3668883",
+    "name": "Exemplo: Somatório em Java",
+    "instance": 210877,
+    "contextid": 5876890,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": false,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1776202748,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668884,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668884",
+    "name": "07/04 Lâminas: Comunicação e Sincronização",
+    "instance": 1840407,
+    "contextid": 5876891,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668884&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1775845175,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 118932,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876891/mod_resource/content/6/slides.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 118932,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668885,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668885",
+    "name": "09/04 Lâminas: Semáforos",
+    "instance": 1840408,
+    "contextid": 5876892,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668885&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1775845207,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 133670,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876892/mod_resource/content/10/slides.pdf?forcedownload=1",
+      "timecreated": 1773179992,
+      "timemodified": 1773179992,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 133670,
+     "lastmodified": 1773179992,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668905,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668905",
+    "name": "14/04 Troca de Mensagens",
+    "instance": 1840417,
+    "contextid": 5876912,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668905&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1776542597,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionview",
+       "rulevalue": {
+        "status": 1,
+        "description": "Ver"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides.pdf",
+      "filepath": "/",
+      "filesize": 309162,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876912/mod_resource/content/15/slides.pdf?forcedownload=1",
+      "timecreated": 1773179993,
+      "timemodified": 1773179993,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 309162,
+     "lastmodified": 1773179993,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668907,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668907",
+    "name": "14/04 Lâminas:  IPC",
+    "instance": 1840419,
+    "contextid": 5876914,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668907&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "aula10_ipc_pipes_fifo-mig.pdf",
+      "filepath": "/",
+      "filesize": 257657,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876914/mod_resource/content/1/aula10_ipc_pipes_fifo-mig.pdf?forcedownload=1",
+      "timecreated": 1773179993,
+      "timemodified": 1773179993,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "MIGUEL GOMES XAVIER",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 257657,
+     "lastmodified": 1773179993,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668910,
+    "name": "\nSockets",
+    "instance": 617695,
+    "contextid": 5876917,
+    "description": "<div class=\"no-overflow\"><p></p>\n<p><strong>Sockets</strong></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 1,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1780505921,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": false,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3668911,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668911",
+    "name": "Lâminas: CS 4244 Internet Programming Sockets Programming",
+    "instance": 1840422,
+    "contextid": 5876918,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668911&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "sockets_kurose.pdf",
+      "filepath": "/",
+      "filesize": 189449,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876918/mod_resource/content/1/sockets_kurose.pdf?forcedownload=1",
+      "timecreated": 1773179993,
+      "timemodified": 1773179993,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 189449,
+     "lastmodified": 1773179993,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668912,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668912",
+    "name": "Lâminas:  Sockets (material alternativo em PT)",
+    "instance": 1840423,
+    "contextid": 5876919,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668912&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "aula2c.pdf",
+      "filepath": "/",
+      "filesize": 392990,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876919/mod_resource/content/1/aula2c.pdf?forcedownload=1",
+      "timecreated": 1773179993,
+      "timemodified": 1773179993,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 392990,
+     "lastmodified": 1773179993,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674470,
+  "name": "Gerência de Memória",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 6,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668916,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668916",
+    "name": "12/05 Lâminas: Gerência de Memória",
+    "instance": 1840425,
+    "contextid": 5876923,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668916&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "template.pdf",
+      "filepath": "/",
+      "filesize": 314127,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876923/mod_resource/content/6/template.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 314127,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668917,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668917",
+    "name": "21/05 Lâminas: Paginação",
+    "instance": 1840426,
+    "contextid": 5876924,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668917&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "template.pdf",
+      "filepath": "/",
+      "filesize": 327302,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876924/mod_resource/content/7/template.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 327302,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668918,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668918",
+    "name": "02/05 Lâminas: Segmentação",
+    "instance": 1840427,
+    "contextid": 5876925,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668918&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "template.pdf",
+      "filepath": "/",
+      "filesize": 321014,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876925/mod_resource/content/3/template.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 321014,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668922,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668922",
+    "name": "02/06 Lâminas: Memória Virtual (Livro-texto)",
+    "instance": 1840431,
+    "contextid": 5876929,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668922&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "ch9br_short.pdf",
+      "filepath": "/",
+      "filesize": 394198,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876929/mod_resource/content/1/ch9br_short.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 394198,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3724585,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3724585",
+    "name": "Exercício: Lista de Questões",
+    "instance": 483546,
+    "contextid": 5955951,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3724585&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Exercício Lista de Questões",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://gist.github.com/miguelxvr/6d85d4882dcd600ed8eb54bb35981de7",
+      "timecreated": null,
+      "timemodified": 1780442081,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1780442081,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674471,
+  "name": "Gerência de I/O",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 7,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668924,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668924",
+    "name": "02/06 Lâminas: Mecanismos de Interrupção",
+    "instance": 1840433,
+    "contextid": 5876931,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668924&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "aula22_interrupcao_gerencia_entrada_saida.pdf",
+      "filepath": "/",
+      "filesize": 608805,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876931/mod_resource/content/1/aula22_interrupcao_gerencia_entrada_saida.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "MIGUEL GOMES XAVIER",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 608805,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3668925,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668925",
+    "name": "02/06 Lâminas: Gerência de I/O (Livro-texto)",
+    "instance": 1840434,
+    "contextid": 5876932,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668925&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "ch13br-short.pdf",
+      "filepath": "/",
+      "filesize": 847064,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876932/mod_resource/content/2/ch13br-short.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "CARLOS ROBERTO MORATELLI",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 847064,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7674472,
+  "name": "Gerência de Arquivos",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 8,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3668926,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3668926",
+    "name": "23/06 Lâminas: Gerência de Arquivos",
+    "instance": 1840435,
+    "contextid": 5876933,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3668926&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "aula24_sistema_arquivos.pdf",
+      "filepath": "/",
+      "filesize": 414009,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876933/mod_resource/content/2/aula24_sistema_arquivos.pdf?forcedownload=1",
+      "timecreated": 1773179994,
+      "timemodified": 1773179994,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Gomes Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 414009,
+     "lastmodified": 1773179994,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3733976,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3733976",
+    "name": "23/06 Lâminas: Lâminas: Armazenamento em Massa",
+    "instance": 1876692,
+    "contextid": 5967098,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3733976&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "slides2.pdf",
+      "filepath": "/",
+      "filesize": 414207,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5967098/mod_resource/content/3/slides2.pdf?forcedownload=1",
+      "timecreated": 1782252566,
+      "timemodified": 1782252568,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 192817,
+      "author": "Miguel Xavier",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 414207,
+     "lastmodified": 1782252568,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ }
+]

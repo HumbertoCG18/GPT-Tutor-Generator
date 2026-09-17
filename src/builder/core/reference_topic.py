@@ -27,6 +27,36 @@ def _unit_bag(unit: dict) -> set[str]:
     return bag
 
 
+def _phrase_bag(phrase: str) -> set[str]:
+    bag: set[str] = set()
+    for tok in _normalize(phrase).split():
+        if len(tok) >= 4:
+            bag.add(tok)
+            bag.add(_stem(tok))
+    return bag
+
+
+def _palavra_citada(palavra: str, texto_bag: set[str]) -> bool:
+    """A palavra aparece no texto — exata, pelo radical, ou como parte de palavra
+    composta. O ultimo caso e necessario: "pthread"/"threads" precisa casar o
+    topico "Programas multithreads" do plano do SO, e nenhum radical liga os dois.
+    Piso de 6 caracteres para a contencao, senao radicais curtos casam qualquer
+    coisa."""
+    if palavra in texto_bag or _stem(palavra) in texto_bag:
+        return True
+    if len(palavra) < 6:
+        return False
+    return any(len(t) >= 6 and (palavra in t or t in palavra) for t in texto_bag)
+
+
+def _frase_citada(phrase: str, texto_bag: set[str]) -> bool:
+    """Toda palavra significativa da frase precisa aparecer. Exigir o conjunto
+    inteiro de variantes (token E radical) era criterio impossivel — nenhuma frase
+    passava, e a cobertura dava zero em 10 de 10 refs (medido 2026-08-18)."""
+    palavras = [tok for tok in _normalize(phrase).split() if len(tok) >= 4]
+    return bool(palavras) and all(_palavra_citada(w, texto_bag) for w in palavras)
+
+
 def assign_concepts_to_unit(
     concepts: List[str],
     fallback_text: str,
@@ -35,33 +65,86 @@ def assign_concepts_to_unit(
     primary_threshold: float = 0.34,
     margin_threshold: float = 0.10,
 ) -> dict:
-    """Retorna {"unit_slug": str, "topics": list[str], "confidence": float}.
+    """Cobertura de uma referência: TODAS as unidades acima do threshold.
 
-    Usa `concepts` (do Gemini); sem concepts cai para tokens de `fallback_text`.
-    Vazio quando nada casa acima do threshold.
+    Retorna {"unit_slug", "topics", "confidence", "units": [{unit_slug, topics,
+    confidence}]}. As três primeiras chaves são a unidade vencedora e existem por
+    compatibilidade (COURSE_MAP e BIBLIOGRAPHY consomem uma unidade só).
+
+    Material transversal cobre VÁRIAS unidades — o single-winner elegia uma e
+    descartava o resto. `topics` são os tópicos que de fato casaram, não todos os
+    da unidade. `margin_threshold` é ignorado: margem separa vencedor de
+    vice-campeão, o que não faz sentido quando a resposta certa é um conjunto.
     """
     terms = [c for c in (concepts or []) if c]
     if not terms and fallback_text:
         terms = [t for t in fallback_text.split() if len(t) >= 4]
     terms_norm = [_normalize(t) for t in terms]
     terms_norm = [t for t in terms_norm if t]
+    vazio = {"unit_slug": "", "topics": [], "confidence": 0.0, "units": []}
     if not terms_norm or not units:
-        return {"unit_slug": "", "topics": [], "confidence": 0.0}
+        return vazio
 
     term_token_sets = [_expand_concept_tokens(t) for t in terms_norm]
+    # Sem `concepts` (build sem Gemini) os termos sao o texto inteiro. Medir a
+    # fracao dos termos que casam dilui o score a zero — a pergunta certa passa a
+    # ser quantos topicos DA UNIDADE o texto cita.
+    por_texto_bruto = not [c for c in (concepts or []) if c]
+    texto_bag: set[str] = set()
+    if por_texto_bruto:
+        for toks in term_token_sets:
+            texto_bag |= toks
 
-    scores: list[tuple[str, float, list]] = []
+    cobertas = []
     for unit in units:
         bag = _unit_bag(unit)
         if not bag:
-            scores.append((unit.get("slug", ""), 0.0, unit.get("topic_phrases", []) or []))
             continue
-        overlap = sum(1 for toks in term_token_sets if toks & bag)
-        scores.append((unit.get("slug", ""), overlap / len(term_token_sets), unit.get("topic_phrases", []) or []))
+        phrases = [p for p in (unit.get("topic_phrases", []) or []) if p]
+        if por_texto_bruto:
+            citados = [p for p in phrases if _frase_citada(p, texto_bag)]
+            # Uma frase DISTINTIVA citada ja cobre a unidade. Fracao como criterio
+            # nao funciona: o glossario infla `topic_phrases` (29 na u03 do SO) e
+            # 1/29 nunca cruza o threshold. A fracao fica sendo so a confianca.
+            fortes = [p for p in citados
+                      if len([w for w in _normalize(p).split() if len(w) >= 4]) >= 2]
+            score = (len(citados) / len(phrases)) if phrases else 0.0
+            if not fortes:
+                continue
+            cobertas.append({"unit_slug": unit.get("slug", ""), "topics": citados[:3],
+                             "confidence": round(score, 3)})
+            continue
+        else:
+            overlap = sum(1 for toks in term_token_sets if toks & bag)
+            score = overlap / len(term_token_sets)
+        if score < primary_threshold:
+            continue
+        if por_texto_bruto:
+            casados = citados
+        else:
+            casados = [
+                phrase for phrase in phrases
+                if (lambda pb: pb and any(toks & pb for toks in term_token_sets))(_phrase_bag(phrase))
+            ]
+        cobertas.append({
+            "unit_slug": unit.get("slug", ""),
+            "topics": casados[:3],
+            "confidence": round(score, 3),
+        })
 
-    scores.sort(key=lambda x: x[1], reverse=True)
-    top_slug, top_score, top_topics = scores[0]
-    second = scores[1][1] if len(scores) > 1 else 0.0
-    if top_score >= primary_threshold and (top_score - second) >= margin_threshold:
-        return {"unit_slug": top_slug, "topics": list(top_topics)[:3], "confidence": round(top_score, 3)}
-    return {"unit_slug": "", "topics": [], "confidence": round(top_score, 3)}
+    if not cobertas:
+        return vazio
+    cobertas.sort(key=lambda u: u["confidence"], reverse=True)
+    # Cobertura real de uma referencia raramente passa de 2 unidades. Sem corte, o
+    # criterio de frase distintiva enche a lista de unidades marginais e derruba a
+    # precisao (medido 2026-08-18). Mantem as que chegam a metade da confianca da
+    # melhor, no maximo 2.
+    teto = cobertas[0]["confidence"]
+    cobertas = [u for u in cobertas if u["confidence"] >= teto * 0.5][:2]
+    winner = cobertas[0]
+    return {
+        "unit_slug": winner["unit_slug"],
+        "topics": list(winner["topics"]),
+        "confidence": winner["confidence"],
+        "units": cobertas,
+    }

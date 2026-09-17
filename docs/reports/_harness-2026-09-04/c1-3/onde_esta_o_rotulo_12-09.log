@@ -1,0 +1,106 @@
+ERROS DE ACEITO NO REGIME CRU: 104
+
+O rotulo do gold esta escrito no texto que o motor leu?
+  LABEL INTEIRO presente  :   3  ( 2.9%)  -> competicao: o motor viu e escolheu outro
+  alias CRU presente      :   1  ( 1.0%)  -> idem, por alias que sobrevive ao corte
+  so TOKEN do label       :  26  (25.0%)  -> parcial: parte do rotulo aparece
+  NADA do rotulo          :  74  (71.2%)  -> vocabulario: o texto nao nomeia o topico
+  (texto vazio no motor)  :   0
+
+Mesmo recorte, so os ERROS CONFIANTES:
+  LABEL INTEIRO      1 de 77
+  alias CRU          1 de 77
+  so TOKEN          21 de 77
+  NADA              54 de 77
+
+Por curso (erros de aceito):
+curso    n  label  aliasCru  soToken   NADA
+MF      15      0         0        5     10
+SO       6      0         0        0      6
+IA      34      0         0        4     30
+ES2      9      0         0        4      5
+TCC      3      1         1        0      1
+CG      26      2         0        6     18
+FR      11      0         0        7      4
+
+Os que o PRODUTO acerta (o vocab LLM resolve), pelo mesmo recorte:
+  n=80 · label 3 · aliasCru 1 · soToken 23 · NADA 53
+
+==================================================================================================================================
+OS QUE O TEXTO NAO NOMEIA DE JEITO NENHUM (alavanca = lexico, nao scorer):
+  MF   archive-of-formal-proofs-355fb8                gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   logicaproposicional-sintaxe                    gold=linguagens-de-especificacao-e-logicas        label='Linguagens de Especificação e Lógicas'
+  MF   logicaproposicional-semantica                  gold=linguagens-de-especificacao-e-logicas        label='Linguagens de Especificação e Lógicas'
+  MF   arvores                                        gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   exemplos                                       gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   intro                                          gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   listas                                         gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   provas                                         gold=provadores-de-teoremas                       label='Provadores de Teoremas'
+  MF   terminacao                                     gold=correcao-parcial-e-total                     label='Correção Parcial e Total'
+  MF   tiposindutivos                                 gold=softwares-de-suporte-a-verificacao-formal-de-programas label='Softwares de Suporte à Verificação Formal de Programas'
+  SO   1903-estruturas-de-controle                    gold=conceitos-basicos                            label='Conceitos básicos'
+  SO   3103-threads                                   gold=conceitos-basicos                            label='Conceitos básicos'
+  SO   exercicios                                     gold=algoritmos-de-escalonamento                  label='Algoritmos de escalonamento'
+  SO   exemplo-threads-em-c-exemplo1                  gold=conceitos-basicos                            label='Conceitos básicos'
+  SO   exemplo-threads-em-c-exemplo2                  gold=conceitos-basicos                            label='Conceitos básicos'
+  SO   exemplo-threads-em-c-exemplo3                  gold=conceitos-basicos                            label='Conceitos básicos'
+  IA   algoritmo-de-classificacao-k-nn                gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exemplo-com-k-nn                               gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exemplo-2-k-nn-com-iriscsv-mais-completo       gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exemplo-de-programa-com-k-nn-em-java           gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   k-nn-para-classificacao-exemplo-cardio         gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   k-nn-para-regressao-exemplo-imc                gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   introducao-a-redes-neurais                     gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron                                gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-classificacao-de-cliente       gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-classificacao-planta-iris      gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-exemplo-atualizado             gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-or-em-python                   gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-reconhecendo-letras            gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exercicio-2-solucao-com-rede-perceptron-atualizado gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   mlp-xoripynb                                   gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   mlp-classificacao-iris-atualizado              gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   mlp-regressao-cardio                           gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   rede-perceptron-e-equacao-de-reta              gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   xor-backpropagation-em-python                  gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exemplo-1-arvores-de-decisao-classificacao-planta-iris gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   exemplo-2-arvores-de-decisao-regressao-diabetes gold=modelos-preditivos                           label='Modelos Preditivos'
+  IA   aula-sobre-agrupamento-parte-1-particional     gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   agrupamento-usando-k-means-exemplo-1-ipynb     gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   agrupamento-usando-k-means-exemplo-2-ipynb     gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   artigo-usando-agrupamento                      gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   survey-on-clustering                           gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   aula-sobre-agrupamento-parte-2-hierarquico     gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   agrupamento-hierarquico-exemplo-1              gold=modelos-descritivos                          label='Modelos Descritivos'
+  IA   agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris gold=modelos-descritivos                          label='Modelos Descritivos'
+  ES2  roteiro1                                       gold=estudo-de-caso-arquitetura-orientada-a-microsservicos label='Estudo de caso: arquitetura orientada a microsserviços'
+  ES2  kubernetes                                     gold=plataformas-de-devops                        label='Plataformas de DevOps'
+  ES2  roteiro2                                       gold=estudo-de-caso-arquitetura-orientada-a-microsservicos label='Estudo de caso: arquitetura orientada a microsserviços'
+  ES2  microsservicos6                                gold=estudo-de-caso-integracao-e-implantacao-de-microsservicos label='Estudo de Caso: integração e implantação de microsserviços'
+  ES2  roteiro8-autenticacao-autorizacao              gold=estudo-de-caso-integracao-e-implantacao-de-microsservicos label='Estudo de Caso: integração e implantação de microsserviços'
+  TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos gold=                                             label=''
+  CG   atividade                                      gold=conceito-de-camera-sintetica                 label='Conceito de Câmera Sintética'
+  CG   basico3d-py                                    gold=conceito-de-camera-sintetica                 label='Conceito de Câmera Sintética'
+  CG   opengl3dcpp-vdi                                gold=conceito-de-camera-sintetica                 label='Conceito de Câmera Sintética'
+  CG   opengl3dcpp                                    gold=conceito-de-camera-sintetica                 label='Conceito de Câmera Sintética'
+  CG   exercicio-com-animacao                         gold=operacoes-com-vetores                        label='Operações com vetores'
+  CG   matematica                                     gold=operacoes-com-vetores                        label='Operações com vetores'
+  CG   animacao-v2                                    gold=                                             label=''
+  CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d gold=sistema-de-coordenadas-cartesianas           label='Sistema de Coordenadas Cartesianas'
+  CG   instanciamento                                 gold=                                             label=''
+  CG   pagina-com-videos-sobre-instanciamento         gold=                                             label=''
+  CG   transformacoesgeometricas                      gold=                                             label=''
+  CG   transformacoesgl                               gold=                                             label=''
+  CG   remocaoderuido                                 gold=filtros                                      label='Filtros'
+  CG   exercicios-teoricos-sobre-processo-de-visualizacao-2d-html gold=sistema-de-coordenadas-cartesianas           label='Sistema de Coordenadas Cartesianas'
+  CG   pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9 gold=entidades-geometricas                        label='Entidades geométricas'
+  CG   pagina-com-videos-sobre-mapeamento-9f410e      gold=sistema-de-coordenadas-cartesianas           label='Sistema de Coordenadas Cartesianas'
+  CG   video-sobre-mapeamento-em-opengl-1dad3c        gold=sistema-de-coordenadas-cartesianas           label='Sistema de Coordenadas Cartesianas'
+  CG   pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156 gold=introducao-e-exemplos-de-aplicacoes          label='Introdução e Exemplos de Aplicações'
+  FR   udp-example-c                                  gold=implementacao-de-sockets                     label='Implementação de sockets'
+  FR   udp-example-java                               gold=implementacao-de-sockets                     label='Implementação de sockets'
+  FR   tcp-chat-c                                     gold=implementacao-de-sockets                     label='Implementação de sockets'
+  FR   tcp-example                                    gold=implementacao-de-sockets                     label='Implementação de sockets'
+
+CSV: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\onde_esta_o_rotulo_12-09.csv

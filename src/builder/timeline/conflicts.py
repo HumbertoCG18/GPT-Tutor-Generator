@@ -13,16 +13,24 @@ from typing import Iterable, List, Mapping
 # evita 4a copia da normalizacao. Mesma fn existe em index.py (modulo pesado).
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
 
-# Espelha o gate de topic-derive do build (index.py): o auto so "teria decidido"
-# a unidade quando o topico primario e confiante e nao-ambiguo.
+# Gate do fallback topic-derive abaixo (so vale para blocos SEM auto_unit_slug).
+# A decisao primaria do auto e o matcher POSICIONAL, gravado em auto_unit_slug
+# (index.py:2198-2204). O topic-derive cobre os blocos que o posicional NAO
+# atribui mas que ainda recebem topico: nao-aula (source_kind != class, fora dos
+# class_candidates), herdados por soft-continuation (unit_slug sem auto_unit_slug)
+# e posicional-vazio. Esses serializam sem auto_unit_slug (so grava se truthy,
+# index.py:932) porem com topic_candidates -> ramo alcancavel em prod (verificado
+# 17/06). 0.65 = mesmo piso de confianca do voto de unidade do build.
 UNIT_AUTO_MIN_CONFIDENCE = 0.65
 
 
 def auto_suggested_unit(block: Mapping) -> tuple[str, float]:
     """(unit_slug, confidence) que o auto atribuiria, ignorando override.
 
-    Abstem ("", 0.0) quando o topico e ambiguo, pouco confiante, ou sem
-    candidatos — espelhando exatamente quando o build NAO topic-derivaria.
+    Precedencia: auto_unit_slug (decisao do matcher posicional) > topic-derive
+    (fallback para blocos sem auto_unit_slug — nao-aula/herdados/posicional-vazio,
+    que ainda tem topico). Abstem ("", 0.0) quando o topico e ambiguo, pouco
+    confiante ou sem candidatos.
     """
     auto = str(block.get("auto_unit_slug") or "").strip()
     if auto:
@@ -37,9 +45,10 @@ def auto_suggested_unit(block: Mapping) -> tuple[str, float]:
     if not candidates:
         return ("", 0.0)
     # NOTA: usa o unit_slug do candidato de maior score (== topico vencedor).
-    # O build resolve via _derive_unit_from_topic_match (normaliza vs taxonomia);
-    # divergem so quando o slug do vencedor nao e unidade valida — caso raro que
-    # no maximo gera um aviso extra/faltante, nunca erro.
+    # (O `_derive_unit_from_topic_match` que esta nota citava foi REMOVIDO em
+    # 2026-08-24: estava morto em producao havia meses, so re-exportado. A
+    # normalizacao contra a taxonomia hoje vive em `reconcile_unit_with_block`,
+    # e a unidade vem do BLOCO temporal, nao do topico — ver U-1 em pendencias.md.)
     unit = str((candidates[0] or {}).get("unit_slug") or "")
     return (unit, conf) if unit else ("", 0.0)
 

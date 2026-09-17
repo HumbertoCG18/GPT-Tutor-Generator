@@ -1,0 +1,56 @@
+  [regua] MF: copia pronta, 85 aliases do LLM vetados na taxonomia, cache de 13 resumos de codigo zerado (sera regenerado sem o vocab)
+  [regua] SO: copia pronta, 98 aliases do LLM vetados na taxonomia, cache de 1 resumos de codigo zerado (sera regenerado sem o vocab), SEM curadoria do benchmark: -0 topicos/-0 termos, 2 vetos neutralizados
+  [regua] IA: copia pronta, 83 aliases do LLM vetados na taxonomia, cache de 4 resumos de codigo zerado (sera regenerado sem o vocab)
+  [regua] ES2: copia pronta, 60 aliases do LLM vetados na taxonomia, cache de 8 resumos de codigo zerado (sera regenerado sem o vocab), SEM curadoria do benchmark: -1 topicos/-1 termos, 0 vetos neutralizados
+  [regua] TCC: copia pronta, 97 aliases do LLM vetados na taxonomia
+  [regua] CG: copia pronta, 78 aliases do LLM vetados na taxonomia, cache de 12 resumos de codigo zerado (sera regenerado sem o vocab), SEM curadoria do benchmark: -3 topicos/-4 termos, 0 vetos neutralizados
+  [regua] FR: copia pronta, 51 aliases do LLM vetados na taxonomia, cache de 4 resumos de codigo zerado (sera regenerado sem o vocab)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+  [regua] MF: reprocess 30s
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+  [regua] SO: reprocess 22s
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+  [regua] IA: reprocess 83s
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+  [regua] ES2: reprocess 25s
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+  [regua] TCC: reprocess 22s
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+  [regua] CG: reprocess 64s
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+  [regua] FR: reprocess 11s
+reprocess x7 em 295s · TENTATIVAS DE REDE BLOQUEADAS: 0
+
+=== 3 EIXOS — configuracao 'regua' (veto=texto, voter OFF), copia em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.frzero\implementacao_taxonomia_15-09 ===
+eixo                n     ACURACIA TOTAL    precisao do confiante   cobertura  erros conf
+bloco             237    222/237    93.7%       139/143     97.2%      60.3%           4
+unidade           284    253/284    89.1%       155/158     98.1%      55.6%           3
+subunidade        251    142/251    56.6%        77/137     56.2%      54.6%          60
+subunid(prim)     251    100/251    39.8%        59/137     43.1%      54.6%          78
+
+NATUREZA DOS ERROS DE UNIDADE (separado para leitura; NADA e descontado do placar acima)
+  erros de unidade                                       31
+    divergencia de DESENHO (bloco x plano adjudicado)    17
+    conflito bloco x texto nao adjudicado                 5
+    falha de sinal (sem conflito registrado)              9
+  --> a divergencia de desenho e a fila da mudanca de precedencia (file_map.py:802-807).
+      Se ela fosse resolvida, a unidade iria de 253/284 = 89.1% para 270/284 = 95.1%.
+      Isto NAO e um desconto: e o teto daquela mudanca, medido.
+
+POR CURSO (acuracia total)
+curso               bloco            unidade         subunidade      subunid(prim)
+MF        59/66    89.4%    61/66    92.4%    46/58    79.3%    25/58    43.1% 
+SO        36/39    92.3%    27/37    73.0%     9/15    60.0%     8/15    53.3% 
+IA        41/42    97.6%    42/42   100.0%     5/39    12.8%     4/39    10.3% 
+ES2       27/28    96.4%    24/28    85.7%    16/28    57.1%    14/28    50.0% 
+TCC       26/27    96.3%    18/18   100.0%     8/11    72.7%     6/11    54.5% 
+CG        33/35    94.3%    81/93    87.1%    51/82    62.2%    37/82    45.1% 
+FR                     -                 -     7/18    38.9%     6/18    33.3% 
+

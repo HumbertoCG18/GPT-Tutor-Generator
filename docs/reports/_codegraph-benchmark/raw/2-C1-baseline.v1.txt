@@ -1,0 +1,241 @@
+DISCOVERY
+src\builder\artifacts\temporal_context.py:14:    unit_number,
+src\builder\artifacts\temporal_context.py:161:        n = unit_number(s)
+src\builder\timeline\unit_labels.py:15:def unit_number(slug: str) -> Optional[int]:
+src\builder\timeline\unit_labels.py:26:    n = unit_number(s)
+src\builder\routing\motor\window_provider.py:369:    """Slug da unidade que a SECAO do Moodle nomeia: 'U2 - ...' (numero explicito, file_map.explicit_unit_number)
+src\builder\routing\motor\window_provider.py:371:    from src.builder.routing.file_map import explicit_unit_number, _unit_number_from_slug
+src\builder\routing\motor\window_provider.py:376:    numero = explicit_unit_number(entry)
+src\builder\routing\motor\window_provider.py:378:        alvo = [str(x.get("slug") or "") for x in units if _unit_number_from_slug(str(x.get("slug") or "")) == numero]
+src\builder\artifacts\student_state.py:106:def _unit_number_from_title(unit_title: str) -> int:
+src\builder\artifacts\student_state.py:114:    unit_number = _unit_number_from_title(unit_title)
+src\builder\artifacts\student_state.py:130:        parts = [str(unit_number), *[str(value) for value in counters if value > 0]]
+src\builder\routing\file_map.py:444:def explicit_unit_number(entry: dict):
+src\builder\routing\file_map.py:454:def _unit_number_from_slug(slug: str):
+src\builder\routing\file_map.py:478:    numero = explicit_unit_number(entry)
+src\builder\routing\file_map.py:480:        alvo = [u for u in indexed_units if _unit_number_from_slug(str(u.get("slug") or "")) == numero]
+src\builder\timeline\index.py:475:def _timeline_unit_number_from_text(text: str) -> Optional[int]:
+src\builder\timeline\index.py:488:def _timeline_unit_number_from_unit(unit: dict) -> Optional[int]:
+src\builder\timeline\index.py:998:def _extract_declared_unit_numbers(
+src\builder\timeline\index.py:1104:        item["declared_unit_numbers"] = _extract_declared_unit_numbers(
+src\builder\timeline\index.py:1135:def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: list) -> List[str]:
+src\builder\timeline\index.py:1136:    if not declared_unit_numbers or not unit_index:
+src\builder\timeline\index.py:1143:        unit_number = _timeline_unit_number_from_unit(unit)
+src\builder\timeline\index.py:1144:        if unit_number is None:
+src\builder\timeline\index.py:1145:            unit_number = _timeline_unit_number_from_text(str(unit.get("title", "") or ""))
+src\builder\timeline\index.py:1146:        if unit_number and unit_number in declared_unit_numbers:
+src\builder\timeline\index.py:1667:        declared_unit_numbers = list(assessment.get("declared_unit_numbers") or [])
+src\builder\timeline\index.py:1668:        declared_unit_slugs = _assessment_scope_unit_slugs(declared_unit_numbers, unit_index)
+src\builder\timeline\index.py:1689:        if declared_unit_numbers and not assessment_date:
+src\builder\timeline\index.py:1691:        if assessment_date and not declared_unit_numbers:
+src\builder\timeline\index.py:1709:                "declared_unit_numbers": declared_unit_numbers,
+src\builder\artifacts\repo.py:290:            declared_units = item.get("declared_unit_numbers", []) or []
+src\builder\artifacts\repo.py:300:            declared_units = item.get("declared_unit_numbers", []) or []
+
+SOURCE VERIFICATION
+src/builder/artifacts/repo.py:271: def assessment_conflict_section_lines(
+src/builder/artifacts/repo.py:285:         lines += [
+src/builder/artifacts/repo.py:286:             "| Avaliação | Data | Escopo | Observação |",
+src/builder/artifacts/repo.py:287:             "|---|---|---|---|",
+src/builder/artifacts/repo.py:288:         ]
+src/builder/artifacts/repo.py:289:         for item in conflicts:
+src/builder/artifacts/repo.py:290:             declared_units = item.get("declared_unit_numbers", []) or []
+src/builder/artifacts/repo.py:291:             scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "—"
+src/builder/artifacts/repo.py:292:             note = " ".join(item.get("conflicts", []) or [])
+src/builder/artifacts/repo.py:293:             lines.append(
+src/builder/artifacts/repo.py:294:                 f"| {item.get('label', '')} | {item.get('assessment_date', '') or '—'} | {scope} | {note or '—'} |"
+src/builder/artifacts/repo.py:295:             )
+src/builder/artifacts/repo.py:296:     else:
+src/builder/artifacts/repo.py:297:         lines.append("**Resumo das inconsistências detectadas**")
+src/builder/artifacts/repo.py:298:         lines.append("")
+src/builder/artifacts/repo.py:299:         for item in conflicts:
+src/builder/artifacts/repo.py:300:             declared_units = item.get("declared_unit_numbers", []) or []
+src/builder/artifacts/repo.py:301:             scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "escopo não explicitado"
+src/builder/artifacts/repo.py:302:             note = " ".join(item.get("conflicts", []) or [])
+src/builder/artifacts/repo.py:303:             lines.append(
+src/builder/artifacts/repo.py:304:                 f"- {item.get('label', '')}"
+src/builder/artifacts/repo.py:305:                 f" ({item.get('assessment_date', '') or 'data não localizada'})"
+src/builder/artifacts/repo.py:306:                 f" -> {scope}: {note or 'observação estrutural'}"
+src/builder/artifacts/repo.py:307:             )
+src/builder/artifacts/repo.py:308:     lines.append("")
+
+src/builder/artifacts/student_state.py:101: _RECENT_BLOCK_RE = re.compile(r"(recent:\s*\n)(?:\s*-\s*\{[^}]*\}\s*\n)*", re.MULTILINE)
+src/builder/artifacts/student_state.py:102: _NEXT_TOPIC_RE = re.compile(r"next_topic:\s*.*", re.MULTILINE)
+src/builder/artifacts/student_state.py:103: VALID_MANUAL_IMPORT_STATUSES = {"pendente", "em_progresso", "compreendido", "revisao"}
+src/builder/artifacts/student_state.py:104: 
+src/builder/artifacts/student_state.py:105: 
+src/builder/artifacts/student_state.py:106: def _unit_number_from_title(unit_title: str) -> int:
+src/builder/artifacts/student_state.py:107:     match = re.search(r"unidade(?:\s+de\s+aprendizagem)?\s+(\d+)", unit_title or "", re.IGNORECASE)
+src/builder/artifacts/student_state.py:108:     if match:
+src/builder/artifacts/student_state.py:109:         return int(match.group(1))
+src/builder/artifacts/student_state.py:110:     return 1
+src/builder/artifacts/student_state.py:111: 
+src/builder/artifacts/student_state.py:112: 
+src/builder/artifacts/student_state.py:113: def _topic_outline_label(unit_title: str, topics: list) -> list[str]:
+src/builder/artifacts/student_state.py:114:     unit_number = _unit_number_from_title(unit_title)
+src/builder/artifacts/student_state.py:115:     counters: list[int] = []
+src/builder/artifacts/student_state.py:116:     labels: list[str] = []
+src/builder/artifacts/student_state.py:117:     for topic in topics:
+src/builder/artifacts/student_state.py:118:         depth = 0
+src/builder/artifacts/student_state.py:119:         if isinstance(topic, tuple) and len(topic) >= 2:
+src/builder/artifacts/student_state.py:120:             try:
+src/builder/artifacts/student_state.py:121:                 depth = max(int(topic[1]), 0)
+src/builder/artifacts/student_state.py:122:             except Exception:
+src/builder/artifacts/student_state.py:125:             counters.append(0)
+src/builder/artifacts/student_state.py:126:         counters = counters[:depth + 1]
+src/builder/artifacts/student_state.py:127:         counters[depth] += 1
+src/builder/artifacts/student_state.py:128:         for idx in range(depth + 1, len(counters)):
+src/builder/artifacts/student_state.py:129:             counters[idx] = 0
+src/builder/artifacts/student_state.py:130:         parts = [str(unit_number), *[str(value) for value in counters if value > 0]]
+src/builder/artifacts/student_state.py:131:         labels.append(".".join(parts))
+src/builder/artifacts/student_state.py:132:     return labels
+src/builder/artifacts/student_state.py:133: 
+src/builder/artifacts/student_state.py:134: 
+src/builder/artifacts/student_state.py:135: def parse_battery_frontmatter(content: str) -> dict:
+src/builder/artifacts/student_state.py:136:     """Parse YAML frontmatter simples (chave: valor por linha)."""
+src/builder/artifacts/student_state.py:137:     m = _FRONTMATTER_RE.match(content or "")
+src/builder/artifacts/student_state.py:138:     if not m:
+
+src/builder/artifacts/temporal_context.py:9: from typing import Optional
+src/builder/artifacts/temporal_context.py:10: 
+src/builder/artifacts/temporal_context.py:11: from src.builder.extraction.content_taxonomy import _exam_code_from_block
+src/builder/artifacts/temporal_context.py:12: from src.builder.timeline.unit_labels import (
+src/builder/artifacts/temporal_context.py:13:     unit_name_from_slug,
+src/builder/artifacts/temporal_context.py:14:     unit_number,
+src/builder/artifacts/temporal_context.py:15:     unit_short_label,
+src/builder/artifacts/temporal_context.py:16: )
+src/builder/artifacts/temporal_context.py:17: 
+src/builder/artifacts/temporal_context.py:18: # kind do bloco -> rótulo curto pra coluna "tipo" (assessment é tratado à parte).
+src/builder/artifacts/temporal_context.py:19: _KIND_TIPO = {
+src/builder/artifacts/temporal_context.py:20:     "class": "aula",
+src/builder/artifacts/temporal_context.py:21:     "review": "revisão",
+src/builder/artifacts/temporal_context.py:22:     "holiday": "feriado",
+src/builder/artifacts/temporal_context.py:146: def build_unit_legend(rows: list) -> list:
+src/builder/artifacts/temporal_context.py:156:         for s in candidates:
+src/builder/artifacts/temporal_context.py:157:             if s and s not in seen:
+src/builder/artifacts/temporal_context.py:158:                 seen.add(s)
+src/builder/artifacts/temporal_context.py:159:                 slugs.append(s)
+src/builder/artifacts/temporal_context.py:160:     def _sort_key(s):
+src/builder/artifacts/temporal_context.py:161:         n = unit_number(s)
+src/builder/artifacts/temporal_context.py:162:         return (n if n is not None else 9999, s)
+src/builder/artifacts/temporal_context.py:163:     slugs.sort(key=_sort_key)
+src/builder/artifacts/temporal_context.py:164:     return [
+src/builder/artifacts/temporal_context.py:165:         {"label": unit_short_label(s), "slug": s, "nome": unit_name_from_slug(s)}
+src/builder/artifacts/temporal_context.py:166:         for s in slugs
+src/builder/artifacts/temporal_context.py:167:     ]
+
+src/builder/routing/file_map.py:439: # exige fronteira antes e digito logo depois).
+src/builder/routing/file_map.py:440: _UNIT_NUM_NAME_RE = re.compile(r"(?:^|[\W_])(?:u\.?\s*|unidade(?:\s+de\s+aprendizagem)?\s+)0*(\d{1,2})(?:$|[\W_])", re.IGNORECASE)
+src/builder/routing/file_map.py:441: _UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
+src/builder/routing/file_map.py:442: 
+src/builder/routing/file_map.py:443: 
+src/builder/routing/file_map.py:444: def explicit_unit_number(entry: dict):
+src/builder/routing/file_map.py:445:     """Numero de unidade explicito em card/titulo/arquivo; None se ausente."""
+src/builder/routing/file_map.py:446:     basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
+src/builder/routing/file_map.py:447:     for text in (str(entry.get("source_section") or ""), str(entry.get("title") or ""), basename):
+src/builder/routing/file_map.py:448:         m = _UNIT_NUM_NAME_RE.search(text)
+src/builder/routing/file_map.py:449:         if m:
+src/builder/routing/file_map.py:450:             return int(m.group(1))
+src/builder/routing/file_map.py:451:     return None
+src/builder/routing/file_map.py:452: 
+src/builder/routing/file_map.py:453: 
+src/builder/routing/file_map.py:454: def _unit_number_from_slug(slug: str):
+src/builder/routing/file_map.py:455:     m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
+src/builder/routing/file_map.py:456:     return int(m.group(1)) if m else None
+src/builder/routing/file_map.py:457: 
+src/builder/routing/file_map.py:458: 
+src/builder/routing/file_map.py:459: def auto_map_entry_unit(
+src/builder/routing/file_map.py:460:     entry: dict,
+src/builder/routing/file_map.py:461:     units: list,
+src/builder/routing/file_map.py:462:     markdown_text: str,
+src/builder/routing/file_map.py:473: ) -> UnitMatchResult:
+src/builder/routing/file_map.py:474:     indexed_units = build_file_map_unit_index(units)
+src/builder/routing/file_map.py:475:     if not indexed_units:
+src/builder/routing/file_map.py:476:         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
+src/builder/routing/file_map.py:477: 
+src/builder/routing/file_map.py:478:     numero = explicit_unit_number(entry)
+src/builder/routing/file_map.py:479:     if numero is not None:
+src/builder/routing/file_map.py:480:         alvo = [u for u in indexed_units if _unit_number_from_slug(str(u.get("slug") or "")) == numero]
+src/builder/routing/file_map.py:481:         if len(alvo) == 1:
+src/builder/routing/file_map.py:482:             return unit_match_result_factory(
+src/builder/routing/file_map.py:483:                 slug=str(alvo[0].get("slug") or ""), confidence=0.95, ambiguous=False,
+src/builder/routing/file_map.py:484:                 reasons=[f"unidade-explicita=u{numero}"])
+src/builder/routing/file_map.py:485: 
+src/builder/routing/file_map.py:486:     signals = collect_entry_unit_signals(entry, markdown_text)
+src/builder/routing/file_map.py:487:     unit_tag_boosts: Dict[str, float] = {}
+src/builder/routing/file_map.py:488:     if unit_tag_index:
+
+src/builder/routing/motor/window_provider.py:364: 
+src/builder/routing/motor/window_provider.py:365: 
+src/builder/routing/motor/window_provider.py:366: _UNIT_TITLE_PREFIX_RE = re.compile(r"^\s*unidade(\s+de\s+aprendizagem)?\s*\d+\s*[\u2014\-\u2013:]?\s*", re.I)
+src/builder/routing/motor/window_provider.py:367: from src.builder.text.patterns import SECTION_NUM_PREFIX_RE as _SECTION_NUM_PREFIX_RE  # regex unica (07/09)
+src/builder/routing/motor/window_provider.py:368: def unit_named_by_section(entry: dict, ctx: MotorContext) -> str:
+src/builder/routing/motor/window_provider.py:369:     """Slug da unidade que a SECAO do Moodle nomeia: 'U2 - ...' (numero explicito, file_map.explicit_unit_number)
+src/builder/routing/motor/window_provider.py:370:     ou secao igual ao/contida no titulo da unidade do plano (frase inteira). "" se nenhuma ou mais de uma."""
+src/builder/routing/motor/window_provider.py:371:     from src.builder.routing.file_map import explicit_unit_number, _unit_number_from_slug
+src/builder/routing/motor/window_provider.py:372:     from src.builder.text.normalize import normalize_match_text
+src/builder/routing/motor/window_provider.py:373:     units = list(getattr(ctx, "units", None) or [])
+src/builder/routing/motor/window_provider.py:374:     if not units:
+src/builder/routing/motor/window_provider.py:375:         return ""
+src/builder/routing/motor/window_provider.py:376:     numero = explicit_unit_number(entry)
+src/builder/routing/motor/window_provider.py:377:     if numero is not None:
+src/builder/routing/motor/window_provider.py:378:         alvo = [str(x.get("slug") or "") for x in units if _unit_number_from_slug(str(x.get("slug") or "")) == numero]
+src/builder/routing/motor/window_provider.py:379:         return alvo[0] if len(alvo) == 1 else ""
+src/builder/routing/motor/window_provider.py:380:     sec = normalize_match_text(_SECTION_NUM_PREFIX_RE.sub("", str(entry.get("source_section") or "")))
+src/builder/routing/motor/window_provider.py:381:     if not sec:
+src/builder/routing/motor/window_provider.py:382:         return ""
+src/builder/routing/motor/window_provider.py:383:     hits = []
+src/builder/routing/motor/window_provider.py:384:     for x in units:
+src/builder/routing/motor/window_provider.py:385:         core = normalize_match_text(_UNIT_TITLE_PREFIX_RE.sub("", str(x.get("title") or "")))
+src/builder/routing/motor/window_provider.py:386:         if core and (re.search(r"(^|\s)" + re.escape(core) + r"(\s|$)", sec) or re.search(r"(^|\s)" + re.escape(sec) + r"(\s|$)", core)):
+
+src/builder/timeline/index.py:470:     if not normalized:
+src/builder/timeline/index.py:471:         return False
+src/builder/timeline/index.py:472:     return any(phrase in normalized for phrase in _TIMELINE_ADMIN_PHRASES)
+src/builder/timeline/index.py:473: 
+src/builder/timeline/index.py:474: 
+src/builder/timeline/index.py:475: def _timeline_unit_number_from_text(text: str) -> Optional[int]:
+src/builder/timeline/index.py:476:     normalized = _normalize_match_text(text)
+src/builder/timeline/index.py:477:     if not normalized:
+src/builder/timeline/index.py:478:         return None
+src/builder/timeline/index.py:479:     match = re.search(r"\bunidade(?: de aprendizagem)?\s*0*(\d+)\b", normalized)
+src/builder/timeline/index.py:480:     if not match:
+src/builder/timeline/index.py:481:         return None
+src/builder/timeline/index.py:482:     try:
+src/builder/timeline/index.py:483:         return int(match.group(1))
+src/builder/timeline/index.py:484:     except ValueError:
+src/builder/timeline/index.py:485:         return None
+src/builder/timeline/index.py:486: 
+src/builder/timeline/index.py:487: 
+src/builder/timeline/index.py:488: def _timeline_unit_number_from_unit(unit: dict) -> Optional[int]:
+src/builder/timeline/index.py:489:     slug = str(unit.get("slug", "") or "")
+src/builder/timeline/index.py:490:     match = re.match(r"^unidade(?:-de-aprendizagem)?-(\d+)\b", slug)
+src/builder/timeline/index.py:491:     if not match:
+src/builder/timeline/index.py:492:         return None
+src/builder/timeline/index.py:493:     try:
+src/builder/timeline/index.py:494:         return int(match.group(1))
+src/builder/timeline/index.py:495:     except ValueError:
+src/builder/timeline/index.py:496:         return None
+src/builder/timeline/index.py:993:             aliases.add(f"prova {num:02d}")
+src/builder/timeline/index.py:994:         aliases.add(normalized)
+src/builder/timeline/index.py:995:     return sorted(aliases)
+src/builder/timeline/index.py:996: 
+src/builder/timeline/index.py:997: 
+src/builder/timeline/index.py:998: def _extract_declared_unit_numbers(
+src/builder/timeline/index.py:999:     text: str,
+src/builder/timeline/index.py:1000:     *,
+src/builder/timeline/index.py:1001:     normalize_match_text: Callable[[str], str],
+src/builder/timeline/index.py:1002:     label_slug: str = "",
+src/builder/timeline/index.py:1003: ) -> List[int]:
+src/builder/timeline/index.py:1004:     normalized = normalize_match_text(text)
+src/builder/timeline/index.py:1005:     if not normalized:
+src/builder/timeline/index.py:1006:         return []
+src/builder/timeline/index.py:1036: def _parse_assessments_from_teaching_plan(
+src/builder/timeline/index.py:1099:         item["label"] = _canonical_assessment_label(
+src/builder/timeline/index.py:1100:             item.get("label", label_slug),
+src/builder/timeline/index.py:1101:             normalize_match_text=normalize_match_text,
+src/builder/timeline/index.py:1102:         )
+src/builder/timeline/index.py:1103:         item["label_slug"] = normalize_match_text(label_slug or item["label"])
+src/builder/timeline/index.py:1104:         item["declared_unit_numbers"] = _extract_declared_unit_numbers(
+src/builder/timeline/index.py:1105:             description,
+src/builder/timeline/index.py:1106:             normalize_mat

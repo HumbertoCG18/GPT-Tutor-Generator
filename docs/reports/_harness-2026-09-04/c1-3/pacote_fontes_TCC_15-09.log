@@ -1,0 +1,139 @@
+[TCC] inventario=27 tipos={'pdf': 27} metadata=[]
+[TCC] 0/27 Plano de Ensino
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 1/27 Aula 01 - Apresentação da Disciplina, Revisão de Teoria de Conjun
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 2/27 Aula 02 - Conjuntos Enumeráveis e Não-Enumeráveis; Argumento da D
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 3/27 Aula 16 - Exemplo de Prova para Revisão
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 4/27 Aula 16 - Classes de Problemas e Complexidade
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+  [latex-check] LaTeX possivelmente corrompido em Aula 16 - Classes de Problemas e Complexidade (score: 30/100).
+[TCC] 5/27 Aula 17 - Complexidade de Tempo Classes P e NP
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 6/27 Aula 17 - NP-Completude
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 7/27 Trabalho T2 - Enunciado
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 8/27 3D Matching
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 9/27 3DM - Caetano, Gabriel e Gustavo
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 10/27 Cubic 3-Edge Coloring
+[TCC] -1/-1 
+[TCC] 11/27 Integer Programming 00.01
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+[TCC] 12/27 Programação Inteira 01_20260617_154423_0000
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+[TCC] 13/27 Aula 03 - Funções Recursivas Primitivas e Composição de Funções
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 14/27 Aula 04 - Funções Computáveis Funções Recursivas Parciais
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 15/27 Aula 05 - Minimização de Funções Recursivas Parciais
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 16/27 T1 - Enunciado
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 17/27 Aula 06 - Revisão Alfabeto, Cadeia, Linguagem, Hierarquia de Chom
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 18/27 Aula 07 - Máquinas de Turing e Linguagens Recursivamente Enumeráv
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 19/27 Aula 08 - Máquinas de Turing como Processadoras de Funções
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 20/27 Aula 09 - Variações de Máquinas de Turing
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 21/27 Aula 10 - Linguagens Reconhecı́veis e Linguagens Decidı́veis
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 22/27 Aula 11 - O Problema da Parada (Halting Problem, Halteproblem)
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 23/27 Aula 12 - Entscheidungsproblem
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 24/27 Aula 13 - Teorema de Rice
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 25/27 Aula 14 - Problema da Correspondência de Post
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 26/27 Aula 15 - Teoremas de Incompletude de Gödel
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] -1/-1 
+[TCC] 27/27 
+[TCC] capture backfills: {'labels': 25, 'posting': 25, 'lessons': 0} {'sections': 3, 'card_labels': 0}
+[TCC] resultado={'seconds': 2549.28, 'calls': {}, 'failed_entries': [], 'completed': True}

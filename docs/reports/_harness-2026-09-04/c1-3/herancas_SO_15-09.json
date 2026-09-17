@@ -1,0 +1,1191 @@
+{
+  "summary": {
+    "SO": {
+      "counts": {
+        "comuns": 39,
+        "bloco_n": 39,
+        "bloco_base": 36,
+        "bloco_novo": 29,
+        "bloco_comum_n": 39,
+        "bloco_comum_base": 36,
+        "bloco_comum_novo": 29,
+        "unidade_n": 37,
+        "unidade_base": 27,
+        "unidade_novo": 23,
+        "unidade_comum_n": 37,
+        "unidade_comum_base": 27,
+        "unidade_comum_novo": 23,
+        "sub_aceito_n": 15,
+        "sub_aceito_base": 9,
+        "sub_aceito_novo": 5,
+        "sub_aceito_comum_n": 15,
+        "sub_aceito_comum_base": 9,
+        "sub_aceito_comum_novo": 5,
+        "sub_primario_n": 15,
+        "sub_primario_base": 8,
+        "sub_primario_novo": 4,
+        "sub_primario_comum_n": 15,
+        "sub_primario_comum_base": 8,
+        "sub_primario_comum_novo": 4,
+        "bloco_perdas": 8,
+        "unidade_perdas": 5,
+        "sub_aceito_perdas": 4,
+        "sub_primario_perdas": 4,
+        "bloco_ganhos": 1,
+        "unidade_ganhos": 1,
+        "manifest_base": 39,
+        "manifest_novo": 42,
+        "novas_origens": 3
+      },
+      "changed_fields": {
+        "category": 25,
+        "moodle_label": 37,
+        "posting_date": 37,
+        "texto_extraido": 31,
+        "manual_timeline_block_id": 1,
+        "base_backend": 1
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "SO",
+      "entry_id": "0206-laminas-gerencia-de-i-o-livro-texto",
+      "new_id": "0206-laminas-gerencia-de-i-o-livro-texto",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de i o\\02.06 lâminas gerência de i o (livro-texto).pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        63052,
+        22413
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0205-laminas-segmentacao",
+      "new_id": "0205-laminas-segmentacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de memória\\02.05 lâminas segmentação.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12483,
+        6784
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "segmentacao"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "1205-laminas-gerencia-de-memoria",
+      "new_id": "1205-laminas-gerencia-de-memoria",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de memória\\12.05 lâminas gerência de memória.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11200,
+        7733
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-05-gerencia-de-memoria",
+        "swapping"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "2105-laminas-paginacao",
+      "new_id": "2105-laminas-paginacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de memória\\21.05 lâminas paginação.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        18760,
+        10123
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "2403-escalonamento-de-processos",
+      "new_id": "2403-escalonamento-de-processos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de processos cpu\\24.03 escalonamento de processos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6511,
+        5096
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "2603-algoritmos-de-escalonamento",
+      "new_id": "2603-algoritmos-de-escalonamento",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de processos cpu\\26.03 algoritmos de escalonamento.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        16216,
+        23170
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exercicios",
+      "new_id": "exercicios",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de processos cpu\\exercícios.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        18435,
+        14971
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "apresentacao-da-disciplina",
+      "new_id": "apresentacao-da-disciplina",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\apresentação da disciplina.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7412,
+        3935
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "lista-exercicios-p1-gabarito",
+      "new_id": "lista-exercicios-p1-gabarito",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\lista exercícios p1 gabarito.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11973,
+        11793
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "programas-multithreads"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "programas-multithreads"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "lista-exercicios-p1",
+      "new_id": "lista-exercicios-p1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\lista exercícios p1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7493,
+        4626
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "programas-multithreads"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "plano-de-ensino",
+      "new_id": "plano-de-ensino",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\plano de ensino.pdf",
+      "matched": true,
+      "observed_differences": [
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13271,
+        11525
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "questoes-do-enade-sobre-sisop",
+      "new_id": "questoes-do-enade-sobre-sisop",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\questões do enade sobre sisop.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "base_backend",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        9303,
+        798
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "",
+        "unidade-06-gerencia-de-arquivos",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "definicao-e-historico",
+      "new_id": "definicao-e-historico",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\introdução aos sistemas operacionais\\definição e histórico.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        34100,
+        17333
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "servicos-dos-sistemas-operacionais"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "servicos-dos-sistemas-operacionais"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "1203-processos",
+      "new_id": "1203-processos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\12.03 processos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        15934,
+        6031
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "1703-chamada-de-sistema",
+      "new_id": "1703-chamada-de-sistema",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\17.03 chamada de sistema.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6413,
+        5951
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "1903-estruturas-de-controle",
+      "new_id": "1903-estruturas-de-controle",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\19.03 estruturas de controle.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6411,
+        4544
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\exemplo criação de processos no unix linux - filho.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        527,
+        527
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\exemplo criação de processos no unix linux - teste01.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        479,
+        479
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\exemplo criação de processos no unix linux - teste02.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        729,
+        729
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\processo e estruturas de controle\\exemplo criação de processos no unix linux - teste03.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        893,
+        893
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "new_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\07.04 lâminas comunicação e sincronização.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7644,
+        6828
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-deadlock",
+        ""
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0904-laminas-semaforos",
+      "new_id": "0904-laminas-semaforos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\09.04 lâminas semáforos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        4626,
+        3807
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-deadlock",
+        ""
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "14-04-troca-de-mensagens",
+      "new_id": "14-04-troca-de-mensagens",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\14 04 troca de mensagens.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10097,
+        7056
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "1404-laminas-ipc",
+      "new_id": "1404-laminas-ipc",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\14.04 lâminas ipc.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        31842,
+        17388
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "new_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\lâminas cs 4244 internet programming sockets programming.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        20051,
+        12996
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-deadlock",
+        ""
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "laminas-sockets-material-alternativo-em-pt",
+      "new_id": "laminas-sockets-material-alternativo-em-pt",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\sincronização e comunicação de processos\\lâminas sockets (material alternativo em pt).pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        20690,
+        15716
+      ],
+      "gains": [
+        "bloco",
+        "unidade"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-deadlock",
+        ""
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0704-exemplo-threads-em-java",
+      "new_id": "0704-exemplo-threads-em-java",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\07.04 exemplo threads em java.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-deadlock",
+        "conceitos-basicos"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-02-gerencia-do-processador",
+        "conceitos-basicos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "3103-threads",
+      "new_id": "3103-threads",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\31.03 threads.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        9383,
+        4805
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "biblioteca-em-c-pthread",
+      "new_id": "biblioteca-em-c-pthread",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\biblioteca em c - pthread.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13704,
+        9369
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo1",
+      "new_id": "exemplo-threads-em-c-exemplo1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\exemplo threads em c - exemplo1.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        1245,
+        1245
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo2",
+      "new_id": "exemplo-threads-em-c-exemplo2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\exemplo threads em c - exemplo2.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        1138,
+        1138
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "algoritmos-de-escalonamento"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo3",
+      "new_id": "exemplo-threads-em-c-exemplo3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\threads\\exemplo threads em c - exemplo3.c",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        1526,
+        1526
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        "escalonamento"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0206-laminas-mecanismos-de-interrupcao",
+      "new_id": "0206-laminas-mecanismos-de-interrupcao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de i o\\02.06 lâminas mecanismos de interrupção.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        28852,
+        12969
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        ""
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "0206-laminas-memoria-virtual-livro-texto",
+      "new_id": "0206-laminas-memoria-virtual-livro-texto",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de memória\\02.06 lâminas memória virtual (livro-texto).pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        52349,
+        13998
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "paginacao"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-05-gerencia-de-memoria",
+        "memoria-virtual"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "2306-laminas-gerencia-de-arquivos",
+      "new_id": "2306-laminas-gerencia-de-arquivos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de arquivos\\23.06 lâminas gerência de arquivos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        69480,
+        14050
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "2306-laminas-laminas-armazenamento-em-massa",
+      "new_id": "2306-laminas-laminas-armazenamento-em-massa",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\gerência de arquivos\\23.06 lâminas lâminas armazenamento em massa.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10503,
+        7046
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "exercicios-p2",
+      "new_id": "exercicios-p2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\exercícios p2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        4486,
+        3262
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "lista-exercicios-p2",
+      "new_id": "lista-exercicios-p2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\lista exercícios p2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3393,
+        3345
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-gerencia-de-arquivos",
+        "arquivos"
+      ]
+    },
+    {
+      "curso": "SO",
+      "entry_id": "programa",
+      "new_id": "programa",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\sistemas-operacionais\\informações gerais\\programa.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13231,
+        11332
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ]
+    }
+  ]
+}

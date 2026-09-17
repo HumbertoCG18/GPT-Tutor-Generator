@@ -1,0 +1,5024 @@
+{
+  "totals": {
+    "entrada_ausente": 13,
+    "bloco_n": 237,
+    "bloco_base": 222,
+    "bloco_novo": 169,
+    "bloco_perdas": 56,
+    "unidade_n": 284,
+    "unidade_base": 253,
+    "unidade_novo": 234,
+    "unidade_perdas": 26,
+    "sub_aceito_n": 251,
+    "sub_aceito_base": 142,
+    "sub_aceito_novo": 99,
+    "sub_primario_n": 251,
+    "sub_primario_base": 100,
+    "sub_primario_novo": 76,
+    "comuns": 303,
+    "bloco_comum_n": 231,
+    "bloco_comum_base": 216,
+    "bloco_comum_novo": 169,
+    "unidade_comum_n": 271,
+    "unidade_comum_base": 244,
+    "unidade_comum_novo": 234,
+    "sub_aceito_comum_n": 243,
+    "sub_aceito_comum_base": 138,
+    "sub_aceito_comum_novo": 99,
+    "sub_primario_comum_n": 243,
+    "sub_primario_comum_base": 96,
+    "sub_primario_comum_novo": 76,
+    "sub_aceito_perdas": 48,
+    "sub_primario_perdas": 31,
+    "sub_primario_ganhos": 7,
+    "sub_aceito_ganhos": 5,
+    "bloco_ganhos": 3,
+    "unidade_ganhos": 7,
+    "manifest_base": 341,
+    "manifest_novo": 338,
+    "novas_origens": 12
+  },
+  "courses": {
+    "MF": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_serial_15-09\\Metodos-Formais-Tutor",
+      "build": {
+        "seconds": 3052.77,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "verified_hashes": 67,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\.moodle_nomes.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 66,
+        "base_backends": {
+          "url_fetcher": 3,
+          "pymupdf4llm": 43,
+          "scanned-pages": 1,
+          "": 19
+        },
+        "base_staging": 2,
+        "curated_refs": 51,
+        "headings": 79,
+        "topics": 23,
+        "aliases": 70,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-metodos-formais/sistemas-formais": [
+            "1.1 Sistemas Formais",
+            "Archive of Formal Proofs",
+            "Especificação Formal"
+          ],
+          "unidade-01-metodos-formais/linguagens-de-especificacao-e-logicas": [
+            "1.2 Linguagens de Especificação e Lógicas"
+          ],
+          "unidade-01-metodos-formais/fundamentos-de-logica-de-primeira-ordem": [
+            "1.2.1 Fundamentos de Lógica de Primeira Ordem",
+            "LÓGICA DE PREDICADOS",
+            "LÓGICA PROPOCIONAL",
+            "LÓGICA PROPOSICIONAL ---",
+            "Lógica de Floyd-Hoare"
+          ],
+          "unidade-01-metodos-formais/especificacao-de-conjuntos-indutivos": [
+            "1.2.2 Especificação de Conjuntos Indutivos",
+            "CONJUNTOS E FUNÇÕES",
+            "Conjuntos Indutivos",
+            "Listas polimórficas (definição indutiva)",
+            "Árvores polimórficas (definição indutiva)"
+          ],
+          "unidade-01-metodos-formais/especificacao-de-funcoes-recursivas": [
+            "1.2.3 Especificação de Funções Recursivas",
+            "EQUAÇÕES RECURSIVAS III",
+            "Formalizando a Noção de Algoritmo Via Equações Recursivas",
+            "Formalização de algoritmos como equações recursivas – Parte 1",
+            "Formalização de algoritmos como equações recursivas – Parte 2",
+            "Formalização de algoritmos como equações recursivas – Parte 3",
+            "Funções Recursivas sobre Listas",
+            "Funções Recursivas sobre Árvores",
+            "Provas por Indução de Especificações Equacionais Recursivas",
+            "Provas por Indução de Especificações Recursivas",
+            "Árvores polimórficas (equações recursivas)"
+          ],
+          "unidade-01-metodos-formais/abordagens-para-verificacao-formal": [
+            "1.3 Abordagens para Verificação Formal",
+            "Formal Verification of Axiom-Free Gödelian Ontological Argument and Trinity Necessity Proof in Isabelle HOL"
+          ],
+          "unidade-01-metodos-formais/provadores-de-teoremas": [
+            "1.3.3 Provadores de Teoremas",
+            "assistentes de prova"
+          ],
+          "unidade-01-metodos-formais/exemplos-de-aplicacoes": [
+            "1.4 Exemplos de Aplicações",
+            "exemplos"
+          ],
+          "unidade-02-verificacao-de-programas/logica-de-hoare": [
+            "2.1 Lógica de Hoare",
+            "Lógica de Hoare – Exercícios",
+            "Triplas de Hoare",
+            "tripla de Hoare"
+          ],
+          "unidade-02-verificacao-de-programas/pre-e-pos-condicoes": [
+            "2.1.1 Pré e Pós Condições",
+            "precondições e pós-condições"
+          ],
+          "unidade-02-verificacao-de-programas/correcao-parcial-e-total": [
+            "2.1.2 Correção Parcial e Total",
+            "Correção",
+            "Correção de Algoritmos",
+            "Correção e Terminação",
+            "Correção parcial:"
+          ],
+          "unidade-02-verificacao-de-programas/invariante-e-variante-de-laco": [
+            "2.1.3 Invariante e Variante de Laço",
+            "Formalização de algoritmos com invariantes de laço",
+            "Invariantes de Laço",
+            "invariante de laço"
+          ],
+          "unidade-02-verificacao-de-programas/sistema-de-prova": [
+            "2.1.4 Sistema de Prova"
+          ],
+          "unidade-02-verificacao-de-programas/softwares-de-suporte-a-verificacao-formal-de-programas": [
+            "2.2 Softwares de Suporte à Verificação Formal de Programas"
+          ],
+          "unidade-02-verificacao-de-programas/verificacao-de-programas": [
+            "1.3.2 Verificação de Programas",
+            "Programação e Verificação com Dafny",
+            "Programação e Verificação com Dafny (Arrays)",
+            "Programação e Verificação com Dafny (Classes)",
+            "Programação e Verificação com Dafny (Sequences)",
+            "Programação e Verificação com Dafny (Sets, Multisets)"
+          ],
+          "unidade-03-verificacao-de-modelos/maquinas-de-estado": [
+            "3.1 Máquinas de Estado",
+            "state machines"
+          ],
+          "unidade-03-verificacao-de-modelos/modelos-de-kripke": [
+            "3.1.1 Modelos de Kripke",
+            "estruturas de Kripke"
+          ],
+          "unidade-03-verificacao-de-modelos/fundamentos-de-logicas-temporais": [
+            "3.2 Fundamentos de Lógicas Temporais"
+          ],
+          "unidade-03-verificacao-de-modelos/logica-temporal-linear": [
+            "3.2.1 Lógica Temporal Linear",
+            "LTL",
+            "Verificação de Modelos e Lógica Temporal"
+          ],
+          "unidade-03-verificacao-de-modelos/logica-temporal-ramificada": [
+            "3.2.2 Lógica Temporal Ramificada",
+            "CTL"
+          ],
+          "unidade-03-verificacao-de-modelos/especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes": [
+            "3.3 Especificação de Propriedades para Sistemas Sequenciais e Concorrentes"
+          ],
+          "unidade-03-verificacao-de-modelos/softwares-de-suporte-a-verificacao-formal-de-modelos": [
+            "3.4 Softwares de Suporte à Verificação Formal de Modelos"
+          ],
+          "unidade-03-verificacao-de-modelos/verificacao-de-modelos-model-checking": [
+            "1.3.1 Verificação de Modelos (Model Checking)",
+            "VERIFICAÇÃO DE MODELOS",
+            "Verificação de Modelos NuSMV/NuXMV + Fasten",
+            "checagem de modelos"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-02",
+            "period_end": "2026-03-02",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-09",
+            "period_end": "2026-03-09",
+            "source_rows": [
+              2
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-25",
+            "source_rows": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-30",
+            "period_end": "2026-04-01",
+            "source_rows": [
+              8,
+              9
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-06",
+            "period_end": "2026-04-13",
+            "source_rows": [
+              10,
+              11,
+              12
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-15",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-20",
+            "period_end": "2026-04-20",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-22",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-27",
+            "period_end": "2026-05-04",
+            "source_rows": [
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-11",
+            "period_end": "2026-05-11",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-25",
+            "source_rows": [
+              21,
+              22,
+              23,
+              24
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-06-01",
+            "period_end": "2026-06-10",
+            "source_rows": [
+              26,
+              27,
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-06-15",
+            "period_end": "2026-06-22",
+            "source_rows": [
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-29",
+            "period_end": "2026-06-29",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-07-06",
+            "period_end": "2026-07-06",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-07-13",
+            "period_end": "2026-07-13",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 67,
+        "base_backends": {
+          "": 19,
+          "pymupdf4llm": 43,
+          "scanned-pages": 5
+        },
+        "base_staging": 48,
+        "curated_refs": 6,
+        "headings": 6,
+        "topics": 23,
+        "aliases": 33,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-metodos-formais/sistemas-formais": [
+            "1.1 Sistemas Formais"
+          ],
+          "unidade-01-metodos-formais/linguagens-de-especificacao-e-logicas": [
+            "1.2 Linguagens de Especificação e Lógicas"
+          ],
+          "unidade-01-metodos-formais/fundamentos-de-logica-de-primeira-ordem": [
+            "1.2.1 Fundamentos de Lógica de Primeira Ordem"
+          ],
+          "unidade-01-metodos-formais/especificacao-de-conjuntos-indutivos": [
+            "1.2.2 Especificação de Conjuntos Indutivos"
+          ],
+          "unidade-01-metodos-formais/especificacao-de-funcoes-recursivas": [
+            "1.2.3 Especificação de Funções Recursivas"
+          ],
+          "unidade-01-metodos-formais/abordagens-para-verificacao-formal": [
+            "1.3 Abordagens para Verificação Formal"
+          ],
+          "unidade-01-metodos-formais/provadores-de-teoremas": [
+            "1.3.3 Provadores de Teoremas",
+            "assistentes de prova"
+          ],
+          "unidade-01-metodos-formais/exemplos-de-aplicacoes": [
+            "1.4 Exemplos de Aplicações",
+            "exemplos"
+          ],
+          "unidade-02-verificacao-de-programas/logica-de-hoare": [
+            "2.1 Lógica de Hoare",
+            "tripla de Hoare"
+          ],
+          "unidade-02-verificacao-de-programas/pre-e-pos-condicoes": [
+            "2.1.1 Pré e Pós Condições",
+            "precondições e pós-condições"
+          ],
+          "unidade-02-verificacao-de-programas/correcao-parcial-e-total": [
+            "2.1.2 Correção Parcial e Total"
+          ],
+          "unidade-02-verificacao-de-programas/invariante-e-variante-de-laco": [
+            "2.1.3 Invariante e Variante de Laço",
+            "invariante de laço"
+          ],
+          "unidade-02-verificacao-de-programas/sistema-de-prova": [
+            "2.1.4 Sistema de Prova"
+          ],
+          "unidade-02-verificacao-de-programas/softwares-de-suporte-a-verificacao-formal-de-programas": [
+            "2.2 Softwares de Suporte à Verificação Formal de Programas"
+          ],
+          "unidade-02-verificacao-de-programas/verificacao-de-programas": [
+            "1.3.2 Verificação de Programas"
+          ],
+          "unidade-03-verificacao-de-modelos/maquinas-de-estado": [
+            "3.1 Máquinas de Estado",
+            "state machines"
+          ],
+          "unidade-03-verificacao-de-modelos/modelos-de-kripke": [
+            "3.1.1 Modelos de Kripke",
+            "estruturas de Kripke"
+          ],
+          "unidade-03-verificacao-de-modelos/fundamentos-de-logicas-temporais": [
+            "3.2 Fundamentos de Lógicas Temporais"
+          ],
+          "unidade-03-verificacao-de-modelos/logica-temporal-linear": [
+            "3.2.1 Lógica Temporal Linear",
+            "LTL"
+          ],
+          "unidade-03-verificacao-de-modelos/logica-temporal-ramificada": [
+            "3.2.2 Lógica Temporal Ramificada",
+            "CTL"
+          ],
+          "unidade-03-verificacao-de-modelos/especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes": [
+            "3.3 Especificação de Propriedades para Sistemas Sequenciais e Concorrentes"
+          ],
+          "unidade-03-verificacao-de-modelos/softwares-de-suporte-a-verificacao-formal-de-modelos": [
+            "3.4 Softwares de Suporte à Verificação Formal de Modelos"
+          ],
+          "unidade-03-verificacao-de-modelos/verificacao-de-modelos-model-checking": [
+            "1.3.1 Verificação de Modelos (Model Checking)",
+            "checagem de modelos"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-02",
+            "period_end": "2026-03-02",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-09",
+            "period_end": "2026-03-09",
+            "source_rows": [
+              2
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-25",
+            "source_rows": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-30",
+            "period_end": "2026-04-01",
+            "source_rows": [
+              8,
+              9
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-06",
+            "period_end": "2026-04-13",
+            "source_rows": [
+              10,
+              11,
+              12
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-15",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-20",
+            "period_end": "2026-04-20",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-22",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-27",
+            "period_end": "2026-05-04",
+            "source_rows": [
+              16,
+              17,
+              18
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-11",
+            "period_end": "2026-05-11",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-25",
+            "source_rows": [
+              21,
+              22,
+              23,
+              24
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-06-01",
+            "period_end": "2026-06-10",
+            "source_rows": [
+              26,
+              27,
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-06-15",
+            "period_end": "2026-06-22",
+            "source_rows": [
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-29",
+            "period_end": "2026-06-29",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-07-06",
+            "period_end": "2026-07-06",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-07-13",
+            "period_end": "2026-07-13",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {
+        "bloco": 4,
+        "unidade": 1
+      }
+    },
+    "SO": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_15-09\\Sistemas-Operacionais-Tutor",
+      "build": {
+        "seconds": 1907.6,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "verified_hashes": 42,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\.moodle_nomes.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 39,
+        "base_backends": {
+          "pymupdf4llm": 31,
+          "": 8
+        },
+        "base_staging": 0,
+        "curated_refs": 38,
+        "headings": 79,
+        "topics": 36,
+        "aliases": 68,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/evolucao-historica": [
+            "1.1 Evolução histórica"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/servicos-dos-sistemas-operacionais": [
+            "1.1 Serviços dos sistemas operacionais",
+            "abstrata",
+            "fato"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/chamadas-de-sistema": [
+            "1.2 Chamadas de sistema",
+            "Chamada de Sistema para Criação de Processos",
+            "Chamada de SistemasCriação de Processos"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/estudo-de-casos": [
+            "--- 2) Casos em que multithreading não melhora desempenho",
+            "1.3 Estudo de casos"
+          ],
+          "unidade-02-gerencia-do-processador/conceitos-basicos": [
+            "3.1 Conceitos básicos"
+          ],
+          "unidade-02-gerencia-do-processador/escalonamento": [
+            "3.2 Escalonamento",
+            "Escalonamento de Processos"
+          ],
+          "unidade-02-gerencia-do-processador/algoritmos-de-escalonamento": [
+            "3.3 Algoritmos de escalonamento"
+          ],
+          "unidade-02-gerencia-do-processador/estudo-de-casos": [
+            "3.4 Estudo de casos"
+          ],
+          "unidade-03-programacao-concorrente/programas-multithreads": [
+            "4.1 Programas multithreads",
+            "Exemplo de Programa Multithread (1)",
+            "Modelo de Multithreading do S.O. Solaris (1)",
+            "Threads"
+          ],
+          "unidade-03-programacao-concorrente/comunicacao-e-sincronizacao-de-processos": [
+            "4.2 Comunicação e sincronização de processos",
+            "Comunicação e Sincronização",
+            "Comunicação entre Processos (1)",
+            "Comunicação entre Processos (2)",
+            "Processos",
+            "SemáforosComunicação e Sincronização",
+            "Troca de MensagensComunicação e Sincronização"
+          ],
+          "unidade-03-programacao-concorrente/primitivas-de-sincronizacao": [
+            "4.3 Primitivas de sincronização"
+          ],
+          "unidade-03-programacao-concorrente/problemas-classicos": [
+            "4.4 Problemas clássicos"
+          ],
+          "unidade-03-programacao-concorrente/construcoes-concorrentes-de-alto-nivel": [
+            "4.5 Construções concorrentes de alto nível"
+          ],
+          "unidade-04-deadlock/conceitos-basicos": [
+            "5.1 Conceitos básicos"
+          ],
+          "unidade-04-deadlock/caracterizacao": [
+            "5.2 Caracterização"
+          ],
+          "unidade-04-deadlock/prevencao": [
+            "5.3 Prevenção"
+          ],
+          "unidade-04-deadlock/deteccao-e-recuperacao": [
+            "5.4 Detecção e recuperação"
+          ],
+          "unidade-05-gerencia-de-memoria/politicas-basicas": [
+            "6.1 Políticas básicas",
+            "Gerência de MemóriaPrincípios Básicos"
+          ],
+          "unidade-05-gerencia-de-memoria/sistemas-monoprogramados": [
+            "6.1.1 Sistemas monoprogramados"
+          ],
+          "unidade-05-gerencia-de-memoria/particoes-fixas": [
+            "6.1.2 Partições fixas"
+          ],
+          "unidade-05-gerencia-de-memoria/particoes-variaveis": [
+            "6.1.3 Partições variáveis"
+          ],
+          "unidade-05-gerencia-de-memoria/swapping": [
+            "6.1.4 Swapping"
+          ],
+          "unidade-05-gerencia-de-memoria/memoria-virtual": [
+            "6.2 Memória virtual",
+            "Capítulo 9: Memória Virtual"
+          ],
+          "unidade-05-gerencia-de-memoria/paginacao": [
+            "6.2.1 Paginação",
+            "Gerência de Memória VirtualPaginação",
+            "Paginação (1)",
+            "about",
+            "laminas",
+            "livro",
+            "logica",
+            "segmentos",
+            "versus"
+          ],
+          "unidade-05-gerencia-de-memoria/segmentacao": [
+            "6.2.2 Segmentação",
+            "Esquema lógico da segmentação",
+            "Memória VirtualSegmentação"
+          ],
+          "unidade-05-gerencia-de-memoria/estudo-de-casos": [
+            "6.3 Estudo de casos"
+          ],
+          "unidade-06-gerencia-de-arquivos/arquivos": [
+            "7.1 Arquivos",
+            "Gerência de Arquivos",
+            "Sistemas de Arquivos",
+            "laminas",
+            "massa",
+            "mecanico"
+          ],
+          "unidade-06-gerencia-de-arquivos/diretorios": [
+            "7.2 Diretórios"
+          ],
+          "unidade-06-gerencia-de-arquivos/implementacao-de-sistemas-de-arquivos": [
+            "7.3 Implementação de sistemas de arquivos"
+          ],
+          "unidade-06-gerencia-de-arquivos/protecao": [
+            "7.4 Proteção"
+          ],
+          "unidade-06-gerencia-de-arquivos/seguranca": [
+            "7.5 Segurança"
+          ],
+          "unidade-06-gerencia-de-arquivos/estudo-de-casos": [
+            "7.6 Estudo de casos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/dispositivos-de-entrada-e-saida": [
+            "2.1 Dispositivos de entrada e saída"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/controladores-dos-dispositivos": [
+            "2.2 Controladores dos dispositivos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/drivers-dos-dispositivos": [
+            "2.3 Drivers dos dispositivos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/estudo-de-casos": [
+            "2.4 Estudo de casos"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-03",
+            "period_end": "2026-03-03",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-05",
+            "period_end": "2026-03-05",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-10",
+            "period_end": "2026-03-17",
+            "source_rows": [
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-19",
+            "period_end": "2026-03-31",
+            "source_rows": [
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-04-02",
+            "period_end": "2026-04-02",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-07",
+            "period_end": "2026-04-09",
+            "source_rows": [
+              10,
+              11
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-14",
+            "period_end": "2026-04-16",
+            "source_rows": [
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-21",
+            "period_end": "2026-04-21",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-23",
+            "period_end": "2026-04-28",
+            "source_rows": [
+              15,
+              16
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-30",
+            "period_end": "2026-04-30",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-05",
+            "period_end": "2026-05-05",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-07",
+            "period_end": "2026-05-07",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-12",
+            "period_end": "2026-05-12",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-14",
+            "period_end": "2026-05-14",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-05-19",
+            "period_end": "2026-05-19",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-05-21",
+            "period_end": "2026-06-02",
+            "source_rows": [
+              23,
+              24,
+              25,
+              26
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-04",
+            "period_end": "2026-06-04",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-09",
+            "period_end": "2026-06-09",
+            "source_rows": [
+              28
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-06-11",
+            "period_end": "2026-06-11",
+            "source_rows": [
+              29
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-06-16",
+            "period_end": "2026-06-23",
+            "source_rows": [
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-06-25",
+            "period_end": "2026-06-25",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-06-30",
+            "period_end": "2026-06-30",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-02",
+            "period_end": "2026-07-02",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-07-07",
+            "period_end": "2026-07-07",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-07-09",
+            "period_end": "2026-07-09",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-07-14",
+            "period_end": "2026-07-14",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-07-16",
+            "period_end": "2026-07-16",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 42,
+        "base_backends": {
+          "pymupdf4llm": 33,
+          "scanned-pages": 1,
+          "": 8
+        },
+        "base_staging": 34,
+        "curated_refs": 7,
+        "headings": 7,
+        "topics": 36,
+        "aliases": 36,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/evolucao-historica": [
+            "1.1 Evolução histórica"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/servicos-dos-sistemas-operacionais": [
+            "1.1 Serviços dos sistemas operacionais"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/chamadas-de-sistema": [
+            "1.2 Chamadas de sistema"
+          ],
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais/estudo-de-casos": [
+            "1.3 Estudo de casos"
+          ],
+          "unidade-02-gerencia-do-processador/conceitos-basicos": [
+            "3.1 Conceitos básicos"
+          ],
+          "unidade-02-gerencia-do-processador/escalonamento": [
+            "3.2 Escalonamento"
+          ],
+          "unidade-02-gerencia-do-processador/algoritmos-de-escalonamento": [
+            "3.3 Algoritmos de escalonamento"
+          ],
+          "unidade-02-gerencia-do-processador/estudo-de-casos": [
+            "3.4 Estudo de casos"
+          ],
+          "unidade-03-programacao-concorrente/programas-multithreads": [
+            "4.1 Programas multithreads"
+          ],
+          "unidade-03-programacao-concorrente/comunicacao-e-sincronizacao-de-processos": [
+            "4.2 Comunicação e sincronização de processos"
+          ],
+          "unidade-03-programacao-concorrente/primitivas-de-sincronizacao": [
+            "4.3 Primitivas de sincronização"
+          ],
+          "unidade-03-programacao-concorrente/problemas-classicos": [
+            "4.4 Problemas clássicos"
+          ],
+          "unidade-03-programacao-concorrente/construcoes-concorrentes-de-alto-nivel": [
+            "4.5 Construções concorrentes de alto nível"
+          ],
+          "unidade-04-deadlock/conceitos-basicos": [
+            "5.1 Conceitos básicos"
+          ],
+          "unidade-04-deadlock/caracterizacao": [
+            "5.2 Caracterização"
+          ],
+          "unidade-04-deadlock/prevencao": [
+            "5.3 Prevenção"
+          ],
+          "unidade-04-deadlock/deteccao-e-recuperacao": [
+            "5.4 Detecção e recuperação"
+          ],
+          "unidade-05-gerencia-de-memoria/politicas-basicas": [
+            "6.1 Políticas básicas"
+          ],
+          "unidade-05-gerencia-de-memoria/sistemas-monoprogramados": [
+            "6.1.1 Sistemas monoprogramados"
+          ],
+          "unidade-05-gerencia-de-memoria/particoes-fixas": [
+            "6.1.2 Partições fixas"
+          ],
+          "unidade-05-gerencia-de-memoria/particoes-variaveis": [
+            "6.1.3 Partições variáveis"
+          ],
+          "unidade-05-gerencia-de-memoria/swapping": [
+            "6.1.4 Swapping"
+          ],
+          "unidade-05-gerencia-de-memoria/memoria-virtual": [
+            "6.2 Memória virtual"
+          ],
+          "unidade-05-gerencia-de-memoria/paginacao": [
+            "6.2.1 Paginação"
+          ],
+          "unidade-05-gerencia-de-memoria/segmentacao": [
+            "6.2.2 Segmentação"
+          ],
+          "unidade-05-gerencia-de-memoria/estudo-de-casos": [
+            "6.3 Estudo de casos"
+          ],
+          "unidade-06-gerencia-de-arquivos/arquivos": [
+            "7.1 Arquivos"
+          ],
+          "unidade-06-gerencia-de-arquivos/diretorios": [
+            "7.2 Diretórios"
+          ],
+          "unidade-06-gerencia-de-arquivos/implementacao-de-sistemas-de-arquivos": [
+            "7.3 Implementação de sistemas de arquivos"
+          ],
+          "unidade-06-gerencia-de-arquivos/protecao": [
+            "7.4 Proteção"
+          ],
+          "unidade-06-gerencia-de-arquivos/seguranca": [
+            "7.5 Segurança"
+          ],
+          "unidade-06-gerencia-de-arquivos/estudo-de-casos": [
+            "7.6 Estudo de casos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/dispositivos-de-entrada-e-saida": [
+            "2.1 Dispositivos de entrada e saída"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/controladores-dos-dispositivos": [
+            "2.2 Controladores dos dispositivos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/drivers-dos-dispositivos": [
+            "2.3 Drivers dos dispositivos"
+          ],
+          "unidade-07-gerencia-de-entrada-e-saida/estudo-de-casos": [
+            "2.4 Estudo de casos"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-03",
+            "period_end": "2026-03-03",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-05",
+            "period_end": "2026-03-05",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-10",
+            "period_end": "2026-03-17",
+            "source_rows": [
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-19",
+            "period_end": "2026-03-31",
+            "source_rows": [
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-04-02",
+            "period_end": "2026-04-02",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-07",
+            "period_end": "2026-04-09",
+            "source_rows": [
+              10,
+              11
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-14",
+            "period_end": "2026-04-16",
+            "source_rows": [
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-21",
+            "period_end": "2026-04-21",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-23",
+            "period_end": "2026-04-28",
+            "source_rows": [
+              15,
+              16
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-30",
+            "period_end": "2026-04-30",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-05",
+            "period_end": "2026-05-05",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-07",
+            "period_end": "2026-05-07",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-12",
+            "period_end": "2026-05-12",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-14",
+            "period_end": "2026-05-14",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-05-19",
+            "period_end": "2026-05-19",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-05-21",
+            "period_end": "2026-06-02",
+            "source_rows": [
+              23,
+              24,
+              25,
+              26
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-04",
+            "period_end": "2026-06-04",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-09",
+            "period_end": "2026-06-09",
+            "source_rows": [
+              28
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-06-11",
+            "period_end": "2026-06-11",
+            "source_rows": [
+              29
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-06-16",
+            "period_end": "2026-06-23",
+            "source_rows": [
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-06-25",
+            "period_end": "2026-06-25",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-06-30",
+            "period_end": "2026-06-30",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-02",
+            "period_end": "2026-07-02",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-07-07",
+            "period_end": "2026-07-07",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-07-09",
+            "period_end": "2026-07-09",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-07-14",
+            "period_end": "2026-07-14",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-07-16",
+            "period_end": "2026-07-16",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {}
+    },
+    "IA": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_serial_15-09\\Inteligencia-Artifical-Tutor",
+      "build": {
+        "seconds": 4285.71,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "verified_hashes": 61,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\.moodle_nomes.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 59,
+        "base_backends": {
+          "url_fetcher": 2,
+          "pymupdf4llm": 28,
+          "": 29
+        },
+        "base_staging": 0,
+        "curated_refs": 55,
+        "headings": 103,
+        "topics": 20,
+        "aliases": 72,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-de-aprendizagem-01-visao-geral/conceituacao": [
+            "Conceituação",
+            "visão geral"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/breve-historico-de-ia": [
+            "Breve Histórico de IA",
+            "contexto histórico"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/subareas-e-disciplinas-afins": [
+            "Subáreas e disciplinas afins"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/questoes-filosoficas-de-ia": [
+            "Questões filosóficas de IA"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/introducao-a-agentes-em-ambientes-deterministicos": [
+            "Agentes",
+            "INTRODUÇÃO AOS ALGORITMOS",
+            "Introducao a Agentes",
+            "Introdução a agentes em ambientes determinísticos",
+            "agentes racionais"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/representacao-de-problemas": [
+            "Representação de problemas",
+            "modelagem do problema"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/busca-informada-heuristica": [
+            "Busca informada (heurística)",
+            "busca heurística"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/algoritmos-de-busca-com-informacao": [
+            "Agentes e Algoritmos de Busca",
+            "Algoritmos de Busca com Informação",
+            "Aula 05 - Agentes e Algoritmos de Busca<sup>1</sup>",
+            "Aula 06- Solução de Problemas (Busca com Informação - Algoritmos por Refinamentos Sucessivos)<sup>1</sup>",
+            "aluna",
+            "barabstract",
+            "braid",
+            "capitulo",
+            "cargas",
+            "chiara",
+            "crosseovers",
+            "crossover",
+            "demo",
+            "geneticas",
+            "geneticos",
+            "implementacaominimax",
+            "lacerda",
+            "luca",
+            "nrainhas",
+            "operadores",
+            "programas",
+            "rectangleinteligencia",
+            "ribbons",
+            "search algorithms"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/problemas-de-otimizacao": [
+            "Problemas de Otimização"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/busca-adversaria": [
+            "Aula 07- Solução de Problemas (Busca Adversária)<sup>1</sup>",
+            "Busca Adversária",
+            "jogos adversariais"
+          ],
+          "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento/agentes-em-logica": [
+            "Agentes em Lógica",
+            "agentes racionais"
+          ],
+          "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento/planejamento-classico": [
+            "Planejamento Clássico",
+            "planning"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/revisao-de-probabilidade": [
+            "Revisão de probabilidade",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/independencia-e-permutabilidade": [
+            "Independência e Permutabilidade",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/regra-de-bayes": [
+            "Regra de Bayes",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/introducao-ao-aprendizado-de-maquina": [
+            "Aprendizado Não Supervisionado",
+            "Aprendizado Supervisionado",
+            "Aprendizado Supervisionado Parte 2",
+            "Aprendizado não Supervisionado: Agrupamento Hierárquico",
+            "Aprendizado não Supervisionado: Agrupamento Hierárquico -Exemplo 2",
+            "Aula 02 - Aprendizado não Supervisionado: agrupamento com k-Means - Exemplo 2",
+            "Aula 29 - Aprendizagem de Máquina: Medidas de Avaliação <sup>1</sup>",
+            "Introdução ao aprendizado de máquina",
+            "exploratoria",
+            "java",
+            "machine learning"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/paradigmas-de-aprendizado": [
+            "Paradigmas de aprendizado",
+            "tipos de aprendizado"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/modelos-preditivos": [
+            "Modelos Preditivos",
+            "modelos supervisionados"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/modelos-descritivos": [
+            "Modelos Descritivos",
+            "modelos exploratórios"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/metricas-de-avaliacao": [
+            "Métricas de Avaliação",
+            "medidas de desempenho"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-02",
+            "period_end": "2026-03-02",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-09",
+            "period_end": "2026-03-09",
+            "source_rows": [
+              2
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-16",
+            "source_rows": [
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-18",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-20",
+            "period_end": "2026-04-20",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-27",
+            "source_rows": [
+              15,
+              16
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-29",
+            "period_end": "2026-04-29",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-05-04",
+            "period_end": "2026-05-04",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-11",
+            "period_end": "2026-05-11",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-13",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-18",
+            "period_end": "2026-05-25",
+            "source_rows": [
+              22,
+              23,
+              24
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-06-01",
+            "period_end": "2026-06-08",
+            "source_rows": [
+              26,
+              27,
+              28
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-06-10",
+            "period_end": "2026-06-15",
+            "source_rows": [
+              29,
+              30
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-17",
+            "period_end": "2026-06-22",
+            "source_rows": [
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-06-29",
+            "period_end": "2026-06-29",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-07-06",
+            "period_end": "2026-07-06",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-13",
+            "period_end": "2026-07-13",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 61,
+        "base_backends": {
+          "pymupdf4llm": 32,
+          "": 29
+        },
+        "base_staging": 32,
+        "curated_refs": 25,
+        "headings": 42,
+        "topics": 20,
+        "aliases": 41,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-de-aprendizagem-01-visao-geral/conceituacao": [
+            "Conceituação",
+            "visão geral"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/breve-historico-de-ia": [
+            "Breve Histórico de IA",
+            "contexto histórico"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/subareas-e-disciplinas-afins": [
+            "Subáreas e disciplinas afins"
+          ],
+          "unidade-de-aprendizagem-01-visao-geral/questoes-filosoficas-de-ia": [
+            "Questões filosóficas de IA"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/introducao-a-agentes-em-ambientes-deterministicos": [
+            "Introdução a agentes em ambientes determinísticos",
+            "agentes racionais"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/representacao-de-problemas": [
+            "Representação de problemas",
+            "modelagem do problema"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/busca-informada-heuristica": [
+            "Busca informada (heurística)",
+            "busca heurística"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/algoritmos-de-busca-com-informacao": [
+            "Algoritmos de Busca com Informação",
+            "search algorithms"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/problemas-de-otimizacao": [
+            "Problemas de Otimização"
+          ],
+          "unidade-de-aprendizagem-02-solucao-de-problemas/busca-adversaria": [
+            "Busca Adversária",
+            "jogos adversariais"
+          ],
+          "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento/agentes-em-logica": [
+            "Agentes em Lógica",
+            "agentes racionais"
+          ],
+          "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento/planejamento-classico": [
+            "Planejamento Clássico",
+            "planning"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/revisao-de-probabilidade": [
+            "Revisão de probabilidade",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/independencia-e-permutabilidade": [
+            "Independência e Permutabilidade",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-04-raciocinio-sob-incerteza/regra-de-bayes": [
+            "Regra de Bayes",
+            "inferência probabilística"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/introducao-ao-aprendizado-de-maquina": [
+            "Aprendizado Supervisionado",
+            "Aprendizado não Supervisionado: Agrupamento Hierárquico",
+            "Aprendizado não Supervisionado: Agrupamento Hierárquico -Exemplo 2",
+            "Aula 02 - Aprendizado não Supervisionado: agrupamento com k-Means - Exemplo 2",
+            "Introdução ao aprendizado de máquina",
+            "machine learning"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/paradigmas-de-aprendizado": [
+            "Paradigmas de aprendizado",
+            "tipos de aprendizado"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/modelos-preditivos": [
+            "Modelos Preditivos",
+            "modelos supervisionados"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/modelos-descritivos": [
+            "Modelos Descritivos",
+            "modelos exploratórios"
+          ],
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina/metricas-de-avaliacao": [
+            "Métricas de Avaliação",
+            "medidas de desempenho"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-02",
+            "period_end": "2026-03-02",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-09",
+            "period_end": "2026-03-09",
+            "source_rows": [
+              2
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-16",
+            "source_rows": [
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-18",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-04-20",
+            "period_end": "2026-04-20",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-27",
+            "source_rows": [
+              15,
+              16
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-29",
+            "period_end": "2026-04-29",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-05-04",
+            "period_end": "2026-05-04",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-05-11",
+            "period_end": "2026-05-11",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-13",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-05-18",
+            "period_end": "2026-05-25",
+            "source_rows": [
+              22,
+              23,
+              24
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-06-01",
+            "period_end": "2026-06-08",
+            "source_rows": [
+              26,
+              27,
+              28
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-06-10",
+            "period_end": "2026-06-15",
+            "source_rows": [
+              29,
+              30
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-06-17",
+            "period_end": "2026-06-22",
+            "source_rows": [
+              31,
+              32
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-06-29",
+            "period_end": "2026-06-29",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-07-06",
+            "period_end": "2026-07-06",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-07-13",
+            "period_end": "2026-07-13",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {
+        "bloco": 2,
+        "unidade": 2
+      }
+    },
+    "ES2": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_15-09\\Engenharia-Software-2-Tutor",
+      "build": {
+        "seconds": 4704.71,
+        "calls": {},
+        "failed_entries": []
+      },
+      "verified_hashes": 35,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\.moodle_nomes.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 35,
+        "base_backends": {
+          "pymupdf4llm": 27,
+          "": 8
+        },
+        "base_staging": 0,
+        "curated_refs": 27,
+        "headings": 47,
+        "topics": 21,
+        "aliases": 49,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-arquitetura-de-software/conceito-de-arquitetura-de-software": [
+            "1.1 Conceito de arquitetura de software",
+            "ARQUITETURA DE SOFTWARE ---",
+            "Sistemas de Software"
+          ],
+          "unidade-01-arquitetura-de-software/visoes-arquiteturais-estrutural-e-dinamica": [
+            "1.2 Visões arquiteturais: estrutural e dinâmica"
+          ],
+          "unidade-01-arquitetura-de-software/estilos-e-padroes-arquiteturais": [
+            "1.3 Estilos e padrões arquiteturais"
+          ],
+          "unidade-01-arquitetura-de-software/camadas": [
+            "1.3.1 Camadas"
+          ],
+          "unidade-01-arquitetura-de-software/cliente-servidor": [
+            "1.3.2 Cliente-Servidor"
+          ],
+          "unidade-01-arquitetura-de-software/orientada-a-servicos": [
+            "1.3.3 Orientada a Serviços",
+            "ARQUITETURA ORIENTADA A SERVIÇOS ---"
+          ],
+          "unidade-01-arquitetura-de-software/orientada-a-microsservicos": [
+            "1.3.4 Orientada a Microsserviços",
+            "Criando um par de microsserviços independentes"
+          ],
+          "unidade-01-arquitetura-de-software/arquitetura-serverless": [
+            "1.3.5 Arquitetura Serverless",
+            "ARQUITETURA DE SISTEMAS WEB ---",
+            "Decisões Arquiteturais"
+          ],
+          "unidade-01-arquitetura-de-software/estrategias-de-construcao-de-arquitetura": [
+            "1.4 Estratégias de Construção de Arquitetura"
+          ],
+          "unidade-01-arquitetura-de-software/estudo-de-caso-arquitetura-orientada-a-microsservicos": [
+            "1.5 Estudo de caso: arquitetura orientada a microsserviços"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/conceito-de-devops": [
+            "2.1 Conceito de DevOps",
+            "DEVOPS"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/gerenciamento-da-configuracao": [
+            "2.2 Gerenciamento da Configuração"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/integracao-continua-ci": [
+            "2.3 Integração contínua (CI)"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/entrega-continua-cd": [
+            "2.4 Entrega contínua (CD)"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/monitoramento-continuo": [
+            "2.5 Monitoramento Contínuo"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/plataformas-de-devops": [
+            "2.6 Plataformas de DevOps"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/estudo-de-caso-integracao-e-implantacao-de-microsservicos": [
+            "2.7 Estudo de Caso: integração e implantação de microsserviços",
+            "alternativo",
+            "ativando",
+            "buildpacks",
+            "cadastro",
+            "circuitbreaker",
+            "colocando",
+            "conteiners",
+            "conversor",
+            "education",
+            "estudantes",
+            "explorando",
+            "fanout",
+            "globais",
+            "history",
+            "moedas",
+            "nameserver",
+            "produtor",
+            "registrando",
+            "rotas",
+            "teaching",
+            "welcome"
+          ],
+          "unidade-03-testes-de-software/conceitos-e-o-processo-de-testes-de-software": [
+            "3.1 Conceitos e o Processo de Testes de Software"
+          ],
+          "unidade-03-testes-de-software/testes-unitarios": [
+            "3.1.1 Testes Unitários"
+          ],
+          "unidade-03-testes-de-software/teste-de-integracao": [
+            "3.1.2 Teste de integração"
+          ],
+          "unidade-03-testes-de-software/teste-de-sistema": [
+            "3.1.3 Teste de sistema"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-06",
+            "period_end": "2026-03-20",
+            "source_rows": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-27",
+            "period_end": "2026-03-27",
+            "source_rows": [
+              3
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-04-03",
+            "period_end": "2026-04-03",
+            "source_rows": [
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-04-10",
+            "period_end": "2026-04-24",
+            "source_rows": [
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-05-01",
+            "period_end": "2026-05-01",
+            "source_rows": [
+              8
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-05-08",
+            "period_end": "2026-05-08",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-05-15",
+            "period_end": "2026-05-15",
+            "source_rows": [
+              10
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-05-22",
+            "period_end": "2026-05-29",
+            "source_rows": [
+              11,
+              12
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-06-05",
+            "period_end": "2026-06-05",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-06-12",
+            "period_end": "2026-06-12",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-06-19",
+            "period_end": "2026-06-19",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-06-26",
+            "period_end": "2026-06-26",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-07-03",
+            "period_end": "2026-07-03",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-07-10",
+            "period_end": "2026-07-10",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-07-17",
+            "period_end": "2026-07-17",
+            "source_rows": [
+              19
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 35,
+        "base_backends": {
+          "pymupdf4llm": 27,
+          "": 8
+        },
+        "base_staging": 27,
+        "curated_refs": 0,
+        "headings": 0,
+        "topics": 21,
+        "aliases": 21,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-arquitetura-de-software/conceito-de-arquitetura-de-software": [
+            "1.1 Conceito de arquitetura de software"
+          ],
+          "unidade-01-arquitetura-de-software/visoes-arquiteturais-estrutural-e-dinamica": [
+            "1.2 Visões arquiteturais: estrutural e dinâmica"
+          ],
+          "unidade-01-arquitetura-de-software/estilos-e-padroes-arquiteturais": [
+            "1.3 Estilos e padrões arquiteturais"
+          ],
+          "unidade-01-arquitetura-de-software/camadas": [
+            "1.3.1 Camadas"
+          ],
+          "unidade-01-arquitetura-de-software/cliente-servidor": [
+            "1.3.2 Cliente-Servidor"
+          ],
+          "unidade-01-arquitetura-de-software/orientada-a-servicos": [
+            "1.3.3 Orientada a Serviços"
+          ],
+          "unidade-01-arquitetura-de-software/orientada-a-microsservicos": [
+            "1.3.4 Orientada a Microsserviços"
+          ],
+          "unidade-01-arquitetura-de-software/arquitetura-serverless": [
+            "1.3.5 Arquitetura Serverless"
+          ],
+          "unidade-01-arquitetura-de-software/estrategias-de-construcao-de-arquitetura": [
+            "1.4 Estratégias de Construção de Arquitetura"
+          ],
+          "unidade-01-arquitetura-de-software/estudo-de-caso-arquitetura-orientada-a-microsservicos": [
+            "1.5 Estudo de caso: arquitetura orientada a microsserviços"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/conceito-de-devops": [
+            "2.1 Conceito de DevOps"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/gerenciamento-da-configuracao": [
+            "2.2 Gerenciamento da Configuração"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/integracao-continua-ci": [
+            "2.3 Integração contínua (CI)"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/entrega-continua-cd": [
+            "2.4 Entrega contínua (CD)"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/monitoramento-continuo": [
+            "2.5 Monitoramento Contínuo"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/plataformas-de-devops": [
+            "2.6 Plataformas de DevOps"
+          ],
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops/estudo-de-caso-integracao-e-implantacao-de-microsservicos": [
+            "2.7 Estudo de Caso: integração e implantação de microsserviços"
+          ],
+          "unidade-03-testes-de-software/conceitos-e-o-processo-de-testes-de-software": [
+            "3.1 Conceitos e o Processo de Testes de Software"
+          ],
+          "unidade-03-testes-de-software/testes-unitarios": [
+            "3.1.1 Testes Unitários"
+          ],
+          "unidade-03-testes-de-software/teste-de-integracao": [
+            "3.1.2 Teste de integração"
+          ],
+          "unidade-03-testes-de-software/teste-de-sistema": [
+            "3.1.3 Teste de sistema"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-06",
+            "period_end": "2026-03-20",
+            "source_rows": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-27",
+            "period_end": "2026-03-27",
+            "source_rows": [
+              3
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-04-03",
+            "period_end": "2026-04-03",
+            "source_rows": [
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-04-10",
+            "period_end": "2026-04-24",
+            "source_rows": [
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-05-01",
+            "period_end": "2026-05-01",
+            "source_rows": [
+              8
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-05-08",
+            "period_end": "2026-05-08",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-05-15",
+            "period_end": "2026-05-15",
+            "source_rows": [
+              10
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-05-22",
+            "period_end": "2026-05-29",
+            "source_rows": [
+              11,
+              12
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-06-05",
+            "period_end": "2026-06-05",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-06-12",
+            "period_end": "2026-06-12",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-06-19",
+            "period_end": "2026-06-19",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-06-26",
+            "period_end": "2026-06-26",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-07-03",
+            "period_end": "2026-07-03",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-07-10",
+            "period_end": "2026-07-10",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-07-17",
+            "period_end": "2026-07-17",
+            "source_rows": [
+              19
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {}
+    },
+    "TCC": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_15-09\\TCC-Tutor",
+      "build": {
+        "seconds": 1083.53,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "verified_hashes": 27,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\teoria-da-computabilidade-e-complexidade\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\teoria-da-computabilidade-e-complexidade\\.moodle_nomes.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 27,
+        "base_backends": {
+          "pymupdf4llm": 27
+        },
+        "base_staging": 0,
+        "curated_refs": 27,
+        "headings": 54,
+        "topics": 26,
+        "aliases": 57,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/conjuntos-enumeraveis": [
+            "1.1 Conjuntos Enumeráveis",
+            "Apresentação da Disciplina e Revisão de Teoria de Conjuntos",
+            "Conjuntos Enumeráveis e Não-Enumeráveis; Argumento da Diagonalização de Cantor",
+            "Parte 1 - Teoria de Conjuntos"
+          ],
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/argumento-diagonal-de-cantor-e-conjuntos-incontaveis": [
+            "1.2 Argumento Diagonal de Cantor e Conjuntos Incontáveis"
+          ],
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais": [
+            "1.3 Funções Recursivas Primitivas e Funções Recursivas Parciais",
+            "Funções Computáveis: Funções Recursivas Parciais",
+            "Funções Recursivas Primitivas; Composição de Funções",
+            "Minimização de Funções Recursivas Parciais",
+            "Parte 3 - Funções Recursivas Primitivas",
+            "Parte 4 - Funções Parciais e Minimização"
+          ],
+          "unidade-02-turing-computabilidade/maquinas-de-turing": [
+            "2.1 Máquinas de Turing",
+            "Linguagens Reconhecíveis e Linguagens Decidíveis; Máquinas de Turing Universais",
+            "Máquinas de Turing como Processadoras de Funções",
+            "Máquinas de Turing e Linguagens Recursivamente Enumeráveis",
+            "lemas",
+            "visoes"
+          ],
+          "unidade-02-turing-computabilidade/linguagens-reconheciveis-e-decidiveis": [
+            "2.2 Linguagens Reconhecíveis e Decidíveis",
+            "Problemas sobre Linguagens de MTs",
+            "Recapitulação: Classes de Linguagens"
+          ],
+          "unidade-02-turing-computabilidade/variacoes-de-maquinas-de-turing": [
+            "2.3 Variações de Máquinas de Turing"
+          ],
+          "unidade-02-turing-computabilidade/conjectura-de-church-turing": [
+            "2.4 Conjectura de Church-Turing"
+          ],
+          "unidade-02-turing-computabilidade/maquinas-de-turing-universais": [
+            "2.5 Máquinas de Turing Universais"
+          ],
+          "unidade-03-problemas-indecidiveis/prova-da-indecidibilidade-do-problema-da-parada": [
+            "3.1 Prova da Indecidibilidade do Problema da Parada",
+            "Halting Problem - O Problema da Parada"
+          ],
+          "unidade-03-problemas-indecidiveis/entscheidungsproblem-e-introducao-a-reducibilidade-de-problemas": [
+            "3.2 Entscheidungsproblem e Introdução à Reducibilidade de Problemas",
+            "Complexidade de Tempo: NP-Compleitude e Redução de Problemas"
+          ],
+          "unidade-03-problemas-indecidiveis/decidibilidade-de-teorias-logicas": [
+            "3.3 Decidibilidade de Teorias Lógicas"
+          ],
+          "unidade-03-problemas-indecidiveis/teoremas-de-godel": [
+            "3.4 Teoremas de Gödel",
+            "Teoremas de Incompletude de Gödel",
+            "desfechos",
+            "revisitado"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/tipos-de-problemas-computacionais": [
+            "4.1 Tipos de Problemas Computacionais",
+            "Da Computabilidade à Complexidade"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/complexidade-de-tempo-e-de-espaco": [
+            "4.2 Complexidade de Tempo e de Espaço",
+            "Complexidade de Tempo: Classes P e NP"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/hierarquia-de-classes-de-complexidade-de-problemas": [
+            "4.3 Hierarquia de Classes de Complexidade de Problemas",
+            "Classes de Problemas e Complexidade Computacional",
+            "classicos",
+            "detalhado",
+            "mensagem"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-p-e-exemplos-de-problemas-em-p": [
+            "4.4 Classe P e exemplos de Problemas em P"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-np": [
+            "4.5 Classe NP"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/definicao-da-classe": [
+            "4.5.1 Definição da Classe",
+            "4.6.1 Definição da Classe",
+            "Definição",
+            "Definição Formal da Classe P"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais": [
+            "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/teorema-de-cook-levin": [
+            "4.5.3 Teorema de Cook-Levin"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/reducao-polinomial-de-problemas": [
+            "4.5.4 Redução Polinomial de Problemas",
+            "Redução Polinomial"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/provas-de-np-completude": [
+            "4.5.5 Provas de NP-Completude",
+            "Redução polinomial e provas de NP-completude"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-pspace": [
+            "4.6 Classe PSPACE"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/exemplos-de-problemas-em-pspace": [
+            "4.6.2 Exemplos de Problemas em PSPACE"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/provas-de-pspace-completude": [
+            "4.6.3 Provas de PSPACE-Completude"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/intratabilidade": [
+            "4.7 Intratabilidade"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-06",
+            "period_end": "2026-03-06",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-18",
+            "source_rows": [
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-20",
+            "period_end": "2026-03-20",
+            "source_rows": [
+              5
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-25",
+            "period_end": "2026-03-25",
+            "source_rows": [
+              6
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-03-27",
+            "period_end": "2026-04-01",
+            "source_rows": [
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-03",
+            "period_end": "2026-04-03",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-08",
+            "period_end": "2026-04-08",
+            "source_rows": [
+              10
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-10",
+            "period_end": "2026-04-10",
+            "source_rows": [
+              11
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-15",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              12
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-04-17",
+            "period_end": "2026-04-17",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-04-24",
+            "period_end": "2026-04-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-04-29",
+            "period_end": "2026-04-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-05-01",
+            "period_end": "2026-05-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-05-08",
+            "period_end": "2026-05-08",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-05-15",
+            "period_end": "2026-05-22",
+            "source_rows": [
+              21,
+              22,
+              23
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              24
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-05-29",
+            "period_end": "2026-05-29",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-06-03",
+            "period_end": "2026-06-03",
+            "source_rows": [
+              26
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-06-05",
+            "period_end": "2026-06-05",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-06-10",
+            "period_end": "2026-06-10",
+            "source_rows": [
+              28
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-06-12",
+            "period_end": "2026-06-12",
+            "source_rows": [
+              29
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-06-17",
+            "period_end": "2026-06-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-06-19",
+            "period_end": "2026-06-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-06-26",
+            "period_end": "2026-06-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-30",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-31",
+            "period_start": "2026-07-03",
+            "period_end": "2026-07-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-32",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-33",
+            "period_start": "2026-07-10",
+            "period_end": "2026-07-10",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-34",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-35",
+            "period_start": "2026-07-17",
+            "period_end": "2026-07-17",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 27,
+        "base_backends": {
+          "pymupdf4llm": 26,
+          "scanned-pages": 1
+        },
+        "base_staging": 27,
+        "curated_refs": 0,
+        "headings": 0,
+        "topics": 26,
+        "aliases": 27,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/conjuntos-enumeraveis": [
+            "1.1 Conjuntos Enumeráveis"
+          ],
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/argumento-diagonal-de-cantor-e-conjuntos-incontaveis": [
+            "1.2 Argumento Diagonal de Cantor e Conjuntos Incontáveis"
+          ],
+          "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas/funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais": [
+            "1.3 Funções Recursivas Primitivas e Funções Recursivas Parciais"
+          ],
+          "unidade-02-turing-computabilidade/maquinas-de-turing": [
+            "2.1 Máquinas de Turing"
+          ],
+          "unidade-02-turing-computabilidade/linguagens-reconheciveis-e-decidiveis": [
+            "2.2 Linguagens Reconhecíveis e Decidíveis"
+          ],
+          "unidade-02-turing-computabilidade/variacoes-de-maquinas-de-turing": [
+            "2.3 Variações de Máquinas de Turing"
+          ],
+          "unidade-02-turing-computabilidade/conjectura-de-church-turing": [
+            "2.4 Conjectura de Church-Turing"
+          ],
+          "unidade-02-turing-computabilidade/maquinas-de-turing-universais": [
+            "2.5 Máquinas de Turing Universais"
+          ],
+          "unidade-03-problemas-indecidiveis/prova-da-indecidibilidade-do-problema-da-parada": [
+            "3.1 Prova da Indecidibilidade do Problema da Parada"
+          ],
+          "unidade-03-problemas-indecidiveis/entscheidungsproblem-e-introducao-a-reducibilidade-de-problemas": [
+            "3.2 Entscheidungsproblem e Introdução à Reducibilidade de Problemas"
+          ],
+          "unidade-03-problemas-indecidiveis/decidibilidade-de-teorias-logicas": [
+            "3.3 Decidibilidade de Teorias Lógicas"
+          ],
+          "unidade-03-problemas-indecidiveis/teoremas-de-godel": [
+            "3.4 Teoremas de Gödel"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/tipos-de-problemas-computacionais": [
+            "4.1 Tipos de Problemas Computacionais"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/complexidade-de-tempo-e-de-espaco": [
+            "4.2 Complexidade de Tempo e de Espaço"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/hierarquia-de-classes-de-complexidade-de-problemas": [
+            "4.3 Hierarquia de Classes de Complexidade de Problemas"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-p-e-exemplos-de-problemas-em-p": [
+            "4.4 Classe P e exemplos de Problemas em P"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-np": [
+            "4.5 Classe NP"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/definicao-da-classe": [
+            "4.5.1 Definição da Classe",
+            "4.6.1 Definição da Classe"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais": [
+            "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/teorema-de-cook-levin": [
+            "4.5.3 Teorema de Cook-Levin"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/reducao-polinomial-de-problemas": [
+            "4.5.4 Redução Polinomial de Problemas"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/provas-de-np-completude": [
+            "4.5.5 Provas de NP-Completude"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/classe-pspace": [
+            "4.6 Classe PSPACE"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/exemplos-de-problemas-em-pspace": [
+            "4.6.2 Exemplos de Problemas em PSPACE"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/provas-de-pspace-completude": [
+            "4.6.3 Provas de PSPACE-Completude"
+          ],
+          "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais/intratabilidade": [
+            "4.7 Intratabilidade"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-03-04",
+            "period_end": "2026-03-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-03-06",
+            "period_end": "2026-03-06",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-03-11",
+            "period_end": "2026-03-18",
+            "source_rows": [
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-03-20",
+            "period_end": "2026-03-20",
+            "source_rows": [
+              5
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-03-25",
+            "period_end": "2026-03-25",
+            "source_rows": [
+              6
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-03-27",
+            "period_end": "2026-04-01",
+            "source_rows": [
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-04-03",
+            "period_end": "2026-04-03",
+            "source_rows": [
+              9
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-04-08",
+            "period_end": "2026-04-08",
+            "source_rows": [
+              10
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-04-10",
+            "period_end": "2026-04-10",
+            "source_rows": [
+              11
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-04-15",
+            "period_end": "2026-04-15",
+            "source_rows": [
+              12
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-04-17",
+            "period_end": "2026-04-17",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-04-22",
+            "period_end": "2026-04-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-04-24",
+            "period_end": "2026-04-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-04-29",
+            "period_end": "2026-04-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-05-01",
+            "period_end": "2026-05-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-05-08",
+            "period_end": "2026-05-08",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-05-13",
+            "period_end": "2026-05-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-05-15",
+            "period_end": "2026-05-22",
+            "source_rows": [
+              21,
+              22,
+              23
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-05-27",
+            "period_end": "2026-05-27",
+            "source_rows": [
+              24
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-05-29",
+            "period_end": "2026-05-29",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-06-03",
+            "period_end": "2026-06-03",
+            "source_rows": [
+              26
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-06-05",
+            "period_end": "2026-06-05",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-06-10",
+            "period_end": "2026-06-10",
+            "source_rows": [
+              28
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-06-12",
+            "period_end": "2026-06-12",
+            "source_rows": [
+              29
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-06-17",
+            "period_end": "2026-06-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-06-19",
+            "period_end": "2026-06-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-06-24",
+            "period_end": "2026-06-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-06-26",
+            "period_end": "2026-06-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-30",
+            "period_start": "2026-07-01",
+            "period_end": "2026-07-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-31",
+            "period_start": "2026-07-03",
+            "period_end": "2026-07-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-32",
+            "period_start": "2026-07-08",
+            "period_end": "2026-07-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-33",
+            "period_start": "2026-07-10",
+            "period_end": "2026-07-10",
+            "source_rows": [
+              37
+            ]
+          },
+          {
+            "id": "bloco-34",
+            "period_start": "2026-07-15",
+            "period_end": "2026-07-15",
+            "source_rows": [
+              38
+            ]
+          },
+          {
+            "id": "bloco-35",
+            "period_start": "2026-07-17",
+            "period_end": "2026-07-17",
+            "source_rows": [
+              39
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {}
+    },
+    "CG": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_semhtml_15-09\\Computacao-Grafica-Tutor",
+      "build": {
+        "seconds": 1598.18,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "verified_hashes": 88,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\.moodle_nomes.json": true,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\raw\\moodle\\contents.json": true,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 93,
+        "base_backends": {
+          "html_converter": 48,
+          "pymupdf4llm": 21,
+          "": 17,
+          "url_fetcher": 7
+        },
+        "base_staging": 76,
+        "curated_refs": 5,
+        "headings": 5,
+        "topics": 59,
+        "aliases": 61,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-ao-processamento-grafico/origens": [
+            "1.1 Origens"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/conceitos": [
+            "1.2 Conceitos"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/areas-relacionadas": [
+            "1.3 Áreas relacionadas"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/aplicacoes": [
+            "1.4 Aplicações",
+            "OpenGL"
+          ],
+          "unidade-02-fundamentos-matematicos/entidades-geometricas": [
+            "2.1 Entidades geométricas"
+          ],
+          "unidade-02-fundamentos-matematicos/operacoes-com-vetores": [
+            "2.2 Operações com vetores"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-deteccao-e-calculo-de-interseccao": [
+            "2.3 Algoritmos de detecção e cálculo de intersecção"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-poligonos": [
+            "2.4 Algoritmos de polígonos"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-geometria-computacional": [
+            "2.5 Algoritmos de Geometria Computacional"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/introducao-e-exemplos-de-aplicacoes": [
+            "3.1 Introdução e Exemplos de Aplicações"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/cores-e-tipos-de-imagens": [
+            "3.2 Cores e tipos de imagens"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/algoritmos-de-quantizacao-e-amostragem": [
+            "3.3 Algoritmos de Quantização e Amostragem"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/filtros": [
+            "3.4 Filtros"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/segmentacao": [
+            "3.5 Segmentação"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/visao-computacional-e-conceito-de-reconhecimento-de-padroes": [
+            "3.6 Visão Computacional e conceito de reconhecimento de padrões"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/sistema-de-coordenadas-cartesianas": [
+            "4.1 Sistema de Coordenadas Cartesianas"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/2d-3d-mao-direita-e-mao-esquerda": [
+            "4.1.1 2D, 3D (mão direita) e (mão esquerda)"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/algoritmos-de-rasterizacao": [
+            "4.2 Algoritmos de Rasterização"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/desenho-de-linhas": [
+            "4.2.1 Desenho de Linhas"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/preenchimento-de-poligonos": [
+            "4.2.2 Preenchimento de Polígonos"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/recorte": [
+            "4.2.3 Recorte"
+          ],
+          "unidade-05-transformacoes-geometricas/transformacoes-geometricas-e-coordenadas-homogeneas-2d": [
+            "5.1 Transformações Geométricas e coordenadas homogêneas 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/mapeamento-window-e-viewport": [
+            "5.2 Mapeamento Window e Viewport"
+          ],
+          "unidade-05-transformacoes-geometricas/pipeline-de-visualizacao-2d": [
+            "5.3 Pipeline de visualização 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/composicao-de-transformacoes-2d": [
+            "5.4 Composição de transformações 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/representacao-matricial-das-transformacoes-3d": [
+            "5.5 Representação matricial das transformações 3D"
+          ],
+          "unidade-05-transformacoes-geometricas/composicao-de-transformacoes-3d": [
+            "5.6 Composição de transformações 3D"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/pipeline-de-visualizacao-3d": [
+            "6.1 Pipeline de visualização 3D"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/conceito-de-camera-sintetica": [
+            "6.2 Conceito de Câmera Sintética"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/projecoes": [
+            "6.3 Projeções"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/paralela": [
+            "6.3.1 Paralela"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/perspectiva": [
+            "6.3.2 Perspectiva"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/a-matematica-das-projecoes-planares": [
+            "6.3.3 A matemática das projeções planares",
+            "Matematica"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmos-de-remocao-de-elementos-ocultos": [
+            "6.4 Algoritmos de Remoção de Elementos Ocultos"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/eliminacao-de-faces-traseiras": [
+            "6.4.1 Eliminação de Faces Traseiras"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmo-do-pintor": [
+            "6.4.2 Algoritmo do Pintor"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmo-z-buffer": [
+            "6.4.3 Algoritmo Z-Buffer"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/arvores-bsp": [
+            "6.4.4 Árvores BSP"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/formas-de-representacao": [
+            "7.1 Formas de Representação"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/representacao-de-curvas-parametricas": [
+            "7.1.1 Representação de Curvas Paramétricas"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/bezier-e-algoritmo-de-casteljau": [
+            "7.1.1.1 Bézier e Algoritmo de Casteljau"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/hermite": [
+            "7.1.1.2 Hermite"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/b-spline": [
+            "7.1.1.3 B-Spline"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/catmull-rom": [
+            "7.1.1.4 Catmull-Rom"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/vetorial-ou-matricial": [
+            "7.1.2 Vetorial ou Matricial"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/enumeracao-espacial": [
+            "7.1.3 Enumeração Espacial"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/representacao-aramada": [
+            "7.1.4 Representação Aramada"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/superficies-limitantes": [
+            "7.1.5 Superfícies Limitantes"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/tecnicas-de-modelagem-3d": [
+            "7.2 Técnicas de Modelagem 3D"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/digitalizacao": [
+            "7.2.1 Digitalização"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/varredura": [
+            "7.2.2 Varredura"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/geometria-solida-construtiva-csg": [
+            "7.2.3 Geometria Sólida Construtiva (CSG)"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/instanciamento-de-primitivas": [
+            "7.2.4 Instanciamento de Primitivas"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/modelos-de-iluminacao-luz-pontual-direcional-spot": [
+            "8.1 Modelos de Iluminação: luz pontual, direcional, spot"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/modelos-de-reflexao-ambiente-difusa-especular": [
+            "8.2 Modelos de Reflexão: ambiente, difusa, especular"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/metodos-de-sombreamento-flat-gouraud-phong": [
+            "8.3 Métodos de sombreamento: Flat , Gouraud, Phong"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/mapeamento-de-textura": [
+            "8.4 Mapeamento de Textura"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/conceitos-basicos-de-ray-tracing-e-radiosidade": [
+            "8.5 Conceitos Básicos de Ray Tracing e Radiosidade"
+          ],
+          "unidade-09-topicos-especiais-em-pesquisa-em-cg/temas-atuais-e-avancados-de-computacao-grafica": [
+            "9.1 Temas atuais e avançados de Computação Gráfica"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-08-04",
+            "period_end": "2026-08-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-08-06",
+            "period_end": "2026-08-06",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-08-11",
+            "period_end": "2026-08-13",
+            "source_rows": [
+              2,
+              3
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-08-18",
+            "period_end": "2026-08-18",
+            "source_rows": [
+              4
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-08-20",
+            "period_end": "2026-08-20",
+            "source_rows": [
+              5
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-08-25",
+            "period_end": "2026-08-27",
+            "source_rows": [
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-09-01",
+            "period_end": "2026-09-08",
+            "source_rows": [
+              8,
+              9,
+              10
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-09-10",
+            "period_end": "2026-09-17",
+            "source_rows": [
+              11,
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-09-22",
+            "period_end": "2026-09-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-09-24",
+            "period_end": "2026-09-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-09-29",
+            "period_end": "2026-09-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-10-01",
+            "period_end": "2026-10-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-10-06",
+            "period_end": "2026-10-08",
+            "source_rows": [
+              18,
+              19
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-10-13",
+            "period_end": "2026-10-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-10-15",
+            "period_end": "2026-10-15",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-10-20",
+            "period_end": "2026-10-20",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-10-22",
+            "period_end": "2026-10-22",
+            "source_rows": [
+              23
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-10-27",
+            "period_end": "2026-10-27",
+            "source_rows": [
+              24
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-10-29",
+            "period_end": "2026-10-29",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-11-03",
+            "period_end": "2026-11-05",
+            "source_rows": [
+              26,
+              27
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-11-10",
+            "period_end": "2026-11-12",
+            "source_rows": [
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-11-17",
+            "period_end": "2026-11-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-11-19",
+            "period_end": "2026-11-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-11-24",
+            "period_end": "2026-11-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-11-26",
+            "period_end": "2026-11-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-12-01",
+            "period_end": "2026-12-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-12-03",
+            "period_end": "2026-12-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-12-08",
+            "period_end": "2026-12-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-12-10",
+            "period_end": "2026-12-10",
+            "source_rows": [
+              37
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 86,
+        "base_backends": {
+          "html_converter": 48,
+          "pymupdf4llm": 21,
+          "": 17
+        },
+        "base_staging": 69,
+        "curated_refs": 3,
+        "headings": 3,
+        "topics": 59,
+        "aliases": 60,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-ao-processamento-grafico/origens": [
+            "1.1 Origens"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/conceitos": [
+            "1.2 Conceitos"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/areas-relacionadas": [
+            "1.3 Áreas relacionadas"
+          ],
+          "unidade-01-introducao-ao-processamento-grafico/aplicacoes": [
+            "1.4 Aplicações"
+          ],
+          "unidade-02-fundamentos-matematicos/entidades-geometricas": [
+            "2.1 Entidades geométricas"
+          ],
+          "unidade-02-fundamentos-matematicos/operacoes-com-vetores": [
+            "2.2 Operações com vetores"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-deteccao-e-calculo-de-interseccao": [
+            "2.3 Algoritmos de detecção e cálculo de intersecção"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-poligonos": [
+            "2.4 Algoritmos de polígonos"
+          ],
+          "unidade-02-fundamentos-matematicos/algoritmos-de-geometria-computacional": [
+            "2.5 Algoritmos de Geometria Computacional"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/introducao-e-exemplos-de-aplicacoes": [
+            "3.1 Introdução e Exemplos de Aplicações"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/cores-e-tipos-de-imagens": [
+            "3.2 Cores e tipos de imagens"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/algoritmos-de-quantizacao-e-amostragem": [
+            "3.3 Algoritmos de Quantização e Amostragem"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/filtros": [
+            "3.4 Filtros"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/segmentacao": [
+            "3.5 Segmentação"
+          ],
+          "unidade-03-processamento-de-imagens-e-visao-computacional/visao-computacional-e-conceito-de-reconhecimento-de-padroes": [
+            "3.6 Visão Computacional e conceito de reconhecimento de padrões"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/sistema-de-coordenadas-cartesianas": [
+            "4.1 Sistema de Coordenadas Cartesianas"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/2d-3d-mao-direita-e-mao-esquerda": [
+            "4.1.1 2D, 3D (mão direita) e (mão esquerda)"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/algoritmos-de-rasterizacao": [
+            "4.2 Algoritmos de Rasterização"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/desenho-de-linhas": [
+            "4.2.1 Desenho de Linhas"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/preenchimento-de-poligonos": [
+            "4.2.2 Preenchimento de Polígonos"
+          ],
+          "unidade-04-processo-de-visualizacao-2d/recorte": [
+            "4.2.3 Recorte"
+          ],
+          "unidade-05-transformacoes-geometricas/transformacoes-geometricas-e-coordenadas-homogeneas-2d": [
+            "5.1 Transformações Geométricas e coordenadas homogêneas 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/mapeamento-window-e-viewport": [
+            "5.2 Mapeamento Window e Viewport"
+          ],
+          "unidade-05-transformacoes-geometricas/pipeline-de-visualizacao-2d": [
+            "5.3 Pipeline de visualização 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/composicao-de-transformacoes-2d": [
+            "5.4 Composição de transformações 2D"
+          ],
+          "unidade-05-transformacoes-geometricas/representacao-matricial-das-transformacoes-3d": [
+            "5.5 Representação matricial das transformações 3D"
+          ],
+          "unidade-05-transformacoes-geometricas/composicao-de-transformacoes-3d": [
+            "5.6 Composição de transformações 3D"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/pipeline-de-visualizacao-3d": [
+            "6.1 Pipeline de visualização 3D"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/conceito-de-camera-sintetica": [
+            "6.2 Conceito de Câmera Sintética"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/projecoes": [
+            "6.3 Projeções"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/paralela": [
+            "6.3.1 Paralela"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/perspectiva": [
+            "6.3.2 Perspectiva"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/a-matematica-das-projecoes-planares": [
+            "6.3.3 A matemática das projeções planares",
+            "Matematica"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmos-de-remocao-de-elementos-ocultos": [
+            "6.4 Algoritmos de Remoção de Elementos Ocultos"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/eliminacao-de-faces-traseiras": [
+            "6.4.1 Eliminação de Faces Traseiras"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmo-do-pintor": [
+            "6.4.2 Algoritmo do Pintor"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/algoritmo-z-buffer": [
+            "6.4.3 Algoritmo Z-Buffer"
+          ],
+          "unidade-06-processo-de-visualizacao-3d/arvores-bsp": [
+            "6.4.4 Árvores BSP"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/formas-de-representacao": [
+            "7.1 Formas de Representação"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/representacao-de-curvas-parametricas": [
+            "7.1.1 Representação de Curvas Paramétricas"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/bezier-e-algoritmo-de-casteljau": [
+            "7.1.1.1 Bézier e Algoritmo de Casteljau"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/hermite": [
+            "7.1.1.2 Hermite"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/b-spline": [
+            "7.1.1.3 B-Spline"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/catmull-rom": [
+            "7.1.1.4 Catmull-Rom"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/vetorial-ou-matricial": [
+            "7.1.2 Vetorial ou Matricial"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/enumeracao-espacial": [
+            "7.1.3 Enumeração Espacial"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/representacao-aramada": [
+            "7.1.4 Representação Aramada"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/superficies-limitantes": [
+            "7.1.5 Superfícies Limitantes"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/tecnicas-de-modelagem-3d": [
+            "7.2 Técnicas de Modelagem 3D"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/digitalizacao": [
+            "7.2.1 Digitalização"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/varredura": [
+            "7.2.2 Varredura"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/geometria-solida-construtiva-csg": [
+            "7.2.3 Geometria Sólida Construtiva (CSG)"
+          ],
+          "unidade-07-representacao-e-modelagem-de-objetos/instanciamento-de-primitivas": [
+            "7.2.4 Instanciamento de Primitivas"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/modelos-de-iluminacao-luz-pontual-direcional-spot": [
+            "8.1 Modelos de Iluminação: luz pontual, direcional, spot"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/modelos-de-reflexao-ambiente-difusa-especular": [
+            "8.2 Modelos de Reflexão: ambiente, difusa, especular"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/metodos-de-sombreamento-flat-gouraud-phong": [
+            "8.3 Métodos de sombreamento: Flat , Gouraud, Phong"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/mapeamento-de-textura": [
+            "8.4 Mapeamento de Textura"
+          ],
+          "unidade-08-sintese-de-imagens-realisticas/conceitos-basicos-de-ray-tracing-e-radiosidade": [
+            "8.5 Conceitos Básicos de Ray Tracing e Radiosidade"
+          ],
+          "unidade-09-topicos-especiais-em-pesquisa-em-cg/temas-atuais-e-avancados-de-computacao-grafica": [
+            "9.1 Temas atuais e avançados de Computação Gráfica"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-08-04",
+            "period_end": "2026-08-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-08-06",
+            "period_end": "2026-08-06",
+            "source_rows": [
+              1
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-08-11",
+            "period_end": "2026-08-13",
+            "source_rows": [
+              2,
+              3
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-08-18",
+            "period_end": "2026-08-18",
+            "source_rows": [
+              4
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-08-20",
+            "period_end": "2026-08-20",
+            "source_rows": [
+              5
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-08-25",
+            "period_end": "2026-08-27",
+            "source_rows": [
+              6,
+              7
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-09-01",
+            "period_end": "2026-09-08",
+            "source_rows": [
+              8,
+              9,
+              10
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-09-10",
+            "period_end": "2026-09-17",
+            "source_rows": [
+              11,
+              12,
+              13
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-09-22",
+            "period_end": "2026-09-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-09-24",
+            "period_end": "2026-09-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-09-29",
+            "period_end": "2026-09-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-10-01",
+            "period_end": "2026-10-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-10-06",
+            "period_end": "2026-10-08",
+            "source_rows": [
+              18,
+              19
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-10-13",
+            "period_end": "2026-10-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-10-15",
+            "period_end": "2026-10-15",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-10-20",
+            "period_end": "2026-10-20",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-10-22",
+            "period_end": "2026-10-22",
+            "source_rows": [
+              23
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-10-27",
+            "period_end": "2026-10-27",
+            "source_rows": [
+              24
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-10-29",
+            "period_end": "2026-10-29",
+            "source_rows": [
+              25
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-11-03",
+            "period_end": "2026-11-05",
+            "source_rows": [
+              26,
+              27
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-11-10",
+            "period_end": "2026-11-12",
+            "source_rows": [
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-11-17",
+            "period_end": "2026-11-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-11-19",
+            "period_end": "2026-11-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-11-24",
+            "period_end": "2026-11-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-11-26",
+            "period_end": "2026-11-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-12-01",
+            "period_end": "2026-12-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-12-03",
+            "period_end": "2026-12-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-12-08",
+            "period_end": "2026-12-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-12-10",
+            "period_end": "2026-12-10",
+            "source_rows": [
+              37
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {
+        "unidade": 6,
+        "sub_aceito": 4,
+        "sub_primario": 4
+      }
+    },
+    "FR": {
+      "root": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\cru_fontes_controle_15-09\\Fundamentos-de-Redes-Tutor",
+      "build": {
+        "seconds": 272.62,
+        "calls": {},
+        "failed_entries": []
+      },
+      "verified_hashes": 22,
+      "metadata_candidates": {
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\fundamentos-de-redes-de-computadores\\stash\\raw\\moodle\\contents.json": false,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\fundamentos-de-redes-de-computadores\\stash\\.moodle_nomes.json": true,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\fundamentos-de-redes-de-computadores\\raw\\moodle\\contents.json": true,
+        "C:\\Users\\Humberto\\Desktop\\Moodle\\fundamentos-de-redes-de-computadores\\.moodle_nomes.json": false
+      },
+      "before": {
+        "entries": 22,
+        "base_backends": {
+          "pymupdf4llm": 15,
+          "": 5,
+          "url_fetcher": 2
+        },
+        "base_staging": 17,
+        "curated_refs": 0,
+        "headings": 0,
+        "topics": 32,
+        "aliases": 32,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-a-redes-de-computadores/conceitos-de-redes-de-computadores-e-internet": [
+            "1.1 Conceitos de redes de computadores e Internet"
+          ],
+          "unidade-01-introducao-a-redes-de-computadores/modelos-osi-e-tcpip": [
+            "1.2 Modelos OSI e TCP/IP"
+          ],
+          "unidade-01-introducao-a-redes-de-computadores/conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia": [
+            "1.3 Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância"
+          ],
+          "unidade-02-nivel-de-aplicacao/funcoes-e-caracteristicas-do-nivel-de-aplicacao": [
+            "2.1 Funções e características do nível de aplicação"
+          ],
+          "unidade-02-nivel-de-aplicacao/paradigmas-clienteservidor-e-p2p": [
+            "2.2 Paradigmas cliente/servidor e P2P"
+          ],
+          "unidade-02-nivel-de-aplicacao/implementacao-de-sockets": [
+            "2.2.1 Implementação de sockets"
+          ],
+          "unidade-02-nivel-de-aplicacao/protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat": [
+            "2.3 Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)"
+          ],
+          "unidade-02-nivel-de-aplicacao/protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap": [
+            "2.4 Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)"
+          ],
+          "unidade-03-nivel-de-transporte/funcoes-e-caracteristicas-do-nivel-de-transporte": [
+            "3.1 Funções e características do nível de transporte"
+          ],
+          "unidade-03-nivel-de-transporte/protocolo-tcp": [
+            "3.2 Protocolo TCP"
+          ],
+          "unidade-03-nivel-de-transporte/controle-de-congestionamento-tcp": [
+            "3.21 Controle de congestionamento TCP"
+          ],
+          "unidade-03-nivel-de-transporte/protocolo-udp": [
+            "3.3 Protocolo UDP"
+          ],
+          "unidade-04-nivel-de-rede/tipos-de-servicos": [
+            "4.1 Tipos de serviços"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-ipv4": [
+            "4.2 Protocolo IPv4"
+          ],
+          "unidade-04-nivel-de-rede/funcoes": [
+            "4.2.1 Funções"
+          ],
+          "unidade-04-nivel-de-rede/enderecamento": [
+            "4.2.2 Endereçamento"
+          ],
+          "unidade-04-nivel-de-rede/fragmentacao": [
+            "4.2.3 Fragmentação"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-arp": [
+            "4.2.4 Protocolo ARP"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-icmp": [
+            "4.2.5 Protocolo ICMP"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-ipv6": [
+            "4.3 Protocolo IPv6"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-icmpv6": [
+            "4.4 Protocolo ICMPv6"
+          ],
+          "unidade-04-nivel-de-rede/roteamento-estatico-e-dinamico": [
+            "4.5 Roteamento estático e dinâmico"
+          ],
+          "unidade-04-nivel-de-rede/algoritmos-de-roteamento": [
+            "4.5.1 Algoritmos de roteamento"
+          ],
+          "unidade-04-nivel-de-rede/protocolos-de-roteamento": [
+            "4.5.2 Protocolos de roteamento"
+          ],
+          "unidade-05-nivel-de-enlace/funcoes-e-caracteristicas-do-nivel-de-enlace": [
+            "5.1 Funções e características do nível de enlace"
+          ],
+          "unidade-05-nivel-de-enlace/protocolos-de-enlace-para-redes-locais-cabeadas-ethernet": [
+            "5.2 Protocolos de enlace para redes locais cabeadas (Ethernet)"
+          ],
+          "unidade-05-nivel-de-enlace/protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth": [
+            "5.3 Protocolos de enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)"
+          ],
+          "unidade-06-nivel-fisico/classificacao-e-topologias-de-redes-de-computadores": [
+            "6.1 Classificação e topologias de redes de computadores"
+          ],
+          "unidade-06-nivel-fisico/fundamentos-de-comunicacao-de-dados": [
+            "6.2 Fundamentos de comunicação de dados"
+          ],
+          "unidade-06-nivel-fisico/calculo-da-capacidade-do-canal": [
+            "6.2.1 Cálculo da capacidade do canal"
+          ],
+          "unidade-06-nivel-fisico/hierarquias-digitais": [
+            "6.2.2 Hierarquias digitais"
+          ],
+          "unidade-06-nivel-fisico/equipamentos-de-interconexao": [
+            "6.3 Equipamentos de interconexão"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-08-04",
+            "period_end": "2026-08-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-08-06",
+            "period_end": "2026-08-11",
+            "source_rows": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-08-13",
+            "period_end": "2026-08-20",
+            "source_rows": [
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-08-25",
+            "period_end": "2026-08-25",
+            "source_rows": [
+              6
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-08-27",
+            "period_end": "2026-09-01",
+            "source_rows": [
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-09-03",
+            "period_end": "2026-09-08",
+            "source_rows": [
+              9,
+              10
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-09-10",
+            "period_end": "2026-09-10",
+            "source_rows": [
+              11
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-09-15",
+            "period_end": "2026-09-15",
+            "source_rows": [
+              12
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-09-17",
+            "period_end": "2026-09-17",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-09-22",
+            "period_end": "2026-09-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-09-24",
+            "period_end": "2026-09-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-09-29",
+            "period_end": "2026-09-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-10-01",
+            "period_end": "2026-10-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-10-06",
+            "period_end": "2026-10-06",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-10-08",
+            "period_end": "2026-10-08",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-10-13",
+            "period_end": "2026-10-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-10-15",
+            "period_end": "2026-10-15",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-10-20",
+            "period_end": "2026-10-20",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-10-22",
+            "period_end": "2026-10-22",
+            "source_rows": [
+              23
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-10-27",
+            "period_end": "2026-11-03",
+            "source_rows": [
+              24,
+              25,
+              26
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-11-05",
+            "period_end": "2026-11-05",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-11-10",
+            "period_end": "2026-11-12",
+            "source_rows": [
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-11-17",
+            "period_end": "2026-11-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-11-19",
+            "period_end": "2026-11-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-11-24",
+            "period_end": "2026-11-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-11-26",
+            "period_end": "2026-11-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-12-01",
+            "period_end": "2026-12-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-12-03",
+            "period_end": "2026-12-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-12-08",
+            "period_end": "2026-12-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-30",
+            "period_start": "2026-12-10",
+            "period_end": "2026-12-10",
+            "source_rows": [
+              37
+            ]
+          }
+        ]
+      },
+      "after": {
+        "entries": 20,
+        "base_backends": {
+          "pymupdf4llm": 15,
+          "": 5
+        },
+        "base_staging": 15,
+        "curated_refs": 0,
+        "headings": 0,
+        "topics": 32,
+        "aliases": 32,
+        "zero_alias": 0,
+        "topic_aliases": {
+          "unidade-01-introducao-a-redes-de-computadores/conceitos-de-redes-de-computadores-e-internet": [
+            "1.1 Conceitos de redes de computadores e Internet"
+          ],
+          "unidade-01-introducao-a-redes-de-computadores/modelos-osi-e-tcpip": [
+            "1.2 Modelos OSI e TCP/IP"
+          ],
+          "unidade-01-introducao-a-redes-de-computadores/conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia": [
+            "1.3 Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância"
+          ],
+          "unidade-02-nivel-de-aplicacao/funcoes-e-caracteristicas-do-nivel-de-aplicacao": [
+            "2.1 Funções e características do nível de aplicação"
+          ],
+          "unidade-02-nivel-de-aplicacao/paradigmas-clienteservidor-e-p2p": [
+            "2.2 Paradigmas cliente/servidor e P2P"
+          ],
+          "unidade-02-nivel-de-aplicacao/implementacao-de-sockets": [
+            "2.2.1 Implementação de sockets"
+          ],
+          "unidade-02-nivel-de-aplicacao/protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat": [
+            "2.3 Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)"
+          ],
+          "unidade-02-nivel-de-aplicacao/protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap": [
+            "2.4 Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)"
+          ],
+          "unidade-03-nivel-de-transporte/funcoes-e-caracteristicas-do-nivel-de-transporte": [
+            "3.1 Funções e características do nível de transporte"
+          ],
+          "unidade-03-nivel-de-transporte/protocolo-tcp": [
+            "3.2 Protocolo TCP"
+          ],
+          "unidade-03-nivel-de-transporte/controle-de-congestionamento-tcp": [
+            "3.21 Controle de congestionamento TCP"
+          ],
+          "unidade-03-nivel-de-transporte/protocolo-udp": [
+            "3.3 Protocolo UDP"
+          ],
+          "unidade-04-nivel-de-rede/tipos-de-servicos": [
+            "4.1 Tipos de serviços"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-ipv4": [
+            "4.2 Protocolo IPv4"
+          ],
+          "unidade-04-nivel-de-rede/funcoes": [
+            "4.2.1 Funções"
+          ],
+          "unidade-04-nivel-de-rede/enderecamento": [
+            "4.2.2 Endereçamento"
+          ],
+          "unidade-04-nivel-de-rede/fragmentacao": [
+            "4.2.3 Fragmentação"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-arp": [
+            "4.2.4 Protocolo ARP"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-icmp": [
+            "4.2.5 Protocolo ICMP"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-ipv6": [
+            "4.3 Protocolo IPv6"
+          ],
+          "unidade-04-nivel-de-rede/protocolo-icmpv6": [
+            "4.4 Protocolo ICMPv6"
+          ],
+          "unidade-04-nivel-de-rede/roteamento-estatico-e-dinamico": [
+            "4.5 Roteamento estático e dinâmico"
+          ],
+          "unidade-04-nivel-de-rede/algoritmos-de-roteamento": [
+            "4.5.1 Algoritmos de roteamento"
+          ],
+          "unidade-04-nivel-de-rede/protocolos-de-roteamento": [
+            "4.5.2 Protocolos de roteamento"
+          ],
+          "unidade-05-nivel-de-enlace/funcoes-e-caracteristicas-do-nivel-de-enlace": [
+            "5.1 Funções e características do nível de enlace"
+          ],
+          "unidade-05-nivel-de-enlace/protocolos-de-enlace-para-redes-locais-cabeadas-ethernet": [
+            "5.2 Protocolos de enlace para redes locais cabeadas (Ethernet)"
+          ],
+          "unidade-05-nivel-de-enlace/protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth": [
+            "5.3 Protocolos de enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)"
+          ],
+          "unidade-06-nivel-fisico/classificacao-e-topologias-de-redes-de-computadores": [
+            "6.1 Classificação e topologias de redes de computadores"
+          ],
+          "unidade-06-nivel-fisico/fundamentos-de-comunicacao-de-dados": [
+            "6.2 Fundamentos de comunicação de dados"
+          ],
+          "unidade-06-nivel-fisico/calculo-da-capacidade-do-canal": [
+            "6.2.1 Cálculo da capacidade do canal"
+          ],
+          "unidade-06-nivel-fisico/hierarquias-digitais": [
+            "6.2.2 Hierarquias digitais"
+          ],
+          "unidade-06-nivel-fisico/equipamentos-de-interconexao": [
+            "6.3 Equipamentos de interconexão"
+          ]
+        },
+        "timeline_structure": [
+          {
+            "id": "bloco-01",
+            "period_start": "2026-08-04",
+            "period_end": "2026-08-04",
+            "source_rows": [
+              0
+            ]
+          },
+          {
+            "id": "bloco-02",
+            "period_start": "2026-08-06",
+            "period_end": "2026-08-11",
+            "source_rows": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "bloco-03",
+            "period_start": "2026-08-13",
+            "period_end": "2026-08-20",
+            "source_rows": [
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "id": "bloco-04",
+            "period_start": "2026-08-25",
+            "period_end": "2026-08-25",
+            "source_rows": [
+              6
+            ]
+          },
+          {
+            "id": "bloco-05",
+            "period_start": "2026-08-27",
+            "period_end": "2026-09-01",
+            "source_rows": [
+              7,
+              8
+            ]
+          },
+          {
+            "id": "bloco-06",
+            "period_start": "2026-09-03",
+            "period_end": "2026-09-08",
+            "source_rows": [
+              9,
+              10
+            ]
+          },
+          {
+            "id": "bloco-07",
+            "period_start": "2026-09-10",
+            "period_end": "2026-09-10",
+            "source_rows": [
+              11
+            ]
+          },
+          {
+            "id": "bloco-08",
+            "period_start": "2026-09-15",
+            "period_end": "2026-09-15",
+            "source_rows": [
+              12
+            ]
+          },
+          {
+            "id": "bloco-09",
+            "period_start": "2026-09-17",
+            "period_end": "2026-09-17",
+            "source_rows": [
+              13
+            ]
+          },
+          {
+            "id": "bloco-10",
+            "period_start": "2026-09-22",
+            "period_end": "2026-09-22",
+            "source_rows": [
+              14
+            ]
+          },
+          {
+            "id": "bloco-11",
+            "period_start": "2026-09-24",
+            "period_end": "2026-09-24",
+            "source_rows": [
+              15
+            ]
+          },
+          {
+            "id": "bloco-12",
+            "period_start": "2026-09-29",
+            "period_end": "2026-09-29",
+            "source_rows": [
+              16
+            ]
+          },
+          {
+            "id": "bloco-13",
+            "period_start": "2026-10-01",
+            "period_end": "2026-10-01",
+            "source_rows": [
+              17
+            ]
+          },
+          {
+            "id": "bloco-14",
+            "period_start": "2026-10-06",
+            "period_end": "2026-10-06",
+            "source_rows": [
+              18
+            ]
+          },
+          {
+            "id": "bloco-15",
+            "period_start": "2026-10-08",
+            "period_end": "2026-10-08",
+            "source_rows": [
+              19
+            ]
+          },
+          {
+            "id": "bloco-16",
+            "period_start": "2026-10-13",
+            "period_end": "2026-10-13",
+            "source_rows": [
+              20
+            ]
+          },
+          {
+            "id": "bloco-17",
+            "period_start": "2026-10-15",
+            "period_end": "2026-10-15",
+            "source_rows": [
+              21
+            ]
+          },
+          {
+            "id": "bloco-18",
+            "period_start": "2026-10-20",
+            "period_end": "2026-10-20",
+            "source_rows": [
+              22
+            ]
+          },
+          {
+            "id": "bloco-19",
+            "period_start": "2026-10-22",
+            "period_end": "2026-10-22",
+            "source_rows": [
+              23
+            ]
+          },
+          {
+            "id": "bloco-20",
+            "period_start": "2026-10-27",
+            "period_end": "2026-11-03",
+            "source_rows": [
+              24,
+              25,
+              26
+            ]
+          },
+          {
+            "id": "bloco-21",
+            "period_start": "2026-11-05",
+            "period_end": "2026-11-05",
+            "source_rows": [
+              27
+            ]
+          },
+          {
+            "id": "bloco-22",
+            "period_start": "2026-11-10",
+            "period_end": "2026-11-12",
+            "source_rows": [
+              28,
+              29
+            ]
+          },
+          {
+            "id": "bloco-23",
+            "period_start": "2026-11-17",
+            "period_end": "2026-11-17",
+            "source_rows": [
+              30
+            ]
+          },
+          {
+            "id": "bloco-24",
+            "period_start": "2026-11-19",
+            "period_end": "2026-11-19",
+            "source_rows": [
+              31
+            ]
+          },
+          {
+            "id": "bloco-25",
+            "period_start": "2026-11-24",
+            "period_end": "2026-11-24",
+            "source_rows": [
+              32
+            ]
+          },
+          {
+            "id": "bloco-26",
+            "period_start": "2026-11-26",
+            "period_end": "2026-11-26",
+            "source_rows": [
+              33
+            ]
+          },
+          {
+            "id": "bloco-27",
+            "period_start": "2026-12-01",
+            "period_end": "2026-12-01",
+            "source_rows": [
+              34
+            ]
+          },
+          {
+            "id": "bloco-28",
+            "period_start": "2026-12-03",
+            "period_end": "2026-12-03",
+            "source_rows": [
+              35
+            ]
+          },
+          {
+            "id": "bloco-29",
+            "period_start": "2026-12-08",
+            "period_end": "2026-12-08",
+            "source_rows": [
+              36
+            ]
+          },
+          {
+            "id": "bloco-30",
+            "period_start": "2026-12-10",
+            "period_end": "2026-12-10",
+            "source_rows": [
+              37
+            ]
+          }
+        ]
+      },
+      "same_timeline": true,
+      "losses_missing_inputs": {}
+    }
+  }
+}

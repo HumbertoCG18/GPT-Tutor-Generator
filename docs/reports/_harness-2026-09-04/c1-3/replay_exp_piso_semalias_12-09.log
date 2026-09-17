@@ -1,0 +1,9 @@
+base: {'MF': 55, 'SO': 15, 'IA': 36, 'ES2': 25, 'TCC': 10, 'CG': 58, 'FR': 18} total 217
+  piso 1.5 CG    58 ->  56 gain ['bezier-python'] loss ['basico3d-py-zip', 'exerciciodemodelagem', 'exemplozbuffer']
+E8 piso 1.5 so em topico sem alias: liquido -2 (ganha 1, perde 3)
+  piso 2.0 CG    58 ->  56 gain ['bezier-python'] loss ['basico3d-py-zip', 'exerciciodemodelagem', 'exemplozbuffer']
+E8 piso 2.0 so em topico sem alias: liquido -2 (ganha 1, perde 3)
+  piso 3.0 CG    58 ->  56 gain ['bezier-python'] loss ['basico3d-py-zip', 'exerciciodemodelagem', 'exemplozbuffer']
+E8 piso 3.0 so em topico sem alias: liquido -2 (ganha 1, perde 3)
+  piso 5.0 CG    58 ->  57 gain ['bezier-python', 'exercicios-sobre-curvas', 'exercicios-sobre-curvas-html'] loss ['intro', 'basico3d-py-zip', 'exerciciodemodelagem', 'exemplozbuffer']
+E8 piso 5.0 so em topico sem alias: liquido -1 (ganha 3, perde 4)

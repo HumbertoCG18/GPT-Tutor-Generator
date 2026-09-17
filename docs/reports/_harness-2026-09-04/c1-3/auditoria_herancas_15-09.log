@@ -1,0 +1,8 @@
+MF: hashes=67 timeline_igual=True aliases=70->33 headings=79->6 perdas_ausentes={'bloco': 4, 'unidade': 1}
+SO: hashes=42 timeline_igual=True aliases=68->36 headings=79->7 perdas_ausentes={}
+IA: hashes=61 timeline_igual=True aliases=72->41 headings=103->42 perdas_ausentes={'bloco': 2, 'unidade': 2}
+ES2: hashes=35 timeline_igual=True aliases=49->21 headings=47->0 perdas_ausentes={}
+TCC: hashes=27 timeline_igual=True aliases=57->27 headings=54->0 perdas_ausentes={}
+CG: hashes=88 timeline_igual=True aliases=61->60 headings=5->3 perdas_ausentes={'unidade': 6, 'sub_aceito': 4, 'sub_primario': 4}
+FR: hashes=22 timeline_igual=True aliases=32->32 headings=0->0 perdas_ausentes={}
+{"entrada_ausente": 13, "bloco_n": 237, "bloco_base": 222, "bloco_novo": 169, "bloco_perdas": 56, "unidade_n": 284, "unidade_base": 253, "unidade_novo": 234, "unidade_perdas": 26, "sub_aceito_n": 251, "sub_aceito_base": 142, "sub_aceito_novo": 99, "sub_primario_n": 251, "sub_primario_base": 100, "sub_primario_novo": 76, "comuns": 303, "bloco_comum_n": 231, "bloco_comum_base": 216, "bloco_comum_novo": 169, "unidade_comum_n": 271, "unidade_comum_base": 244, "unidade_comum_novo": 234, "sub_aceito_comum_n": 243, "sub_aceito_comum_base": 138, "sub_aceito_comum_novo": 99, "sub_primario_comum_n": 243, "sub_primario_comum_base": 96, "sub_primario_comum_novo": 76, "sub_aceito_perdas": 48, "sub_primario_perdas": 31, "sub_primario_ganhos": 7, "sub_aceito_ganhos": 5, "bloco_ganhos": 3, "unidade_ganhos": 7, "manifest_base": 341, "manifest_novo": 338, "novas_origens": 12}

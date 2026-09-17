@@ -1,0 +1,40 @@
+DISCOVERY
+src\ui\maintenance_panel.py:102:    def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src\ui\maintenance_panel.py:137:        n, ids = self._detect_orphans(repo_dir)
+
+SOURCE VERIFICATION
+src/ui/maintenance_panel.py:12: class MaintenancePanel(tk.Frame):
+src/ui/maintenance_panel.py:97:     def _clear_log(self) -> None:
+src/ui/maintenance_panel.py:98:         self._log.configure(state="normal")
+src/ui/maintenance_panel.py:99:         self._log.delete("1.0", "end")
+src/ui/maintenance_panel.py:100:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:101: 
+src/ui/maintenance_panel.py:102:     def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src/ui/maintenance_panel.py:103:         """Read-only: conta órfãos em code_curation contra manifest."""
+src/ui/maintenance_panel.py:104:         cur_path = repo_dir / "code_curation.json"
+src/ui/maintenance_panel.py:105:         mf_path = repo_dir / "manifest.json"
+src/ui/maintenance_panel.py:106:         if not cur_path.exists() or not mf_path.exists():
+src/ui/maintenance_panel.py:107:             return (0, [])
+src/ui/maintenance_panel.py:108:         try:
+src/ui/maintenance_panel.py:109:             cur = json.loads(cur_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:110:             mf = json.loads(mf_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:111:         except Exception:
+src/ui/maintenance_panel.py:112:             return (0, [])
+src/ui/maintenance_panel.py:113:         valid = {e.get("id") for e in mf.get("entries", []) if e.get("id")}
+src/ui/maintenance_panel.py:114:         orphans = [eid for eid in (cur.get("entries") or {}) if eid not in valid]
+src/ui/maintenance_panel.py:115:         return (len(orphans), orphans)
+src/ui/maintenance_panel.py:127:     def refresh(self) -> None:
+src/ui/maintenance_panel.py:132:             self._var_sidecar_age.set("—")
+src/ui/maintenance_panel.py:133:             return
+src/ui/maintenance_panel.py:134:         repo_dir = Path(repo_dir)
+src/ui/maintenance_panel.py:135:         self._var_subject.set(repo_dir.name)
+src/ui/maintenance_panel.py:136: 
+src/ui/maintenance_panel.py:137:         n, ids = self._detect_orphans(repo_dir)
+src/ui/maintenance_panel.py:138:         if n == 0:
+src/ui/maintenance_panel.py:139:             self._var_code_orphans.set("nenhum")
+src/ui/maintenance_panel.py:140:         else:
+src/ui/maintenance_panel.py:141:             self._var_code_orphans.set(f"{n} órfão(s): {', '.join(ids[:5])}{'...' if n > 5 else ''}")
+src/ui/maintenance_panel.py:142: 
+src/ui/maintenance_panel.py:143:         present = [p.name for p in self._sidecar_files(repo_dir) if p.exists()]
+src/ui/maintenance_panel.py:144:         self._var_sidecar_age.set(f"{len(present)}/5 presentes (serão regerados)")
+src/ui/maintenance_panel.py:145: 

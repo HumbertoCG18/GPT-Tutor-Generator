@@ -1,0 +1,4 @@
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+[SO] zips 1, membros 2, md distintos 2 (ok) · reprocess 53s · orfaos apagados 18 · code_curation {'determ-v3': 1} · git sujo 17 -> 22 · tentativas Gemini 0
+total 53s · tentativas de chamada Gemini: 0

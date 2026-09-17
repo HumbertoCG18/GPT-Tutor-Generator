@@ -1,0 +1,10 @@
+entries reescritas (label existe e != title): 211/348
+  window_provider:226 ordinal                          muda em   0  
+  anchor_engine:125 _exam_number                       muda em   0  
+  anchor_engine:142 is_exam_prep                       muda em   0  
+  due_window:92/97 _stems(title+id)                    muda em   0  
+  concept_resolver:385 extract_dates(title)            muda em   0  
+  file_map:230 _REVISAO_RE(title+id)                   muda em   2  ES2:servicos False->True | ES2:web False->True
+  file_map:446 explicit_unit_number                    muda em   0  
+  file_map:1092 split_camel_case(title) tokens         muda em 133  MF:exerciciosformalizacaoalgori {'recursao', 'algoritmos', 'formalizacao'}->{'recursivas', 'equacoes'} | MF:formalizacaoalgoritmos-recur {'recursao', 'algoritmos', 'formalizacao'}->{'recursivas', 'listas', 'especifi | MF:revisao set()->{'essenciais', 'conceitos'} | MF:provasindutivas-especificaco {'indutivas', 'especificacoes', 'arvores', 'provas', 'recursivas'}->{'inducao'
+  disambiguator:70 entry_tokens (title+label, conjunto) muda em 103  MF:exerciciosformalizacaoalgori {'formalizacao', 'algoritmos', 'recursao3', 'recursivas', 'equacoes'}->{'recur | MF:formalizacaoalgoritmos-recur {'listas', 'formalizacao', 'recursao2', 'algoritmos', 'especificacoes', 'recur | MF:provasindutivas-especificaco {'indutivas', 'especificacoes', 'arvores', 'provas', 'inducao', 'recursivas',  | MF:provasindutivas-especificaco {'listas', 'indutivas', 'especificacoes', 'provas', 'inducao', 'recursivas', '

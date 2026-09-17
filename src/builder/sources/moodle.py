@@ -9,6 +9,7 @@ Só stdlib.
 from __future__ import annotations
 
 import json
+import logging
 import re
 import urllib.parse
 import urllib.request
@@ -16,9 +17,26 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from src.utils.helpers import slugify
+from src.utils.helpers import slugify, write_json_manifest
 
 _INVALID = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+
+# Datas DD/MM[/YYYY] com separador '/' (convenção de data) -> forma pontilhada
+# com dia/mês zero-padded a 2 dígitos. Só age sobre '/', então versão/numeração
+# com '.' (ex.: "2.10.1") e "12/2025" (mês/ano, 2º termo 4 dígitos) ficam fora.
+_DATE_SLASH_RE = re.compile(r'(?<!\d)(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?(?!\d)')
+
+
+def _normalize_date_seps(name: str) -> str:
+    def _repl(m):
+        head = f"{int(m.group(1)):02d}.{int(m.group(2)):02d}"
+        return f"{head}.{m.group(3)}" if m.group(3) else head
+    name = _DATE_SLASH_RE.sub(_repl, name)
+    # passe genérico: '/' restante entre dígitos (ex.: "12/2025") -> '.', sem pad
+    return re.sub(r'(?<=\d)/(?=\d)', '.', name)
+
+
+logger = logging.getLogger(__name__)
 
 import re as _re
 
@@ -41,6 +59,10 @@ def parse_moodle_course(course: dict) -> dict:
     m = _COURSE_SEM_RE.search(full)
     if m:
         semester = m.group(1)
+    turma = ""
+    m_t = _re.search(r"Turmas?\s+(\d{3}\b(?:\s*-\s*\d{3}\b)*)", full, _re.IGNORECASE)
+    if m_t:
+        turma = _re.sub(r"\s+", " ", m_t.group(1)).strip()
     # corta o tail estrutural (Turma/semestre/Prof) e remove o código inicial.
     m_turma = _re.search(r"\s*-\s*Turma\b", full, _re.IGNORECASE)
     head = full[:m_turma.start()] if m_turma else full
@@ -53,11 +75,13 @@ def parse_moodle_course(course: dict) -> dict:
         "semester": semester,
         "slug": slugify(name) if name else (slugify(str(course.get("shortname") or "")) or cid),
         "shortname": str(course.get("shortname") or ""),
+        "turma": turma,
     }
 
 
 def sanitize_folder_name(name: str) -> str:
-    name = _INVALID.sub(" ", str(name or ""))
+    name = _normalize_date_seps(str(name or ""))
+    name = _INVALID.sub(" ", name)
     name = re.sub(r"\s+", " ", name).strip(" .")
     return name or "sem-secao"
 
@@ -97,6 +121,9 @@ class SectionFile:
     filename: str          # nome ORIGINAL do conteúdo Moodle (ex.: "main.pdf") — usado no backfill
     fileurl: str
     savename: str = ""     # nome p/ disco, derivado do título do módulo (resolve colisão de "main.pdf")
+    label: str = ""        # mod.get("name") — label do recurso no Moodle (alavanca 1)
+    timemodified: int = 0  # epoch do upload/modificacao no Moodle (posting_date) — S0, nao consumido
+    timecreated: int = 0   # epoch de criacao do blob no Moodle
 
     @property
     def disk_name(self) -> str:
@@ -125,8 +152,210 @@ def iter_section_files(contents) -> List[SectionFile]:
             for f in file_contents:
                 original = str(f["filename"])
                 savename = _savename_from_module(mod.get("name"), original, len(file_contents))
-                out.append(SectionFile(section, original, str(f["fileurl"]), savename))
+                out.append(SectionFile(section, original, str(f["fileurl"]), savename,
+                                       label=str(mod.get("name") or ""),
+                                       timemodified=int(f.get("timemodified") or 0),
+                                       timecreated=int(f.get("timecreated") or 0)))
     return out
+
+
+def _section_file_value_index(contents, value_fn):
+    """Indexa SectionFiles por savename (disk_name) E filename original,
+    casefolded. value_fn(sf) -> valor ou None. Conta ocorrências por key;
+    val_by_key guarda o valor da 1ª ocorrência (quando value_fn != None).
+    O chamador só aceita match em key com count == 1 (não-ambígua)."""
+    from collections import Counter
+    counts = Counter()
+    val_by_key = {}
+    for sf in iter_section_files(contents):
+        v = value_fn(sf)
+        for key in {sf.disk_name.casefold(), sf.filename.casefold()}:
+            counts[key] += 1
+            if v is not None:
+                val_by_key.setdefault(key, v)
+    return val_by_key, counts
+
+
+def _match_entry_basename(entry, val_by_key, counts):
+    """Casa o basename do source_path do entry contra o índice; só retorna
+    valor se a key existir, tiver valor e for única (count == 1)."""
+    base = Path(str(entry.get("source_path") or "")).name.casefold()
+    if base in val_by_key and counts[base] == 1:
+        return val_by_key[base]
+    return None
+
+
+def backfill_moodle_label_from_api(manifest_entries, contents):
+    """Casa entries -> label do recurso Moodle (mod.name) por savename
+    (instancename) com fallback no filename original. Retorna {id->moodle_label}.
+    Keys ambíguas (count>1 nas duas formas) são puladas."""
+    val_by_key, counts = _section_file_value_index(
+        contents, lambda sf: sf.label or None)
+    out = {}
+    for e in manifest_entries or []:
+        v = _match_entry_basename(e, val_by_key, counts)
+        if v is not None:
+            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            out[eid] = v
+    return out
+
+
+def posting_date_iso(ts) -> str:
+    """Converte epoch -> "YYYY-MM-DD" UTC. Inválido/<=0 -> ""."""
+    from datetime import datetime, timezone
+    try:
+        n = int(ts)
+    except (TypeError, ValueError):
+        return ""
+    if n <= 0:
+        return ""
+    return datetime.fromtimestamp(n, tz=timezone.utc).strftime("%Y-%m-%d")
+
+
+def backfill_posting_date_from_api(manifest_entries, contents):
+    """Casa entries -> {timemodified, timecreated} por savename com fallback no
+    filename. Keys ambíguas puladas."""
+    def _ts(sf):
+        if sf.timemodified or sf.timecreated:
+            return {"timemodified": sf.timemodified, "timecreated": sf.timecreated}
+        return None
+    val_by_key, counts = _section_file_value_index(contents, _ts)
+    out = {}
+    for e in manifest_entries or []:
+        v = _match_entry_basename(e, val_by_key, counts)
+        if v is not None:
+            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            out[eid] = v
+    return out
+
+
+from src.builder.text.patterns import DATE_DMY_RE as _DATE_DMY  # regex unica (07/09)
+_DATE_PREFIX = re.compile(r"^\s*\[?\s*\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?\b")   # "12/03 Processos", "[03/08] - Intro"
+_STRUCTURE_FIELDS = ("moodle_section_index", "moodle_module_index", "moodle_week_label")
+
+
+def _label_text(mod) -> str:
+    """Texto ATUAL do label: description sem HTML. O `name` da API e cache do texto
+    original (ES2: name diz 2025, description diz 2026) e so entra sem description."""
+    from src.builder.sources.moodle_labels import _strip_html
+    txt = re.sub(r"\s+", " ", _strip_html(str(mod.get("description") or ""))).strip()
+    return txt or re.sub(r"\s+", " ", str(mod.get("name") or "")).strip()
+
+
+def _ext_compatible(a: str, b: str) -> bool:
+    return a == b or ({a, b} <= {".pdf", ".htm", ".html"})
+
+
+def _norm_text(t) -> str:
+    from src.builder.text.normalize import normalize_match_text
+    return " ".join(normalize_match_text(str(t or "")).split())
+
+
+from src.models.core import moodle_label_text as _label_of  # leitor unico (07/09)
+
+
+def module_files(mod) -> list:
+    """Nomes ORIGINAIS dos arquivos de um modulo (contents[].type == "file")."""
+    return [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
+
+
+def match_module_entries(in_sec, mod, n_name) -> list:
+    """Entries da secao que sao este modulo (casador UNICO do backfill e da sync): basename ==
+    savename/filename -> stem do arquivo (extensao trocada pelo pipeline) -> moodle_label == nome
+    do modulo (unico) -> stem da entry == nome do modulo. n_name = Counter dos nomes normalizados
+    dos modulos da secao."""
+    name = str(mod.get("name") or "")
+    files = module_files(mod)
+    keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
+    ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+    if not ids and files:
+        # Stem so com extensao COMPATIVEL: identica, ou o par html<->pdf da pagina impressa. Sem isto o anexo
+        # TransformacoesGeometricas.cpp de uma pagina roubava o TransformacoesGeometricas.zip de outro modulo (CG 04/09).
+        stems = {(_norm_text(Path(k).stem), Path(k).suffix.lower()) for k in keys}
+        ids = [e for e in in_sec if any(
+            _norm_text(Path(str(e.get("source_path") or "")).stem) == st
+            and _ext_compatible(Path(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
+    # Label do sidecar == nome do modulo: entry ROTULADA pertence ao modulo mesmo quando outro arquivo ja casou
+    # pelo basename (folhas da subarvore levam o label do hub, S6d; sem a uniao viravam "sumidas" na sync, 04/09).
+    same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
+    if same and (len(same) == 1 or n_name[_norm_text(name)] == 1):
+        ids = ids + [e for e in same if e not in ids]
+    if not ids:
+        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) == _norm_text(name)]
+    return ids
+
+
+def iter_sections(manifest_entries, contents):
+    """(sec, entries da secao, modulos, Counter de nomes) por secao do contents.json."""
+    from collections import Counter
+    for sec in contents or []:
+        sec_key = _norm_text(sanitize_folder_name(str(sec.get("name") or "")))
+        in_sec = [e for e in manifest_entries or [] if _norm_text(e.get("source_section")) == sec_key]
+        mods = sec.get("modules") or []
+        yield sec, in_sec, mods, Counter(_norm_text(m.get("name")) for m in mods)
+
+
+def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0) -> dict:
+    """Posicao do professor no Moodle -> {id: {moodle_section_index, moodle_module_index,
+    moodle_week_label}} (Fase 3a). Casamento POR SECAO (source_section == secao sanitizada):
+    basename == savename/filename do modulo -> moodle_label == mod.name (unico) -> stem == mod.name.
+    week_label = texto do label DATADO (dd/mm/aaaa do ano do curso; year=0 = qualquer) mais
+    proximo antes do modulo; labels consecutivos empilham (" || "); label sem data nao ancora
+    nem reseta. Modulo com DATA no nome ("12/03 Processos") e ancora: seu nome vira o week_label
+    dele e dos modulos sem data que o seguem. Entry sem match fica FORA (o chamador conta)."""
+    out: dict = {}
+    for sec, in_sec, mods, n_name in iter_sections(manifest_entries, contents):
+        if not in_sec:
+            continue
+        run, pending = "", []
+        for mi, mod in enumerate(mods):
+            name = str(mod.get("name") or "")
+            if mod.get("modname") == "label":
+                txt = _label_text(mod)
+                if any(not year or int(y) == year for _d, _m, y in _DATE_DMY.findall(txt)):
+                    pending.append(txt)
+                continue
+            if pending:
+                run, pending = " || ".join(pending), []
+            if _DATE_PREFIX.match(name):
+                run = re.sub(r"\s+", " ", name).strip()
+            for e in match_module_entries(in_sec, mod, n_name):
+                eid = str(e.get("id") or "")
+                if eid and eid not in out:
+                    out[eid] = {"moodle_section_index": int(sec.get("section") or 0),
+                                "moodle_module_index": mi, "moodle_week_label": run}
+    return out
+
+
+def backfill_moodle_structure_repo(repo_root, entries):
+    """Aplica backfill_moodle_structure_from_api IN-PLACE nas entries a partir de
+    `raw/moodle/contents.json` (moodle_pull); ano = period_start do 1o bloco do
+    `.timeline_index.json` (SARC e a verdade). Sem contents.json -> None, nada muda.
+    Campos antigos sao LIMPOS antes (estrutura e verdade do Moodle, nunca cache):
+    entry sem match fica sem estrutura e sai em `unmatched`."""
+    repo = Path(repo_root)
+    cpath = repo / "raw" / "moodle" / "contents.json"
+    if not cpath.is_file():
+        return None
+    contents = json.loads(cpath.read_text(encoding="utf-8"))
+    year = 0
+    try:
+        tl = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
+        blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
+        year = int(str(blocks[0].get("period_start") or "")[:4]) if blocks else 0
+    except Exception:
+        year = 0
+    found = backfill_moodle_structure_from_api(entries, contents, year)
+    unmatched = []
+    for e in entries or []:
+        for f in _STRUCTURE_FIELDS:
+            e.pop(f, None)
+        hit = found.get(str(e.get("id") or ""))
+        if hit:
+            e.update(hit)
+        else:
+            unmatched.append(str(e.get("id") or ""))
+    return {"matched": len(found), "unmatched": unmatched}
 
 
 def section_file_index(contents) -> dict:
@@ -135,6 +364,19 @@ def section_file_index(contents) -> dict:
     for sf in iter_section_files(contents):
         idx.setdefault(sf.filename.casefold(), sf.section)
     return idx
+
+
+def section_file_index_strict(contents) -> tuple:
+    """({basename.casefold(): secao} só de basenames únicos, {ambíguos}).
+
+    Basename presente em >1 seção sai do dict — ambíguo é miss e o chamador
+    decide o fallback (cf. spec 2026-06-11-m365-card-mapping)."""
+    secs: dict = {}
+    for sf in iter_section_files(contents):
+        secs.setdefault(sf.filename.casefold(), set()).add(sf.section)
+    index = {k: next(iter(v)) for k, v in secs.items() if len(v) == 1}
+    ambiguous = {k for k, v in secs.items() if len(v) > 1}
+    return index, ambiguous
 
 
 def backfill_source_section_from_api(manifest_entries, contents):
@@ -262,6 +504,9 @@ def filter_courses_by_semester(courses, semester) -> list:
     return [c for c in (courses or []) if parse_moodle_course(c)["semester"] == semester]
 
 
+_CARD_LISTING = "_ARQUIVOS_DO_CARD.txt"
+
+
 def build_card_structure(stash_dir, contents) -> dict:
     """Cria <stash_dir>/<seção>/ + _ARQUIVOS_DO_CARD.txt (lista esperada). Sem bytes."""
     stash_dir = Path(stash_dir)
@@ -276,8 +521,149 @@ def build_card_structure(stash_dir, contents) -> dict:
         folders += 1
         expected += len(names)
         listing = "Arquivos esperados neste card (baixe do Moodle e coloque aqui):\n\n" + "\n".join(names) + "\n"
-        (folder / "_ARQUIVOS_DO_CARD.txt").write_text(listing, encoding="utf-8")
+        (folder / _CARD_LISTING).write_text(listing, encoding="utf-8")
     return {"folders": folders, "expected_files": expected}
+
+
+def refresh_card_listings_from_disk(stash_dir) -> int:
+    """Reescreve <card>/_ARQUIVOS_DO_CARD.txt espelhando os arquivos REAIS de cada
+    card. Fonte da verdade = DISCO, não a API Moodle — pra matéria M365 os nomes
+    (ex.: 'devops.pdf') batem com o arquivo real, não com o nome/caixa do Moodle
+    ('DevOps.pdf'). Chamado após o download M365. Retorna nº de cards atualizados.
+    O fluxo Moodle (build_card_structure) NÃO usa isto — segue com 'lista esperada'."""
+    root = Path(stash_dir)
+    if not root.is_dir():
+        return 0
+    updated = 0
+    for folder in sorted(root.iterdir()):
+        if not folder.is_dir():
+            continue
+        names = sorted(p.name for p in folder.iterdir()
+                       if p.is_file() and p.name != _CARD_LISTING)
+        listing = "Arquivos presentes neste card:\n\n" + "\n".join(names) + "\n"
+        (folder / _CARD_LISTING).write_text(listing, encoding="utf-8")
+        updated += 1
+    return updated
+
+
+def find_subject_for_course(store, course):
+    """Acha o SubjectProfile da matéria: moodle_course_id > slug > nome.
+
+    Mesma precedência do upsert de import_moodle_courses; usado também pela UI
+    (persistir m365_filter no perfil certo — antes o lookup por nome falhava
+    em silêncio quando o nome do store divergia do nome vindo do Moodle)."""
+    info = parse_moodle_course(course)
+    cid = info["moodle_course_id"]
+    match_by_slug = None
+    for n in store.names():
+        sp = store.get(n)
+        if not sp:
+            continue
+        if cid and getattr(sp, "moodle_course_id", "") == cid:
+            return sp
+        if not match_by_slug and getattr(sp, "slug", "") and sp.slug == info["slug"]:
+            match_by_slug = sp
+    return match_by_slug or store.get(info["name"])
+
+
+def backfill_repo_signals_additive(repo_root, contents, info, write: bool = True) -> dict:
+    """Backfill que NAO muda atribuicao: moodle_label (fill-if-empty), posting_date,
+    .lessons_index.json, e meta turma/schedule_url. Grava in-place se write."""
+    import json as _json
+    repo = Path(repo_root)
+    mpath = repo / "manifest.json"
+    if not mpath.is_file():
+        return {"labels": 0, "posting": 0, "lessons": 0}
+    manifest = _json.loads(mpath.read_text(encoding="utf-8"))
+    entries = manifest.get("entries", [])
+    labels = backfill_moodle_label_from_api(entries, contents)
+    posting = backfill_posting_date_from_api(entries, contents)
+    n_lab = n_post = 0
+    for e in entries:
+        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        if labels.get(eid) and not str(e.get("moodle_label") or "").strip():
+            e["moodle_label"] = labels[eid]
+            n_lab += 1
+        if eid in posting:
+            e["posting_date"] = posting_date_iso(posting[eid]["timemodified"])
+            e["posting_date_created"] = posting_date_iso(posting[eid]["timecreated"])
+            n_post += 1
+    if info.get("turma"):
+        manifest["turma"] = info["turma"]
+    if info.get("schedule_url"):
+        manifest["schedule_url"] = info["schedule_url"]
+    if write:
+        write_json_manifest(mpath, manifest)
+    n_lessons = 0
+    try:
+        from src.builder.sources.moodle_labels import build_lesson_topic_index
+        year = int((info.get("semester") or "0/0").split("/")[0] or 0)
+        lessons_index = build_lesson_topic_index(contents, year)
+        if lessons_index.get("by_date") and write:
+            (repo / "course" / ".lessons_index.json").write_text(
+                _json.dumps(lessons_index, ensure_ascii=False, indent=1), encoding="utf-8")
+            n_lessons = len(lessons_index["by_date"])
+    except Exception:
+        logger.warning("lessons_index falhou para %s", info.get("name"), exc_info=True)
+    return {"labels": n_lab, "posting": n_post, "lessons": n_lessons}
+
+
+def backfill_repo_signals_consumed(repo_root, contents, info, write: bool = True) -> dict:
+    """Backfill que MUDA atribuicao: source_section (overwrite) + card_block_map/assign_due.
+    Usado pelo import normal e pelo S0b (eval-gated). Grava in-place se write."""
+    import json as _json
+    repo = Path(repo_root)
+    mpath = repo / "manifest.json"
+    if not mpath.is_file():
+        return {"sections": 0, "card_labels": 0}
+    manifest = _json.loads(mpath.read_text(encoding="utf-8"))
+    entries = manifest.get("entries", [])
+    assignments, _u, _a = backfill_source_section_from_api(entries, contents)
+    n_sec = 0
+    for e in entries:
+        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        if eid in assignments:
+            e["source_section"] = assignments[eid]
+            n_sec += 1
+    if write:
+        write_json_manifest(mpath, manifest)
+    n_card = 0
+    try:
+        from src.builder.sources.moodle_labels import (
+            parse_card_dates, derive_card_block_map, merge_card_block_map,
+            extract_assign_deadlines, extract_assign_deadlines_detailed,
+            extract_file_dues,
+        )
+        ti_path = repo / "course" / ".timeline_index.json"
+        map_path = repo / "course" / ".card_block_map.json"
+        if ti_path.is_file():
+            blocks = (_json.loads(ti_path.read_text(encoding="utf-8")) or {}).get("blocks") or []
+            year = int((info.get("semester") or "0/0").split("/")[0] or 0)
+            derived = derive_card_block_map(parse_card_dates(contents, year), blocks)
+            for _card, _due in extract_assign_deadlines(contents, year).items():
+                if _card in derived:
+                    derived[_card]["assign_due"] = _due
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels", "assign_due": _due}
+            for _card, _lst in extract_assign_deadlines_detailed(contents, year).items():
+                if _card in derived:
+                    derived[_card]["assign_dues"] = _lst
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels", "assign_dues": _lst}
+            for _card, _fd in extract_file_dues(contents, year).items():
+                if _card in derived:
+                    derived[_card]["file_dues"] = _fd
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels",
+                                      "file_dues": _fd}
+            existing = _json.loads(map_path.read_text(encoding="utf-8")) if map_path.is_file() else {}
+            merged = merge_card_block_map(existing, derived)
+            if merged != existing and write:
+                map_path.write_text(_json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
+            n_card = sum(1 for _ in derived.values())
+    except Exception:
+        logger.warning("card_block_map via labels falhou para %s", info.get("name"), exc_info=True)
+    return {"sections": n_sec, "card_labels": n_card}
 
 
 def import_moodle_courses(selected_courses, base_folder, store, client, download: bool = False) -> dict:
@@ -292,23 +678,16 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
     base = Path(base_folder)
     created = updated = linked = 0
     folders = expected_files = backfilled = downloaded = 0
+    card_map_labels = card_map_manual = 0
     failed: list = []
     for course in selected_courses or []:
         info = parse_moodle_course(course)
         cid = info["moodle_course_id"]
         stash = str(base / info["slug"])
         # --- upsert (id -> slug -> create) ---
-        match_by_id = None
-        match_by_slug = None
-        for n in store.names():
-            sp = store.get(n)
-            if not sp:
-                continue
-            if cid and getattr(sp, "moodle_course_id", "") == cid:
-                match_by_id = sp
-                break
-            if not match_by_slug and getattr(sp, "slug", "") and sp.slug == info["slug"]:
-                match_by_slug = sp
+        sp = find_subject_for_course(store, course)
+        match_by_id = sp if (sp is not None and cid and getattr(sp, "moodle_course_id", "") == cid) else None
+        match_by_slug = sp if (sp is not None and match_by_id is None and getattr(sp, "slug", "") == info["slug"]) else None
         if match_by_id is not None:
             sp = match_by_id
             sp.stash_folder = stash
@@ -336,22 +715,14 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
         st = build_card_structure(base / info["slug"], contents)
         folders += st["folders"]
         expected_files += st["expected_files"]
+        sp.turma = info.get("turma", "") or getattr(sp, "turma", "")
         repo = getattr(sp, "repo_root", "") or ""
         if repo and (Path(repo) / "manifest.json").is_file():
-            mpath = Path(repo) / "manifest.json"
-            manifest = _json.loads(mpath.read_text(encoding="utf-8"))
-            entries = manifest.get("entries", [])
-            assignments, _u, _a = backfill_source_section_from_api(entries, contents)
-            if assignments:
-                for e in entries:
-                    eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
-                    if eid in assignments:
-                        e["source_section"] = assignments[eid]
-                        backfilled += 1
-                mpath.with_suffix(".json.apibak").write_text(
-                    mpath.read_text(encoding="utf-8"), encoding="utf-8"
-                )
-                mpath.write_text(_json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+            info_repo = {**info, "turma": sp.turma, "schedule_url": getattr(sp, "schedule_url", "")}
+            add = backfill_repo_signals_additive(repo, contents, info_repo, write=True)
+            con = backfill_repo_signals_consumed(repo, contents, info_repo, write=True)
+            backfilled += con["sections"]
+            card_map_labels += con["card_labels"]
         if download:
             dl = client.download_course(cid, stash)
             downloaded += int(dl.get("downloaded", 0))
@@ -360,6 +731,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
         "created": created, "updated": updated, "linked": linked,
         "folders": folders, "expected_files": expected_files,
         "backfilled": backfilled, "downloaded": downloaded, "failed": failed,
+        "card_map_labels": card_map_labels, "card_map_manual": card_map_manual,
     }
 
 

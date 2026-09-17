@@ -1,0 +1,28 @@
+errados no estado DETERM v2, vocab novo (id -> pred | gold [extras]):
+  MF   archive-of-formal-proofs-355fb8                  -> abordagens-para-verificacao-fo | provadores-de-teoremas 
+  MF   arvores                                          -> exemplos-de-aplicacoes         | provadores-de-teoremas ['especificacao-de-funcoes-recursivas']
+  MF   exemplos                                         -> exemplos-de-aplicacoes         | provadores-de-teoremas ['especificacao-de-conjuntos-indutivos', 'especificacao-de-funcoes-recursivas']
+  MF   intro                                            -> exemplos-de-aplicacoes         | provadores-de-teoremas ['especificacao-de-conjuntos-indutivos', 'especificacao-de-funcoes-recursivas']
+  MF   listas                                           -> exemplos-de-aplicacoes         | provadores-de-teoremas ['especificacao-de-funcoes-recursivas']
+  MF   introducao-zip                                   ->                                | softwares-de-suporte-a-verific ['verificacao-de-programas']
+  MF   terminacao                                       ->                                | correcao-parcial-e-total ['invariante-e-variante-de-laco']
+  MF   tiposindutivos                                   -> verificacao-de-programas       | softwares-de-suporte-a-verific 
+  SO   exemplo-criacao-de-processos-no-unix-linux-filho -> estudo-de-casos                | chamadas-de-sistema 
+  SO   exemplo-criacao-de-processos-no-unix-linux-teste -> estudo-de-casos                | chamadas-de-sistema 
+  SO   exemplo-criacao-de-processos-no-unix-linux-teste -> estudo-de-casos                | chamadas-de-sistema 
+  SO   exemplo-criacao-de-processos-no-unix-linux-teste -> estudo-de-casos                | chamadas-de-sistema 
+  SO   exemplo-threads-em-c-exemplo1                    -> estudo-de-casos                | conceitos-basicos 
+  SO   exemplo-threads-em-c-exemplo2                    -> estudo-de-casos                | conceitos-basicos 
+  SO   exemplo-threads-em-c-exemplo3                    -> estudo-de-casos                | conceitos-basicos 
+  IA   rede-perceptron-or-em-python                     -> introducao-ao-aprendizado-de-m | modelos-preditivos 
+  IA   mlp-xoripynb                                     ->                                | modelos-preditivos 
+  IA   aula-sobre-agrupamento-parte-2-hierarquico       -> introducao-ao-aprendizado-de-m | modelos-descritivos 
+  ES2  kubernetes                                       -> estudo-de-caso-integracao-e-im | plataformas-de-devops 
+  ES2  microsservicos2                                  -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori 
+  ES2  microsservicos3                                  -> estilos-e-padroes-arquiteturai | estudo-de-caso-arquitetura-ori 
+  ES2  roteiro4                                         -> gerenciamento-da-configuracao  | estudo-de-caso-integracao-e-im 
+  ES2  roteiro5                                         -> gerenciamento-da-configuracao  | estudo-de-caso-integracao-e-im 
+  ES2  roteiro6                                         -> gerenciamento-da-configuracao  | estudo-de-caso-integracao-e-im 
+  ES2  roteiro7                                         -> gerenciamento-da-configuracao  | estudo-de-caso-integracao-e-im 
+  ES2  roteiro7-history-service                         -> gerenciamento-da-configuracao  | estudo-de-caso-integracao-e-im 
+  TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierar -> linguagens-reconheciveis-e-dec |  

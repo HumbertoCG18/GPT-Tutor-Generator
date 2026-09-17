@@ -1,0 +1,184 @@
+DISCOVERY
+GRAPHIFY
+Node: ._detect_orphans()
+  ID:        src_ui_maintenance_panel_maintenancepanel_detect_orphans
+  Source:    src/ui/maintenance_panel.py L102
+  Type:      code
+  Community: 
+  Degree:    4
+
+Connections (4):
+  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L102
+  --> Path [references] [EXTRACTED] src/ui/maintenance_panel.py:L102
+  <-- .refresh() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L137
+  <-- Read-only: conta órfãos em code_curation contra manifest. [rationale_for] [EXTRACTED] src/ui/maintenance_panel.py:L103
+
+Ambiguous: 'refresh' matches 3 nodes in different files.
+  src/ui/codes_panel.py
+    id: src_ui_codes_panel_codespanel_refresh
+  src/ui/maintenance_panel.py
+    id: src_ui_maintenance_panel_maintenancepanel_refresh
+  src/ui/timeline_dashboard.py
+    id: src_ui_timeline_dashboard_timelinedashboardview_refresh
+Retry with the repo-relative path or the full node id.
+
+Node: .refresh()
+  ID:        src_ui_maintenance_panel_maintenancepanel_refresh
+  Source:    src/ui/maintenance_panel.py L127
+  Type:      code
+  Community: 
+  Degree:    4
+
+Connections (4):
+  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L127
+  --> Path [calls] [EXTRACTED] src/ui/maintenance_panel.py:L134
+  --> ._detect_orphans() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L137
+  --> ._sidecar_files() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L143
+
+CBM
+total: 1
+results: 1  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel (src/ui/maintenance_panel.py):
+  _detect_orphans Method 102-115 1 2 refresh;len;get
+has_more: false
+
+function: _detect_orphans
+direction: both
+callees_total: 2
+callees: 2  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+builtins:
+  len 1 lsp 0.92
+codegraph-pilot-20260915.src.ui.theme.AppConfig:
+  get 1 heuristic 0.28
+callers_total: 3
+callers: 3  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.ui.app.App:
+  _on_notebook_tab_changed 2 lsp 0.90
+codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel:
+  refresh 1 heuristic 0.28
+codegraph-pilot-20260915.src.ui.maintenance_panel.py:
+  __file__ 2 heuristic 0.28
+
+total: 26
+results: 26  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.artifacts.student_state (src/builder/artifacts/student_state.py):
+  refresh_active_unit_progress Function 386-410 2 4 apply_manual_import_to_student_state;regenerate_pedagogical_files;derive_active_unit_progress;replace;write_text
+codegraph-pilot-20260915.src.builder.engine (src/builder/engine.py):
+  _refresh_manifest_auto_tags Function 365-371 1 2 refresh_manifest_auto_tags
+codegraph-pilot-20260915.src.builder.extraction.content_taxonomy (src/builder/extraction/content_taxonomy.py):
+  refresh_manifest_auto_tags Function 948-967 1 7 _refresh_manifest_auto_tags;str;list;dict;append;get;replace;infer_entry_auto_tags
+codegraph-pilot-20260915.src.builder.sources.moodle (src/builder/sources/moodle.py):
+  refresh_card_listings_from_disk Function 528-546 1 2 download_subject_m365;write_text
+codegraph-pilot-20260915.src.ui.app.App (src/ui/app.py):
+  _refresh_backlog Method 1470-1505 11 6 _apply_repo_task_event;_refresh_repo_progress_state;_on_repo_task_queue_finished;_on_subject_selected;_on_build_complete;_on_single_processed_success;_on_unprocess_done;_on_reprocess_done;edit_backlog_entry;_reject_current;_resolve_backlog_markdown_status;_format_backlog_title;_repo_dir;get;load;delete
+  _refresh_repo_dashboard Method 859-867 7 4 _refresh_repo_task_views;_prune_processed_queue_entries;_refresh_repo_progress_state;open_subject_manager;_on_subject_selected;_on_build_complete;collect_repo_metrics;set_rows;get;names
+  _refresh_repo_progress_state Method 1157-1162 3 3 app.py;_on_build_cancelled;_on_build_error;_refresh_repo_dashboard;_prune_processed_queue_entries;_refresh_backlog
+  _refresh_repo_task_views Method 869-872 6 3 _build_ui;_enqueue_repo_task;remove_selected_repo_task;clear_finished_repo_tasks;_apply_repo_task_event;_on_repo_task_queue_finished;_save_repo_tasks;_refresh_repo_tasks_tree;_refresh_repo_dashboard
+  _refresh_repo_tasks_tree Method 838-857 1 2 _refresh_repo_task_views;replace;delete
+  _refresh_timeline_dashboard Method 888-899 4 2 _on_build_cancelled;_on_build_complete;_on_single_processed_success;_on_single_interrupted;refresh
+  enqueue_current_repo_refresh Method 974-975 1 1 _enqueue_repo_task
+  refresh_tree Method 1784-1818 16 4 _consume_repo_task_snapshot;_prune_processed_queue_entries;_restore_pending_operation_context;_on_subject_selected;add_pdfs;add_images;import_from_stash;add_url;add_code_files;edit_selected;str;derive_profile_backends;get;delete
+codegraph-pilot-20260915.src.ui.codes_panel.CodesPanel (src/ui/codes_panel.py):
+  refresh Method 144-203 4 8 codes_panel.py;_on_notebook_tab_changed;get;set;delete;_code_row_label;_repo_dir;_load_curation;_load_blocks;_id_cell
+codegraph-pilot-20260915.src.ui.curator_studio.CuratorStudioPanel (src/ui/curator_studio.py):
+  _refresh_previews Method 533-535 3 1 _set_preview_zoom;_load_more_preview_pages;_toggle_preview_crop_mode;_load_previews
+codegraph-pilot-20260915.src.ui.dialogs.BacklogEntryEditDialog (src/ui/dialogs.py):
+  _refresh_subunit_status_display Method 3328-3344 2 7 _apply_manual_subunit_selection;_clear_manual_subunit;_update_manual_subunit_pending_state;_resolve_backlog_subunit_status;str;dict;get;set
+  _refresh_tag_summary_display Method 3144-3154 2 6 _apply_manual_tag_selection;_clear_manual_tags;_update_manual_tag_pending_state;_format_backlog_tag_summary;str;list;get;set
+  _refresh_timeline_status_display Method 3461-3475 2 6 _apply_manual_timeline_selection;_clear_manual_timeline;_update_manual_timeline_pending_state;_resolve_backlog_timeline_status;str;dict;set
+  _refresh_unit_status_display Method 3220-3234 2 6 _apply_manual_unit_selection;_clear_manual_unit;_update_manual_unit_pending_state;_resolve_backlog_unit_status;str;dict;set
+codegraph-pilot-20260915.src.ui.dialogs.ProcessingProfileManagerDialog (src/ui/dialogs.py):
+  _refresh_list Method 565-568 3 2 __init__;_save;_delete;_profiles;delete
+codegraph-pilot-20260915.src.ui.dialogs.SubjectManagerDialog (src/ui/dialogs.py):
+  _refresh_list Method 1457-1460 3 2 __init__;_save;_delete;delete;names
+codegraph-pilot-20260915.src.ui.image_curator.ImageCuratorPanel (src/ui/image_curator.py):
+  _refresh_entry_after_image_change Method 605-639 1 9 _delete_images;group_images_by_page;_load_datalab_page_overrides;_build_duplicate_index;_rebuild_tree;_show_images;get;set;delete
+  _refresh_pdf_page Method 1063-1066 1 1 _render_pdf_page
+codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel (src/ui/maintenance_panel.py):
+  refresh Method 127-144 3 4 maintenance_panel.py;_on_notebook_tab_changed;len;set;_detect_orphans;_sidecar_files
+codegraph-pilot-20260915.src.ui.repo_dashboard.RepoDashboard (src/ui/repo_dashboard.py):
+  _handle_refresh Method 169-171 1 0 -
+codegraph-pilot-20260915.src.ui.student_state_curator.StudentStateCurator (src/ui/student_state_curator.py):
+  _refresh_target_preview Method 185-191 2 3 _build_ui;_populate_topics;get;set;_selected_topic_slug
+codegraph-pilot-20260915.src.ui.timeline_dashboard.TimelineDashboardView (src/ui/timeline_dashboard.py):
+  refresh Method 470-481 4 1 _on_notebook_tab_changed;_refresh_timeline_dashboard;__init__;_reload
+has_more: false
+
+{"status":"ambiguous","message":"3 matches for \"refresh\". Pick a qualified_name from suggestions below, or use search_graph(name_pattern=\"...\") to narrow results.","suggestions":[{"qualified_name":"codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel.refresh","name":"refresh","label":"Method","file_path":"src/ui/maintenance_panel.py"},{"qualified_name":"codegraph-pilot-20260915.src.ui.timeline_dashboard.TimelineDashboardView.refresh","name":"refresh","label":"Method","file_path":"src/ui/timeline_dashboard.py"},{"qualified_name":"codegraph-pilot-20260915.src.ui.codes_panel.CodesPanel.refresh","name":"refresh","label":"Method","file_path":"src/ui/codes_panel.py"}]}
+SOURCE VERIFICATION
+src/ui/maintenance_panel.py:12: class MaintenancePanel(tk.Frame):
+src/ui/maintenance_panel.py:35:     def _build_ui(self):
+src/ui/maintenance_panel.py:72: 
+src/ui/maintenance_panel.py:73:         # ── Toolbar
+src/ui/maintenance_panel.py:74:         toolbar = ttk.Frame(self)
+src/ui/maintenance_panel.py:75:         toolbar.pack(fill="x", padx=12, pady=(12, 4))
+src/ui/maintenance_panel.py:76:         ttk.Button(
+src/ui/maintenance_panel.py:77:             toolbar, text="🔍 Detectar resíduos", command=self.refresh
+src/ui/maintenance_panel.py:78:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:79:         ttk.Button(
+src/ui/maintenance_panel.py:80:             toolbar, text="🧹 Executar limpeza", command=self._on_sweep
+src/ui/maintenance_panel.py:81:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:82: 
+src/ui/maintenance_panel.py:83:         # ── Log
+src/ui/maintenance_panel.py:84:         log_frame = ttk.LabelFrame(self, text="Log")
+src/ui/maintenance_panel.py:85:         log_frame.pack(fill="both", expand=True, padx=12, pady=12)
+src/ui/maintenance_panel.py:97:     def _clear_log(self) -> None:
+src/ui/maintenance_panel.py:98:         self._log.configure(state="normal")
+src/ui/maintenance_panel.py:99:         self._log.delete("1.0", "end")
+src/ui/maintenance_panel.py:100:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:101: 
+src/ui/maintenance_panel.py:102:     def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src/ui/maintenance_panel.py:103:         """Read-only: conta órfãos em code_curation contra manifest."""
+src/ui/maintenance_panel.py:104:         cur_path = repo_dir / "code_curation.json"
+src/ui/maintenance_panel.py:105:         mf_path = repo_dir / "manifest.json"
+src/ui/maintenance_panel.py:106:         if not cur_path.exists() or not mf_path.exists():
+src/ui/maintenance_panel.py:107:             return (0, [])
+src/ui/maintenance_panel.py:108:         try:
+src/ui/maintenance_panel.py:109:             cur = json.loads(cur_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:110:             mf = json.loads(mf_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:111:         except Exception:
+src/ui/maintenance_panel.py:112:             return (0, [])
+src/ui/maintenance_panel.py:113:         valid = {e.get("id") for e in mf.get("entries", []) if e.get("id")}
+src/ui/maintenance_panel.py:114:         orphans = [eid for eid in (cur.get("entries") or {}) if eid not in valid]
+src/ui/maintenance_panel.py:115:         return (len(orphans), orphans)
+src/ui/maintenance_panel.py:121:             repo_dir / "course" / ".semantic_profile.generated.json",
+src/ui/maintenance_panel.py:122:             repo_dir / "course" / ".tag_catalog.json",
+src/ui/maintenance_panel.py:123:             repo_dir / "course" / ".timeline_index.json",
+src/ui/maintenance_panel.py:124:         ]
+src/ui/maintenance_panel.py:125: 
+src/ui/maintenance_panel.py:126:     # ---------------------------------------------------------- refresh
+src/ui/maintenance_panel.py:127:     def refresh(self) -> None:
+src/ui/maintenance_panel.py:128:         repo_dir = self._get_repo_dir() if self._get_repo_dir else None
+src/ui/maintenance_panel.py:129:         if not repo_dir:
+src/ui/maintenance_panel.py:130:             self._var_subject.set("(sem matéria selecionada)")
+src/ui/maintenance_panel.py:131:             self._var_code_orphans.set("—")
+src/ui/maintenance_panel.py:132:             self._var_sidecar_age.set("—")
+src/ui/maintenance_panel.py:133:             return
+src/ui/maintenance_panel.py:134:         repo_dir = Path(repo_dir)
+src/ui/maintenance_panel.py:135:         self._var_subject.set(repo_dir.name)
+src/ui/maintenance_panel.py:136: 
+src/ui/maintenance_panel.py:137:         n, ids = self._detect_orphans(repo_dir)
+src/ui/maintenance_panel.py:138:         if n == 0:
+src/ui/maintenance_panel.py:139:             self._var_code_orphans.set("nenhum")
+src/ui/maintenance_panel.py:140:         else:
+src/ui/maintenance_panel.py:141:             self._var_code_orphans.set(f"{n} órfão(s): {', '.join(ids[:5])}{'...' if n > 5 else ''}")
+src/ui/maintenance_panel.py:142: 
+src/ui/maintenance_panel.py:143:         present = [p.name for p in self._sidecar_files(repo_dir) if p.exists()]
+src/ui/maintenance_panel.py:144:         self._var_sidecar_age.set(f"{len(present)}/5 presentes (serão regerados)")
+src/ui/maintenance_panel.py:145: 
+src/ui/maintenance_panel.py:147:     def _on_sweep(self) -> None:
+src/ui/maintenance_panel.py:168:         def _worker():
+src/ui/maintenance_panel.py:176:             except Exception as exc:
+src/ui/maintenance_panel.py:177:                 self.after(0, lambda e=exc: self._log_line(f"[erro] {e}"))
+src/ui/maintenance_panel.py:178:             finally:
+src/ui/maintenance_panel.py:179:                 def _done():
+src/ui/maintenance_panel.py:180:                     self._busy = False
+src/ui/maintenance_panel.py:181:                     self.refresh()
+src/ui/maintenance_panel.py:182:                 self.after(0, _done)
+src/ui/maintenance_panel.py:183: 
+src/ui/maintenance_panel.py:184:         threading.Thread(target=_worker, daemon=True).start()
+src/ui/maintenance_panel.py:185: 
+src/ui/maintenance_panel.py:186:     def _render_report(self, report: dict) -> None:
+src/ui/maintenance_panel.py:187:         self._log_line(f"code_curation purgadas: {report.get('code_curation_removed', 0)}")
+src/ui/maintenance_panel.py:188:         self._log_line(f"image_curation purgadas: {report.get('image_curation_removed', 0)}")
+src/ui/maintenance_panel.py:189:         self._log_line(f"sidecars regerados: {report.get('regenerated', False)}")

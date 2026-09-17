@@ -1,0 +1,623 @@
+{
+  "courses": {
+    "MF": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "d3e23b602f59faf03438765b15b6d291c831604a4df2fb103cedf87006320afc",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": false,
+      "sections": 12,
+      "modules": 159,
+      "counts": {
+        "common_entries": 62,
+        "raw_matched": 61,
+        "raw_exact_historical": 61,
+        "with_labels_matched": 61,
+        "with_labels_exact_historical": 61,
+        "gold_block_and_unit_with_block_unit": 62,
+        "gold_block_unit_compatible": 60
+      },
+      "structure_differences": [],
+      "historical_dates_check": {
+        "Introdução a Métodos Formais": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Verificação de Programas": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Especificação e Verificação de Modelos": {
+          "same_dates_format": true,
+          "rederived": true
+        }
+      },
+      "derived_lessons": 39,
+      "curricular_disagreements": [
+        {
+          "id": "t1-2026-1-thy",
+          "gold_block": "bloco-11",
+          "derived_block_unit": "unidade-02-verificacao-de-programas",
+          "neighbor": "bloco-10",
+          "gold_units": [
+            "unidade-01-metodos-formais"
+          ]
+        },
+        {
+          "id": "t2-2026-1",
+          "gold_block": "bloco-20",
+          "derived_block_unit": "unidade-03-verificacao-de-modelos",
+          "neighbor": "bloco-18",
+          "gold_units": [
+            "unidade-02-verificacao-de-programas"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_correct": {
+            "entries": 43,
+            "signal_window": 39,
+            "gold_in_signal_window": 37
+          },
+          "kept_wrong": {
+            "entries": 12,
+            "signal_window": 10,
+            "gold_in_signal_window": 5
+          },
+          "gain": {
+            "entries": 5,
+            "signal_window": 5,
+            "gold_in_signal_window": 5
+          },
+          "loss": {
+            "entries": 2,
+            "signal_window": 2,
+            "gold_in_signal_window": 0
+          }
+        }
+      }
+    },
+    "SO": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "588743e0803f0cc62eced3a1ec3674899ca0ba87516ee5043a0c600485d9da52",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": false,
+      "sections": 9,
+      "modules": 54,
+      "counts": {
+        "common_entries": 39,
+        "raw_matched": 37,
+        "raw_exact_historical": 37,
+        "with_labels_matched": 37,
+        "with_labels_exact_historical": 37,
+        "gold_block_and_unit_with_block_unit": 37,
+        "gold_block_unit_compatible": 29
+      },
+      "structure_differences": [],
+      "historical_dates_check": {},
+      "derived_lessons": 0,
+      "curricular_disagreements": [
+        {
+          "id": "0704-laminas-comunicacao-e-sincronizacao",
+          "gold_block": "bloco-06",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "0904-laminas-semaforos",
+          "gold_block": "bloco-06",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "0704-exemplo-threads-em-java",
+          "gold_block": "bloco-06",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "3103-threads",
+          "gold_block": "bloco-04",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "biblioteca-em-c-pthread",
+          "gold_block": "bloco-04",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "exemplo-threads-em-c-exemplo1",
+          "gold_block": "bloco-04",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "exemplo-threads-em-c-exemplo2",
+          "gold_block": "bloco-04",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        },
+        {
+          "id": "exemplo-threads-em-c-exemplo3",
+          "gold_block": "bloco-04",
+          "derived_block_unit": "unidade-02-gerencia-do-processador",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-programacao-concorrente"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_correct": {
+            "entries": 28,
+            "signal_window": 22,
+            "gold_in_signal_window": 22
+          },
+          "gain": {
+            "entries": 8,
+            "signal_window": 5,
+            "gold_in_signal_window": 5
+          },
+          "kept_wrong": {
+            "entries": 2,
+            "signal_window": 1,
+            "gold_in_signal_window": 0
+          },
+          "loss": {
+            "entries": 1,
+            "signal_window": 1,
+            "gold_in_signal_window": 0
+          }
+        }
+      }
+    },
+    "IA": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "0037686482489608d301771025621577cf3495613c3c020937f393b22f1e6250",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": false,
+      "sections": 24,
+      "modules": 149,
+      "counts": {
+        "common_entries": 57,
+        "raw_matched": 55,
+        "raw_exact_historical": 55,
+        "with_labels_matched": 55,
+        "with_labels_exact_historical": 55,
+        "gold_block_and_unit_with_block_unit": 40,
+        "gold_block_unit_compatible": 39
+      },
+      "structure_differences": [],
+      "historical_dates_check": {
+        "Semana 1 - 02.03 a 06.03 - Plano de Ensino e Introdução a IA": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 6 - 06.04 a 10.04 - ML - Aprendizado Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 9 - 27.04 a 01.05 - ML - Aprendizado Não Supervisionado": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 10 - 04.04 a 08.04 - Avaliações": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 11 -11.05 a 15.05 - Avaliações": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 13 - 25.05 a 29.05 - Algoritmos de Busca com Informação": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 14 - 01.06 a 05.06 - Algoritmos de Busca com Informação": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 15 - 08.06 a 12.06 - Algoritmos de Busca": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 16 - 15.06 a 19.06 - Algoritmos de Busca e Agentes": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Semana 17 - 22.06 a 26.06 - Exercicios": {
+          "same_dates_format": true,
+          "rederived": true
+        }
+      },
+      "derived_lessons": 35,
+      "curricular_disagreements": [
+        {
+          "id": "visao-geral-introducao-e-historico",
+          "gold_block": "bloco-02",
+          "derived_block_unit": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-de-aprendizagem-01-visao-geral"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_wrong": {
+            "entries": 15,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          },
+          "kept_correct": {
+            "entries": 25,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          }
+        },
+        "datas_cards": {
+          "gain": {
+            "entries": 14,
+            "signal_window": 14,
+            "gold_in_signal_window": 14
+          },
+          "kept_wrong": {
+            "entries": 1,
+            "signal_window": 1,
+            "gold_in_signal_window": 1
+          },
+          "kept_correct": {
+            "entries": 24,
+            "signal_window": 24,
+            "gold_in_signal_window": 24
+          },
+          "loss": {
+            "entries": 1,
+            "signal_window": 1,
+            "gold_in_signal_window": 1
+          }
+        }
+      }
+    },
+    "ES2": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "d6c077bb13522e06a32a1f65bc974f11490db732d0a4fdde8c3310ded436d4ac",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": false,
+      "sections": 9,
+      "modules": 80,
+      "counts": {
+        "common_entries": 35,
+        "raw_matched": 35,
+        "raw_exact_historical": 35,
+        "with_labels_matched": 35,
+        "with_labels_exact_historical": 35,
+        "gold_block_and_unit_with_block_unit": 28,
+        "gold_block_unit_compatible": 25
+      },
+      "structure_differences": [],
+      "historical_dates_check": {
+        "TDE Trabalho Discente Efetivo": {
+          "same_dates_format": false,
+          "rederived": false
+        },
+        "Revisão": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "Microsserviços": {
+          "same_dates_format": true,
+          "rederived": true
+        },
+        "DevOps": {
+          "same_dates_format": true,
+          "rederived": true
+        }
+      },
+      "derived_lessons": 18,
+      "curricular_disagreements": [
+        {
+          "id": "azure",
+          "gold_block": "bloco-09",
+          "derived_block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-01-arquitetura-de-software"
+          ]
+        },
+        {
+          "id": "microsservicos5",
+          "gold_block": "bloco-08",
+          "derived_block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-01-arquitetura-de-software"
+          ]
+        },
+        {
+          "id": "microsservicos7",
+          "gold_block": "bloco-09",
+          "derived_block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-01-arquitetura-de-software"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_correct": {
+            "entries": 11,
+            "signal_window": 9,
+            "gold_in_signal_window": 9
+          },
+          "kept_wrong": {
+            "entries": 1,
+            "signal_window": 1,
+            "gold_in_signal_window": 0
+          },
+          "gain": {
+            "entries": 16,
+            "signal_window": 16,
+            "gold_in_signal_window": 16
+          }
+        },
+        "datas_cards": {
+          "kept_correct": {
+            "entries": 10,
+            "signal_window": 8,
+            "gold_in_signal_window": 8
+          },
+          "kept_wrong": {
+            "entries": 8,
+            "signal_window": 8,
+            "gold_in_signal_window": 8
+          },
+          "loss": {
+            "entries": 1,
+            "signal_window": 1,
+            "gold_in_signal_window": 1
+          },
+          "gain": {
+            "entries": 9,
+            "signal_window": 9,
+            "gold_in_signal_window": 9
+          }
+        }
+      }
+    },
+    "TCC": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\TCC-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "ac7a829da06e1e60ca8fd80430937e58de6dec051be09911cce89360325e5fab",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": false,
+      "sections": 16,
+      "modules": 45,
+      "counts": {
+        "common_entries": 27,
+        "raw_matched": 25,
+        "raw_exact_historical": 25,
+        "with_labels_matched": 25,
+        "with_labels_exact_historical": 25,
+        "gold_block_and_unit_with_block_unit": 18,
+        "gold_block_unit_compatible": 17
+      },
+      "structure_differences": [],
+      "historical_dates_check": {},
+      "derived_lessons": 0,
+      "curricular_disagreements": [
+        {
+          "id": "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf",
+          "gold_block": "bloco-10",
+          "derived_block_unit": "unidade-02-turing-computabilidade",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-problemas-indecidiveis"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_correct": {
+            "entries": 26,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          },
+          "kept_wrong": {
+            "entries": 1,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          }
+        }
+      }
+    },
+    "CG": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Computacao-Grafica-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "37768b7f230cd28b3a20a266888576cca3415f8dac6dbad4bc9cdcf2eafd868c",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": true,
+      "sections": 29,
+      "modules": 111,
+      "counts": {
+        "common_entries": 86,
+        "raw_matched": 70,
+        "raw_exact_historical": 70,
+        "with_labels_matched": 70,
+        "with_labels_exact_historical": 70,
+        "gold_block_and_unit_with_block_unit": 35,
+        "gold_block_unit_compatible": 33
+      },
+      "structure_differences": [],
+      "historical_dates_check": {},
+      "derived_lessons": 0,
+      "curricular_disagreements": [
+        {
+          "id": "morfologiamatematicapptx",
+          "gold_block": "bloco-08",
+          "derived_block_unit": "unidade-06-processo-de-visualizacao-3d",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-processamento-de-imagens-e-visao-computacional"
+          ]
+        },
+        {
+          "id": "exemplodemanipulacaodeimagens",
+          "gold_block": "bloco-03",
+          "derived_block_unit": "unidade-02-fundamentos-matematicos",
+          "neighbor": "",
+          "gold_units": [
+            "unidade-03-processamento-de-imagens-e-visao-computacional"
+          ]
+        }
+      ],
+      "controls": {
+        "ordem": {
+          "kept_correct": {
+            "entries": 33,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          },
+          "kept_wrong": {
+            "entries": 2,
+            "signal_window": 0,
+            "gold_in_signal_window": 0
+          }
+        }
+      }
+    },
+    "FR": {
+      "capture": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Fundamentos-de-Redes-Tutor\\raw\\moodle\\contents.json",
+      "capture_sha256": "e59719f6b092b45f2f0c49ab9445d800ef3510a5605a8beb0102f72f69a32a1c",
+      "same_as_product_capture": true,
+      "raw_reconstruction_has_capture": true,
+      "sections": 6,
+      "modules": 32,
+      "counts": {
+        "common_entries": 20,
+        "raw_matched": 20,
+        "raw_exact_historical": 20,
+        "with_labels_matched": 20,
+        "with_labels_exact_historical": 20
+      },
+      "structure_differences": [],
+      "historical_dates_check": {},
+      "derived_lessons": 0,
+      "curricular_disagreements": [],
+      "controls": {
+        "ordem": {}
+      }
+    }
+  },
+  "calls": [],
+  "es2_positional_probe": [
+    {
+      "block": "bloco-08",
+      "stored": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        0.6
+      ],
+      "replayed": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        0.6
+      ]
+    },
+    {
+      "block": "bloco-09",
+      "stored": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        0.4
+      ],
+      "replayed": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        0.4
+      ]
+    }
+  ],
+  "contract_confidence_probe": [
+    [
+      "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      [
+        "reconciliada_do_bloco=bloco-09"
+      ],
+      {
+        "unit": "unidade-01-arquitetura-de-software",
+        "block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "block_id": "bloco-09"
+      }
+    ],
+    [
+      "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      [
+        "reconciliada_do_bloco=bloco-09"
+      ],
+      {
+        "unit": "unidade-01-arquitetura-de-software",
+        "block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "block_id": "bloco-09"
+      }
+    ],
+    [
+      "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      [
+        "reconciliada_do_bloco=bloco-09"
+      ],
+      {
+        "unit": "unidade-01-arquitetura-de-software",
+        "block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "block_id": "bloco-09"
+      }
+    ]
+  ]
+}

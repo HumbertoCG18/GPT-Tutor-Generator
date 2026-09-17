@@ -1,0 +1,10 @@
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 26/27 (backup: manifest.json.bak)
+{"course": "ES2", "arm": "controle", "calls": [], "changed_fields": {}, "prediction_changes": 0, "same_text": false, "same_taxonomy": true, "valid": false}
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\metadados_blocos_15-09.py", line 133, in <module>
+    main()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\metadados_blocos_15-09.py", line 127, in main
+    assert result["valid"], "contraste nao isolou metadados"
+           ~~~~~~^^^^^^^^^
+AssertionError: contraste nao isolou metadados

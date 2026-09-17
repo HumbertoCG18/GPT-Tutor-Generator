@@ -1,0 +1,229 @@
+DISCOVERY
+src\models\task_queue.py:10:RepoTaskAction = Literal["build_repo", "process_selected", "refresh_repo"]
+src\ui\timeline_dashboard.py:468:        self.refresh()
+src\ui\timeline_dashboard.py:470:    def refresh(self) -> None:
+src\ui\timeline_dashboard.py:506:        ttk.Button(bar, text="↺ Recarregar", command=self.refresh).pack(side="right", padx=4)
+src\ui\student_state_curator.py:129:        self.topic_combo.bind("<<ComboboxSelected>>", lambda _e: self._refresh_target_preview())
+src\ui\student_state_curator.py:180:        self._refresh_target_preview()
+src\ui\student_state_curator.py:185:    def _refresh_target_preview(self) -> None:
+src\ui\repo_dashboard.py:109:    def __init__(self, parent, on_refresh: Optional[Callable[[], None]] = None):
+src\ui\repo_dashboard.py:111:        self._on_refresh = on_refresh
+src\ui\repo_dashboard.py:115:        ttk.Button(toolbar, text="🔄 Atualizar Dashboard", command=self._handle_refresh).pack(side="left")
+src\ui\repo_dashboard.py:169:    def _handle_refresh(self) -> None:
+src\ui\repo_dashboard.py:170:        if self._on_refresh:
+src\ui\repo_dashboard.py:171:            self._on_refresh()
+src\ui\maintenance_panel.py:77:            toolbar, text="🔍 Detectar resíduos", command=self.refresh
+src\ui\maintenance_panel.py:102:    def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src\ui\maintenance_panel.py:126:    # ---------------------------------------------------------- refresh
+src\ui\maintenance_panel.py:127:    def refresh(self) -> None:
+src\ui\maintenance_panel.py:137:        n, ids = self._detect_orphans(repo_dir)
+src\ui\maintenance_panel.py:181:                    self.refresh()
+src\builder\engine.py:365:def _refresh_manifest_auto_tags(root_dir: Path, manifest_entries: List[dict], vocabulary: dict) -> List[dict]:
+src\builder\engine.py:366:    return _content_taxonomy.refresh_manifest_auto_tags(
+src\builder\engine.py:2163:            refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
+src\ui\image_curator.py:435:            command=self._refresh_pdf_page,
+src\ui\image_curator.py:605:    def _refresh_entry_after_image_change(self, entry_id: str):
+src\ui\image_curator.py:606:        """Reload groups for an entry after file-level mutations and refresh tree/UI."""
+src\ui\image_curator.py:1063:    def _refresh_pdf_page(self):
+src\ui\image_curator.py:1253:        self._refresh_entry_after_image_change(entry_id)
+src\ui\dialogs.py:560:        self._refresh_list()
+src\ui\dialogs.py:565:    def _refresh_list(self):
+src\ui\dialogs.py:607:        self._refresh_list()
+src\ui\dialogs.py:617:        self._refresh_list()
+src\ui\dialogs.py:1284:        self._refresh_list()
+src\ui\dialogs.py:1457:    def _refresh_list(self):
+src\ui\dialogs.py:1532:        self._refresh_list()
+src\ui\dialogs.py:1582:            self._refresh_list()
+src\ui\dialogs.py:3144:    def _refresh_tag_summary_display(self) -> None:
+src\ui\dialogs.py:3191:        self._refresh_tag_summary_display()
+src\ui\dialogs.py:3209:        self._refresh_tag_summary_display()
+src\ui\dialogs.py:3220:    def _refresh_unit_status_display(self) -> None:
+src\ui\dialogs.py:3294:        self._refresh_unit_status_display()
+src\ui\dialogs.py:3312:        self._refresh_unit_status_display()
+src\ui\dialogs.py:3328:    def _refresh_subunit_status_display(self) -> None:
+src\ui\dialogs.py:3432:        self._refresh_subunit_status_display()
+src\ui\dialogs.py:3450:        self._refresh_subunit_status_display()
+src\ui\dialogs.py:3461:    def _refresh_timeline_status_display(self) -> None:
+src\ui\dialogs.py:3513:        self._refresh_timeline_status_display()
+src\ui\dialogs.py:3531:        self._refresh_timeline_status_display()
+src\ui\curator_studio.py:521:        self._refresh_previews()
+src\ui\curator_studio.py:531:        self._refresh_previews()
+src\ui\curator_studio.py:533:    def _refresh_previews(self):
+src\ui\curator_studio.py:543:        self._refresh_previews()
+src\ui\curator_studio.py:1331:                    if hasattr(parent_app, "refresh_tree"):
+src\ui\curator_studio.py:1332:                        parent_app.refresh_tree()
+src\ui\curator_studio.py:1336:            if hasattr(parent_app, "_refresh_backlog"):
+src\ui\curator_studio.py:1337:                parent_app._refresh_backlog()
+src\ui\codes_panel.py:64:        ttk.Button(toolbar, text="🔄 Recarregar", command=self.refresh).pack(side="left", padx=2)
+src\ui\codes_panel.py:84:            command=self.refresh,
+src\ui\codes_panel.py:143:    # -------------------------------------------------------------- refresh
+src\ui\codes_panel.py:144:    def refresh(self):
+src\ui\codes_panel.py:254:                self.after(0, self.refresh)
+src\ui\codes_panel.py:350:            self.refresh()
+src\ui\codes_panel.py:479:            self.refresh()
+src\ui\app.py:452:        repo_enqueue_menu.add_command(label="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh)
+src\ui\app.py:504:        ttk.Button(backlog_toolbar, text="🔄 Atualizar Backlog", command=self._refresh_backlog).pack(
+src\ui\app.py:558:        self._repo_dashboard = RepoDashboard(tab_dashboard, on_refresh=self._refresh_repo_dashboard)
+src\ui\app.py:664:        self._refresh_repo_task_views()
+src\ui\app.py:838:    def _refresh_repo_tasks_tree(self):
+src\ui\app.py:859:    def _refresh_repo_dashboard(self):
+src\ui\app.py:869:    def _refresh_repo_task_views(self):
+src\ui\app.py:871:        self._refresh_repo_tasks_tree()
+src\ui\app.py:872:        self._refresh_repo_dashboard()
+src\ui\app.py:882:            self._timeline_dashboard.refresh()
+src\ui\app.py:884:            self._codes_panel.refresh()
+src\ui\app.py:886:            self._maint_panel.refresh()
+src\ui\app.py:888:    def _refresh_timeline_dashboard(self) -> None:
+src\ui\app.py:892:        sob demanda em refresh(); sem esta chamada a aba Cronograma fica com o
+src\ui\app.py:897:                self._timeline_dashboard.refresh()
+src\ui\app.py:942:        if action == "refresh_repo":
+src\ui\app.py:974:    def enqueue_current_repo_refresh(self):
+src\ui\app.py:975:        self._enqueue_repo_task("refresh_repo")
+src\ui\app.py:1012:        self._refresh_repo_task_views()
+src\ui\app.py:1077:        self._refresh_repo_task_views()
+src\ui\app.py:1081:        self._refresh_repo_task_views()
+src\ui\app.py:1096:            self._refresh_backlog()
+src\ui\app.py:1102:        self._refresh_repo_task_views()
+src\ui\app.py:1131:                self.refresh_tree()
+src\ui\app.py:1150:            self.refresh_tree()
+src\ui\app.py:1153:            self._refresh_repo_dashboard()
+src\ui\app.py:1157:    def _refresh_repo_progress_state(self, repo_dir: Optional[Path]) -> None:
+src\ui\app.py:1161:        self._refresh_backlog()
+src\ui\app.py:1162:        self._refresh_repo_dashboard()
+src\ui\app.py:1176:                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
+src\ui\app.py:1194:        if task.action == "refresh_repo":
+src\ui\app.py:1215:        self._refresh_repo_task_views()
+src\ui\app.py:1216:        self._refresh_backlog()
+src\ui\app.py:1317:        self.refresh_tree()
+src\ui\app.py:1373:        self._refresh_repo_dashboard()
+src\ui\app.py:1433:        self.refresh_tree()
+src\ui\app.py:1436:        self._refresh_backlog()
+src\ui\app.py:1437:        self._refresh_repo_dashboard()
+src\ui\app.py:1470:    def _refresh_backlog(self):
+src\ui\app.py:1602:        self.refresh_tree()
+src\ui\app.py:1629:        self.refresh_tree()
+src\ui\app.py:1677:        self.refresh_tree()
+src\ui\app.py:1687:            self.refresh_tree()
+src\ui\app.py:1714:        self.refresh_tree()
+src\ui\app.py:1733:            self.refresh_tree()
+src\ui\app.py:1743:        self.refresh_tree()
+src\ui\app.py:1763:        self.refresh_tree()
+src\ui\app.py:1777:        self.refresh_tree()
+src\ui\app.py:1784:    def refresh_tree(self):
+src\ui\app.py:2010:                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
+src\ui\app.py:2050:            self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
+src\ui\app.py:2053:        self._refresh_timeline_dashboard()
+src\ui\app.py:2061:        self.refresh_tree()
+src\ui\app.py:2100:        self._refresh_backlog()
+src\ui\app.py:2101:        self._refresh_repo_dashboard()
+src\ui\app.py:2102:        self._refresh_timeline_dashboard()
+src\ui\app.py:2108:            self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
+src\ui\app.py:2229:            self.refresh_tree()
+src\ui\app.py:2232:        self._refresh_backlog()
+src\ui\app.py:2233:        self._refresh_timeline_dashboard()
+src\ui\app.py:2240:        self._refresh_timeline_dashboard()
+src\ui\app.py:2293:                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
+src\ui\app.py:2341:        # de _reprocess_repo), com refresh/status via self.after.
+src\ui\app.py:2402:            self._refresh_backlog()
+src\ui\app.py:2465:            self._refresh_backlog()
+src\ui\app.py:2728:                self._refresh_backlog()
+src\builder\sources\m365.py:20:    refresh_card_listings_from_disk,
+src\builder\sources\m365.py:119:    rt = tok.get("refresh_token")
+src\builder\sources\m365.py:124:    p.write_text(json.dumps({"refresh_token": rt}), encoding="utf-8")
+src\builder\sources\m365.py:128:    """Access token via refresh token salvo, ou None se ausente/expirado."""
+src\builder\sources\m365.py:133:        rt = (json.loads(p.read_text(encoding="utf-8")) or {}).get("refresh_token")
+src\builder\sources\m365.py:139:        "grant_type": "refresh_token", "client_id": _CLIENT_ID,
+src\builder\sources\m365.py:140:        "refresh_token": rt, "scope": _SCOPE}).json()
+src\builder\sources\m365.py:182:    """Cliente pronto: usa refresh token salvo ou faz device-login."""
+src\builder\sources\m365.py:185:        log.info("usando refresh token salvo")
+src\builder\sources\m365.py:277:    refresh_card_listings_from_disk(dest)
+src\builder\sources\moodle.py:528:def refresh_card_listings_from_disk(stash_dir) -> int:
+src\builder\timeline\block_identity.py:227:        # Inherit best match (exclusivo) e refresh anchor/last_seen in-place
+src\builder\artifacts\student_state.py:351:    refresh_active_unit_progress(
+src\builder\artifacts\student_state.py:386:def refresh_active_unit_progress(
+src\builder\extraction\content_taxonomy.py:948:def refresh_manifest_auto_tags(
+src\builder\extraction\content_taxonomy.py:955:    refreshed: List[dict] = []
+src\builder\extraction\content_taxonomy.py:966:        refreshed.append(item)
+src\builder\extraction\content_taxonomy.py:967:    return refreshed
+src\builder\ops\pedagogical_regeneration.py:412:    refresh_manifest_auto_tags_fn,
+src\builder\ops\pedagogical_regeneration.py:562:    live_manifest_entries = refresh_manifest_auto_tags_fn(builder.root_dir, live_manifest_entries, tag_catalog)
+src\builder\ops\pedagogical_regeneration.py:746:                student_state_v2.refresh_active_unit_progress(
+src\builder\ops\pedagogical_regeneration.py:752:                logger.warning("refresh_active_unit_progress falhou: %s", exc)
+
+SOURCE VERIFICATION
+src/ui/maintenance_panel.py:12: class MaintenancePanel(tk.Frame):
+src/ui/maintenance_panel.py:35:     def _build_ui(self):
+src/ui/maintenance_panel.py:72: 
+src/ui/maintenance_panel.py:73:         # ── Toolbar
+src/ui/maintenance_panel.py:74:         toolbar = ttk.Frame(self)
+src/ui/maintenance_panel.py:75:         toolbar.pack(fill="x", padx=12, pady=(12, 4))
+src/ui/maintenance_panel.py:76:         ttk.Button(
+src/ui/maintenance_panel.py:77:             toolbar, text="🔍 Detectar resíduos", command=self.refresh
+src/ui/maintenance_panel.py:78:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:79:         ttk.Button(
+src/ui/maintenance_panel.py:80:             toolbar, text="🧹 Executar limpeza", command=self._on_sweep
+src/ui/maintenance_panel.py:81:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:82: 
+src/ui/maintenance_panel.py:83:         # ── Log
+src/ui/maintenance_panel.py:84:         log_frame = ttk.LabelFrame(self, text="Log")
+src/ui/maintenance_panel.py:85:         log_frame.pack(fill="both", expand=True, padx=12, pady=12)
+src/ui/maintenance_panel.py:97:     def _clear_log(self) -> None:
+src/ui/maintenance_panel.py:98:         self._log.configure(state="normal")
+src/ui/maintenance_panel.py:99:         self._log.delete("1.0", "end")
+src/ui/maintenance_panel.py:100:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:101: 
+src/ui/maintenance_panel.py:102:     def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src/ui/maintenance_panel.py:103:         """Read-only: conta órfãos em code_curation contra manifest."""
+src/ui/maintenance_panel.py:104:         cur_path = repo_dir / "code_curation.json"
+src/ui/maintenance_panel.py:105:         mf_path = repo_dir / "manifest.json"
+src/ui/maintenance_panel.py:106:         if not cur_path.exists() or not mf_path.exists():
+src/ui/maintenance_panel.py:107:             return (0, [])
+src/ui/maintenance_panel.py:108:         try:
+src/ui/maintenance_panel.py:109:             cur = json.loads(cur_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:110:             mf = json.loads(mf_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:111:         except Exception:
+src/ui/maintenance_panel.py:112:             return (0, [])
+src/ui/maintenance_panel.py:113:         valid = {e.get("id") for e in mf.get("entries", []) if e.get("id")}
+src/ui/maintenance_panel.py:114:         orphans = [eid for eid in (cur.get("entries") or {}) if eid not in valid]
+src/ui/maintenance_panel.py:115:         return (len(orphans), orphans)
+src/ui/maintenance_panel.py:121:             repo_dir / "course" / ".semantic_profile.generated.json",
+src/ui/maintenance_panel.py:122:             repo_dir / "course" / ".tag_catalog.json",
+src/ui/maintenance_panel.py:123:             repo_dir / "course" / ".timeline_index.json",
+src/ui/maintenance_panel.py:124:         ]
+src/ui/maintenance_panel.py:125: 
+src/ui/maintenance_panel.py:126:     # ---------------------------------------------------------- refresh
+src/ui/maintenance_panel.py:127:     def refresh(self) -> None:
+src/ui/maintenance_panel.py:128:         repo_dir = self._get_repo_dir() if self._get_repo_dir else None
+src/ui/maintenance_panel.py:129:         if not repo_dir:
+src/ui/maintenance_panel.py:130:             self._var_subject.set("(sem matéria selecionada)")
+src/ui/maintenance_panel.py:131:             self._var_code_orphans.set("—")
+src/ui/maintenance_panel.py:132:             self._var_sidecar_age.set("—")
+src/ui/maintenance_panel.py:133:             return
+src/ui/maintenance_panel.py:134:         repo_dir = Path(repo_dir)
+src/ui/maintenance_panel.py:135:         self._var_subject.set(repo_dir.name)
+src/ui/maintenance_panel.py:136: 
+src/ui/maintenance_panel.py:137:         n, ids = self._detect_orphans(repo_dir)
+src/ui/maintenance_panel.py:138:         if n == 0:
+src/ui/maintenance_panel.py:139:             self._var_code_orphans.set("nenhum")
+src/ui/maintenance_panel.py:140:         else:
+src/ui/maintenance_panel.py:141:             self._var_code_orphans.set(f"{n} órfão(s): {', '.join(ids[:5])}{'...' if n > 5 else ''}")
+src/ui/maintenance_panel.py:142: 
+src/ui/maintenance_panel.py:143:         present = [p.name for p in self._sidecar_files(repo_dir) if p.exists()]
+src/ui/maintenance_panel.py:144:         self._var_sidecar_age.set(f"{len(present)}/5 presentes (serão regerados)")
+src/ui/maintenance_panel.py:145: 
+src/ui/maintenance_panel.py:147:     def _on_sweep(self) -> None:
+src/ui/maintenance_panel.py:168:         def _worker():
+src/ui/maintenance_panel.py:176:             except Exception as exc:
+src/ui/maintenance_panel.py:177:                 self.after(0, lambda e=exc: self._log_line(f"[erro] {e}"))
+src/ui/maintenance_panel.py:178:             finally:
+src/ui/maintenance_panel.py:179:                 def _done():
+src/ui/maintenance_panel.py:180:                     self._busy = False
+src/ui/maintenance_panel.py:181:                     self.refresh()
+src/ui/maintenance_panel.py:182:                 self.after(0, _done)
+src/ui/maintenance_panel.py:183: 
+src/ui/maintenance_panel.py:184:         threading.Thread(target=_worker, daemon=True).start()
+src/ui/maintenance_panel.py:185: 
+src/ui/maintenance_panel.py:186:     def _render_report(self, report: dict) -> None:
+src/ui/maintenance_panel.py:187:         self._log_line(f"code_curation purgadas: {report.get('code_curation_removed', 0)}")
+src/ui/maintenance_panel.py:188:         self._log_line(f"image_curation purgadas: {report.get('image_curation_removed', 0)}")
+src/ui/maintenance_panel.py:189:         self._log_line(f"sidecars regerados: {report.get('regenerated', False)}")

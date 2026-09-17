@@ -1,0 +1,12 @@
+Politica: 'conflito' so e duvida se o bloco e fill (<0.6) OU o label do SARC do bloco toca >= 2 unidades (tokens exclusivos)
+  SAEM & erro unidade (escondido)      0
+  [CG] saem                            7
+  [ES2] saem                           8
+  [IA] saem                            2
+  [MF] saem                            1
+  [SO] saem                            6
+  [TCC] saem                           2
+  conflitos                            57
+  ficam & erro unidade                 5
+  ficam na fila                        31
+  saem da fila                         26

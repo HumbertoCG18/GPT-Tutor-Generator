@@ -1,0 +1,180 @@
+DISCOVERY
+Node: MaintenancePanel
+  ID:        src_ui_maintenance_panel_maintenancepanel
+  Source:    src/ui/maintenance_panel.py L12
+  Type:      code
+  Community: 
+  Degree:    16
+
+Connections (16):
+  <-- App [uses] [INFERRED] src/ui/app.py:L38
+  <-- app.py [imports] [EXTRACTED] src/ui/app.py:L38
+  <-- _FlexToolbar [uses] [INFERRED] src/ui/app.py:L38
+  <-- _UILogHandler [uses] [INFERRED] src/ui/app.py:L38
+  <-- ._build_ui() [calls] [EXTRACTED] src/ui/app.py:L588
+  --> ._detect_orphans() [method] [EXTRACTED] src/ui/maintenance_panel.py:L102
+  --> ._on_sweep() [method] [EXTRACTED] src/ui/maintenance_panel.py:L147
+  --> .refresh() [method] [EXTRACTED] src/ui/maintenance_panel.py:L127
+  --> .__init__() [method] [EXTRACTED] src/ui/maintenance_panel.py:L21
+  --> ._log_line() [method] [EXTRACTED] src/ui/maintenance_panel.py:L91
+  --> ._sidecar_files() [method] [EXTRACTED] src/ui/maintenance_panel.py:L117
+  <-- maintenance_panel.py [contains] [EXTRACTED] src/ui/maintenance_panel.py:L12
+  --> ._build_ui() [method] [EXTRACTED] src/ui/maintenance_panel.py:L35
+  --> ._clear_log() [method] [EXTRACTED] src/ui/maintenance_panel.py:L97
+  --> ._render_report() [method] [EXTRACTED] src/ui/maintenance_panel.py:L186
+  <-- Detecta e remove resíduos deixados por remoções anteriores. Surfaces: -… [rationale_for] [EXTRACTED] src/ui/maintenance_panel.py:L13
+
+Ambiguous: '_build_ui' matches 7 nodes in different files.
+  src/ui/app.py
+    id: src_ui_app_app_build_ui
+  src/ui/codes_panel.py
+    id: src_ui_codes_panel_codespanel_build_ui
+  src/ui/curator_studio.py
+    id: src_ui_curator_studio_curatorstudiopanel_build_ui
+  src/ui/dialogs.py
+    id: src_ui_dialogs_subjectmanagerdialog_build_ui
+  src/ui/image_curator.py
+    id: src_ui_image_curator_imagecuratorpanel_build_ui
+  src/ui/maintenance_panel.py
+    id: src_ui_maintenance_panel_maintenancepanel_build_ui
+  src/ui/student_state_curator.py
+    id: src_ui_student_state_curator_studentstatecurator_build_ui
+Retry with the repo-relative path or the full node id.
+
+Node: ._build_ui()
+  ID:        src_ui_maintenance_panel_maintenancepanel_build_ui
+  Source:    src/ui/maintenance_panel.py L35
+  Type:      code
+  Community: 
+  Degree:    2
+
+Connections (2):
+  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L35
+  <-- .__init__() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L32
+
+SOURCE VERIFICATION
+src/ui/maintenance_panel.py:7: from pathlib import Path
+src/ui/maintenance_panel.py:8: from tkinter import messagebox, ttk
+src/ui/maintenance_panel.py:9: from typing import Callable, Optional
+src/ui/maintenance_panel.py:10: 
+src/ui/maintenance_panel.py:11: 
+src/ui/maintenance_panel.py:12: class MaintenancePanel(tk.Frame):
+src/ui/maintenance_panel.py:13:     """Detecta e remove resíduos deixados por remoções anteriores.
+src/ui/maintenance_panel.py:14: 
+src/ui/maintenance_panel.py:15:     Surfaces:
+src/ui/maintenance_panel.py:16:       - code_curation.json (entries órfãs)
+src/ui/maintenance_panel.py:17:       - image_curation.json embarcado no manifest (imagens removidas)
+src/ui/maintenance_panel.py:18:       - sidecars derivativos (regerados do manifest atual)
+src/ui/maintenance_panel.py:19:     """
+src/ui/maintenance_panel.py:20: 
+src/ui/maintenance_panel.py:21:     def __init__(
+src/ui/maintenance_panel.py:22:         self,
+src/ui/maintenance_panel.py:23:         parent,
+src/ui/maintenance_panel.py:24:         *,
+src/ui/maintenance_panel.py:25:         get_repo_dir_fn: Callable[[], Optional[Path]],
+src/ui/maintenance_panel.py:26:         make_builder_fn: Callable[[], object],
+src/ui/maintenance_panel.py:27:     ):
+src/ui/maintenance_panel.py:28:         super().__init__(parent)
+src/ui/maintenance_panel.py:29:         self._get_repo_dir = get_repo_dir_fn
+src/ui/maintenance_panel.py:30:         self._make_builder = make_builder_fn
+src/ui/maintenance_panel.py:31:         self._busy = False
+src/ui/maintenance_panel.py:32:         self._build_ui()
+src/ui/maintenance_panel.py:33: 
+src/ui/maintenance_panel.py:34:     # ---------------------------------------------------------- UI
+src/ui/maintenance_panel.py:35:     def _build_ui(self):
+src/ui/maintenance_panel.py:36:         header = ttk.Frame(self)
+src/ui/maintenance_panel.py:37:         header.pack(fill="x", padx=12, pady=(12, 4))
+src/ui/maintenance_panel.py:38:         ttk.Label(
+src/ui/maintenance_panel.py:39:             header,
+src/ui/maintenance_panel.py:40:             text="🧹 Manutenção do repositório",
+src/ui/maintenance_panel.py:41:             font=("Segoe UI", 12, "bold"),
+src/ui/maintenance_panel.py:42:         ).pack(anchor="w")
+src/ui/maintenance_panel.py:43:         ttk.Label(
+src/ui/maintenance_panel.py:44:             header,
+src/ui/maintenance_panel.py:45:             text=(
+src/ui/maintenance_panel.py:46:                 "Remove resíduos de entries deletadas antes da correção de "
+src/ui/maintenance_panel.py:47:                 "lifecycle e regenera sidecars derivativos (taxonomy, "
+src/ui/maintenance_panel.py:48:                 "timeline, MDs). Não reprocessa entries — custo zero."
+src/ui/maintenance_panel.py:49:             ),
+src/ui/maintenance_panel.py:50:             foreground="gray",
+src/ui/maintenance_panel.py:51:             wraplength=720,
+src/ui/maintenance_panel.py:52:             justify="left",
+src/ui/maintenance_panel.py:53:         ).pack(anchor="w", pady=(2, 8))
+src/ui/maintenance_panel.py:54: 
+src/ui/maintenance_panel.py:55:         # ── Cards de status
+src/ui/maintenance_panel.py:56:         cards = ttk.Frame(self)
+src/ui/maintenance_panel.py:57:         cards.pack(fill="x", padx=12, pady=4)
+src/ui/maintenance_panel.py:58: 
+src/ui/maintenance_panel.py:59:         self._var_subject = tk.StringVar(value="—")
+src/ui/maintenance_panel.py:60:         self._var_code_orphans = tk.StringVar(value="—")
+src/ui/maintenance_panel.py:61:         self._var_sidecar_age = tk.StringVar(value="—")
+src/ui/maintenance_panel.py:62: 
+src/ui/maintenance_panel.py:63:         for i, (label, var) in enumerate([
+src/ui/maintenance_panel.py:64:             ("Matéria atual:", self._var_subject),
+src/ui/maintenance_panel.py:65:             ("Órfãos em code_curation.json:", self._var_code_orphans),
+src/ui/maintenance_panel.py:66:             ("Sidecars derivativos:", self._var_sidecar_age),
+src/ui/maintenance_panel.py:67:         ]):
+src/ui/maintenance_panel.py:68:             row = ttk.Frame(cards)
+src/ui/maintenance_panel.py:69:             row.pack(fill="x", pady=2)
+src/ui/maintenance_panel.py:70:             ttk.Label(row, text=label, width=32).pack(side="left")
+src/ui/maintenance_panel.py:71:             ttk.Label(row, textvariable=var, font=("Segoe UI", 10, "bold")).pack(side="left")
+src/ui/maintenance_panel.py:72: 
+src/ui/maintenance_panel.py:73:         # ── Toolbar
+src/ui/maintenance_panel.py:74:         toolbar = ttk.Frame(self)
+src/ui/maintenance_panel.py:75:         toolbar.pack(fill="x", padx=12, pady=(12, 4))
+src/ui/maintenance_panel.py:76:         ttk.Button(
+src/ui/maintenance_panel.py:77:             toolbar, text="🔍 Detectar resíduos", command=self.refresh
+src/ui/maintenance_panel.py:78:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:79:         ttk.Button(
+src/ui/maintenance_panel.py:80:             toolbar, text="🧹 Executar limpeza", command=self._on_sweep
+src/ui/maintenance_panel.py:81:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:82: 
+src/ui/maintenance_panel.py:83:         # ── Log
+src/ui/maintenance_panel.py:84:         log_frame = ttk.LabelFrame(self, text="Log")
+src/ui/maintenance_panel.py:85:         log_frame.pack(fill="both", expand=True, padx=12, pady=12)
+src/ui/maintenance_panel.py:86:         self._log = tk.Text(log_frame, wrap="word", height=12, font=("Consolas", 9))
+src/ui/maintenance_panel.py:87:         self._log.pack(fill="both", expand=True, padx=4, pady=4)
+src/ui/maintenance_panel.py:88:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:89: 
+src/ui/maintenance_panel.py:90:     # ---------------------------------------------------------- helpers
+src/ui/maintenance_panel.py:91:     def _log_line(self, msg: str) -> None:
+src/ui/maintenance_panel.py:92:         self._log.configure(state="normal")
+src/ui/maintenance_panel.py:93:         self._log.insert("end", msg + "\n")
+src/ui/maintenance_panel.py:94:         self._log.see("end")
+src/ui/maintenance_panel.py:95:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:96: 
+src/ui/maintenance_panel.py:97:     def _clear_log(self) -> None:
+src/ui/maintenance_panel.py:98:         self._log.configure(state="normal")
+src/ui/maintenance_panel.py:99:         self._log.delete("1.0", "end")
+src/ui/maintenance_panel.py:100:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:101: 
+src/ui/maintenance_panel.py:102:     def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:
+src/ui/maintenance_panel.py:103:         """Read-only: conta órfãos em code_curation contra manifest."""
+src/ui/maintenance_panel.py:104:         cur_path = repo_dir / "code_curation.json"
+src/ui/maintenance_panel.py:105:         mf_path = repo_dir / "manifest.json"
+src/ui/maintenance_panel.py:106:         if not cur_path.exists() or not mf_path.exists():
+src/ui/maintenance_panel.py:107:             return (0, [])
+src/ui/maintenance_panel.py:108:         try:
+src/ui/maintenance_panel.py:109:             cur = json.loads(cur_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:110:             mf = json.loads(mf_path.read_text(encoding="utf-8"))
+src/ui/maintenance_panel.py:111:         except Exception:
+src/ui/maintenance_panel.py:112:             return (0, [])
+src/ui/maintenance_panel.py:113:         valid = {e.get("id") for e in mf.get("entries", []) if e.get("id")}
+src/ui/maintenance_panel.py:114:         orphans = [eid for eid in (cur.get("entries") or {}) if eid not in valid]
+src/ui/maintenance_panel.py:115:         return (len(orphans), orphans)
+src/ui/maintenance_panel.py:116: 
+src/ui/maintenance_panel.py:117:     def _sidecar_files(self, repo_dir: Path) -> list[Path]:
+src/ui/maintenance_panel.py:118:         return [
+src/ui/maintenance_panel.py:119:             repo_dir / "course" / ".assessment_context.json",
+src/ui/maintenance_panel.py:120:             repo_dir / "course" / ".content_taxonomy.json",
+src/ui/maintenance_panel.py:121:             repo_dir / "course" / ".semantic_profile.generated.json",
+src/ui/maintenance_panel.py:122:             repo_dir / "course" / ".tag_catalog.json",
+src/ui/maintenance_panel.py:123:             repo_dir / "course" / ".timeline_index.json",
+src/ui/maintenance_panel.py:124:         ]
+src/ui/maintenance_panel.py:125: 
+src/ui/maintenance_panel.py:126:     # ---------------------------------------------------------- refresh
+src/ui/maintenance_panel.py:127:     def refresh(self) -> None:
+src/ui/maintenance_panel.py:128:         repo_dir = self._get_repo_dir() if self._get_repo_dir else None
+src/ui/maintenance_panel.py:129:         if not repo_dir:
+src/ui/maintenance_panel.py:130:             self._var_subject.set("(sem matéria selecionada)")
+src/ui/maintenance_panel.py:131:             self._var_code_orphans.set("—")

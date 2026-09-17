@@ -50,12 +50,13 @@ from src.builder.routing.file_map import (
     resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
     resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
     score_card_evidence_against_entry as _file_map_score_card_evidence_against_entry,
-    score_entry_against_timeline_block as _file_map_score_entry_against_timeline_block,
     score_entry_against_unit as _file_map_score_entry_against_unit,
-    select_probable_period_for_entry as _file_map_select_probable_period_for_entry,
     strip_outline_prefix as _file_map_strip_outline_prefix,
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
+)
+from src.builder.routing.resolver_apply import (
+    apply_unit_subunit_fields as _apply_unit_subunit_fields,
 )
 from src.builder.runtime.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
@@ -169,6 +170,13 @@ from src.builder.ops.url_and_cleanup import (
     process_url as _ops_process_url,
     remove_entry_consolidated_images as _ops_remove_entry_consolidated_images,
 )
+from src.builder.ops.taxonomy_inputs import (
+    build_rich_content_taxonomy as _ops_build_rich_content_taxonomy,
+)
+from src.builder.core.html_material import (
+    datalab_image_markdown as _core_html_material_datalab_image_markdown,
+    process_html as _core_html_material_process_html,
+)
 from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
@@ -185,7 +193,6 @@ from src.builder.core.image_resolution import (
 from src.builder.core.code_summarization import (
     prune_stale_code_curation as _core_code_summarization_prune_stale,
     load_code_curation as _core_code_summarization_load,
-    summarize_all_code_entries as _core_code_summarization_summarize_all,
 )
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
@@ -207,6 +214,7 @@ from src.builder.artifacts.navigation import (
     budgeted_file_map_md as _navigation_budgeted_file_map_md,
     course_map_md as _navigation_course_map_md,
     file_map_md as _navigation_file_map_md,
+    file_map_trace_md as _navigation_file_map_trace_md,
     low_token_course_map_md as _navigation_low_token_course_map_md,
     low_token_course_map_md_v2 as _navigation_low_token_course_map_md_v2,
     low_token_file_map_md as _navigation_low_token_file_map_md,
@@ -238,14 +246,12 @@ from src.builder.timeline.index import (
     _build_timeline_candidate_rows as _timeline_build_timeline_candidate_rows,
     _build_file_map_timeline_context_from_course as _timeline_build_file_map_timeline_context_from_course,
     _build_timeline_index,
-    _derive_unit_from_topic_match,
     _empty_timeline_index,
     _iter_content_taxonomy_topics,
     _parse_syllabus_timeline as _timeline_parse_syllabus_timeline,
     _parse_timeline_date_value,
     _score_entry_against_taxonomy_topic,
     _score_timeline_unit_phrase,
-    _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
 )
@@ -306,9 +312,6 @@ _build_timeline_candidate_rows = _timeline_build_timeline_candidate_rows
 _parse_syllabus_timeline = _timeline_parse_syllabus_timeline
 
 
-_serialize_timeline_index = _timeline_serialize_timeline_index
-
-
 _parse_glossary_terms = _content_taxonomy._parse_glossary_terms
 
 def _build_content_taxonomy(
@@ -317,6 +320,7 @@ def _build_content_taxonomy(
     glossary_md: str,
     strong_headings: Optional[List[str]] = None,
     semantic_profile: Optional[dict] = None,
+    glossary_terms: Optional[List[dict]] = None,
 ) -> dict:
     return _content_taxonomy.build_content_taxonomy(
         teaching_plan=teaching_plan,
@@ -327,13 +331,13 @@ def _build_content_taxonomy(
         parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
         topic_text=_topic_text,
         normalize_unit_slug=_normalize_unit_slug,
+        glossary_terms=glossary_terms,
     )
 
 
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
 _build_unit_tag_index = _content_taxonomy.build_unit_tag_index
-_resolve_unit_block_tags = _content_taxonomy.resolve_unit_block_tags
 
 
 def _write_tag_catalog(
@@ -351,6 +355,10 @@ def _write_tag_catalog(
         course_map_text=course_map_text,
         glossary_text=glossary_text,
         manifest_entries=manifest_entries,
+        glossary_terms=_course_terms(
+            {"course_name": root_dir.name}, subject_profile,
+            root_dir=root_dir, manifest_entries=manifest_entries,
+        ),
     )
 
 
@@ -370,14 +378,11 @@ _strip_frontmatter_block = _markdown_utils_strip_frontmatter_block
 _rewrite_markdown_asset_paths = _markdown_utils_rewrite_markdown_asset_paths
 _strip_markdown_image_refs = _markdown_utils_strip_markdown_image_refs
 
-
 _entry_image_source_dirs = _entry_signals_image_source_dirs
-
 
 _build_page_chunks = _backend_build_page_chunks
 _build_marker_page_chunks = _backend_build_marker_page_chunks
 _selected_page_count = _backend_selected_page_count
-
 
 _prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docling_python_source_pdf(
     ctx,
@@ -386,9 +391,7 @@ _prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docli
     pymupdf_module=pymupdf if HAS_PYMUPDF else None,
 )
 
-
 _configure_docling_python_standard_gpu = _backend_configure_docling_python_standard_gpu
-
 
 _marker_chunk_size_for_workload = lambda ctx: _backend_marker_chunk_size_for_workload(
     ctx,
@@ -396,13 +399,11 @@ _marker_chunk_size_for_workload = lambda ctx: _backend_marker_chunk_size_for_wor
     selected_page_count_fn=_selected_page_count,
 )
 
-
 _datalab_chunk_size_for_workload = lambda ctx: _backend_datalab_chunk_size_for_workload(
     ctx,
     effective_document_profile_fn=_effective_document_profile,
     selected_page_count_fn=_selected_page_count,
 )
-
 
 _datalab_should_chunk = lambda ctx: _backend_datalab_should_chunk(
     ctx,
@@ -410,9 +411,7 @@ _datalab_should_chunk = lambda ctx: _backend_datalab_should_chunk(
     selected_page_count_fn=_selected_page_count,
 )
 
-
 _merge_numeric_dicts = _markdown_utils_merge_numeric_dicts
-
 
 _should_force_ocr_for_marker = _backend_should_force_ocr_for_marker
 _marker_should_use_llm = _backend_marker_should_use_llm
@@ -427,14 +426,12 @@ _marker_progress_hints = _backend_marker_progress_hints
 _load_docling_python_api = _backend_load_docling_python_api
 has_docling_python_api = lambda: bool(_load_docling_python_api())
 
-
 _advanced_cli_stall_timeout = lambda backend_name, ctx: _backend_advanced_cli_stall_timeout(
     backend_name,
     ctx,
     effective_document_profile_fn=_effective_document_profile,
     selected_page_count_fn=_selected_page_count,
 )
-
 
 def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
     return _core_utils_pdf_image_extraction_policy(
@@ -447,17 +444,14 @@ def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
     )
 _truncate_markdown_blocks = _url_markdown_truncate_markdown_blocks
 
-
 _compact_notebook_markdown = _markdown_utils_compact_notebook_markdown
 _generated_repo_gitignore_text = _markdown_utils_generated_repo_gitignore_text
-
 
 _html_to_structured_markdown = partial(
     _url_markdown_html_to_structured_markdown,
     collapse_ws=_collapse_ws,
     truncate_markdown_blocks=_truncate_markdown_blocks,
 )
-
 
 # ---------------------------------------------------------------------------
 # Unicode math -> LaTeX normalization
@@ -468,7 +462,6 @@ _repair_mojibake_text = _text_repair_mojibake_text
 _sanitize_external_markdown_text = _text_sanitize_external_markdown_text
 _detect_latex_corruption = _text_detect_latex_corruption
 _hybridize_marker_markdown_with_base = _text_hybridize_marker_markdown_with_base
-
 
 # ---------------------------------------------------------------------------
 # Backend architecture
@@ -498,7 +491,6 @@ class BackendContext:
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"
 
-
 class ExtractionBackend:
     name = "base"
     layer = "base"
@@ -508,7 +500,6 @@ class ExtractionBackend:
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
         raise NotImplementedError
-
 
 class PyMuPDF4LLMBackend(ExtractionBackend):
     name = "pymupdf4llm"
@@ -541,7 +532,9 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             kwargs.pop("image_path", None)
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
-        md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
+        from src.utils.pdf_markdown import respect_actualtext
+        with respect_actualtext():  # 2026-08-28: /ActualText -> glifos PUA sem isso
+            md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
         if isinstance(md, list):
             body = "\n\n".join(chunk.get("text", "") for chunk in md)
         else:
@@ -563,7 +556,6 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             asset_dir=safe_rel(ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id, ctx.root_dir) if ctx.entry.preserve_pdf_images_in_markdown else None,
             notes=["Markdown gerado com PyMuPDF4LLM."],
         )
-
 
 class PyMuPDFBackend(ExtractionBackend):
     name = "pymupdf"
@@ -612,7 +604,6 @@ class PyMuPDFBackend(ExtractionBackend):
             notes=["Markdown bruto gerado com PyMuPDF."],
         )
 
-
 _run_cli_with_timeout = lambda cmd, backend_name, ctx, stall_timeout=None: _backend_run_cli_with_timeout(
     cmd,
     backend_name,
@@ -627,7 +618,6 @@ _run_cli_with_timeout = lambda cmd, backend_name, ctx, stall_timeout=None: _back
 )
 
 _MARKER_CAPABILITIES_CACHE = None
-
 
 def _detect_marker_capabilities() -> Dict[str, object]:
     global _MARKER_CAPABILITIES_CACHE
@@ -735,7 +725,6 @@ class DoclingCLIBackend(ExtractionBackend):
             notes=["Saída avançada gerada com Docling CLI."],
         )
 
-
 class DoclingPythonBackend(ExtractionBackend):
     name = "docling_python"
     layer = "advanced"
@@ -756,7 +745,7 @@ class DoclingPythonBackend(ExtractionBackend):
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
-
+        
         DocumentConverter = api["DocumentConverter"]
         PdfFormatOption = api["PdfFormatOption"]
         PdfPipelineOptions = api["PdfPipelineOptions"]
@@ -833,10 +822,8 @@ class DoclingPythonBackend(ExtractionBackend):
             notes=["Saída avançada gerada com Docling Python API."],
         )
 
-
 _PAGINATION_MARKER_RE = re.compile(r"^\d+\n-{40,}\s*$", re.MULTILINE)
 _IMAGE_REF_RE = re.compile(r"!\[.*?\]\((.+?)\)")
-
 
 def _extract_datalab_image_page_map(markdown: str, page_offset: int = 0) -> dict:
     """Parse a paginated Datalab markdown response into {filename: page_number}.
@@ -872,14 +859,13 @@ def _strip_pagination_markers(text: str) -> str:
     cleaned = re.sub(r"^\d+\s*$", "", cleaned, flags=re.MULTILINE)
     return cleaned
 
-
 def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int]) -> dict:
     """Parse DataLab raw markdown for image captions; return image_curation dict."""
-    from datetime import datetime
+    from datetime import datetime, UTC
 
     pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
     pages: Dict[str, dict] = {}
-    now = datetime.utcnow().isoformat(timespec="seconds")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
 
     for m in pattern.finditer(raw_markdown):
         caption = m.group(1).strip()
@@ -900,7 +886,6 @@ def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int])
         return {}
     return {"pages": pages}
 
-
 def _merge_image_curations(curations: list) -> dict:
     """Merge multiple image_curation dicts (from chunked DataLab runs) into one."""
     merged: Dict[str, dict] = {}
@@ -909,8 +894,6 @@ def _merge_image_curations(curations: list) -> dict:
             merged.setdefault(page_key, {"include_page": True, "images": {}})
             merged[page_key]["images"].update(page_data.get("images") or {})
     return {"pages": merged}
-
-
 class DatalabCloudBackend(ExtractionBackend):
     name = "datalab"
     layer = "advanced"
@@ -938,8 +921,7 @@ class DatalabCloudBackend(ExtractionBackend):
             paginate=True,
             token_efficient_markdown=False,
             poll_interval=2.0,
-            max_wait_seconds=max_wait_seconds,
-        )
+            max_wait_seconds=max_wait_seconds)
         raw_markdown = result.markdown
         image_page_map = _extract_datalab_image_page_map(raw_markdown, page_offset)
         markdown = _sanitize_external_markdown_text(raw_markdown)
@@ -948,8 +930,7 @@ class DatalabCloudBackend(ExtractionBackend):
         return result, markdown, image_page_map, raw_markdown
 
     def _save_datalab_images(
-        self, images: dict, entry_id: str, root_dir: Path
-    ) -> tuple[Path, list[str]]:
+        self, images: dict, entry_id: str, root_dir: Path ) -> tuple[Path, list[str]]:
         import base64
         images_dir = root_dir / "staging" / "assets" / "images" / entry_id
         ensure_dir(images_dir)
@@ -961,12 +942,11 @@ class DatalabCloudBackend(ExtractionBackend):
                 out_path.write_bytes(img_data)
                 saved.append(out_path.name)
             except Exception as exc:
-                logger.warning("  [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
+                logger.warning(" [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
         return images_dir, saved
 
     def _save_datalab_image_pages(
-        self, image_page_map: dict, out_dir: Path
-    ) -> None:
+        self, image_page_map: dict, out_dir: Path ) -> None:
         """Persist {filename: page_number} map alongside datalab-run.json."""
         if not image_page_map:
             return
@@ -988,27 +968,24 @@ class DatalabCloudBackend(ExtractionBackend):
         out_path = out_dir / f"{ctx.entry_id}.md"
 
         logger.info(
-            "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
+            " [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
             mode,
             page_range or "all",
-            max_wait_seconds,
-        )
+            max_wait_seconds )
 
         try:
             result, markdown, image_page_map, raw_markdown = self._convert_range(
                 ctx,
                 mode=mode,
                 page_range=page_range,
-                max_wait_seconds=max_wait_seconds,
-            )
+                max_wait_seconds=max_wait_seconds )
         except Exception as e:
             logger.error("  [datalab] Erro ao executar: %s", e)
             return BackendRunResult(
                 name=self.name,
                 layer=self.layer,
                 status="error",
-                error=str(e),
-            )
+                error=str(e) )
 
         saved_images: list = []
         images_dir_path: Optional[Path] = None
@@ -1016,7 +993,7 @@ class DatalabCloudBackend(ExtractionBackend):
             images_dir_path, saved_images = self._save_datalab_images(
                 result.images, ctx.entry_id, ctx.root_dir
             )
-            logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
+            logger.info(" [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
 
         image_curation = None
         if ctx.image_description_source == "datalab" and raw_markdown:
@@ -1072,8 +1049,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path and saved_images else None,
-            image_curation=image_curation,
-        )
+            image_curation=image_curation )
 
     def _run_chunked_datalab(
         self,
@@ -1081,8 +1057,7 @@ class DatalabCloudBackend(ExtractionBackend):
         out_dir: Path,
         *,
         mode: str,
-        max_wait_seconds: int,
-    ) -> BackendRunResult:
+        max_wait_seconds: int ) -> BackendRunResult:
         chunk_size = _datalab_chunk_size_for_workload(ctx)
         chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
         if len(chunks) <= 1:
@@ -1091,14 +1066,12 @@ class DatalabCloudBackend(ExtractionBackend):
                 out_dir,
                 mode=mode,
                 page_range=pages_to_marker_range(ctx.pages),
-                max_wait_seconds=max_wait_seconds,
-            )
+                max_wait_seconds=max_wait_seconds )
 
         logger.info(
             "  [datalab] Documento longo; processando em %d chunks de até %d páginas.",
             len(chunks),
-            chunk_size,
-        )
+            chunk_size )
 
         out_path = out_dir / f"{ctx.entry_id}.md"
         chunks_dir = out_dir / "chunks"
@@ -1119,16 +1092,14 @@ class DatalabCloudBackend(ExtractionBackend):
                 idx,
                 len(chunks),
                 chunk_pages[0] + 1,
-                chunk_pages[-1] + 1,
-            )
+                chunk_pages[-1] + 1 )
             try:
                 result, markdown, chunk_image_page_map, raw_markdown = self._convert_range(
                     ctx,
                     mode=mode,
                     page_range=chunk_range,
                     max_wait_seconds=max_wait_seconds,
-                    page_offset=chunk_pages[0],
-                )
+                    page_offset=chunk_pages[0] )
             except Exception as e:
                 logger.error("  [datalab] Erro no chunk %d/%d: %s", idx, len(chunks), e)
                 return BackendRunResult(
@@ -1154,8 +1125,7 @@ class DatalabCloudBackend(ExtractionBackend):
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
                 combined_parts.append(
-                    f"<!-- DATALAB_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
-                )
+                    f"<!-- DATALAB_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}" )
 
             if result.parse_quality_score is not None:
                 parse_scores.append(float(result.parse_quality_score))
@@ -1255,8 +1225,7 @@ class DatalabCloudBackend(ExtractionBackend):
             "  [datalab] Long-doc policy: should_chunk=%s (selected_pages=%d, chunk_size=%d).",
             should_chunk,
             _selected_page_count(ctx),
-            _datalab_chunk_size_for_workload(ctx),
-        )
+            _datalab_chunk_size_for_workload(ctx) or -1)
         if should_chunk:
             return self._run_chunked_datalab(
                 ctx,
@@ -1269,10 +1238,7 @@ class DatalabCloudBackend(ExtractionBackend):
             out_dir,
             mode=mode,
             page_range=page_range,
-            max_wait_seconds=max_wait_seconds,
-        )
-
-
+            max_wait_seconds=max_wait_seconds )
 class MarkerCLIBackend(ExtractionBackend):
     name = "marker"
     layer = "advanced"
@@ -1286,8 +1252,7 @@ class MarkerCLIBackend(ExtractionBackend):
         out_dir: Path,
         caps: Dict[str, object],
         pages: Optional[List[int]],
-        stall_timeout: int,
-    ) -> BackendRunResult:
+        stall_timeout: int ) -> BackendRunResult:
         ensure_dir(out_dir)
 
         cmd = [
@@ -1327,8 +1292,7 @@ class MarkerCLIBackend(ExtractionBackend):
             if not marker_model:
                 logger.warning(
                     "  [marker] LLM habilitado, mas nenhum modelo do Marker foi configurado. "
-                    "Defina 'Modelo Ollama do Marker' nas configurações para ativar --use_llm."
-                )
+                    "Defina 'Modelo Ollama do Marker' nas configurações para ativar --use_llm.")
             elif use_llm_flag:
                 cmd.append(use_llm_flag)
                 marker_llm_active = True
@@ -1369,8 +1333,7 @@ class MarkerCLIBackend(ExtractionBackend):
                 logger.info(
                     "  [marker] Processors visuais desativados via config_json "
                     "(modelo '%s' não é vision). Imagens serão tratadas pelo Image Curator.",
-                    marker_model,
-                )
+                    marker_model )
 
             # Aumentar timeout do OllamaService para modelos locais (default=30s
             # é insuficiente quando GPU é compartilhada com layout models).
@@ -1381,23 +1344,19 @@ class MarkerCLIBackend(ExtractionBackend):
         if marker_llm_active:
             if _marker_model_is_cloud_variant(marker_model):
                 logger.warning(
-                    "  [marker] O modelo '%s' parece ser variante cloud. Para estabilidade no Marker, prefira um modelo local como gemma3:4b.",
-                    marker_model,
-                )
+                    "  [marker] O modelo '%s' parece ser variante cloud. Para estabilidade no Marker, prefira um modelo local como gemma3:4b.", marker_model )
             elif not _marker_model_is_probably_vision(marker_model):
                 logger.info(
                     "  [marker] Modelo texto-only '%s' detectado. Extração de imagens desabilitada automaticamente; "
                     "LLM será usado apenas para math, tabelas e headers.",
-                    marker_model,
-                )
+                    marker_model )
             logger.info(
                 "  [marker] LLM ativo: service=%s model=%s base_url=%s redo_inline_math=%s torch_device=%s",
                 MARKER_OLLAMA_SERVICE,
                 marker_model,
                 marker_ollama_url or "(padrão do Marker)",
                 "sim" if "--redo_inline_math" in cmd or "--redo-inline-math" in cmd else "não",
-                marker_torch_device,
-            )
+                marker_torch_device )
         else:
             logger.info("  [marker] LLM inativo para esta execução. TORCH_DEVICE=%s", marker_torch_device)
 
@@ -1423,14 +1382,12 @@ class MarkerCLIBackend(ExtractionBackend):
         except (InterruptedError, TimeoutError) as e:
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
-                command=cmd, error=str(e),
-            )
+                command=cmd, error=str(e) )
         except Exception as e:
             logger.error("  [marker] Erro ao executar: %s", e)
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
-                command=cmd, error=str(e),
-            )
+                command=cmd, error=str(e) )
 
         stdout_text = "\n".join(stdout_lines)
         stderr_text = "\n".join(stderr_lines)
@@ -1492,8 +1449,7 @@ class MarkerCLIBackend(ExtractionBackend):
         ctx: BackendContext,
         out_dir: Path,
         caps: Dict[str, object],
-        stall_timeout: int,
-    ) -> BackendRunResult:
+        stall_timeout: int ) -> BackendRunResult:
         chunk_size = _marker_chunk_size_for_workload(ctx)
         chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
         if len(chunks) <= 1:
@@ -1502,13 +1458,11 @@ class MarkerCLIBackend(ExtractionBackend):
         logger.info(
             "  [marker] Documento grande/pesado; processando em %d chunks de até %d páginas.",
             len(chunks),
-            chunk_size,
-        )
+            chunk_size )
         logger.info(
             "  [marker] Chunk policy: %d páginas por chunk para %d páginas selecionadas.",
             chunk_size,
-            _selected_page_count(ctx),
-        )
+            _selected_page_count(ctx) )
         combined_path = out_dir / f"{ctx.entry_id}.md"
         combined_parts: List[str] = []
         chunk_meta = []
@@ -1517,8 +1471,7 @@ class MarkerCLIBackend(ExtractionBackend):
             chunk_dir = out_dir / f"chunk-{idx:03d}"
             logger.info(
                 "  [marker] Chunk %d/%d — páginas %d-%d",
-                idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1,
-            )
+                idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1 )
             result = self._run_single_marker(ctx, chunk_dir, caps, chunk_pages, stall_timeout)
             if result.status != "ok" or not result.markdown_path:
                 return BackendRunResult(
@@ -1526,27 +1479,23 @@ class MarkerCLIBackend(ExtractionBackend):
                     layer=self.layer,
                     status="error",
                     command=result.command,
-                    error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}",
-                )
+                    error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}" )
 
             md_abs = ctx.root_dir / result.markdown_path
             try:
                 chunk_text = _sanitize_external_markdown_text(
-                    md_abs.read_text(encoding="utf-8", errors="replace")
-                )
+                    md_abs.read_text(encoding="utf-8", errors="replace") )
             except Exception as e:
                 return BackendRunResult(
                     name=self.name,
                     layer=self.layer,
                     status="error",
-                    error=f"Falha ao ler markdown do chunk {idx}: {e}",
-                )
+                    error=f"Falha ao ler markdown do chunk {idx}: {e}" )
 
             chunk_body = _strip_frontmatter_block(chunk_text).strip()
             chunk_body = _rewrite_markdown_asset_paths(chunk_body, md_abs.parent, combined_path.parent)
             combined_parts.append(
-                f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
-            )
+                f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}" )
             chunk_meta.append({
                 "chunk_index": idx,
                 "page_range": pages_to_marker_range(chunk_pages),
@@ -1829,6 +1778,7 @@ class RepoBuilder:
             has_docling_python_api_fn=has_docling_python_api,
             marker_cli=MARKER_CLI,
             file_map_md_fn=file_map_md,
+            file_map_trace_md_fn=file_map_trace_md,
         )
 
     def _create_structure(self) -> None:
@@ -1847,7 +1797,6 @@ class RepoBuilder:
             course_map_md_fn=course_map_md,
             glossary_md_fn=glossary_md,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
             student_profile_md_fn=student_profile_md,
             syllabus_md_fn=syllabus_md,
             bibliography_md_fn=bibliography_md,
@@ -1895,11 +1844,11 @@ class RepoBuilder:
         try:
             data = _json.loads(path.read_text(encoding="utf-8"))
             return data.get("blocks", []) or []
-        except Exception:
+        except Exception as exc:
+            # Arquivo EXISTE mas falhou: sem o warning, o curso roda como se não
+            # tivesse cronograma e nenhum gate acusa (achado auditoria 2.4).
+            logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM blocos de cronograma", path, type(exc).__name__, exc)
             return []
-
-    def _summarize_code_entries(self, client, progress_cb=None) -> dict:
-        return _core_code_summarization_summarize_all(self, client, progress_cb)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)
@@ -2045,6 +1994,18 @@ class RepoBuilder:
     def _process_image(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         return _source_importers_process_image(self, entry, raw_target)
 
+    def _process_html(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        from src.builder.ops.pedagogical_regeneration import _resolve_gemini_client
+
+        client = _resolve_gemini_client(self)
+        return _core_html_material_process_html(
+            self,
+            entry,
+            raw_target,
+            datalab_image_fn=_core_html_material_datalab_image_markdown,
+            gemini_text_fn=client.generate_text if client else (lambda prompt, image_path=None: ""),
+        )
+
     def _process_code(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         return _source_importers_process_code(self, entry, raw_target)
 
@@ -2162,7 +2123,6 @@ class RepoBuilder:
         _incremental_build_incremental_build_impl(
             self,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
         )
 
     def _derive_active_unit_slug_from_state(self) -> str:
@@ -2181,7 +2141,7 @@ class RepoBuilder:
             self,
             manifest,
             filter_live_manifest_entries_fn=_filter_live_manifest_entries,
-            build_file_map_content_taxonomy_from_course_fn=_build_file_map_content_taxonomy_from_course,
+            build_rich_content_taxonomy_fn=_build_rich_content_taxonomy,
             write_internal_content_taxonomy_fn=_write_internal_content_taxonomy,
             build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
             persist_enriched_timeline_index_fn=_persist_enriched_timeline_index,
@@ -2201,15 +2161,12 @@ class RepoBuilder:
             glossary_md_fn=glossary_md,
             write_tag_catalog_fn=_write_tag_catalog,
             refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
-            resolve_unit_block_tags_fn=partial(
-                _resolve_unit_block_tags,
-                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
-                build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
-                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
-                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+            apply_unit_subunit_fn=partial(
+                _apply_unit_subunit_fields,
                 auto_map_entry_unit_fn=_auto_map_entry_unit,
-                select_probable_period_for_entry_fn=_select_probable_period_for_entry,
-                resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
+                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
+                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
                 entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
             ),
             syllabus_md_fn=syllabus_md,
@@ -2220,9 +2177,9 @@ class RepoBuilder:
             code_index_md_fn=code_index_md,
             whiteboard_index_md_fn=whiteboard_index_md,
             file_map_md_fn=file_map_md,
+            file_map_trace_md_fn=file_map_trace_md,
             student_profile_md_fn=student_profile_md,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
             parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
             topic_text_fn=_topic_text,
             inject_executive_summary_fn=_inject_executive_summary,
@@ -2288,6 +2245,7 @@ _glossary_aliases = _build_glossary_aliases(
     topic_text=_topic_text,
 )
 glossary_md = _glossary_aliases["glossary_md"]
+_course_terms = _glossary_aliases["course_terms"]
 _clamp_navigation_artifact = _glossary_aliases["_clamp_navigation_artifact"]
 _find_glossary_evidence = _glossary_aliases["_find_glossary_evidence"]
 _seed_glossary_fields = _glossary_aliases["_seed_glossary_fields"]
@@ -2316,6 +2274,7 @@ _file_map_aliases = _build_file_map_aliases(
     timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
     score_timeline_unit_phrase=_score_timeline_unit_phrase,
     glossary_md=glossary_md,
+    course_terms_fn=_course_terms,
     collect_strong_heading_candidates=_collect_strong_heading_candidates,
     resolve_semantic_profile_fn=resolve_semantic_profile,
     build_content_taxonomy_fn=_build_content_taxonomy,
@@ -2336,6 +2295,17 @@ _normalize_unit_slug = _file_map_aliases["_normalize_unit_slug"]
 _build_file_map_unit_index = _file_map_aliases["_build_file_map_unit_index"]
 _collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
 _build_file_map_content_taxonomy_from_course = _file_map_aliases["_build_file_map_content_taxonomy_from_course"]
+
+
+def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile, *, entries=None):
+    return _ops_build_rich_content_taxonomy(
+        repo_root, course_meta, subject_profile,
+        taxonomy_fn=_build_file_map_content_taxonomy_from_course,
+        filter_live_fn=_filter_live_manifest_entries,
+        entries=entries,
+    )
+
+
 _auto_map_entry_subtopic = _file_map_aliases["_auto_map_entry_subtopic"]
 _score_entry_against_unit = _file_map_aliases["_score_entry_against_unit"]
 _auto_map_entry_unit = _file_map_aliases["_auto_map_entry_unit"]
@@ -2353,16 +2323,7 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
     file_map_score_card_evidence_against_entry=_file_map_score_card_evidence_against_entry,
-    file_map_score_entry_against_timeline_block=_file_map_score_entry_against_timeline_block,
-    file_map_select_probable_period_for_entry=_file_map_select_probable_period_for_entry,
-    collect_entry_unit_signals=_collect_entry_unit_signals,
-    build_timeline_index=_build_timeline_index,
-    timeline_period_label=_timeline_period_label,
-    collapse_ws=_collapse_ws,
     normalize_match_text=_normalize_match_text,
-    extract_date_range_signal=extract_date_range_signal,
-    extract_timeline_session_signals=extract_timeline_session_signals,
-    parse_timeline_date_value=_parse_timeline_date_value,
     timeline_aggregate_unit_periods_from_blocks=_timeline_aggregate_unit_periods_from_blocks,
     timeline_build_file_map_timeline_context_from_course=_timeline_build_file_map_timeline_context_from_course,
     build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
@@ -2372,8 +2333,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
-_score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
-_select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
 _build_file_map_timeline_context_from_course = _teaching_timeline_aliases["_build_file_map_timeline_context_from_course"]
 _parse_bibliography_from_teaching_plan = _teaching_timeline_aliases["_parse_bibliography_from_teaching_plan"]
@@ -2389,7 +2348,6 @@ _repo_doc_aliases = _build_repo_doc_aliases(
     code_review_profile_fn=_code_review_profile,
 )
 student_state_md = _repo_doc_aliases["student_state_md"]
-progress_schema_md = _repo_doc_aliases["progress_schema_md"]
 bibliography_md = _repo_doc_aliases["bibliography_md"]
 exam_index_md = _repo_doc_aliases["exam_index_md"]
 assignment_index_md = _repo_doc_aliases["assignment_index_md"]
@@ -2409,6 +2367,7 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     navigation_low_token_course_map_md_v2=_navigation_low_token_course_map_md_v2,
     navigation_course_map_md=_navigation_course_map_md,
     navigation_file_map_md=_navigation_file_map_md,
+    navigation_file_map_trace_md=_navigation_file_map_trace_md,
     json_str_fn=json_str,
     safe_rel_fn=safe_rel,
     ensure_dir_fn=ensure_dir,
@@ -2425,17 +2384,8 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     assessment_conflict_section_lines=_assessment_conflict_section_lines,
     filter_live_manifest_entries=_filter_live_manifest_entries,
     build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
-    build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-    iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
     merge_manual_and_auto_tags=_merge_manual_and_auto_tags,
     resolve_entry_manual_timeline_block=_resolve_entry_manual_timeline_block,
-    entry_markdown_text_for_file_map=_entry_markdown_text_for_file_map,
-    auto_map_entry_subtopic=_auto_map_entry_subtopic,
-    resolve_entry_manual_unit_slug=_resolve_entry_manual_unit_slug,
-    unit_match_result_factory=UnitMatchResult,
-    derive_unit_from_topic_match=_derive_unit_from_topic_match,
-    auto_map_entry_unit=_auto_map_entry_unit,
-    select_probable_period_for_entry=_select_probable_period_for_entry,
     file_map_markdown_cell=_file_map_markdown_cell,
     entry_markdown_path_for_file_map=_entry_markdown_path_for_file_map,
     get_entry_sections=_get_entry_sections,
@@ -2443,7 +2393,6 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     entry_usage_hint=_entry_usage_hint,
     entry_priority_label=_entry_priority_label,
     collapse_ws=_collapse_ws,
-    build_unit_tag_index_fn=_build_unit_tag_index,
 )
 root_readme = _navigation_template_aliases["root_readme"]
 wrap_frontmatter = _navigation_template_aliases["wrap_frontmatter"]
@@ -2457,6 +2406,7 @@ backend_architecture_md = _navigation_template_aliases["backend_architecture_md"
 backend_policy_yaml = _navigation_template_aliases["backend_policy_yaml"]
 course_map_md = _navigation_template_aliases["course_map_md"]
 file_map_md = _navigation_template_aliases["file_map_md"]
+file_map_trace_md = _navigation_template_aliases["file_map_trace_md"]
 exercise_index_md = _navigation_template_aliases["exercise_index_md"]
 
 
@@ -2481,7 +2431,6 @@ __all__ = [
     "student_profile_md",
     "glossary_md",
     "student_state_md",
-    "progress_schema_md",
     "bibliography_md",
     "exam_index_md",
     "assignment_index_md",
@@ -2502,6 +2451,7 @@ __all__ = [
     "backend_policy_yaml",
     "UnitMatchResult",
     "TopicMatchResult",
+    "_apply_unit_subunit_fields",
     "_auto_map_entry_subtopic",
     "_auto_map_entry_unit",
     "_build_assessment_context_from_course",
@@ -2516,7 +2466,6 @@ __all__ = [
     "_collect_entry_unit_signals",
     "_compact_notebook_markdown",
     "_detect_latex_corruption",
-    "_derive_unit_from_topic_match",
     "_entry_markdown_text_for_file_map",
     "_file_map_markdown_cell",
     "_filter_live_manifest_entries",
@@ -2532,13 +2481,9 @@ __all__ = [
     "_parse_timeline_date_value",
     "_repair_mojibake_text",
     "_resolve_entry_manual_timeline_block",
-    "_resolve_unit_block_tags",
     "_sanitize_external_markdown_text",
-    "_score_entry_against_timeline_block",
     "_score_entry_against_unit",
     "_seed_glossary_fields",
-    "_select_probable_period_for_entry",
-    "_serialize_timeline_index",
     "_write_internal_content_taxonomy",
 ]
 

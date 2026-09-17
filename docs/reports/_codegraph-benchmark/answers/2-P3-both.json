@@ -1,0 +1,13 @@
+{
+  "id": "P3",
+  "arm": "both",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 13.185902400000487,
+  "returncode": 0,
+  "evidence_sha256": "41d2a07f867054b8de732b9f7e56b7d067700d3938d9f9a85ebc591af813cb76",
+  "prompt_chars": 14562,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77e-37e5-73e1-be1a-0e4e1f9bb42d\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep\\\",\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker\\\",\\\"src/builder/engine.py:RepoBuilder.sweep_orphans\\\",\\\"src/builder/ops/lifecycle_ops.py:sweep_orphans\\\"],\\\"evidence\\\":[\\\"src/ui/maintenance_panel.py:147\\\",\\\"src/ui/maintenance_panel.py:168\\\",\\\"src/ui/maintenance_panel.py:184\\\",\\\"src/ui/maintenance_panel.py:170\\\",\\\"src/ui/maintenance_panel.py:174\\\",\\\"src/builder/engine.py:2218\\\",\\\"src/builder/engine.py:2219\\\",\\\"src/builder/engine.py:152\\\",\\\"src/builder/ops/lifecycle_ops.py:263\\\"],\\\"caveat\\\":\\\"Cadeia pressupõe que self._make_builder() retorne RepoBuilder com sweep_orphans sem sobrescrita; a evidência não comprova esse tipo. O worker é iniciado por threading.Thread após as guardas e a confirmação.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":22975,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":209,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

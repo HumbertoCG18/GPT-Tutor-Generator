@@ -1,0 +1,11 @@
+{
+  "id": "I2",
+  "arm": "baseline",
+  "rep": 1,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 1109.494399299998,
+  "error": "timeout",
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76c-7653-7400-8673-5541e4b2fc58\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"docling.document_converter\\\",\\\"docling.datamodel.pipeline_options\\\",\\\"docling.datamodel.base_models\\\",\\\"docling.datamodel.accelerator_options\\\",\\\"docling.datamodel.settings\\\"],\\\"evidence\\\":[\\\"src/builder/runtime/backend_runtime.py:229\\\",\\\"src/builder/runtime/backend_runtime.py:230\\\",\\\"src/builder/runtime/backend_runtime.py:231\\\",\\\"src/builder/runtime/backend_runtime.py:232\\\",\\\"src/builder/runtime/backend_runtime.py:233\\\"],\\\"caveat\\\":\\\"A evidência mostra as chamadas de importação; não confirma que os módulos estão instalados.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20894,\"cached_input_tokens\":20736,\"cache_write_input_tokens\":0,\"output_tokens\":120,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

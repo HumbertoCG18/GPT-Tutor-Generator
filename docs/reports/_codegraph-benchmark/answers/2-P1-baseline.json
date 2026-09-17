@@ -1,0 +1,13 @@
+{
+  "id": "P1",
+  "arm": "baseline",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 7.497378799998842,
+  "returncode": 0,
+  "evidence_sha256": "8eca822cf76bc0b4a060f9437f8920768468911ffca5aee436c553dc245e3b83",
+  "prompt_chars": 16408,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77d-fd29-75c0-a0d4-acb82bf189c7\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/builder/engine.py:MarkerCLIBackend._run_chunked_marker\\\",\\\"src/builder/runtime/backend_runtime.py:build_marker_page_chunks\\\",\\\"src/builder/runtime/backend_runtime.py:build_page_chunks\\\"],\\\"evidence\\\":[\\\"src/builder/engine.py:1454\\\",\\\"src/builder/engine.py:384\\\",\\\"src/builder/engine.py:64\\\",\\\"src/builder/runtime/backend_runtime.py:29\\\",\\\"src/builder/runtime/backend_runtime.py:21\\\"],\\\"caveat\\\":\\\"\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":23398,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":107,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

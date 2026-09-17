@@ -1,0 +1,64 @@
+========================================================================================================
+PLACAR CONSOLIDADO — 12/09, depois de 4 rodadas de correcao e 9 refutacoes adversariais
+========================================================================================================
+
+1) OS 3 EIXOS COM O MOTOR COMPLETO (acuracia TOTAL: todo material no denominador; abster nao tira ninguem)
+   fonte: c1-3/motor_3eixos_v2_12-09.log + motor_3eixos_produto_12-09.log · 0 tentativas de rede nas 4
+--------------------------------------------------------------------------------------------------------
+   eixo                           NU        CRU     +VOCAB    PRODUTO     meta 90%
+   bloco                       93,2%      93,7%      93,2%      99,2%    OK no cru
+   unidade                     85,9%      89,1%      89,8%      92,6%   faltam 0.9 pp
+   subunidade (aceito)         49,8%      58,2%      87,6%      89,2%   faltam 31.8 pp
+   subunidade (primario)       33,9%      41,0%      73,3%      74,1%   faltam 49.0 pp
+   cobertura                   54,2%      56,2%      58,2%      76,9%
+
+   NU = sem curadoria manual e sem vocab LLM · CRU = curadoria humana, sem vocab (o regime da regua)
+   +VOCAB = com o vocabulario do LLM, voter ainda off · PRODUTO = voter ligado (reproduz o produto em disco)
+
+2) A META 90/90/90 EM MATERIAIS (o que falta, no regime CRU)
+--------------------------------------------------------------------------------------------------------
+   bloco          tem 222/237  · 90% exige 214 · JA BATE
+   unidade        tem 253/284  · 90% exige 256 · faltam 3 materiais
+   subunidade     tem 146/251  · 90% exige 226 · faltam 80 materiais
+
+3) O QUE CADA CAMADA COMPRA (pontos de acuracia total)
+--------------------------------------------------------------------------------------------------------
+   camada                                bloco   unidade   subunidade
+   curadoria humana (NU -> CRU)           +0,4      +3,2         +8,4
+   vocabulario do LLM (CRU -> VOCAB)      -0,4      +0,7        +29,4
+   voter do LLM (VOCAB -> PRODUTO)        +5,9      +2,8         +1,6
+
+4) NUMEROS QUE MUDARAM HOJE — nao reusar a coluna da esquerda
+--------------------------------------------------------------------------------------------------------
+   numero                                                publicado   depois da correcao
+   divergencias replay x produto                                 2          0 (eram 10)
+   regua do cru, subunidade aceito (replay)                139/251              147/251
+   erros de aceito no cru                                      112 104 (replay) / 105 (motor)
+   erros CONFIANTES no cru                                      82                   77
+   teto das fontes do professor (primario, 227)   61% e depois 64%                  44%
+   SARC no IA (alcance)                                        87%                   5%
+   ganho do seletor com 5 topicos                  +31 (5 topicos) +31, mas 2 topicos de 1 curso
+   2a passada: higiene de token de midia            divida a pagar REFUTADA (-2 cru, -3 produto)
+
+5) FRENTES FECHADAS POR NEGATIVO MEDIDO (nao reabrir sem dado novo)
+--------------------------------------------------------------------------------------------------------
+   x SARC posicional (perde nos dois regimes; sobrevive a 2 testes de robustez)
+   x piso global de winner_score e a margem 1o-2o (Spearman 0,948: e o mesmo piso, 5a refutacao)
+   x razao s2/s1, cobertura de tokens, riqueza de alias, 'sem competicao' (nao separam)
+   x limpar token de midia da doacao por headings (custa -2 no cru e -3 no produto)
+   x numerar artificialmente o plano do IA (o professor realmente nao numera)
+   x Datalab como alavanca de atribuicao (3 predicoes mudam de 31, saldo zero)
+
+6) O QUE CONTINUA SEM MEDICAO
+--------------------------------------------------------------------------------------------------------
+   ? custo por curso da compilacao de vocabulario (tokens, retries, tempo humano)
+   ? validacao fora da amostra: o LR nao tem gold de subunidade
+   ? o prompt v1 do compilador — a unica peca calibrada no gold que sobra
+   ? a meta POR CURSO (MF 89,4% no bloco, SO 73,0% na unidade)
+   ? os 25 erros de subunidade que o produto tambem erra
+
+========================================================================================================
+EM UMA LINHA: no motor cru o BLOCO ja bate a meta (93,7%), a UNIDADE fica a 3 materiais (89,1%) e a
+SUBUNIDADE precisa de 80 materiais (58,2% contra 90%) — e o unico mecanismo que move a subunidade e
+vocabulario, que hoje so sabemos produzir com uma passada de LLM por curso.
+========================================================================================================

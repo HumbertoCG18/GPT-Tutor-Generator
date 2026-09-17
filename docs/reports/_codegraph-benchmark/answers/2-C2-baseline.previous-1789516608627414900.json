@@ -1,0 +1,13 @@
+{
+  "id": "C2",
+  "arm": "baseline",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 5.925056899999618,
+  "returncode": 0,
+  "evidence_sha256": "67511f6d077f3b37fa5d9c32f409b1f312fedccc6f80de264c9af2b790d490b5",
+  "prompt_chars": 6261,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77d-c594-70e2-a80f-869f1055fa7b\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/builder/runtime/backend_runtime.py:build_marker_page_chunks\\\"],\\\"evidence\\\":[\\\"src/builder/runtime/backend_runtime.py:29\\\"],\\\"caveat\\\":\\\"\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20634,\"cached_input_tokens\":11776,\"cache_write_input_tokens\":0,\"output_tokens\":41,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import os
+
 import json
 import logging
 import sys
 from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
-from src.utils.helpers import write_text
+from src.builder.ops.lifecycle_ops import assign_dedup_id
+from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +26,7 @@ def build_impl(
     has_docling_python_api_fn,
     marker_cli,
     file_map_md_fn,
+    file_map_trace_md_fn=None,
 ) -> None:
     logger.info("Building repository at %s", builder.root_dir)
     logger.info("Creating directory structure...")
@@ -56,10 +60,12 @@ def build_impl(
     if skipped:
         logger.info("Pulando %d entries desabilitados.", skipped)
     total = len(active_entries)
+    existing_ids: set = set()
     for i, entry in enumerate(active_entries):
         logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
         if builder.progress_callback:
             builder.progress_callback(i, total, entry.title)
+        assign_dedup_id(entry, existing_ids)
         try:
             item_result = builder._process_entry(entry)
             manifest["entries"].append(item_result)
@@ -85,18 +91,18 @@ def build_impl(
             logger.warning("[%d/%d] Pulando entry com arquivo ausente: %s", i + 1, total, exc)
             manifest["logs"] = builder.logs
             manifest = builder._compact_manifest(manifest)
-            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+            write_json_manifest(manifest_path, manifest)
             continue
         manifest["logs"] = builder.logs
         manifest = builder._compact_manifest(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_json_manifest(manifest_path, manifest)
         logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
     if builder.progress_callback:
         builder.progress_callback(total, total, "")
 
     manifest["logs"] = builder.logs
     manifest = builder._compact_manifest(manifest)
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)
@@ -109,6 +115,11 @@ def build_impl(
             builder.subject_profile,
         ),
     )
+    if file_map_trace_md_fn is not None:   # C1 item 1: rastreabilidade por material, fora do roteador
+        write_text(
+            builder.root_dir / "course" / "FILE_MAP_TRACE.md",
+            file_map_trace_md_fn({**builder.course_meta, "_repo_root": builder.root_dir}, manifest["entries"]),
+        )
 
     removed = builder._prune_stale_image_curation()
     if removed:
@@ -120,7 +131,7 @@ def build_impl(
     builder._resolve_content_images()
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
 
     write_deeptutor_export(
         builder.root_dir,
@@ -134,12 +145,16 @@ def build_impl(
 
 
 def _run_auto_code_summarization(builder, logger) -> None:
-    """Auto-run enrichment if opted-in via config.
-
-    Resumo de codigo exige Gemini (pula sem client). Enriquecimento de
-    referencias roda mesmo sem client: mapeia unidade/topico por texto
-    (deterministico) e so pula o resumo Gemini — modo degradado do spec.
+    """Resumo de CODIGO e deterministico e roda sempre (camada 3 por Gemini cortada em 11/09: determ v3 142 x 137 na
+    subunidade, 0 chamadas; ver code_summarization.synthesize_all_code_entries). O que segue opt-in por config e so o
+    enriquecimento de REFERENCIAS: mapeia unidade/topico por texto mesmo sem client e so pula o resumo Gemini.
     """
+    try:
+        if not os.environ.get("TUTOR_NO_CODE_SYNTH"):   # kill switch dos harnesses que medem sem/com resumo
+            from src.builder.core.code_summarization import synthesize_all_code_entries
+            synthesize_all_code_entries(builder)
+    except Exception as exc:
+        logger.warning("[code] resumo deterministico pulado: %s", exc)
     try:
         from src.ui.theme import AppConfig
         config = AppConfig()
@@ -151,9 +166,6 @@ def _run_auto_code_summarization(builder, logger) -> None:
         def _progress(idx, total, title, status):
             if status in ("calling_api", "done"):
                 logger.info("[Gemini] [%d/%d] %s: %s", idx, total, status, title)
-
-        if client is not None:
-            builder._summarize_code_entries(client, progress_cb=_progress)
 
         # Referencias mapeiam por texto mesmo sem Gemini (client pode ser None).
         from src.builder.core.reference_summary import summarize_all_reference_entries

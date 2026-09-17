@@ -1,0 +1,801 @@
+[
+  {
+    "name": "claude-mem:ccs-align",
+    "description": "Run the CCS Align seat's hourly breathing cycle — prove the local claude-mem worker is healthy, pull needle observations through search → timeline → get_observations, land them in a seat-owned middle cache via atomic grab → append → filter exclude-marks → replace, manage exclude marks, and walk house → project → seat rules to detect conflicts (SHADOW_HOUSE, DENY_ALLOW, DRIFT, CLOCK_HEADER) with an append-only rules-report.md. Use when asked to run CCS Align, breathe the alignment seat, refresh the middle cache, exclude or restore an observation, walk rules, check rules conflicts, or check the Worker Watch board.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\claude-mem-local\\claude-mem\\13.24.23\\skills\\ccs-align\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "claude-mem@claude-mem-local",
+    "proposed_profile": "manual-until-role-justified"
+  },
+  {
+    "name": "claude-mem:mem-search",
+    "description": "Search claude-mem's persistent cross-session memory database. Use when user asks \"did we already solve this?\", \"how did we do X last time?\", or needs work from previous sessions.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\claude-mem-local\\claude-mem\\13.24.23\\skills\\mem-search\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "claude-mem@claude-mem-local",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "codex:codex-cli-runtime",
+    "description": "Internal helper contract for calling the codex-companion runtime from Claude Code",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-codex\\codex\\1.0.6\\skills\\codex-cli-runtime\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "codex@openai-codex",
+    "proposed_profile": "Claude-only-companion"
+  },
+  {
+    "name": "codex:codex-result-handling",
+    "description": "Internal guidance for presenting Codex helper output back to the user",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-codex\\codex\\1.0.6\\skills\\codex-result-handling\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "codex@openai-codex",
+    "proposed_profile": "Claude-only-companion"
+  },
+  {
+    "name": "codex:gpt-5-4-prompting",
+    "description": "Internal guidance for composing Codex and GPT-5.4 prompts for coding, review, diagnosis, and research tasks inside the Codex Claude Code plugin",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-codex\\codex\\1.0.6\\skills\\gpt-5-4-prompting\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "codex@openai-codex",
+    "proposed_profile": "Claude-only-companion"
+  },
+  {
+    "name": "computer-use:computer-use",
+    "description": "Control Windows apps from ChatGPT",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.908.70816\\skills\\computer-use\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "computer-use@openai-bundled",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "context7-mcp",
+    "description": "This skill should be used when the user asks about libraries, frameworks, API references, or needs code examples. Activates for setup questions, code generation involving libraries, or mentions of specific frameworks like React, Vue, Next.js, Prisma, Supabase, etc.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\context7-mcp\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "dispatching-parallel-agents",
+    "description": "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\dispatching-parallel-agents\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "documents:documents",
+    "description": "Create, edit, redline, and comment on `.docx`, Word, and Google Docs-targeted document artifacts inside the container, with a strict render-and-verify workflow. Use `render_docx.py` to generate page PNGs (and optional PDF) for visual QA, then iterate until layout is flawless before delivering the final document.",
+    "interface": {
+      "displayName": "Documents",
+      "shortDescription": "Create and edit Word and Google Docs files",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.909.61513\\skills\\documents\\assets\\file-document.png",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.909.61513\\skills\\documents\\assets\\file-document.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": "#2563EB",
+      "defaultPrompt": "Use $documents to create, edit, redline, or review a Word file or Google Doc."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.909.61513\\skills\\documents\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "documents@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:benchmark-methodology",
+    "description": "Use after competitive-platform-analysis has produced a tiered competitor set. Scores each competitor across nine weighted dimensions (positioning, voice, visual craft, offer packaging, evidence, enterprise-readiness, thought leadership, pricing, client's strategic tension) with explicit 1–5 rubrics and a tension-plot. Precedes competitive-report-structure.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\benchmark-methodology\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:click-path-audit",
+    "description": "Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work but cancel each other out, produce wrong final state, or leave the UI in an inconsistent state. Use when: systematic debugging found no bugs but users report broken buttons, or after any major refactor touching shared state stores.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\click-path-audit\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:contract-first",
+    "description": "Use when multiple consumers and providers must evolve an API or event schema without field drift, integration surprises, or one side silently redefining the interface.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\contract-first\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:cost-aware-llm-pipeline",
+    "description": "Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. Use when LLM spend needs to come down, or when routing tasks across model tiers and budgets.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\cost-aware-llm-pipeline\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:error-handling",
+    "description": "Patterns for robust error handling across TypeScript, Python, and Go. Covers typed errors, error boundaries, retries, circuit breakers, and user-facing error messages. Use when designing error types, retries, circuit breakers, or user-facing failure messages in TypeScript, Python, or Go.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\error-handling\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:eval-harness",
+    "description": "Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles. Use when a Claude Code workflow needs a formal eval before it is trusted or changed.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\eval-harness\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:git-workflow",
+    "description": "Git workflow patterns including branching strategies, commit conventions, merge vs rebase, conflict resolution, and collaborative development best practices for teams of all sizes. Use when choosing a branching strategy, writing commit conventions, deciding merge versus rebase, or resolving conflicts.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\git-workflow\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:intent-driven-development",
+    "description": "Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside implementation. Use when a user asks to clarify a feature, define acceptance criteria, de-risk a security/data/migration/integration change, prepare implementation requirements for another agent, or make a complex request testable. Do not trigger for trivial edits, straightforward fixes, active debugging, code review, or implementation requests whose acceptance conditions are already clear unless the user explicitly invokes this skill.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\intent-driven-development\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:living-docs-governance",
+    "description": "Keep a long-lived project's documentation from rotting by assigning existing project docs clear constitution, map, status, and history roles, then wiring the active agent harness to those canonical sources. Use in the maintain phase when docs drift from code, agents lose context between sessions, or intentional removals keep being recreated. Prefer adopting the repository's current docs structure over creating new root files. 中文触发：文档治理、活文档、项目状态追踪、防文档漂移、项目地图、健康仪表盘、删除区、长期项目治理",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\living-docs-governance\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:orch-add-feature",
+    "description": "Orchestrate building a brand-new feature end to end — research, plan, TDD implementation, review, and gated commit — by delegating each phase to the matching ECC agent. Use when adding a capability that does not exist yet.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\orch-add-feature\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:orch-fix-defect",
+    "description": "Orchestrate fixing a bug — reproduce it as a failing regression test, fix to green, review, and gated commit — by delegating each phase to the matching ECC agent. Use when existing behavior is broken or wrong.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\orch-fix-defect\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:orch-pipeline",
+    "description": "Shared orchestration engine for the orch-* skill family. Defines the gated Research-Plan-TDD-Review-Commit pipeline, the size classifier, the agent map, and the two human gates that the orch-* operation skills delegate to. Not usually invoked directly. Not usually invoked directly; it applies when an orch-* skill delegates its gated Research-Plan-TDD-Review-Commit pipeline.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\orch-pipeline\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:orch-refine-code",
+    "description": "Orchestrate a behavior-preserving refactor — confirm tests are green, restructure without changing behavior, keep tests green, review, and gated commit. Use when the structure should improve but behavior must not change.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\orch-refine-code\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:parallel-execution-optimizer",
+    "description": "Use when the user wants a task done much faster through parallel work, concurrent agents, batched tool calls, isolated worktrees, or many independent verification lanes without losing correctness.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\parallel-execution-optimizer\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:plankton-code-quality",
+    "description": "Write-time code quality enforcement using Plankton — auto-formatting, linting, and Claude-powered fixes on every file edit via hooks. Use when setting up write-time formatting, linting, or auto-fix hooks on file edits.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\plankton-code-quality\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:python-patterns",
+    "description": "Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications. Use when writing or reviewing Python code and idiomatic structure, typing, or PEP 8 is in question.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\python-patterns\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:python-testing",
+    "description": "Python testing strategies using pytest, TDD methodology, fixtures, mocking, parametrization, and coverage requirements. Use when writing pytest tests — fixtures, mocks, parametrization, or coverage.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\python-testing\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:regex-vs-llm-structured-text",
+    "description": "Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confidence edge cases.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\regex-vs-llm-structured-text\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:source-command-hookify",
+    "description": "Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\.codex-plugin\\migrated-command-skills\\source-command-hookify\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:source-command-learn",
+    "description": "Extract reusable patterns from the current session and save them as candidate skills or guidance.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\.codex-plugin\\migrated-command-skills\\source-command-learn\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:source-command-refactor-clean",
+    "description": "Safely identify and remove dead code with verification after each change.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\.codex-plugin\\migrated-command-skills\\source-command-refactor-clean\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:source-command-test-coverage",
+    "description": "Analyze coverage, identify gaps, and generate missing tests toward the target threshold.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\.codex-plugin\\migrated-command-skills\\source-command-test-coverage\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ecc:tdd-workflow",
+    "description": "Use this skill when writing new features, fixing bugs, or refactoring code. Enforces test-driven development with 80%+ coverage including unit, integration, and E2E tests.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\tdd-workflow\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ecc:verification-loop",
+    "description": "A comprehensive verification system for Claude Code sessions. Use when verifying a Claude Code session's work before claiming it is complete.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ecc\\ecc\\2.2.1\\skills\\verification-loop\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ecc@ecc",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "executing-plans",
+    "description": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\executing-plans\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "find-skills",
+    "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\find-skills\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "finishing-a-development-branch",
+    "description": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\finishing-a-development-branch\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "graphify",
+    "description": "Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. Turns any input (code, docs, papers, images, videos) into a persistent knowledge graph with god nodes, community detection, and query/path/explain tools.",
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\graphify\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "consolidate-overlap"
+  },
+  {
+    "name": "graphify-windows",
+    "description": "Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. Turns any input (code, docs, papers, images, videos) into a persistent knowledge graph with god nodes, community detection, and query/path/explain tools.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\graphify\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "heredoc-git-bash-windows",
+    "description": "Escape de barra invertida e aspas quebra em quatro lugares diferentes no Windows com Git Bash — heredoc, printf dentro de JSON, string Python com \\b, e cmd /c com aspas. Use quando for gerar código, JSON ou comando com `\\n`, `\\\\`, caminho Windows ou aspas a partir do Bash tool. Sintoma: SyntaxError em Node, JSON.parse falhando, caminho corrompido, ou \"Cannot find module\" com aspas dentro do caminho.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\heredoc-git-bash-windows\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "medir-uso-antes-de-remover",
+    "description": "Conta invocações reais de uma ferramenta ou MCP varrendo os blocos tool_use dos transcripts, em vez de grep no texto. Use antes de remover um MCP, plugin ou skill \"que parece não servir\", e antes de aceitar que algo é usado. Sintoma do erro oposto: grep devolve centenas de ocorrências que são definição de ferramenta, não chamada.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\medir-uso-antes-de-remover\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "merge-corrected-copy-then-disable-duplicate"
+  },
+  {
+    "name": "medir-uso-antes-de-remover",
+    "description": "Conta invocações reais de uma ferramenta ou MCP varrendo os blocos tool_use dos transcripts, em vez de grep no texto. Use antes de remover um MCP, plugin ou skill \"que parece não servir\", e antes de aceitar que algo é usado. Sintoma do erro oposto: grep devolve centenas de ocorrências que são definição de ferramenta, não chamada.",
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\learned-medir-uso-antes-de-remover\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "mex-check-falso-positivo",
+    "description": "O `mex check` trata qualquer texto entre crases parecido com caminho como afirmação de caminho, e a maioria dos seus erros é falso positivo. Use antes de rodar `mex sync` ou de reescrever arquivos do scaffold `.mex/` para \"corrigir drift\". Sintoma: drift score 0/100 com mais de 100 erros num scaffold que está correto.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\mex-check-falso-positivo\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "pdf:pdf",
+    "description": "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction.",
+    "interface": {
+      "displayName": "PDF",
+      "shortDescription": "Read, create, render, and verify PDF files",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.909.61513\\skills\\pdf\\assets\\file-document.png",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.909.61513\\skills\\pdf\\assets\\file-document.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": "#DC2626",
+      "defaultPrompt": "Use $pdf to read, create, render, or visually verify a PDF file."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.909.61513\\skills\\pdf\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "pdf@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ponytail:ponytail",
+    "description": "Forces the laziest solution that actually works, simplest, shortest, most minimal. Channels a senior dev who has seen everything: question whether the task needs to exist at all (YAGNI), reach for the standard library before custom code, native platform features before dependencies, one line before fifty. Supports intensity levels: lite, full (default), ultra. Use on ANY coding task: writing, adding, refactoring, fixing, reviewing, or designing code, and choosing libraries or dependencies. Also use whenever the user says \"ponytail\", \"be lazy\", \"lazy mode\", \"simplest solution\", \"minimal solution\", \"yagni\", \"do less\", or \"shortest path\", or complains about over-engineering, bloat, boilerplate, or unnecessary dependencies. Do NOT use for non-coding requests (general knowledge, prose, translation, summaries, recipes).",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "core"
+  },
+  {
+    "name": "ponytail:ponytail-audit",
+    "description": "Whole-repo audit for over-engineering. Like ponytail-review, but scans the entire codebase instead of a diff: a ranked list of what to delete, simplify, or replace with stdlib/native equivalents. Use when the user says \"audit this codebase\", \"audit for over-engineering\", \"what can I delete from this repo\", \"find bloat\", \"ponytail-audit\", or \"/ponytail-audit\". One-shot report, does not apply fixes.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail-audit\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ponytail:ponytail-debt",
+    "description": "Harvest every `ponytail:` comment in the codebase into a debt ledger, so the deliberate shortcuts and deferrals ponytail leaves behind get tracked instead of rotting into \"later means never\". Use when the user says \"ponytail debt\", \"/ponytail-debt\", \"what did ponytail defer\", \"list the shortcuts\", \"ponytail ledger\", or \"what did we mark to do later\". One-shot report, changes nothing.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail-debt\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ponytail:ponytail-gain",
+    "description": "Show ponytail's measured impact as a compact scoreboard: less code, less cost, more speed, from the benchmark medians. One-shot display, not a persistent mode, and not a per-repo number. Trigger: /ponytail-gain, \"ponytail gain\", \"what does ponytail save\", \"show ponytail impact\", \"ponytail scoreboard\".",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail-gain\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ponytail:ponytail-help",
+    "description": "Quick-reference card for all ponytail modes, skills, and commands. One-shot display, not a persistent mode. Trigger: /ponytail-help, \"ponytail help\", \"what ponytail commands\", \"how do I use ponytail\".",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail-help\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "ponytail:ponytail-review",
+    "description": "Code review focused exclusively on over-engineering. Finds what to delete: reinvented standard library, unneeded dependencies, speculative abstractions, dead flexibility. One line per finding: location, what to cut, what replaces it. Use when the user says \"review for over-engineering\", \"what can we delete\", \"is this over-engineered\", \"simplify review\", or invokes /ponytail-review. Complements correctness-focused review, this one only hunts complexity.",
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.10.0\\skills\\ponytail-review\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "ponytail@ponytail",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "presentations:Presentations",
+    "description": "Read, create or edit PowerPoint or Google Slides decks. Use for presentation, slide deck, PowerPoint, PPT, PPTX, or Google Slides requests.",
+    "interface": {
+      "displayName": "Presentations",
+      "shortDescription": "Create polished PowerPoint and Google Slides decks",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.909.61513\\skills\\presentations\\assets\\file-presentation.png",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.909.61513\\skills\\presentations\\assets\\file-presentation.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": "#C43E1C",
+      "defaultPrompt": "Create a presentation slide deck with $Presentations."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.909.61513\\skills\\presentations\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "presentations@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "receiving-code-review",
+    "description": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\receiving-code-review\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "requesting-code-review",
+    "description": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\requesting-code-review\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "spreadsheets:Spreadsheets",
+    "description": "Use skill when user requests to create, modify, analyze, visualize, or work with spreadsheet files (`.xlsx`, `.xls`, `.csv`, `.tsv`) or Google Sheets with formulas, formatting, charts, tables, and recalculation. Do not use for live controlling Microsoft Excel app or a live Excel session.",
+    "interface": {
+      "displayName": "Spreadsheets",
+      "shortDescription": "Create and edit spreadsheet or Google Sheets-ready files",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.909.61513\\skills\\spreadsheets\\assets\\file-spreadsheet.png",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.909.61513\\skills\\spreadsheets\\assets\\file-spreadsheet.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": "#107C41",
+      "defaultPrompt": "Use $Spreadsheets to build or update a spreadsheet artifact with formulas, formatting, and verification."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.909.61513\\skills\\spreadsheets\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "spreadsheets@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "spreadsheets:excel-live-control",
+    "description": "Control an open or active Microsoft Excel workbook through the ChatGPT add-in or connected session. Use when the user tags the Microsoft Excel app in Codex or follows up on an established live Excel task. Do not use for standalone spreadsheet files or Google Sheets.",
+    "interface": {
+      "displayName": "Excel Live Control",
+      "shortDescription": "Control an open Microsoft Excel workbook using Microsoft Excel desktop app live control",
+      "iconSmall": null,
+      "iconLarge": null,
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": "#107C41",
+      "defaultPrompt": "Use $excel-live-control to update and verify my open Microsoft Excel workbook."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.909.61513\\skills\\excel-live-control\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "spreadsheets@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "subagent-driven-development",
+    "description": "Use when executing implementation plans with independent tasks in the current session",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\subagent-driven-development\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "systematic-debugging",
+    "description": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\systematic-debugging\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "template-creator:template-creator",
+    "description": "Create or update a reusable personal Codex artifact-template skill. Use when the user invokes $template-creator or asks in natural language to create a reusable template from a reference document, presentation, spreadsheet, Google Docs, Slides, or Sheets link, ImageGen or Product Design image, email, Slack message, or Site project, or explicitly asks to edit or update a passed artifact-template skill. Do not use for one-off creation from an existing template.",
+    "interface": {
+      "displayName": "Template Creator",
+      "shortDescription": "Create or update personal reference-backed templates",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\template-creator\\26.909.61513\\assets\\icon.png",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\template-creator\\26.909.61513\\assets\\logo.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use $template-creator to create a template from my documents, presentations, spreadsheets, Google Docs, Slides, or Sheets links, ImageGen or Product Design images, emails, Slack messages, and Site projects or update the artifact template skill I pass."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-primary-runtime\\template-creator\\26.909.61513\\skills\\template-creator\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "template-creator@openai-primary-runtime",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "test-driven-development",
+    "description": "Use when implementing any feature or bugfix, before writing implementation code",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\test-driven-development\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "troglodita",
+    "description": "Modo de comunicação ultra-comprimido para PT-BR. Corta uso de tokens ~70% mantendo precisão técnica total. Diagnósticos em telegrafia, ações no imperativo. Níveis: leve, total (padrão), máximo. Ativa quando user diz \"modo troglodita\", \"fala curta\", \"menos tokens\", \"seja breve\", ou invoca /troglodita.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "troglodita-commit",
+    "description": "Gera mensagens de commit concisas no formato Conventional Commits. Assunto <= 50 chars, modo imperativo, sem enrolação. Invoca com /troglodita-commit.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-commit\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "troglodita-help",
+    "description": "Cartão de referência rápida com todos os comandos, modos e configurações do Troglodita. Invoca com /troglodita-help.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-help\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "troglodita-review",
+    "description": "Review de código em uma linha. Formato: L<linha>: <emoji> <problema>. <correção>. Invoca com /troglodita-review.",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-review\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "using-git-worktrees",
+    "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via native tools or git worktree fallback",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\using-git-worktrees\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "using-superpowers",
+    "description": "Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\using-superpowers\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "consolidate-overlap"
+  },
+  {
+    "name": "verification-before-completion",
+    "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\verification-before-completion\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "visualize:visualize",
+    "description": "Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.",
+    "interface": {
+      "displayName": "Visualize",
+      "shortDescription": "Turn ideas and data into interactive visuals",
+      "iconSmall": null,
+      "iconLarge": null,
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use $visualize to create an interactive visual when a chart, map, diagram, simulation, 3D model, data explorer, or UI preview would make the result easier to understand or adjust."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.37\\skills\\visualize\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": "visualize@openai-bundled",
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "writing-plans",
+    "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\writing-plans\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "writing-skills",
+    "description": "Use when creating new skills, editing existing skills, or verifying skills work before deployment",
+    "path": "C:\\Users\\Humberto\\.agents\\skills\\writing-skills\\SKILL.md",
+    "scope": "user",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "on-demand"
+  },
+  {
+    "name": "imagegen",
+    "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+    "interface": {
+      "displayName": "Image Gen",
+      "shortDescription": "Generate or edit images for websites, games, and more",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\skills\\.system\\imagegen\\assets\\imagegen-small.svg",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\skills\\.system\\imagegen\\assets\\imagegen.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use $imagegen to make or edit an image for this project."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\imagegen\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "openai-docs",
+    "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+    "shortDescription": "Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, and self-knowledge; OpenAI APIs and ChatGPT Work. 'You'/'this app' means Codex only.",
+    "interface": {
+      "displayName": "OpenAI Docs",
+      "shortDescription": "OpenAI and Codex docs for models, skills, tasks, and setup",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\skills\\.system\\openai-docs\\assets\\openai-small.svg",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\skills\\.system\\openai-docs\\assets\\openai.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use OpenAI Docs for official docs lookup, questions about Codex itself or Codex surfaces, model selection, model migration, and prompt-upgrade work."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\openai-docs\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "plugin-creator",
+    "description": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/files, valid manifest defaults, and personal-marketplace entries by default. Use when Codex needs to create a new personal plugin, add optional plugin structure, generate or update marketplace entries for plugin ordering and availability metadata, or update an existing local plugin during development with the CLI-driven cachebuster and reinstall flow.",
+    "interface": {
+      "displayName": "Plugin Creator",
+      "shortDescription": "Scaffold plugins and marketplace entries",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\skills\\.system\\plugin-creator\\assets\\plugin-creator-small.svg",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\skills\\.system\\plugin-creator\\assets\\plugin-creator.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use $plugin-creator to scaffold a valid plugin in the personal marketplace, then validate it before handing it back."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\plugin-creator\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "review-agent",
+    "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+    "interface": {
+      "displayName": "Review Agent",
+      "shortDescription": "Find actionable bugs in code changes",
+      "iconSmall": null,
+      "iconLarge": null,
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": "Use $review-agent to review the requested code changes and return actionable findings."
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\review-agent\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "skill-creator",
+    "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+    "shortDescription": "Create or update a skill",
+    "interface": {
+      "displayName": "Skill Creator",
+      "shortDescription": "Create or update a skill",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-creator\\assets\\skill-creator-small.svg",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-creator\\assets\\skill-creator.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": null
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-creator\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  },
+  {
+    "name": "skill-installer",
+    "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+    "shortDescription": "Install curated skills from openai/skills or other repos",
+    "interface": {
+      "displayName": "Skill Installer",
+      "shortDescription": "Install curated skills from openai/skills or other repos",
+      "iconSmall": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-installer\\assets\\skill-installer-small.svg",
+      "iconLarge": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-installer\\assets\\skill-installer.png",
+      "iconSmallUrl": null,
+      "iconLargeUrl": null,
+      "brandColor": null,
+      "defaultPrompt": null
+    },
+    "path": "C:\\Users\\Humberto\\.codex\\skills\\.system\\skill-installer\\SKILL.md",
+    "scope": "system",
+    "enabled": true,
+    "pluginId": null,
+    "proposed_profile": "core"
+  }
+]

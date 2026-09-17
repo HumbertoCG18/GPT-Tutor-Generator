@@ -1,0 +1,18 @@
+SUBUNIDADE, as tres configuracoes — REGUA INTEIRA (251 materiais, 7 cursos)
+configuracao          n         aceito       primario  confiantes   aceito do confiante        entrega
+(a) CRU             251    147   58.6%    105   41.8%         190    113/190    59.5%    113/251  45.0%
+(b) CRU+DATALAB     251    147   58.6%    104   41.4%         190    113/190    59.5%    113/251  45.0%
+(c) PRODUTO         251    224   89.2%    186   74.1%         193    178/193    92.2%    178/251  70.9%
+
+SUBUNIDADE, so a FATIA COM DATALAB (a unica comparacao honesta de (b))
+  materiais com Datalab por curso: MF 0 · SO 0 · IA 0 · ES2 0 · TCC 0 · CG 17 · FR 14  = 31 de 251
+configuracao          n         aceito       primario  confiantes   aceito do confiante
+(a) CRU              31     21   67.7%     16   51.6%          24     17/24     70.8%
+(b) CRU+DATALAB      31     21   67.7%     15   48.4%          24     17/24     70.8%
+(c) PRODUTO          31     30   96.8%     26   83.9%          23     23/23    100.0%
+
+O QUE O DATALAB MUDA, material a material (so onde ele existe):
+  CG   colisao                                        PERDE  cru=algoritmos-de-deteccao-e-calculo-de-interseccao datalab=(vazio)
+  CG   instanciamento                                 troca  cru=sistema-de-coordenadas-cartesianas     datalab=recorte
+  FR   08-desenvolvimento-de-aplicacoes               GANHA  cru=(vazio)                                datalab=paradigmas-clienteservidor-e-p2p
+  (3 de 31 materiais com Datalab mudam de predicao)

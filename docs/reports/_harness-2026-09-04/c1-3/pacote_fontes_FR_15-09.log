@@ -1,0 +1,84 @@
+[FR] inventario=20 tipos={'pdf': 15, 'image': 1, 'zip': 4} metadata=['contents.json', '.moodle_nomes.json']
+[FR] 0/20 Plano de Ensino - 20262
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 1/20 01 - Protocolos de Rede
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 2/20 02 - Modelos de Referencia
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 3/20 02 - poster-network-protocols
+[FR] 4/20 03 - Tipos de Redes
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 5/20 unidade1-exercicios
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 6/20 04 - Camada de Aplicação
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 7/20 04 - Protocolo HTTP
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 8/20 05 - Protocolo DNS
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 9/20 06 - Protocolo DHCP
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 10/20 07 - Protocolos de E-mail
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 11/20 08 - Desenvolvimento de Aplicações
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 12/20 LIsta de exercícios 1 - Camada de Aplicação
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 13/20 tcp_chat_c
+[FR] 14/20 tcp_example
+[FR] 15/20 udp_example_c
+[FR] 16/20 udp_example_java
+[FR] 17/20 unidade2-exercicios-dhcp
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 18/20 unidade2-exercicios-dns
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 19/20 unidade2-exercicios-http
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] -1/-1 
+[FR] 20/20 
+[FR] capture backfills: {'labels': 0, 'posting': 20, 'lessons': 0} {'sections': 20, 'card_labels': 0}
+[FR] resultado={'seconds': 273.21, 'calls': {}, 'failed_entries': [], 'completed': True}

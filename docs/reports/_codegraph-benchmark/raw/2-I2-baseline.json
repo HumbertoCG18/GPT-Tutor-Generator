@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "load_docling_python_api",
+      "-e",
+      "import_module",
+      "src"
+    ],
+    "seconds": 0.029513200002838857,
+    "returncode": 0,
+    "stdout": "src\\builder\\engine.py:70:    load_docling_python_api as _backend_load_docling_python_api,\nsrc\\builder\\engine.py:426:_load_docling_python_api = _backend_load_docling_python_api\nsrc\\builder\\engine.py:427:has_docling_python_api = lambda: bool(_load_docling_python_api())\nsrc\\builder\\engine.py:736:        api = _load_docling_python_api()\nsrc\\builder\\runtime\\backend_runtime.py:222:def load_docling_python_api():\nsrc\\builder\\runtime\\backend_runtime.py:229:        document_converter = importlib.import_module(\"docling.document_converter\")\nsrc\\builder\\runtime\\backend_runtime.py:230:        pipeline_options = importlib.import_module(\"docling.datamodel.pipeline_options\")\nsrc\\builder\\runtime\\backend_runtime.py:231:        base_models = importlib.import_module(\"docling.datamodel.base_models\")\nsrc\\builder\\runtime\\backend_runtime.py:232:        accelerator_options = importlib.import_module(\"docling.datamodel.accelerator_options\")\nsrc\\builder\\runtime\\backend_runtime.py:233:        settings_module = importlib.import_module(\"docling.datamodel.settings\")\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,81 @@
+       topicos  sinonimos    df  outro  boiler  disperso
+SO           3         11    30     19       4        19
+        6.2.1 Paginação                              <- ['about', 'laminas', 'livro', 'logica', 'segmentos', 'versus']
+        1.1 Serviços dos sistemas operacionais       <- ['abstrata', 'fato']
+        7.1 Arquivos                                 <- ['laminas', 'massa', 'mecanico']
+IA           2         21    41      6      10        42
+        Algoritmos de Busca com Informação           <- ['aluna', 'barabstract', 'braid', 'capitulo', 'cargas', 'chiara', 'crosseovers', 'crossover', 'demo']
+        Introdução ao aprendizado de máquina         <- ['exploratoria', 'java']
+ES2          1         21    53     11       3        13
+        2.7 Estudo de Caso: integração e implantação <- ['alternativo', 'ativando', 'buildpacks', 'cadastro', 'circuitbreaker', 'colocando', 'conteiners', 'conversor', 'education']
+TCC          3          7    43     18       2         8
+        4.3 Hierarquia de Classes de Complexidade de <- ['classicos', 'detalhado', 'mensagem']
+        2.1 Máquinas de Turing                       <- ['lemas', 'visoes']
+        3.4 Teoremas de Gödel                        <- ['desfechos', 'revisitado']
+MF           2         11     4     14       1         3
+        1.2.3 Especificação de Funções Recursivas    <- ['especificacoesrecursivas', 'exercicioscorrecaoinducaomatematica', 'exerciciosisabelle', 'generalizada', 'indutivas', 'intro', 'provasindutivas']
+        1.3.1 Verificação de Modelos (Model Checking <- ['exercicioslogicatemporal', 'exerciciosnusmv', 'ferramenta', 'verificacaomodelos']
+CG           6         24    34     15      18        28
+        1.1 Origens                                  <- ['communication', 'graphical', 'intro', 'machine', 'origensdacomputacaografica']
+        3.5 Segmentação                              <- ['aritmetica', 'editado', 'elaborado', 'pedro', 'revisado', 'segmentacaodetexturas', 'texto', 'xerxenesky']
+        6.4 Algoritmos de Remoção de Elementos Ocult <- ['elemoculto', 'exemplozbuffer']
+        1.2 Conceitos                                <- ['instrucoes', 'introdutorio', 'preliminares', 'tutorial']
+        2.5 Algoritmos de Geometria Computacional    <- ['domina', 'geomcomp', 'planesweep', 'slab']
+        7.1.1 Representação de Curvas Paramétricas   <- ['curvasparametricas']
+LR           1          2    18      0       2         0
+        HTTP e HTTPS                                 <- ['cabecalhos', 'cookies']
+FR           1          2     5     12       0         3
+        4.2.2 Endereçamento                          <- ['aprendizado', 'enquadramento']
+ATUAL   SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila   9 | conf-err  0
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+LIMPO   SO   100%  33/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub   9/ 15 | fila  16 | conf-err  3
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+PROF    SO   100%  34/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  10/ 15 | fila  12 | conf-err  2
+
+ATUAL   IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+LIMPO   IA   100%   7/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub   4/ 39 | fila   5 | conf-err 34
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+PROF    IA   100%   7/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub   4/ 39 | fila   5 | conf-err 34
+
+ATUAL   ES2  100%  29/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub  27/ 28 | fila  11 | conf-err  1
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+LIMPO   ES2  100%   7/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub   5/ 28 | fila  16 | conf-err 11
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+PROF    ES2  100%  17/ 31 | bloco  27/ 28 | unidade  28/ 28 | sub  15/ 28 | fila  11 | conf-err 11
+
+ATUAL   TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   6 | conf-err  0
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+LIMPO   TCC  100%  24/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   5 | conf-err  2
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+PROF    TCC  100%  24/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   5 | conf-err  2
+
+ATUAL   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+LIMPO   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+PROF    MF   100%  59/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  52/ 58 | fila  12 | conf-err  6
+
+ATUAL   CG   100%  59/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  58/ 82 | fila  47 | conf-err  9
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+LIMPO   CG   100%  59/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  58/ 82 | fila  47 | conf-err  9
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+PROF    CG   100%  58/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  57/ 82 | fila  48 | conf-err 10
+
+============================================================================================================
+ATUAL   TOT  100% 254/288 | bloco 235/237 | unidade 190/190 | sub 201/233 | fila  88 | conf-err 16
+LIMPO   TOT  100% 188/288 | bloco 235/237 | unidade 190/190 | sub 135/233 | fila 100 | conf-err 65
+PROF    TOT  100% 199/288 | bloco 235/237 | unidade 190/190 | sub 146/233 | fila  93 | conf-err 65
+[fim] 475s

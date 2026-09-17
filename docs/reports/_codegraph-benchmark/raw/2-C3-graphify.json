@@ -1,0 +1,32 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "MaintenancePanel",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6508396999997785,
+    "returncode": 0,
+    "stdout": "Node: MaintenancePanel\n  ID:        src_ui_maintenance_panel_maintenancepanel\n  Source:    src/ui/maintenance_panel.py L12\n  Type:      code\n  Community: \n  Degree:    16\n\nConnections (16):\n  <-- App [uses] [INFERRED] src/ui/app.py:L38\n  <-- app.py [imports] [EXTRACTED] src/ui/app.py:L38\n  <-- _FlexToolbar [uses] [INFERRED] src/ui/app.py:L38\n  <-- _UILogHandler [uses] [INFERRED] src/ui/app.py:L38\n  <-- ._build_ui() [calls] [EXTRACTED] src/ui/app.py:L588\n  --> ._detect_orphans() [method] [EXTRACTED] src/ui/maintenance_panel.py:L102\n  --> ._on_sweep() [method] [EXTRACTED] src/ui/maintenance_panel.py:L147\n  --> .refresh() [method] [EXTRACTED] src/ui/maintenance_panel.py:L127\n  --> .__init__() [method] [EXTRACTED] src/ui/maintenance_panel.py:L21\n  --> ._log_line() [method] [EXTRACTED] src/ui/maintenance_panel.py:L91\n  --> ._sidecar_files() [method] [EXTRACTED] src/ui/maintenance_panel.py:L117\n  <-- maintenance_panel.py [contains] [EXTRACTED] src/ui/maintenance_panel.py:L12\n  --> ._build_ui() [method] [EXTRACTED] src/ui/maintenance_panel.py:L35\n  --> ._clear_log() [method] [EXTRACTED] src/ui/maintenance_panel.py:L97\n  --> ._render_report() [method] [EXTRACTED] src/ui/maintenance_panel.py:L186\n  <-- Detecta e remove resíduos deixados por remoções anteriores. Surfaces: -… [rationale_for] [EXTRACTED] src/ui/maintenance_panel.py:L13\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_build_ui",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6855136999947717,
+    "returncode": 1,
+    "stdout": "Ambiguous: '_build_ui' matches 7 nodes in different files.\n  src/ui/app.py\n    id: src_ui_app_app_build_ui\n  src/ui/codes_panel.py\n    id: src_ui_codes_panel_codespanel_build_ui\n  src/ui/curator_studio.py\n    id: src_ui_curator_studio_curatorstudiopanel_build_ui\n  src/ui/dialogs.py\n    id: src_ui_dialogs_subjectmanagerdialog_build_ui\n  src/ui/image_curator.py\n    id: src_ui_image_curator_imagecuratorpanel_build_ui\n  src/ui/maintenance_panel.py\n    id: src_ui_maintenance_panel_maintenancepanel_build_ui\n  src/ui/student_state_curator.py\n    id: src_ui_student_state_curator_studentstatecurator_build_ui\nRetry with the repo-relative path or the full node id.\n",
+    "stderr": ""
+  }
+]

@@ -4,11 +4,11 @@ def test_resolve_manual_block_falls_back_to_nth_instructional_block():
     timeline_context = {
         "timeline_index": {
             "blocks": [
-                {"id": "bloco-auto-001", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-002", "administrative_only": True, "unit_slug": "u1"},
-                {"id": "bloco-auto-003", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-004", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-005", "administrative_only": False, "unit_slug": "u1"},
+                {"id": "bloco-auto-001", "unit_slug": "u1", "rows": [{"content": "Aula 1"}]},
+                {"id": "bloco-auto-002", "unit_slug": "u1", "rows": [{"content": "Feriado"}]},
+                {"id": "bloco-auto-003", "unit_slug": "u1", "rows": [{"content": "Aula 3"}]},
+                {"id": "bloco-auto-004", "unit_slug": "u1", "rows": [{"content": "Aula 4"}]},
+                {"id": "bloco-auto-005", "unit_slug": "u1", "rows": [{"content": "Aula 5"}]},
             ]
         }
     }

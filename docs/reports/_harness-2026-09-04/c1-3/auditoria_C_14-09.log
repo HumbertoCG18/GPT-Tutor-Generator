@@ -1,0 +1,8 @@
+auditoria C: 400 relacoes · {'RUIDO': 305, 'CORRETA': 93, 'INDETERMINADA': 1, 'INCORRETA': 1} · tokens 81915 · negadas None
+   MF   {'RUIDO': 24, 'CORRETA': 4}
+   SO   {'CORRETA': 35, 'RUIDO': 88, 'INDETERMINADA': 1, 'INCORRETA': 1}
+   IA   {'RUIDO': 93, 'CORRETA': 8}
+   ES2  {'RUIDO': 31, 'CORRETA': 18}
+   TCC  {'RUIDO': 28, 'CORRETA': 11}
+   CG   {'RUIDO': 17, 'CORRETA': 3}
+   FR   {'RUIDO': 24, 'CORRETA': 14}

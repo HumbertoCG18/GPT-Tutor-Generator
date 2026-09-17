@@ -1,0 +1,47 @@
+  [produto] MF: copia pronta
+  [produto] SO: copia pronta
+  [produto] IA: copia pronta
+  [produto] ES2: copia pronta
+  [produto] TCC: copia pronta
+  [produto] CG: copia pronta
+  [produto] FR: copia pronta
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+  [produto] MF: reprocess 23s
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+  [produto] SO: reprocess 25s
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+  [produto] IA: reprocess 81s
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+  [produto] ES2: reprocess 27s
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+  [produto] TCC: reprocess 24s
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+  [produto] CG: reprocess 30s
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+  [produto] FR: reprocess 9s
+reprocess x7 em 221s · TENTATIVAS DE REDE BLOQUEADAS: 0
+
+=== 3 EIXOS — configuracao 'produto' (voter OFF), copia em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.motor3eixos ===
+eixo                n     ACURACIA TOTAL    precisao do confiante   cobertura  erros conf
+bloco             237    235/237    99.2%       188/189     99.5%      79.7%           1
+unidade           284    263/284    92.6%       209/216     96.8%      76.1%           7
+subunidade        251    224/251    89.2%       178/193     92.2%      76.9%          15
+subunid(prim)     251    186/251    74.1%       154/193     79.8%      76.9%          39
+
+POR CURSO (acuracia total)
+curso               bloco            unidade         subunidade      subunid(prim)
+MF        65/66    98.5%    61/66    92.4%    55/58    94.8%    39/58    67.2% 
+SO        39/39   100.0%    29/37    78.4%    15/15   100.0%    14/15    93.3% 
+IA        42/42   100.0%    42/42   100.0%    36/39    92.3%    36/39    92.3% 
+ES2       27/28    96.4%    24/28    85.7%    26/28    92.9%    24/28    85.7% 
+TCC       27/27   100.0%    18/18   100.0%    10/11    90.9%     8/11    72.7% 
+CG        35/35   100.0%    89/93    95.7%    64/82    78.0%    49/82    59.8% 
+FR                     -                 -    18/18   100.0%    16/18    88.9% 
+

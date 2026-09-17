@@ -1,0 +1,25 @@
+MEDIDO em 103 erros com gold nao vazio (dos 109; os de gold vazio nao tem rotulo a procurar).
+TETO DE ALCANCE, NAO GANHO: token presente nao vira acerto sozinho — em 12/09, dos 32 alcancados por
+alguma fonte, so 10 teriam o gold como argmax.
+
+camada           frase   token    nada   (acumulado: onde o rotulo do gold e alcancavel)
+bundle               2      21      80
+frontmatter          0       3     100
+corpo                4      28      71
+membros              0       3     100
+
+>>> EVIDENCIA AUSENTE NO BUNDLE E PRESENTE EM ALGUMA CAMADA MAIS RICA: 12 de 103
+    por curso: {'IA': 3, 'ES2': 2, 'CG': 6, 'FR': 1}
+    por camada que a contem: frontmatter 0 · corpo 10 · membros 2
+
+>>> CONFRONTO COM O JULGAMENTO DOS AGENTES (a razao deste script existir)
+    o agente disse 'fora do bundle' em 23 · a medicao diz 12
+    concordam: 5 · so o agente: 18 · so a medicao: 7
+
+>>> POR CLASSE DO DIAGNOSTICO (a evidencia fora do bundle atravessa as classes?)
+    classe A:  23 erros ·   2 com evidencia fora do bundle
+    classe B:  32 erros ·   2 com evidencia fora do bundle
+    classe C:  38 erros ·   7 com evidencia fora do bundle
+    classe D:  10 erros ·   1 com evidencia fora do bundle
+
+Detalhe em evidencia_fora_do_bundle_13-09.csv

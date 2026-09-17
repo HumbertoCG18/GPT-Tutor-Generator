@@ -1,0 +1,34 @@
+[MF] itens=12 · multipla contem gold=11 · multipla estreita a janela=5 · posicao UNICA=1 · posicao multipla=11 · unica != gold=1 · unica = atual=0 · unica = gold=0  || conf-err: itens=4 · multipla contem gold=4 · multipla estreita a janela=1 · posicao multipla=4
+[SO] itens=8 · multipla contem gold=5 · multipla estreita a janela=0 · posicao multipla=7 · sem posicao=1  || conf-err: 
+[IA] itens=12 · multipla contem gold=8 · multipla estreita a janela=0 · posicao multipla=12  || conf-err: 
+[ES2] itens=1 · posicao UNICA=1 · unica = atual=1  || conf-err: 
+[TCC] itens=1 · multipla contem gold=1 · multipla estreita a janela=0 · posicao multipla=1  || conf-err: 
+[CG] itens=34 · sem posicao=34  || conf-err: 
+
+[TOTAL zero]
+  ERRO CONFIANTE de bloco: itens                   4
+  ERRO CONFIANTE de bloco: multipla contem gold    4
+  ERRO CONFIANTE de bloco: multipla estreita a janela 1
+  ERRO CONFIANTE de bloco: posicao multipla        4
+  duvida de bloco: itens                           68
+  duvida de bloco: multipla contem gold            25
+  duvida de bloco: multipla estreita a janela      5
+  duvida de bloco: posicao UNICA                   2
+  duvida de bloco: posicao multipla                31
+  duvida de bloco: sem posicao                     35
+  duvida de bloco: unica != gold                   1
+  duvida de bloco: unica = atual                   1
+  duvida de bloco: unica = gold                    0
+
+exemplos duvida de bloco:
+   MF:logicaproposicional-sint posicao com 2 blocos (label datado) atual=bloco-03 gold=bloco-03 pos=['bloco-03', 'bloco-04']
+   MF:introducao posicao com 2 blocos (label datado) atual=bloco-01 gold=bloco-02 pos=['bloco-01', 'bloco-02']
+   MF:logicaproposicional-sema posicao com 2 blocos (label datado) atual=bloco-03 gold=bloco-03 pos=['bloco-03', 'bloco-04']
+   MF:exerciciosformalizacaoal posicao com 2 blocos (label datado) atual=bloco-03 gold=bloco-04 pos=['bloco-03', 'bloco-04']
+   MF:formalizacaoalgoritmos-r posicao com 2 blocos (label datado) atual=bloco-04 gold=bloco-04 pos=['bloco-03', 'bloco-04']
+
+exemplos ERRO CONFIANTE de bloco:
+   MF:revisao posicao com 2 blocos (label datado) atual=bloco-04 gold=bloco-03 pos=['bloco-03', 'bloco-04']
+   MF:intro posicao com 3 blocos (label datado) atual=bloco-05 gold=bloco-06 pos=['bloco-05', 'bloco-06', 'bloco-07']
+   MF:exerciciosdafny2 posicao com 4 blocos (label datado) atual=bloco-11 gold=bloco-13 pos=['bloco-10', 'bloco-11', 'bloco-12', 'bloco-13']
+   MF:introducao-zip posicao com 4 blocos (label datado) atual=bloco-10 gold=bloco-12 pos=['bloco-10', 'bloco-11', 'bloco-12', 'bloco-13']

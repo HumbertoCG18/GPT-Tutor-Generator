@@ -1,0 +1,56 @@
+
+=== MF (3 unidades)
+   primeiro numero != unidade   1.3.2 Verificação de Programas (unidade 2)
+   subtopico orfao              1.3.2 sem o pai 1.3
+   primeiro numero != unidade   1.3.1 Verificação de Modelos (Model Ch (unidade 3)
+   subtopico orfao              1.3.1 sem o pai 1.3
+
+=== SO (7 unidades)
+   primeiro numero != unidade   3.1 Conceitos básicos (unidade 2)
+   primeiro numero != unidade   3.2 Escalonamento (unidade 2)
+   primeiro numero != unidade   3.3 Algoritmos de escalonamento (unidade 2)
+   primeiro numero != unidade   3.4 Estudo de casos (unidade 2)
+   primeiro numero != unidade   4.1 Programas _multithreads_ (unidade 3)
+   primeiro numero != unidade   4.2 Comunicação e sincronização de p (unidade 3)
+   primeiro numero != unidade   4.3 Primitivas de sincronização (unidade 3)
+   primeiro numero != unidade   4.4 Problemas clássicos (unidade 3)
+   primeiro numero != unidade   4.5 Construções concorrentes de alto (unidade 3)
+   ... e mais 24
+
+=== IA (5 unidades)
+   sem code                     Conceituação (u1)
+   sem code                     Breve Histórico de IA (u1)
+   sem code                     Subáreas e disciplinas afins (u1)
+   sem code                     Questões filosóficas de IA (u1)
+   sem code                     Introdução a agentes em ambientes determ (u2)
+   sem code                     Representação de problemas (u2)
+   sem code                     Busca informada (heurística) (u2)
+   sem code                     Algoritmos de Busca com Informação (u2)
+   sem code                     Problemas de Otimização (u2)
+   ... e mais 11
+
+=== ES2 (3 unidades)
+   sem anomalias
+
+=== TCC (4 unidades)
+   sem anomalias
+
+=== CG (9 unidades)
+   sem anomalias
+
+=== LR (3 unidades)
+   sem code                     HTTP e HTTPS (u1)
+   sem code                     Configuração dinâmica de hosts (DHCP) (u1)
+   sem code                     Sistemas de domínios de nomes (DNS) (u1)
+   sem code                     NAT (u1)
+   sem code                     Estudo de comportamento e funcionalidade (u2)
+   sem code                     Análise de congestionamento (u2)
+   sem code                     Implementação de aplicações utilizando s (u2)
+   sem code                     Protocolos IPv4 e IPv6 (u3)
+   sem code                     Protocolo ARP (u3)
+   ... e mais 2
+
+=== FR (6 unidades)
+   primeiro numero != unidade   802.11 e Bluetooth) (unidade 5)
+
+TOTAL {'desalinhado': 35, 'orfao': 2, 'duplicado': 1, 'sem code': 31}

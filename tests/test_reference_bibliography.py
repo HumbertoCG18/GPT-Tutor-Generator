@@ -4,7 +4,7 @@ from src.builder.artifacts.repo import bibliography_md
 class _Entry:
     def __init__(self, **kw):
         d = dict(title="GitHub - a/b", source_path="https://github.com/a/b", tags="",
-                 notes="", professor_signal="", include_in_bundle=True, category="bibliografia")
+                 notes="", include_in_bundle=True, category="bibliografia")
         d.update(kw)
         self.__dict__.update(d)
 

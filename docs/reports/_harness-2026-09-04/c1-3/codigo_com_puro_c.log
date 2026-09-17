@@ -1,0 +1,61 @@
+  [codigo:com] Metodos-Formais-Tutor: resumos originais mantidos
+  [nu] MF: 9 pinos zerados (vocab LLM mantido)
+  [codigo:com] Sistemas-Operacionais-Tutor: resumos originais mantidos
+  [nu] SO: 0 pinos zerados (vocab LLM mantido)
+  [codigo:com] Inteligencia-Artifical-Tutor: resumos originais mantidos
+  [nu] IA: 1 pinos zerados (vocab LLM mantido)
+  [codigo:com] Engenharia-Software-2-Tutor: resumos originais mantidos
+  [nu] ES2: 0 pinos zerados (vocab LLM mantido)
+  [codigo:com] TCC-Tutor: resumos originais mantidos
+  [nu] TCC: 0 pinos zerados (vocab LLM mantido)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+reprocess x5 sem voter: 344s
+
+=== EIXOS — motor puro (sem curadoria, sem LLM voter, COM vocab compilado) ===
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+MF      57/66           0   65/65         11/13 0.846     0
+SO      36/38           0   30/37         19/19 1.000     0
+       unidade errada: 0704-laminas-comunicacao-e-sincronizacao, 0904-laminas-semaforos, laminas-cs-4244-internet-programming-sockets-programming, laminas-sockets-material-alternativo-em-pt, lista-exercicios-p1, lista-exercicios-p1-gabarito, 0704-exemplo-threads-em-java
+IA      41/42           0   39/42           2/3 0.667     0
+       unidade errada: ia-responsável-7c4626, o-que-é-inteligência-artificial-ia-oracle-brasil-43437f, visao-geral-introducao-e-historico
+ES2     27/28           0   28/28         19/19 1.000     0
+TCC     24/25           0   18/18           3/3 1.000     0
+LR                  (sem gold — fora da regua)
+FR                  (sem gold — fora da regua)
+-------------------------------------------------------
+TOTAL  bloco 185/199 (93.0%) conf-err 0 | unidade 180/190 (94.7%) | cobertura 54/57 F1 0.947 sem-pred 0 | pinos 0
+metodos temporais: {'janela-1': 120, 'disamb': 53, 'prep-prova': 11, 'titulo-topico': 10, 'irmao-card': 8, 'ref-generica': 5, 'meta-generica': 4, 'disamb-curto': 4, 'secao-geral': 3, 'due-contain': 2, 'due-straddle': 1}
+
+SUBUNIDADE motor puro (COM vocab compilado): 137/151 com-extras · 115/151 primario
+total: 345s
+exit 0
+subunidade por curso, estado COM, vocab refiltrado 11/09:
+MF    52/58  primario 36
+SO    15/15  primario 14
+IA    38/39  primario 38
+ES2   22/28  primario 19
+TCC   10/11  primario 8
+errados (id -> pred | gold):
+  MF   archive-of-formal-proofs-355fb8                  -> abordagens-para-verificacao-fo | provadores-de-teoremas
+  MF   exemplos                                         -> exemplos-de-aplicacoes         | provadores-de-teoremas
+  MF   hoare                                            -> correcao-parcial-e-total       | logica-de-hoare
+  MF   tiposindutivos                                   -> verificacao-de-programas       | softwares-de-suporte-a-verific
+  MF   exemplos-zip                                     ->                                | softwares-de-suporte-a-verific
+  MF   classes-parte2                                   ->                                | verificacao-de-programas
+  IA   aula-sobre-agrupamento-parte-2-hierarquico       -> introducao-ao-aprendizado-de-m | modelos-descritivos
+  ES2  roteiro1                                         -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori
+  ES2  microsservicos2                                  -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori
+  ES2  microsservicos3                                  -> estilos-e-padroes-arquiteturai | estudo-de-caso-arquitetura-ori
+  ES2  roteiro3-gateway                                 -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori
+  ES2  roteiro2                                         -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori
+  ES2  roteiro3                                         -> orientada-a-microsservicos     | estudo-de-caso-arquitetura-ori
+  TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierar -> linguagens-reconheciveis-e-dec | 

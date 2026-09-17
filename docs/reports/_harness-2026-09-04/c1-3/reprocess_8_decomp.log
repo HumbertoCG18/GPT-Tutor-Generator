@@ -1,0 +1,57 @@
+== Metodos-Formais-Tutor: 66 entries | votos 52 | git sujo: 0
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+   revisar mudou 1 {('ok', 'duvida'): 1} | fila 10 -> 11 | sub mudou 1 ['intro'] | bloco 0 [] | unidade 0 []
+      sub: intro                                        provadores-de-teoremas         -> ificacao-de-funcoes-recursivas
+   commit: ok | HEAD ed31d99
+== Sistemas-Operacionais-Tutor: 39 entries | votos 20 | git sujo: 0
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 13 -> 13 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Inteligencia-Artifical-Tutor: 59 entries | votos 22 | git sujo: 0
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+   revisar mudou 3 {('duvida', 'ok'): 3} | fila 10 -> 7 | sub mudou 3 ['introducao-a-busca-informada', 'programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas', 'prova-1-2024-02'] | bloco 0 [] | unidade 0 []
+      sub: introducao-a-busca-informada                 ritmos-de-busca-com-informacao -> busca-informada-heuristica
+      sub: programas-exemplo-hc-sa-versao-para-nrainhas -                              -> busca-informada-heuristica
+      sub: prova-1-2024-02                              -                              -> subareas-e-disciplinas-afins
+   commit: ok | HEAD 74fec68
+== Engenharia-Software-2-Tutor: 35 entries | votos 32 | git sujo: 0
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 12 -> 12 | sub mudou 1 ['devops'] | bloco 0 [] | unidade 0 []
+      sub: devops                                       conceito-de-devops             -> integracao-continua-ci
+   commit: ok | HEAD 0fe0f53
+== TCC-Tutor: 27 entries | votos 22 | git sujo: 0
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 10 -> 10 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Laboratorio-de-Redes-Tutor: 7 entries | votos 2 | git sujo: 0
+[profile] Laboratorio-de-Redes-Tutor: perfil 'Laboratório de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 2 -> 2 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Fundamentos-de-Redes-Tutor: 22 entries | votos 13 | git sujo: 0
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 8 -> 8 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Computacao-Grafica-Tutor: 93 entries | votos 42 | git sujo: 0
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+   revisar mudou 3 {('duvida', 'ok'): 3} | fila 55 -> 52 | sub mudou 10 ['basico3d-cpp', 'programabasico3d', 'bezier-animacao', 'bezier-cpp', 'bezier-py'] | bloco 0 [] | unidade 0 []
+      sub: basico3d-cpp                                 entacao-de-curvas-parametricas -> ezier-e-algoritmo-de-casteljau
+      sub: programabasico3d                             exao-ambiente-difusa-especular -> ombreamento-flat-gouraud-phong
+      sub: bezier-animacao                              -                              -> ezier-e-algoritmo-de-casteljau
+      sub: bezier-cpp                                   -                              -> ezier-e-algoritmo-de-casteljau
+      sub: bezier-py                                    -                              -> ezier-e-algoritmo-de-casteljau
+      sub: bezier-python                                -                              -> ezier-e-algoritmo-de-casteljau
+      sub: img                                          filtros                        -> cores-e-tipos-de-imagens
+      sub: listadeexercicios2026-1                      -                              -> exao-ambiente-difusa-especular
+      sub: resolucao-de-prova-de-computacao-grafica-3d  mapeamento-de-textura          -> exao-ambiente-difusa-especular
+      sub: exercicioduascores                           -                              -> cores-e-tipos-de-imagens
+   commit: ok | HEAD 929cdc3
+TOTAL 8 tutores: subunidade mudou 15 | revisar mudou 7 | fila 120 -> 115
+[fim]

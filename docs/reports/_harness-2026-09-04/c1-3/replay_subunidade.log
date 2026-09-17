@@ -1,0 +1,29 @@
+curso        sem    determ       com
+MF        52/58     50/58     51/58 
+SO         8/15      8/15      8/15 
+IA        36/39     36/39     38/39 
+ES2       16/28     20/28     21/28 
+TCC       11/11     11/11     11/11 
+total    123/151   125/151   129/151
+tempo: 17s
+TCC: {'sem': 11, 'determ': 11, 'com': 11} (log: 10; replay diverge, conhecido)
+ok: MF/SO/IA/ES2 batem com os logs nos 3 regimes
+REMOVE_STUDY_ALIASES SO (8, 7) -> (15, 14) gain ['exemplo-criacao-de-processos-no-unix-linux-filho', 'exemplo-criacao-de-processos-no-unix-linux-teste01', 'exemplo-criacao-de-processos-no-unix-linux-teste02', 'exemplo-criacao-de-processos-no-unix-linux-teste03', 'exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3'] loss []
+RESTORE_REJECTED IA (36, 36) -> (37, 37) gain ['rede-perceptron-or-em-python'] loss []
+RESTORE_REJECTED ES2 (20, 18) -> (21, 19) gain ['kubernetes'] loss []
+SKIP_DUPLICATE_MD MF (50, 36) -> (53, 38) gain ['arvores', 'intro', 'listas'] loss []
+SKIP_DUPLICATE_MD SO (8, 7) -> (8, 7) gain [] loss []
+SKIP_DUPLICATE_MD IA (36, 36) -> (36, 36) gain [] loss []
+SKIP_DUPLICATE_MD ES2 (20, 18) -> (20, 18) gain [] loss []
+SKIP_DUPLICATE_MD TCC (11, 9) -> (11, 9) gain [] loss []
+IDENTIFIER_ALIASES ES2 (20, 18) -> (22, 20) gain ['roteiro7', 'roteiro7-history-service'] loss []
+IDENTIFIER_ALIASES MF (50, 36) -> (50, 36) gain [] loss []
+IDENTIFIER_ALIASES IA (36, 36) -> (36, 36) gain [] loss []
+IDENTIFIER_ALIASES SO (8, 7) -> (8, 7) gain [] loss []
+PRESERVE_PHRASES ES2 (20, 18) -> (24, 22) gain ['roteiro4', 'roteiro5', 'roteiro6', 'roteiro7', 'roteiro7-history-service'] loss ['roteiro3-gateway']
+PRESERVE_PHRASES MF (50, 36) -> (50, 36) gain [] loss []
+PRESERVE_PHRASES IA (36, 36) -> (36, 36) gain [] loss []
+PRESERVE_PHRASES SO (8, 7) -> (8, 7) gain [] loss []
+SO_ONLY_NEW_STUDY sem (8, 7) (15, 14)
+SO_ONLY_NEW_STUDY determ (8, 7) (15, 14)
+SO_ONLY_NEW_STUDY com (8, 7) (15, 14)

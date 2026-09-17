@@ -3,18 +3,11 @@
 from __future__ import annotations
 
 import re
-import unicodedata
+
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 
 _CARD_RE = re.compile(r"(?im)(?:^|[\n;]\s*)\s*card\s*[:\-]\s*(?P<title>[^;\n]+)")
 _TOPICO_RE = re.compile(r"(?im)(?:^|[\n;]\s*)\s*(?:topico|t[oó]pico)\s*[:\-]\s*(?P<title>[^;\n]+)")
-
-
-def _normalize_match_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
-    normalized = normalized.lower()
-    normalized = re.sub(r"[^a-z0-9\s]", " ", normalized)
-    return re.sub(r"\s+", " ", normalized).strip()
 
 
 def _clean_title(title: str) -> str:

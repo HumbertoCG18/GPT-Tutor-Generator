@@ -3,14 +3,17 @@ from __future__ import annotations
 from datetime import datetime
 import html as html_lib
 import re
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 from src.builder.artifacts.repo import rows_to_markdown_table
 
 
-def truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
+def truncate_markdown_blocks(blocks: List[str], max_chars: Optional[int] = 15000) -> str:
+    """`max_chars=None` = sem teto (HTML salvo como material, S6a); o default e o das entries url."""
     if not blocks:
         return ""
+    if max_chars is None:
+        return '\n\n'.join(b for b in blocks if b).strip()
     out: List[str] = []
     size = 0
     for block in blocks:
@@ -109,7 +112,12 @@ def pick_best_content_root(soup):
 
 def inline_html_to_markdown(node, *, collapse_ws: Callable[[str], str]) -> str:
     from bs4 import NavigableString, Tag
+    from bs4.element import PreformattedString
 
+    # Comment/Declaration/CData sao NavigableString: sem o corte, o VML condicional do Word
+    # (`<!--[if gte vml 1]>...<![endif]-->`, `<![if !vml]>`) vazava para o markdown (Curvas.htm, 03/09).
+    if isinstance(node, PreformattedString):
+        return ""
     if isinstance(node, NavigableString):
         return str(node)
     if not isinstance(node, Tag):
@@ -118,6 +126,12 @@ def inline_html_to_markdown(node, *, collapse_ws: Callable[[str], str]) -> str:
     name = node.name.lower()
     if name == "br":
         return "\n"
+    if name == "img":
+        # Ref no lugar, chaveada pelo src: formulas das paginas do professor sao GIFs inline
+        # (piloto Curvas, 03/09). Quem descreve/OCRa a imagem substitui pelo nome do arquivo.
+        src = (node.get("src") or "").strip()
+        alt = collapse_ws(str(node.get("alt") or ""))
+        return f"![{alt}]({src})" if src else ""
 
     content = "".join(inline_html_to_markdown(child, collapse_ws=collapse_ws) for child in node.children)
     content = html_lib.unescape(content)
@@ -151,6 +165,9 @@ def render_html_block_to_markdown(tag, *, collapse_ws: Callable[[str], str]) -> 
 
     if name == "p":
         return collapse_ws(inline_html_to_markdown(tag, collapse_ws=collapse_ws))
+
+    if name == "img":
+        return inline_html_to_markdown(tag, collapse_ws=collapse_ws)
 
     if name in {"ul", "ol"}:
         lines: List[str] = []
@@ -214,7 +231,7 @@ def html_to_structured_markdown(
 
     blocks: List[str] = []
     seen: set[str] = set()
-    block_tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "blockquote", "pre", "table"]
+    block_tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "blockquote", "pre", "table", "img"]
     for tag in content_root.find_all(block_tags):
         if any(parent.name in block_tags for parent in tag.parents if getattr(parent, "name", None)):
             continue
@@ -241,16 +258,16 @@ def html_to_structured_markdown(
     header_lines = [f"# {page_title}", ""]
     if description:
         header_lines.extend([description, ""])
-    header_lines.extend(
-        [
-            f"- URL: [{url}]({url})",
-            f"- Domínio: `{host or 'desconhecido'}`",
-            f"- Capturado em: `{datetime.now().isoformat(timespec='seconds')}`",
-            "",
-            "## Conteúdo Extraído",
-            "",
-        ]
-    )
+    if url:   # documento local (HTML salvo no stash) nao tem URL, dominio nem hora de captura
+        header_lines.extend(
+            [
+                f"- URL: [{url}]({url})",
+                f"- Domínio: `{host or 'desconhecido'}`",
+                f"- Capturado em: `{datetime.now().isoformat(timespec='seconds')}`",
+                "",
+            ]
+        )
+    header_lines.extend(["## Conteúdo Extraído", ""])
 
     body = truncate_markdown_blocks(blocks)
     if not body:

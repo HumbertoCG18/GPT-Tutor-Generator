@@ -1,0 +1,22 @@
+DISCOVERY
+total: 1
+results: 1  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):
+  unit_short_label Function 21-27 3 2 build_temporal_context_rows;build_unit_legend;_populate;str;unit_number
+has_more: false
+
+SOURCE VERIFICATION
+src/builder/timeline/unit_labels.py:16:     """Número da unidade no slug, ou None se não casar o padrão."""
+src/builder/timeline/unit_labels.py:17:     m = _UNIT_NUM_RE.search(str(slug or ""))
+src/builder/timeline/unit_labels.py:18:     return int(m.group(1)) if m else None
+src/builder/timeline/unit_labels.py:19: 
+src/builder/timeline/unit_labels.py:20: 
+src/builder/timeline/unit_labels.py:21: def unit_short_label(slug: str) -> str:
+src/builder/timeline/unit_labels.py:22:     """'unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão."""
+src/builder/timeline/unit_labels.py:23:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:24:     if not s:
+src/builder/timeline/unit_labels.py:25:         return ""
+src/builder/timeline/unit_labels.py:26:     n = unit_number(s)
+src/builder/timeline/unit_labels.py:27:     return f"U{n}" if n is not None else s
+src/builder/timeline/unit_labels.py:28: 
+src/builder/timeline/unit_labels.py:29: 

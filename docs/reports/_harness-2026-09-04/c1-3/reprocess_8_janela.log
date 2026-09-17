@@ -1,0 +1,45 @@
+== Metodos-Formais-Tutor: 66 entries | votos 52 | git sujo: 0
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 11 -> 11 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Sistemas-Operacionais-Tutor: 39 entries | votos 20 | git sujo: 0
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+   revisar mudou 3 {('duvida', 'ok'): 3} | fila 13 -> 10 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: ok | HEAD c60e2d1
+== Inteligencia-Artifical-Tutor: 59 entries | votos 22 | git sujo: 0
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 4 -> 4 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== Engenharia-Software-2-Tutor: 35 entries | votos 32 | git sujo: 0
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+   revisar mudou 0 {} | fila 12 -> 12 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: pulado (so updated_at); working tree restaurado
+== TCC-Tutor: 27 entries | votos 22 | git sujo: 0
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+   revisar mudou 3 {('duvida', 'ok'): 3} | fila 10 -> 7 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: ok | HEAD 79a9696
+== Laboratorio-de-Redes-Tutor: 7 entries | votos 2 | git sujo: 0
+[profile] Laboratorio-de-Redes-Tutor: perfil 'Laboratório de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+   revisar mudou 2 {('duvida', 'ok'): 2} | fila 2 -> 0 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: ok | HEAD 5201deb
+== Fundamentos-de-Redes-Tutor: 22 entries | votos 13 | git sujo: 0
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+   revisar mudou 3 {('duvida', 'ok'): 3} | fila 8 -> 5 | sub mudou 0 [] | bloco 3 ['tcp-chat-c', 'tcp-example', 'udp-example-c'] | unidade 0 []
+      bloco: tcp-chat-c                                   67b87155341f -> 83f1d061f013
+      bloco: tcp-example                                  67b87155341f -> 83f1d061f013
+      bloco: udp-example-c                                67b87155341f -> 83f1d061f013
+   commit: ok | HEAD 5c9372a
+== Computacao-Grafica-Tutor: 93 entries | votos 42 | git sujo: 0
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+   revisar mudou 15 {('duvida', 'ok'): 6, ('duvida', 'mudou'): 9} | fila 50 -> 44 | sub mudou 0 [] | bloco 0 [] | unidade 0 []
+   commit: ok | HEAD 3c2c932
+TOTAL 8 tutores: subunidade mudou 0 | revisar mudou 26 | fila 110 -> 93
+[fim]

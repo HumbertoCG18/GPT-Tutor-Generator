@@ -1,0 +1,2 @@
+bloco manda (hoje)              : conflitos 39 · com gold 32 · bloco certo 31 · texto certo 1 · por curso (n, bloco, texto) {'CG': [11, 10, 1], 'ES2': [4, 4, 0], 'MF': [9, 9, 0], 'SO': [7, 7, 0], 'TCC': [1, 1, 0]}
+material_gt manda onde existe   : conflitos 39 · com gold 33 · bloco certo 21 · texto certo 12 · por curso (n, bloco, texto) {'CG': [11, 10, 1], 'ES2': [4, 2, 2], 'MF': [10, 7, 3], 'SO': [7, 1, 6], 'TCC': [1, 1, 0]}

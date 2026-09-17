@@ -1,0 +1,191 @@
+DISCOVERY
+Node: build_temporal_context_rows()
+  ID:        src_builder_artifacts_temporal_context_build_temporal_context_rows
+  Source:    src/builder/artifacts/temporal_context.py L56
+  Type:      code
+  Community: 
+  Degree:    5
+
+Connections (5):
+  <-- temporal_context.py [contains] [EXTRACTED] src/builder/artifacts/temporal_context.py:L56
+  <-- temporal_context_md() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L108
+  --> unit_short_label() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L77
+  --> _tipo_label() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L76
+  <-- Mapeia blocos do cronograma em linhas compactas. Blocos sem data ISO de início… [rationale_for] [EXTRACTED] src/builder/artifacts/temporal_context.py:L57
+
+Node: unit_short_label()
+  ID:        src_builder_timeline_unit_labels_unit_short_label
+  Source:    src/builder/timeline/unit_labels.py L21
+  Type:      code
+  Community: 
+  Degree:    7
+
+Connections (7):
+  <-- timeline_dashboard.py [imports] [EXTRACTED] src/ui/timeline_dashboard.py:L21
+  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12
+  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L165
+  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L21
+  --> unit_number() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26
+  <-- build_temporal_context_rows() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L77
+  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L22
+
+Node: unit_number()
+  ID:        src_builder_timeline_unit_labels_unit_number
+  Source:    src/builder/timeline/unit_labels.py L15
+  Type:      code
+  Community: 
+  Degree:    5
+
+Connections (5):
+  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12
+  <-- unit_short_label() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26
+  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L161
+  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L15
+  <-- Número da unidade no slug, ou None se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L16
+
+Shortest path (2 hops):
+  build_temporal_context_rows() --calls [EXTRACTED]--> unit_short_label() --calls [EXTRACTED]--> unit_number()
+
+SOURCE VERIFICATION
+src/builder/artifacts/temporal_context.py:9: from typing import Optional
+src/builder/artifacts/temporal_context.py:10: 
+src/builder/artifacts/temporal_context.py:11: from src.builder.extraction.content_taxonomy import _exam_code_from_block
+src/builder/artifacts/temporal_context.py:12: from src.builder.timeline.unit_labels import (
+src/builder/artifacts/temporal_context.py:13:     unit_name_from_slug,
+src/builder/artifacts/temporal_context.py:14:     unit_number,
+src/builder/artifacts/temporal_context.py:15:     unit_short_label,
+src/builder/artifacts/temporal_context.py:16: )
+src/builder/artifacts/temporal_context.py:17: 
+src/builder/artifacts/temporal_context.py:18: # kind do bloco -> rótulo curto pra coluna "tipo" (assessment é tratado à parte).
+src/builder/artifacts/temporal_context.py:19: _KIND_TIPO = {
+src/builder/artifacts/temporal_context.py:20:     "class": "aula",
+src/builder/artifacts/temporal_context.py:21:     "review": "revisão",
+src/builder/artifacts/temporal_context.py:22:     "holiday": "feriado",
+src/builder/artifacts/temporal_context.py:23:     "suspended": "suspensão",
+src/builder/artifacts/temporal_context.py:51:             return "prova final"
+src/builder/artifacts/temporal_context.py:52:         return f"prova {code}" if code else "prova"
+src/builder/artifacts/temporal_context.py:53:     return _KIND_TIPO.get(kind, kind or "—")
+src/builder/artifacts/temporal_context.py:54: 
+src/builder/artifacts/temporal_context.py:55: 
+src/builder/artifacts/temporal_context.py:56: def build_temporal_context_rows(timeline_blocks: list) -> list:
+src/builder/artifacts/temporal_context.py:57:     """Mapeia blocos do cronograma em linhas compactas. Blocos sem data ISO
+src/builder/artifacts/temporal_context.py:58:     de início são omitidos (não dá pra localizá-los no tempo)."""
+src/builder/artifacts/temporal_context.py:59:     rows = []
+src/builder/artifacts/temporal_context.py:60:     for b in timeline_blocks or []:
+src/builder/artifacts/temporal_context.py:61:         start = str(b.get("period_start") or "").strip()
+src/builder/artifacts/temporal_context.py:62:         if not start:
+src/builder/artifacts/temporal_context.py:63:             continue
+src/builder/artifacts/temporal_context.py:64:         end = str(b.get("period_end") or "").strip() or start
+src/builder/artifacts/temporal_context.py:65:         unit_slug = str(b.get("unit_slug") or "").strip()
+src/builder/artifacts/temporal_context.py:66:         topics = [str(t).strip() for t in (b.get("topics") or []) if str(t).strip()]
+src/builder/artifacts/temporal_context.py:67:         if topics:
+src/builder/artifacts/temporal_context.py:68:             topico = "; ".join(topics)
+src/builder/artifacts/temporal_context.py:69:         else:
+src/builder/artifacts/temporal_context.py:70:             topico = str(b.get("primary_topic_label") or "").strip()
+src/builder/artifacts/temporal_context.py:71:         scope_slugs = [str(s).strip() for s in (b.get("scope_unit_slugs") or []) if str(s).strip()]
+src/builder/artifacts/temporal_context.py:72:         rows.append({
+src/builder/artifacts/temporal_context.py:73:             "id": str(b.get("id") or ""),
+src/builder/artifacts/temporal_context.py:74:             "inicio": start,
+src/builder/artifacts/temporal_context.py:75:             "fim": end,
+src/builder/artifacts/temporal_context.py:76:             "tipo": _tipo_label(b),
+src/builder/artifacts/temporal_context.py:77:             "unidade": unit_short_label(unit_slug),
+src/builder/artifacts/temporal_context.py:78:             "unidade_slug": unit_slug,
+src/builder/artifacts/temporal_context.py:79:             "topico": topico,
+src/builder/artifacts/temporal_context.py:80:             "escopo": [unit_short_label(s) for s in scope_slugs],
+src/builder/artifacts/temporal_context.py:81:             "escopo_slugs": scope_slugs,
+src/builder/artifacts/temporal_context.py:82:         })
+src/builder/artifacts/temporal_context.py:83:     return rows
+src/builder/artifacts/temporal_context.py:84: 
+src/builder/artifacts/temporal_context.py:85: 
+src/builder/artifacts/temporal_context.py:86: def _parse_iso(value) -> Optional[date]:
+src/builder/artifacts/temporal_context.py:87:     try:
+src/builder/artifacts/temporal_context.py:88:         return date.fromisoformat(str(value)[:10])
+src/builder/artifacts/temporal_context.py:103: 
+src/builder/artifacts/temporal_context.py:104: def temporal_context_md(course_meta: dict, timeline_blocks: list) -> str:
+src/builder/artifacts/temporal_context.py:105:     """Renderiza o artefato CONTEXTO_TEMPORAL.md (cabeçalho + legenda + tabela).
+src/builder/artifacts/temporal_context.py:106:     Cronograma vazio -> nota de indisponível."""
+src/builder/artifacts/temporal_context.py:107:     course_name = (course_meta or {}).get("course_name", "Curso")
+src/builder/artifacts/temporal_context.py:108:     rows = build_temporal_context_rows(timeline_blocks)
+src/builder/artifacts/temporal_context.py:109:     lines = [
+src/builder/artifacts/temporal_context.py:110:         f"# CONTEXTO TEMPORAL — {course_name}",
+src/builder/artifacts/temporal_context.py:111:         "",
+src/builder/artifacts/temporal_context.py:112:         "> Cronograma compacto. Você (tutor) calcula a semana atual e a prontidão",
+src/builder/artifacts/temporal_context.py:113:         "> pré-prova A CADA sessão comparando com a data de hoje. Datas ISO YYYY-MM-DD.",
+src/builder/artifacts/temporal_context.py:114:         "",
+src/builder/artifacts/temporal_context.py:115:     ]
+src/builder/artifacts/temporal_context.py:116:     if not rows:
+src/builder/artifacts/temporal_context.py:146: def build_unit_legend(rows: list) -> list:
+src/builder/artifacts/temporal_context.py:156:         for s in candidates:
+src/builder/artifacts/temporal_context.py:157:             if s and s not in seen:
+src/builder/artifacts/temporal_context.py:158:                 seen.add(s)
+src/builder/artifacts/temporal_context.py:159:                 slugs.append(s)
+src/builder/artifacts/temporal_context.py:160:     def _sort_key(s):
+src/builder/artifacts/temporal_context.py:161:         n = unit_number(s)
+src/builder/artifacts/temporal_context.py:162:         return (n if n is not None else 9999, s)
+src/builder/artifacts/temporal_context.py:163:     slugs.sort(key=_sort_key)
+src/builder/artifacts/temporal_context.py:164:     return [
+src/builder/artifacts/temporal_context.py:165:         {"label": unit_short_label(s), "slug": s, "nome": unit_name_from_slug(s)}
+src/builder/artifacts/temporal_context.py:166:         for s in slugs
+src/builder/artifacts/temporal_context.py:167:     ]
+
+src/builder/timeline/unit_labels.py:10: from typing import Optional
+src/builder/timeline/unit_labels.py:11: 
+src/builder/timeline/unit_labels.py:12: _UNIT_NUM_RE = re.compile(r"unidade[-_\s]*0*(\d+)", re.IGNORECASE)
+src/builder/timeline/unit_labels.py:13: 
+src/builder/timeline/unit_labels.py:14: 
+src/builder/timeline/unit_labels.py:15: def unit_number(slug: str) -> Optional[int]:
+src/builder/timeline/unit_labels.py:16:     """Número da unidade no slug, ou None se não casar o padrão."""
+src/builder/timeline/unit_labels.py:17:     m = _UNIT_NUM_RE.search(str(slug or ""))
+src/builder/timeline/unit_labels.py:18:     return int(m.group(1)) if m else None
+src/builder/timeline/unit_labels.py:19: 
+src/builder/timeline/unit_labels.py:20: 
+src/builder/timeline/unit_labels.py:21: def unit_short_label(slug: str) -> str:
+src/builder/timeline/unit_labels.py:22:     """'unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão."""
+src/builder/timeline/unit_labels.py:23:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:24:     if not s:
+src/builder/timeline/unit_labels.py:25:         return ""
+src/builder/timeline/unit_labels.py:26:     n = unit_number(s)
+src/builder/timeline/unit_labels.py:27:     return f"U{n}" if n is not None else s
+src/builder/timeline/unit_labels.py:28: 
+src/builder/timeline/unit_labels.py:29: 
+src/builder/timeline/unit_labels.py:30: def unit_name_from_slug(slug: str) -> str:
+src/builder/timeline/unit_labels.py:31:     """'unidade-01-limites' -> 'Limites'. Sem sufixo de nome -> o próprio slug."""
+src/builder/timeline/unit_labels.py:32:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:33:     if not s:
+src/builder/timeline/unit_labels.py:34:         return ""
+
+src/ui/timeline_dashboard.py:16: from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
+src/ui/timeline_dashboard.py:17: from src.builder.timeline.classifier import classify_block
+src/ui/timeline_dashboard.py:18: from src.builder.timeline.curation import apply_block_curation, set_block_override
+src/ui/timeline_dashboard.py:19: from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
+src/ui/timeline_dashboard.py:20: from src.builder.timeline.status import derive_block_status
+src/ui/timeline_dashboard.py:21: from src.builder.timeline.unit_labels import unit_short_label as _unit_short_label
+src/ui/timeline_dashboard.py:22: from src.models.core import SubjectProfile
+src/ui/timeline_dashboard.py:23: from src.utils.helpers import write_json_manifest
+src/ui/timeline_dashboard.py:24: from src.ui.theme import apply_theme_to_toplevel
+src/ui/timeline_dashboard.py:25: 
+src/ui/timeline_dashboard.py:26: logger = logging.getLogger(__name__)
+src/ui/timeline_dashboard.py:27: 
+src/ui/timeline_dashboard.py:28: # status derivado -> chave da paleta do tema (cor do badge).
+src/ui/timeline_dashboard.py:29: _STATUS_COLOR = {
+src/ui/timeline_dashboard.py:417: class TimelineDashboardView(tk.Frame):
+src/ui/timeline_dashboard.py:757:     def _populate(self) -> None:
+src/ui/timeline_dashboard.py:784: 
+src/ui/timeline_dashboard.py:785:             nome_cell = _block_name(block, kind)
+src/ui/timeline_dashboard.py:786: 
+src/ui/timeline_dashboard.py:787:             unit_slug = str(block.get("unit_slug") or "")
+src/ui/timeline_dashboard.py:788:             unit_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
+src/ui/timeline_dashboard.py:789:             unit_cell = (("✎ " if unit_manual else "") + _unit_short_label(unit_slug)) if unit_slug else ""
+src/ui/timeline_dashboard.py:790: 
+src/ui/timeline_dashboard.py:791:             if kind in ("assessment", "review"):
+src/ui/timeline_dashboard.py:792:                 scope = _block_scope_slugs(block)
+src/ui/timeline_dashboard.py:793:                 escopo_cell = (
+src/ui/timeline_dashboard.py:794:                     ", ".join(_unit_short_label(s) for s in scope) if scope else "(definir)"
+src/ui/timeline_dashboard.py:795:                 )
+src/ui/timeline_dashboard.py:796:             else:
+src/ui/timeline_dashboard.py:797:                 escopo_cell = "—"
+src/ui/timeline_dashboard.py:798: 
+src/ui/timeline_dashboard.py:799:             tipo_manual = bool(str(block.get("manual_kind_override") or "").strip())
+src/ui/timeline_dashboard.py:800:             tipo_cell = ("✎ " if tipo_manual else "") + disp["label"]
+src/ui/timeline_dashboard.py:801: 
+src/ui/timeline_dashboard.py:802:             arq_cell = str(block.get("_file_count", 0))

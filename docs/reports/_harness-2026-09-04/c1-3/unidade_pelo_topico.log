@@ -1,0 +1,52 @@
+curso | secao nomeia topico | unidade JA vinha da secao | unidade NOVA (so pelo topico) | motor concorda | gold concorda
+MF    |                   0 |                         0 |                             0 |              0 | 0/0
+SO    |                   9 |                         2 |                             7 |              3 | 3/5
+IA    |                   9 |                         0 |                             9 |              9 | 0/0
+ES2   |                   0 |                         0 |                             0 |              0 | 0/0
+TCC   |                   7 |                         0 |                             7 |              6 | 6/6
+CG    |                  30 |                         0 |                            30 |             23 | 0/0
+LR    |                   2 |                         0 |                             2 |              2 | 0/0
+FR    |                   0 |                         0 |                             0 |              0 | 0/0
+TOT   |                  57 |                         2 |                            55 |             43 | 9/11
+
+onde a unidade JA vinha da secao, o topico concorda em 2/2 (consistencia das duas leituras)
+
+=== OS QUE MUDARIAM (motor != unidade dona do topico da secao)
+  SO 0704-laminas-comunicacao-e-sincron secao='Sincronização e Comunicação de'
+      motor=unidade-04-deadlock                regra=unidade-03-programacao-concorrente gold=unidade-04-deadlock motor acerta, REGRA erra
+      topico da secao: comunicacao-e-sincronizacao-de-processos · sub do motor: -
+  SO 0904-laminas-semaforos             secao='Sincronização e Comunicação de'
+      motor=unidade-04-deadlock                regra=unidade-03-programacao-concorrente gold=unidade-04-deadlock motor acerta, REGRA erra
+      topico da secao: comunicacao-e-sincronizacao-de-processos · sub do motor: -
+  SO 14-04-troca-de-mensagens           secao='Sincronização e Comunicação de'
+      motor=unidade-02-gerencia-do-processador regra=unidade-03-programacao-concorrente gold=(sem gold) 
+      topico da secao: comunicacao-e-sincronizacao-de-processos · sub do motor: conceitos-basicos
+  SO 1404-laminas-ipc                   secao='Sincronização e Comunicação de'
+      motor=unidade-02-gerencia-do-processador regra=unidade-03-programacao-concorrente gold=(sem gold) 
+      topico da secao: comunicacao-e-sincronizacao-de-processos · sub do motor: conceitos-basicos
+  TCC aula-06-revisao-alfabeto-cadeia-li secao='Semana 4 - Teoria de Autômatos'
+      motor=s-enumeraveis-e-funcoes-recursivas regra=unidade-02-turing-computabilidade  gold=(sem gold) 
+      topico da secao: maquinas-de-turing · sub do motor: -
+  CG atividade                          secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: conceito-de-camera-sintetica
+  CG basico3d-py                        secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: perspectiva
+  CG opengl3d                           secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: conceito-de-camera-sintetica
+  CG opengl3dcpp-vdi                    secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: conceito-de-camera-sintetica
+  CG opengl3dcpp                        secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: perspectiva
+  CG vis3d                              secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: paralela
+  CG pagina-com-videos-sobre-visualizac secao='13 - Computação Gráfica 3D'    
+      motor=ade-06-processo-de-visualizacao-3d regra=opicos-especiais-em-pesquisa-em-cg gold=(sem gold) 
+      topico da secao: temas-atuais-e-avancados-de-computacao-grafica · sub do motor: paralela
+
+total que mudaria: 12

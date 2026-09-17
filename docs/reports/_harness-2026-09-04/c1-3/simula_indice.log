@@ -1,0 +1,40 @@
+base 195/233 · erros 38
+gate INDICE (k>=3 subtopicos com score>=1): 90 materiais, 7 erros dentro
+
+TETO: o cabecalho nomeia o gold, nos 38 erros
+   secao        alcanca 3/38
+   titulo+h1    alcanca 4/38
+   qualquer     alcanca 6/38
+
+variante                certos  delta  ganha  perde   muda
+SEC+indice+nv              195     +0      0      0      3
+SEC+indice                 193     -2      1      3     10
+SEC+nv                     196     +1      2      1     11
+SEC                        191     -4      3      7     21
+TIT+indice+nv              191     -4      0      4      7
+TIT+indice                 191     -4      0      4      8
+TIT+nv                     194     -1      3      4     13
+TIT                        195     +0      4      4     15
+AMBOS+indice+nv            194     -1      0      1      7
+AMBOS+indice               192     -3      1      4     15
+AMBOS+nv                   197     +2      4      2     17
+AMBOS                      193     -2      6      8     29
+
+melhor: AMBOS+nv -> 197/233 (+2); flips:
+   + CG   exercicios-sobre-curvas          hermite                -> de-curvas-parametricas gold=catmull-rom            k=2
+   + CG   exercicios-sobre-curvas-html     hermite                -> de-curvas-parametricas gold=catmull-rom            k=2
+   + CG   pagina-com-videos-sobre-curvas-p hermite                -> de-curvas-parametricas gold=de-curvas-parametricas k=2
+   + MF   exemplos-zip                                            -> acao-formal-de-modelos gold=modelos-model-checking k=0
+   - CG   exemplozbuffer                   algoritmo-z-buffer     -> o-de-elementos-ocultos gold=algoritmo-z-buffer     k=0
+   - CG   mapeamento                       oordenadas-cartesianas -> direita-e-mao-esquerda gold=oordenadas-cartesianas k=3
+   ~ CG   bezier-animacao                  algoritmo-de-casteljau -> de-curvas-parametricas gold=de-curvas-parametricas k=0
+   ~ CG   bezier-cpp                       algoritmo-de-casteljau -> de-curvas-parametricas gold=de-curvas-parametricas k=0
+   ~ CG   bezier-py                        algoritmo-de-casteljau -> de-curvas-parametricas gold=de-curvas-parametricas k=0
+   ~ CG   bezier-python                    algoritmo-de-casteljau -> de-curvas-parametricas gold=de-curvas-parametricas k=0
+   ~ CG   curvas                           hermite                -> de-curvas-parametricas gold=b-spline               k=4
+   ~ CG   intro                            conceitos              -> origens                gold=origens                k=0
+   ~ CG   vis3d                            paralela               -> projecoes              gold=to-de-camera-sintetica k=5
+   ~ MF   archive-of-formal-proofs-355fb8  ara-verificacao-formal -> sistemas-formais       gold=provadores-de-teoremas k=4
+   ~ MF   arvores                          provadores-de-teoremas -> -de-funcoes-recursivas gold=provadores-de-teoremas k=3
+   ~ MF   listas                           provadores-de-teoremas -> -de-funcoes-recursivas gold=provadores-de-teoremas k=3
+   ~ TCC  t1-enunciado                     es-recursivas-parciais -> conjuntos-enumeraveis  gold=es-recursivas-parciais k=3

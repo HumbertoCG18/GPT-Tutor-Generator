@@ -1,0 +1,16 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "unit_short_label",
+      "src"
+    ],
+    "seconds": 0.023446799998055212,
+    "returncode": 0,
+    "stdout": "src\\ui\\timeline_dashboard.py:21:from src.builder.timeline.unit_labels import unit_short_label as _unit_short_label\nsrc\\ui\\timeline_dashboard.py:789:            unit_cell = ((\"✎ \" if unit_manual else \"\") + _unit_short_label(unit_slug)) if unit_slug else \"\"\nsrc\\ui\\timeline_dashboard.py:794:                    \", \".join(_unit_short_label(s) for s in scope) if scope else \"(definir)\"\nsrc\\builder\\artifacts\\temporal_context.py:15:    unit_short_label,\nsrc\\builder\\artifacts\\temporal_context.py:77:            \"unidade\": unit_short_label(unit_slug),\nsrc\\builder\\artifacts\\temporal_context.py:80:            \"escopo\": [unit_short_label(s) for s in scope_slugs],\nsrc\\builder\\artifacts\\temporal_context.py:165:        {\"label\": unit_short_label(s), \"slug\": s, \"nome\": unit_name_from_slug(s)}\nsrc\\builder\\timeline\\unit_labels.py:21:def unit_short_label(slug: str) -> str:\n",
+    "stderr": ""
+  }
+]

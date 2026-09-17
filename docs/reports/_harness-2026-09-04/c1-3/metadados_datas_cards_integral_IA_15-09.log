@@ -1,0 +1,3 @@
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 59/61 -> 59/61 (backup: manifest.json.bak)
+{"course": "IA", "arm": "datas_cards", "calls": [], "changed_fields": {"card_dates": 17}, "prediction_changes": 22, "same_text": true, "same_taxonomy": true, "same_entries": true, "valid": true}

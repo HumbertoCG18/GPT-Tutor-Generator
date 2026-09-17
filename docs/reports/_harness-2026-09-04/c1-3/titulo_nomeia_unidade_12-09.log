@@ -1,0 +1,94 @@
+=== REGIME CRU (copia .motor3eixos) ===
+  n                                           284
+  titulo sugere 1 unidade                      48
+  sugestao BATE o gold                         30
+  concorda com o motor                         25
+  CONTRADIZ o motor                            23
+    motor errado, titulo certo (GANHO)          4
+    motor certo, titulo errado (PERDA)         13
+    ambos errados                               6
+  sem sugestao (0 ou 2+)                      236
+  --> saldo se o titulo sobrepusesse sempre: -9  (ganha 4, perde 13)
+
+=== PRODUTO ===
+  n                                           284
+  titulo sugere 1 unidade                      48
+  sugestao BATE o gold                         30
+  concorda com o motor                         27
+  CONTRADIZ o motor                            21
+    motor errado, titulo certo (GANHO)          1
+    motor certo, titulo errado (PERDA)         15
+    ambos errados                               5
+  sem sugestao (0 ou 2+)                      236
+  --> saldo se o titulo sobrepusesse sempre: -14  (ganha 1, perde 15)
+
+CASOS NO CRU (o que a regra mexeria), um a um:
+  [GANHO         ] CG   resolucao-de-prova-de-computacao-grafica-2d   
+                   motor=unidade-08-sintese-de-imagens-realisticas
+                   titulo sugere=unidade-04-processo-de-visualizacao-2d
+  [GANHO         ] CG   resolucao-de-prova-de-computacao-grafica-2d-html
+                   motor=unidade-08-sintese-de-imagens-realisticas
+                   titulo sugere=unidade-04-processo-de-visualizacao-2d
+  [GANHO         ] CG   resolucao-de-prova-de-computacao-grafica-3d   
+                   motor=unidade-04-processo-de-visualizacao-2d
+                   titulo sugere=unidade-06-processo-de-visualizacao-3d
+  [GANHO         ] SO   3103-threads                                  
+                   motor=unidade-02-gerencia-do-processador
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] CG   programabasico3d                              
+                   motor=unidade-08-sintese-de-imagens-realisticas
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [PERDA         ] CG   opengl-cpp                                    
+                   motor=unidade-01-introducao-ao-processamento-grafico
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [PERDA         ] CG   opengl-py                                     
+                   motor=unidade-01-introducao-ao-processamento-grafico
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [PERDA         ] CG   video-sobre-mapeamento-em-opengl-1dad3c       
+                   motor=unidade-04-processo-de-visualizacao-2d
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [PERDA         ] CG   pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156
+                   motor=unidade-03-processamento-de-imagens-e-visao-computacional
+                   titulo sugere=unidade-01-introducao-ao-processamento-grafico
+  [PERDA         ] SO   2403-escalonamento-de-processos               
+                   motor=unidade-02-gerencia-do-processador
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] SO   2603-algoritmos-de-escalonamento              
+                   motor=unidade-02-gerencia-do-processador
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] SO   1203-processos                                
+                   motor=unidade-01-introducao-ao-estudo-de-sistemas-operacionais
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] SO   1703-chamada-de-sistema                       
+                   motor=unidade-01-introducao-ao-estudo-de-sistemas-operacionais
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] SO   1903-estruturas-de-controle                   
+                   motor=unidade-02-gerencia-do-processador
+                   titulo sugere=unidade-03-programacao-concorrente
+  [PERDA         ] TCC  aula-13-teorema-de-rice-pdf                   
+                   motor=unidade-03-problemas-indecidiveis
+                   titulo sugere=unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais
+  [PERDA         ] TCC  aula-14-problema-da-correspondencia-de-post   
+                   motor=unidade-03-problemas-indecidiveis
+                   titulo sugere=unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais
+  [PERDA         ] TCC  aula-15-teoremas-de-incompletude-de-godel     
+                   motor=unidade-03-problemas-indecidiveis
+                   titulo sugere=unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais
+  [ambos errados ] CG   basico3d-cpp                                  
+                   motor=unidade-02-fundamentos-matematicos
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [ambos errados ] CG   basico3d-py-zip                               
+                   motor=unidade-02-fundamentos-matematicos
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [ambos errados ] CG   maptextures                                   
+                   motor=unidade-04-processo-de-visualizacao-2d
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [ambos errados ] CG   texturas-v3                                   
+                   motor=unidade-01-introducao-ao-processamento-grafico
+                   titulo sugere=unidade-09-topicos-especiais-em-pesquisa-em-cg
+  [ambos errados ] SO   questoes-do-enade-sobre-sisop                 
+                   motor=unidade-01-introducao-ao-estudo-de-sistemas-operacionais
+                   titulo sugere=unidade-02-gerencia-do-processador
+  [ambos errados ] TCC  plano-de-ensino                               
+                   motor=unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas
+                   titulo sugere=unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais

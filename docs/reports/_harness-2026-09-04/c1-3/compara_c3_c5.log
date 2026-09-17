@@ -1,0 +1,21 @@
+A) MASSA E ERRO POR GRUPO (8 tutores)
+grupo                             materiais  com gold  errados  % erro   fila
+C3: provas/listas/trabalhos              71        58        8     14%     21
+resto                                   277       248       84     34%     75
+
+  C3: provas/listas/trabalhos: {'listas': 48, 'provas': 8, 'trabalhos': 8, 'gabaritos': 7}
+     bloco 44/45 · unidade 31/31 · subunidade 36/43
+  resto: {'material-de-aula': 117, 'codigo-professor': 85, 'outros': 31, 'references': 28, 'cronograma': 8, 'bibliografia': 7, 'fotos-de-prova': 1}
+     bloco 191/192 · unidade 159/159 · subunidade 125/208
+
+B) DIVIDAS DE DADOS MEDIDAS (alvo da C5)
+   nomes de membro colidindo entre zips          1431
+   materiais sem gold de unidade (CG)              93
+   sem texto nenhum                                43
+   materiais sem gold de unidade (FR)              22
+   materiais sem gold de unidade (LR)               7
+   texto < 200 chars                                1
+   colisao de nome por curso: {'SO': 12, 'ES2': 758, 'MF': 35, 'CG': 626}
+
+C) LEITURA
+   C3 cobre 71 de 348 materiais (20%) e carrega 8 dos 92 erros (9%).

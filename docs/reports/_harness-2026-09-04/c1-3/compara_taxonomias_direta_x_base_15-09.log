@@ -1,0 +1,15 @@
+MF: topicos_diferentes=0 aliases_mais=0 aliases_menos=0
+SO: topicos_diferentes=0 aliases_mais=0 aliases_menos=0
+IA: topicos_diferentes=0 aliases_mais=0 aliases_menos=0
+ES2: topicos_diferentes=0 aliases_mais=0 aliases_menos=0
+TCC: topicos_diferentes=0 aliases_mais=0 aliases_menos=0
+CG: topicos_diferentes=8 aliases_mais=8 aliases_menos=0
+  7.2.3 geometria-solida-construtiva-csg: +['7.2.3 Geometria Sólida Construtiva (CSG)'] -[]
+  7.2.4 instanciamento-de-primitivas: +['7.2.4 Instanciamento de Primitivas'] -[]
+  8.1 modelos-de-iluminacao-luz-pontual-direcional-spot: +['8.1 Modelos de Iluminação: luz pontual, direcional, spot'] -[]
+  8.2 modelos-de-reflexao-ambiente-difusa-especular: +['8.2 Modelos de Reflexão: ambiente, difusa, especular'] -[]
+  8.3 metodos-de-sombreamento-flat-gouraud-phong: +['8.3 Métodos de sombreamento: Flat , Gouraud, Phong'] -[]
+  8.4 mapeamento-de-textura: +['8.4 Mapeamento de Textura'] -[]
+  8.5 conceitos-basicos-de-ray-tracing-e-radiosidade: +['8.5 Conceitos Básicos de Ray Tracing e Radiosidade'] -[]
+  9.1 temas-atuais-e-avancados-de-computacao-grafica: +['9.1 Temas atuais e avançados de Computação Gráfica'] -[]
+FR: topicos_diferentes=0 aliases_mais=0 aliases_menos=0

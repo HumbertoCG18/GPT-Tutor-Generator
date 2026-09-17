@@ -1,0 +1,74 @@
+CARDAPIO IA — o que existe no repo (para preencher travessia_gt_IA.csv). bloco | id | titulo | categoria | subunidade | card
+Em 'esperado' use o id (1a coluna apos o bloco) ou um trecho do titulo; varios aceitos separados por |.
+
+--- bloco-01 03-02 Plano ensino programatico cronograma for
+ia-responsável-7c4626                            | IA Responsável                                               | references       |                                  | 
+o-que-é-inteligência-artificial-ia-oracle-brasil-43437f | O que é Inteligência Artificial (IA)? | Oracle Brasil        | references       | breve-historico-de-ia            | 
+--- bloco-02 03-04 Conceituação
+visao-geral-introducao-e-historico               | Visão Geral - Introdução e Histórico                         | material-de-aula | conceituacao                     | Semana 1 - 02.03 a 06.03 - Plano d
+--- bloco-03 03-09 Introducao
+introducao-a-ml                                  | Introdução a ML                                              | material-de-aula | introducao-ao-aprendizado-de-maq | Semana 2 - 09.03 a 13.03 - Introdu
+--- bloco-04 03-11 Introdução ao aprendizado de máquina
+analise-exploratoria-de-dados-exemplo-1          | Análise Exploratória de Dados - Exemplo 1                    | codigo-professor | introducao-ao-aprendizado-de-maq | Semana 3 - 16.03 a 20.03 - Machine
+analise-exploratoria-dos-dados-exemplo-2         | Analise Exploratória dos Dados - Exemplo 2                   | codigo-professor | introducao-ao-aprendizado-de-maq | Semana 3 - 16.03 a 20.03 - Machine
+caracteristicas-dos-dados                        | Características dos Dados                                    | material-de-aula | introducao-ao-aprendizado-de-maq | Semana 2 - 09.03 a 13.03 - Introdu
+--- bloco-05 03-18 Modelos Preditivos
+algoritmo-de-classificacao-k-nn                  | Algoritmo de Classificação k-NN                              | material-de-aula | modelos-preditivos               | Semana 3 - 16.03 a 20.03 - Machine
+artigo-usando-k-nn-em-texto                      | Artigo usando k-NN em texto                                  | bibliografia     | modelos-preditivos               | Semana 3 - 16.03 a 20.03 - Machine
+arvores-de-decisao                               | Árvores de Decisão                                           | material-de-aula | modelos-preditivos               | Semana 7 - 13.04 a 17.04 - ML - Ap
+como-analisar-resultados-acc-pr-re-e-f1          | Como analisar resultados Acc, Pr, Re e F1                    | material-de-aula | metricas-de-avaliacao            | Semana 6 - 06.04 a 10.04 - ML - Ap
+exemplo-1-arvores-de-decisao-classificacao-planta-iris | Exemplo 1 - Árvores de Decisão Classificação - Planta Iris   | codigo-professor | modelos-preditivos               | Semana 7 - 13.04 a 17.04 - ML - Ap
+exemplo-2-arvores-de-decisao-regressao-diabetes  | Exemplo 2 - Arvores de Decisão - Regressão - Diabetes        | codigo-professor | modelos-preditivos               | Semana 7 - 13.04 a 17.04 - ML - Ap
+exemplo-2-k-nn-com-iriscsv-mais-completo         | Exemplo 2 k-NN (com IRIS.csv) - mais completo                | codigo-professor | modelos-preditivos               | Semana 3 - 16.03 a 20.03 - Machine
+exemplo-com-k-nn                                 | Exemplo com k-NN                                             | codigo-professor | modelos-preditivos               | Semana 3 - 16.03 a 20.03 - Machine
+exemplo-complementar-classificacao-com-arvores-de-decisao | Exemplo Complementar - Classificação com Árvores de Decisão  | codigo-professor | modelos-preditivos               | Semana 7 - 13.04 a 17.04 - ML - Ap
+exemplo-de-programa-com-k-nn-em-java             | Exemplo de programa com k-NN (em java)                       | codigo-professor | modelos-preditivos               | Semana 3 - 16.03 a 20.03 - Machine
+exercicio-2-solucao-com-rede-perceptron-atualizado | Exercicio 2 - Solução com rede Perceptron (atualizado)       | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+introducao-a-redes-neurais                       | Introducao a redes neurais                                   | material-de-aula | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+k-nn-para-classificacao-exemplo-cardio           | K-NN para Classificação Exemplo Cardio                       | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+k-nn-para-regressao-exemplo-imc                  | K-NN para Regressão exemplo IMC                              | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+mlp                                              | MLP                                                          | material-de-aula | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv | MLP Classificação - Inadimplência (normalização e GridSearch | codigo-professor | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+mlp-classificacao-iris-atualizado                | MLP Classificação - IRIS atualizado                          | codigo-professor | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+mlp-regressao-cardio                             | MLP Regressão - Cardio                                       | codigo-professor | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+mlp-xoripynb                                     | MLP - XOR.ipynb                                              | codigo-professor | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+rede-perceptron                                  | Rede Perceptron                                              | material-de-aula | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+rede-perceptron-classificacao-de-cliente         | Rede Perceptron - Classificacao de Cliente                   | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+rede-perceptron-classificacao-planta-iris        | Rede Perceptron - Classificacao - Planta Iris                | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+rede-perceptron-e-equacao-de-reta                | Rede Perceptron e Equação de Reta                            | material-de-aula | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+rede-perceptron-exemplo-atualizado               | Rede Perceptron - Exemplo Atualizado                         | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+rede-perceptron-or-em-python                     | Rede Perceptron - OR em Python                               | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+rede-perceptron-reconhecendo-letras              | Rede Perceptron - Reconhecendo Letras                        | codigo-professor | modelos-preditivos               | Semana 4 - 23.03 a 27.03 - Machine
+xor-backpropagation-em-python                    | XOR - Backpropagation em python                              | codigo-professor | modelos-preditivos               | Semana 5 -30.03 a 01.04 ML - Apren
+--- bloco-07 04-22 Modelos Descritivos
+agrupamento-hierarquico-exemplo-1                | agrupamento hierarquico - exemplo 1                          | codigo-professor | modelos-descritivos              | Semana 9 - 27.04 a 01.05 - ML - Ap
+agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris | agrupamento hierarquico - exemplo 2 (use o dataset da planta | codigo-professor | modelos-descritivos              | Semana 9 - 27.04 a 01.05 - ML - Ap
+agrupamento-usando-k-means-exemplo-1-ipynb       | agrupamento usando k-Means exemplo 1 (.ipynb)                | codigo-professor | modelos-descritivos              | Semana 8 - 20.04 a 24.04 - ML - Ap
+agrupamento-usando-k-means-exemplo-2-ipynb       | agrupamento usando k-Means exemplo 2 (.ipynb)                | codigo-professor | modelos-descritivos              | Semana 8 - 20.04 a 24.04 - ML - Ap
+artigo-usando-agrupamento                        | Artigo usando agrupamento                                    | bibliografia     | modelos-descritivos              | Semana 8 - 20.04 a 24.04 - ML - Ap
+aula-sobre-agrupamento-parte-1-particional       | Aula sobre Agrupamento - parte 1 (particional)               | material-de-aula | modelos-descritivos              | Semana 8 - 20.04 a 24.04 - ML - Ap
+aula-sobre-agrupamento-parte-2-hierarquico       | Aula sobre Agrupamento - parte 2 (hierarquico)               | material-de-aula | modelos-descritivos              | Semana 9 - 27.04 a 01.05 - ML - Ap
+survey-on-clustering                             | Survey on Clustering                                         | material-de-aula | modelos-descritivos              | Semana 8 - 20.04 a 24.04 - ML - Ap
+--- bloco-13 05-18 Correcao algoritmos busca
+ag-feito-em-aula-pelo-luca                       | AG feito em aula pelo Luca                                   | codigo-professor | algoritmos-de-busca-com-informac | Semana 13 - 25.05 a 29.05 - Algori
+algoritmo-genetico                               | Algoritmo Genetico                                           | material-de-aula | algoritmos-de-busca-com-informac | Semana 12 - 18.05 a 22.05 - Algori
+cap-sobre-algoritmos-geneticos-lacerda-e-outros  | Cap. sobre Algoritmos Geneticos (Lacerda e outros)           | material-de-aula | introducao-a-agentes-em-ambiente | Semana 12 - 18.05 a 22.05 - Algori
+introducao-a-busca-informada                     | Introducao a busca informada                                 | material-de-aula | algoritmos-de-busca-com-informac | Semana 12 - 18.05 a 22.05 - Algori
+outros-operadores                                | Outros operadores                                            | material-de-aula |                                  | Semana 12 - 18.05 a 22.05 - Algori
+programa-exemplo-ag                              | programa-exemplo AG                                          | codigo-professor |                                  | Semana 12 - 18.05 a 22.05 - Algori
+--- bloco-15 06-01 Algoritmos busca
+algoritmo-dijkstra                               | Algoritmo Dijkstra                                           | material-de-aula | algoritmos-de-busca-com-informac | Semana 14 - 01.06 a 05.06 - Algori
+hill-climbing-e-simulated-annealing              | Hill Climbing e Simulated Annealing                          | material-de-aula | algoritmos-de-busca-com-informac | Semana 14 - 01.06 a 05.06 - Algori
+programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas | Programas-exemplo HC, SA (versão para NRainhas e Distribuiçã | codigo-professor |                                  | Semana 14 - 01.06 a 05.06 - Algori
+--- bloco-16 06-10 Correcao duvidas algoritmos busca
+implementacaominimax                             | ImplementacaoMinimax                                         | codigo-professor | busca-adversaria                 | Semana 15 - 08.06 a 12.06 - Algori
+lista-de-exercicios-i                            | Lista de Exercicios I                                        | listas           | algoritmos-de-busca-com-informac | Semana 15 - 08.06 a 12.06 - Algori
+minimax-teoria                                   | minimax-teoria                                               | material-de-aula | busca-adversaria                 | Semana 15 - 08.06 a 12.06 - Algori
+p2-202401                                        | P2 2024.01                                                   | provas           | algoritmos-de-busca-com-informac | TDE Trabalho Discente Efetivo
+respostas-da-lista-i-feito-pela-aluna-chiara     | Respostas da lista I (feito pela aluna Chiara)               | gabaritos        | introducao-a-agentes-em-ambiente | Semana 15 - 08.06 a 12.06 - Algori
+--- bloco-17 06-17 Introdução a agentes em ambientes determ
+introducao-a-agentes                             | Introducao a agentes                                         | material-de-aula | planejamento-classico            | Semana 16 - 15.06 a 19.06 - Algori
+--- bloco-19 06-29 Trabalho
+p2-202402                                        | P2 2024.02                                                   | provas           | planejamento-classico            | TDE Trabalho Discente Efetivo
+--- (sem bloco)  
+prova-1-2024-02                                  | Prova 1 2024 02                                              | provas           | modelos-preditivos               | TDE Trabalho Discente Efetivo

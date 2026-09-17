@@ -1,0 +1,33 @@
+materiais: base 316 · braco 316 · em comum 316
+
+eixo            ganhos  perdas  saldo
+bloco                0       0     +0
+unidade              0       0     +0
+sub_aceito           3       3     +0
+sub_primario         2       3     -1
+
+por curso (ganhos/perdas):
+  CG   bloco +0/-0 · unidade +0/-0 · sub_aceito +1/-0 · sub_primario +1/-0
+  ES2  bloco +0/-0 · unidade +0/-0 · sub_aceito +1/-3 · sub_primario +0/-3
+  FR   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  IA   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  MF   bloco +0/-0 · unidade +0/-0 · sub_aceito +1/-0 · sub_primario +1/-0
+  SO   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  TCC  bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+
+GANHOS:
+  [sub_aceito  ] CG   vis3d                                                                           -> projecoes
+  [sub_aceito  ] ES2  devops                                         integracao-continua-ci           -> gerenciamento-da-configuracao
+  [sub_aceito  ] MF   intro                                          fundamentos-de-logica-de-prime   -> especificacao-de-funcoes-recur
+  [sub_primario] CG   vis3d                                                                           -> projecoes
+  [sub_primario] MF   introducao                                     exemplos-de-aplicacoes           -> abordagens-para-verificacao-fo
+
+PERDAS:
+  [sub_aceito  ] ES2  roteiro4                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  roteiro5                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  roteiro6                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  roteiro4                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  roteiro5                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  roteiro6                                       estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+
+CORTE (>= 5 ganhos primario, >= 5 ganhos aceito, 0 perdas em qualquer eixo): ENCERRA — primario +2, aceito +3, perdas 6

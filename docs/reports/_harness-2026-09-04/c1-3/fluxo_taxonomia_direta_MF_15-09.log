@@ -1,0 +1,28 @@
+  [regua] MF: copia pronta, 85 aliases do LLM vetados na taxonomia, cache de 13 resumos de codigo zerado (sera regenerado sem o vocab)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+  [regua] MF: reprocess 57s
+reprocess x1 em 57s · TENTATIVAS DE REDE BLOQUEADAS: 0
+
+=== 3 EIXOS — configuracao 'regua' (veto=texto, voter OFF), copia em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.frzero ===
+eixo                n     ACURACIA TOTAL    precisao do confiante   cobertura  erros conf
+bloco              66     59/66     89.4%        41/44      93.2%      66.7%           3
+unidade            66     61/66     92.4%        43/44      97.7%      66.7%           1
+subunidade         58     46/58     79.3%        31/40      77.5%      69.0%           9
+subunid(prim)      58     25/58     43.1%        21/40      52.5%      69.0%          19
+
+NATUREZA DOS ERROS DE UNIDADE (separado para leitura; NADA e descontado do placar acima)
+  erros de unidade                                        5
+    divergencia de DESENHO (bloco x plano adjudicado)     5
+  --> a divergencia de desenho e a fila da mudanca de precedencia (file_map.py:802-807).
+      Se ela fosse resolvida, a unidade iria de 61/66 = 92.4% para 66/66 = 100.0%.
+      Isto NAO e um desconto: e o teto daquela mudanca, medido.
+
+POR CURSO (acuracia total)
+curso               bloco            unidade         subunidade      subunid(prim)
+MF        59/66    89.4%    61/66    92.4%    46/58    79.3%    25/58    43.1% 
+
+
+=== EQUIVALENCIA E TAMANHO ===
+MF: equivalencia=OK topics=23 aliases=23/23 glossary=6732 structured=5810 reducao=13.7%
+TENTATIVAS DE REDE BLOQUEADAS: 0

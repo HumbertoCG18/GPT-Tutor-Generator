@@ -10,7 +10,6 @@ from src.builder.timeline.conflicts import detect_timeline_conflicts
 # o suficiente para o revisor comparar o vencedor contra as 2 alternativas mais
 # próximas sem inflar o relatório; só é computado para materiais já flagados
 # (media/baixa), limitando o custo do scorer.
-_TOP_N_CANDIDATES = 3
 
 _NON_MATERIAL_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
 
@@ -30,10 +29,13 @@ def _entry_block_id(entry: dict, blocks: list | None = None) -> str:
 
     Lazy-import: cronograma_health é importado por caminhos do builder que
     file_map também toca; o import tardio evita ciclo (padrão das fases 1-3).
+    TEMPORAL: via resolve_temporal_block (âncora>manual>computed); flag OFF cai
+    no resolve_effective_block (byte-idêntico). _entry_block_source abaixo fica
+    no resolve_effective_block (manual-ness, ortogonal à âncora).
     """
-    from src.builder.routing.file_map import resolve_effective_block
+    from src.builder.routing.file_map import resolve_temporal_block
 
-    return resolve_effective_block(entry, blocks).block_id
+    return resolve_temporal_block(entry, blocks)
 
 
 def _entry_block_source(entry: dict, blocks: list | None = None) -> str:
@@ -108,54 +110,30 @@ def _entry_title(entry: dict) -> str:
     return str(entry.get("title") or entry.get("source_path") or entry.get("id") or "—")
 
 
-def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES) -> list:
-    """Top-N (block_id, score) para um material flagado.
+def _candidate_refs(entry: dict, blocks: list) -> list:
+    """Candidatos p/ material flagado: janela do motor (F4) quando serializada,
+    lista ordenada sem re-scoring. Cutover passo 3: o fallback S2
+    (_top_candidate_blocks via score_entry_against_timeline_block) foi
+    APOSENTADO junto com o scorer — sem janela, degrada para [] e o relatório
+    ainda lista o material como acionável (band/flag continuam no Dashboard)."""
+    window = [str(r) for r in (entry.get("temporal_block_window") or []) if str(r)]
+    if window:
+        return [(ref, None) for ref in window]
+    return []
 
-    REUSA score_entry_against_timeline_block (não reimplementa scoring) sobre os
-    blocos instrucionais — exatamente o mesmo scorer de _best_instructional_block_fallback
-    em content_taxonomy. Lazy-import para evitar ciclo. Computado SÓ para
-    materiais já flagados (chamador filtra), limitando o custo.
 
-    Degrada para [] se os blocos não trazem rows (ex.: fixtures mínimas / dados
-    sem cronograma scorável) — o relatório ainda lista o material como acionável.
-    """
-    instructional = [
-        b for b in (blocks or [])
-        if b.get("id") and not bool(b.get("administrative_only"))
-    ]
-    if not instructional:
-        return []
-    try:
-        from src.builder.routing.file_map import (
-            score_entry_against_timeline_block,
-            score_card_evidence_against_entry,
-        )
-        from src.builder.extraction.entry_signals import (
-            collect_entry_unit_signals,
-            score_text_against_row,
-        )
-        from src.builder.extraction.content_taxonomy import _normalize_match_text
-    except Exception:
-        return []
-
-    markdown_text = ""
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    preferred_unit = str(entry.get("computed_unit_slug") or "").strip()
-    scored = []
-    for block in instructional:
-        score = score_entry_against_timeline_block(
-            signals,
-            block,
-            normalize_match_text=_normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s, items, normalize_match_text=_normalize_match_text
-            ),
-            preferred_unit_slug=preferred_unit,
-        )
-        scored.append((str(block.get("id") or ""), float(score)))
-    scored.sort(key=lambda item: item[1], reverse=True)
-    return scored[:n]
+def llm_vote_summary(entries: Iterable[dict]) -> dict:
+    """Contagem dos votos do voter (TIER 3) pelo estado GRAVADO: decisoes com
+    `temporal_block_method` `llm`/`llm-funil` e flagados, por 100 entries — a
+    mesma regua de scripts/censo_motor_llm.py (votos/100, revisar). Read-only."""
+    es = list(entries or [])
+    llm = sum(1 for e in es if str(e.get("temporal_block_method") or "") == "llm")
+    funil = sum(1 for e in es if str(e.get("temporal_block_method") or "") == "llm-funil")
+    flagged = sum(1 for e in es if bool(e.get("temporal_block_flag")))
+    total = len(es)
+    per100 = lambda n: (100.0 * n / total) if total else 0.0  # noqa: E731
+    return {"total": total, "llm": llm, "llm_funil": funil, "votes": llm + funil,
+            "votes_per_100": per100(llm + funil), "flagged": flagged, "flagged_per_100": per100(flagged)}
 
 
 def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
@@ -189,6 +167,18 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
         f"| baixa | {dist['baixa']} |",
     ]
 
+    # Votos de LLM (C0 11b): custo do voter visivel no tutor, na regua do censo
+    # (scripts/censo_motor_llm.py: decisoes por `llm`/`llm-funil` e flagados, por 100 entries).
+    votes = llm_vote_summary(entries)
+    lines += [
+        "",
+        "## Votos de LLM (motor TIER 3)",
+        "",
+        f"- **Decisões por voto**: {votes['votes']}/{votes['total']} entries ({votes['votes_per_100']:.1f} por 100)"
+        f" — `llm` {votes['llm']} · `llm-funil` {votes['llm_funil']}",
+        f"- **Flagados (fila de dúvida)**: {votes['flagged']}/{votes['total']} entries ({votes['flagged_per_100']:.1f} por 100)",
+    ]
+
     # Lista acionável de baixa-confiança (media/baixa): cada material vira tarefa,
     # com manual/auto + top-N blocos candidatos (scorer reusado).
     materials = [
@@ -215,9 +205,10 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
                 f"- **{_entry_title(entry)}** — bloco `{effective}` "
                 f"(faixa {band}, conf {conf:.2f}, {source_label})"
             )
-            candidates = _top_candidate_blocks(entry, blocks)
+            candidates = _candidate_refs(entry, blocks)
             for cand_id, cand_score in candidates:
-                lines.append(f"    - candidato `{cand_id}` (score {cand_score:.2f})")
+                score_label = f"{cand_score:.2f}" if cand_score is not None else "—"
+                lines.append(f"    - candidato `{cand_id}` (score {score_label})")
 
     counts = _blocks_by_material_count(entries, blocks)
     poor = [bid for bid, n in counts.items() if n == 0]
@@ -235,10 +226,17 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
         lines.append(f"- {bid}: {n} material(is)")
 
     conflicts = detect_timeline_conflicts(blocks or [])
-    period_by_id = {
-        str(b.get("id") or ""): str(b.get("period_label") or "")
-        for b in (blocks or [])
-    }
+    # Re-key por uuid também: c["block_id"] pode ser uuid (computed_block_id) ou
+    # bloco-NN legado; ambas as chaves apontam o mesmo period_label.
+    period_by_id = {}
+    for _b in (blocks or []):
+        _k = str(_b.get("id") or "").strip()
+        _uk = str(_b.get("block_uuid") or "").strip()
+        _pl = str(_b.get("period_label") or "")
+        if _k:
+            period_by_id[_k] = _pl
+        if _uk:
+            period_by_id[_uk] = _pl
     lines += [
         "",
         "## Conflitos de curadoria",

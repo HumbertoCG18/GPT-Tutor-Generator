@@ -1,0 +1,21 @@
+== A) ROTULO_REPETIDO
+ROTULO_REPETIDO    SO   sem     (8, 7) -> (10, 9)  gain ['exemplo-criacao-de-processos-no-unix-linux-filho', 'exemplo-criacao-de-processos-no-unix-linux-teste01', 'exemplo-criacao-de-processos-no-unix-linux-teste02', 'exemplo-criacao-de-processos-no-unix-linux-teste03']  loss ['1903-estruturas-de-controle', '3103-threads']
+ROTULO_REPETIDO    SO   determ  (8, 7) -> (14, 13)  gain ['exemplo-criacao-de-processos-no-unix-linux-filho', 'exemplo-criacao-de-processos-no-unix-linux-teste01', 'exemplo-criacao-de-processos-no-unix-linux-teste02', 'exemplo-criacao-de-processos-no-unix-linux-teste03', 'exemplo-threads-em-c-exemplo1', 'exemplo-threads-em-c-exemplo2', 'exemplo-threads-em-c-exemplo3']  loss ['1903-estruturas-de-controle']
+ROTULO_REPETIDO    SO   com     (8, 7) -> (10, 9)  gain ['exemplo-criacao-de-processos-no-unix-linux-filho', 'exemplo-criacao-de-processos-no-unix-linux-teste01', 'exemplo-criacao-de-processos-no-unix-linux-teste02', 'exemplo-criacao-de-processos-no-unix-linux-teste03']  loss ['1903-estruturas-de-controle', '3103-threads']
+ROTULO_REPETIDO    IA   determ  (36, 36) -> (36, 36)  gain []  loss []
+ROTULO_REPETIDO    ES2  determ  (20, 18) -> (20, 18)  gain []  loss []
+ROTULO_REPETIDO    TCC  determ  (11, 9) -> (11, 9)  gain []  loss []
+ROTULO_REPETIDO    MF   determ  (50, 36) -> (50, 36)  gain []  loss []
+== B) SEM_VETO_TITULO
+  vetados so pelo titulo em SO: 0 termos: {}
+SEM_VETO_TITULO    SO   determ  (8, 7) -> (8, 7)  gain []  loss []
+SEM_VETO_TITULO    SO   com     (8, 7) -> (8, 7)  gain []  loss []
+  vetados so pelo titulo em IA: 4 termos: {'Questões filosóficas de IA': ['IA Responsável'], 'Problemas de Otimização': ['Algoritmo Genético'], 'Modelos Preditivos': ['Rede Perceptron', 'Árvores de Decisão']}
+SEM_VETO_TITULO    IA   determ  (36, 36) -> (37, 37)  gain ['rede-perceptron-or-em-python']  loss []
+SEM_VETO_TITULO    IA   com     (38, 38) -> (38, 38)  gain []  loss []
+  vetados so pelo titulo em ES2: 4 termos: {'1.3.4 Orientada a Microsserviços': ['MICROSSERVIÇOS'], '2.1 Conceito de DevOps': ['DevOps'], '2.6 Plataformas de DevOps': ['Kubernetes', 'Azure']}
+SEM_VETO_TITULO    ES2  determ  (20, 18) -> (21, 19)  gain ['kubernetes']  loss []
+SEM_VETO_TITULO    ES2  com     (21, 18) -> (22, 19)  gain ['kubernetes']  loss []
+  vetados so pelo titulo em TCC: 0 termos: {}
+SEM_VETO_TITULO    TCC  determ  (11, 9) -> (11, 9)  gain []  loss []
+SEM_VETO_TITULO    TCC  com     (11, 9) -> (11, 9)  gain []  loss []

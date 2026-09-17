@@ -1,0 +1,244 @@
+[
+  {
+    "id": "exercicioscorrecaoinducaomatematica",
+    "true": "bloco-06",
+    "material": "ExerciciosCorrecaoInducaoMatematica.pdf",
+    "pred": "bloco-05",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-05",
+      "bloco-06"
+    ]
+  },
+  {
+    "id": "exercicioscorrecaoterminacao",
+    "true": "bloco-10",
+    "material": "ExerciciosCorrecaoTerminacao.pdf",
+    "pred": "bloco-11",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-6",
+    "janela": [
+      "bloco-10",
+      "bloco-11",
+      "bloco-12",
+      "bloco-13",
+      "bloco-14",
+      "bloco-15"
+    ]
+  },
+  {
+    "id": "exerciciosdafny1",
+    "true": "bloco-12",
+    "material": "ExerciciosDafny1.pdf",
+    "pred": "bloco-11",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-6+serieDP",
+    "janela": [
+      "bloco-10",
+      "bloco-11",
+      "bloco-12",
+      "bloco-13",
+      "bloco-14",
+      "bloco-15"
+    ]
+  },
+  {
+    "id": "exerciciosdafny5",
+    "true": "bloco-15",
+    "material": "ExerciciosDafny5.pdf",
+    "pred": "bloco-15",
+    "correct": true,
+    "flag": true,
+    "mode": "multi-6+serieDP",
+    "janela": [
+      "bloco-10",
+      "bloco-11",
+      "bloco-12",
+      "bloco-13",
+      "bloco-14",
+      "bloco-15"
+    ]
+  },
+  {
+    "id": "exerciciosespecificacao",
+    "true": "bloco-03",
+    "material": "ExerciciosEspecificacao.pdf",
+    "pred": "bloco-02",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-02",
+      "bloco-03"
+    ]
+  },
+  {
+    "id": "exerciciosespecificacao-respostas",
+    "true": "bloco-03",
+    "material": "ExerciciosEspecificacao_respostas.pdf",
+    "pred": "bloco-02",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-02",
+      "bloco-03"
+    ]
+  },
+  {
+    "id": "exerciciosisabelle2",
+    "true": "bloco-06",
+    "material": "ExerciciosIsabelle2.pdf",
+    "pred": "bloco-05",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-05",
+      "bloco-06"
+    ]
+  },
+  {
+    "id": "logicadehoare2",
+    "true": "bloco-10",
+    "material": "LogicaDeHoare2.pdf",
+    "pred": "bloco-10",
+    "correct": true,
+    "flag": true,
+    "mode": "multi-6",
+    "janela": [
+      "bloco-10",
+      "bloco-11",
+      "bloco-12",
+      "bloco-13",
+      "bloco-14",
+      "bloco-15"
+    ]
+  },
+  {
+    "id": "logicapredicados-semantica",
+    "true": "bloco-03",
+    "material": "logicaPredicados_semantica.pdf",
+    "pred": "bloco-02",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-02",
+      "bloco-03"
+    ]
+  },
+  {
+    "id": "logicapredicados-sintaxe",
+    "true": "bloco-03",
+    "material": "logicaPredicados_sintaxe.pdf",
+    "pred": "bloco-02",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-02",
+      "bloco-03"
+    ]
+  },
+  {
+    "id": "plano",
+    "true": "bloco-01",
+    "material": "plano.pdf",
+    "pred": "",
+    "correct": false,
+    "mode": "sem-janela(funil)",
+    "flag": true
+  },
+  {
+    "id": "provasindutivas-especificacoesrecursivas-listas",
+    "true": "bloco-06",
+    "material": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+    "pred": "bloco-05",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-05",
+      "bloco-06"
+    ]
+  },
+  {
+    "id": "arvores",
+    "true": "bloco-06",
+    "material": "arvores.thy",
+    "pred": "bloco-05",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-2",
+    "janela": [
+      "bloco-05",
+      "bloco-06"
+    ]
+  },
+  {
+    "id": "exemplos-zip",
+    "true": "bloco-16",
+    "material": "exemplos.zip",
+    "pred": "bloco-16",
+    "correct": true,
+    "flag": true,
+    "mode": "multi-6",
+    "janela": [
+      "bloco-16",
+      "bloco-17",
+      "bloco-18",
+      "bloco-19",
+      "bloco-20",
+      "bloco-21"
+    ]
+  },
+  {
+    "id": "tiposindutivos",
+    "true": "bloco-15",
+    "material": "tiposindutivos.zip",
+    "pred": "bloco-10",
+    "correct": false,
+    "flag": true,
+    "mode": "multi-6",
+    "janela": [
+      "bloco-10",
+      "bloco-11",
+      "bloco-12",
+      "bloco-13",
+      "bloco-14",
+      "bloco-15"
+    ]
+  },
+  {
+    "id": "archive-of-formal-proofs-355fb8",
+    "true": "bloco-01",
+    "material": "Archive of Formal Proofs",
+    "pred": "",
+    "correct": false,
+    "mode": "sem-janela(funil)",
+    "flag": true
+  },
+  {
+    "id": "aws-encryption-sdk",
+    "true": "bloco-01",
+    "material": "aws-encryption-sdk",
+    "pred": "",
+    "correct": false,
+    "mode": "sem-janela(funil)",
+    "flag": true
+  },
+  {
+    "id": "eth2",
+    "true": "bloco-12",
+    "material": "eth2.0-dafny",
+    "pred": "",
+    "correct": false,
+    "mode": "sem-janela(funil)",
+    "flag": true
+  }
+]

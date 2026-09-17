@@ -1,0 +1,17 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_detect_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5629485999961616,
+    "returncode": 0,
+    "stdout": "Node: ._detect_orphans()\n  ID:        src_ui_maintenance_panel_maintenancepanel_detect_orphans\n  Source:    src/ui/maintenance_panel.py L102\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L102\n  --> Path [references] [EXTRACTED] src/ui/maintenance_panel.py:L102\n  <-- .refresh() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L137\n  <-- Read-only: conta órfãos em code_curation contra manifest. [rationale_for] [EXTRACTED] src/ui/maintenance_panel.py:L103\n",
+    "stderr": ""
+  }
+]

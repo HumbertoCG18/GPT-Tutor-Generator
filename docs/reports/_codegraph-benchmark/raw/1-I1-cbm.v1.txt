@@ -1,0 +1,50 @@
+DISCOVERY
+total: 1
+results: 1  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):
+  unit_short_label Function 21-27 3 2 build_temporal_context_rows;build_unit_legend;_populate;str;unit_number
+has_more: false
+
+function: unit_short_label
+direction: both
+callees_total: 3
+callees: 3  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+builtins:
+  int 2 lsp 0.88
+  str 1 lsp 0.88
+codegraph-pilot-20260915.src.builder.timeline.unit_labels:
+  unit_number 1 lsp 0.88
+callers_total: 7
+callers: 7  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.artifacts.temporal_context:
+  build_temporal_context_rows 1 lsp 0.97
+  build_unit_legend 1 lsp 0.95
+  temporal_context_md 2 lsp 0.95
+codegraph-pilot-20260915.src.ui.timeline_dashboard.TimelineDashboardView:
+  _populate 1 heuristic 0.28
+  _render 2 lsp 0.90
+  _sort_by 2 lsp 0.90
+codegraph-pilot-20260915.src.ui.timeline_dashboard.py:
+  __file__ 2 heuristic 0.28
+
+total: 0
+results: 0  (rows: name label lines in out connected; qn = group prefix + "." + name)
+has_more: false
+hint: "No nodes match this pattern. Check spelling or try a broader regex."
+
+{"error":"function not found","function_name":"_unit_short_label","hint":"Use search_graph(name_pattern=\".*_unit_short_label.*\") to find the exact name, then pass it to trace_path."}
+SOURCE VERIFICATION
+src/builder/timeline/unit_labels.py:16:     """Número da unidade no slug, ou None se não casar o padrão."""
+src/builder/timeline/unit_labels.py:17:     m = _UNIT_NUM_RE.search(str(slug or ""))
+src/builder/timeline/unit_labels.py:18:     return int(m.group(1)) if m else None
+src/builder/timeline/unit_labels.py:19: 
+src/builder/timeline/unit_labels.py:20: 
+src/builder/timeline/unit_labels.py:21: def unit_short_label(slug: str) -> str:
+src/builder/timeline/unit_labels.py:22:     """'unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão."""
+src/builder/timeline/unit_labels.py:23:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:24:     if not s:
+src/builder/timeline/unit_labels.py:25:         return ""
+src/builder/timeline/unit_labels.py:26:     n = unit_number(s)
+src/builder/timeline/unit_labels.py:27:     return f"U{n}" if n is not None else s
+src/builder/timeline/unit_labels.py:28: 
+src/builder/timeline/unit_labels.py:29: 

@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "_on_sweep",
+      "-e",
+      "sweep_orphans",
+      "src"
+    ],
+    "seconds": 0.02117089999956079,
+    "returncode": 0,
+    "stdout": "src\\ui\\maintenance_panel.py:80:            toolbar, text=\"🧹 Executar limpeza\", command=self._on_sweep\nsrc\\ui\\maintenance_panel.py:147:    def _on_sweep(self) -> None:\nsrc\\ui\\maintenance_panel.py:174:                report = builder.sweep_orphans()\nsrc\\builder\\engine.py:152:    sweep_orphans as _lifecycle_ops_sweep_orphans,\nsrc\\builder\\engine.py:2218:    def sweep_orphans(self) -> Dict[str, object]:\nsrc\\builder\\engine.py:2219:        return _lifecycle_ops_sweep_orphans(self)\nsrc\\builder\\ops\\lifecycle_ops.py:263:def sweep_orphans(builder) -> Dict[str, object]:\nsrc\\builder\\ops\\lifecycle_ops.py:304:        \"[sweep_orphans] code=%s img=%s regen=%s errors=%s\",\n",
+    "stderr": ""
+  }
+]

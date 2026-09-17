@@ -13,15 +13,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.artifacts.cronograma_health import material_coverage  # noqa: E402
-from src.builder.routing.thresholds import T  # noqa: E402
+
+_MATERIAL_COVERAGE_MIN: float = 0.70  # gate local; constante removida do thresholds (P4)
 
 
 def coverage_gate_failures(entries: list) -> list:
     rep = material_coverage(entries)
     fails = []
-    if rep["total"] and rep["coverage"] < T.MATERIAL_COVERAGE_MIN:
+    if rep["total"] and rep["coverage"] < _MATERIAL_COVERAGE_MIN:
         fails.append(
-            f"cobertura {rep['coverage']:.0%} < {T.MATERIAL_COVERAGE_MIN:.0%} "
+            f"cobertura {rep['coverage']:.0%} < {_MATERIAL_COVERAGE_MIN:.0%} "
             f"({rep['orphans']} orfaos de {rep['total']})"
         )
     return fails

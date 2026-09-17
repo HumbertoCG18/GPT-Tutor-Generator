@@ -1,0 +1,32 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "load_docling_python_api",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.4909996999995201,
+    "returncode": 0,
+    "stdout": "Node: load_docling_python_api()\n  ID:        src_builder_runtime_backend_runtime_load_docling_python_api\n  Source:    src/builder/runtime/backend_runtime.py L222\n  Type:      code\n  Community: \n  Degree:    2\n\nConnections (2):\n  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61\n  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L222\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "import_module",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5413793999978225,
+    "returncode": 0,
+    "stdout": "No node matching 'import_module' found.\n",
+    "stderr": ""
+  }
+]

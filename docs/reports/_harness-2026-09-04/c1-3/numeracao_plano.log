@@ -1,0 +1,35 @@
+NUMERACAO DOS TOPICOS NA TAXONOMIA (campo `code`) x NUMERO DA UNIDADE
+curso unid  top c/code code X.Y  X.Y.Z code bate a unidade | exemplos
+MF       3   23     23       10     13                  21 | 1.1 Sistemas Formais (u1, kind=topic) · 1.2 Linguagens de Especificaçã (u1, kind=topic) · 1.2.1 Fundamentos de Lógica de P (u1, kind=subtopic)
+SO       7   36     36       30      6                   4 | 1.1 Evolução histórica (u1, kind=topic) · 1.1 Serviços dos sistemas oper (u1, kind=topic) · 1.2 Chamadas de sistema (u1, kind=topic)
+IA       5   20      0        0      0                   0 | 
+ES2      3   21     21       13      8                  21 | 1.1 Conceito de arquitetura de (u1, kind=topic) · 1.2 Visões arquiteturais: estr (u1, kind=topic) · 1.3 Estilos e padrões arquitet (u1, kind=topic)
+TCC      4   26     26       19      7                  26 | 1.1 Conjuntos Enumeráveis (u1, kind=topic) · 1.2 Argumento Diagonal de Cant (u1, kind=topic) · 1.3 Funções Recursivas Primiti (u1, kind=topic)
+CG       9   59     59       35     24                  59 | 1.1 Origens (u1, kind=topic) · 1.2 Conceitos (u1, kind=topic) · 1.3 Áreas relacionadas (u1, kind=topic)
+LR       3   11      0        0      0                   0 | 
+FR       6   33     33       23     10                  32 | 1.1 Conceitos de redes de comp (u1, kind=topic) · 1.2 Modelos OSI e TCP/IP (u1, kind=topic) · 1.3 Conceito de protocolo de r (u1, kind=topic)
+
+=== CG: hierarquia X.Y / X.Y.Z na unidade 03 e 04
+  [unidade-03-processamento-de-imagens-e-visao-computacional] Unidade 03 — Processamento de Imagens e Visão Computacio
+     code=3.1      kind=topic     slug=introducao-e-exemplos-de-aplicacoe label=Introdução e Exemplos de Aplicações
+     code=3.2      kind=topic     slug=cores-e-tipos-de-imagens           label=Cores e tipos de imagens
+     code=3.3      kind=topic     slug=algoritmos-de-quantizacao-e-amostr label=Algoritmos de Quantização e Amostragem
+     code=3.4      kind=topic     slug=filtros                            label=Filtros
+     code=3.5      kind=topic     slug=segmentacao                        label=Segmentação
+     code=3.6      kind=topic     slug=visao-computacional-e-conceito-de- label=Visão Computacional e conceito de reconh
+  [unidade-04-processo-de-visualizacao-2d] Unidade 04 — Processo de Visualização 2D
+     code=4.1      kind=topic     slug=sistema-de-coordenadas-cartesianas label=Sistema de Coordenadas Cartesianas
+     code=4.1.1    kind=subtopic  slug=2d-3d-mao-direita-e-mao-esquerda   label=2D, 3D (mão direita) e (mão esquerda)
+     code=4.2      kind=topic     slug=algoritmos-de-rasterizacao         label=Algoritmos de Rasterização
+     code=4.2.1    kind=subtopic  slug=desenho-de-linhas                  label=Desenho de Linhas
+     code=4.2.2    kind=subtopic  slug=preenchimento-de-poligonos         label=Preenchimento de Polígonos
+     code=4.2.3    kind=subtopic  slug=recorte                            label=Recorte
+
+=== SO: por que o code nao bate a unidade (4/36)
+  [unidade-01-introducao-ao-estudo-de-sistemas-] codes=['1.1', '1.1', '1.2', '1.3']
+  [unidade-02-gerencia-do-processador          ] codes=['3.1', '3.2', '3.3', '3.4']
+  [unidade-03-programacao-concorrente          ] codes=['4.1', '4.2', '4.3', '4.4', '4.5']
+  [unidade-04-deadlock                         ] codes=['5.1', '5.2', '5.3', '5.4']
+  [unidade-05-gerencia-de-memoria              ] codes=['6.1', '6.1.1', '6.1.2', '6.1.3', '6.1.4', '6.2', '6.2.1', '6.2.2']
+  [unidade-06-gerencia-de-arquivos             ] codes=['7.1', '7.2', '7.3', '7.4', '7.5', '7.6']
+  [unidade-07-gerencia-de-entrada-e-saida      ] codes=['2.1', '2.2', '2.3', '2.4']

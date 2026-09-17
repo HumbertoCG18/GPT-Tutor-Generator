@@ -7,12 +7,18 @@ from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
 from src.builder.ops.build_workflow import _run_auto_code_summarization
-from src.utils.helpers import write_text
+from src.builder.ops.lifecycle_ops import assign_dedup_id
+from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
+# Auditoria 2.1+2.2: compact+write POR ENTRY era o gargalo do build incremental
+# (32x medido). O par por-entry é design de crash-resume (10bec352/79b6f98) —
+# vira checkpoint a cada N: crash perde no máximo N-1 entries de trabalho.
+_CHECKPOINT_EVERY = 10
 
-def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_fn) -> None:
+
+def incremental_build_impl(builder, *, student_state_md_fn) -> None:
     """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
     manifest_path = builder.root_dir / "manifest.json"
     if not manifest_path.exists():
@@ -37,10 +43,16 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
 
         manifest.setdefault("failed_entries", [])
         total = len(new_entries)
+        existing_ids = {
+            str(e.get("id") or "")
+            for e in manifest.get("entries", [])
+            if e.get("id")
+        }
         for i, entry in enumerate(new_entries):
             logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
             if builder.progress_callback:
                 builder.progress_callback(i, total, entry.title)
+            assign_dedup_id(entry, existing_ids)
             try:
                 item_result = builder._process_entry(entry)
                 manifest["entries"].append(item_result)
@@ -68,14 +80,17 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
                 manifest.setdefault("logs", []).extend(builder.logs)
                 builder.logs = []
                 manifest = builder._compact_manifest(manifest)
-                write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+                write_json_manifest(manifest_path, manifest)
                 continue
             manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
             manifest.setdefault("logs", []).extend(builder.logs)
             builder.logs = []
-            manifest = builder._compact_manifest(manifest)
-            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-            logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
+            if (i + 1) % _CHECKPOINT_EVERY == 0:
+                manifest = builder._compact_manifest(manifest)
+                write_json_manifest(manifest_path, manifest)
+                logger.info("[%d/%d] Concluído (checkpoint salvo): %s", i + 1, total, entry.title)
+            else:
+                logger.info("[%d/%d] Concluído: %s", i + 1, total, entry.title)
         if builder.progress_callback:
             builder.progress_callback(total, total, "")
 
@@ -83,7 +98,7 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     manifest.setdefault("logs", []).extend(builder.logs)
     manifest = builder._compact_manifest(manifest)
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     removed = builder._prune_stale_image_curation()
     if removed:
         with open(manifest_path, "r", encoding="utf-8") as f:
@@ -102,11 +117,8 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
         state_path.write_text(content, encoding="utf-8")
     else:
         write_text(state_path, student_state_md_fn(builder.course_meta, builder.student_profile))
-    progress_path = builder.root_dir / "build" / "PROGRESS_SCHEMA.md"
-    if not progress_path.exists():
-        write_text(progress_path, progress_schema_md_fn())
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)

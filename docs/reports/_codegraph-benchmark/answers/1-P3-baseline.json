@@ -1,0 +1,13 @@
+{
+  "id": "P3",
+  "arm": "baseline",
+  "rep": 1,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 9.460440000002563,
+  "returncode": 0,
+  "evidence_sha256": "d7e24b926d016e9dbcaaba6652fdaa9c088c527de0c415eee050bba6aa3eceee",
+  "prompt_chars": 11704,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76c-26a7-7020-b948-573b661838a9\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep\\\",\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker\\\",\\\"src/builder/engine.py:RepoBuilder.sweep_orphans\\\",\\\"src/builder/ops/lifecycle_ops.py:sweep_orphans\\\"],\\\"evidence\\\":[\\\"src/ui/maintenance_panel.py:147\\\",\\\"src/ui/maintenance_panel.py:168\\\",\\\"src/ui/maintenance_panel.py:184\\\",\\\"src/ui/maintenance_panel.py:170\\\",\\\"src/ui/maintenance_panel.py:174\\\",\\\"src/builder/engine.py:2218\\\",\\\"src/builder/engine.py:2219\\\",\\\"src/builder/engine.py:152\\\",\\\"src/builder/ops/lifecycle_ops.py:263\\\"],\\\"caveat\\\":\\\"A cadeia pressupõe que self._make_builder() retorna uma instância de RepoBuilder; a evidência não confirma esse tipo.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":22047,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":187,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

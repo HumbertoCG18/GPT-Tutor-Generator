@@ -1,0 +1,151 @@
+materiais: base 316 · braco 316 · em comum 316
+
+eixo            ganhos  perdas  saldo
+bloco                1       4     -3
+unidade              0      16    -16
+sub_aceito          17      39    -22
+sub_primario        24      28     -4
+
+por curso (ganhos/perdas):
+  CG   bloco +0/-3 · unidade +0/-14 · sub_aceito +3/-7 · sub_primario +2/-4
+  ES2  bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-8 · sub_primario +0/-7
+  FR   bloco +0/-0 · unidade +0/-0 · sub_aceito +4/-0 · sub_primario +4/-0
+  IA   bloco +0/-0 · unidade +0/-0 · sub_aceito +0/-0 · sub_primario +0/-0
+  MF   bloco +1/-1 · unidade +0/-0 · sub_aceito +2/-17 · sub_primario +9/-10
+  SO   bloco +0/-0 · unidade +0/-1 · sub_aceito +6/-6 · sub_primario +7/-6
+  TCC  bloco +0/-0 · unidade +0/-1 · sub_aceito +2/-1 · sub_primario +2/-1
+
+GANHOS:
+  [bloco       ] MF   exerciciosdafny2                               verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_aceito  ] CG   matematica                                                                      -> entidades-geometricas
+  [sub_aceito  ] CG   pagina-com-videos-sobre-fundamentos-matemati   algoritmos-de-poligonos          -> operacoes-com-vetores
+  [sub_aceito  ] CG   vis3d                                                                           -> projecoes
+  [sub_aceito  ] FR   04-protocolo-http                              paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o
+  [sub_aceito  ] FR   05-protocolo-dns                               protocolos-de-aplicacao-para-o   -> protocolos-de-aplicacao-para-i
+  [sub_aceito  ] FR   unidade1-exercicios                                                             -> modelos-osi-e-tcpip
+  [sub_aceito  ] FR   unidade2-exercicios-http                       paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o
+  [sub_aceito  ] MF   exerciciosespecificacao                        fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   exerciciosespecificacao-respostas              fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] SO   1903-estruturas-de-controle                    escalonamento                    -> conceitos-basicos
+  [sub_aceito  ] SO   3103-threads                                   escalonamento                    -> conceitos-basicos
+  [sub_aceito  ] SO   exemplo-threads-em-c-exemplo1                  escalonamento                    -> conceitos-basicos
+  [sub_aceito  ] SO   exemplo-threads-em-c-exemplo2                  escalonamento                    -> conceitos-basicos
+  [sub_aceito  ] SO   exemplo-threads-em-c-exemplo3                  escalonamento                    -> conceitos-basicos
+  [sub_aceito  ] SO   exercicios                                                                      -> algoritmos-de-escalonamento
+  [sub_aceito  ] TCC  aula-09-variacoes-de-maquinas-de-turing        maquinas-de-turing               -> variacoes-de-maquinas-de-turin
+  [sub_aceito  ] TCC  aula-10-linguagens-reconhecıveis-e-linguagen   maquinas-de-turing               -> linguagens-reconheciveis-e-dec
+  [sub_primario] CG   elemoculto                                     algoritmo-z-buffer               -> algoritmos-de-remocao-de-eleme
+  [sub_primario] CG   vis3d                                                                           -> projecoes
+  [sub_primario] FR   04-protocolo-http                              paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o
+  [sub_primario] FR   05-protocolo-dns                               protocolos-de-aplicacao-para-o   -> protocolos-de-aplicacao-para-i
+  [sub_primario] FR   unidade1-exercicios                                                             -> modelos-osi-e-tcpip
+  [sub_primario] FR   unidade2-exercicios-http                       paradigmas-clienteservidor-e-p   -> protocolos-de-aplicacao-para-o
+  [sub_primario] MF   colecoes-arrays                                verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_primario] MF   exercicios-arrays                              verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_primario] MF   exerciciosdafny1                               verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_primario] MF   exerciciosdafny2                               verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_primario] MF   exerciciosdafny4                               verificacao-de-programas         -> softwares-de-suporte-a-verific
+  [sub_primario] MF   exerciciosespecificacao                        fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   exerciciosespecificacao-respostas              fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   logicaproposicional-semantica                  fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   logicaproposicional-sintaxe                    fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] SO   1903-estruturas-de-controle                    escalonamento                    -> conceitos-basicos
+  [sub_primario] SO   3103-threads                                   escalonamento                    -> conceitos-basicos
+  [sub_primario] SO   definicao-e-historico                          servicos-dos-sistemas-operacio   -> evolucao-historica
+  [sub_primario] SO   exemplo-threads-em-c-exemplo1                  escalonamento                    -> conceitos-basicos
+  [sub_primario] SO   exemplo-threads-em-c-exemplo2                  escalonamento                    -> conceitos-basicos
+  [sub_primario] SO   exemplo-threads-em-c-exemplo3                  escalonamento                    -> conceitos-basicos
+  [sub_primario] SO   exercicios                                                                      -> algoritmos-de-escalonamento
+  [sub_primario] TCC  aula-09-variacoes-de-maquinas-de-turing        maquinas-de-turing               -> variacoes-de-maquinas-de-turin
+  [sub_primario] TCC  aula-10-linguagens-reconhecıveis-e-linguagen   maquinas-de-turing               -> linguagens-reconheciveis-e-dec
+
+PERDAS:
+  [bloco       ] CG   animacao-v2                                    desenho-de-linhas                -> aplicacoes
+  [bloco       ] CG   recorte                                        recorte                          -> segmentacao
+  [bloco       ] CG   transformacoesgl                               sistema-de-coordenadas-cartesi   -> aplicacoes
+  [bloco       ] MF   provas                                         abordagens-para-verificacao-fo   -> linguagens-de-especificacao-e-
+  [unidade     ] CG   animacao-v2                                    desenho-de-linhas                -> aplicacoes
+  [unidade     ] CG   exercicios-teoricos-sobre-processo-de-visual   desenho-de-linhas                -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   exercicios-teoricos-sobre-processo-de-visual   desenho-de-linhas                -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   instanciamento                                 sistema-de-coordenadas-cartesi   -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   mapeamento                                     recorte                          -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   pagina-com-videos-sobre-instanciamento         desenho-de-linhas                -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   pagina-com-videos-sobre-mapeamento-9f410e                                       -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   pagina-com-videos-sobre-recorte-e257d3         recorte                          -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   recorte                                        recorte                          -> segmentacao
+  [unidade     ] CG   transformacoesgeometricas                      desenho-de-linhas                -> transformacoes-geometricas-e-c
+  [unidade     ] CG   transformacoesgl                               sistema-de-coordenadas-cartesi   -> aplicacoes
+  [unidade     ] CG   video-sobre-mapeamento-em-opengl-1dad3c                                         -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   video-sobre-o-algoritmo-de-recorte-por-subdi   recorte                          -> pipeline-de-visualizacao-2d
+  [unidade     ] CG   vis2d                                          recorte                          -> pipeline-de-visualizacao-2d
+  [unidade     ] SO   lista-exercicios-p1                            programas-multithreads           -> conceitos-basicos
+  [unidade     ] TCC  aula-14-problema-da-correspondencia-de-post    prova-da-indecidibilidade-do-p   -> maquinas-de-turing
+  [sub_aceito  ] CG   basico3d-py                                    pipeline-de-visualizacao-3d      -> algoritmos-de-remocao-de-eleme
+  [sub_aceito  ] CG   exercicio-com-poligonos                        algoritmos-de-poligonos          -> 
+  [sub_aceito  ] CG   exercicio-de-animacao-foguete                  algoritmos-de-poligonos          -> 
+  [sub_aceito  ] CG   pagina-com-videos-sobre-recorte-e257d3         recorte                          -> pipeline-de-visualizacao-2d
+  [sub_aceito  ] CG   recorte                                        recorte                          -> segmentacao
+  [sub_aceito  ] CG   video-sobre-o-algoritmo-de-recorte-por-subdi   recorte                          -> pipeline-de-visualizacao-2d
+  [sub_aceito  ] CG   vis2d                                          recorte                          -> pipeline-de-visualizacao-2d
+  [sub_aceito  ] ES2  microsservicos5                                estudo-de-caso-integracao-e-im   -> entrega-continua-cd
+  [sub_aceito  ] ES2  microsservicos7                                estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  roteiro1-introducao                            orientada-a-microsservicos       -> estilos-e-padroes-arquiteturai
+  [sub_aceito  ] ES2  roteiro4-circuitbreaker                        estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  roteiro6-conteiners-composicao                 estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  roteiro7-filas                                 estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_aceito  ] ES2  servicos                                       orientada-a-servicos             -> estilos-e-padroes-arquiteturai
+  [sub_aceito  ] ES2  web                                            cliente-servidor                 -> estilos-e-padroes-arquiteturai
+  [sub_aceito  ] MF   classes-parte1                                 verificacao-de-programas         -> invariante-e-variante-de-laco
+  [sub_aceito  ] MF   colecoes-conjuntos                             verificacao-de-programas         -> logica-de-hoare
+  [sub_aceito  ] MF   conjuntosindutivos                             especificacao-de-conjuntos-ind   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   exemplos-zip                                   verificacao-de-modelos-model-c   -> fundamentos-de-logicas-tempora
+  [sub_aceito  ] MF   exercicios-conjuntos                           verificacao-de-programas         -> logica-de-hoare
+  [sub_aceito  ] MF   exerciciosconjuntosindutivos                   especificacao-de-conjuntos-ind   -> sistemas-formais
+  [sub_aceito  ] MF   exercicioscorrecaoinducaomatematica            especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   exerciciosisabelle                             especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   exerciciosisabelle2                            especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   exercicioslogicatemporal                       logica-temporal-linear           -> maquinas-de-estado
+  [sub_aceito  ] MF   formalizacaoalgoritmos-recursao                especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   introducao-zip                                 verificacao-de-programas         -> logica-de-hoare
+  [sub_aceito  ] MF   logicapredicados-semantica                     fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   logicapredicados-sintaxe                       fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   provasindutivas-especificacoesrecursivas       especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   provasindutivas-especificacoesrecursivas-arv   especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] MF   provasindutivas-especificacoesrecursivas-lis   especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_aceito  ] SO   1203-processos                                 chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] SO   1703-chamada-de-sistema                        chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] SO   exemplo-criacao-de-processos-no-unix-linux-f   chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_aceito  ] TCC  aula-01-apresentacao-da-disciplina-revisao-d   conjuntos-enumeraveis            -> argumento-diagonal-de-cantor-e
+  [sub_primario] CG   exercicio-com-poligonos                        algoritmos-de-poligonos          -> 
+  [sub_primario] CG   pagina-com-videos-sobre-recorte-e257d3         recorte                          -> pipeline-de-visualizacao-2d
+  [sub_primario] CG   recorte                                        recorte                          -> segmentacao
+  [sub_primario] CG   video-sobre-o-algoritmo-de-recorte-por-subdi   recorte                          -> pipeline-de-visualizacao-2d
+  [sub_primario] ES2  microsservicos7                                estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  revisaoarquiteturapadroes                      conceito-de-arquitetura-de-sof   -> estilos-e-padroes-arquiteturai
+  [sub_primario] ES2  roteiro4-circuitbreaker                        estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  roteiro6-conteiners-composicao                 estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  roteiro7-filas                                 estudo-de-caso-integracao-e-im   -> gerenciamento-da-configuracao
+  [sub_primario] ES2  servicos                                       orientada-a-servicos             -> estilos-e-padroes-arquiteturai
+  [sub_primario] ES2  web                                            cliente-servidor                 -> estilos-e-padroes-arquiteturai
+  [sub_primario] MF   conjuntosindutivos                             especificacao-de-conjuntos-ind   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   exerciciosconjuntosindutivos                   especificacao-de-conjuntos-ind   -> sistemas-formais
+  [sub_primario] MF   exercicioscorrecaoinducaomatematica            especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   formalizacaoalgoritmos-recursao                especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   logicapredicados-semantica                     fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   logicapredicados-sintaxe                       fundamentos-de-logica-de-prime   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   provasindutivas-especificacoesrecursivas       especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   provasindutivas-especificacoesrecursivas-arv   especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   provasindutivas-especificacoesrecursivas-lis   especificacao-de-funcoes-recur   -> linguagens-de-especificacao-e-
+  [sub_primario] MF   verificacaomodelos                             verificacao-de-modelos-model-c   -> fundamentos-de-logicas-tempora
+  [sub_primario] SO   1203-processos                                 chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] SO   1703-chamada-de-sistema                        chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] SO   exemplo-criacao-de-processos-no-unix-linux-f   chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] SO   exemplo-criacao-de-processos-no-unix-linux-t   chamadas-de-sistema              -> evolucao-historica
+  [sub_primario] TCC  aula-01-apresentacao-da-disciplina-revisao-d   conjuntos-enumeraveis            -> argumento-diagonal-de-cantor-e
+
+CORTE (>= 5 ganhos primario, >= 5 ganhos aceito, 0 perdas em qualquer eixo): ENCERRA — primario +24, aceito +17, perdas 87

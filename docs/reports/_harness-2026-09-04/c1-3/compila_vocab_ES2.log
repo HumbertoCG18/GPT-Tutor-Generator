@@ -1,0 +1,19 @@
+ES2: 32 materiais, 2 unidades com material, 2 chamadas previstas (cap)
+  unidade-01-arquitetura-de-software mats  14  zips 3  membros  43  bundle  6679 chars
+  unidade-02-integracao-de-desenvolvimento-e-operacao-devops mats  18  zips 5  membros  88  bundle  8725 chars
+  chamada 1/2
+  chamada 2/2
+chamadas feitas: 2/2; modelo gemini-3.5-flash; sidecar manual devolvido: True
+gravado .glossary_curation.llm.json: 12 topicos com termos, 56 termos, erros: []
+  1.1 Conceito de arquitetura de software: ['Arquitetura de Software', 'Sistemas de Software', 'Aplicações Corporativas', 'IEEE', 'Manutabilidade']
+  1.3 Estilos e padrões arquiteturais: ['Padrões de Projeto', 'PADRÕES', 'Evolução dos modelos arquiteturais']
+  1.3.1 Camadas: ['Arquitetura em camadas lógicas', 'Arquitetura em camadas físicas', 'camadas lógicas', 'camadas físicas']
+  1.3.2 Cliente-Servidor: ['arquitetura cliente servidor', 'Cliente', 'Servidor', 'Client Side Rendering', 'Server Side Rendering', 'HTTP']
+  1.3.3 Orientada a Serviços: ['ARQUITETURA ORIENTADA A SERVIÇOS', 'WEB SERVICES']
+  1.3.4 Orientada a Microsserviços: ['Microserviços', 'Monolitos', 'Escalabilidade Vertical', 'Escalabilidade Horizontal', 'Service Discovery', 'Service Registry', 'Client-Side Discovery', 'Server-Side Discovery', 'Backends for frontends']
+  1.4 Estratégias de Construção de Arquitetura: ['Decisões Arquiteturais']
+  1.5 Estudo de caso: arquitetura orientada a microsserviços: ['microserviço de conversão', 'Discovery (Name Server)', 'Balanceamento de Carga', 'Netflix Eureka', 'CurrencyExchangeProxy', 'CurrencyExchange', 'CurrencyConversion', 'ApiGatewayApplication']
+  2.2 Gerenciamento da Configuração: ['Gerência de configuração', 'Gerência de versões e mudanças', 'Infraestrutura como código (IaC)', 'Gerência de pacotes']
+  2.3 Integração contínua (CI): ['Pipeline']
+  2.6 Plataformas de DevOps: ['Docker', 'Ambientes de Desenvolvimento em Nuvem']
+  2.7 Estudo de Caso: integração e implantação de microsserviços: ['Circuit Breaker', 'Composição de Containers', 'compose.yaml', 'RabbitMQ', 'Comunicação por Filas', 'Auth0', 'Autenticação e Autorização', 'Serviço em contêiner', 'Contêiner', 'Máquina Virtual', 'multi-stage build']

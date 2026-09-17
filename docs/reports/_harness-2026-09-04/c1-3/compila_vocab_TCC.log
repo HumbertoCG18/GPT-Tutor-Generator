@@ -1,0 +1,30 @@
+TCC: 21 materiais, 4 unidades com material, 4 chamadas previstas (cap)
+  unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas mats   6  zips 0  membros   0  bundle  4655 chars
+  unidade-02-turing-computabilidade mats   4  zips 0  membros   0  bundle  3196 chars
+  unidade-03-problemas-indecidiveis mats   6  zips 0  membros   0  bundle  3848 chars
+  unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais mats   5  zips 0  membros   0  bundle  3794 chars
+  chamada 1/4
+  chamada 2/4
+  chamada 3/4
+  chamada 4/4
+chamadas feitas: 4/4; modelo gemini-3.5-flash; sidecar manual devolvido: True
+gravado .glossary_curation.llm.json: 19 topicos com termos, 96 termos, erros: []
+  1.1 Conjuntos Enumeráveis: ['Enumerabilidade', 'Conjunto Enumerável', 'Contável', 'Conjunto Infinito Contável', 'Função de Pareamento de Cantor']
+  1.2 Argumento Diagonal de Cantor e Conjuntos Incontáveis: ['Conjuntos Não-Enumeráveis', 'Conjunto Não-Enumerável', 'Incontável', 'Argumento da Diagonalização de Cantor']
+  1.3 Funções Recursivas Primitivas e Funções Recursivas Parciais: ['Funções Computáveis', 'Funções Recursivas Primitivas', 'Composição de Funções', 'Tese de Church-Turing', 'Funções Recursivas', 'Função Zero', 'Funções de Projeção', 'Funções Recursivas Parciais', 'Função de Ackermann', 'Funções Parciais', 'Operador \\mu', 'Minimização Regular', 'Minimização Limitada', 'Minimização Ilimitada']
+  2.1 Máquinas de Turing: ['Máquina de Turing', 'A Função de Transição', 'Configuração', 'Autômatos Finitos', 'Processadoras de Funções', 'Funções Turing-Computáveis', 'Função Parcial', 'Função Total', 'Codificação de Tuplas', 'O Problema de Hilbert', 'A Resposta de Turing']
+  2.2 Linguagens Reconhecíveis e Decidíveis: ['Linguagens Reconhecíveis', 'Linguagens Decidíveis', 'Linguagens Recursivamente Enumeráveis', 'Linguagem Turing-Reconhecível', 'Linguagem Turing-Decidível', 'co-R.E.', 'Rekursiva', 'Linguagens Regulares', 'Linguagens Livres de Contexto', 'Problemas Aritméticos']
+  2.3 Variações de Máquinas de Turing: ['MT Multifita', 'Não-Determinismo', 'Árvore de Computação']
+  3.1 Prova da Indecidibilidade do Problema da Parada: ['O Problema da Parada', 'Halting Problem', 'Halteproblem']
+  3.2 Entscheidungsproblem e Introdução à Reducibilidade de Problemas: ['Entscheidungsproblem', 'Problema da Decisão', 'O Programa de Hilbert', 'Teorema de Rice', 'Problema da Correspondência de Post']
+  3.3 Decidibilidade de Teorias Lógicas: ['Lógica de Primeira Ordem', 'Lógica de Predicados', 'Validade e Satisfatibilidade']
+  3.4 Teoremas de Gödel: ['Teoremas de Incompletude de Gödel', 'Kurt Gödel', 'Aritmética de Peano', 'Números de Gödel', 'Paradoxo do Mentiroso']
+  4.1 Tipos de Problemas Computacionais: ['Classes de Problemas', 'Classes de Problemas e Complexidade']
+  4.2 Complexidade de Tempo e de Espaço: ['Complexidade de Tempo', 'Recursos Computacionais', 'Análise de Pior Caso', 'Notação Assintótica', 'Notação O', 'Big-O']
+  4.3 Hierarquia de Classes de Complexidade de Problemas: ['Classes de Crescimento', 'Divisão Fundamental', 'Classes Super-Polinomiais']
+  4.4 Classe P e exemplos de Problemas em P: ['Definição Formal da Classe P', 'PATH', 'PRIMES', 'Tese de Cobham-Edmonds', 'Fechamento', 'Robustez']
+  4.5 Classe NP: ['certificado polinomial']
+  4.5.1 Definição da Classe: ['NP-hard', 'NP-completo', 'NP-Completeness']
+  4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais: ['3-Dimensional Matching', 'Integer Programming', 'Vertex Cover', 'SAT-3']
+  4.5.4 Redução Polinomial de Problemas: ['Redução Polinomial', 'Transitividade', 'Gadget de Variável', 'Gadget de Cláusula', 'Gadget de Limpeza']
+  4.5.5 Provas de NP-Completude: ['NP-Compleitude', 'Como Provar NP-Compleitude', 'Método Padrão']

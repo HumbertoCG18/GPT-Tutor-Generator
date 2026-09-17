@@ -1,0 +1,826 @@
+{
+  "summary": {
+    "TCC": {
+      "counts": {
+        "comuns": 27,
+        "bloco_n": 27,
+        "bloco_base": 26,
+        "bloco_novo": 26,
+        "bloco_comum_n": 27,
+        "bloco_comum_base": 26,
+        "bloco_comum_novo": 26,
+        "unidade_n": 18,
+        "unidade_base": 18,
+        "unidade_novo": 17,
+        "unidade_comum_n": 18,
+        "unidade_comum_base": 18,
+        "unidade_comum_novo": 17,
+        "sub_aceito_n": 11,
+        "sub_aceito_base": 8,
+        "sub_aceito_novo": 9,
+        "sub_aceito_comum_n": 11,
+        "sub_aceito_comum_base": 8,
+        "sub_aceito_comum_novo": 9,
+        "sub_primario_n": 11,
+        "sub_primario_base": 6,
+        "sub_primario_novo": 7,
+        "sub_primario_comum_n": 11,
+        "sub_primario_comum_base": 6,
+        "sub_primario_comum_novo": 7,
+        "sub_aceito_ganhos": 2,
+        "sub_primario_ganhos": 2,
+        "unidade_perdas": 1,
+        "sub_aceito_perdas": 1,
+        "sub_primario_perdas": 1,
+        "manifest_base": 27,
+        "manifest_novo": 27,
+        "novas_origens": 0
+      },
+      "changed_fields": {
+        "moodle_label": 26,
+        "posting_date": 26,
+        "texto_extraido": 27,
+        "manual_timeline_block_id": 3,
+        "category": 6,
+        "base_backend": 1
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "TCC",
+      "entry_id": "aula-17-complexidade-de-tempo-classes-p-e-np",
+      "new_id": "aula-17-complexidade-de-tempo-classes-p-e-np",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 11 - classes de problemas e complexidade\\aula 17 - complexidade de tempo classes p e np.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        49982,
+        56376
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "hierarquia-de-classes-de-complexidade-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "complexidade-de-tempo-e-de-espaco"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "plano-de-ensino",
+      "new_id": "plano-de-ensino",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\sem-secao\\plano de ensino.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10720,
+        6061
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        ""
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-17-np-completude-pdf",
+      "new_id": "aula-17-np-completude",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 12 - np-completude\\aula 17 - np-completude.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        23768,
+        25544
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "teorema-de-cook-levin"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "trabalho-t2-enunciado",
+      "new_id": "trabalho-t2-enunciado",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 13 - trabalho t2\\trabalho t2 - enunciado.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        9274,
+        5770
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "provas-de-np-completude"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "3dm-caetano-gabriel-e-gustavo",
+      "new_id": "3dm-caetano-gabriel-e-gustavo",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 14 - apresentações t2\\3dm - caetano, gabriel e gustavo.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        16780,
+        11940
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "definicao-da-classe"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "cubic-3-edge-coloring",
+      "new_id": "cubic-3-edge-coloring",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 14 - apresentações t2\\cubic 3-edge coloring.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "base_backend",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        19695,
+        1492
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        ""
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "programacao-inteira-01-20260617-154423-0000",
+      "new_id": "programacao-inteira-01-20260617-154423-0000",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 14 - apresentações t2\\programação inteira 01_20260617_154423_0000.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        9369,
+        9284
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf",
+      "new_id": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 2 - funções recursivas primitivas, parciais e totais\\aula 04 - funções computáveis funções recursivas parciais.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        23927,
+        25514
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "t1-enunciado",
+      "new_id": "t1-enunciado",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 3 - operações de minimização e trabalho t1\\t1 - enunciado.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5948,
+        2312
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+      "new_id": "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 4 - teoria de autômatos e introdução a máquinas de turing\\aula 07 - máquinas de turing e linguagens recursivamente enumeráveis.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        27799,
+        25270
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes",
+      "new_id": "aula-08-maquinas-de-turing-como-processadoras-de-funcoes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 5 - codificação de máquinas de turing e equivalência entre modelos\\aula 08 - máquinas de turing como processadoras de funções.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        21689,
+        21713
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf",
+      "new_id": "aula-10-linguagens-reconheciveis-e-linguagens-decidiveis",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 6 - variações de máquinas de turing e linguagens decidíveis\\aula 10 - linguagens reconhecı́veis e linguagens decidı́veis.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        25747,
+        24489
+      ],
+      "gains": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-09",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ],
+      "pred_after": [
+        "bloco-09",
+        "unidade-02-turing-computabilidade",
+        "linguagens-reconheciveis-e-decidiveis"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf",
+      "new_id": "aula-11-o-problema-da-parada-halting-problem-halteproblem",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 7- halteproblem und entscheidungsproblem\\aula 11 - o problema da parada (halting problem, halteproblem).pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        26160,
+        22150
+      ],
+      "gains": [],
+      "losses": [
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-10",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-turing-computabilidade",
+        "conjectura-de-church-turing"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-12-entscheidungsproblem-pdf",
+      "new_id": "aula-12-entscheidungsproblem",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 7- halteproblem und entscheidungsproblem\\aula 12 - entscheidungsproblem.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        23841,
+        26577
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-11",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-13-teorema-de-rice-pdf",
+      "new_id": "aula-13-teorema-de-rice",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 8 - teorema de rice e problema da correspondência de post\\aula 13 - teorema de rice.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12313,
+        14180
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-12",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ],
+      "pred_after": [
+        "bloco-12",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "3d-matching",
+      "new_id": "3d-matching",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 14 - apresentações t2\\3d matching.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        16523,
+        11163
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "definicao-da-classe"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "integer-programming-0001",
+      "new_id": "integer-programming-0001",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 14 - apresentações t2\\integer programming 00.01.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        9656,
+        8278
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-25",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "reducao-polinomial-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-16-classes-de-problemas-e-complexidade-pdf",
+      "new_id": "aula-16-classes-de-problemas-e-complexidade",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 11 - classes de problemas e complexidade\\aula 16 - classes de problemas e complexidade.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        31564,
+        32135
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "hierarquia-de-classes-de-complexidade-de-problemas"
+      ],
+      "pred_after": [
+        "bloco-19",
+        "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+        "hierarquia-de-classes-de-complexidade-de-problemas"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",
+      "new_id": "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 1 - enumerabilidade e argumento da diagonalização de cantor\\aula 01 - apresentação da disciplina, revisão de teoria de conjuntos e enumerabilidade.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        21406,
+        17483
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "conjuntos-enumeraveis"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        ""
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor",
+      "new_id": "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 1 - enumerabilidade e argumento da diagonalização de cantor\\aula 02 - conjuntos enumeráveis e não-enumeráveis; argumento da diagonalização de cantor.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        22098,
+        19002
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "conjuntos-enumeraveis"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "conjuntos-enumeraveis"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-16-exemplo-de-prova-para-revisao",
+      "new_id": "aula-16-exemplo-de-prova-para-revisao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 10 - revisão para p1 e prova p1\\aula 16 - exemplo de prova para revisão.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        4519,
+        4508
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes",
+      "new_id": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 2 - funções recursivas primitivas, parciais e totais\\aula 03 - funções recursivas primitivas e composição de funções.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        25058,
+        25948
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-05-minimizacao-de-funcoes-recursivas-parciais",
+      "new_id": "aula-05-minimizacao-de-funcoes-recursivas-parciais",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 3 - operações de minimização e trabalho t1\\aula 05 - minimização de funções recursivas parciais.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        21822,
+        22092
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "new_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 4 - teoria de autômatos e introdução a máquinas de turing\\aula 06 - revisão alfabeto, cadeia, linguagem, hierarquia de chomsky, lemas e propriedades de autômatos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        36737,
+        34739
+      ],
+      "gains": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        "conjuntos-enumeraveis"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+        ""
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-09-variacoes-de-maquinas-de-turing",
+      "new_id": "aula-09-variacoes-de-maquinas-de-turing",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 6 - variações de máquinas de turing e linguagens decidíveis\\aula 09 - variações de máquinas de turing.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        23768,
+        21562
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ],
+      "pred_after": [
+        "bloco-08",
+        "unidade-02-turing-computabilidade",
+        "maquinas-de-turing"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-14-problema-da-correspondencia-de-post",
+      "new_id": "aula-14-problema-da-correspondencia-de-post",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 8 - teorema de rice e problema da correspondência de post\\aula 14 - problema da correspondência de post.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        16555,
+        16280
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ]
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "aula-15-teoremas-de-incompletude-de-godel",
+      "new_id": "aula-15-teoremas-de-incompletude-de-godel",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\teoria-da-computabilidade-e-complexidade\\semana 9 - teoremas de gödel\\aula 15 - teoremas de incompletude de gödel.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        24433,
+        26196
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-14",
+        "unidade-03-problemas-indecidiveis",
+        "teoremas-de-godel"
+      ],
+      "pred_after": [
+        "bloco-14",
+        "unidade-03-problemas-indecidiveis",
+        "prova-da-indecidibilidade-do-problema-da-parada"
+      ]
+    }
+  ]
+}

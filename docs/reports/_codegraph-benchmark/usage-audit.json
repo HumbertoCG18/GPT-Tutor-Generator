@@ -1,0 +1,7 @@
+{
+  "attempts_with_usage": 176,
+  "input_tokens": 3818768,
+  "cached_input_tokens": 2306176,
+  "output_tokens": 14594,
+  "note": "Includes superseded packets and retries; not a billing amount; smoke without usage excluded"
+}

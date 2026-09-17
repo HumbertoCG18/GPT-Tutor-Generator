@@ -1,0 +1,26 @@
+AULA: 188 golds | concorda: 148 · sem posicao datada: 37 · gold DEPOIS da postagem: 3
+por curso: {'MF': {'concorda': 59, 'sem posicao datada': 2, 'gold DEPOIS da postagem': 1}, 'SO': {'concorda': 27, 'sem posicao datada': 8}, 'IA': {'concorda': 38}, 'ES2': {'sem posicao datada': 1, 'gold DEPOIS da postagem': 2, 'concorda': 24}, 'TCC': {'sem posicao datada': 26}}
+
+DIVERGENCIAS gold x posicao do professor (AULA):
+por categoria: {'trabalhos': 1, 'codigo-professor': 1, 'material-de-aula': 1}
+motor segue: gold 3 | posicao 0 | nenhum 0
+
+  MF t2-2026-1  [trabalhos]  card='TDE Trabalho Discente Efetivo'  label='Definição'
+     POSICAO bloco-11           <- label: Trabalho 1 (06/05/2026):
+             deliverable 05-06..05-06 | 05-06 logica de programas correcao parcial c
+     GOLD    bloco-18           class 06-29..06-29 | 06-29 verificacao de modelos ferramenta aula
+     motor   bloco-18 = gold   -> gold DEPOIS da postagem
+
+  ES2 roteiro1  [codigo-professor]  card='Microsserviços'  label='Código'
+     POSICAO bloco-01           <- label: Semana 16/03/2026 a 20/03/2026: (20/03/2026): Arqu...
+             class 03-06..03-20 | 03-06 apresentacao da disciplina revisao de ; 03-13 arquitetura baseada em servicos monoli; 03-20 arquitetura baseada em servicos
+     GOLD    bloco-02           class 03-27..03-27 | 03-27 microsservicos no spring introducao au
+     motor   bloco-02 = gold   -> gold DEPOIS da postagem
+
+  ES2 roteiro1-introducao  [material-de-aula]  card='Microsserviços'  label='Roteiro 1'
+     POSICAO bloco-01           <- label: Semana 16/03/2026 a 20/03/2026: (20/03/2026): Arqu...
+             class 03-06..03-20 | 03-06 apresentacao da disciplina revisao de ; 03-13 arquitetura baseada em servicos monoli; 03-20 arquitetura baseada em servicos
+     GOLD    bloco-02           class 03-27..03-27 | 03-27 microsservicos no spring introducao au
+     motor   bloco-02 = gold   -> gold DEPOIS da postagem
+
+CSV: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-02\auditoria_gold.csv

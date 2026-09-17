@@ -1,0 +1,9 @@
+{
+  "id": "L1",
+  "arm": "baseline",
+  "rep": 0,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 180.11347650000243,
+  "error": "timeout"
+}

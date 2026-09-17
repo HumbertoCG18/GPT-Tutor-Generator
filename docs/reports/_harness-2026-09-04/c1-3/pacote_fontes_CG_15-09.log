@@ -1,0 +1,180 @@
+[CG] inventario=86 tipos={'html': 48, 'pdf': 21, 'zip': 14, 'code': 3} metadata=['contents.json', '.moodle_nomes.json']
+[CG] 0/86 intro
+[CG] 1/86 OrigensDaComputacaoGrafica
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 2/86 pagina-com-videos-sobre-segmentacao-de-imagens-d0627f
+[CG] 3/86 pagina-com-videos-sobre-segmentacao-por-texturas-e03566
+[CG] 4/86 Segmentacao.pptx
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 5/86 SegmentacaoDeTexturas
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 6/86 MorfologiaMatematica.pptx
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 7/86 pagina-com-videos-sobre-morfologia-matematica-06265a
+[CG] 8/86 CSG
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 9/86 Modelagem3D
+[CG] 10/86 paginas-com-videos-sobre-modelagem-geometrica-f2614a
+[CG] 11/86 atividade
+[CG] 12/86 Basico3D-PY
+[CG] 13/86 OpenGL3D
+[CG] 14/86 OpenGL3DCPP-VDI
+[CG] 15/86 OpenGL3DCPP
+[CG] 16/86 pagina-com-videos-sobre-visualizacao-3d-35a833
+[CG] 17/86 Vis3d
+[CG] 18/86 Basico3D-CPP
+[CG] 19/86 Basico3D-PY
+Entry id collision: basico3d-py -> basico3d-py-zip (ext=zip folder=14 - Exercícios sobre Modelagem Geométrica)
+[CG] 20/86 ExercicioDeModelagem
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 21/86 ElemOculto
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 22/86 ExemploZbuffer
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 23/86 pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a
+[CG] 24/86 Iluminacao
+[CG] 25/86 pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea
+[CG] 26/86 ProgramaBasico3D
+[CG] 27/86 MapTextures
+[CG] 28/86 pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3
+[CG] 29/86 exercicios
+[CG] 30/86 OpenGL-CPP
+[CG] 31/86 OpenGL-PY
+[CG] 32/86 OpenGLBasico
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 33/86 Texturas_v3
+[CG] 34/86 ExemploDeManipulacaoDeImagens
+[CG] 35/86 exercicio-com-animacao
+[CG] 36/86 exercicio-com-poligonos
+[CG] 37/86 exercicio-de-animacao-foguete
+[CG] 38/86 FundamentosMatematicos
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+  [latex-check] LaTeX possivelmente corrompido em FundamentosMatematicos (score: 30/100).
+[CG] 39/86 Matematica
+[CG] 40/86 pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-g
+[CG] 41/86 Colisao
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+  [latex-check] LaTeX possivelmente corrompido em Colisao (score: 30/100).
+[CG] 42/86 videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84
+[CG] 43/86 Domina
+[CG] 44/86 GeomComp
+[CG] 45/86 pagina-com-videos-sobre-geometria-computacional-ebca9a
+[CG] 46/86 PlaneSweep
+[CG] 47/86 Slab
+[CG] 48/86 Animacao-v2
+[CG] 49/86 exercicios-teoricos-sobre-processo-de-visualizacao-2d
+[CG] 50/86 Instanciamento
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 51/86 Mapeamento
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 52/86 pagina-com-videos-sobre-instanciamento
+[CG] 53/86 pagina-com-videos-sobre-mapeamento-9f410e
+[CG] 54/86 pagina-com-videos-sobre-recorte-e257d3
+[CG] 55/86 Recorte
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 56/86 TransformacoesGeometricas
+[CG] 57/86 TransformacoesGL
+[CG] 58/86 Vis2d
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 59/86 Bezier-Animacao
+[CG] 60/86 Bezier-CPP
+[CG] 61/86 Bezier-PY
+[CG] 62/86 Bezier-Python
+[CG] 63/86 Curvas
+[CG] 64/86 CurvasParametricas
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 65/86 exercicios-sobre-curvas
+[CG] 66/86 pagina-com-videos-sobre-curvas-parametricas-63d902
+[CG] 67/86 ExercicioDuasCores
+[CG] 68/86 FloodFill
+[CG] 69/86 IMG
+[CG] 70/86 pagina-com-videos-sobre-manipulacao-de-imagens-61ddde
+[CG] 71/86 RemocaoDeRuido
+[CG] 72/86 exercicios-de-processamento-de-imagens
+[CG] 73/86 IntroducaoProcImg
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 74/86 pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61
+[CG] 75/86 exercicios-de-geometria-computacional
+[CG] 76/86 exercicios-sobre-curvas
+Entry id collision: exercicios-sobre-curvas -> exercicios-sobre-curvas-html (ext=html folder=Exercícios 2D)
+[CG] 77/86 exercicios-teoricos-sobre-processo-de-visualizacao-2d
+Entry id collision: exercicios-teoricos-sobre-processo-de-visualizacao-2d -> exercicios-teoricos-sobre-processo-de-visualizacao-2d-html (ext=html folder=Exercícios 2D)
+[CG] 78/86 ExerciciosFundamentosMatematicos
+[CG] 79/86 resolucao-de-prova-de-computacao-grafica-2d
+[CG] 80/86 ListaDeExercícios2026-1
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 81/86 Cronograma2026-2
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 82/86 PlanoDeEnsino-4645Z-04-Fundamentos de Computação Gráfica
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 83/86 VideosCG-v2
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] -1/-1 
+[CG] 84/86 resolucao-de-prova-de-computacao-grafica-2d
+Entry id collision: resolucao-de-prova-de-computacao-grafica-2d -> resolucao-de-prova-de-computacao-grafica-2d-html (ext=html folder=Provas Resolvidas)
+[CG] 85/86 resolucao-de-prova-de-computacao-grafica-3d
+[CG] 86/86 
+[CG] capture backfills: {'labels': 0, 'posting': 32, 'lessons': 0} {'sections': 31, 'card_labels': 0}
+[CG] resultado={'seconds': 979.96, 'calls': {}, 'failed_entries': [], 'completed': True}

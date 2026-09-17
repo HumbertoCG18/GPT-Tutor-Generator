@@ -1,0 +1,10 @@
+{
+  "workflow.md": "70ba22cb4a5df4f1e7d6c629462139ea481b80d40a8c62b9658da25f4529d00a",
+  "task-state.template.md": "4c01c036ca9e17b6e2da7eca0ec7dce18bf78046a3aafcf2cbe5967c40f6cd1e",
+  "agents/README.md": "ca67e5aa29ba84145b340f59fd06d145071738b3d518cdeb9893da68bbb8d5f1",
+  "agents/agy-doc-updater.md": "9d43325c46db021960815acce4e919b83097cebff41709cfca9eae9a637ed834",
+  "agents/agy-researcher.md": "825062461dd630bf52773d3dfe440eb857ad37bf8c25adbabe98558da5030786",
+  "agents/tdd-guide.md": "979afbb40c42bfdd02fc308c130d7e257f5d6dd5f6531ef2562644862f6b7771",
+  "agents/python-reviewer.md": "d2180b115f5840383268c13d5d075b0541fe7ef2a1ac8ecd5d835266ca1b27ce",
+  "evals/research-output.schema.json": "379a6db0ce2bfa97179127690fb1e2d4b4968d493643d8885b3282a1e12f6480"
+}

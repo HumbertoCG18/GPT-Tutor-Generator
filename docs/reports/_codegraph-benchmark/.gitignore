@@ -1,0 +1,7 @@
+snapshot/
+tools/
+agent-work/
+state/
+mutation/
+native-sync/
+__pycache__/

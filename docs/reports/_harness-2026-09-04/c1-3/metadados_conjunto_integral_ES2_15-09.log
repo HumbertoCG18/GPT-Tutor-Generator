@@ -1,0 +1,3 @@
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+{"course": "ES2", "arm": "conjunto", "calls": [], "changed_fields": {"posting_date": 35, "posting_date_created": 35, "moodle_label": 35, "moodle_section_index": 35, "moodle_module_index": 35, "moodle_week_label": 35}, "prediction_changes": 19, "same_text": true, "same_taxonomy": true, "same_entries": true, "valid": true}

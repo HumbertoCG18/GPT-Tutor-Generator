@@ -1,0 +1,33 @@
+
+########## REGIME produto (C:\Users\Humberto\Documents\GitHub)
+  MF   bloco  59/ 60 (posicao unica   6/  7) | bloco2   2/  2 (unico  0/ 0) | unidade  24/ 24 (circ  0) | sub   0/  0 (circ  0, vazia  0)
+  SO   bloco  28/ 30 (posicao unica  19/ 19) | bloco2   1/  1 (unico  1/ 1) | unidade   8/ 15 (circ  0) | sub   2/ 13 (circ  1, vazia  3)
+  IA   bloco  54/ 54 (posicao unica  39/ 39) | bloco2   0/  0 (unico  0/ 0) | unidade   9/  9 (circ  0) | sub   9/  9 (circ  0, vazia  0)
+  ES2  bloco  27/ 29 (posicao unica  21/ 23) | bloco2   0/  0 (unico  0/ 0) | unidade   2/  2 (circ  0) | sub   0/  0 (circ  0, vazia  0)
+  TCC  bloco  20/ 22 (posicao unica   6/  6) | bloco2   0/  1 (unico  0/ 1) | unidade   6/  7 (circ  0) | sub   5/  7 (circ  0, vazia  0)
+  CG   bloco   0/  0 (posicao unica   0/  0) | bloco2  58/ 59 (unico 58/59) | unidade  44/ 44 (circ  0) | sub  15/ 28 (circ  2, vazia  0)
+  LR   bloco   0/  0 (posicao unica   0/  0) | bloco2   3/  3 (unico  3/ 3) | unidade   2/  2 (circ  0) | sub   2/  2 (circ  0, vazia  0)
+  FR   bloco   0/  0 (posicao unica   0/  0) | bloco2   0/  0 (unico  0/ 0) | unidade  19/ 19 (circ 19) | sub   0/ 14 (circ  0, vazia  0)
+  TOT  bloco 188/195 (posicao unica  91/ 94) | bloco2  64/ 66 (unico 62/64) | unidade 114/122 (circ 19) | sub  33/ 73 (circ  3, vazia  3)
+CALIBRACAO — onde a SECAO nomeia a unidade E existe gold, quem acerta?
+       casos  motor=gold  secao=gold  os dois  so motor  so secao  nenhum
+SO        13          13           8        8         5         0       0
+ES2        1           1           1        1         0         0       0
+TCC        6           6           6        6         0         0       0
+MF        24          24          24       24         0         0       0
+TOT       44          44          39       39         5         0       0
+
+  precisao do MOTOR onde a secao fala: 100%
+  precisao da SECAO (a regua sem gold): 89%
+
+OS CASOS EM QUE MOTOR E SECAO DIVERGEM (quem o gold da razao):
+  SO   0704-laminas-comunicacao-e-sin secao=Sincronização e Comunicação de     motor=04-deadlock        regua=03-programacao-c   gold=04-deadlock        -> MOTOR | B
+  SO   0904-laminas-semaforos         secao=Sincronização e Comunicação de     motor=04-deadlock        regua=03-programacao-c   gold=04-deadlock        -> MOTOR | B
+  SO   2403-escalonamento-de-processo secao=Gerência de Processos CPU          motor=02-gerencia-do-p   regua=03-programacao-c   gold=02-gerencia-do-p   -> MOTOR | B
+  SO   2603-algoritmos-de-escalonamen secao=Gerência de Processos CPU          motor=02-gerencia-do-p   regua=03-programacao-c   gold=02-gerencia-do-p   -> MOTOR | B
+  SO   exercicios                     secao=Gerência de Processos CPU          motor=02-gerencia-do-p   regua=03-programacao-c   gold=02-gerencia-do-p   -> MOTOR | B
+
+COBERTURA DA REGUA SEM GOLD NOS CURSOS SEM GOLD DE UNIDADE:
+  CG   materiais com unidade= 93 · a regua fala em  44 ( 47%) · concordam 44/44  [caminho A (confiavel): 16/16 · caminho B (refutado 07/09): 28/28]
+  LR   materiais com unidade=  7 · a regua fala em   2 ( 29%) · concordam 2/2  [caminho A (confiavel): 0/0 · caminho B (refutado 07/09): 2/2]
+  FR   materiais com unidade= 22 · a regua fala em  19 ( 86%) · concordam 19/19  [caminho A (confiavel): 19/19 · caminho B (refutado 07/09): 0/0]

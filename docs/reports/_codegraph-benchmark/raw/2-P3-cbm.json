@@ -1,0 +1,54 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "search_graph",
+      "{\"project\": \"codegraph-pilot-20260915\", \"name_pattern\": \".*_on_sweep.*\", \"include_connected\": true, \"limit\": 30}"
+    ],
+    "seconds": 5.316895399999339,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"total: 1\\nresults: 1  (rows: name label lines in out connected; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel (src/ui/maintenance_panel.py):\\n  _on_sweep Method 147-184 1 2 _log_line;_clear_log\\nhas_more: false\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli search_graph' is deprecated and will be removed in a future release; use flags (run 'cli search_graph --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "trace_path",
+      "{\"project\": \"codegraph-pilot-20260915\", \"function_name\": \"_on_sweep\", \"direction\": \"both\", \"depth\": 2, \"limit\": 40, \"include_evidence\": true}"
+    ],
+    "seconds": 3.497527399995306,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"function: _on_sweep\\ndirection: both\\ncallees_total: 3\\ncallees: 3  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.models.core.SubjectStore:\\n  delete 2 heuristic 0.38\\ncodegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel:\\n  _clear_log 1 heuristic 0.38\\n  _log_line 1 lsp 0.90\\ncallers_total: 0\\ncallers: 0  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli trace_path' is deprecated and will be removed in a future release; use flags (run 'cli trace_path --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "search_graph",
+      "{\"project\": \"codegraph-pilot-20260915\", \"name_pattern\": \".*sweep_orphans.*\", \"include_connected\": true, \"limit\": 30}"
+    ],
+    "seconds": 3.7963231000030646,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"total: 2\\nresults: 2  (rows: name label lines in out connected; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine.RepoBuilder (src/builder/engine.py):\\n  sweep_orphans Method 2218-2219 1 1 maintenance_panel.py;sweep_orphans\\ncodegraph-pilot-20260915.src.builder.ops.lifecycle_ops (src/builder/ops/lifecycle_ops.py):\\n  sweep_orphans Function 263-310 1 9 sweep_orphans;len;append;write_json_manifest;_effective_course_meta;_prune_stale_image_curation;_prune_stale_code_curation;_regenerate_pedagogical_files;load\\nhas_more: false\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli search_graph' is deprecated and will be removed in a future release; use flags (run 'cli search_graph --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "trace_path",
+      "{\"project\": \"codegraph-pilot-20260915\", \"function_name\": \"sweep_orphans\", \"direction\": \"both\", \"depth\": 2, \"limit\": 40, \"include_evidence\": true}"
+    ],
+    "seconds": 4.016838300005475,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"status\\\":\\\"ambiguous\\\",\\\"message\\\":\\\"2 matches for \\\\\\\"sweep_orphans\\\\\\\". Pick a qualified_name from suggestions below, or use search_graph(name_pattern=\\\\\\\"...\\\\\\\") to narrow results.\\\",\\\"suggestions\\\":[{\\\"qualified_name\\\":\\\"codegraph-pilot-20260915.src.builder.ops.lifecycle_ops.sweep_orphans\\\",\\\"name\\\":\\\"sweep_orphans\\\",\\\"label\\\":\\\"Function\\\",\\\"file_path\\\":\\\"src/builder/ops/lifecycle_ops.py\\\"},{\\\"qualified_name\\\":\\\"codegraph-pilot-20260915.src.builder.engine.RepoBuilder.sweep_orphans\\\",\\\"name\\\":\\\"sweep_orphans\\\",\\\"label\\\":\\\"Method\\\",\\\"file_path\\\":\\\"src/builder/engine.py\\\"}]}\"}],\"structuredContent\":{\"status\":\"ambiguous\",\"message\":\"2 matches for \\\"sweep_orphans\\\". Pick a qualified_name from suggestions below, or use search_graph(name_pattern=\\\"...\\\") to narrow results.\",\"suggestions\":[{\"qualified_name\":\"codegraph-pilot-20260915.src.builder.ops.lifecycle_ops.sweep_orphans\",\"name\":\"sweep_orphans\",\"label\":\"Function\",\"file_path\":\"src/builder/ops/lifecycle_ops.py\"},{\"qualified_name\":\"codegraph-pilot-20260915.src.builder.engine.RepoBuilder.sweep_orphans\",\"name\":\"sweep_orphans\",\"label\":\"Method\",\"file_path\":\"src/builder/engine.py\"}]},\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli trace_path' is deprecated and will be removed in a future release; use flags (run 'cli trace_path --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  }
+]

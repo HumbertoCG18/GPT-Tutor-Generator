@@ -1,0 +1,7 @@
+  1.2 Conceitos: -['Mapeamento de Texturas', 'OpenGL', 'OpenGL 3D'] +[]
+  1.3 Áreas relacionadas: -['Manipulação de Imagens', 'Morfologia Matemática'] +[]
+  2.3 Algoritmos de detecção e cálculo de intersecção: -[] +['Colisão']
+  2.5 Algoritmos de Geometria Computacional: -[] +['GeomComp']
+  3.5 Segmentação: -[] +['FloodFill']
+  6.4.3 Algoritmo _Z-Buffer_: -['Z-Buffer'] +[]
+CG: termos 86 -> 83; backup .glossary_curation.llm.json.bak-11-09

@@ -1,0 +1,6 @@
+MF: comuns=62 ausentes=4 ambiguos=0 novas_origens=5
+  bloco: base=59/66 novo=45/66 ganhos=1 perdas=15 | comuns=55->45/62
+  unidade: base=61/66 novo=59/66 ganhos=1 perdas=3 | comuns=60->59/62
+  sub_aceito: base=46/58 novo=29/58 ganhos=2 perdas=19 | comuns=46->29/57
+  sub_primario: base=25/58 novo=25/58 ganhos=4 perdas=4 | comuns=25->25/57
+  diferencas observadas (nao causas isoladas): {'moodle_label': 61, 'posting_date': 61, 'manual_unit_slug': 13, 'manual_timeline_block_id': 19, 'texto_extraido': 45, 'category': 19, 'title': 12, 'base_backend': 2}

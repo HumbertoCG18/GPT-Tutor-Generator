@@ -1,0 +1,20 @@
+ANTES    SO   100%  39/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub  15/ 15 | fila   9 | conf-err  0
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+SEM-CUR  SO   100%  33/ 39 | bloco  39/ 39 | unidade  37/ 37 | sub   9/ 15 | fila  16 | conf-err  3   (removidos 4 termos curados)
+ANTES    IA   100%  42/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub  39/ 39 | fila   4 | conf-err  0
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+SEM-CUR  IA   100%   7/ 42 | bloco  42/ 42 | unidade  42/ 42 | sub   4/ 39 | fila   5 | conf-err 34   (removidos 4 termos curados)
+ANTES    ES2  100%  22/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub  21/ 28 | fila  12 | conf-err  3
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+SEM-CUR  ES2  100%   6/ 31 | bloco  27/ 28 | unidade  21/ 28 | sub   5/ 28 | fila  24 | conf-err  5   (removidos 5 termos curados)
+ANTES    TCC  100%  27/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub  11/ 11 | fila   6 | conf-err  0
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+SEM-CUR  TCC  100%  24/ 27 | bloco  27/ 27 | unidade  18/ 18 | sub   8/ 11 | fila   5 | conf-err  2   (removidos 4 termos curados)
+
+ANTES    TOT  100% 130/139 | bloco 135/136 | unidade 118/125 | sub  86/ 93 | fila  31 | conf-err  3
+SEM-CUR  TOT  100%  70/139 | bloco 135/136 | unidade 118/125 | sub  26/ 93 | fila  50 | conf-err 44
+[fim] 148s

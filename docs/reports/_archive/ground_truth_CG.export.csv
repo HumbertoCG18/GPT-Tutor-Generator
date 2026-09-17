@@ -1,0 +1,62 @@
+﻿id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid,nota
+origens-da-computacao-grafica,origens-da-computacao-grafica.pdf,bloco-01,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-04,yes,no,26afa1ef-6742-4b2f-b9f4-b596e8ad6de9,
+origensdacomputacaografica,OrigensDaComputacaoGrafica.pdf,bloco-01,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-04,yes,no,26afa1ef-6742-4b2f-b9f4-b596e8ad6de9,
+exercicios,exercicios.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+opengl-cpp,OpenGL-CPP.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+opengl-py,OpenGL-PY.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+openglbasico,OpenGLBasico.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+texturas-v3,Texturas_v3.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+exemplodemanipulacaodeimagens,ExemploDeManipulacaoDeImagens.cpp,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+exercicio-com-animacao,exercicio-com-animacao.pdf,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+exercicio-com-poligonos,exercicio-com-poligonos.pdf,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+exercicio-de-animacao-foguete,exercicio-de-animacao-foguete.pdf,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+fundamentosmatematicos,FundamentosMatematicos.pdf,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+matematica,Matematica.cpp,bloco-03,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-11,yes,no,419072fa-d344-4461-89c5-da8a978750f2,
+colisao,Colisao.pdf,bloco-04,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-18,yes,no,fa1a2e23-cf8e-49bf-a2ea-6b8c5c0a710b,
+computacao-grafica-geometria-computacional-plane-sweep,computacao-grafica-geometria-computacional-plane-sweep.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,"ambiguo: ['bloco-15', 'bloco-05']"
+disciplina-de-computacao-grafica-geometria-computacional,disciplina-de-computacao-grafica-geometria-computacional.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,"ambiguo: ['bloco-15', 'bloco-05']"
+geometria-computacional-dominancia,geometria-computacional-dominancia.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,"ambiguo: ['bloco-15', 'bloco-05']"
+geometria-computacional-metodo-das-faixas,geometria-computacional-metodo-das-faixas.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,"ambiguo: ['bloco-15', 'bloco-05']"
+animacao-v2,Animacao-v2.zip,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+exercicios-teoricos-sobre-processo-de-visualizacao-2d,exercicios-teoricos-sobre-processo-de-visualizacao-2d.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+instanciamento,Instanciamento.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+mapeamento,Mapeamento.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+pagina-com-videos-sobre-instanciamento,pagina-com-videos-sobre-instanciamento.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+recorte,Recorte.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+transformacoes-geometricas-em-opengl,transformacoes-geometricas-em-opengl.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+transformacoesgeometricas,TransformacoesGeometricas.zip,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+vis2d,Vis2d.pdf,bloco-06,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,08-25,yes,no,b33accaf-8a2c-4dc2-88e0-b3fd8fa45bad,
+bezier-animacao,Bezier-Animacao.zip,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+bezier-cpp,Bezier-CPP.zip,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+bezier-py,Bezier-PY.zip,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+bezier-python,Bezier-Python.zip,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+computacao-grafica-curvas-parametricas,computacao-grafica-curvas-parametricas.pdf,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+curvasparametricas,CurvasParametricas.pdf,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+exercicios-sobre-curvas,exercicios-sobre-curvas.pdf,bloco-13,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-06,yes,no,858d8c04-a0c2-452c-8455-f453011041b1,
+computacao-grafica-exercicio-de-prenchimento-de-area,computacao-grafica-exercicio-de-prenchimento-de-area.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens,computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+computacao-grafica-i-exercicio-sobre-filtros,computacao-grafica-i-exercicio-sobre-filtros.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+computacao-grafica-manipulacao-de-imagens,computacao-grafica-manipulacao-de-imagens.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+exercicios-de-processamento-de-imagens,exercicios-de-processamento-de-imagens.pdf,bloco-07,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,09-01,yes,no,9fc18a1f-fdcb-462f-9198-1f22c629ee0a,
+introducaoprocimg,IntroducaoProcImg.pdf,bloco-07,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,09-01,yes,no,9fc18a1f-fdcb-462f-9198-1f22c629ee0a,
+segmentacaopptx,Segmentacao.pptx.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+segmentacaodetexturas,SegmentacaoDeTexturas.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+morfologiamatematicapptx,MorfologiaMatematica.pptx.pdf,bloco-08,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,09-10,yes,no,427001fa-d7be-4491-b4c5-0375ae88de61,
+computacao-grafica-modelagem-de-solidos,computacao-grafica-modelagem-de-solidos.pdf,bloco-15,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-15,yes,no,48a4f134-20b9-48cc-8dd7-04cdfd3d55d2,
+csg,CSG.pdf,bloco-15,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-15,yes,no,48a4f134-20b9-48cc-8dd7-04cdfd3d55d2,
+atividade,atividade.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+basico3d-py,Basico3D-PY.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+biblioteca-grafica-opengl,biblioteca-grafica-opengl.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+computacao-grafica-opengl-navegacao-em-ambientes-virtuais,computacao-grafica-opengl-navegacao-em-ambientes-virtuais.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+computacao-grafica-visualizacao-3d,computacao-grafica-visualizacao-3d.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+opengl-3d,opengl-3d.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+opengl3dcpp-vdi,OpenGL3DCPP-VDI.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+opengl3dcpp,OpenGL3DCPP.zip,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+basico3d-cpp,Basico3D-CPP.zip,bloco-15,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-15,yes,no,48a4f134-20b9-48cc-8dd7-04cdfd3d55d2,
+basico3d-py-zip,Basico3D-PY.zip,bloco-15,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-15,yes,no,48a4f134-20b9-48cc-8dd7-04cdfd3d55d2,
+exerciciodemodelagem,ExercicioDeModelagem.pdf,bloco-15,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,10-15,yes,no,48a4f134-20b9-48cc-8dd7-04cdfd3d55d2,
+elemoculto,ElemOculto.pdf,bloco-20,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,11-03,yes,no,41c1fa7a-87db-420c-88d4-d1b6a9a7577e,
+exemplozbuffer,ExemploZbuffer.pdf,bloco-20,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,11-03,yes,no,41c1fa7a-87db-420c-88d4-d1b6a9a7577e,
+modelos-de-iluminacao,modelos-de-iluminacao.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+programabasico3d,ProgramaBasico3D.cpp,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado
+mapeamento-de-texturas-em-opengl,mapeamento-de-texturas-em-opengl.pdf,,,,,"estrutura:secao-moodle->topico-sarc (proposto-claude 02/09, REVISAR)",clean,,no,no,,secao sem bloco casado

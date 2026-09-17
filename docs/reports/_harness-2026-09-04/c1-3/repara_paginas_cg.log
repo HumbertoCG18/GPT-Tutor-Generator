@@ -1,0 +1,56 @@
+entries url de mod/page no CG: 16
+  pagina-com-videos-sobre-fundamentos-matematicos-pa <- 3770139-pagina-com-videos-sobre-fundamentos-matematicos-para (101 palavras) -> stash/3 - Fundamentos Matemáticos /pagina-com-videos-sobre-fundam.html
+  videos-sobre-algoritmos-de-detecao-de-colisao-bd7d <- 3770147-videos-sobre-algoritmos-de-detecao-de-colisao.html (147 palavras) -> stash/4 - Detecção de Colisão/videos-sobre-algoritmos-de-det.html
+  pagina-com-videos-sobre-geometria-computacional-eb <- 3770149-pagina-com-videos-sobre-geometria-computacional.html (37 palavras) -> stash/5 - Geometria Computacional/pagina-com-videos-sobre-geomet.html
+  pagina-com-videos-sobre-recorte-e257d3             <- 3770157-pagina-com-videos-sobre-recorte.html (14 palavras) -> stash/6 - Processo de Visualização/pagina-com-videos-sobre-recort.html
+  pagina-com-videos-sobre-mapeamento-9f410e          <- 3770161-pagina-com-videos-sobre-mapeamento.html (7 palavras) -> stash/6 - Processo de Visualização/pagina-com-videos-sobre-mapeam.html
+  pagina-com-videos-sobre-curvas-parametricas-63d902 <- 3770170-pagina-com-videos-sobre-curvas-parametricas.html (130 palavras) -> stash/7 - Curvas Paramétricas/pagina-com-videos-sobre-curvas.html
+  pagina-com-videos-sobre-manipulacao-de-imagens-61d <- 3770188-pagina-com-videos-sobre-manipulacao-de-imagens.html (83 palavras) -> stash/8 - Manipulação de Imagens/pagina-com-videos-sobre-manipu.html
+  pagina-com-videos-sobre-introducao-ao-processament <- 3770194-pagina-com-videos-sobre-introducao-ao-processamento- (130 palavras) -> stash/9 - Introdução ao Processame/pagina-com-videos-sobre-introd.html
+  pagina-com-videos-sobre-segmentacao-de-imagens-d06 <- 3770197-pagina-com-videos-sobre-segmentacao-de-imagens.html (62 palavras) -> stash/10 - Segmentação de Imagens/pagina-com-videos-sobre-segmen.html
+  pagina-com-videos-sobre-segmentacao-por-texturas-e <- 3770198-pagina-com-videos-sobre-segmentacao-por-texturas.htm (113 palavras) -> stash/10 - Segmentação de Imagens/pagina-com-videos-sobre-segmen.html
+  pagina-com-videos-sobre-morfologia-matematica-0626 <- 3770202-pagina-com-videos-sobre-morfologia-matematica.html (52 palavras) -> stash/11 - Morfologia Matemática/pagina-com-videos-sobre-morfol.html
+  paginas-com-videos-sobre-modelagem-geometrica-f261 <- 3770208-paginas-com-videos-sobre-modelagem-geometrica.html (134 palavras) -> stash/12 - Modelagem Geométrica/paginas-com-videos-sobre-model.html
+  pagina-com-videos-sobre-visualizacao-3d-35a833     <- 3770212-pagina-com-videos-sobre-visualizacao-3d.html (187 palavras) -> stash/13 - Computação Gráfica 3D/pagina-com-videos-sobre-visual.html
+  pagina-com-videos-sobre-remocao-de-elementos-ocult <- 3770222-pagina-com-videos-sobre-remocao-de-elementos-ocultos (58 palavras) -> stash/15 - Remoção de Elementos Oc/pagina-com-videos-sobre-remoca.html
+  pagina-com-videos-sobre-sintese-de-imagens-realist <- 3770226-pagina-com-videos-sobre-sintese-de-imagens-realistic (144 palavras) -> stash/16 - Síntese de Imagens Real/pagina-com-videos-sobre-sintes.html
+  pagina-com-videos-sobre-mapeamento-de-texturas-07b <- 3770228-pagina-com-videos-sobre-mapeamento-de-texturas.html (33 palavras) -> stash/17 - Mapeamento de Texturas/pagina-com-videos-sobre-mapeam.html
+com HTML salvo: 16 · sem: []
+  (1/16) Página com Vídeos sobre Fundamentos Matemáticos para Computa
+  (2/16) Vídeos sobre Algoritmos de Deteção de Colisão
+  (3/16) Página com Videos Sobre Geometria Computacional
+  (4/16) Página com Vídeos sobre RECORTE
+  (5/16) Página com Vídeos sobre Mapeamento
+  (6/16) Página com Vídeos sobre Curvas Paramétricas
+  (7/16) Página com Vídeos sobre Manipulação de Imagens
+  (8/16) Página com Vídeos sobre Introdução ao Processamento de Image
+  (9/16) Página com Vídeos sobre Segmentação de Imagens
+  (10/16) Página com Vídeos sobre Segmentação por Texturas
+  (11/16) Página com Vídeos sobre Morfologia Matemática
+  (12/16) Páginas com Vídeos sobre Modelagem Geométrica
+  (13/16) Página com Vídeos sobre Visualização 3D
+  (14/16) Página com Vídeos sobre Remoção de Elementos Ocultos
+  (15/16) Página com Vídeos sobre Síntese de Imagens Realísticas
+  (16/16) Página com Vídeos sobre Mapeamento de Texturas
+  (17/16) 
+falhas: []
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+  pagina-com-videos-sobre-fundamentos-matematico type=html  chars=  1524 login=nao sub=algoritmos-de-poligonos unit=damentos-matematicos
+  videos-sobre-algoritmos-de-detecao-de-colisao- type=html  chars=  2281 login=nao sub=eccao-e-calculo-de-interseccao unit=damentos-matematicos
+  pagina-com-videos-sobre-geometria-computaciona type=html  chars=   534 login=nao sub=mos-de-geometria-computacional unit=damentos-matematicos
+  pagina-com-videos-sobre-recorte-e257d3         type=html  chars=   275 login=nao sub=recorte unit=o-de-visualizacao-2d
+  pagina-com-videos-sobre-mapeamento-9f410e      type=html  chars=   191 login=nao sub=- unit=o-de-visualizacao-2d
+  pagina-com-videos-sobre-curvas-parametricas-63 type=html  chars=  1670 login=nao sub=hermite unit=modelagem-de-objetos
+  pagina-com-videos-sobre-manipulacao-de-imagens type=html  chars=  1101 login=nao sub=segmentacao unit=-visao-computacional
+  pagina-com-videos-sobre-introducao-ao-processa type=html  chars=  1756 login=nao sub=filtros unit=-visao-computacional
+  pagina-com-videos-sobre-segmentacao-de-imagens type=html  chars=   852 login=nao sub=segmentacao unit=-visao-computacional
+  pagina-com-videos-sobre-segmentacao-por-textur type=html  chars=  1332 login=nao sub=segmentacao unit=-visao-computacional
+  pagina-com-videos-sobre-morfologia-matematica- type=html  chars=   727 login=nao sub=segmentacao unit=-visao-computacional
+  paginas-com-videos-sobre-modelagem-geometrica- type=html  chars=  1391 login=nao sub=ometria-solida-construtiva-csg unit=modelagem-de-objetos
+  pagina-com-videos-sobre-visualizacao-3d-35a833 type=html  chars=  1895 login=nao sub=paralela unit=o-de-visualizacao-3d
+  pagina-com-videos-sobre-remocao-de-elementos-o type=html  chars=   865 login=nao sub=e-remocao-de-elementos-ocultos unit=o-de-visualizacao-3d
+  pagina-com-videos-sobre-sintese-de-imagens-rea type=html  chars=  1478 login=nao sub=exao-ambiente-difusa-especular unit=-imagens-realisticas
+  pagina-com-videos-sobre-mapeamento-de-texturas type=html  chars=   512 login=nao sub=- unit=o-de-visualizacao-2d
+git status (linhas): 6
+[fim]

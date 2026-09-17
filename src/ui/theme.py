@@ -84,6 +84,14 @@ CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
 class AppConfig:
     """Manages persistent app configuration via ~/.gpt_tutor_config.json."""
 
+    # Migrações de modelo por (vision_backend, vision_model antigo) -> novo.
+    # Tabela em vez de if inline: nova migração = nova entrada, sem outra condicional.
+    _MODEL_MIGRATIONS: Dict[tuple, str] = {
+        ("ollama", "qwen3-vl"): "qwen3-vl:235b-cloud",
+        ("ollama", "qwen2.5vl:7b"): "qwen3-vl:235b-cloud",
+        ("ollama", "qwen3-vl:8b"): "qwen3-vl:235b-cloud",
+    }
+
     DEFAULTS: Dict[str, object] = {
         "theme": "dark",
         "default_mode": "auto",
@@ -99,14 +107,13 @@ class AppConfig:
         "marker_llm_model": "qwen3-vl:8b",
         "marker_torch_device": "auto",
         "prevent_sleep_during_build": True,
-        "font_size": 10,
         "vision_backend": "ollama",
         "vision_model": "qwen3-vl:235b-cloud",
         "vision_model_quantization": "default",
         "ollama_base_url": "http://localhost:11434",
         "image_description_source": "ollama",
         "gemini_api_key": "",
-        "gemini_model": "gemini-2.5-flash",
+        "gemini_model": "gemini-3.5-flash",
         "gemini_auto_summarize": False,
     }
 
@@ -119,8 +126,10 @@ class AppConfig:
             if CONFIG_PATH.exists():
                 stored = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
                 self.data.update({k: v for k, v in stored.items() if k in self.DEFAULTS})
-                if self.data.get("vision_backend") == "ollama" and self.data.get("vision_model") in {"qwen3-vl", "qwen2.5vl:7b", "qwen3-vl:8b"}:
-                    self.data["vision_model"] = "qwen3-vl:235b-cloud"
+                migration_key = (self.data.get("vision_backend"), self.data.get("vision_model"))
+                new_model = self._MODEL_MIGRATIONS.get(migration_key)
+                if new_model:
+                    self.data["vision_model"] = new_model
         except Exception:
             pass
 

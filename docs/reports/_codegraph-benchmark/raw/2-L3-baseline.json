@@ -1,0 +1,16 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "_detect_orphans",
+      "src"
+    ],
+    "seconds": 0.02319809999607969,
+    "returncode": 0,
+    "stdout": "src\\ui\\maintenance_panel.py:102:    def _detect_orphans(self, repo_dir: Path) -> tuple[int, list[str]]:\nsrc\\ui\\maintenance_panel.py:137:        n, ids = self._detect_orphans(repo_dir)\n",
+    "stderr": ""
+  }
+]

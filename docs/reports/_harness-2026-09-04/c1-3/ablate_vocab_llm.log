@@ -1,0 +1,16 @@
+A) QUANTO VALE O VOCABULARIO COMPILADO POR LLM (ablacao do .glossary_curation.llm.json)
+COM-LLM   MF   100%  58/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  51/ 58 | fila  11 | conf-err  6
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+SEM-LLM   MF   100%  54/ 66 | bloco  65/ 66 | unidade  65/ 65 | sub  47/ 58 | fila   8 | conf-err  8   (removidos 17 topicos)
+COM-LLM   CG   100%  59/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  58/ 82 | fila  47 | conf-err  9
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+SEM-LLM   CG   100%  49/ 83 | bloco  35/ 35 | unidade   0/  0 | sub  48/ 82 | fila  46 | conf-err 12   (removidos 24 topicos)
+
+COM-LLM   TOT  100% 117/149 | bloco 100/101 | unidade  65/ 65 | sub 109/140 | fila  58 | conf-err 15
+SEM-LLM   TOT  100% 103/149 | bloco 100/101 | unidade  65/ 65 | sub  95/140 | fila  54 | conf-err 20
+
+B) O PINO DE UNIDADE DO SO QUE DIVERGE DO AUTOMATICO
+   bloco-06  pino=04-deadlock  auto=02-gerencia-do-processador  aula='gerencia do processador sincronizacao e deadlock aul'
+[fim] 46s

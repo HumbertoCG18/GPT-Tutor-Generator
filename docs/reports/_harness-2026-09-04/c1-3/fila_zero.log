@@ -1,0 +1,12 @@
+[MF] materiais  66 · fila  17 (26/100) · fila&erra  7 · fila&certo 10 · fila sem gold  0 · CONFIANTE&erra 10 · motivos {'flag:disamb': 11, 'conflito': 7, 'sub-ambigua': 1, 'sub-empate': 1, 'flag:due-straddle': 1}
+[SO] materiais  39 · fila  23 (59/100) · fila&erra  9 · fila&certo 14 · fila sem gold  0 · CONFIANTE&erra  3 · motivos {'conflito': 15, 'flag:disamb': 7, 'sub-empate': 2, 'sem-bloco': 1}
+[IA] materiais  59 · fila  16 (27/100) · fila&erra  9 · fila&certo  1 · fila sem gold  6 · CONFIANTE&erra 30 · motivos {'flag:disamb': 8, 'conflito': 4, 'flag:disamb-curto': 4}
+[ES2] materiais  35 · fila  14 (40/100) · fila&erra 11 · fila&certo  1 · fila sem gold  2 · CONFIANTE&erra 13 · motivos {'conflito': 13, 'flag:disamb': 1}
+[TCC] materiais  27 · fila   7 (26/100) · fila&erra  2 · fila&certo  5 · fila sem gold  0 · CONFIANTE&erra  2 · motivos {'conflito': 3, 'sub-ambigua': 3, 'sem-bloco': 1}
+[CG] materiais  93 · fila  60 (65/100) · fila&erra 26 · fila&certo 27 · fila sem gold  7 · CONFIANTE&erra 11 · motivos {'flag:disamb': 26, 'conflito': 15, '?': 11, 'sem-bloco': 8, 'sub-empate': 7, 'sub-ambigua': 2}
+
+[TOTAL zero] materiais 319 · fila 137 (42.9/100) · fila&erra 64 · fila&certo 58 · fila sem gold 15 · CONFIANTE&erra 69
+motivos: {'conflito': 57, 'flag:disamb': 53, '?': 11, 'sub-empate': 10, 'sem-bloco': 10, 'sub-ambigua': 6, 'flag:disamb-curto': 4, 'flag:due-straddle': 1}
+duvida que acerta erro: {'duvida acerta erro de bloco': 12, 'duvida acerta erro de sub': 51, 'duvida acerta erro de unidade': 7}
+erros confiantes por eixo: {'TOTAL sub': 65, 'TOTAL bloco': 4, 'TOTAL unidade': 4} | por curso: {'MF sub': 7, 'MF bloco': 4, 'SO sub': 3, 'IA unidade': 1, 'IA sub': 29, 'ES2 sub': 13, 'ES2 unidade': 3, 'TCC sub': 2, 'CG sub': 11}
+exemplos confiantes: {'sub': ['MF:archive-of-formal-proofs-3', 'MF:revisao', 'MF:exemplos', 'MF:listas', 'MF:invariantes', 'MF:tiposindutivos'], 'bloco': ['MF:revisao', 'MF:intro', 'MF:exerciciosdafny2', 'MF:introducao-zip'], 'unidade': ['IA:ia-responsável-7c4626', 'ES2:roteiro4-circuitbreaker', 'ES2:microsservicos4', 'ES2:roteiro4']}

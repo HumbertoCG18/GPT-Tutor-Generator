@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from functools import partial
 
+from src.builder.core.course_vocabulary import build_course_terms
+
 
 def build_glossary_aliases(
     *,
@@ -36,10 +38,11 @@ def build_glossary_aliases(
         collapse_ws=collapse_ws,
     )
 
-    def collect_glossary_evidence(root_dir, manifest_entries=None):
+    def collect_glossary_evidence(root_dir, manifest_entries=None, unit_titles=None):
         return repo_artifacts_module.collect_glossary_evidence(
             root_dir,
             manifest_entries=manifest_entries,
+            unit_titles=unit_titles,
             collapse_ws=collapse_ws,
             strip_frontmatter_block=strip_frontmatter_block,
             extract_markdown_headings_fn=extract_markdown_headings,
@@ -86,6 +89,19 @@ def build_glossary_aliases(
         refine_glossary_definition_from_evidence_fn=lambda term, unit_hint, evidence: refine_glossary_definition_from_evidence(term, unit_hint, evidence),
     )
 
+    def course_terms(course_meta, subject_profile=None, *, root_dir=None, manifest_entries=None):
+        return build_course_terms(
+            subject_profile, root_dir=root_dir, manifest_entries=manifest_entries,
+            parse_units_from_teaching_plan_fn=parse_units_from_teaching_plan,
+            topic_text_fn=topic_text,
+            collect_glossary_evidence_fn=collect_glossary_evidence,
+            find_glossary_evidence_fn=find_glossary_evidence,
+            seed_glossary_fields_fn=seed_glossary_fields,
+            load_curation_fn=repo_artifacts_module.load_glossary_curation,
+            curation_key_fn=repo_artifacts_module._glossary_curation_key,
+            merge_synonyms_fn=repo_artifacts_module.merge_glossary_synonyms,
+        )
+
     def glossary_md(course_meta, subject_profile=None, *, root_dir=None, manifest_entries=None):
         return repo_artifacts_module.glossary_md(
             course_meta,
@@ -105,6 +121,7 @@ def build_glossary_aliases(
         )
 
     return {
+        "course_terms": course_terms,
         "glossary_md": glossary_md,
         "_clamp_navigation_artifact": clamp_navigation_artifact,
         "_glossary_tokens": glossary_tokens,

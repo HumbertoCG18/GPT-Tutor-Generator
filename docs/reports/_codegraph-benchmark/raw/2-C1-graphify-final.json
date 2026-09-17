@@ -1,0 +1,17 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "unit_number",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5243858999965596,
+    "returncode": 0,
+    "stdout": "Node: unit_number()\n  ID:        src_builder_timeline_unit_labels_unit_number\n  Source:    src/builder/timeline/unit_labels.py L15\n  Type:      code\n  Community: \n  Degree:    5\n\nConnections (5):\n  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12\n  <-- unit_short_label() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26\n  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L161\n  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L15\n  <-- Número da unidade no slug, ou None se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L16\n",
+    "stderr": ""
+  }
+]

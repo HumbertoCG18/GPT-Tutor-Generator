@@ -1,0 +1,32 @@
+{
+ "type": "object",
+ "properties": {
+  "vereditos": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "classe": {
+      "type": "string",
+      "enum": [
+       "CORRETA",
+       "INCORRETA",
+       "RUIDO",
+       "INDETERMINADA"
+      ]
+     }
+    },
+    "required": [
+     "id",
+     "classe"
+    ]
+   }
+  }
+ },
+ "required": [
+  "vereditos"
+ ]
+}

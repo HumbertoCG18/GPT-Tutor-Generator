@@ -1,0 +1,1095 @@
+{
+  "scope": "personal skill roots, installed Claude registry, Codex cache (all versions), AGY config plugins, sibling Git repositories; installed != loaded",
+  "projects": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Computacao-Grafica-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Engenharia-Software-2-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Fundamentos-de-Redes-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Inteligencia-Artifical-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Laboratorio-de-Redes-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Metodos-Formais-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\MetodosAnaliticos",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\Sistemas-Operacionais-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\T-ES2",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\TCC-Tutor",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\UniHub"
+  ],
+  "summary": {
+    ".agents/skills": {
+      "files": 23,
+      "description_chars": 3267,
+      "plugin_enabled": "local-discovery",
+      "overrides": {
+        "": 23
+      }
+    },
+    ".claude/skills": {
+      "files": 8,
+      "description_chars": 1036,
+      "plugin_enabled": "local-discovery",
+      "overrides": {
+        "": 6,
+        "user-invocable-only": 2
+      }
+    },
+    ".claude:plugin:claude-md-management@claude-plugins-official": {
+      "files": 1,
+      "description_chars": 338,
+      "plugin_enabled": "False",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".claude:plugin:claude-mem@thedotmack": {
+      "files": 20,
+      "description_chars": 5438,
+      "plugin_enabled": "True",
+      "overrides": {
+        "off": 18,
+        "": 2
+      }
+    },
+    ".claude:plugin:codex@openai-codex": {
+      "files": 3,
+      "description_chars": 293,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 3
+      }
+    },
+    ".claude:plugin:ecc@ecc": {
+      "files": 898,
+      "description_chars": 153206,
+      "plugin_enabled": "True",
+      "overrides": {
+        "user-invocable-only": 819,
+        "": 79
+      }
+    },
+    ".claude:plugin:frontend-design@claude-plugins-official": {
+      "files": 1,
+      "description_chars": 204,
+      "plugin_enabled": "False",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".claude:plugin:ponytail@ponytail": {
+      "files": 12,
+      "description_chars": 3322,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 12
+      }
+    },
+    ".claude:plugin:superpowers@claude-plugins-official": {
+      "files": 14,
+      "description_chars": 1861,
+      "plugin_enabled": "False",
+      "overrides": {
+        "": 14
+      }
+    },
+    ".codex/skills": {
+      "files": 12,
+      "description_chars": 2832,
+      "plugin_enabled": "local-discovery",
+      "overrides": {
+        "": 12
+      }
+    },
+    ".codex:plugin:claude-mem@claude-mem-local": {
+      "files": 2,
+      "description_chars": 797,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 2
+      }
+    },
+    ".codex:plugin:codex-security@openai-curated-remote": {
+      "files": 15,
+      "description_chars": 4486,
+      "plugin_enabled": "not-explicit",
+      "overrides": {
+        "": 15
+      }
+    },
+    ".codex:plugin:codex@openai-codex": {
+      "files": 3,
+      "description_chars": 293,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 3
+      }
+    },
+    ".codex:plugin:computer-use@openai-bundled": {
+      "files": 1,
+      "description_chars": 33,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:documents@openai-primary-runtime": {
+      "files": 1,
+      "description_chars": 313,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:ecc@ecc": {
+      "files": 635,
+      "description_chars": 78223,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 635
+      }
+    },
+    ".codex:plugin:google-drive@openai-curated-remote": {
+      "files": 5,
+      "description_chars": 2296,
+      "plugin_enabled": "not-explicit",
+      "overrides": {
+        "": 5
+      }
+    },
+    ".codex:plugin:openai-templates@openai-curated-remote": {
+      "files": 20,
+      "description_chars": 4925,
+      "plugin_enabled": "not-explicit",
+      "overrides": {
+        "": 20
+      }
+    },
+    ".codex:plugin:pdf@openai-primary-runtime": {
+      "files": 1,
+      "description_chars": 222,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:plugin-management@openai-curated-remote": {
+      "files": 1,
+      "description_chars": 290,
+      "plugin_enabled": "not-explicit",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:ponytail@ponytail": {
+      "files": 12,
+      "description_chars": 3322,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 12
+      }
+    },
+    ".codex:plugin:presentations@openai-primary-runtime": {
+      "files": 1,
+      "description_chars": 139,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:spreadsheets@openai-primary-runtime": {
+      "files": 2,
+      "description_chars": 554,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 2
+      }
+    },
+    ".codex:plugin:template-creator@openai-primary-runtime": {
+      "files": 1,
+      "description_chars": 463,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    ".codex:plugin:visualize@openai-bundled": {
+      "files": 1,
+      "description_chars": 309,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    "agy:plugin:claude-mem": {
+      "files": 1,
+      "description_chars": 178,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 1
+      }
+    },
+    "agy:plugin:ecc": {
+      "files": 632,
+      "description_chars": 77907,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 632
+      }
+    },
+    "agy:plugin:ponytail": {
+      "files": 12,
+      "description_chars": 1094,
+      "plugin_enabled": "True",
+      "overrides": {
+        "": 12
+      }
+    },
+    "project:T-ES2:.agents/skills": {
+      "files": 4,
+      "description_chars": 1032,
+      "plugin_enabled": "local-discovery",
+      "overrides": {
+        "": 4
+      }
+    }
+  },
+  "duplicate_names": {
+    "heredoc-git-bash-windows": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\heredoc-git-bash-windows\\SKILL.md",
+        "sha256": "29523695ef2d90fc69b7070bcee9b554ed2c8c95669c81e733ef88417152c9fd",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\learned\\heredoc-git-bash-windows\\SKILL.md",
+        "sha256": "29523695ef2d90fc69b7070bcee9b554ed2c8c95669c81e733ef88417152c9fd",
+        "codex_disabled": false
+      }
+    ],
+    "medir-uso-antes-de-remover": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\medir-uso-antes-de-remover\\SKILL.md",
+        "sha256": "c1ad22fdc91af719c01ca67bc218f9e6cd66a46d291d4927945e91c43910c0df",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\learned\\medir-uso-antes-de-remover\\SKILL.md",
+        "sha256": "4353ad9326566014fe3275c94231d6e8bf6efb7c6539acf24be8dc5aa3b6b84e",
+        "codex_disabled": false
+      }
+    ],
+    "mex-check-falso-positivo": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\learned\\mex-check-falso-positivo\\SKILL.md",
+        "sha256": "cebf1ec3fd1e2729bdbdb0f635c0f972598935c3df2008a639305b703c08f59d",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\learned\\mex-check-falso-positivo\\SKILL.md",
+        "sha256": "cebf1ec3fd1e2729bdbdb0f635c0f972598935c3df2008a639305b703c08f59d",
+        "codex_disabled": false
+      }
+    ],
+    "troglodita": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita\\SKILL.md",
+        "sha256": "218da4eab5901414bd34e960e7df992ecfbb552c1c45e323233c56489dd1a51a",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.codex\\skills\\troglodita\\SKILL.md",
+        "sha256": "218da4eab5901414bd34e960e7df992ecfbb552c1c45e323233c56489dd1a51a",
+        "codex_disabled": true
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\troglodita\\SKILL.md",
+        "sha256": "218da4eab5901414bd34e960e7df992ecfbb552c1c45e323233c56489dd1a51a",
+        "codex_disabled": false
+      }
+    ],
+    "troglodita-commit": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-commit\\SKILL.md",
+        "sha256": "65efdcb36ac284fc6e6e726fd28d9608ee371e0a316730f1153a2812cc7951b3",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\troglodita-commit\\SKILL.md",
+        "sha256": "65efdcb36ac284fc6e6e726fd28d9608ee371e0a316730f1153a2812cc7951b3",
+        "codex_disabled": false
+      }
+    ],
+    "troglodita-help": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-help\\SKILL.md",
+        "sha256": "dfc28c6bc2f49ede4b151657cdf86922314e0f7800c51c45702ba436682a72af",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.codex\\skills\\troglodita-help\\SKILL.md",
+        "sha256": "dfc28c6bc2f49ede4b151657cdf86922314e0f7800c51c45702ba436682a72af",
+        "codex_disabled": true
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\troglodita-help\\SKILL.md",
+        "sha256": "dfc28c6bc2f49ede4b151657cdf86922314e0f7800c51c45702ba436682a72af",
+        "codex_disabled": false
+      }
+    ],
+    "troglodita-review": [
+      {
+        "path": "C:\\Users\\Humberto\\.agents\\skills\\troglodita-review\\SKILL.md",
+        "sha256": "8df5cad1a007a2fd67b89a6d65d74e6b06217181391b6c2809a1a6e44929bc10",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\troglodita-review\\SKILL.md",
+        "sha256": "8df5cad1a007a2fd67b89a6d65d74e6b06217181391b6c2809a1a6e44929bc10",
+        "codex_disabled": false
+      }
+    ],
+    "graphify": [
+      {
+        "path": "C:\\Users\\Humberto\\.codex\\skills\\graphify\\SKILL.md",
+        "sha256": "3898b1042721cad27d6f87ca44f638415a7f763203aefd86b90f9358ffea3a43",
+        "codex_disabled": false
+      },
+      {
+        "path": "C:\\Users\\Humberto\\.claude\\skills\\graphify\\SKILL.md",
+        "sha256": "43011be551529ba70b2c3962bece090c591ce1fdc8d05026837ae337972a431a",
+        "codex_disabled": false
+      }
+    ]
+  },
+  "configs": {
+    "C:\\Users\\Humberto\\.claude\\settings.json": {
+      "enabledPlugins": {
+        "claude-md-management@claude-plugins-official": false,
+        "frontend-design@claude-plugins-official": false,
+        "ponytail@ponytail": true,
+        "claude-mem@thedotmack": true,
+        "ecc@ecc": true,
+        "code-review@claude-plugins-official": false,
+        "github@claude-plugins-official": false,
+        "superpowers@claude-plugins-official": false,
+        "codex@openai-codex": true
+      },
+      "skillOverrides": {
+        "writing-plans": "off",
+        "design": "name-only",
+        "dataviz": "name-only",
+        "claude-api": "name-only",
+        "schedule": "name-only",
+        "keybindings-help": "name-only",
+        "fewer-permission-prompts": "name-only",
+        "security-review": "name-only",
+        "run": "name-only",
+        "claude-in-chrome": "name-only",
+        "claude-mem:babysit": "off",
+        "claude-mem:cloud-sync": "off",
+        "claude-mem:design-is": "off",
+        "claude-mem:do": "off",
+        "claude-mem:how-it-works": "off",
+        "claude-mem:knowledge-agent": "off",
+        "claude-mem:learn-codebase": "off",
+        "claude-mem:make-plan": "off",
+        "claude-mem:mode-creator": "off",
+        "claude-mem:oh-my-issues": "off",
+        "claude-mem:pathfinder": "off",
+        "claude-mem:smart-explore": "off",
+        "claude-mem:standup": "off",
+        "claude-mem:timeline-report": "off",
+        "claude-mem:version-bump": "off",
+        "claude-mem:weekly-digests": "off",
+        "claude-mem:what-the": "off",
+        "claude-mem:wowerpoint": "off",
+        "ecc:accessibility": "user-invocable-only",
+        "ecc:agent-architecture-audit": "user-invocable-only",
+        "ecc:agent-eval": "user-invocable-only",
+        "ecc:agent-harness-construction": "user-invocable-only",
+        "ecc:agent-introspection-debugging": "user-invocable-only",
+        "ecc:agent-payment-x402": "user-invocable-only",
+        "ecc:agent-self-evaluation": "user-invocable-only",
+        "ecc:agent-sort": "user-invocable-only",
+        "ecc:agentic-engineering": "user-invocable-only",
+        "ecc:agentic-os": "user-invocable-only",
+        "ecc:ai-first-engineering": "user-invocable-only",
+        "ecc:ai-regression-testing": "user-invocable-only",
+        "ecc:android-clean-architecture": "user-invocable-only",
+        "ecc:angular-developer": "user-invocable-only",
+        "ecc:api-connector-builder": "user-invocable-only",
+        "ecc:api-design": "user-invocable-only",
+        "ecc:architecture-decision-records": "user-invocable-only",
+        "ecc:article-writing": "user-invocable-only",
+        "ecc:aside": "user-invocable-only",
+        "ecc:auto-update": "user-invocable-only",
+        "ecc:automation-audit-ops": "user-invocable-only",
+        "ecc:autonomous-agent-harness": "user-invocable-only",
+        "ecc:autonomous-loops": "user-invocable-only",
+        "ecc:backend-patterns": "user-invocable-only",
+        "ecc:benchmark": "user-invocable-only",
+        "ecc:benchmark-optimization-loop": "user-invocable-only",
+        "ecc:blender-motion-state-inspection": "user-invocable-only",
+        "ecc:blueprint": "user-invocable-only",
+        "ecc:brand-discovery": "user-invocable-only",
+        "ecc:brand-voice": "user-invocable-only",
+        "ecc:browser-qa": "user-invocable-only",
+        "ecc:bun-runtime": "user-invocable-only",
+        "ecc:canary-watch": "user-invocable-only",
+        "ecc:carrier-relationship-management": "user-invocable-only",
+        "ecc:checkpoint": "user-invocable-only",
+        "ecc:cisco-ios-patterns": "user-invocable-only",
+        "ecc:ck": "user-invocable-only",
+        "ecc:claude-devfleet": "user-invocable-only",
+        "ecc:clickhouse-io": "user-invocable-only",
+        "ecc:code-tour": "user-invocable-only",
+        "ecc:codebase-onboarding": "user-invocable-only",
+        "ecc:codehealth-mcp": "user-invocable-only",
+        "ecc:coding-standards": "user-invocable-only",
+        "ecc:competitive-platform-analysis": "user-invocable-only",
+        "ecc:competitive-report-structure": "user-invocable-only",
+        "ecc:compose-multiplatform-patterns": "user-invocable-only",
+        "ecc:config-gc": "user-invocable-only",
+        "ecc:configure-ecc": "user-invocable-only",
+        "ecc:connections-optimizer": "user-invocable-only",
+        "ecc:content-engine": "user-invocable-only",
+        "ecc:content-hash-cache-pattern": "user-invocable-only",
+        "ecc:continuous-agent-loop": "user-invocable-only",
+        "ecc:continuous-learning": "user-invocable-only",
+        "ecc:continuous-learning-v2": "user-invocable-only",
+        "ecc:cost-report": "user-invocable-only",
+        "ecc:cost-tracking": "user-invocable-only",
+        "ecc:council": "user-invocable-only",
+        "ecc:council-multi-model": "user-invocable-only",
+        "ecc:cpp-build": "user-invocable-only",
+        "ecc:cpp-coding-standards": "user-invocable-only",
+        "ecc:cpp-review": "user-invocable-only",
+        "ecc:cpp-test": "user-invocable-only",
+        "ecc:cpp-testing": "user-invocable-only",
+        "ecc:crosspost": "user-invocable-only",
+        "ecc:csharp-testing": "user-invocable-only",
+        "ecc:customer-billing-ops": "user-invocable-only",
+        "ecc:customs-trade-compliance": "user-invocable-only",
+        "ecc:dart-flutter-patterns": "user-invocable-only",
+        "ecc:dashboard-builder": "user-invocable-only",
+        "ecc:data-scraper-agent": "user-invocable-only",
+        "ecc:data-throughput-accelerator": "user-invocable-only",
+        "ecc:database-migrations": "user-invocable-only",
+        "ecc:deep-research": "user-invocable-only",
+        "ecc:defi-amm-security": "user-invocable-only",
+        "ecc:delivery-gate": "user-invocable-only",
+        "ecc:deployment-patterns": "user-invocable-only",
+        "ecc:design-system": "user-invocable-only",
+        "ecc:dev-team": "user-invocable-only",
+        "ecc:django-celery": "user-invocable-only",
+        "ecc:django-patterns": "user-invocable-only",
+        "ecc:django-security": "user-invocable-only",
+        "ecc:django-tdd": "user-invocable-only",
+        "ecc:django-verification": "user-invocable-only",
+        "ecc:dmux-workflows": "user-invocable-only",
+        "ecc:docker-patterns": "user-invocable-only",
+        "ecc:documentation-lookup": "user-invocable-only",
+        "ecc:dotnet-patterns": "user-invocable-only",
+        "ecc:dynamic-workflow-mode": "user-invocable-only",
+        "ecc:e2e-testing": "user-invocable-only",
+        "ecc:ecc-recipes": "user-invocable-only",
+        "ecc:ecc-tools-cost-audit": "user-invocable-only",
+        "ecc:email-ops": "user-invocable-only",
+        "ecc:energy-procurement": "user-invocable-only",
+        "ecc:enterprise-agent-ops": "user-invocable-only",
+        "ecc:epic-claim": "user-invocable-only",
+        "ecc:epic-decompose": "user-invocable-only",
+        "ecc:epic-publish": "user-invocable-only",
+        "ecc:epic-review": "user-invocable-only",
+        "ecc:epic-sync": "user-invocable-only",
+        "ecc:epic-unblock": "user-invocable-only",
+        "ecc:epic-validate": "user-invocable-only",
+        "ecc:evm-token-decimals": "user-invocable-only",
+        "ecc:evolve": "user-invocable-only",
+        "ecc:exa-search": "user-invocable-only",
+        "ecc:fal-ai-media": "user-invocable-only",
+        "ecc:fastapi-patterns": "user-invocable-only",
+        "ecc:fastapi-review": "user-invocable-only",
+        "ecc:feature-dev": "user-invocable-only",
+        "ecc:finance-billing-ops": "user-invocable-only",
+        "ecc:flox-environments": "user-invocable-only",
+        "ecc:flutter-build": "user-invocable-only",
+        "ecc:flutter-dart-code-review": "user-invocable-only",
+        "ecc:flutter-review": "user-invocable-only",
+        "ecc:flutter-test": "user-invocable-only",
+        "ecc:foundation-models-on-device": "user-invocable-only",
+        "ecc:frontend-a11y": "user-invocable-only",
+        "ecc:frontend-design-direction": "user-invocable-only",
+        "ecc:frontend-patterns": "user-invocable-only",
+        "ecc:frontend-slides": "user-invocable-only",
+        "ecc:fsharp-testing": "user-invocable-only",
+        "ecc:gan-build": "user-invocable-only",
+        "ecc:gan-design": "user-invocable-only",
+        "ecc:gan-style-harness": "user-invocable-only",
+        "ecc:gateguard": "user-invocable-only",
+        "ecc:generating-python-installer": "user-invocable-only",
+        "ecc:github-ops": "user-invocable-only",
+        "ecc:go-build": "user-invocable-only",
+        "ecc:go-review": "user-invocable-only",
+        "ecc:go-test": "user-invocable-only",
+        "ecc:golang-patterns": "user-invocable-only",
+        "ecc:golang-testing": "user-invocable-only",
+        "ecc:google-workspace-ops": "user-invocable-only",
+        "ecc:gradle-build": "user-invocable-only",
+        "ecc:growth-log": "user-invocable-only",
+        "ecc:harness-audit": "user-invocable-only",
+        "ecc:healthcare-cdss-patterns": "user-invocable-only",
+        "ecc:healthcare-emr-patterns": "user-invocable-only",
+        "ecc:healthcare-eval-harness": "user-invocable-only",
+        "ecc:healthcare-phi-compliance": "user-invocable-only",
+        "ecc:hermes-imports": "user-invocable-only",
+        "ecc:hexagonal-architecture": "user-invocable-only",
+        "ecc:hipaa-compliance": "user-invocable-only",
+        "ecc:homelab-network-readiness": "user-invocable-only",
+        "ecc:homelab-network-setup": "user-invocable-only",
+        "ecc:homelab-pihole-dns": "user-invocable-only",
+        "ecc:homelab-vlan-segmentation": "user-invocable-only",
+        "ecc:homelab-wireguard-vpn": "user-invocable-only",
+        "ecc:hookify-configure": "user-invocable-only",
+        "ecc:hookify-help": "user-invocable-only",
+        "ecc:hookify-list": "user-invocable-only",
+        "ecc:hookify-rules": "user-invocable-only",
+        "ecc:inherit-legacy-style": "user-invocable-only",
+        "ecc:instinct-export": "user-invocable-only",
+        "ecc:instinct-import": "user-invocable-only",
+        "ecc:instinct-status": "user-invocable-only",
+        "ecc:inventory-demand-planning": "user-invocable-only",
+        "ecc:investor-materials": "user-invocable-only",
+        "ecc:investor-outreach": "user-invocable-only",
+        "ecc:ios-icon-gen": "user-invocable-only",
+        "ecc:iterative-retrieval": "user-invocable-only",
+        "ecc:ito-baskets": "user-invocable-only",
+        "ecc:ito-compute": "user-invocable-only",
+        "ecc:ito-inference": "user-invocable-only",
+        "ecc:ito-training": "user-invocable-only",
+        "ecc:java-coding-standards": "user-invocable-only",
+        "ecc:jira": "user-invocable-only",
+        "ecc:jira-integration": "user-invocable-only",
+        "ecc:jpa-patterns": "user-invocable-only",
+        "ecc:knowledge-ops": "user-invocable-only",
+        "ecc:kotlin-build": "user-invocable-only",
+        "ecc:kotlin-coroutines-flows": "user-invocable-only",
+        "ecc:kotlin-exposed-patterns": "user-invocable-only",
+        "ecc:kotlin-ktor-patterns": "user-invocable-only",
+        "ecc:kotlin-patterns": "user-invocable-only",
+        "ecc:kotlin-review": "user-invocable-only",
+        "ecc:kotlin-test": "user-invocable-only",
+        "ecc:kotlin-testing": "user-invocable-only",
+        "ecc:kubernetes-patterns": "user-invocable-only",
+        "ecc:laravel-patterns": "user-invocable-only",
+        "ecc:laravel-plugin-discovery": "user-invocable-only",
+        "ecc:laravel-security": "user-invocable-only",
+        "ecc:laravel-tdd": "user-invocable-only",
+        "ecc:laravel-verification": "user-invocable-only",
+        "ecc:latency-critical-systems": "user-invocable-only",
+        "ecc:lead-intelligence": "user-invocable-only",
+        "ecc:learn-eval": "user-invocable-only",
+        "ecc:liquid-glass-design": "user-invocable-only",
+        "ecc:llm-trading-agent-security": "user-invocable-only",
+        "ecc:logistics-exception-management": "user-invocable-only",
+        "ecc:loop-design-check": "user-invocable-only",
+        "ecc:loop-start": "user-invocable-only",
+        "ecc:loop-status": "user-invocable-only",
+        "ecc:mailtrap-email-integration": "user-invocable-only",
+        "ecc:make-interfaces-feel-better": "user-invocable-only",
+        "ecc:manim-video": "user-invocable-only",
+        "ecc:market-research": "user-invocable-only",
+        "ecc:marketing-campaign": "user-invocable-only",
+        "ecc:mcp-server-patterns": "user-invocable-only",
+        "ecc:messages-ops": "user-invocable-only",
+        "ecc:ml-adoption-playbook": "user-invocable-only",
+        "ecc:model-route": "user-invocable-only",
+        "ecc:motion-advanced": "user-invocable-only",
+        "ecc:motion-foundations": "user-invocable-only",
+        "ecc:motion-patterns": "user-invocable-only",
+        "ecc:motion-ui": "user-invocable-only",
+        "ecc:multi-backend": "user-invocable-only",
+        "ecc:multi-execute": "user-invocable-only",
+        "ecc:multi-frontend": "user-invocable-only",
+        "ecc:multi-plan": "user-invocable-only",
+        "ecc:multi-workflow": "user-invocable-only",
+        "ecc:mysql-patterns": "user-invocable-only",
+        "ecc:nanoclaw-repl": "user-invocable-only",
+        "ecc:nasiko-control-plane": "user-invocable-only",
+        "ecc:nestjs-patterns": "user-invocable-only",
+        "ecc:netmiko-ssh-automation": "user-invocable-only",
+        "ecc:network-bgp-diagnostics": "user-invocable-only",
+        "ecc:network-config-validation": "user-invocable-only",
+        "ecc:network-interface-health": "user-invocable-only",
+        "ecc:nextjs-turbopack": "user-invocable-only",
+        "ecc:nodejs-keccak256": "user-invocable-only",
+        "ecc:nutrient-document-processing": "user-invocable-only",
+        "ecc:nuxt4-patterns": "user-invocable-only",
+        "ecc:openclaw-persona-forge": "user-invocable-only",
+        "ecc:opensource-pipeline": "user-invocable-only",
+        "ecc:orch-build-mvp": "user-invocable-only",
+        "ecc:orch-change-feature": "user-invocable-only",
+        "ecc:perl-patterns": "user-invocable-only",
+        "ecc:perl-security": "user-invocable-only",
+        "ecc:perl-testing": "user-invocable-only",
+        "ecc:plan-canvas": "user-invocable-only",
+        "ecc:plan-orchestrate": "user-invocable-only",
+        "ecc:plan-prd": "user-invocable-only",
+        "ecc:pm2": "user-invocable-only",
+        "ecc:postgres-patterns": "user-invocable-only",
+        "ecc:prediction-market-oracle-research": "user-invocable-only",
+        "ecc:prediction-market-risk-review": "user-invocable-only",
+        "ecc:prisma-patterns": "user-invocable-only",
+        "ecc:product-capability": "user-invocable-only",
+        "ecc:product-lens": "user-invocable-only",
+        "ecc:production-audit": "user-invocable-only",
+        "ecc:production-scheduling": "user-invocable-only",
+        "ecc:project-flow-ops": "user-invocable-only",
+        "ecc:project-init": "user-invocable-only",
+        "ecc:projects": "user-invocable-only",
+        "ecc:promote": "user-invocable-only",
+        "ecc:prompt-optimizer": "user-invocable-only",
+        "ecc:prp-commit": "user-invocable-only",
+        "ecc:prp-implement": "user-invocable-only",
+        "ecc:prp-plan": "user-invocable-only",
+        "ecc:prp-pr": "user-invocable-only",
+        "ecc:prp-prd": "user-invocable-only",
+        "ecc:prune": "user-invocable-only",
+        "ecc:pytorch-patterns": "user-invocable-only",
+        "ecc:quality-gate": "user-invocable-only",
+        "ecc:quality-nonconformance": "user-invocable-only",
+        "ecc:quarkus-patterns": "user-invocable-only",
+        "ecc:quarkus-security": "user-invocable-only",
+        "ecc:quarkus-tdd": "user-invocable-only",
+        "ecc:quarkus-verification": "user-invocable-only",
+        "ecc:ralphinho-rfc-pipeline": "user-invocable-only",
+        "ecc:react-build": "user-invocable-only",
+        "ecc:react-native-patterns": "user-invocable-only",
+        "ecc:react-patterns": "user-invocable-only",
+        "ecc:react-performance": "user-invocable-only",
+        "ecc:react-review": "user-invocable-only",
+        "ecc:react-test": "user-invocable-only",
+        "ecc:react-testing": "user-invocable-only",
+        "ecc:recsys-pipeline-architect": "user-invocable-only",
+        "ecc:recursive-decision-ledger": "user-invocable-only",
+        "ecc:redis-patterns": "user-invocable-only",
+        "ecc:remotion-video-creation": "user-invocable-only",
+        "ecc:repo-scan": "user-invocable-only",
+        "ecc:research-ops": "user-invocable-only",
+        "ecc:resume-session": "user-invocable-only",
+        "ecc:returns-reverse-logistics": "user-invocable-only",
+        "ecc:review-pr": "user-invocable-only",
+        "ecc:rules-distill": "user-invocable-only",
+        "ecc:rust-build": "user-invocable-only",
+        "ecc:rust-patterns": "user-invocable-only",
+        "ecc:rust-review": "user-invocable-only",
+        "ecc:rust-test": "user-invocable-only",
+        "ecc:rust-testing": "user-invocable-only",
+        "ecc:safety-guard": "user-invocable-only",
+        "ecc:santa-loop": "user-invocable-only",
+        "ecc:santa-method": "user-invocable-only",
+        "ecc:save-session": "user-invocable-only",
+        "ecc:scientific-db-pubmed-database": "user-invocable-only",
+        "ecc:scientific-db-uspto-database": "user-invocable-only",
+        "ecc:scientific-pkg-gget": "user-invocable-only",
+        "ecc:scientific-thinking-literature-review": "user-invocable-only",
+        "ecc:scientific-thinking-scholar-evaluation": "user-invocable-only",
+        "ecc:search-first": "user-invocable-only",
+        "ecc:security-bounty-hunter": "user-invocable-only",
+        "ecc:security-review": "user-invocable-only",
+        "ecc:seo": "user-invocable-only",
+        "ecc:sessions": "user-invocable-only",
+        "ecc:setup-pm": "user-invocable-only",
+        "ecc:skill-comply": "user-invocable-only",
+        "ecc:skill-health": "user-invocable-only",
+        "ecc:skill-scout": "user-invocable-only",
+        "ecc:skill-stocktake": "user-invocable-only",
+        "ecc:social-graph-ranker": "user-invocable-only",
+        "ecc:social-publisher": "user-invocable-only",
+        "ecc:springboot-patterns": "user-invocable-only",
+        "ecc:springboot-security": "user-invocable-only",
+        "ecc:springboot-tdd": "user-invocable-only",
+        "ecc:springboot-verification": "user-invocable-only",
+        "ecc:strategic-compact": "user-invocable-only",
+        "ecc:swift-actor-persistence": "user-invocable-only",
+        "ecc:swift-concurrency-6-2": "user-invocable-only",
+        "ecc:swift-protocol-di-testing": "user-invocable-only",
+        "ecc:swiftui-patterns": "user-invocable-only",
+        "ecc:taste": "user-invocable-only",
+        "ecc:tasteforge-video": "user-invocable-only",
+        "ecc:team-agent-orchestration": "user-invocable-only",
+        "ecc:team-builder": "user-invocable-only",
+        "ecc:terminal-opener": "user-invocable-only",
+        "ecc:terminal-ops": "user-invocable-only",
+        "ecc:tinystruct-patterns": "user-invocable-only",
+        "ecc:token-budget-advisor": "user-invocable-only",
+        "ecc:ui-demo": "user-invocable-only",
+        "ecc:ui-to-vue": "user-invocable-only",
+        "ecc:uncloud": "user-invocable-only",
+        "ecc:unified-memory": "user-invocable-only",
+        "ecc:unified-notifications-ops": "user-invocable-only",
+        "ecc:update-codemaps": "user-invocable-only",
+        "ecc:update-docs": "user-invocable-only",
+        "ecc:video-editing": "user-invocable-only",
+        "ecc:videodb": "user-invocable-only",
+        "ecc:visa-doc-translate": "user-invocable-only",
+        "ecc:vite-patterns": "user-invocable-only",
+        "ecc:vue-patterns": "user-invocable-only",
+        "ecc:vue-review": "user-invocable-only",
+        "ecc:workspace-surface-audit": "user-invocable-only",
+        "ecc:x-api": "user-invocable-only",
+        "ecc:build-fix": "user-invocable-only",
+        "ecc:code-review": "user-invocable-only",
+        "troglodita-commit": "user-invocable-only",
+        "troglodita-review": "user-invocable-only",
+        "ecc:security-scan": "user-invocable-only",
+        "ecc:context-budget": "user-invocable-only",
+        "ecc:ecc-guide": "user-invocable-only",
+        "ecc:mle-workflow": "user-invocable-only",
+        "ecc:windows-desktop-e2e": "user-invocable-only"
+      },
+      "hook_events": [
+        "SessionStart"
+      ],
+      "mcp": {}
+    },
+    "C:\\Users\\Humberto\\.codex\\config.toml": {
+      "plugins": {
+        "claude-mem@thedotmack": {
+          "enabled": false
+        },
+        "claude-mem@claude-mem-local": {
+          "enabled": true
+        },
+        "ponytail@ponytail": {
+          "enabled": true
+        },
+        "ecc@ecc": {
+          "enabled": true
+        },
+        "codex-app-tools@openai-bundled": {
+          "enabled": true
+        },
+        "browser@openai-bundled": {
+          "enabled": true
+        },
+        "unified-computer-use@openai-bundled": {
+          "enabled": true
+        },
+        "visualize@openai-bundled": {
+          "enabled": true
+        },
+        "computer-use@openai-bundled": {
+          "enabled": true
+        },
+        "documents@openai-primary-runtime": {
+          "enabled": true
+        },
+        "pdf@openai-primary-runtime": {
+          "enabled": true
+        },
+        "spreadsheets@openai-primary-runtime": {
+          "enabled": true
+        },
+        "presentations@openai-primary-runtime": {
+          "enabled": true
+        },
+        "template-creator@openai-primary-runtime": {
+          "enabled": true
+        },
+        "codex@openai-codex": {
+          "enabled": true
+        },
+        "chrome@openai-bundled": {
+          "enabled": true
+        }
+      },
+      "skills": {
+        "config": [
+          {
+            "path": "C:/Users/Humberto/.codex/skills/learned-heredoc-git-bash-windows/SKILL.md",
+            "enabled": false
+          },
+          {
+            "path": "C:/Users/Humberto/.codex/skills/learned-mex-check-falso-positivo/SKILL.md",
+            "enabled": false
+          },
+          {
+            "path": "C:/Users/Humberto/.codex/skills/troglodita/SKILL.md",
+            "enabled": false
+          },
+          {
+            "path": "C:/Users/Humberto/.codex/skills/troglodita-help/SKILL.md",
+            "enabled": false
+          }
+        ]
+      },
+      "hook_events": [
+        "state"
+      ],
+      "mcp": {
+        "perssua": {
+          "enabled": true
+        },
+        "chrome-devtools-mcp": {
+          "enabled": true
+        },
+        "github": {
+          "enabled": true
+        },
+        "graphify": {
+          "enabled": false
+        },
+        "node_repl": {
+          "enabled": true
+        },
+        "context7": {
+          "enabled": true
+        },
+        "codebase-memory-mcp": {
+          "enabled": true
+        }
+      }
+    },
+    "C:\\Users\\Humberto\\.gemini\\config\\config.json": {
+      "plugins": {
+        "android-cli-plugin": {
+          "enabled": false
+        },
+        "claude-mem": {
+          "enabled": true
+        },
+        "ecc": {
+          "enabled": true
+        },
+        "gemini-api": {
+          "enabled": false
+        },
+        "google-antigravity-sdk": {
+          "enabled": false
+        },
+        "modern-web-guidance-plugin": {
+          "enabled": false
+        },
+        "ponytail": {
+          "enabled": true
+        },
+        "science": {
+          "enabled": false
+        }
+      },
+      "hook_events": [],
+      "mcp": {}
+    },
+    "C:\\Users\\Humberto\\.gemini\\config\\hooks.json": {
+      "hook_events": [],
+      "mcp": {}
+    },
+    "C:\\Users\\Humberto\\.gemini\\config\\mcp_config.json": {
+      "hook_events": [],
+      "mcp": {
+        "chrome-devtools-mcp": {
+          "enabled": true
+        },
+        "context7": {
+          "enabled": true
+        },
+        "github": {
+          "enabled": true
+        },
+        "graphify": {
+          "enabled": true
+        },
+        "perssua": {
+          "enabled": true
+        }
+      }
+    },
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.claude\\settings.local.json": {
+      "hook_events": [],
+      "mcp": {}
+    },
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.claude\\settings.json": {
+      "hook_events": [
+        "PreToolUse"
+      ],
+      "mcp": {}
+    },
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.codex\\config.toml": {
+      "hook_events": [],
+      "mcp": {
+        "graphify": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "codex_memory_files": [
+    {
+      "name": "MEMORY.md",
+      "bytes": 10039
+    },
+    {
+      "name": "memory_summary.md",
+      "bytes": 2563
+    },
+    {
+      "name": "raw_memories.md",
+      "bytes": 15441
+    },
+    {
+      "name": ".git\\config",
+      "bytes": 164
+    },
+    {
+      "name": ".git\\description",
+      "bytes": 77
+    },
+    {
+      "name": ".git\\HEAD",
+      "bytes": 23
+    },
+    {
+      "name": ".git\\index",
+      "bytes": 1261
+    },
+    {
+      "name": ".git\\hooks\\applypatch-msg.sample",
+      "bytes": 1154
+    },
+    {
+      "name": ".git\\hooks\\commit-msg.sample",
+      "bytes": 1274
+    },
+    {
+      "name": ".git\\hooks\\docs.url",
+      "bytes": 34
+    },
+    {
+      "name": ".git\\hooks\\fsmonitor-watchman.sample",
+      "bytes": 779
+    },
+    {
+      "name": ".git\\hooks\\post-update.sample",
+      "bytes": 570
+    },
+    {
+      "name": ".git\\hooks\\pre-applypatch.sample",
+      "bytes": 1355
+    },
+    {
+      "name": ".git\\hooks\\pre-commit.sample",
+      "bytes": 799
+    },
+    {
+      "name": ".git\\hooks\\pre-merge-commit.sample",
+      "bytes": 716
+    },
+    {
+      "name": ".git\\hooks\\pre-push.sample",
+      "bytes": 2002
+    },
+    {
+      "name": ".git\\hooks\\pre-rebase.sample",
+      "bytes": 1604
+    },
+    {
+      "name": ".git\\hooks\\prepare-commit-msg.sample",
+      "bytes": 1918
+    },
+    {
+      "name": ".git\\info\\exclude",
+      "bytes": 269
+    },
+    {
+      "name": ".git\\logs\\HEAD",
+      "bytes": 174
+    },
+    {
+      "name": ".git\\logs\\refs\\heads\\master",
+      "bytes": 174
+    },
+    {
+      "name": ".git\\objects\\12\\cf844563500c27e8a8397bba73f7676fe400a8",
+      "bytes": 1762
+    },
+    {
+      "name": ".git\\objects\\20\\cc956932c7f92fd7cf0fc7d6a1d6943a505e5b",
+      "bytes": 51
+    },
+    {
+      "name": ".git\\objects\\42\\80b44ed537b5b4304dac156afc69ead107b326",
+      "bytes": 61
+    },
+    {
+      "name": ".git\\objects\\5f\\a27821f0d03ef9e64fb6185d8f0d828050513e",
+      "bytes": 166
+    },
+    {
+      "name": ".git\\objects\\6d\\ebb3ca278b1ead0590679c1f89e0722f66b76a",
+      "bytes": 1450
+    },
+    {
+      "name": ".git\\objects\\7f\\c5e4edd2522a0dd1553317e7457c27e6f60316",
+      "bytes": 1265
+    },
+    {
+      "name": ".git\\objects\\84\\e7ab44c884af4b9d18adec5ef66fbc763fa947",
+      "bytes": 5118
+    },
+    {
+      "name": ".git\\objects\\b3\\c0b8efbea3e583350a0168db954e3fbfcab1f0",
+      "bytes": 7025
+    },
+    {
+      "name": ".git\\objects\\d2\\2880604eb94d21ae5a2fb192633f180f5d720f",
+      "bytes": 205
+    },
+    {
+      "name": ".git\\objects\\d8\\999ab6fa427aa9f29cd11caf06108f9ab5dd9f",
+      "bytes": 319
+    },
+    {
+      "name": ".git\\objects\\db\\f1bab1b8229e39f12ee09a7fa10ca80f31d8c7",
+      "bytes": 1095
+    },
+    {
+      "name": ".git\\objects\\e8\\4a4da5fd54ad7fd805f1679aca393a060fcefe",
+      "bytes": 5089
+    },
+    {
+      "name": ".git\\objects\\ea\\3366382a7f3e4940c9eee2c84c75eec89598df",
+      "bytes": 517
+    },
+    {
+      "name": ".git\\objects\\f4\\c8c4b242bc7c7dd02204dcb0915535aa62d263",
+      "bytes": 547
+    },
+    {
+      "name": ".git\\refs\\heads\\master",
+      "bytes": 41
+    },
+    {
+      "name": "extensions\\ad_hoc\\instructions.md",
+      "bytes": 746
+    },
+    {
+      "name": "rollout_summaries\\2026-09-14T17-49-38-jHl7-regime_cru_teto_glossario_pacote_fontes_prova_matematica.md",
+      "bytes": 8222
+    },
+    {
+      "name": "rollout_summaries\\2026-09-15T21-41-11-0T5k-condense_technical_payload_under_12800.md",
+      "bytes": 2025
+    },
+    {
+      "name": "rollout_summaries\\2026-09-15T21-41-11-Pyle-condense_observation_payload_under_12800.md",
+      "bytes": 1819
+    },
+    {
+      "name": "rollout_summaries\\2026-09-15T21-41-11-QiQC-condense_tool_payload_under_12800.md",
+      "bytes": 654
+    },
+    {
+      "name": "rollout_summaries\\2026-09-15T21-41-11-XyNf-condense_tool_payload_under_12800.md",
+      "bytes": 1492
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+MATERIAIS QUE DEPENDEM DE TEXTO EXTERNO (8 tutores)
+      mat  com-yt  videos  pag-prof  so-links  (so-links = texto quase todo em URL)
+SO     39       0       0         3         0
+IA     59       1       1         7         0
+ES2    35       0       0         5         0
+TCC    27       0       0         7         0
+MF     66       0       0         3         0
+CG     93      31     243        18         0
+LR      7       0       0         0         0
+FR     22       2       2         0         0
+TOT   348      34     246        43         0
+
+QUANTO DO ERRO DE SUBUNIDADE MORA NESSES MATERIAIS (6 golds)
+   classe                    n  certos     %  erros
+   texto proprio           184     161   88%     23
+   tem youtube              28      16   57%     12
+   tem pagina externa       21      18   86%      3
+   TOTAL                   233     195

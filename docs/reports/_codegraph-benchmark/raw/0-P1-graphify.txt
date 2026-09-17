@@ -1,0 +1,246 @@
+DISCOVERY
+Node: ._run_chunked_marker()
+  ID:        src_builder_engine_markerclibackend_run_chunked_marker
+  Source:    src/builder/engine.py L1447
+  Type:      code
+  Community: 
+  Degree:    10
+
+Connections (10):
+  --> write_text() [calls] [EXTRACTED] src/builder/engine.py:L1506
+  --> safe_rel() [calls] [EXTRACTED] src/builder/engine.py:L1510
+  --> BackendContext [references] [EXTRACTED] src/builder/engine.py:L1447
+  --> Path [references] [EXTRACTED] src/builder/engine.py:L1447
+  --> BackendRunResult [references] [EXTRACTED] src/builder/engine.py:L1447
+  <-- MarkerCLIBackend [method] [EXTRACTED] src/builder/engine.py:L1447
+  --> ._run_single_marker() [calls] [EXTRACTED] src/builder/engine.py:L1456
+  <-- .run() [calls] [EXTRACTED] src/builder/engine.py:L1566
+  --> wrap_frontmatter() [calls] [EXTRACTED] src/builder/engine.py:L1506
+  --> pages_to_marker_range() [calls] [EXTRACTED] src/builder/engine.py:L1501
+
+Node: build_marker_page_chunks()
+  ID:        src_builder_runtime_backend_runtime_build_marker_page_chunks
+  Source:    src/builder/runtime/backend_runtime.py L28
+  Type:      code
+  Community: 
+  Degree:    3
+
+Connections (3):
+  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61
+  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L28
+  --> build_page_chunks() [calls] [EXTRACTED] src/builder/runtime/backend_runtime.py:L29
+
+Node: build_page_chunks()
+  ID:        src_builder_runtime_backend_runtime_build_page_chunks
+  Source:    src/builder/runtime/backend_runtime.py L21
+  Type:      code
+  Community: 
+  Degree:    3
+
+Connections (3):
+  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61
+  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L21
+  <-- build_marker_page_chunks() [calls] [EXTRACTED] src/builder/runtime/backend_runtime.py:L29
+
+No directed path found between '_run_chunked_marker' and 'build_page_chunks'. Re-run with --undirected to search ignoring edge direction.
+
+SOURCE VERIFICATION
+src/builder/engine.py:59:     apply_unit_subunit_fields as _apply_unit_subunit_fields,
+src/builder/engine.py:60: )
+src/builder/engine.py:61: from src.builder.runtime.backend_runtime import (
+src/builder/engine.py:62:     MARKER_OLLAMA_SERVICE,
+src/builder/engine.py:63:     advanced_cli_stall_timeout as _backend_advanced_cli_stall_timeout,
+src/builder/engine.py:64:     build_marker_page_chunks as _backend_build_marker_page_chunks,
+src/builder/engine.py:65:     build_page_chunks as _backend_build_page_chunks,
+src/builder/engine.py:66:     configure_docling_python_standard_gpu as _backend_configure_docling_python_standard_gpu,
+src/builder/engine.py:67:     datalab_chunk_size_for_workload as _backend_datalab_chunk_size_for_workload,
+src/builder/engine.py:68:     datalab_should_chunk as _backend_datalab_should_chunk,
+src/builder/engine.py:69:     detect_marker_capabilities as _backend_detect_marker_capabilities,
+src/builder/engine.py:70:     load_docling_python_api as _backend_load_docling_python_api,
+src/builder/engine.py:71:     marker_chunk_size_for_workload as _backend_marker_chunk_size_for_workload,
+src/builder/engine.py:72:     marker_effective_torch_device as _backend_marker_effective_torch_device,
+src/builder/engine.py:73:     marker_model_is_cloud_variant as _backend_marker_model_is_cloud_variant,
+src/builder/engine.py:378: _rewrite_markdown_asset_paths = _markdown_utils_rewrite_markdown_asset_paths
+src/builder/engine.py:379: _strip_markdown_image_refs = _markdown_utils_strip_markdown_image_refs
+src/builder/engine.py:380: 
+src/builder/engine.py:381: _entry_image_source_dirs = _entry_signals_image_source_dirs
+src/builder/engine.py:382: 
+src/builder/engine.py:383: _build_page_chunks = _backend_build_page_chunks
+src/builder/engine.py:384: _build_marker_page_chunks = _backend_build_marker_page_chunks
+src/builder/engine.py:385: _selected_page_count = _backend_selected_page_count
+src/builder/engine.py:386: 
+src/builder/engine.py:387: _prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docling_python_source_pdf(
+src/builder/engine.py:388:     ctx,
+src/builder/engine.py:389:     out_dir,
+src/builder/engine.py:390:     has_pymupdf=HAS_PYMUPDF,
+src/builder/engine.py:391:     pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+src/builder/engine.py:392: )
+src/builder/engine.py:897: class DatalabCloudBackend(ExtractionBackend):
+src/builder/engine.py:1054:     def _run_chunked_datalab(
+src/builder/engine.py:1057:         out_dir: Path,
+src/builder/engine.py:1058:         *,
+src/builder/engine.py:1059:         mode: str,
+src/builder/engine.py:1060:         max_wait_seconds: int ) -> BackendRunResult:
+src/builder/engine.py:1061:         chunk_size = _datalab_chunk_size_for_workload(ctx)
+src/builder/engine.py:1062:         chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
+src/builder/engine.py:1063:         if len(chunks) <= 1:
+src/builder/engine.py:1064:             return self._run_single_datalab(
+src/builder/engine.py:1065:                 ctx,
+src/builder/engine.py:1066:                 out_dir,
+src/builder/engine.py:1067:                 mode=mode,
+src/builder/engine.py:1068:                 page_range=pages_to_marker_range(ctx.pages),
+src/builder/engine.py:1069:                 max_wait_seconds=max_wait_seconds )
+src/builder/engine.py:1070: 
+src/builder/engine.py:1242: class MarkerCLIBackend(ExtractionBackend):
+src/builder/engine.py:1442:             metadata_path=safe_rel(metadata_path, ctx.root_dir),
+src/builder/engine.py:1443:             command=cmd,
+src/builder/engine.py:1444:             notes=["Saída avançada gerada com Marker CLI."],
+src/builder/engine.py:1445:         )
+src/builder/engine.py:1446: 
+src/builder/engine.py:1447:     def _run_chunked_marker(
+src/builder/engine.py:1448:         self,
+src/builder/engine.py:1449:         ctx: BackendContext,
+src/builder/engine.py:1450:         out_dir: Path,
+src/builder/engine.py:1451:         caps: Dict[str, object],
+src/builder/engine.py:1452:         stall_timeout: int ) -> BackendRunResult:
+src/builder/engine.py:1453:         chunk_size = _marker_chunk_size_for_workload(ctx)
+src/builder/engine.py:1454:         chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
+src/builder/engine.py:1455:         if len(chunks) <= 1:
+src/builder/engine.py:1456:             return self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+src/builder/engine.py:1457: 
+src/builder/engine.py:1458:         logger.info(
+src/builder/engine.py:1459:             "  [marker] Documento grande/pesado; processando em %d chunks de até %d páginas.",
+src/builder/engine.py:1460:             len(chunks),
+src/builder/engine.py:1461:             chunk_size )
+src/builder/engine.py:1462:         logger.info(
+src/builder/engine.py:1463:             "  [marker] Chunk policy: %d páginas por chunk para %d páginas selecionadas.",
+src/builder/engine.py:1464:             chunk_size,
+src/builder/engine.py:1465:             _selected_page_count(ctx) )
+src/builder/engine.py:1466:         combined_path = out_dir / f"{ctx.entry_id}.md"
+src/builder/engine.py:1467:         combined_parts: List[str] = []
+src/builder/engine.py:1468:         chunk_meta = []
+src/builder/engine.py:1469: 
+src/builder/engine.py:1470:         for idx, chunk_pages in enumerate(chunks, start=1):
+src/builder/engine.py:1471:             chunk_dir = out_dir / f"chunk-{idx:03d}"
+src/builder/engine.py:1472:             logger.info(
+src/builder/engine.py:1473:                 "  [marker] Chunk %d/%d — páginas %d-%d",
+src/builder/engine.py:1474:                 idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1 )
+src/builder/engine.py:1475:             result = self._run_single_marker(ctx, chunk_dir, caps, chunk_pages, stall_timeout)
+src/builder/engine.py:1476:             if result.status != "ok" or not result.markdown_path:
+src/builder/engine.py:1477:                 return BackendRunResult(
+src/builder/engine.py:1478:                     name=self.name,
+src/builder/engine.py:1479:                     layer=self.layer,
+src/builder/engine.py:1480:                     status="error",
+src/builder/engine.py:1481:                     command=result.command,
+src/builder/engine.py:1482:                     error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}" )
+src/builder/engine.py:1483: 
+src/builder/engine.py:1484:             md_abs = ctx.root_dir / result.markdown_path
+src/builder/engine.py:1485:             try:
+src/builder/engine.py:1486:                 chunk_text = _sanitize_external_markdown_text(
+src/builder/engine.py:1487:                     md_abs.read_text(encoding="utf-8", errors="replace") )
+src/builder/engine.py:1488:             except Exception as e:
+src/builder/engine.py:1489:                 return BackendRunResult(
+src/builder/engine.py:1490:                     name=self.name,
+src/builder/engine.py:1491:                     layer=self.layer,
+src/builder/engine.py:1492:                     status="error",
+src/builder/engine.py:1493:                     error=f"Falha ao ler markdown do chunk {idx}: {e}" )
+src/builder/engine.py:1494: 
+src/builder/engine.py:1495:             chunk_body = _strip_frontmatter_block(chunk_text).strip()
+src/builder/engine.py:1496:             chunk_body = _rewrite_markdown_asset_paths(chunk_body, md_abs.parent, combined_path.parent)
+src/builder/engine.py:1497:             combined_parts.append(
+src/builder/engine.py:1498:                 f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}" )
+src/builder/engine.py:1499:             chunk_meta.append({
+src/builder/engine.py:1500:                 "chunk_index": idx,
+src/builder/engine.py:1501:                 "page_range": pages_to_marker_range(chunk_pages),
+src/builder/engine.py:1502:                 "markdown_path": result.markdown_path,
+src/builder/engine.py:1503:                 "metadata_path": result.metadata_path,
+src/builder/engine.py:1504:             })
+src/builder/engine.py:1505: 
+src/builder/engine.py:1506:         write_text(combined_path, wrap_frontmatter({
+src/builder/engine.py:1507:             "entry_id": ctx.entry_id,
+src/builder/engine.py:1508:             "title": ctx.entry.title,
+src/builder/engine.py:1509:             "backend": self.name,
+src/builder/engine.py:1510:             "source_pdf": safe_rel(ctx.raw_target, ctx.root_dir),
+src/builder/engine.py:1511:             "page_range": ctx.entry.page_range,
+src/builder/engine.py:1512:         }, "\n\n".join(part for part in combined_parts if part).strip() + "\n"))
+src/builder/engine.py:1513: 
+src/builder/engine.py:1514:         metadata_path = out_dir / "marker-run.json"
+src/builder/engine.py:1515:         write_text(metadata_path, json.dumps({
+src/builder/engine.py:1516:             "capabilities": caps,
+src/builder/engine.py:1517:             "stall_timeout": stall_timeout,
+src/builder/engine.py:1518:             "chunked": True,
+src/builder/engine.py:1519:             "chunks": chunk_meta,
+src/builder/engine.py:1520:         }, indent=2, ensure_ascii=False))
+src/builder/engine.py:1521: 
+src/builder/engine.py:1522:         return BackendRunResult(
+src/builder/engine.py:1523:             name=self.name,
+src/builder/engine.py:1524:             layer=self.layer,
+src/builder/engine.py:1525:             status="ok",
+src/builder/engine.py:1526:             markdown_path=safe_rel(combined_path, ctx.root_dir),
+src/builder/engine.py:1527:             asset_dir=safe_rel(out_dir, ctx.root_dir),
+src/builder/engine.py:1528:             metadata_path=safe_rel(metadata_path, ctx.root_dir),
+src/builder/engine.py:1529:             notes=["Saída avançada gerada com Marker CLI em chunks."],
+src/builder/engine.py:1530:         )
+src/builder/engine.py:1532:     def run(self, ctx: BackendContext) -> BackendRunResult:
+src/builder/engine.py:1561:             chunking_mode,
+src/builder/engine.py:1562:             supports_chunking,
+src/builder/engine.py:1563:             chunking_would_help,
+src/builder/engine.py:1564:         )
+src/builder/engine.py:1565:         if should_chunk:
+src/builder/engine.py:1566:             result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
+src/builder/engine.py:1567:         else:
+src/builder/engine.py:1568:             result = self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+src/builder/engine.py:1569:             if (
+src/builder/engine.py:1570:                 result.status == "error"
+src/builder/engine.py:1571:                 and chunking_mode == "fallback"
+src/builder/engine.py:1572:                 and chunking_would_help
+src/builder/engine.py:1573:                 and result.error
+src/builder/engine.py:1574:                 and "travou (sem output por" in result.error
+src/builder/engine.py:1575:             ):
+src/builder/engine.py:1576:                 logger.warning("  [marker] Timeout detectado; repetindo em chunks como fallback.")
+src/builder/engine.py:1577:                 result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
+src/builder/engine.py:1578: 
+src/builder/engine.py:1579:         if result.status == "ok":
+src/builder/engine.py:1580:             return result
+src/builder/engine.py:1581: 
+src/builder/engine.py:1582:         if DOCLING_CLI:
+src/builder/engine.py:1583:             logger.warning("  [marker] Falhou; tentando fallback para docling: %s", result.error)
+src/builder/engine.py:1584:             fallback = DoclingCLIBackend().run(ctx)
+src/builder/engine.py:1585:             if fallback.status == "ok":
+src/builder/engine.py:2457:     "_build_assessment_context_from_course",
+src/builder/engine.py:2458:     "_build_content_taxonomy",
+src/builder/engine.py:2459:     "_build_file_map_timeline_context_from_course",
+src/builder/engine.py:2460:     "_build_file_map_unit_index",
+src/builder/engine.py:2461:     "_build_file_map_unit_index_from_course",
+src/builder/engine.py:2462:     "_build_marker_page_chunks",
+src/builder/engine.py:2463:     "_build_timeline_candidate_rows",
+src/builder/engine.py:2464:     "_build_timeline_index",
+src/builder/engine.py:2465:     "_bundle_priority_score",
+src/builder/engine.py:2466:     "_collect_entry_unit_signals",
+src/builder/engine.py:2467:     "_compact_notebook_markdown",
+src/builder/engine.py:2468:     "_detect_latex_corruption",
+src/builder/engine.py:2469:     "_entry_markdown_text_for_file_map",
+src/builder/engine.py:2470:     "_file_map_markdown_cell",
+
+src/builder/runtime/backend_runtime.py:16: _DOCLING_PYTHON_API_CACHE = None
+src/builder/runtime/backend_runtime.py:17: _MARKER_CAPABILITIES_CACHE = None
+src/builder/runtime/backend_runtime.py:18: MARKER_OLLAMA_SERVICE = "marker.services.ollama.OllamaService"
+src/builder/runtime/backend_runtime.py:19: 
+src/builder/runtime/backend_runtime.py:20: 
+src/builder/runtime/backend_runtime.py:21: def build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:22:     selected = sorted(pages if pages is not None else list(range(page_count)))
+src/builder/runtime/backend_runtime.py:23:     if not selected:
+src/builder/runtime/backend_runtime.py:24:         return []
+src/builder/runtime/backend_runtime.py:25:     return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+src/builder/runtime/backend_runtime.py:26: 
+src/builder/runtime/backend_runtime.py:27: 
+src/builder/runtime/backend_runtime.py:28: def build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:29:     return build_page_chunks(pages, page_count, chunk_size=chunk_size)
+src/builder/runtime/backend_runtime.py:30: 
+src/builder/runtime/backend_runtime.py:31: 
+src/builder/runtime/backend_runtime.py:32: def selected_page_count(ctx: "BackendContext") -> int:
+src/builder/runtime/backend_runtime.py:33:     if ctx.pages is not None:
+src/builder/runtime/backend_runtime.py:34:         return len(ctx.pages)
+src/builder/runtime/backend_runtime.py:35:     return max(int(ctx.report.page_count or 0), 0)
+src/builder/runtime/backend_runtime.py:36: 
+src/builder/runtime/backend_runtime.py:37: 

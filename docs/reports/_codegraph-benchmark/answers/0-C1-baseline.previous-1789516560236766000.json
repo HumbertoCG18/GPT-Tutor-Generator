@@ -1,0 +1,13 @@
+{
+  "id": "C1",
+  "arm": "baseline",
+  "rep": 0,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 7.502660500002094,
+  "returncode": 0,
+  "evidence_sha256": "a93dd9e36e2035c34c78f45e8ce3ea8279de6e8bd9a08f27dfd54765ebca05f3",
+  "prompt_chars": 19993,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a769-f9dc-78a1-b564-68c30d323dec\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[],\\\"evidence\\\":[\\\"src/builder/timeline/unit_labels.py:26\\\"],\\\"caveat\\\":\\\"A evidência mostra a chamada a unit_number, mas omite a definição da função que a contém.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":24318,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":49,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

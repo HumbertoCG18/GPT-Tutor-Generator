@@ -1,0 +1,33 @@
+TIER 3: voto falhou p/ pagina-com-videos-sobre-manipulacao-de-imagens-61ddde (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156 (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ pagina-com-videos-sobre-segmentacao-de-imagens-d0627f (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ pagina-com-videos-sobre-segmentacao-por-texturas-e03566 (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ pagina-com-videos-sobre-visualizacao-3d-35a833 (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+[CG] zips 14, membros 273, md distintos 186 (COLISAO) · reprocess 130s · code_curation {'determ-v3': 12} · git sujo 0 -> 196 · tentativas Gemini 6
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+[ES2] zips 8, membros 131, md distintos 129 (COLISAO) · reprocess 56s · code_curation {'determ-v3': 8} · git sujo 2 -> 143 · tentativas Gemini 6
+TIER 3: voto falhou p/ tcp-chat-c (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ tcp-example (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+TIER 3: voto falhou p/ udp-example-c (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+[FR] zips 4, membros 8, md distintos 8 (ok) · reprocess 16s · code_curation {'determ-v3': 4} · git sujo 0 -> 17 · tentativas Gemini 9
+TIER 3: voto falhou p/ prova-1-2024-02 (RuntimeError: Gemini bloqueado no rollout: summarize_bundle)
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+[IA] zips 4, membros 15, md distintos 15 (ok) · reprocess 218s · code_curation {'determ-v3': 4} · git sujo 2 -> 30 · tentativas Gemini 10
+[profile] Laboratorio-de-Redes-Tutor: perfil 'Laboratório de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+[LR] zips 0, membros 0, md distintos 0 (ok) · reprocess 2s · code_curation {} · git sujo 0 -> 4 · tentativas Gemini 10
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+[MF] zips 13, membros 70, md distintos 70 (ok) · reprocess 39s · code_curation {'determ-v3': 13} · git sujo 3 -> 83 · tentativas Gemini 10
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+[TCC] zips 0, membros 0, md distintos 0 (ok) · reprocess 45s · code_curation {} · git sujo 2 -> 12 · tentativas Gemini 10
+total 515s · tentativas de chamada Gemini: ['summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle', 'summarize_bundle']
+exit 0

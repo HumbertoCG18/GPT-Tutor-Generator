@@ -1,0 +1,20 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "_run_chunked_marker",
+      "-e",
+      "build_marker_page_chunks",
+      "-e",
+      "build_page_chunks",
+      "src"
+    ],
+    "seconds": 0.023334999998041894,
+    "returncode": 0,
+    "stdout": "src\\builder\\runtime\\backend_runtime.py:21:def build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:\nsrc\\builder\\runtime\\backend_runtime.py:28:def build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:\nsrc\\builder\\runtime\\backend_runtime.py:29:    return build_page_chunks(pages, page_count, chunk_size=chunk_size)\nsrc\\builder\\engine.py:64:    build_marker_page_chunks as _backend_build_marker_page_chunks,\nsrc\\builder\\engine.py:65:    build_page_chunks as _backend_build_page_chunks,\nsrc\\builder\\engine.py:383:_build_page_chunks = _backend_build_page_chunks\nsrc\\builder\\engine.py:384:_build_marker_page_chunks = _backend_build_marker_page_chunks\nsrc\\builder\\engine.py:1062:        chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)\nsrc\\builder\\engine.py:1447:    def _run_chunked_marker(\nsrc\\builder\\engine.py:1454:        chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)\nsrc\\builder\\engine.py:1566:            result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)\nsrc\\builder\\engine.py:1577:                result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)\nsrc\\builder\\engine.py:2462:    \"_build_marker_page_chunks\",\n",
+    "stderr": ""
+  }
+]

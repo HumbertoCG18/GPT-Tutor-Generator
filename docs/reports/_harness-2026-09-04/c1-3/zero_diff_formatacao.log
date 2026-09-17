@@ -1,0 +1,28 @@
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+== Metodos-Formais-Tutor: 0 arquivo(s) diferem da referencia: []
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+== Sistemas-Operacionais-Tutor: 8 arquivo(s) diferem da referencia: ['.deeptutor/knowledge/COURSE_MAP.md', '.deeptutor/knowledge/FILE_MAP.md', '.deeptutor/knowledge/GLOSSARY.md', 'course/.content_taxonomy.json', 'course/.timeline_index.json', 'course/COURSE_MAP.md', 'course/FILE_MAP.md', 'course/GLOSSARY.md']
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+== Inteligencia-Artifical-Tutor: 5 arquivo(s) diferem da referencia: ['.deeptutor/knowledge/COURSE_MAP.md', '.deeptutor/knowledge/GLOSSARY.md', 'course/.content_taxonomy.json', 'course/COURSE_MAP.md', 'course/GLOSSARY.md']
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+== Engenharia-Software-2-Tutor: 0 arquivo(s) diferem da referencia: []
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+== TCC-Tutor: 6 arquivo(s) diferem da referencia: ['.deeptutor/knowledge/COURSE_MAP.md', '.deeptutor/knowledge/GLOSSARY.md', 'course/.assessment_context.json', 'course/.content_taxonomy.json', 'course/COURSE_MAP.md', 'course/GLOSSARY.md']
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+== Computacao-Grafica-Tutor: 8 arquivo(s) diferem da referencia: ['.deeptutor/knowledge/COURSE_MAP.md', '.deeptutor/knowledge/FILE_MAP.md', '.deeptutor/knowledge/GLOSSARY.md', 'course/.content_taxonomy.json', 'course/COURSE_MAP.md', 'course/FILE_MAP.md', 'course/GLOSSARY.md', 'manifest.json']
+     elemoculto: ['auto_tags', 'computed_subunit_slug', 'subunit_match_confidence', 'subunit_match_reasons', 'unit_match_confidence', 'unit_match_reasons']
+     exemplozbuffer: ['subunit_match_confidence', 'subunit_match_reasons', 'unit_match_confidence', 'unit_match_reasons']
+     pagina-com-videos-sobre-remocao-de-e: ['subunit_match_confidence', 'unit_match_confidence', 'unit_match_reasons']
+[profile] Laboratorio-de-Redes-Tutor: perfil 'Laboratório de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+== Laboratorio-de-Redes-Tutor: 0 arquivo(s) diferem da referencia: []
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+== Fundamentos-de-Redes-Tutor: 7 arquivo(s) diferem da referencia: ['.deeptutor/knowledge/COURSE_MAP.md', '.deeptutor/knowledge/GLOSSARY.md', 'course/.content_taxonomy.json', 'course/.semantic_profile.generated.json', 'course/.tag_catalog.json', 'course/COURSE_MAP.md', 'course/GLOSSARY.md']
+[check] TOTAL arquivos diferentes: 34 · 316s

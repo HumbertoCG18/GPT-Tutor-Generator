@@ -1,0 +1,13 @@
+{
+  "id": "L3",
+  "arm": "graphify",
+  "rep": 0,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 12.351509899999655,
+  "returncode": 0,
+  "evidence_sha256": "f54aa2178305e7798166ca2927cab991d79f886b9d3aa4afd99170fc7e008f90",
+  "prompt_chars": 3907,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a769-e173-7a61-8ee2-c5b995c5d38a\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/ui/maintenance_panel.py:MaintenancePanel._detect_orphans\\\"],\\\"evidence\\\":[\\\"src/ui/maintenance_panel.py:102\\\"],\\\"caveat\\\":\\\"\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":19950,\"cached_input_tokens\":11648,\"cache_write_input_tokens\":0,\"output_tokens\":41,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

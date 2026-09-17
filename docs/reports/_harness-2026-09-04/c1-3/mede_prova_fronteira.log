@@ -1,0 +1,258 @@
+
+=== SO ===
+  bloco-01  2026-03-03 overview   u=-            conf=0.0  apresentacao da disciplina e introducao aula
+  bloco-02  2026-03-05 overview   u=-            conf=0.0  introducao aula
+  bloco-03  2026-03-10 class      u=01-introduca conf=0.8  historico e evolucao dos sistemas operaciona
+  bloco-04  2026-03-19 class      u=02-gerencia- conf=0.6  gerencia do processador processos chamadas d
+  bloco-05  2026-04-02 holiday    u=-            conf=0.0  feriado aula
+  bloco-06  2026-04-07 class      u=04-deadlock  conf=1.0  gerencia do processador sincronizacao e dead
+  bloco-07  2026-04-14 class      u=02-gerencia- conf=0.6  especificacao tp1
+  bloco-08  2026-04-21 holiday    u=-            conf=0.0  feriado aula
+  bloco-09  2026-04-23 class      u=03-programac conf=0.6  comunicacao entre processos pipes filas aula
+  bloco-10  2026-04-30 office_hou u=-            conf=0.0  duvidas prova aula
+  bloco-11  2026-05-05 office_hou u=-            conf=0.0  duvidas tp1 duvidas p1 aula
+  bloco-12  2026-05-07 assessment u=07-gerencia- conf=1.0  p1 prova
+  bloco-13  2026-05-12 class      u=05-gerencia- conf=0.8  gerencia de memoria memoria virtual paginaca
+  bloco-14  2026-05-14 deliverabl u=-            conf=0.0  apresentacao tp1 parte 1 trabalho
+  bloco-15  2026-05-19 deliverabl u=-            conf=0.0  apresentacao tp1 parte 2 trabalho
+  bloco-16  2026-05-21 class      u=05-gerencia- conf=0.8  gerencia de memoria memoria virtual paginaca
+  bloco-17  2026-06-04 holiday    u=-            conf=0.0  feriado aula
+  bloco-18  2026-06-09 class      u=07-gerencia- conf=0.6  gerencia de e s
+  bloco-19  2026-06-11 class      u=07-gerencia- conf=0.6  gerencia de e s aula
+  bloco-20  2026-06-16 class      u=06-gerencia- conf=1.0  gerencia de arquivos aula
+  bloco-21  2026-06-25 assessment u=-            conf=0.0  prova p2 prova
+  bloco-22  2026-06-30 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-23  2026-07-02 deliverabl u=-            conf=0.0  apresentacao tp2 parte 1 trabalho
+  bloco-24  2026-07-07 deliverabl u=-            conf=0.0  apresentacao tp2 parte 2 trabalho
+  bloco-25  2026-07-09 reserved   u=-            conf=0.0  reserva tecnica aula
+  bloco-26  2026-07-14 assessment u=-            conf=0.0  prova g2 aula
+  bloco-27  2026-07-16 assessment u=-            conf=0.0  aula
+     ^ troca 01-introdu -> 02-gerenci SEM avaliacao entre
+     ^ troca 02-gerenci -> 04-deadloc SEM avaliacao entre
+     ^ troca 04-deadloc -> 02-gerenci SEM avaliacao entre
+     ^ troca 02-gerenci -> 03-program SEM avaliacao entre
+     ^ troca 03-program -> 07-gerenci SEM avaliacao entre
+     ^ troca 07-gerenci -> 05-gerenci SEM avaliacao entre
+     ^ troca 05-gerenci -> 07-gerenci SEM avaliacao entre
+     ^ troca 07-gerenci -> 06-gerenci SEM avaliacao entre
+
+=== IA ===
+  bloco-01  2026-03-02 overview   u=-            conf=0.0  plano de ensino conteudo programatico cronog
+  bloco-02  2026-03-04 class      u=de-aprendiza conf=0.4  visao geral da ia aula
+  bloco-03  2026-03-09 overview   u=de-aprendiza conf=1.0  ml introducao a ml aula
+  bloco-04  2026-03-11 class      u=de-aprendiza conf=1.0  ml tipos de dados e preparacao de dados aula
+  bloco-05  2026-03-18 class      u=de-aprendiza conf=1.0  ml abordagem supervisionada k nn aula
+  bloco-06  2026-04-20 suspended  u=-            conf=0.0  suspensao de aulas aula
+  bloco-07  2026-04-22 class      u=de-aprendiza conf=1.0  ml abordagem nao supervisionada k means exer
+  bloco-08  2026-04-29 office_hou u=-            conf=0.0  duvidas para t1 aula
+  bloco-09  2026-05-04 deliverabl u=-            conf=0.0  apresentacao do t1 trabalho
+  bloco-10  2026-05-06 deliverabl u=-            conf=0.0  apresentacao do t1 trabalho
+  bloco-11  2026-05-11 class      u=de-aprendiza conf=0.4  exercicios gerais aula
+  bloco-12  2026-05-13 assessment u=-            conf=0.0  prova 1 prova
+  bloco-13  2026-05-18 class      u=de-aprendiza conf=0.6  correcao p1 e algoritmos de busca aula
+  bloco-14  2026-05-27 academic_e u=-            conf=0.0  es day evento academico
+  bloco-15  2026-06-01 class      u=de-aprendiza conf=0.6  algoritmos de busca aula
+  bloco-16  2026-06-10 class      u=de-aprendiza conf=0.6  correcao da p1 duvidas t2 aula
+  bloco-17  2026-06-17 class      u=de-aprendiza conf=0.6  introducao a agentes e planejamento aula
+  bloco-18  2026-06-24 holiday    u=-            conf=0.0  suspensao de atividades feriado
+  bloco-19  2026-06-29 deliverabl u=-            conf=0.0  apresentacao t2 trabalho
+  bloco-20  2026-07-01 assessment u=-            conf=0.0  prova p2 prova
+  bloco-21  2026-07-06 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-22  2026-07-08 results    u=-            conf=0.0  atendimento divulgacao dos resultados da g1 
+  bloco-23  2026-07-13 assessment u=-            conf=0.0  prova g2 prova de g2
+  bloco-24  2026-07-15 assessment u=-            conf=0.0  aula
+     ^ troca de-aprendi -> de-aprendi SEM avaliacao entre
+     ^ troca de-aprendi -> de-aprendi SEM avaliacao entre
+     ^ troca de-aprendi -> de-aprendi COM avaliacao entre (['bloco-12'])
+     ^ troca de-aprendi -> de-aprendi SEM avaliacao entre
+
+=== ES2 ===
+  bloco-01  2026-03-06 class      u=01-arquitetu conf=0.6  apresentacao da disciplina revisao de concei
+  bloco-02  2026-03-27 class      u=01-arquitetu conf=0.4  microsservicos no spring introducao aula
+  bloco-03  2026-04-03 holiday    u=-            conf=0.0  feriado aula
+  bloco-04  2026-04-10 class      u=02-integraca conf=1.0  microservicos no spring discovery aula
+  bloco-05  2026-05-01 holiday    u=-            conf=0.0  feriado aula
+  bloco-06  2026-05-08 assessment u=-            conf=0.0  prova p1 prova
+  bloco-07  2026-05-15 class      u=02-integraca conf=1.0  microservicos no spring circuit breaker aula
+  bloco-08  2026-05-22 class      u=02-integraca conf=0.6  implantacao de microservicos conteineres aul
+  bloco-09  2026-06-05 class      u=02-integraca conf=1.0  comunicacao assincrona aula
+  bloco-10  2026-06-12 class      u=02-integraca conf=1.0  autenticacao e autorizacao aula
+  bloco-11  2026-06-19 suspended  u=-            conf=0.0  suspensao jogo copa do mundo aula
+  bloco-12  2026-06-26 class      u=02-integraca conf=0.6  devops exercicios aula
+  bloco-13  2026-07-03 assessment u=-            conf=0.0  prova p2 entrega trabalho final prova
+  bloco-14  2026-07-10 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-15  2026-07-17 assessment u=-            conf=0.0  prova g2 prova de g2
+     ^ troca 01-arquite -> 02-integra SEM avaliacao entre
+     ! avaliacao bloco-06 NAO e fronteira (mesma unidade 02-integra dos dois lados)
+
+=== TCC ===
+  bloco-01  2026-03-04 class      u=01-conjuntos conf=0.8  apresentacao
+  bloco-02  2026-03-06 class      u=01-conjuntos conf=0.8  conjuntos enumeraveis e nao enumeraveis
+  bloco-03  2026-03-11 class      u=01-conjuntos conf=0.8  funcoes recursivas primitivas
+  bloco-04  2026-03-20 deliverabl u=-            conf=0.0  t1 em aula trabalho
+  bloco-05  2026-03-25 class      u=01-conjuntos conf=0.4  revisao alfabeto cadeia linguagem hierarquia
+  bloco-06  2026-03-27 class      u=02-turing-co conf=0.8  maquinas de turing e linguagens recursivamen
+  bloco-07  2026-04-03 holiday    u=-            conf=0.0  feriado aula
+  bloco-08  2026-04-08 class      u=02-turing-co conf=0.6  variacoes de maquias de turing aula
+  bloco-09  2026-04-10 class      u=02-turing-co conf=0.8  linguagens reconheciveis e linguagens decidi
+  bloco-10  2026-04-15 class      u=03-problemas conf=1.0  halting problem aula
+  bloco-11  2026-04-17 class      u=03-problemas conf=1.0  entscheidungsproblem aula
+  bloco-12  2026-04-22 class      u=03-problemas conf=1.0  theorema de rice aula
+  bloco-13  2026-04-24 class      u=03-problemas conf=0.6  problema da correspondencia de post aula
+  bloco-14  2026-04-29 class      u=03-problemas conf=0.6  teoremas de godel aula
+  bloco-15  2026-05-01 holiday    u=-            conf=0.0  feriado aula
+  bloco-16  2026-05-06 review     u=-            conf=0.0  revisao para prova p1 aula
+  bloco-17  2026-05-08 assessment u=-            conf=0.0  prova p1 prova
+  bloco-18  2026-05-13 class      u=03-problemas conf=0.6  correcao prova p1 aula
+  bloco-19  2026-05-15 class      u=04-hierarqui conf=0.8  classes de problemas
+  bloco-20  2026-05-27 academic_e u=-            conf=0.0  se day evento academico
+  bloco-21  2026-05-29 workshop   u=-            conf=0.0  oficina de problemas entrega t2 aula
+  bloco-22  2026-06-03 class      u=04-hierarqui conf=0.6  theorema de cook levin aula
+  bloco-23  2026-06-05 deliverabl u=-            conf=0.0  complexidade de tempo classe np hard
+  bloco-24  2026-06-10 deliverabl u=-            conf=0.0  complexidade de tempo pspace pspace trabalho
+  bloco-25  2026-06-12 deliverabl u=-            conf=0.0  oficina de problemas entrega t2 trabalho
+  bloco-26  2026-06-17 deliverabl u=-            conf=0.0  oficina de problemas trabalho
+  bloco-27  2026-06-19 deliverabl u=-            conf=0.0  oficina de problemas trabalho
+  bloco-28  2026-06-24 deliverabl u=-            conf=0.0  oficina de problemas trabalho
+  bloco-29  2026-06-26 deliverabl u=-            conf=0.0  oficina de problemas apresentacao trabalho
+  bloco-30  2026-07-01 review     u=-            conf=0.0  revisao para prova p2 aula
+  bloco-31  2026-07-03 assessment u=-            conf=0.0  prova p2 prova
+  bloco-32  2026-07-08 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-33  2026-07-10 class      u=04-hierarqui conf=0.4  correcao da prova p2 e prova ps aula
+  bloco-34  2026-07-15 assessment u=-            conf=0.0  atendimento a duvidas aula
+  bloco-35  2026-07-17 assessment u=-            conf=0.0  prova g2 prova de g2
+     ^ troca 01-conjunt -> 02-turing- SEM avaliacao entre
+     ^ troca 02-turing- -> 03-problem SEM avaliacao entre
+     ^ troca 03-problem -> 04-hierarq SEM avaliacao entre
+     ! avaliacao bloco-17 NAO e fronteira (mesma unidade 03-problem dos dois lados)
+     ! avaliacao bloco-31 NAO e fronteira (mesma unidade 04-hierarq dos dois lados)
+     ! avaliacao bloco-32 NAO e fronteira (mesma unidade 04-hierarq dos dois lados)
+
+=== MF ===
+  bloco-01  2026-03-02 class      u=01-metodos-f conf=0.4  apresentacao da disciplina aula
+  bloco-02  2026-03-04 class      u=01-metodos-f conf=0.6  introducao a metodos formais aula
+  bloco-03  2026-03-09 class      u=01-metodos-f conf=0.4  revisao de logica de predicados exercicios a
+  bloco-04  2026-03-11 class      u=01-metodos-f conf=0.8  conjuntos indutivos e equacoes recursivas au
+  bloco-05  2026-03-30 class      u=01-metodos-f conf=0.8  provas por inducao aula
+  bloco-06  2026-04-06 class      u=01-metodos-f conf=0.6  prova interativa de teoremas isabelle aula
+  bloco-07  2026-04-15 review     u=-            conf=0.0  exercicios de revisao aula
+  bloco-08  2026-04-20 suspended  u=-            conf=0.0  suspensao de aulas aula
+  bloco-09  2026-04-22 assessment u=-            conf=0.0  prova p1 prova
+  bloco-10  2026-04-27 class      u=02-verificac conf=0.6  logica de hoare aula
+  bloco-11  2026-05-06 deliverabl u=-            conf=0.0  logica de programas correcao parcial correca
+  bloco-12  2026-05-11 class      u=02-verificac conf=0.6  terminacao introducao ao dafny aula
+  bloco-13  2026-05-13 class      u=02-verificac conf=0.6  logica de programas introducao ao dafny aula
+  bloco-14  2026-05-27 academic_e u=-            conf=0.0  se day evento academico
+  bloco-15  2026-06-01 class      u=02-verificac conf=0.8  logica de programas orientacao a objetos daf
+  bloco-16  2026-06-15 class      u=03-verificac conf=0.6  verificacao de modelos logica temporal aula
+  bloco-17  2026-06-24 suspended  u=-            conf=0.0  suspensao jogo copa do mundo aula
+  bloco-18  2026-06-29 class      u=03-verificac conf=0.6  verificacao de modelos ferramenta aula
+  bloco-19  2026-07-01 review     u=-            conf=0.0  exercicios de revisao aula
+  bloco-20  2026-07-06 assessment u=-            conf=0.0  prova p2 entrega do t2 prova
+  bloco-21  2026-07-08 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-22  2026-07-13 results    u=-            conf=0.0  devolucao das provas aula
+  bloco-23  2026-07-15 assessment u=-            conf=0.0  prova g2 prova de g2
+     ^ troca 01-metodos -> 02-verific COM avaliacao entre (['bloco-09'])
+     ^ troca 02-verific -> 03-verific SEM avaliacao entre
+
+=== CG ===
+  bloco-01  2026-08-04 class      u=01-introduca conf=0.6  apresentacao da disciplina e origens da cg a
+  bloco-02  2026-08-06 class      u=01-introduca conf=0.6  introducao a opengl aula
+  bloco-03  2026-08-11 class      u=02-fundament conf=0.6  fundamentos matematicos para cg pi aula
+  bloco-04  2026-08-18 class      u=02-fundament conf=0.6  algoritmos de deteccao de colisao aula
+  bloco-05  2026-08-20 class      u=02-fundament conf=0.6  geometria computacional aula
+  bloco-06  2026-08-25 class      u=04-processo- conf=0.6  processo de visualizacao 2d instanciamento a
+  bloco-07  2026-09-01 class      u=03-processam conf=0.6  processamento de imagens e visao computacion
+  bloco-08  2026-09-10 class      u=03-processam conf=1.0  morfologia matematica aula
+  bloco-09  2026-09-22 office_hou u=-            conf=0.0  aula de duvidas aula
+  bloco-10  2026-09-24 assessment u=-            conf=0.0  prova p1 prova
+  bloco-11  2026-09-29 office_hou u=-            conf=0.0  aula de duvidas aula
+  bloco-12  2026-10-01 deliverabl u=-            conf=0.0  trabalho i trabalho
+  bloco-13  2026-10-06 class      u=07-represent conf=0.6  curvas parametricas aula
+  bloco-14  2026-10-13 holiday    u=-            conf=0.0  feriado aula
+  bloco-15  2026-10-15 class      u=07-represent conf=0.6  modelagem geometrica aula
+  bloco-16  2026-10-20 academic_e u=-            conf=0.0  semana academica evento academico
+  bloco-17  2026-10-22 academic_e u=-            conf=0.0  semana academica evento academico
+  bloco-18  2026-10-27 class      u=06-processo- conf=0.6  visualizacao 3d projecao aula
+  bloco-19  2026-10-29 class      u=06-processo- conf=0.6  visualizacao 3d observador aula
+  bloco-20  2026-11-03 class      u=06-processo- conf=0.6  remocao de elementos ocultos aula
+  bloco-21  2026-11-10 class      u=08-sintese-d conf=0.6  iluminacao aula
+  bloco-22  2026-11-17 office_hou u=-            conf=0.0  aula de duvidas aula
+  bloco-23  2026-11-19 assessment u=-            conf=0.0  prova p2 prova
+  bloco-24  2026-11-24 assessment u=-            conf=0.0  prova ps prova de substituicao
+  bloco-25  2026-11-26 office_hou u=-            conf=0.0  aula de duvidas aula
+  bloco-26  2026-12-01 deliverabl u=-            conf=0.0  trabalho 2 trabalho
+  bloco-27  2026-12-03 office_hou u=-            conf=0.0  aula de duvidas aula
+  bloco-28  2026-12-08 assessment u=-            conf=0.0  prova g2 prova de g2
+  bloco-29  2026-12-10 class      u=08-sintese-d conf=0.4  aula
+     ^ troca 01-introdu -> 02-fundame SEM avaliacao entre
+     ^ troca 02-fundame -> 04-process SEM avaliacao entre
+     ^ troca 04-process -> 03-process SEM avaliacao entre
+     ^ troca 03-process -> 07-represe COM avaliacao entre (['bloco-10'])
+     ^ troca 07-represe -> 06-process SEM avaliacao entre
+     ^ troca 06-process -> 08-sintese SEM avaliacao entre
+     ! avaliacao bloco-23 NAO e fronteira (mesma unidade 08-sintese dos dois lados)
+     ! avaliacao bloco-24 NAO e fronteira (mesma unidade 08-sintese dos dois lados)
+     ! avaliacao bloco-28 NAO e fronteira (mesma unidade 08-sintese dos dois lados)
+
+=== LR ===
+  bloco-01  2026-08-03 class      u=01-nivel-de- conf=0.4  apresentacao da disciplina aula
+  bloco-02  2026-08-10 class      u=01-nivel-de- conf=0.4  wireshark aula
+  bloco-03  2026-08-17 deliverabl u=-            conf=0.0  camada de aplicacao dhcp trabalho
+  bloco-04  2026-08-24 deliverabl u=-            conf=0.0  camada de aplicacao dns trabalho
+  bloco-05  2026-08-31 deliverabl u=-            conf=0.0  camada de aplicacao http s trabalho
+  bloco-06  2026-09-07 holiday    u=-            conf=0.0  feriado aula
+  bloco-07  2026-09-14 class      u=02-nivel-de- conf=0.8  camada de transporte sockets tcp e udp aula
+  bloco-08  2026-09-21 class      u=02-nivel-de- conf=0.4  desenvolvimento do t1 aula
+  bloco-09  2026-10-05 deliverabl u=-            conf=0.0  apresentacao do t1 trabalho
+  bloco-10  2026-10-12 holiday    u=-            conf=0.0  feriado aula
+  bloco-11  2026-10-19 deliverabl u=-            conf=0.0  camada de rede ip arp e icmp trabalho
+  bloco-12  2026-10-26 deliverabl u=-            conf=0.0  roteamento trabalho
+  bloco-13  2026-11-02 holiday    u=-            conf=0.0  feriado aula
+  bloco-14  2026-11-09 class      u=02-nivel-de- conf=0.4  desenvolvimento do tf aula
+  bloco-15  2026-11-23 deliverabl u=-            conf=0.0  apresentacao do tf trabalho
+  bloco-16  2026-11-30 deliverabl u=-            conf=0.0  apresentacao do tf trabalho
+  bloco-17  2026-12-07 assessment u=-            conf=0.0  aula
+     ^ troca 01-nivel-d -> 02-nivel-d SEM avaliacao entre
+
+=== FR ===
+  bloco-01  2026-08-04 class      u=01-introduca conf=0.6  apresentacao da disciplina aula
+  bloco-02  2026-08-06 class      u=01-introduca conf=0.4  arquitetura de protocolos modelos de referen
+  bloco-03  2026-08-13 class      u=02-nivel-de- conf=0.8  protocolos de aplicacao dhcp aula
+  bloco-04  2026-08-25 academic_e u=-            conf=0.0  aula magna da escola politecnica evento acad
+  bloco-05  2026-08-27 class      u=02-nivel-de- conf=0.8  protocolos de aplicacao dns aula
+  bloco-06  2026-09-03 class      u=02-nivel-de- conf=0.4  camada de transporte udp tcp aula
+  bloco-07  2026-09-10 class      u=04-nivel-de- conf=0.4  camada de rede enderecamento ip aula
+  bloco-08  2026-09-15 class      u=04-nivel-de- conf=0.6  protocolo ipv4 aula
+  bloco-09  2026-09-17 class      u=04-nivel-de- conf=0.6  icmpv4 aula
+  bloco-10  2026-09-22 office_hou u=-            conf=0.0  duvidas da p1 aula
+  bloco-11  2026-09-24 assessment u=-            conf=0.0  prova p1 prova
+  bloco-12  2026-09-29 class      u=04-nivel-de- conf=0.6  protocolos ipv6 e icmpv6 aula
+  bloco-13  2026-10-01 overview   u=-            conf=0.0  introducao ao roteamento ip aula
+  bloco-14  2026-10-06 class      u=04-nivel-de- conf=0.6  tabela de roteamento aula
+  bloco-15  2026-10-08 class      u=04-nivel-de- conf=0.6  algoritmos de roteamento aula
+  bloco-16  2026-10-13 holiday    u=-            conf=0.0  feriado aula
+  bloco-17  2026-10-15 class      u=04-nivel-de- conf=0.6  protocolos de roteamento aula
+  bloco-18  2026-10-20 academic_e u=-            conf=0.0  semana academica da pucrs evento academico
+  bloco-19  2026-10-22 academic_e u=-            conf=0.0  semana academica da pucrs evento academico
+  bloco-20  2026-10-27 class      u=04-nivel-de- conf=0.4  camada de enlace servicos e enquadramento au
+  bloco-21  2026-11-05 class      u=05-nivel-de- conf=0.6  ethernet comutada stp vlan lacp etc aula
+  bloco-22  2026-11-10 class      u=05-nivel-de- conf=0.4  camada fisica e raw sockets aula
+  bloco-23  2026-11-17 deliverabl u=-            conf=0.0  apresentacao do trabalho tf trabalho
+  bloco-24  2026-11-19 deliverabl u=-            conf=0.0  apresentacao do trabalho tf trabalho
+  bloco-25  2026-11-24 deliverabl u=-            conf=0.0  apresentacao do trabalho tf trabalho
+  bloco-26  2026-11-26 assessment u=-            conf=0.0  prova 2 prova
+  bloco-27  2026-12-01 makeup     u=-            conf=0.0  prova ps prova de substituicao
+  bloco-28  2026-12-03 reserved   u=-            conf=0.0  reserva tecnica aula
+  bloco-29  2026-12-08 assessment u=-            conf=0.0  aula
+  bloco-30  2026-12-10 assessment u=-            conf=0.0  prova g2 aula
+     ^ troca 01-introdu -> 02-nivel-d SEM avaliacao entre
+     ^ troca 02-nivel-d -> 04-nivel-d SEM avaliacao entre
+     ^ troca 04-nivel-d -> 05-nivel-d SEM avaliacao entre
+     ! avaliacao bloco-11 NAO e fronteira (mesma unidade 04-nivel-d dos dois lados)
+
+======================================================================
+H1 — a avaliacao e fronteira de unidade
+  trocas de unidade COM avaliacao entre :   3  (a favor)
+  trocas de unidade SEM avaliacao entre :  25  (contra)
+  avaliacoes que nao separam unidades   :   8  (contra)

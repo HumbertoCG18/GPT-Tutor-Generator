@@ -1,0 +1,2819 @@
+{
+  "summary": {
+    "MF": {
+      "perdas": 11,
+      "fallback_sem_prova_datalab": 11,
+      "posting_date": 11,
+      "posting_date_created": 11,
+      "moodle_label": 11,
+      "moodle_section_index": 11,
+      "moodle_module_index": 11,
+      "moodle_week_label": 11,
+      "manual_timeline_block_id": 3,
+      "manual_unit_slug": 1
+    },
+    "SO": {
+      "perdas": 8,
+      "fallback_sem_prova_datalab": 8,
+      "posting_date": 8,
+      "posting_date_created": 8,
+      "moodle_label": 8,
+      "moodle_section_index": 8,
+      "moodle_module_index": 8,
+      "moodle_week_label": 8
+    },
+    "IA": {
+      "perdas": 15,
+      "datalab": 3,
+      "posting_date": 15,
+      "posting_date_created": 15,
+      "moodle_label": 15,
+      "moodle_section_index": 15,
+      "moodle_module_index": 15,
+      "moodle_week_label": 15,
+      "category": 5,
+      "fallback_sem_prova_datalab": 12,
+      "manual_timeline_block_id": 2
+    },
+    "ES2": {
+      "perdas": 16,
+      "datalab": 1,
+      "posting_date": 16,
+      "posting_date_created": 16,
+      "moodle_label": 16,
+      "moodle_section_index": 16,
+      "moodle_module_index": 16,
+      "moodle_week_label": 16,
+      "category": 11,
+      "fallback_sem_prova_datalab": 15
+    },
+    "TCC": {},
+    "CG": {},
+    "FR": {}
+  },
+  "losses": [
+    {
+      "course": "MF",
+      "entry_id": "exerciciosisabelle2",
+      "new_id": "exerciciosisabelle2",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exercícios - provas em Isabelle (parte 2)",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          19,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 30/03/2026 a 03/04/2026: (30/03/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. (01/04/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. || Semana 06/04/2026 a 10/04/2026: (06/04/2026): Especificações recursivas e provas por indução em Isabelle; (08/04/2026): Especificações recursivas e provas por indução em Isabelle. || Semana 13/04/2026 a 17/04/2026: (13/04/2026): Provas em Isabelle, exercícios; (15/04/2026): Exercícios de revisão para P1. || Semana 20/04/2026 a 24/04/2026: (20/04/2026): Feriado; (22/04/2026): Prova P1.",
+          null
+        ],
+        "manual_timeline_block_id": [
+          null,
+          ""
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\exercises\\lists\\exerciciosisabelle2.md",
+            "sha256": "aa2e366f12cfb6873cc44dadf0ccc2d2371935db81f6029d9ab4a89eebb11102",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "logicaproposicional-semantica",
+      "new_id": "logicaproposicional-semantica",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Lógica Proposicional - semântica",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          5,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 09/03/2026 a 13/03/2026: (09/03/2026): revisão de fundamentos de lógica; (11/03/2026): conjuntos indutivos e equações recursivas; (atividade assíncrona): exercícios.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\content\\curated\\logicaproposicional-semantica.md",
+            "sha256": "0dec037cfd1f8cca4ae37766f954d817524f9777e202af4e14ac709da6bea30d",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "after": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "softwares-de-suporte-a-verificacao-formal-de-modelos"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "exerciciosisabelle",
+      "new_id": "exerciciosisabelle",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exercícios - provas em Isabelle",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          18,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 30/03/2026 a 03/04/2026: (30/03/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. (01/04/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. || Semana 06/04/2026 a 10/04/2026: (06/04/2026): Especificações recursivas e provas por indução em Isabelle; (08/04/2026): Especificações recursivas e provas por indução em Isabelle. || Semana 13/04/2026 a 17/04/2026: (13/04/2026): Provas em Isabelle, exercícios; (15/04/2026): Exercícios de revisão para P1. || Semana 20/04/2026 a 24/04/2026: (20/04/2026): Feriado; (22/04/2026): Prova P1.",
+          null
+        ],
+        "manual_timeline_block_id": [
+          null,
+          ""
+        ],
+        "manual_unit_slug": [
+          "unidade-01-metodos-formais",
+          ""
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\exercises\\lists\\exerciciosisabelle.md",
+            "sha256": "bca768ead4326439cbc7d6a4b745c2f8bb5af2e6c5975c05cc3ce22120650bf9",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "provadores-de-teoremas"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "t1-2026-1-thy",
+      "new_id": "t1-2026-1-thy",
+      "differences": {
+        "posting_date": [
+          "2026-04-15",
+          null
+        ],
+        "posting_date_created": [
+          "2026-04-15",
+          null
+        ],
+        "moodle_label": [
+          "Arquivo .thy",
+          null
+        ],
+        "moodle_section_index": [
+          4,
+          null
+        ],
+        "moodle_module_index": [
+          3,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\code\\professor\\t1-2026-1-thy.md",
+            "sha256": "388a1edb1d09c14d0c6af6792804e480b8af235e8e928e0f440f29814d70b4e9",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ],
+      "after": [
+        "",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "exemplos",
+      "new_id": "exemplos-thy",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exemplos - definicoes de funcoes",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          14,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 30/03/2026 a 03/04/2026: (30/03/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. (01/04/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. || Semana 06/04/2026 a 10/04/2026: (06/04/2026): Especificações recursivas e provas por indução em Isabelle; (08/04/2026): Especificações recursivas e provas por indução em Isabelle. || Semana 13/04/2026 a 17/04/2026: (13/04/2026): Provas em Isabelle, exercícios; (15/04/2026): Exercícios de revisão para P1. || Semana 20/04/2026 a 24/04/2026: (20/04/2026): Feriado; (22/04/2026): Prova P1.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\code\\professor\\exemplos.md",
+            "sha256": "bbc5c60ed69ea0eba8743243a039519f8ea332c6ef1d0e9c6202411f9adf39f8",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "exemplos-de-aplicacoes"
+      ],
+      "after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "exemplos-de-aplicacoes"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "provas",
+      "new_id": "provas",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exemplos - provas isabelle e isar",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          15,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 30/03/2026 a 03/04/2026: (30/03/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. (01/04/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. || Semana 06/04/2026 a 10/04/2026: (06/04/2026): Especificações recursivas e provas por indução em Isabelle; (08/04/2026): Especificações recursivas e provas por indução em Isabelle. || Semana 13/04/2026 a 17/04/2026: (13/04/2026): Provas em Isabelle, exercícios; (15/04/2026): Exercícios de revisão para P1. || Semana 20/04/2026 a 24/04/2026: (20/04/2026): Feriado; (22/04/2026): Prova P1.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\code\\professor\\provas.md",
+            "sha256": "2eaf4a3ee029cf0f75222cbaafbb5bd89a8c343d7df89ae5deacaca607e534db",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "exerciciosdafny5",
+      "new_id": "exerciciosdafny5",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exercícios - classes em Dafny",
+          null
+        ],
+        "moodle_section_index": [
+          9,
+          null
+        ],
+        "moodle_module_index": [
+          53,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (01/06/2026): Classes e objetos em Dafny, ghosts e autocontrato; (03/06/2026): Exercícios. || Semana 08/06/2026 a 12/06/2026: (08/06/2026): Classes e objetos em Dafny, ghosts e autocontrato. (10/06/2026): Exercícios.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\exercises\\lists\\exerciciosdafny5.md",
+            "sha256": "9e9406c3a06ce69283de406f0872e3b26d30acc85276cdba9326f13da4ba9800",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "exerciciosnusmv",
+      "new_id": "exerciciosnusmv",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Exercícios - verificação de modelos com NuXMV/NuSMV/Fasten",
+          null
+        ],
+        "moodle_section_index": [
+          10,
+          null
+        ],
+        "moodle_module_index": [
+          18,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 15/06/2026 a 19/06/2026: (15/06/2026): Verificação de modelos, lógica temporal; (17/06/2026): Verificação de modelos, lógica temporal. || Semana 22/06/2026 a 26/06/2026: (22/06/2026): Exercícios ; (24/06/2026): Suspensão Copa do Mundo. || Semana 29/06/2026 a 03/07/2026: (29/06/2026): verificação de modelos, ferramenta; (01/07/2026): exercícios de revisão.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\exercises\\lists\\exerciciosnusmv.md",
+            "sha256": "e1479af9fa729381ea99c93a3057fadd51a6e16d7480118930fd14dab9e49604",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "verificacao-de-modelos-model-checking"
+      ],
+      "after": [
+        "bloco-18",
+        "unidade-03-verificacao-de-modelos",
+        ""
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "classes-parte1",
+      "new_id": "classes-parte1",
+      "differences": {
+        "posting_date": [
+          "2026-05-31",
+          null
+        ],
+        "posting_date_created": [
+          "2026-05-31",
+          null
+        ],
+        "moodle_label": [
+          "Exemplos (classes, parte 1)",
+          null
+        ],
+        "moodle_section_index": [
+          9,
+          null
+        ],
+        "moodle_module_index": [
+          51,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (01/06/2026): Classes e objetos em Dafny, ghosts e autocontrato; (03/06/2026): Exercícios. || Semana 08/06/2026 a 12/06/2026: (08/06/2026): Classes e objetos em Dafny, ghosts e autocontrato. (10/06/2026): Exercícios.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "tiposindutivos",
+      "new_id": "tiposindutivos",
+      "differences": {
+        "posting_date": [
+          "2026-05-31",
+          null
+        ],
+        "posting_date_created": [
+          "2026-05-31",
+          null
+        ],
+        "moodle_label": [
+          "Exemplos (Tipos Indutivos)",
+          null
+        ],
+        "moodle_section_index": [
+          9,
+          null
+        ],
+        "moodle_module_index": [
+          50,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (01/06/2026): Classes e objetos em Dafny, ghosts e autocontrato; (03/06/2026): Exercícios. || Semana 08/06/2026 a 12/06/2026: (08/06/2026): Classes e objetos em Dafny, ghosts e autocontrato. (10/06/2026): Exercícios.",
+          null
+        ],
+        "manual_timeline_block_id": [
+          "95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0",
+          ""
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "course": "MF",
+      "entry_id": "classes-parte2",
+      "new_id": "classes-parte2",
+      "differences": {
+        "posting_date": [
+          "2026-06-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-10",
+          null
+        ],
+        "moodle_label": [
+          "Exemplos (classes, parte 2)",
+          null
+        ],
+        "moodle_section_index": [
+          9,
+          null
+        ],
+        "moodle_module_index": [
+          52,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (01/06/2026): Classes e objetos em Dafny, ghosts e autocontrato; (03/06/2026): Exercícios. || Semana 08/06/2026 a 12/06/2026: (08/06/2026): Classes e objetos em Dafny, ghosts e autocontrato. (10/06/2026): Exercícios.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "exercicios",
+      "new_id": "exercicios",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Exercícios",
+          null
+        ],
+        "moodle_section_index": [
+          3,
+          null
+        ],
+        "moodle_module_index": [
+          3,
+          null
+        ],
+        "moodle_week_label": [
+          "26/03 Algoritmos de Escalonamento",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\exercises\\lists\\exercicios.md",
+            "sha256": "cae4a9f358f66713ec92fa43820f935ce14a4b8475b4909aac97e09d00206fcc",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-04",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ],
+      "after": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "apresentacao-da-disciplina",
+      "new_id": "apresentacao-da-disciplina",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Apresentação da Disciplina",
+          null
+        ],
+        "moodle_section_index": [
+          0,
+          null
+        ],
+        "moodle_module_index": [
+          2,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\content\\curated\\apresentacao-da-disciplina.md",
+            "sha256": "f22feca72793394e9a2f468c821a71e92528d498290298cc6886b0a234925db0",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ],
+      "after": [
+        "",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "questoes-do-enade-sobre-sisop",
+      "new_id": "questoes-do-enade-sobre-sisop",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Questões do ENADE sobre SISOP",
+          null
+        ],
+        "moodle_section_index": [
+          0,
+          null
+        ],
+        "moodle_module_index": [
+          15,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\exercises\\lists\\questoes-do-enade-sobre-sisop.md",
+            "sha256": "d7b78e74377012b6f1e8352bd87651a06b63764ceb0b72ba64dbcfaa55f05ae7",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "after": [
+        "",
+        "unidade-06-gerencia-de-arquivos",
+        ""
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo: Criação de Processos no Unix/Linux",
+          null
+        ],
+        "moodle_section_index": [
+          2,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "19/03 Estruturas de Controle",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\code\\professor\\exemplo-criacao-de-processos-no-unix-linux-filho.md",
+            "sha256": "48a5a821819e53cda0310867cc8d07ed7cad72d687b4f4f8b635cb55461dad2b",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo: Criação de Processos no Unix/Linux",
+          null
+        ],
+        "moodle_section_index": [
+          2,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "19/03 Estruturas de Controle",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\code\\professor\\exemplo-criacao-de-processos-no-unix-linux-teste01.md",
+            "sha256": "903fc4cd5cda0c9e6f707ee08c82e4d70a98bc6364c2b920ae11b2f765720aaa",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo: Criação de Processos no Unix/Linux",
+          null
+        ],
+        "moodle_section_index": [
+          2,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "19/03 Estruturas de Controle",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\code\\professor\\exemplo-criacao-de-processos-no-unix-linux-teste02.md",
+            "sha256": "5fceb3e1024d5effb3d4b3dd26781c9bc0c7a064afa7efa1d767d7cc6d06b60d",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "new_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo: Criação de Processos no Unix/Linux",
+          null
+        ],
+        "moodle_section_index": [
+          2,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "19/03 Estruturas de Controle",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\code\\professor\\exemplo-criacao-de-processos-no-unix-linux-teste03.md",
+            "sha256": "fe93f6aa1b2908c54dbcf9322cc0b7483d3cacfca0c27b2bbeeda18ec15c4e8e",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        "chamadas-de-sistema"
+      ],
+      "after": [
+        "bloco-09",
+        "unidade-03-programacao-concorrente",
+        "comunicacao-e-sincronizacao-de-processos"
+      ]
+    },
+    {
+      "course": "SO",
+      "entry_id": "programa",
+      "new_id": "programa",
+      "differences": {
+        "posting_date": [
+          "2026-03-10",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-10",
+          null
+        ],
+        "moodle_label": [
+          "Programa",
+          null
+        ],
+        "moodle_section_index": [
+          0,
+          null
+        ],
+        "moodle_module_index": [
+          1,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\content\\curated\\programa.md",
+            "sha256": "d6ba9e824451978e275c1d434d5fad013eaf95b6b39ffcbed0cfb80c70d52e30",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+        ""
+      ],
+      "after": [
+        "",
+        "unidade-02-gerencia-do-processador",
+        ""
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "visao-geral-introducao-e-historico",
+      "new_id": "visao-geral-introducao-e-historico",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Visão Geral - Introdução e Histórico",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\visao-geral-introducao-e-historico\\chunks\\chunk-001.md",
+            "sha256": "856f41a6bad96edfd3e213f293aeefc55d57a24262a3090c370e0eff71b0d40b",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\visao-geral-introducao-e-historico\\chunks\\chunk-002.md",
+            "sha256": "8607f8cbda4dbeb915331cd77561584ab01f7df1eb077ecbafc839c45d4b3d60",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\visao-geral-introducao-e-historico\\chunks\\chunk-003.md",
+            "sha256": "462d17b716efa9adb9883e06b5b03bd704d81c1173e68f257d21a7bedb54db81",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-02",
+        "unidade-de-aprendizagem-01-visao-geral",
+        "conceituacao"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "aula-sobre-agrupamento-parte-1-particional",
+      "new_id": "aula-sobre-agrupamento-parte-1-particional",
+      "differences": {
+        "posting_date": [
+          "2026-04-22",
+          null
+        ],
+        "posting_date_created": [
+          "2026-04-22",
+          null
+        ],
+        "moodle_label": [
+          "Aula sobre Agrupamento  - parte 1 (particional)",
+          null
+        ],
+        "moodle_section_index": [
+          13,
+          null
+        ],
+        "moodle_module_index": [
+          2,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-1-particional\\chunks\\chunk-001.md",
+            "sha256": "e6603311f12d79c3a3f7790b9abefd302d28753bec95b57f039a909d9a5f69d3",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-1-particional\\chunks\\chunk-002.md",
+            "sha256": "5078ed2b8eb65b74c9aa2defab081922f5dfa7af8ad8e52470675a567ddff6b0",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-1-particional\\chunks\\chunk-003.md",
+            "sha256": "4f0197ffe0a301ad9c26774131e86c8c194cf8676968f495ae8091ce19ac3f07",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "aula-sobre-agrupamento-parte-2-hierarquico",
+      "new_id": "aula-sobre-agrupamento-parte-2-hierarquico",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Aula sobre Agrupamento - parte 2 (hierarquico)",
+          null
+        ],
+        "moodle_section_index": [
+          14,
+          null
+        ],
+        "moodle_module_index": [
+          1,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-2-hierarquico\\chunks\\chunk-001.md",
+            "sha256": "bce5f7d04967bc8537d34ac43492214658001fad1b90167ee9c4f80a92df68c4",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-2-hierarquico\\chunks\\chunk-002.md",
+            "sha256": "69e55653b3314e5e1b03cdde835a309d84519835307a34a743bd8c7f0516aa7a",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\staging\\markdown-auto\\datalab\\aula-sobre-agrupamento-parte-2-hierarquico\\chunks\\chunk-003.md",
+            "sha256": "b71a84ce711854310eb0449011f6495f3e990a24a270fe4b5a3117c585fed980",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-02",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "caracteristicas-dos-dados",
+      "new_id": "caracteristicas-dos-dados",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Características dos Dados",
+          null
+        ],
+        "moodle_section_index": [
+          7,
+          null
+        ],
+        "moodle_module_index": [
+          2,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\caracteristicas-dos-dados.md",
+            "sha256": "b1f41817f97725fa3cdeac6ab25add39521d0d3e4e03836b39d6b55fce745fed",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "introducao-a-ml",
+      "new_id": "introducao-a-ml",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Introdução a ML",
+          null
+        ],
+        "moodle_section_index": [
+          7,
+          null
+        ],
+        "moodle_module_index": [
+          1,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\introducao-a-ml.md",
+            "sha256": "f130943b244c35c4193cd68bf0614e7ad68634a646550a3ac655373beec71aa7",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-03",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "algoritmo-de-classificacao-k-nn",
+      "new_id": "algoritmo-de-classificacao-k-nn",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Algoritmo de Classificação k-NN",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          2,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\algoritmo-de-classificacao-k-nn.md",
+            "sha256": "6164eae1981876ec063509c8832b8f5043a3c71a03dfcfff92201ea40cf0c8c5",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "artigo-usando-k-nn-em-texto",
+      "new_id": "artigo-usando-k-nn-em-texto",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Artigo usando k-NN em texto",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          3,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "manual_timeline_block_id": [
+          null,
+          ""
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\artigo-usando-k-nn-em-texto.md",
+            "sha256": "430eaae5520141b52670ad865eaf777188f5a7b7ec12fe0b8126c83f61938cab",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "exemplo-de-programa-com-k-nn-em-java",
+      "new_id": "exemplo-de-programa-com-k-nn-em-java",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo de programa com k-NN (em java)",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          11,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "como-analisar-resultados-acc-pr-re-e-f1",
+      "new_id": "como-analisar-resultados-acc-pr-re-e-f1",
+      "differences": {
+        "posting_date": [
+          "2026-04-08",
+          null
+        ],
+        "posting_date_created": [
+          "2026-04-08",
+          null
+        ],
+        "moodle_label": [
+          "Como analisar resultados: Acc, Pr, Re e F1",
+          null
+        ],
+        "moodle_section_index": [
+          11,
+          null
+        ],
+        "moodle_module_index": [
+          2,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\como-analisar-resultados-acc-pr-re-e-f1.md",
+            "sha256": "a1f5f653ba9fdee828a22d446be43a75ce9eb4d33e781eb51688ee35e757ed2d",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-02",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "new_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "differences": {
+        "posting_date": [
+          "2026-04-22",
+          null
+        ],
+        "posting_date_created": [
+          "2026-04-22",
+          null
+        ],
+        "moodle_label": [
+          "agrupamento usando k-Means: exemplo 1 (.ipynb)",
+          null
+        ],
+        "moodle_section_index": [
+          13,
+          null
+        ],
+        "moodle_module_index": [
+          9,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\code\\professor\\agrupamento-usando-k-means-exemplo-1-ipynb.md",
+            "sha256": "8dd6698ede156515be6a141cb4a1437c1963b0949a9af5bc07686aaf56ef922a",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "artigo-usando-agrupamento",
+      "new_id": "artigo-usando-agrupamento",
+      "differences": {
+        "posting_date": [
+          "2026-04-22",
+          null
+        ],
+        "posting_date_created": [
+          "2026-04-22",
+          null
+        ],
+        "moodle_label": [
+          "Artigo usando agrupamento",
+          null
+        ],
+        "moodle_section_index": [
+          13,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ],
+        "manual_timeline_block_id": [
+          null,
+          ""
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\content\\curated\\artigo-usando-agrupamento.md",
+            "sha256": "8fa6a0ea08c92e46ab1931296913792173a7f484b841ed259856082dc51516ea",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "new_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "differences": {
+        "posting_date": [
+          "2026-03-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-03-24",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo 2 k-NN (com IRIS.csv) - mais completo",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          10,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\code\\professor\\exemplo-2-k-nn-com-iriscsv-mais-completo.md",
+            "sha256": "de07b7564269f6547f26bc19f78d3432e2a0c13f2404cc3e15f56b60a4ae69c6",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "exemplo-com-k-nn",
+      "new_id": "exemplo-com-k-nn",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo com k-NN.",
+          null
+        ],
+        "moodle_section_index": [
+          8,
+          null
+        ],
+        "moodle_module_index": [
+          8,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\code\\professor\\exemplo-com-k-nn.md",
+            "sha256": "7df22d114b5e25d26020a6f8c26cebd45641cde7877c97365944d5d00336ddce",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "new_id": "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo 1 - Árvores de Decisão: Classificação - Planta Iris",
+          null
+        ],
+        "moodle_section_index": [
+          12,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\code\\professor\\exemplo-1-arvores-de-decisao-classificacao-planta-iris.md",
+            "sha256": "2f673f2e87353c2b9780ed91059120ed6ffd25726241ebd54b3a0bf5bb55a46c",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "IA",
+      "entry_id": "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "new_id": "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "differences": {
+        "posting_date": [
+          "2026-02-24",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-24",
+          null
+        ],
+        "moodle_label": [
+          "Exemplo 2 - Arvores de Decisão - Regressão - Diabetes",
+          null
+        ],
+        "moodle_section_index": [
+          12,
+          null
+        ],
+        "moodle_module_index": [
+          5,
+          null
+        ],
+        "moodle_week_label": [
+          "",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Inteligencia-Artifical-Tutor\\code\\professor\\exemplo-2-arvores-de-decisao-regressao-diabetes.md",
+            "sha256": "1f0028762c64a05aa32dc9a3d692a879aac147dd892d7f4915e6f98021163da1",
+            "frontmatter_keys": [
+              "entry_id",
+              "title",
+              "language",
+              "category",
+              "unit",
+              "source"
+            ]
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "revisaoarquiteturapadroes",
+      "new_id": "revisaoarquiteturapadroes",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Arquitetura e padrões: revisão de conceitos",
+          null
+        ],
+        "moodle_section_index": [
+          5,
+          null
+        ],
+        "moodle_module_index": [
+          3,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 02/03/2026 a 06/03/2026: (06/03/2026): apresentação da disciplina, revisão de conceitos. || Semana 09/03/2026 a 13/03/2026: (13/03/2026): Arquitetura Baseada em Serviços Monolítica. Estudo de Caso.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\staging\\markdown-auto\\datalab\\revisaoarquiteturapadroes\\chunks\\chunk-001.md",
+            "sha256": "f41cde44013c53075cd08dae6807a6ad375b134cd97a54c1d21c7d6004796476",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\staging\\markdown-auto\\datalab\\revisaoarquiteturapadroes\\chunks\\chunk-002.md",
+            "sha256": "48c86af309f960fcacb59235b4049cde7f5d63230c3c3257cbb0df6022e3ba74",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\staging\\markdown-auto\\datalab\\revisaoarquiteturapadroes\\chunks\\chunk-003.md",
+            "sha256": "c61da405af056b83534cc9c5846b40b56232bdc60e878ada9efc14f81b883eff",
+            "frontmatter_keys": []
+          },
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\staging\\markdown-auto\\datalab\\revisaoarquiteturapadroes\\chunks\\chunk-004.md",
+            "sha256": "a4faa31d771a1dd1b46e4bef3a248b4fa1b37ccf615d28f935401581048e86af",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "conceito-de-arquitetura-de-software"
+      ],
+      "after": [
+        "",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        ""
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro2-nameserver",
+      "new_id": "roteiro2-nameserver",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Roteiro 2",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          18,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 06/04/2026 a 10/04/2026: (10/04/2026): microsserviços no Spring - discovery.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\roteiro2-nameserver.md",
+            "sha256": "85618187ce519849ece52c5a8450f903f8c611196c5e75d5353704828eb273ad",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "servicos",
+      "new_id": "servicos",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Serviços: revisão de conceitos",
+          null
+        ],
+        "moodle_section_index": [
+          5,
+          null
+        ],
+        "moodle_module_index": [
+          5,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 02/03/2026 a 06/03/2026: (06/03/2026): apresentação da disciplina, revisão de conceitos. || Semana 09/03/2026 a 13/03/2026: (13/03/2026): Arquitetura Baseada em Serviços Monolítica. Estudo de Caso.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\servicos.md",
+            "sha256": "f471695938c241bedd1fca833f6cd9b98f44a1ca47dd310b98dab2ccbdf71604",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-servicos"
+      ],
+      "after": [
+        "",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-servicos"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "web",
+      "new_id": "web",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Sistemas na web: revisão de conceitos",
+          null
+        ],
+        "moodle_section_index": [
+          5,
+          null
+        ],
+        "moodle_module_index": [
+          4,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 02/03/2026 a 06/03/2026: (06/03/2026): apresentação da disciplina, revisão de conceitos. || Semana 09/03/2026 a 13/03/2026: (13/03/2026): Arquitetura Baseada em Serviços Monolítica. Estudo de Caso.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\web.md",
+            "sha256": "9c783bd64f85b1a74eb0244bbafe89640d9bab156ae94752bbc359f212eedc3f",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "cliente-servidor"
+      ],
+      "after": [
+        "",
+        "unidade-01-arquitetura-de-software",
+        "cliente-servidor"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "microsservicos5",
+      "new_id": "microsservicos5",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Padrões para microsserviços: implantação",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          36,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 18/05/2026 a 22/05/2026: (22/05/2026): implantação de microsserviços em conteiners. || Semana 25/05/2026 a 29/06/2026: (29/06/2026): implantação de microsserviços em conteiners.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\microsservicos5.md",
+            "sha256": "8ff90c825a0c1ea3113896c911b16344356bb1e376d1f9b2f35d4cddaa90d018",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "microsservicos6",
+      "new_id": "microsservicos6",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Autenticação e Autorização",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          50,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 08/06/2026 a 12/06/2026: (12/06/2026): autenticação e autorização.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\microsservicos6.md",
+            "sha256": "b250e2ee04f935cfd9d4ec347d1fd57b51c63746723201bfda7a0f821788dc0d",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-10",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "gerenciamento-da-configuracao"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "microsservicos7",
+      "new_id": "microsservicos7",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Comunicação assíncrona",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          45,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (05/06/2026): comunicação assíncrona.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\microsservicos7.md",
+            "sha256": "56988e3ace7cf84dd2303e01582f119235cf53c48bbb4844523acd6ca0441738",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro2",
+      "new_id": "roteiro2",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Código",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          19,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 06/04/2026 a 10/04/2026: (10/04/2026): microsserviços no Spring - discovery.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ],
+      "after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro4-circuitbreaker",
+      "new_id": "roteiro4-circuitbreaker",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Roteiro 4",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          31,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 27/04/2026 a 01/05/2026: (01/05/2026): feriado. || Semana 04/05/2026 a 08/05/2026: (08/05/2026): prova P1. || Semana 11/05/2026 a 15/05/2026: (15/05/2026): microsserviços com Spring, circuit-breaker.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\roteiro4-circuitbreaker.md",
+            "sha256": "58c250f2efaf994a78eb9be0da9024512683026118f67273cbb1bfe2c8aa32c9",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro5",
+      "new_id": "roteiro5",
+      "differences": {
+        "posting_date": [
+          "2026-06-05",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-05",
+          null
+        ],
+        "moodle_label": [
+          "Código",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          38,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 18/05/2026 a 22/05/2026: (22/05/2026): implantação de microsserviços em conteiners. || Semana 25/05/2026 a 29/06/2026: (29/06/2026): implantação de microsserviços em conteiners.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro5-conteiners",
+      "new_id": "roteiro5-conteiners",
+      "differences": {
+        "posting_date": [
+          "2026-02-18",
+          null
+        ],
+        "posting_date_created": [
+          "2026-02-18",
+          null
+        ],
+        "moodle_label": [
+          "Roteiro 5",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          37,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 18/05/2026 a 22/05/2026: (22/05/2026): implantação de microsserviços em conteiners. || Semana 25/05/2026 a 29/06/2026: (29/06/2026): implantação de microsserviços em conteiners.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\roteiro5-conteiners.md",
+            "sha256": "53f5e17c5d3453a461b5ebf4111eec452cfaf8c8e18c8b7f334cbd11fecf5e42",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro7",
+      "new_id": "roteiro7",
+      "differences": {
+        "posting_date": [
+          "2026-06-05",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-05",
+          null
+        ],
+        "moodle_label": [
+          "Código",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          48,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (05/06/2026): comunicação assíncrona.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro7-filas",
+      "new_id": "roteiro7-filas",
+      "differences": {
+        "posting_date": [
+          "2026-06-05",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-05",
+          null
+        ],
+        "moodle_label": [
+          "Roteiro 7",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          46,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (05/06/2026): comunicação assíncrona.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\roteiro7-filas.md",
+            "sha256": "dae76fef3753e557627bb9428aa769600b54ff3bdd95e91deedbecc9682661fb",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro7-history-service",
+      "new_id": "roteiro7-history-service",
+      "differences": {
+        "posting_date": [
+          "2026-06-05",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-05",
+          null
+        ],
+        "moodle_label": [
+          "Código - serviço history",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          47,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 01/06/2026 a 05/06/2026: (05/06/2026): comunicação assíncrona.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro8-autenticacao-autorizacao",
+      "new_id": "roteiro8-autenticacao-autorizacao",
+      "differences": {
+        "posting_date": [
+          "2026-06-13",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-13",
+          null
+        ],
+        "moodle_label": [
+          "Roteiro 8",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          51,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 08/06/2026 a 12/06/2026: (12/06/2026): autenticação e autorização.",
+          null
+        ],
+        "category": [
+          "material-de-aula",
+          "outros"
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [
+          {
+            "path": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\content\\curated\\roteiro8-autenticacao-autorizacao.md",
+            "sha256": "82e9dcc41bf79e10fee4c1600d77c56bafd2010f5fb17ab2e0591ea4b52def81",
+            "frontmatter_keys": []
+          }
+        ],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-10",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "gerenciamento-da-configuracao"
+      ],
+      "after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "course": "ES2",
+      "entry_id": "roteiro4",
+      "new_id": "roteiro4",
+      "differences": {
+        "posting_date": [
+          "2026-06-05",
+          null
+        ],
+        "posting_date_created": [
+          "2026-06-05",
+          null
+        ],
+        "moodle_label": [
+          "Código",
+          null
+        ],
+        "moodle_section_index": [
+          6,
+          null
+        ],
+        "moodle_module_index": [
+          32,
+          null
+        ],
+        "moodle_week_label": [
+          "Semana 27/04/2026 a 01/05/2026: (01/05/2026): feriado. || Semana 04/05/2026 a 08/05/2026: (08/05/2026): prova P1. || Semana 11/05/2026 a 15/05/2026: (15/05/2026): microsserviços com Spring, circuit-breaker.",
+          null
+        ]
+      },
+      "md_source": {
+        "provider": "fallback_sem_prova_datalab",
+        "files": [],
+        "note": "frontmatter do app nao prova metadado extraido do PDF"
+      },
+      "before": [
+        "bloco-07",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    }
+  ]
+}

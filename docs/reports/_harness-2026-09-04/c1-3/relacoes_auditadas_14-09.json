@@ -1,0 +1,8 @@
+{
+  "_nota": "As 3 relacoes novas ADMISSIVEIS apos a auditoria do astra (resposta_codex_astra_extrator_relacoes.md, item 3), extraidas pelo codigo congelado extrator_relacoes_14-09.py, sem gold. Termo literal como saiu da fonte. Injetadas como alias do topico pelo --relacoes do motor_3eixos_12-09.py. FR e FR do zero: 0 relacoes. IA: 0.",
+  "relacoes": [
+    {"curso": "MF", "topic_code": "1.3", "categoria": "Abordagens para Verificação Formal", "termo": "Verificação de Modelos (Model Checking):", "padrao": "subtitulo_lista", "fonte": "introducao.md:190"},
+    {"curso": "MF", "topic_code": "1.3", "categoria": "Abordagens para Verificação Formal", "termo": "Verificação Dedutiva:", "padrao": "subtitulo_lista", "fonte": "introducao.md:198"},
+    {"curso": "SO", "topic_code": "7.4", "categoria": "Proteção", "termo": "Bit de validade:", "padrao": "subtitulo_lista", "fonte": "2105-laminas-paginacao.md:266"}
+  ]
+}

@@ -1,0 +1,35 @@
+A PRECISAO DO CONFIANTE, POR REGIME (base 251; 'confiante' = o motor NAO poe na fila)
+regime        n  confiante  cobertura   ACEITO do confiante   PRIMARIO do confiante  fila   recall da fila   alarme falso
+produto     251        193     76.9%    178/193    92.2%     154/193     79.8%    58   12/27     44%   46/58    79%
+cru         251        190     75.7%    113/190    59.5%      83/190     43.7%    61   27/104    26%   34/61    56%
+so_codigo   251        183     72.9%     93/183    50.8%      70/183     38.3%    68   48/138    35%   20/68    29%
+
+Predicao VAZIA entre os confiantes (o motor nao decidiu e nao avisou):
+  produto       0 de 193 confiantes
+  cru           3 de 190 confiantes
+  so_codigo     9 de 183 confiantes
+
+POR CURSO (confiante / n · aceito do confiante · primario do confiante)
+curso                      produto                          cru                    so_codigo
+MF      48/58   45ac   94%  34pr   71%  48/58   36ac   75%  21pr   44%  42/58   29ac   69%  23pr   55%
+SO      12/15   12ac  100%  11pr   92%  11/15    8ac   73%   7pr   64%  11/15    4ac   36%   3pr   27%
+IA      36/39   36ac  100%  36pr  100%  39/39    5ac   13%   4pr   10%  39/39    6ac   15%   4pr   10%
+ES2     23/28   21ac   91%  19pr   83%  19/28   13ac   68%  11pr   58%  19/28    5ac   26%   5pr   26%
+TCC     11/11   10ac   91%   8pr   73%  10/11    8ac   80%   6pr   60%  10/11    8ac   80%   5pr   50%
+CG      46/82   37ac   80%  30pr   65%  46/82   36ac   78%  28pr   61%  46/82   34ac   74%  24pr   52%
+FR      17/18   17ac  100%  16pr   94%  17/18    7ac   41%   6pr   35%  16/18    7ac   44%   6pr   38%
+
+ERROS CONFIANTES DO REGIME CRU (o motor entrega errado sem avisar), por curso:
+  MF     12
+  SO      3
+  IA     34
+  ES2     6
+  TCC     2
+  CG     10
+  FR     10
+  TOTAL 77
+
+Os erros do cru que a FILA pega (tem motivo), por motivo:
+  sub-empate             14
+  conflito                8
+  sub-ambigua             1

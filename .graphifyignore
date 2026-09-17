@@ -1,0 +1,13 @@
+# Vendor e assets minificados.
+# Antes disto, 3.602 de 13.728 nos do grafo (26%) vinham de
+# docs/vendor/mermaid.min.js — simbolos como "h$t", zero valor semantico.
+docs/vendor/
+*.min.js
+*.min.css
+
+# Índices, caches e cópias de avaliação não são fontes do projeto.
+graphify-out/
+.codebase-memory/
+.cache/
+__pycache__/
+docs/reports/_codegraph-benchmark/

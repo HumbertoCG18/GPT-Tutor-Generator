@@ -1,0 +1,311 @@
+{
+  "cru_fontes_serial_15-09": {
+    "replay_entries": 67,
+    "cases": [
+      {
+        "id": "provasindutivas-especificacoesrecursivas",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        }
+      },
+      {
+        "id": "provasindutivas-especificacoesrecursivas-arvores",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        }
+      },
+      {
+        "id": "provasindutivas-especificacoesrecursivas-listas",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "topic",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        }
+      }
+    ]
+  },
+  "pacote_fontes_15-09": {
+    "replay_entries": 67,
+    "cases": [
+      {
+        "id": "provasindutivas-especificacoesrecursivas",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "a5776e13-ea73-4ae4-960e-a777b5290f37",
+            "d979c6c3-ccd3-4970-9127-5475137e8d68",
+            "6bc87cf9-5b4f-4085-a311-3f1c683df7eb"
+          ],
+          "labels"
+        ],
+        "decision": null,
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05",
+          "bloco-06",
+          "bloco-07"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "media",
+          "flag": false,
+          "provider": "card",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05",
+            "bloco-06"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": null
+      },
+      {
+        "id": "provasindutivas-especificacoesrecursivas-arvores",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "a5776e13-ea73-4ae4-960e-a777b5290f37",
+            "d979c6c3-ccd3-4970-9127-5475137e8d68",
+            "6bc87cf9-5b4f-4085-a311-3f1c683df7eb"
+          ],
+          "labels"
+        ],
+        "decision": null,
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05",
+          "bloco-06",
+          "bloco-07"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "alta",
+          "flag": false,
+          "provider": "labels",
+          "method": "titulo-topico",
+          "window": [
+            "a5776e13-ea73-4ae4-960e-a777b5290f37",
+            "d979c6c3-ccd3-4970-9127-5475137e8d68",
+            "6bc87cf9-5b4f-4085-a311-3f1c683df7eb"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05",
+            "bloco-06"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": null
+      },
+      {
+        "id": "provasindutivas-especificacoesrecursivas-listas",
+        "category": "provas",
+        "lexical": false,
+        "window": [
+          [
+            "a5776e13-ea73-4ae4-960e-a777b5290f37",
+            "d979c6c3-ccd3-4970-9127-5475137e8d68",
+            "6bc87cf9-5b4f-4085-a311-3f1c683df7eb"
+          ],
+          "labels"
+        ],
+        "decision": null,
+        "category_replay": {
+          "input": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+          "result": "provas"
+        },
+        "window_block_ids": [
+          "bloco-05",
+          "bloco-06",
+          "bloco-07"
+        ],
+        "lexical_enabled_probe": {
+          "block_ref": "bloco-05",
+          "conf": 1.0,
+          "band": "media",
+          "flag": false,
+          "provider": "card",
+          "method": "janela-1",
+          "window": [
+            "bloco-05"
+          ]
+        },
+        "without_card_dates_window": [
+          [
+            "bloco-05",
+            "bloco-06"
+          ],
+          "topic"
+        ],
+        "without_card_dates_decision": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "L1",
+    "category": "location",
+    "question": "Onde está definida unit_short_label?",
+    "seeds": [
+      "unit_short_label"
+    ]
+  },
+  {
+    "id": "L2",
+    "category": "location",
+    "question": "Onde está definida load_docling_python_api?",
+    "seeds": [
+      "load_docling_python_api"
+    ]
+  },
+  {
+    "id": "L3",
+    "category": "location",
+    "question": "Onde está definida MaintenancePanel._detect_orphans?",
+    "seeds": [
+      "_detect_orphans"
+    ]
+  },
+  {
+    "id": "C1",
+    "category": "calls",
+    "question": "Em unit_labels.py, qual função chama diretamente unit_number?",
+    "seeds": [
+      "unit_number"
+    ]
+  },
+  {
+    "id": "C2",
+    "category": "calls",
+    "question": "Em backend_runtime.py, qual função chama diretamente build_page_chunks?",
+    "seeds": [
+      "build_page_chunks"
+    ]
+  },
+  {
+    "id": "C3",
+    "category": "calls",
+    "question": "Em MaintenancePanel._build_ui, quais métodos são registrados como command dos dois botões? São callbacks, não chamadas imediatas.",
+    "seeds": [
+      "MaintenancePanel",
+      "_build_ui"
+    ]
+  },
+  {
+    "id": "P1",
+    "category": "path",
+    "question": "Liste em ordem a cadeia de chamadas de MarkerCLIBackend._run_chunked_marker até build_page_chunks, resolvendo o alias importado.",
+    "seeds": [
+      "_run_chunked_marker",
+      "build_marker_page_chunks",
+      "build_page_chunks"
+    ]
+  },
+  {
+    "id": "P2",
+    "category": "path",
+    "question": "Liste em ordem o caminho de build_temporal_context_rows até unit_number via formatação do rótulo.",
+    "seeds": [
+      "build_temporal_context_rows",
+      "unit_short_label",
+      "unit_number"
+    ]
+  },
+  {
+    "id": "P3",
+    "category": "path",
+    "question": "Liste em ordem a cadeia iniciada em MaintenancePanel._on_sweep até a implementação sweep_orphans de lifecycle_ops. Inclua o worker aninhado e a fachada RepoBuilder; explicite a hipótese de tipo do builder.",
+    "seeds": [
+      "_on_sweep",
+      "sweep_orphans"
+    ]
+  },
+  {
+    "id": "I1",
+    "category": "impact",
+    "question": "Quais funções/métodos de src chamam diretamente unit_short_label, inclusive pelo alias _unit_short_label? Não inclua transitivos ou imports sem chamada.",
+    "seeds": [
+      "unit_short_label",
+      "_unit_short_label"
+    ]
+  },
+  {
+    "id": "I2",
+    "category": "impact",
+    "question": "Quais módulos externos load_docling_python_api carrega via importlib.import_module? Liste os cinco nomes completos; não afirme que estão instalados.",
+    "seeds": [
+      "load_docling_python_api",
+      "import_module"
+    ]
+  },
+  {
+    "id": "I3",
+    "category": "impact",
+    "question": "Dentro de MaintenancePanel, qual método chama diretamente _detect_orphans, e quais dois métodos registram/invocam esse consumidor (inclua o callback aninhado)? Liste consumidor primeiro.",
+    "seeds": [
+      "_detect_orphans",
+      "refresh"
+    ]
+  }
+]

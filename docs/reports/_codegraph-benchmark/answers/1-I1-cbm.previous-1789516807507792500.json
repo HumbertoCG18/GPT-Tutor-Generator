@@ -1,0 +1,13 @@
+{
+  "id": "I1",
+  "arm": "cbm",
+  "rep": 1,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 10.432689200002642,
+  "returncode": 0,
+  "evidence_sha256": "0a0ff83399dabbb270771580dfb4eecd9b5b647944b01c191b0bc89f8bc5b542",
+  "prompt_chars": 3249,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76c-4aa1-77a2-8e50-059e9bee5238\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/builder/artifacts/temporal_context.py:build_temporal_context_rows\\\",\\\"src/builder/artifacts/temporal_context.py:build_unit_legend\\\",\\\"src/ui/timeline_dashboard.py:TimelineDashboardView._populate\\\"],\\\"evidence\\\":[\\\"src/builder/timeline/unit_labels.py:21\\\"],\\\"caveat\\\":\\\"Chamadores diretos identificados pelo grafo; _populate tem confiança heurística 0,28. A fonte fornecida mostra apenas a definição, sem linhas das chamadas ou confirmação do alias _unit_short_label.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":19830,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":185,\"reasoning_output_tokens\":66}}\n",
+  "stderr": ""
+}

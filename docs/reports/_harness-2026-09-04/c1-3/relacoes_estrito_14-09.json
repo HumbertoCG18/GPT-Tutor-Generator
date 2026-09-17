@@ -1,0 +1,93 @@
+{
+ "_nota": "regime estrito: gerado por relacoes_por_regime_14-09.py do inventario pre-ancoragem; filtro automatico, sem auditoria manual.",
+ "relacoes": [
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação de Modelos (Model Checking):",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:190"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "É baseado em modelos",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:193"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação Dedutiva:",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:198"
+  },
+  {
+   "curso": "MF",
+   "topic_code": "1.3",
+   "categoria": "Abordagens para Verificação Formal",
+   "termo": "Verificação baseada em inferência (portanto, em provas)",
+   "padrao": "subtitulo_lista",
+   "fonte": "introducao.md:202"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Proteção de acesso é garantida por definição:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:260"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Processos acessam somente suas páginas end. válidos",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:261"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Endereço inválido apenas na última página",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:262"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "▶ Se houver fragmentação interna",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:263"
+  },
+  {
+   "curso": "SO",
+   "topic_code": "7.4",
+   "categoria": "Proteção",
+   "termo": "Bit de validade:",
+   "padrao": "subtitulo_lista",
+   "fonte": "2105-laminas-paginacao.md:266"
+  },
+  {
+   "curso": "ES2",
+   "topic_code": "2.3",
+   "categoria": "Integração contínua (CI)",
+   "termo": "[GitHub actions](#), [Jenkins](#), [Travis CI](#)",
+   "padrao": "subtitulo_lista",
+   "fonte": "devops.md:405"
+  },
+  {
+   "curso": "TCC",
+   "topic_code": "4.5",
+   "categoria": "Classe NP",
+   "termo": "Linguagens decidíveis por MTN em tempo polinomial",
+   "padrao": "subtitulo_lista",
+   "fonte": "aula-09-variacoes-de-maquinas-de-turing.md:340"
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+curso  aliases vetados   tambem no PLANO   nos HEADINGS   no sidecar MANUAL   so no LLM
+MF                  83                11             50                   0          31
+SO                  97                 4             61                   0          35
+IA                  80                 4             45                   0          34
+ES2                 59                 6             31                   0          28
+TCC                 96                 0             58                   0          38
+CG                  78                 0             62                   0          16
+FR                  51                10             34                   0          15
+TOT                544                35            341                   0         197
+
+VETO EXCESSIVO = alias que esta no sidecar do LLM mas TAMBEM vem de fonte do professor:
+  pelo PLANO ou pelo sidecar MANUAL (fontes fortes): 35 de 544
+  contando tambem HEADINGS do acervo: 347 de 544
+
+Os que vem do PLANO ou da CURADORIA MANUAL (o veto tira contribuicao do professor junto):
+  MF   Conjuntos Indutivos                                  [plano headings]
+  MF   Correção parcial                                     [plano headings]
+  MF   Especificação Formal                                 [plano headings]
+  MF   Invariantes                                          [plano headings]
+  MF   Modelos                                              [plano headings]
+  MF   NuSMV                                                [plano headings]
+  MF   NuXMV                                                [plano headings]
+  MF   Propriedades                                         [plano]
+  MF   Sistemas                                             [plano headings]
+  MF   Teoremas                                             [plano]
+  MF   Verificação de modelos                               [plano headings]
+  SO   Exclusão mútua                                       [plano]
+  SO   Gerência de Arquivos                                 [plano headings]
+  SO   Processos                                            [plano headings]
+  SO   Sincronização                                        [plano headings]
+  IA   Ambientes                                            [plano headings]
+  IA   Busca Informada                                      [plano]
+  IA   Inteligência Artificial                              [plano headings]
+  IA   machine learning                                     [plano headings]
+  ES2  Arquitetura de Software                              [plano headings]
+  ES2  Cliente                                              [plano headings]
+  ES2  DEVOPS                                               [plano headings]
+  ES2  Gerência de configuração                             [plano headings]
+  ES2  PADRÕES                                              [plano headings]
+  ES2  Servidor                                             [plano headings]
+  FR   Bluetooth                                            [plano]
+  FR   Comunicação entre Processos                          [plano headings]
+  FR   DHCP                                                 [plano headings]
+  FR   HTTP                                                 [plano headings]
+  FR   Internet                                             [plano headings]
+  FR   Modelos de Referência                                [plano headings]
+  FR   POP3                                                 [plano]
+  FR   Protocolos de Comunicação                            [plano headings]
+  FR   Redes Pessoais                                       [plano headings]
+  FR   SMTP                                                 [plano headings]
+
+LEITURA: 'so no LLM' e o veto legitimo. O resto e coincidencia de texto — o termo existe no sidecar do LLM E
+numa fonte do professor. Vetar por texto remove os dois; vetar por PROVENIENCIA exigiria um campo que a
+taxonomia nao tem hoje.

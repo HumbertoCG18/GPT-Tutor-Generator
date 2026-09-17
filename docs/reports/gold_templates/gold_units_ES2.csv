@@ -1,0 +1,15 @@
+﻿block_uuid,block_id,date_start,date_end,kind,topic_text,unit_slug_atual,true_unit,notes
+c47823dc-111f-4854-b46e-08acb7063909,bloco-01,2026-03-06,2026-03-20,class,disciplina conceitos arquitetura baseada servicos monolitica microservicos,unidade-01-arquitetura-de-software,unidade-01-arquitetura-de-software,
+b0e2cc0d-7442-4888-87f2-2a4694598b83,bloco-02,2026-03-27,2026-03-27,class,microsservicos spring introducao,unidade-01-arquitetura-de-software,unidade-01-arquitetura-de-software,
+05c47442-e3e3-4fda-ab6b-019acdc07c87,bloco-03,2026-04-03,2026-04-03,holiday,feriado,,,
+8a2e86f0-fb4a-4487-86ec-07e74c73d88a,bloco-04,2026-04-10,2026-04-24,class,microservicos spring discovery gateway,unidade-01-arquitetura-de-software,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,
+852bbdd6-4c53-4c6a-b237-6be58e5852db,bloco-05,2026-05-01,2026-05-01,holiday,feriado,,,
+5f282140-9baa-481b-9f0c-565864226e06,bloco-06,2026-05-08,2026-05-08,assessment,Prova P1,,,"FORA DA RÉGUA: u01, u02 (kind=assessment)"
+a0d38bad-e123-4b82-b8d0-03f6724b9617,bloco-07,2026-05-15,2026-05-15,class,microservicos spring circuit breaker,unidade-01-arquitetura-de-software,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,
+a803a9f7-5aa5-4629-8b93-4531b56119bc,bloco-08,2026-05-22,2026-05-29,class,implantacao microservicos conteineres,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,
+f5d645cb-1de3-4538-a03c-a3fce86b4c41,bloco-09,2026-06-05,2026-06-05,class,comunicacao,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,unidade-03-testes-de-software,
+17b8da72-b970-4db3-b49e-7cd196945b39,bloco-10,2026-06-12,2026-06-12,class,autenticacao autorizacao,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,unidade-03-testes-de-software,
+5ab3225a-26e9-40dd-b8f7-9c480bfa6c4f,bloco-11,2026-06-26,2026-06-26,suspended,jogo copa mundo devops,,,
+6a2ce7b2-8758-45b5-93d1-c83202ff79ae,bloco-12,2026-07-03,2026-07-03,assessment,Prova P2 e Entrega Trabalho Final,,,"FORA DA RÉGUA: u02, u03 (kind=assessment)"
+5b68af4c-dc8d-46ee-908f-4f88610bed2c,bloco-13,2026-07-10,2026-07-10,assessment,Prova OS,,,FORA DA RÉGUA: tudo (kind=assessment)
+34ec4768-8b38-43eb-9ec8-590f447de639,bloco-14,2026-07-17,2026-07-17,assessment,Prova G2,,,FORA DA RÉGUA: tudo (kind=assessment)

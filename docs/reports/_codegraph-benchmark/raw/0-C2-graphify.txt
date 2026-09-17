@@ -1,0 +1,36 @@
+DISCOVERY
+Node: build_page_chunks()
+  ID:        src_builder_runtime_backend_runtime_build_page_chunks
+  Source:    src/builder/runtime/backend_runtime.py L21
+  Type:      code
+  Community: 
+  Degree:    3
+
+Connections (3):
+  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61
+  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L21
+  <-- build_marker_page_chunks() [calls] [EXTRACTED] src/builder/runtime/backend_runtime.py:L29
+
+SOURCE VERIFICATION
+src/builder/runtime/backend_runtime.py:16: _DOCLING_PYTHON_API_CACHE = None
+src/builder/runtime/backend_runtime.py:17: _MARKER_CAPABILITIES_CACHE = None
+src/builder/runtime/backend_runtime.py:18: MARKER_OLLAMA_SERVICE = "marker.services.ollama.OllamaService"
+src/builder/runtime/backend_runtime.py:19: 
+src/builder/runtime/backend_runtime.py:20: 
+src/builder/runtime/backend_runtime.py:21: def build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:22:     selected = sorted(pages if pages is not None else list(range(page_count)))
+src/builder/runtime/backend_runtime.py:23:     if not selected:
+src/builder/runtime/backend_runtime.py:24:         return []
+src/builder/runtime/backend_runtime.py:25:     return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+src/builder/runtime/backend_runtime.py:26: 
+src/builder/runtime/backend_runtime.py:27: 
+src/builder/runtime/backend_runtime.py:28: def build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:29:     return build_page_chunks(pages, page_count, chunk_size=chunk_size)
+src/builder/runtime/backend_runtime.py:30: 
+src/builder/runtime/backend_runtime.py:31: 
+src/builder/runtime/backend_runtime.py:32: def selected_page_count(ctx: "BackendContext") -> int:
+src/builder/runtime/backend_runtime.py:33:     if ctx.pages is not None:
+src/builder/runtime/backend_runtime.py:34:         return len(ctx.pages)
+src/builder/runtime/backend_runtime.py:35:     return max(int(ctx.report.page_count or 0), 0)
+src/builder/runtime/backend_runtime.py:36: 
+src/builder/runtime/backend_runtime.py:37: 

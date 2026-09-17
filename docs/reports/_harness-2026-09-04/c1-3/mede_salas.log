@@ -1,0 +1,59 @@
+cursos: {'MF': '92717 4646M-04 - Métodos Formais para Co', 'SO': '92854 98700-04 - Sistemas Operacionais -', 'IA': '93156 98708-04 - Inteligência Artificial', 'ES2': '92714 98802-02 - Engenharia de Software ', 'TCC': '93728 4647F-04 - Teoria da Computabilida', 'LR': '95473 98710-02 - Laboratório de Redes de', 'CG': '95106 98716-04 - Computação Gráfica - Tu', 'FR': '95139 98709-04 - Fundamentos de Redes de'}
+warnings da API: {'No access rights in module context': 89}
+
+== MF (Metodos-Formais-Tutor): 2 salas · arquivos com vencimento no card_block_map: 57
+   Sala de entrega                    sec='TDE | Trabalho D' abre=-           vence=06/05 23:59 fecha=-     so-vencimento     bloco=bloco-11 deliverable sarc=nao 'logica de programas correcao p' anexos=[] intro=0
+   Sala de entrega                    sec='TDE | Trabalho D' abre=-           vence=06/07 23:59 fecha=-     so-vencimento     bloco=bloco-20 assessment  sarc=sim 'prova p2 entrega do t2 prova' anexos=[] intro=0
+   arquivos com vencimento (card_block_map): categorias {'(sem entry)': 32, 'material-de-aula': 4, 'listas': 7, 'codigo-professor': 13, 'trabalhos': 1}
+
+== SO (Sistemas-Operacionais-Tutor): 3 salas · arquivos com vencimento no card_block_map: 0
+   Exemplo: Somatório em Java         sec='Sincronização e ' abre=-           vence=-           fecha=-     sem-vencimento    bloco=-        -           sarc=nao '' anexos=['Código Java Somatório com condição de corrida'] (FORA do tutor) intro=18
+   Trabalho 1 - Entrega 14/05         sec='Informações Gera' abre=-           vence=14/05 19:15 fecha=-     so-vencimento     bloco=bloco-14 deliverable sarc=sim 'apresentacao tp1 parte 1 traba' anexos=['TP1_20261.pdf'] (FORA do tutor) intro=13
+   Trabalho 2 - Entrega 02/07         sec='Informações Gera' abre=-           vence=02/07 19:15 fecha=-     so-vencimento     bloco=bloco-23 deliverable sarc=sim 'apresentacao tp2 parte 1 traba' anexos=['TP2_20261.pdf'] (FORA do tutor) intro=13
+   arquivos com vencimento (card_block_map): categorias {}
+
+== IA (Inteligencia-Artifical-Tutor): 18 salas · arquivos com vencimento no card_block_map: 0
+   Atividade de Aula 1 - Machine Lear sec='TDE | Trabalho D' abre=11/03 21:00 vence=11/03 21:50 fecha=11/03 22:13 atividade-de-aula bloco=bloco-04 class       sarc=nao 'ml tipos de dados e preparacao | m' anexos=['Atividade_ Dados2026.zip'] (FORA do tutor) intro=1475
+   Atividade de Aula 2 - Analisando e sec='TDE | Trabalho D' abre=16/03 00:00 vence=18/03 21:00 fecha=-     curta             bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=['cardio_v2.csv'] (FORA do tutor) intro=2201
+   Atividade de Aula 3a - Classificaç sec='TDE | Trabalho D' abre=23/03 21:00 vence=23/03 22:30 fecha=-     atividade-de-aula bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=103
+   Atividade de Aula 3b - Classificaç sec='TDE | Trabalho D' abre=23/03 21:00 vence=30/03 21:30 fecha=-     trabalho          bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=788
+   Atividade de Aula 4 - Rede Percept sec='TDE | Trabalho D' abre=30/03 00:00 vence=30/03 22:30 fecha=-     atividade-de-aula bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=442
+   Atividade de Aula 5 - Classificaçã sec='TDE | Trabalho D' abre=06/04 00:00 vence=06/04 22:30 fecha=-     atividade-de-aula bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=175
+   Atividade de Aula 6 - Regressao    sec='TDE | Trabalho D' abre=13/04 00:00 vence=13/04 22:30 fecha=-     atividade-de-aula bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=709
+   Atividade de Aula 7 - Árvores de D sec='TDE | Trabalho D' abre=15/04 21:00 vence=15/04 22:30 fecha=-     atividade-de-aula bloco=bloco-05 class       sarc=nao 'ml abordagem supervisionada k  | m' anexos=[] intro=709
+   Atividade de Aula 8 - Agrupamento  sec='TDE | Trabalho D' abre=27/04 00:00 vence=29/04 21:00 fecha=-     curta             bloco=bloco-08 office_hours sarc=sim 'duvidas para t1 aula' anexos=[] intro=389
+   Atividade de Aula 9 - Agrupamento  sec='TDE | Trabalho D' abre=27/04 00:00 vence=29/04 22:30 fecha=-     curta             bloco=bloco-08 office_hours sarc=sim 'duvidas para t1 aula' anexos=[] intro=241
+   T1 - Classificação de Dados        sec='TDE | Trabalho D' abre=06/04 21:00 vence=04/05 21:00 fecha=-     trabalho          bloco=bloco-09 deliverable sarc=sim 'apresentacao do t1 trabalho' anexos=['T1_IA_2026_01_t32.pdf'] (FORA do tutor) intro=0
+   Atividade de Aula 10 - Algoritmos  sec='TDE | Trabalho D' abre=01/06 00:00 vence=01/06 22:30 fecha=-     atividade-de-aula bloco=bloco-15 class       sarc=nao 'algoritmos de busca aula | algorit' anexos=[] intro=114
+   Atividade de Aula 11 - Algoritmo d sec='TDE | Trabalho D' abre=03/06 21:00 vence=03/06 22:30 fecha=-     atividade-de-aula bloco=bloco-15 class       sarc=nao 'algoritmos de busca aula | algorit' anexos=['AlgoritmoAStar_v2.zip', 'readme2.txt'] (FORA do tutor) intro=897
+   Atividade de Aula 12 - Jogo da Vel sec='TDE | Trabalho D' abre=15/06 00:00 vence=15/06 22:30 fecha=-     atividade-de-aula bloco=bloco-16 class       sarc=sim 'correcao da p1 duvidas t2 aula | a' anexos=[] intro=415
+   Informe aqui o nome dos integrante sec='TDE | Trabalho D' abre=22/06 00:00 vence=26/06 23:00 fecha=-     curta             bloco=bloco-18 holiday     sarc=nao 'suspensao de atividades feriad' anexos=[] intro=96
+   Vídeo da apresentação do T2        sec='TDE | Trabalho D' abre=22/06 00:00 vence=29/06 21:00 fecha=-     trabalho          bloco=bloco-19 deliverable sarc=sim 'apresentacao t2 trabalho' anexos=[] intro=2611
+   T2 - Enunciado e Entrega           sec='TDE | Trabalho D' abre=03/06 00:00 vence=29/06 21:00 fecha=-     trabalho          bloco=bloco-19 deliverable sarc=sim 'apresentacao t2 trabalho' anexos=['T2_AlgoritmosDeBusca_2026_01.pdf'] (FORA do tutor) intro=0
+   Casos de Teste                     sec='TDE | Trabalho D' abre=29/06 00:00 vence=29/06 22:30 fecha=-     atividade-de-aula bloco=bloco-19 deliverable sarc=sim 'apresentacao t2 trabalho' anexos=['casoDeTeste32.zip'] (FORA do tutor) intro=138
+   arquivos com vencimento (card_block_map): categorias {}
+
+== ES2 (Engenharia-Software-2-Tutor): 1 salas · arquivos com vencimento no card_block_map: 0
+   Sala de entrega                    sec='TDE | Trabalho D' abre=02/07 00:00 vence=06/07 23:59 fecha=-     curta             bloco=bloco-13 assessment  sarc=sim 'prova p2 entrega trabalho fina' anexos=[] intro=0
+   arquivos com vencimento (card_block_map): categorias {}
+
+== TCC (TCC-Tutor): 3 salas · arquivos com vencimento no card_block_map: 0
+   SALA DE ENTREGA - T1               sec='Semana 3 - Opera' abre=-           vence=-           fecha=20/03 23:55 sem-vencimento    bloco=-        -           sarc=nao '' anexos=[] intro=0
+   T2 - SALA DE ENTREGA               sec='Semana 13 - Trab' abre=-           vence=-           fecha=25/06 17:00 sem-vencimento    bloco=-        -           sarc=nao '' anexos=[] intro=0
+   SALA DE ENTREGA - Atividade Extra  sec='Semana 15 - Ativ' abre=-           vence=-           fecha=08/07 23:59 sem-vencimento    bloco=-        -           sarc=nao '' anexos=[] intro=1017
+   arquivos com vencimento (card_block_map): categorias {}
+
+== LR (Laboratorio-de-Redes-Tutor): 3 salas · arquivos com vencimento no card_block_map: 0
+   Sala de entrega                    sec='[17/08] - DHCP'   abre=17/08 20:00 vence=18/08 23:59 fecha=18/08 23:59 curta             bloco=bloco-03 deliverable sarc=nao 'camada de aplicacao dhcp traba' anexos=[] intro=0
+   Sala de entrega                    sec='[24/08] - DNS'    abre=24/08 20:00 vence=24/08 20:45 fecha=25/09 23:59 atividade-de-aula bloco=bloco-04 deliverable sarc=nao 'camada de aplicacao dns trabal' anexos=[] intro=21
+   Sala de entrega                    sec='[31/08] - HTTP'   abre=31/08 19:15 vence=31/08 23:59 fecha=01/09 23:59 atividade-de-aula bloco=bloco-05 deliverable sarc=nao 'camada de aplicacao http s tra' anexos=[] intro=0
+   arquivos com vencimento (card_block_map): categorias {}
+
+== CG (Computacao-Grafica-Tutor): 0 salas · arquivos com vencimento no card_block_map: 0
+   arquivos com vencimento (card_block_map): categorias {}
+
+== FR (Fundamentos-de-Redes-Tutor): 0 salas · arquivos com vencimento no card_block_map: 0
+   arquivos com vencimento (card_block_map): categorias {}
+
+[TOTAL] {'classe so-vencimento': 4, 'salas': 30, 'anexos': 10, 'anexos fora do tutor': 10, 'vencimento em bloco deliverable': 10, 'vencimento em bloco assessment': 2, 'classe sem-vencimento': 4, 'classe atividade-de-aula': 12, 'vencimento em bloco class': 11, 'classe curta': 6, 'classe trabalho': 4, 'trabalho: SARC nomeia entrega/prova': 3, 'vencimento em bloco office_hours': 2, 'vencimento em bloco holiday': 1}
+salas_api.json gravado (gitignored)

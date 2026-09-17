@@ -1,0 +1,23 @@
+A) ALIASES QUE SERVEM A 2+ TOPICOS
+      topicos  aliases  ambiguos  entre unidades
+SO         36       88         1               1
+IA         20       82         2               1
+ES2        21       63         1               1
+TCC        26       66         0               0
+MF         23      133         3               1
+CG         59      125         0               0
+LR         11       19         0               0
+FR         32       87         0               0
+TOT       228      663         7               4
+
+OS AMBIGUOS ENTRE UNIDADES (os que podem mover a unidade de um material):
+  SO   threads                            -> 02-gerencia-/conceitos-basicos | 03-programac/programas-multithreads
+  IA   agentes racionais                  -> de-aprendiza/introducao-a-agentes-em-am | de-aprendiza/agentes-em-logica
+  ES2  microsserviço de câmbio            -> 01-arquitetu/estudo-de-caso-arquitetura | 02-integraca/estudo-de-caso-integracao-
+  MF   Lógica de Floyd-Hoare              -> 01-metodos-f/fundamentos-de-logica-de-p | 02-verificac/logica-de-hoare
+
+B) DECISOES DE HOJE QUE DEPENDEM DE UM ALIAS AMBIGUO
+  SO   nenhum bloco decidido por alias ambiguo
+  IA   nenhum bloco decidido por alias ambiguo
+  ES2  nenhum bloco decidido por alias ambiguo
+  MF   nenhum bloco decidido por alias ambiguo

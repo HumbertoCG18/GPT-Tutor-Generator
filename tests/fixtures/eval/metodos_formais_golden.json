@@ -1,0 +1,4125 @@
+{
+ "subject": "Metodos-Formais",
+ "generated_from": {
+  "manifest": "C:\\Users\\Humberto\\Documents\\GitHub\\Metodos-Formais-Tutor\\manifest.json",
+  "timeline_index": "C:\\Users\\Humberto\\Documents\\GitHub\\Metodos-Formais-Tutor\\course\\.timeline_index.json",
+  "card_block_map": "C:\\Users\\Humberto\\Documents\\GitHub\\Metodos-Formais-Tutor\\course\\.card_block_map.json"
+ },
+ "card_block_map": {
+  "Bibliografia-Livros": {
+   "block_ids": [],
+   "source": "manual"
+  },
+  "Especificações Indutivas e Recursivas": {
+   "block_ids": [
+    "bloco-04"
+   ],
+   "source": "manual"
+  },
+  "Exercícios de Revisão para Provas": {
+   "block_ids": [
+    "bloco-07"
+   ],
+   "source": "manual"
+  },
+  "Provas por Indução": {
+   "block_ids": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "source": "manual"
+  },
+  "Revisão - Lógica e Especificação": {
+   "block_ids": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "source": "manual"
+  },
+  "Introdução a Métodos Formais": {
+   "block_ids": [
+    "bloco-01",
+    "bloco-02"
+   ],
+   "source": "labels",
+   "format": "A",
+   "dates": [
+    "2026-03-02",
+    "2026-03-04"
+   ]
+  },
+  "Verificação de Programas": {
+   "block_ids": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "source": "labels",
+   "format": "A",
+   "dates": [
+    "2026-04-27",
+    "2026-04-29",
+    "2026-05-04",
+    "2026-05-06",
+    "2026-05-11",
+    "2026-05-13",
+    "2026-05-18",
+    "2026-05-20",
+    "2026-05-25",
+    "2026-05-27",
+    "2026-06-01",
+    "2026-06-03",
+    "2026-06-08",
+    "2026-06-10"
+   ],
+   "assign_due": "2026-06-10"
+  },
+  "TDE Trabalho Discente Efetivo": {
+   "block_ids": [],
+   "source": "labels",
+   "assign_due": "2026-05-06"
+  }
+ },
+ "timeline": {
+  "blocks": [
+   {
+    "id": "bloco-01",
+    "period_start": "2026-03-02",
+    "period_end": "2026-03-02",
+    "period_label": "1 dia · 02/03/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.4,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Disciplina",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "fundamentos-de-logica-de-primeira-ordem",
+      "topic_label": "Fundamentos de Lógica de Primeira Ordem",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.2.1. Fundamentos de Lógica de Primeira Ordem",
+       "LÓGICA DE PREDICADOS",
+       "LÓGICA PROPOCIONAL",
+       "LÓGICA PROPOSICIONAL ---",
+       "Lógica de Floyd-Hoare",
+       "—"
+      ],
+      "score": 0.2,
+      "confidence": 0.291
+     },
+     {
+      "topic_slug": "especificacao-de-conjuntos-indutivos",
+      "topic_label": "Especificação de Conjuntos Indutivos",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**2. Listas polimórficas (definição indutiva)**",
+       "**Conjuntos Indutivos**",
+       "1.2.2. Especificação de Conjuntos Indutivos",
+       "CONJUNTOS E FUNÇÕES",
+       "Árvores polimórficas (definição indutiva)",
+       "—"
+      ],
+      "score": 0.2,
+      "confidence": 0.291
+     }
+    ],
+    "topic_text": "disciplina",
+    "topics": [
+     "disciplina"
+    ],
+    "aliases": [
+     "disciplina"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-01-sessao-2026-03-02",
+      "date": "2026-03-02",
+      "kind": "class",
+      "label": "apresentacao da disciplina aula",
+      "signals": [
+       "2026-03-02",
+       "02 03 2026",
+       "02",
+       "03",
+       "2026",
+       "02 03",
+       "03 2026",
+       "apresentacao da disciplina aula",
+       "apresentacao",
+       "da",
+       "disciplina",
+       "aula",
+       "apresentacao da",
+       "da disciplina",
+       "disciplina aula",
+       "apresentacao da disciplina",
+       "da disciplina aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     0
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-02",
+    "period_start": "2026-03-04",
+    "period_end": "2026-03-04",
+    "period_label": "1 dia · 04/03/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.6,
+    "primary_topic_slug": "sistemas-formais",
+    "primary_topic_label": "Sistemas Formais",
+    "primary_topic_confidence": 1.0,
+    "topic_ambiguous": false,
+    "topic_candidates": [
+     {
+      "topic_slug": "sistemas-formais",
+      "topic_label": "Sistemas Formais",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "**Métodos Formais**",
+       "1.1. Sistemas Formais",
+       "Archive of Formal Proofs",
+       "Especificação Formal",
+       "—"
+      ],
+      "score": 4.756,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.144
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.144
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.144
+     },
+     {
+      "topic_slug": "fundamentos-de-logica-de-primeira-ordem",
+      "topic_label": "Fundamentos de Lógica de Primeira Ordem",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.2.1. Fundamentos de Lógica de Primeira Ordem",
+       "LÓGICA DE PREDICADOS",
+       "LÓGICA PROPOCIONAL",
+       "LÓGICA PROPOSICIONAL ---",
+       "Lógica de Floyd-Hoare",
+       "—"
+      ],
+      "score": 0.2,
+      "confidence": 0.042
+     }
+    ],
+    "topic_text": "introducao metodos formais",
+    "topics": [
+     "introducao metodos formais"
+    ],
+    "aliases": [
+     "introducao",
+     "metodos",
+     "formais"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-02-sessao-2026-03-04",
+      "date": "2026-03-04",
+      "kind": "class",
+      "label": "introducao a metodos formais aula",
+      "signals": [
+       "2026-03-04",
+       "04 03 2026",
+       "04",
+       "03",
+       "2026",
+       "04 03",
+       "03 2026",
+       "introducao a metodos formais aula",
+       "introducao",
+       "a",
+       "metodos",
+       "formais",
+       "aula",
+       "introducao a",
+       "a metodos",
+       "metodos formais",
+       "formais aula",
+       "introducao a metodos",
+       "a metodos formais",
+       "metodos formais aula",
+       "introducao a metodos formais",
+       "a metodos formais aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     1
+    ],
+    "topic_source": "taxonomy",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-03",
+    "period_start": "2026-03-09",
+    "period_end": "2026-03-09",
+    "period_label": "1 dia · 09/03/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.6,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Logica predicados",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "logica predicados",
+    "topics": [
+     "logica predicados"
+    ],
+    "aliases": [
+     "logica",
+     "predicados"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-03-sessao-2026-03-09",
+      "date": "2026-03-09",
+      "kind": "class",
+      "label": "revisao de logica de predicados exercicios aula",
+      "signals": [
+       "2026-03-09",
+       "09 03 2026",
+       "09",
+       "03",
+       "2026",
+       "09 03",
+       "03 2026",
+       "revisao de logica de predicados exercicios aula",
+       "revisao",
+       "de",
+       "logica",
+       "predicados",
+       "exercicios",
+       "aula",
+       "revisao de",
+       "de logica",
+       "logica de",
+       "de predicados",
+       "predicados exercicios",
+       "exercicios aula",
+       "revisao de logica",
+       "de logica de",
+       "logica de predicados",
+       "de predicados exercicios",
+       "predicados exercicios aula",
+       "revisao de logica de",
+       "de logica de predicados",
+       "logica de predicados exercicios",
+       "de predicados exercicios aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     2
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-04",
+    "period_start": "2026-03-11",
+    "period_end": "2026-03-25",
+    "period_label": "5 dias · 11/03/2026 a 25/03/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.8,
+    "primary_topic_slug": "especificacao-de-conjuntos-indutivos",
+    "primary_topic_label": "Especificação de Conjuntos Indutivos",
+    "primary_topic_confidence": 1.0,
+    "topic_ambiguous": false,
+    "topic_candidates": [
+     {
+      "topic_slug": "especificacao-de-conjuntos-indutivos",
+      "topic_label": "Especificação de Conjuntos Indutivos",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**2. Listas polimórficas (definição indutiva)**",
+       "**Conjuntos Indutivos**",
+       "1.2.2. Especificação de Conjuntos Indutivos",
+       "CONJUNTOS E FUNÇÕES",
+       "Árvores polimórficas (definição indutiva)",
+       "—"
+      ],
+      "score": 6.596,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "especificacao-de-funcoes-recursivas",
+      "topic_label": "Especificação de Funções Recursivas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**Formalização de algoritmos como equações recursivas – Parte 3**",
+       "**Funções Recursivas sobre Listas**",
+       "1.2.3. Especificação de Funções Recursivas",
+       "Formalizando a Noção de Algoritmo Via Equações Recursivas",
+       "Formalização de algoritmos como equações recursivas – Parte 1",
+       "Formalização de algoritmos como equações recursivas – Parte 2",
+       "Funções Recursivas sobre Árvores",
+       "Provas por Indução de Especificações Equacionais Recursivas",
+       "Provas por Indução de Especificações Recursivas",
+       "Árvores polimórficas (equações recursivas)",
+       "—"
+      ],
+      "score": 1.375,
+      "confidence": 0.208
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.104
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.104
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.104
+     }
+    ],
+    "topic_text": "conjuntos indutivos equacoes recursivas arvores",
+    "topics": [
+     "conjuntos indutivos equacoes recursivas",
+     "arvores"
+    ],
+    "aliases": [
+     "conjuntos",
+     "indutivos",
+     "equacoes",
+     "recursivas",
+     "arvores"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-04-sessao-2026-03-11",
+      "date": "2026-03-11",
+      "kind": "class",
+      "label": "conjuntos indutivos e equacoes recursivas aula",
+      "signals": [
+       "2026-03-11",
+       "11 03 2026",
+       "11",
+       "03",
+       "2026",
+       "11 03",
+       "03 2026",
+       "conjuntos indutivos e equacoes recursivas aula",
+       "conjuntos",
+       "indutivos",
+       "e",
+       "equacoes",
+       "recursivas",
+       "aula",
+       "conjuntos indutivos",
+       "indutivos e",
+       "e equacoes",
+       "equacoes recursivas",
+       "recursivas aula",
+       "conjuntos indutivos e",
+       "indutivos e equacoes",
+       "e equacoes recursivas",
+       "equacoes recursivas aula",
+       "conjuntos indutivos e equacoes",
+       "indutivos e equacoes recursivas",
+       "e equacoes recursivas aula"
+      ]
+     },
+     {
+      "id": "bloco-04-sessao-2026-03-16",
+      "date": "2026-03-16",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-03-16",
+       "16 03 2026",
+       "16",
+       "03",
+       "2026",
+       "16 03",
+       "03 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     },
+     {
+      "id": "bloco-04-sessao-2026-03-18",
+      "date": "2026-03-18",
+      "kind": "class",
+      "label": "estudo de caso listas aula",
+      "signals": [
+       "2026-03-18",
+       "18 03 2026",
+       "18",
+       "03",
+       "2026",
+       "18 03",
+       "03 2026",
+       "estudo de caso listas aula",
+       "estudo",
+       "de",
+       "caso",
+       "listas",
+       "aula",
+       "estudo de",
+       "de caso",
+       "caso listas",
+       "listas aula",
+       "estudo de caso",
+       "de caso listas",
+       "caso listas aula",
+       "estudo de caso listas",
+       "de caso listas aula"
+      ]
+     },
+     {
+      "id": "bloco-04-sessao-2026-03-23",
+      "date": "2026-03-23",
+      "kind": "class",
+      "label": "estudo de caso arvores aula",
+      "signals": [
+       "2026-03-23",
+       "23 03 2026",
+       "23",
+       "03",
+       "2026",
+       "23 03",
+       "03 2026",
+       "estudo de caso arvores aula",
+       "estudo",
+       "de",
+       "caso",
+       "arvores",
+       "aula",
+       "estudo de",
+       "de caso",
+       "caso arvores",
+       "arvores aula",
+       "estudo de caso",
+       "de caso arvores",
+       "caso arvores aula",
+       "estudo de caso arvores",
+       "de caso arvores aula"
+      ]
+     },
+     {
+      "id": "bloco-04-sessao-2026-03-25",
+      "date": "2026-03-25",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-03-25",
+       "25 03 2026",
+       "25",
+       "03",
+       "2026",
+       "25 03",
+       "03 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "topic_source": "taxonomy",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-05",
+    "period_start": "2026-03-30",
+    "period_end": "2026-04-01",
+    "period_label": "2 dias · 30/03/2026 a 01/04/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.8,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Inducao arvores",
+    "primary_topic_confidence": 0.45,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "especificacao-de-funcoes-recursivas",
+      "topic_label": "Especificação de Funções Recursivas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**Formalização de algoritmos como equações recursivas – Parte 3**",
+       "**Funções Recursivas sobre Listas**",
+       "1.2.3. Especificação de Funções Recursivas",
+       "Formalizando a Noção de Algoritmo Via Equações Recursivas",
+       "Formalização de algoritmos como equações recursivas – Parte 1",
+       "Formalização de algoritmos como equações recursivas – Parte 2",
+       "Funções Recursivas sobre Árvores",
+       "Provas por Indução de Especificações Equacionais Recursivas",
+       "Provas por Indução de Especificações Recursivas",
+       "Árvores polimórficas (equações recursivas)",
+       "—"
+      ],
+      "score": 1.375,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "especificacao-de-conjuntos-indutivos",
+      "topic_label": "Especificação de Conjuntos Indutivos",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**2. Listas polimórficas (definição indutiva)**",
+       "**Conjuntos Indutivos**",
+       "1.2.2. Especificação de Conjuntos Indutivos",
+       "CONJUNTOS E FUNÇÕES",
+       "Árvores polimórficas (definição indutiva)",
+       "—"
+      ],
+      "score": 1.116,
+      "confidence": 0.812
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.498
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.498
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.498
+     }
+    ],
+    "topic_text": "inducao arvores",
+    "topics": [
+     "inducao",
+     "inducao arvores"
+    ],
+    "aliases": [
+     "inducao",
+     "arvores"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-05-sessao-2026-03-30",
+      "date": "2026-03-30",
+      "kind": "class",
+      "label": "provas por inducao aula",
+      "signals": [
+       "2026-03-30",
+       "30 03 2026",
+       "30",
+       "03",
+       "2026",
+       "30 03",
+       "03 2026",
+       "provas por inducao aula",
+       "provas",
+       "por",
+       "inducao",
+       "aula",
+       "provas por",
+       "por inducao",
+       "inducao aula",
+       "provas por inducao",
+       "por inducao aula"
+      ]
+     },
+     {
+      "id": "bloco-05-sessao-2026-04-01",
+      "date": "2026-04-01",
+      "kind": "class",
+      "label": "provas por inducao listas e arvores aula",
+      "signals": [
+       "2026-04-01",
+       "01 04 2026",
+       "01",
+       "04",
+       "2026",
+       "01 04",
+       "04 2026",
+       "provas por inducao listas e arvores aula",
+       "provas",
+       "por",
+       "inducao",
+       "listas",
+       "e",
+       "arvores",
+       "aula",
+       "provas por",
+       "por inducao",
+       "inducao listas",
+       "listas e",
+       "e arvores",
+       "arvores aula",
+       "provas por inducao",
+       "por inducao listas",
+       "inducao listas e",
+       "listas e arvores",
+       "e arvores aula",
+       "provas por inducao listas",
+       "por inducao listas e",
+       "inducao listas e arvores",
+       "listas e arvores aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     8,
+     9
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-06",
+    "period_start": "2026-04-06",
+    "period_end": "2026-04-13",
+    "period_label": "3 dias · 06/04/2026 a 13/04/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.6,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Interativa teoremas isabelle",
+    "primary_topic_confidence": 0.45,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "provadores-de-teoremas",
+      "topic_label": "Provadores de Teoremas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.3. Provadores de Teoremas",
+       "assistentes de prova"
+      ],
+      "score": 1.116,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "sistema-de-prova",
+      "topic_label": "Sistema de Prova",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.4. Sistema de Prova",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.289
+     }
+    ],
+    "topic_text": "interativa teoremas isabelle",
+    "topics": [
+     "interativa teoremas"
+    ],
+    "aliases": [
+     "interativa",
+     "teoremas"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-06-sessao-2026-04-06",
+      "date": "2026-04-06",
+      "kind": "class",
+      "label": "prova interativa de teoremas isabelle aula",
+      "signals": [
+       "2026-04-06",
+       "06 04 2026",
+       "06",
+       "04",
+       "2026",
+       "06 04",
+       "04 2026",
+       "prova interativa de teoremas isabelle aula",
+       "prova",
+       "interativa",
+       "de",
+       "teoremas",
+       "isabelle",
+       "aula",
+       "prova interativa",
+       "interativa de",
+       "de teoremas",
+       "teoremas isabelle",
+       "isabelle aula",
+       "prova interativa de",
+       "interativa de teoremas",
+       "de teoremas isabelle",
+       "teoremas isabelle aula",
+       "prova interativa de teoremas",
+       "interativa de teoremas isabelle",
+       "de teoremas isabelle aula"
+      ]
+     },
+     {
+      "id": "bloco-06-sessao-2026-04-08",
+      "date": "2026-04-08",
+      "kind": "class",
+      "label": "prova interativa de teoremas isabelle aula",
+      "signals": [
+       "2026-04-08",
+       "08 04 2026",
+       "08",
+       "04",
+       "2026",
+       "08 04",
+       "04 2026",
+       "prova interativa de teoremas isabelle aula",
+       "prova",
+       "interativa",
+       "de",
+       "teoremas",
+       "isabelle",
+       "aula",
+       "prova interativa",
+       "interativa de",
+       "de teoremas",
+       "teoremas isabelle",
+       "isabelle aula",
+       "prova interativa de",
+       "interativa de teoremas",
+       "de teoremas isabelle",
+       "teoremas isabelle aula",
+       "prova interativa de teoremas",
+       "interativa de teoremas isabelle",
+       "de teoremas isabelle aula"
+      ]
+     },
+     {
+      "id": "bloco-06-sessao-2026-04-13",
+      "date": "2026-04-13",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-04-13",
+       "13 04 2026",
+       "13",
+       "04",
+       "2026",
+       "13 04",
+       "04 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     10,
+     11,
+     12
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-07",
+    "period_start": "2026-04-15",
+    "period_end": "2026-04-15",
+    "period_label": "1 dia · 15/04/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Conteúdo: unidade-01-metodos-formais",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "",
+    "topics": [],
+    "aliases": [],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-07-sessao-2026-04-15",
+      "date": "2026-04-15",
+      "kind": "class",
+      "label": "exercicios de revisao aula",
+      "signals": [
+       "2026-04-15",
+       "15 04 2026",
+       "15",
+       "04",
+       "2026",
+       "15 04",
+       "04 2026",
+       "exercicios de revisao aula",
+       "exercicios",
+       "de",
+       "revisao",
+       "aula",
+       "exercicios de",
+       "de revisao",
+       "revisao aula",
+       "exercicios de revisao",
+       "de revisao aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     13
+    ],
+    "topic_source": "",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "review",
+    "scope_unit_slugs": [
+     "unidade-01-metodos-formais"
+    ]
+   },
+   {
+    "id": "bloco-08",
+    "period_start": "2026-04-20",
+    "period_end": "2026-04-20",
+    "period_label": "1 dia · 20/04/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Suspensao",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "suspensao",
+    "topics": [
+     "suspensao"
+    ],
+    "aliases": [
+     "suspensao"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-08-sessao-2026-04-20",
+      "date": "2026-04-20",
+      "kind": "class",
+      "label": "suspensao de aulas aula",
+      "signals": [
+       "2026-04-20",
+       "20 04 2026",
+       "20",
+       "04",
+       "2026",
+       "20 04",
+       "04 2026",
+       "suspensao de aulas aula",
+       "suspensao",
+       "de",
+       "aulas",
+       "aula",
+       "suspensao de",
+       "de aulas",
+       "aulas aula",
+       "suspensao de aulas",
+       "de aulas aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     14
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "suspended"
+   },
+   {
+    "id": "bloco-09",
+    "period_start": "2026-04-22",
+    "period_end": "2026-04-22",
+    "period_label": "1 dia · 22/04/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Conteúdo: unidade-01-metodos-formais",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "provadores-de-teoremas",
+      "topic_label": "Provadores de Teoremas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.3. Provadores de Teoremas",
+       "assistentes de prova"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "sistema-de-prova",
+      "topic_label": "Sistema de Prova",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.4. Sistema de Prova",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     }
+    ],
+    "topic_text": "",
+    "topics": [],
+    "aliases": [],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-09-sessao-2026-04-22",
+      "date": "2026-04-22",
+      "kind": "class",
+      "label": "prova p1 prova",
+      "signals": [
+       "2026-04-22",
+       "22 04 2026",
+       "22",
+       "04",
+       "2026",
+       "22 04",
+       "04 2026",
+       "prova p1 prova",
+       "prova",
+       "p1",
+       "prova p1",
+       "p1 prova"
+      ]
+     }
+    ],
+    "source_rows": [
+     15
+    ],
+    "source_kind": "assessment",
+    "topic_source": "",
+    "kind": "assessment",
+    "scope_unit_slugs": [
+     "unidade-01-metodos-formais"
+    ]
+   },
+   {
+    "id": "bloco-10",
+    "period_start": "2026-04-27",
+    "period_end": "2026-05-04",
+    "period_label": "3 dias · 27/04/2026 a 04/05/2026",
+    "unit_slug": "unidade-01-metodos-formais",
+    "unit_confidence": 0.4,
+    "primary_topic_slug": "logica-de-hoare",
+    "primary_topic_label": "Lógica de Hoare",
+    "primary_topic_confidence": 1.0,
+    "topic_ambiguous": false,
+    "topic_candidates": [
+     {
+      "topic_slug": "logica-de-hoare",
+      "topic_label": "Lógica de Hoare",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.1. Lógica de Hoare",
+       "Triplas de Hoare",
+       "tripla de Hoare"
+      ],
+      "score": 3.55,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.193
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.193
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.193
+     },
+     {
+      "topic_slug": "fundamentos-de-logica-de-primeira-ordem",
+      "topic_label": "Fundamentos de Lógica de Primeira Ordem",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.2.1. Fundamentos de Lógica de Primeira Ordem",
+       "LÓGICA DE PREDICADOS",
+       "LÓGICA PROPOCIONAL",
+       "LÓGICA PROPOSICIONAL ---",
+       "Lógica de Floyd-Hoare",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.091
+     }
+    ],
+    "topic_text": "logica hoare",
+    "topics": [
+     "logica hoare"
+    ],
+    "aliases": [
+     "logica",
+     "hoare"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-10-sessao-2026-04-27",
+      "date": "2026-04-27",
+      "kind": "class",
+      "label": "logica de hoare aula",
+      "signals": [
+       "2026-04-27",
+       "27 04 2026",
+       "27",
+       "04",
+       "2026",
+       "27 04",
+       "04 2026",
+       "logica de hoare aula",
+       "logica",
+       "de",
+       "hoare",
+       "aula",
+       "logica de",
+       "de hoare",
+       "hoare aula",
+       "logica de hoare",
+       "de hoare aula"
+      ]
+     },
+     {
+      "id": "bloco-10-sessao-2026-04-29",
+      "date": "2026-04-29",
+      "kind": "class",
+      "label": "logica de hoare aula",
+      "signals": [
+       "2026-04-29",
+       "29 04 2026",
+       "29",
+       "04",
+       "2026",
+       "29 04",
+       "04 2026",
+       "logica de hoare aula",
+       "logica",
+       "de",
+       "hoare",
+       "aula",
+       "logica de",
+       "de hoare",
+       "hoare aula",
+       "logica de hoare",
+       "de hoare aula"
+      ]
+     },
+     {
+      "id": "bloco-10-sessao-2026-05-04",
+      "date": "2026-05-04",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-05-04",
+       "04 05 2026",
+       "04",
+       "05",
+       "2026",
+       "04 05",
+       "05 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     16,
+     17,
+     18
+    ],
+    "topic_source": "taxonomy",
+    "auto_unit_slug": "unidade-01-metodos-formais",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-11",
+    "period_start": "2026-05-06",
+    "period_end": "2026-05-06",
+    "period_label": "1 dia · 06/05/2026",
+    "unit_slug": "unidade-02-verificacao-de-programas",
+    "unit_confidence": 0.8,
+    "primary_topic_slug": "correcao-parcial-e-total",
+    "primary_topic_label": "Correção Parcial e Total",
+    "primary_topic_confidence": 1.0,
+    "topic_ambiguous": false,
+    "topic_candidates": [
+     {
+      "topic_slug": "correcao-parcial-e-total",
+      "topic_label": "Correção Parcial e Total",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.2. Correção Parcial e Total",
+       "Correção",
+       "Correção de Algoritmos",
+       "Correção e Terminação",
+       "Correção parcial:",
+       "—"
+      ],
+      "score": 11.352,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "invariante-e-variante-de-laco",
+      "topic_label": "Invariante e Variante de Laço",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.3. Invariante e Variante de Laço",
+       "Formalização de algoritmos com invariantes de laço",
+       "Invariantes de Laço",
+       "invariante de laço"
+      ],
+      "score": 3.12,
+      "confidence": 0.275
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.06
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.06
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.06
+     }
+    ],
+    "topic_text": "logica programas correcao parcial total terminacao invariantes laco",
+    "topics": [
+     "logica programas correcao parcial correcao total terminacao invariantes laco"
+    ],
+    "aliases": [
+     "logica",
+     "programas",
+     "correcao",
+     "parcial",
+     "total",
+     "terminacao"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-11-sessao-2026-05-06",
+      "date": "2026-05-06",
+      "kind": "class",
+      "label": "logica de programas correcao parcial correcao total e terminacao invariantes de laco aula",
+      "signals": [
+       "2026-05-06",
+       "06 05 2026",
+       "06",
+       "05",
+       "2026",
+       "06 05",
+       "05 2026",
+       "logica de programas correcao parcial correcao total e terminacao invariantes de laco aula",
+       "logica",
+       "de",
+       "programas",
+       "correcao",
+       "parcial",
+       "total",
+       "e",
+       "terminacao",
+       "invariantes",
+       "laco",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas correcao",
+       "correcao parcial",
+       "parcial correcao",
+       "correcao total",
+       "total e",
+       "e terminacao",
+       "terminacao invariantes",
+       "invariantes de",
+       "de laco",
+       "laco aula",
+       "logica de programas",
+       "de programas correcao",
+       "programas correcao parcial",
+       "correcao parcial correcao",
+       "parcial correcao total",
+       "correcao total e",
+       "total e terminacao",
+       "e terminacao invariantes",
+       "terminacao invariantes de",
+       "invariantes de laco",
+       "de laco aula",
+       "logica de programas correcao",
+       "de programas correcao parcial",
+       "programas correcao parcial correcao",
+       "correcao parcial correcao total",
+       "parcial correcao total e",
+       "correcao total e terminacao",
+       "total e terminacao invariantes",
+       "e terminacao invariantes de",
+       "terminacao invariantes de laco",
+       "invariantes de laco aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     19
+    ],
+    "topic_source": "taxonomy",
+    "auto_unit_slug": "unidade-02-verificacao-de-programas",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-12",
+    "period_start": "2026-05-11",
+    "period_end": "2026-05-11",
+    "period_label": "1 dia · 11/05/2026",
+    "unit_slug": "unidade-02-verificacao-de-programas",
+    "unit_confidence": 0.4,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Terminacao introducao dafny",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "verificacao-de-programas",
+      "topic_label": "Verificação de Programas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.2. Verificação de Programas",
+       "Programação e Verificação com Dafny",
+       "Programação e Verificação com Dafny (Arrays)",
+       "Programação e Verificação com Dafny (Classes)",
+       "Programação e Verificação com Dafny (Sequences)",
+       "Programação e Verificação com Dafny (Sets, Multisets)",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "correcao-parcial-e-total",
+      "topic_label": "Correção Parcial e Total",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.2. Correção Parcial e Total",
+       "Correção",
+       "Correção de Algoritmos",
+       "Correção e Terminação",
+       "Correção parcial:",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     }
+    ],
+    "topic_text": "terminacao introducao dafny",
+    "topics": [
+     "terminacao introducao dafny"
+    ],
+    "aliases": [
+     "terminacao",
+     "introducao",
+     "dafny"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-12-sessao-2026-05-11",
+      "date": "2026-05-11",
+      "kind": "class",
+      "label": "terminacao introducao ao dafny aula",
+      "signals": [
+       "2026-05-11",
+       "11 05 2026",
+       "11",
+       "05",
+       "2026",
+       "11 05",
+       "05 2026",
+       "terminacao introducao ao dafny aula",
+       "terminacao",
+       "introducao",
+       "ao",
+       "dafny",
+       "aula",
+       "terminacao introducao",
+       "introducao ao",
+       "ao dafny",
+       "dafny aula",
+       "terminacao introducao ao",
+       "introducao ao dafny",
+       "ao dafny aula",
+       "terminacao introducao ao dafny",
+       "introducao ao dafny aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     20
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-02-verificacao-de-programas",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-13",
+    "period_start": "2026-05-13",
+    "period_end": "2026-05-25",
+    "period_label": "4 dias · 13/05/2026 a 25/05/2026",
+    "unit_slug": "unidade-02-verificacao-de-programas",
+    "unit_confidence": 0.4,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Logica programas dafny colecoes arrays sequencias conjuntos",
+    "primary_topic_confidence": 0.45,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "verificacao-de-programas",
+      "topic_label": "Verificação de Programas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.2. Verificação de Programas",
+       "Programação e Verificação com Dafny",
+       "Programação e Verificação com Dafny (Arrays)",
+       "Programação e Verificação com Dafny (Classes)",
+       "Programação e Verificação com Dafny (Sequences)",
+       "Programação e Verificação com Dafny (Sets, Multisets)",
+       "—"
+      ],
+      "score": 1.116,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 0.614
+     },
+     {
+      "topic_slug": "especificacao-de-conjuntos-indutivos",
+      "topic_label": "Especificação de Conjuntos Indutivos",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "**2. Listas polimórficas (definição indutiva)**",
+       "**Conjuntos Indutivos**",
+       "1.2.2. Especificação de Conjuntos Indutivos",
+       "CONJUNTOS E FUNÇÕES",
+       "Árvores polimórficas (definição indutiva)",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.289
+     }
+    ],
+    "topic_text": "logica programas dafny colecoes arrays sequencias conjuntos",
+    "topics": [
+     "logica programas"
+    ],
+    "aliases": [
+     "logica",
+     "programas"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-13-sessao-2026-05-13",
+      "date": "2026-05-13",
+      "kind": "class",
+      "label": "logica de programas dafny aula",
+      "signals": [
+       "2026-05-13",
+       "13 05 2026",
+       "13",
+       "05",
+       "2026",
+       "13 05",
+       "05 2026",
+       "logica de programas dafny aula",
+       "logica",
+       "de",
+       "programas",
+       "dafny",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas dafny",
+       "dafny aula",
+       "logica de programas",
+       "de programas dafny",
+       "programas dafny aula",
+       "logica de programas dafny",
+       "de programas dafny aula"
+      ]
+     },
+     {
+      "id": "bloco-13-sessao-2026-05-18",
+      "date": "2026-05-18",
+      "kind": "class",
+      "label": "logica de programas colecoes dafny arrays aula",
+      "signals": [
+       "2026-05-18",
+       "18 05 2026",
+       "18",
+       "05",
+       "2026",
+       "18 05",
+       "05 2026",
+       "logica de programas colecoes dafny arrays aula",
+       "logica",
+       "de",
+       "programas",
+       "colecoes",
+       "dafny",
+       "arrays",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas colecoes",
+       "colecoes dafny",
+       "dafny arrays",
+       "arrays aula",
+       "logica de programas",
+       "de programas colecoes",
+       "programas colecoes dafny",
+       "colecoes dafny arrays",
+       "dafny arrays aula",
+       "logica de programas colecoes",
+       "de programas colecoes dafny",
+       "programas colecoes dafny arrays",
+       "colecoes dafny arrays aula"
+      ]
+     },
+     {
+      "id": "bloco-13-sessao-2026-05-20",
+      "date": "2026-05-20",
+      "kind": "class",
+      "label": "logica de programas colecoes dafny sequencias aula",
+      "signals": [
+       "2026-05-20",
+       "20 05 2026",
+       "20",
+       "05",
+       "2026",
+       "20 05",
+       "05 2026",
+       "logica de programas colecoes dafny sequencias aula",
+       "logica",
+       "de",
+       "programas",
+       "colecoes",
+       "dafny",
+       "sequencias",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas colecoes",
+       "colecoes dafny",
+       "dafny sequencias",
+       "sequencias aula",
+       "logica de programas",
+       "de programas colecoes",
+       "programas colecoes dafny",
+       "colecoes dafny sequencias",
+       "dafny sequencias aula",
+       "logica de programas colecoes",
+       "de programas colecoes dafny",
+       "programas colecoes dafny sequencias",
+       "colecoes dafny sequencias aula"
+      ]
+     },
+     {
+      "id": "bloco-13-sessao-2026-05-25",
+      "date": "2026-05-25",
+      "kind": "class",
+      "label": "logica de programas colecoes dafny conjuntos aula",
+      "signals": [
+       "2026-05-25",
+       "25 05 2026",
+       "25",
+       "05",
+       "2026",
+       "25 05",
+       "05 2026",
+       "logica de programas colecoes dafny conjuntos aula",
+       "logica",
+       "de",
+       "programas",
+       "colecoes",
+       "dafny",
+       "conjuntos",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas colecoes",
+       "colecoes dafny",
+       "dafny conjuntos",
+       "conjuntos aula",
+       "logica de programas",
+       "de programas colecoes",
+       "programas colecoes dafny",
+       "colecoes dafny conjuntos",
+       "dafny conjuntos aula",
+       "logica de programas colecoes",
+       "de programas colecoes dafny",
+       "programas colecoes dafny conjuntos",
+       "colecoes dafny conjuntos aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     21,
+     22,
+     23,
+     24
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-02-verificacao-de-programas",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-14",
+    "period_start": "2026-05-27",
+    "period_end": "2026-05-27",
+    "period_label": "1 dia · 27/05/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Evento academico",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "evento academico",
+    "topics": [
+     "evento academico"
+    ],
+    "aliases": [
+     "evento",
+     "academico"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-14-sessao-2026-05-27",
+      "date": "2026-05-27",
+      "kind": "class",
+      "label": "se day evento academico",
+      "signals": [
+       "2026-05-27",
+       "27 05 2026",
+       "27",
+       "05",
+       "2026",
+       "27 05",
+       "05 2026",
+       "se day evento academico",
+       "se",
+       "day",
+       "evento",
+       "academico",
+       "se day",
+       "day evento",
+       "evento academico",
+       "se day evento",
+       "day evento academico"
+      ]
+     }
+    ],
+    "source_rows": [
+     25
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-02-verificacao-de-programas",
+    "kind": "academic_event"
+   },
+   {
+    "id": "bloco-15",
+    "period_start": "2026-06-01",
+    "period_end": "2026-06-10",
+    "period_label": "4 dias · 01/06/2026 a 10/06/2026",
+    "unit_slug": "unidade-02-verificacao-de-programas",
+    "unit_confidence": 0.4,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Logica programas orientacao objetos dafny ghosts autocontrat…",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "verificacao-de-programas",
+      "topic_label": "Verificação de Programas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.2. Verificação de Programas",
+       "Programação e Verificação com Dafny",
+       "Programação e Verificação com Dafny (Arrays)",
+       "Programação e Verificação com Dafny (Classes)",
+       "Programação e Verificação com Dafny (Sequences)",
+       "Programação e Verificação com Dafny (Sets, Multisets)",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "fundamentos-de-logica-de-primeira-ordem",
+      "topic_label": "Fundamentos de Lógica de Primeira Ordem",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.2.1. Fundamentos de Lógica de Primeira Ordem",
+       "LÓGICA DE PREDICADOS",
+       "LÓGICA PROPOCIONAL",
+       "LÓGICA PROPOSICIONAL ---",
+       "Lógica de Floyd-Hoare",
+       "—"
+      ],
+      "score": 0.2,
+      "confidence": 0.291
+     }
+    ],
+    "topic_text": "logica programas orientacao objetos dafny ghosts autocontrato",
+    "topics": [
+     "logica programas"
+    ],
+    "aliases": [
+     "logica",
+     "programas"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-15-sessao-2026-06-01",
+      "date": "2026-06-01",
+      "kind": "class",
+      "label": "logica de programas orientacao a objetos dafny ghosts autocontrato aula",
+      "signals": [
+       "2026-06-01",
+       "01 06 2026",
+       "01",
+       "06",
+       "2026",
+       "01 06",
+       "06 2026",
+       "logica de programas orientacao a objetos dafny ghosts autocontrato aula",
+       "logica",
+       "de",
+       "programas",
+       "orientacao",
+       "a",
+       "objetos",
+       "dafny",
+       "ghosts",
+       "autocontrato",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas orientacao",
+       "orientacao a",
+       "a objetos",
+       "objetos dafny",
+       "dafny ghosts",
+       "ghosts autocontrato",
+       "autocontrato aula",
+       "logica de programas",
+       "de programas orientacao",
+       "programas orientacao a",
+       "orientacao a objetos",
+       "a objetos dafny",
+       "objetos dafny ghosts",
+       "dafny ghosts autocontrato",
+       "ghosts autocontrato aula",
+       "logica de programas orientacao",
+       "de programas orientacao a",
+       "programas orientacao a objetos",
+       "orientacao a objetos dafny",
+       "a objetos dafny ghosts",
+       "objetos dafny ghosts autocontrato",
+       "dafny ghosts autocontrato aula"
+      ]
+     },
+     {
+      "id": "bloco-15-sessao-2026-06-03",
+      "date": "2026-06-03",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-06-03",
+       "03 06 2026",
+       "03",
+       "06",
+       "2026",
+       "03 06",
+       "06 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     },
+     {
+      "id": "bloco-15-sessao-2026-06-08",
+      "date": "2026-06-08",
+      "kind": "class",
+      "label": "logica de programas orientacao a objetos dafny ghosts autocontrato aula",
+      "signals": [
+       "2026-06-08",
+       "08 06 2026",
+       "08",
+       "06",
+       "2026",
+       "08 06",
+       "06 2026",
+       "logica de programas orientacao a objetos dafny ghosts autocontrato aula",
+       "logica",
+       "de",
+       "programas",
+       "orientacao",
+       "a",
+       "objetos",
+       "dafny",
+       "ghosts",
+       "autocontrato",
+       "aula",
+       "logica de",
+       "de programas",
+       "programas orientacao",
+       "orientacao a",
+       "a objetos",
+       "objetos dafny",
+       "dafny ghosts",
+       "ghosts autocontrato",
+       "autocontrato aula",
+       "logica de programas",
+       "de programas orientacao",
+       "programas orientacao a",
+       "orientacao a objetos",
+       "a objetos dafny",
+       "objetos dafny ghosts",
+       "dafny ghosts autocontrato",
+       "ghosts autocontrato aula",
+       "logica de programas orientacao",
+       "de programas orientacao a",
+       "programas orientacao a objetos",
+       "orientacao a objetos dafny",
+       "a objetos dafny ghosts",
+       "objetos dafny ghosts autocontrato",
+       "dafny ghosts autocontrato aula"
+      ]
+     },
+     {
+      "id": "bloco-15-sessao-2026-06-10",
+      "date": "2026-06-10",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-06-10",
+       "10 06 2026",
+       "10",
+       "06",
+       "2026",
+       "10 06",
+       "06 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     26,
+     27,
+     28,
+     29
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-02-verificacao-de-programas",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-16",
+    "period_start": "2026-06-15",
+    "period_end": "2026-06-29",
+    "period_label": "5 dias · 15/06/2026 a 29/06/2026",
+    "unit_slug": "unidade-03-verificacao-de-modelos",
+    "unit_confidence": 0.6,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Verificacao modelos logica temporal ferramenta",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "logica-temporal-linear",
+      "topic_label": "Lógica Temporal Linear",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "subtopic",
+      "aliases": [
+       "3.2.1. Lógica Temporal Linear",
+       "LTL"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "logica-temporal-ramificada",
+      "topic_label": "Lógica Temporal Ramificada",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "subtopic",
+      "aliases": [
+       "3.2.2. Lógica Temporal Ramificada",
+       "CTL"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     }
+    ],
+    "topic_text": "verificacao modelos logica temporal ferramenta",
+    "topics": [
+     "verificacao modelos logica temporal",
+     "verificacao modelos ferramenta"
+    ],
+    "aliases": [
+     "verificacao",
+     "modelos",
+     "logica",
+     "temporal",
+     "ferramenta"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-16-sessao-2026-06-15",
+      "date": "2026-06-15",
+      "kind": "class",
+      "label": "verificacao de modelos logica temporal aula",
+      "signals": [
+       "2026-06-15",
+       "15 06 2026",
+       "15",
+       "06",
+       "2026",
+       "15 06",
+       "06 2026",
+       "verificacao de modelos logica temporal aula",
+       "verificacao",
+       "de",
+       "modelos",
+       "logica",
+       "temporal",
+       "aula",
+       "verificacao de",
+       "de modelos",
+       "modelos logica",
+       "logica temporal",
+       "temporal aula",
+       "verificacao de modelos",
+       "de modelos logica",
+       "modelos logica temporal",
+       "logica temporal aula",
+       "verificacao de modelos logica",
+       "de modelos logica temporal",
+       "modelos logica temporal aula"
+      ]
+     },
+     {
+      "id": "bloco-16-sessao-2026-06-17",
+      "date": "2026-06-17",
+      "kind": "class",
+      "label": "verificacao de modelos logica temporal aula",
+      "signals": [
+       "2026-06-17",
+       "17 06 2026",
+       "17",
+       "06",
+       "2026",
+       "17 06",
+       "06 2026",
+       "verificacao de modelos logica temporal aula",
+       "verificacao",
+       "de",
+       "modelos",
+       "logica",
+       "temporal",
+       "aula",
+       "verificacao de",
+       "de modelos",
+       "modelos logica",
+       "logica temporal",
+       "temporal aula",
+       "verificacao de modelos",
+       "de modelos logica",
+       "modelos logica temporal",
+       "logica temporal aula",
+       "verificacao de modelos logica",
+       "de modelos logica temporal",
+       "modelos logica temporal aula"
+      ]
+     },
+     {
+      "id": "bloco-16-sessao-2026-06-22",
+      "date": "2026-06-22",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-06-22",
+       "22 06 2026",
+       "22",
+       "06",
+       "2026",
+       "22 06",
+       "06 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     },
+     {
+      "id": "bloco-16-sessao-2026-06-24",
+      "date": "2026-06-24",
+      "kind": "class",
+      "label": "verificacao de modelos ferramenta aula",
+      "signals": [
+       "2026-06-24",
+       "24 06 2026",
+       "24",
+       "06",
+       "2026",
+       "24 06",
+       "06 2026",
+       "verificacao de modelos ferramenta aula",
+       "verificacao",
+       "de",
+       "modelos",
+       "ferramenta",
+       "aula",
+       "verificacao de",
+       "de modelos",
+       "modelos ferramenta",
+       "ferramenta aula",
+       "verificacao de modelos",
+       "de modelos ferramenta",
+       "modelos ferramenta aula",
+       "verificacao de modelos ferramenta",
+       "de modelos ferramenta aula"
+      ]
+     },
+     {
+      "id": "bloco-16-sessao-2026-06-29",
+      "date": "2026-06-29",
+      "kind": "class",
+      "label": "exercicios aula",
+      "signals": [
+       "2026-06-29",
+       "29 06 2026",
+       "29",
+       "06",
+       "2026",
+       "29 06",
+       "06 2026",
+       "exercicios aula",
+       "exercicios",
+       "aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     30,
+     31,
+     32,
+     33,
+     34
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-03-verificacao-de-modelos",
+    "kind": "class"
+   },
+   {
+    "id": "bloco-17",
+    "period_start": "2026-07-01",
+    "period_end": "2026-07-01",
+    "period_label": "1 dia · 01/07/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Conteúdo: unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "",
+    "topics": [],
+    "aliases": [],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-17-sessao-2026-07-01",
+      "date": "2026-07-01",
+      "kind": "class",
+      "label": "exercicios de revisao aula",
+      "signals": [
+       "2026-07-01",
+       "01 07 2026",
+       "01",
+       "07",
+       "2026",
+       "01 07",
+       "07 2026",
+       "exercicios de revisao aula",
+       "exercicios",
+       "de",
+       "revisao",
+       "aula",
+       "exercicios de",
+       "de revisao",
+       "revisao aula",
+       "exercicios de revisao",
+       "de revisao aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     35
+    ],
+    "topic_source": "",
+    "auto_unit_slug": "unidade-03-verificacao-de-modelos",
+    "kind": "review",
+    "scope_unit_slugs": [
+     "unidade-02-verificacao-de-programas",
+     "unidade-03-verificacao-de-modelos"
+    ]
+   },
+   {
+    "id": "bloco-18",
+    "period_start": "2026-07-06",
+    "period_end": "2026-07-06",
+    "period_label": "1 dia · 06/07/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Conteúdo: unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "provadores-de-teoremas",
+      "topic_label": "Provadores de Teoremas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.3. Provadores de Teoremas",
+       "assistentes de prova"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "sistema-de-prova",
+      "topic_label": "Sistema de Prova",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.4. Sistema de Prova",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     }
+    ],
+    "topic_text": "",
+    "topics": [],
+    "aliases": [],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-18-sessao-2026-07-06",
+      "date": "2026-07-06",
+      "kind": "class",
+      "label": "prova p2 prova",
+      "signals": [
+       "2026-07-06",
+       "06 07 2026",
+       "06",
+       "07",
+       "2026",
+       "06 07",
+       "07 2026",
+       "prova p2 prova",
+       "prova",
+       "p2",
+       "prova p2",
+       "p2 prova"
+      ]
+     }
+    ],
+    "source_rows": [
+     36
+    ],
+    "source_kind": "assessment",
+    "topic_source": "",
+    "kind": "assessment",
+    "scope_unit_slugs": [
+     "unidade-02-verificacao-de-programas",
+     "unidade-03-verificacao-de-modelos"
+    ]
+   },
+   {
+    "id": "bloco-19",
+    "period_start": "2026-07-08",
+    "period_end": "2026-07-08",
+    "period_label": "1 dia · 08/07/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Substituicao",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "substituicao",
+    "topics": [
+     "substituicao"
+    ],
+    "aliases": [
+     "substituicao"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-19-sessao-2026-07-08",
+      "date": "2026-07-08",
+      "kind": "class",
+      "label": "prova ps prova de substituicao",
+      "signals": [
+       "2026-07-08",
+       "08 07 2026",
+       "08",
+       "07",
+       "2026",
+       "08 07",
+       "07 2026",
+       "prova ps prova de substituicao",
+       "prova",
+       "ps",
+       "de",
+       "substituicao",
+       "prova ps",
+       "ps prova",
+       "prova de",
+       "de substituicao",
+       "prova ps prova",
+       "ps prova de",
+       "prova de substituicao",
+       "prova ps prova de",
+       "ps prova de substituicao"
+      ]
+     }
+    ],
+    "source_rows": [
+     37
+    ],
+    "source_kind": "assessment",
+    "topic_source": "topic_text_fallback",
+    "kind": "assessment",
+    "scope_unit_slugs": [
+     "unidade-01-metodos-formais",
+     "unidade-02-verificacao-de-programas",
+     "unidade-03-verificacao-de-modelos"
+    ]
+   },
+   {
+    "id": "bloco-20",
+    "period_start": "2026-07-13",
+    "period_end": "2026-07-13",
+    "period_label": "1 dia · 13/07/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Devolucao",
+    "primary_topic_confidence": 0.0,
+    "topic_ambiguous": true,
+    "topic_candidates": [],
+    "topic_text": "devolucao",
+    "topics": [
+     "devolucao"
+    ],
+    "aliases": [
+     "devolucao"
+    ],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-20-sessao-2026-07-13",
+      "date": "2026-07-13",
+      "kind": "class",
+      "label": "devolucao das provas aula",
+      "signals": [
+       "2026-07-13",
+       "13 07 2026",
+       "13",
+       "07",
+       "2026",
+       "13 07",
+       "07 2026",
+       "devolucao das provas aula",
+       "devolucao",
+       "das",
+       "provas",
+       "aula",
+       "devolucao das",
+       "das provas",
+       "provas aula",
+       "devolucao das provas",
+       "das provas aula"
+      ]
+     }
+    ],
+    "source_rows": [
+     38
+    ],
+    "topic_source": "topic_text_fallback",
+    "auto_unit_slug": "unidade-03-verificacao-de-modelos",
+    "kind": "results"
+   },
+   {
+    "id": "bloco-21",
+    "period_start": "2026-07-15",
+    "period_end": "2026-07-15",
+    "period_label": "1 dia · 15/07/2026",
+    "unit_slug": "",
+    "unit_confidence": 0.0,
+    "primary_topic_slug": "",
+    "primary_topic_label": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos",
+    "primary_topic_confidence": 0.13708800000000002,
+    "topic_ambiguous": true,
+    "topic_candidates": [
+     {
+      "topic_slug": "linguagens-de-especificacao-e-logicas",
+      "topic_label": "Linguagens de Especificação e Lógicas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "topic",
+      "aliases": [
+       "1.2. Linguagens de Especificação e Lógicas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-programas",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Programas",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "topic",
+      "aliases": [
+       "2.2. Softwares de Suporte à Verificação Formal de Programas",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "softwares-de-suporte-a-verificacao-formal-de-modelos",
+      "topic_label": "Softwares de Suporte à Verificação Formal de Modelos",
+      "unit_slug": "unidade-03-verificacao-de-modelos",
+      "kind": "topic",
+      "aliases": [
+       "3.4. Softwares de Suporte à Verificação Formal de Modelos",
+       "—"
+      ],
+      "score": 0.685,
+      "confidence": 1.0
+     },
+     {
+      "topic_slug": "provadores-de-teoremas",
+      "topic_label": "Provadores de Teoremas",
+      "unit_slug": "unidade-01-metodos-formais",
+      "kind": "subtopic",
+      "aliases": [
+       "1.3.3. Provadores de Teoremas",
+       "assistentes de prova"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     },
+     {
+      "topic_slug": "sistema-de-prova",
+      "topic_label": "Sistema de Prova",
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "kind": "subtopic",
+      "aliases": [
+       "2.1.4. Sistema de Prova",
+       "—"
+      ],
+      "score": 0.322,
+      "confidence": 0.47
+     }
+    ],
+    "topic_text": "",
+    "topics": [],
+    "aliases": [],
+    "card_evidence": [],
+    "sessions": [
+     {
+      "id": "bloco-21-sessao-2026-07-15",
+      "date": "2026-07-15",
+      "kind": "class",
+      "label": "prova g2 prova de g2",
+      "signals": [
+       "2026-07-15",
+       "15 07 2026",
+       "15",
+       "07",
+       "2026",
+       "15 07",
+       "07 2026",
+       "prova g2 prova de g2",
+       "prova",
+       "g2",
+       "de",
+       "prova g2",
+       "g2 prova",
+       "prova de",
+       "de g2",
+       "prova g2 prova",
+       "g2 prova de",
+       "prova de g2",
+       "prova g2 prova de",
+       "g2 prova de g2"
+      ]
+     }
+    ],
+    "source_rows": [
+     39
+    ],
+    "source_kind": "assessment",
+    "topic_source": "",
+    "kind": "assessment",
+    "scope_unit_slugs": [
+     "unidade-01-metodos-formais",
+     "unidade-02-verificacao-de-programas",
+     "unidade-03-verificacao-de-modelos"
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "id": "eth2",
+   "title": "GitHub - Consensys/eth2.0-dafny: Eth2.0 spec in Dafny · GitHub",
+   "category": "bibliografia",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "eth2.0-dafny",
+   "source_section_real": "",
+   "unit_guess": {
+    "slug": "",
+    "confidence": 0.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "aws-encryption-sdk",
+   "title": "GitHub - aws/aws-encryption-sdk: AWS Encryption SDK · GitHub",
+   "category": "bibliografia",
+   "auto_tags": [],
+   "raw_target": "aws-encryption-sdk",
+   "source_section_real": "",
+   "unit_guess": {
+    "slug": "",
+    "confidence": 0.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "archive-of-formal-proofs-355fb8",
+   "title": "Archive of Formal Proofs",
+   "category": "references",
+   "auto_tags": [
+    "ferramenta:axiom-free",
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
+   "raw_target": "www.isa-afp.org",
+   "source_section_real": "",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "categoria fora da timeline: references"
+  },
+  {
+   "id": "exerciciosformalizacaoalgoritmosrecursao3",
+   "title": "ExerciciosFormalizacaoAlgoritmosRecursao3",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosFormalizacaoAlgoritmosRecursao3.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "formalizacaoalgoritmos-recursao2",
+   "title": "FormalizacaoAlgoritmos_Recursao2",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:sobre"
+   ],
+   "raw_target": "FormalizacaoAlgoritmos_Recursao2.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- ****Funções Recursivas sobre Listas****\n- ****1. Introdução****\n- ****2. Listas polimórficas (definição indutiva)****\n- ****3. Listas polimórficas (equações recursivas)****\n\n<!-- EXEC_SUMMARY_END -->\n## **Funções Recursivas sobre Listas**\n\n## **1. Introdução**\n\nListas são um dos tipos de coleções mais básicos que podemos encontrar em diversas linguagens de programação.\n\nNosso objetivo é definir um tipo de dado indutivo para representar listas e diversas operações sobre a mesma. Essa formalização se dará na forma de equações recursivas, um modelo matemático adequado aos nossos objetivos.\n\n## **2. Listas polimórficas (definição indutiva)**\n\nUm tipo indutivo para representar listas *polimórficas* ou *genéricas*, representada por (), onde é um conjunto arbitrário (representando os elementos que podem pertencer à lista), pode ser representado por dois construtores:\n\n- Um *construtor base* para representar a lista vazia, representado pelo símbolo \"[ ]\";\n- Um *construtor indutivo* para representar a anexação de um elemento à esquerda de uma lista, representado pelo símbolo \" :\".\n\nAssim, os elementos do tipo indutivo () são gerados pelas seguintes regras:\n\n$$\\overline{[\\ ]} \\in List(\\tau) empty$$\n\n$$\\underline{L} \\in List(\\tau), h \\in \\tau$$\n\n$$\\underline{h: L \\in List(\\tau)} cons$$\n\nA fim de facilitar a descrição de listas, vamos assumir a seguinte simp",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "exerciciosconjuntosindutivos",
+   "title": "ExerciciosConjuntosIndutivos",
+   "category": "listas",
+   "auto_tags": [],
+   "raw_target": "ExerciciosConjuntosIndutivos.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "## **Prof. Júlio Machado**\n\n## **Exercícios**\n\n## **Conjuntos Indutivos**\n\n- 1) Definir um conjunto de regras para construir os conjuntos que seguem:\n  - a. Conjunto *Pares*: conjunto dos números naturais pares tal que (0 $\\in$ )\n  - b. Conjunto *Impares*: conjunto dos números naturais ímpares tal que (0 $\\notin$ )\n  - c. Conjunto <sup>1</sup> $\\triangleq$ { | $\\in$ $\\mathbb{N}$}\n  - d. Conjunto <sup>2</sup> $\\triangleq$ { | > 0 $\\land$ > 0}\n  - e. Conjunto <sup>3</sup> $\\triangleq$ { | > 0 $\\land$ > 0}\n  - f. Conjunto <sup>4</sup> $\\triangleq$ { | > 0 $\\land$ > 0 $\\land$ $\\geq$ 0}\n  - g. Conjunto *Pot2*: conjunto das potências de dois {1,2,4,8,16,32,...}\n  - h. Conjunto S = {0,1,3,7,15,31,...}\n- 2) Através de árvores de prova, mostrar que:\n  - a. 8 $\\in$\n  - b. 9 $\\notin$\n  - c. 11 $\\in$\n  - d. $\\in$ <sup>1</sup>\n  - e. $\\in$ <sup>2</sup>\n  - f. $\\in$ <sup>3</sup>\n  - g. $\\notin$ <sup>3</sup>\n  - h. $\\in$ <sup>4</sup>\n  - i. $\\in$ <sup>4</sup>\n  - j. $\\in$ <sup>4</sup>\n  - k. $\\in$ <sup>4</sup>\n  - l. $\\notin$ <sup>4</sup>\n- 3) Considere o conjunto *Prop* das proposições válidas sobre $\\sum$:\n\n$$\\begin{split} S &\\triangleq \\{ \\land, \\lor, \\rightarrow \\} \\\\ X &\\triangleq \\{ x_0 \\,, x_1 \\,, \\dots, x_n \\} \\\\ \\Sigma &\\triangleq S \\cup X \\end{split}$$\n\n$$\\frac{1}{v \\in Prop} (v \\in X) Var \\qquad \\frac{p \\in Prop \\quad q \\in Prop}{(p \\ bop \\ q) \\in Prop} (bop \\in S) Bop$$\n\n![](../../../../../content/images/manual-crops/exerciciosconjuntosindutivos-page-001-manual-181842.png)\n\n![](",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "conjuntosindutivos",
+   "title": "ConjuntosIndutivos",
+   "category": "material-de-aula",
+   "auto_tags": [],
+   "raw_target": "ConjuntosIndutivos.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- ****Métodos Formais****\n- ****Prof. Júlio Machado****\n- ****1. Revisão****\n  - **Introdução**\n- ****Representação por enumeração****\n  - Exemplos:\n  - **Igualdade de conjuntos**\n- ****2. Definição por indução****\n- **Axioma:**\n- **3. Árvores de prova**\n- ****4. Listas****\n\n<!-- EXEC_SUMMARY_END -->\n## **Métodos Formais**\n## **Prof. Júlio Machado**\n\n# **Conjuntos Indutivos**\n## **1. Revisão**\n### **Introdução**\n\nComo em qualquer assunto a ser estudado, a Matemática também exige uma linguagem adequada para o seu desenvolvimento.\n\nA **Teoria dos Conjuntos** representa instrumento de grande utilidade nos diversos desenvolvimentos da Matemática, bem como em outros ramos das ciências físicas e humanas.\n\nDevemos aceitar, inicialmente, a existência de alguns conceitos primitivos (noções que adotamos sem definição) e que estabelecem a linguagem do estudo da Teoria dos Conjuntos.\n\nAdotaremos a existência de três conceitos primitivos: **elemento**, **conjunto** e **pertinência**. Assim é preciso entender que, cada um de nós é um elemento do conjunto de moradores desta cidade, ou melhor, cada um de nós é um elemento que pertence ao conjunto de habitantes da cidade, mesmo que não tenhamos definido o que é conjunto, o que é elemento e o que é pertinência.\n#### **Notação e Representação**\n\nA notação dos conjuntos é feita mediante a utilização de uma letra maiús",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "logicapredicados-semantica",
+   "title": "logicaPredicados_semantica",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:predicados"
+   ],
+   "raw_target": "logicaPredicados_semantica.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n# LÓGICA DE PREDICADOS\n\nSemântica\n\nBaseado nos materiais do Prof. Alfio Martini\n\n# Motivação\n\n- Definir a noção de interpretação para uma assinatura da Lógica de Predicados\n- Aprender a calcular o valor semântico de termos e fórmulas\n- Revisando...\n  - Termos são elementos sintáticos que servem para representar elementos do domínio de uma determinada aplicação\n    - Símbolos de variáveis, constantes e funções\n  - Fórmulas são elementos sintáticos que denotam certas propriedades booleanas que determinados elementos do domínio possam ter\n    - Símbolos de predicados, conectivos proposicionais, quantificador universal, quantificador existencial\n\n# Interpretação\n\n- Os elementos básicos de uma interpretação para uma assinatura da lógica de predicados são:\n  - Um domínio, o qual é uma coleção não vazia de elementos, no qual as fórmulas serão avaliadas.\n  - Um elemento do domínio, para cada constante da assinatura.\n  - Um conjunto de funções sobre o domínio, uma para cada símbolo de função presente na assinatura.\n  - Um conjunto de relações sobre o domínio, uma para cada símbolo de predicado na assinatura.\n\n# Interpretação\n\n- Seja =(OP, R) uma assinatura para a lógica de predicados\n- Uma interpretação I para consiste de:\n  - Um conjunto não-vazio D de valores chamado de domínio\n  - Para cada símbolo constante c C, um valor c<sup>I</sup> D\n  - Para cada símbolo de função f F, uma função f I :D<sup>n</sup>→D tal que ArF(f) = n\n  - Para cada símb",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "logicapredicados-sintaxe",
+   "title": "logicaPredicados_sintaxe",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:predicados"
+   ],
+   "raw_target": "logicaPredicados_sintaxe.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA DE PREDICADOS**\n  - Exemplo\n  - Exemplo\n- **LÓGICA DE PREDICADOS**\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n## LÓGICA DE PREDICADOS\n\nSintaxe\n\nBaseado nos materiais do Prof. Alfio Martini\n\n#### Sintaxe\n\n- Devido ao poder da lógica de predicados, sua linguagem é mais complexa do que a lógica proposicional\n- Conceitos:\n  - Assinaturas\n  - Termos (denotam objetos)\n  - Fórmulas (denotam valores lógicos)\n\n#### Assinatura\n\n- Assinaturas são declarações dos símbolos utilizados para a construção da linguagem específica\n- Dividida em duas partes:\n  - Assinatura para os termos\n  - Assinatura para as fórmulas\n\n#### Assinatura\n\n- Uma assinatura de primeira ordem para a lógica de predicados é uma tupla =(OP, R) onde\n  - OP = (C, F, ArF) tal que\n    - C é um conjunto de símbolos de constantes\n    - F é um conjunto de símbolos de funções\n    - ArF:F→N é uma função de aridade que indica o número de argumentos de cada símbolo de função fF\n  - R = (P, ArP) tal que\n    - P é um conjunto de símbolos de predicados\n    - ArP:P→N é uma função de aridade que indica o número de argumentos de cada símbolo de predicado pP\n- Para cada assinatura assumimos um conjunto contável de identificadores para variáveis X={x, y, z, ...}\n\n### Exemplo\n\n- Assinatura para aritmética:\n  - OP=(C,F,ArF)\n    - C={0}\n    - F={add, mult, succ}\n    - ArF={add 2,",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "logicaproposicional-sintaxe",
+   "title": "logicaProposicional_sintaxe",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:propocional",
+    "ferramenta:proposicional"
+   ],
+   "raw_target": "logicaProposicional_sintaxe.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA PROPOCIONAL**\n  - Proposição\n  - Proposição\n  - Composição de Proposições\n  - Composição de Proposições\n- **LÓGICA PROPOCIONAL**\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n## LÓGICA PROPOCIONAL\n\nIntrodução\n\nBaseado nos materiais do Prof. Daniel Callegari\n### Proposição\n\n- Costuma-se usar a palavra \"**proposição**\" para designar o significado de uma sentença ou oração declarativa.\n- Exemplo: \"João ama Maria\" é o mesmo que \"Maria é amada por João\".\n### Proposição\n\n- Toda proposição é uma frase (mas nem toda frase é uma proposição); uma frase é uma proposição apenas quando admite um dos dois valores lógicos: Falso (F) ou Verdadeiro (V).\n- Frases que não são proposições\n  - Pare!\n  - Quer uma xícara de café?\n  - Eu não estou bem certo se esta cor me agrada.\n- Frases que são proposições\n  - A lua é o único satélite do planeta terra (V)\n  - A cidade de Salvador é a capital do estado do Amazonas (F)\n  - O numero 712 é ímpar (F)\n  - Raiz quadrada de dois é um número irracional (V)\n\n<!-- IMAGE_DESCRIPTION: logicaproposicional-sintaxe-_page_6_Figure_1.png -->\n<!-- Tipo: genérico -->\n> **[Descrição de imagem]** A imagem apresenta um quadro destacado em amarelo contendo explicações sobre conectivos lógicos, inserido em um contexto de lista de proposições com suas representações simbólicas.\n<!-- /IMAGE_DESCRIPTION -->\n### Compo",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "revisao",
+   "title": "revisao",
+   "category": "material-de-aula",
+   "auto_tags": [],
+   "raw_target": "revisao.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n## CONJUNTOS E FUNÇÕES\n\nRevisão\n\n- Um conjunto é uma coleção de elementos\n- A={0,1}\n- B=={} é o conjunto vazio\n\n- Os elementos também são chamados de membros desse conjunto\n- A={0,1}\n- 0A, 0 é um elemento do conjunto A, 0 pertence a A\n- 2A, 2 não é um elemento do conjunto A, 2 não pertence a A\n\n- Conjuntos podem também ser descritos através de uma especificação das propriedades dos seus elementos\n- A={xN/x<5}, onde N é o conjunto dos números naturais\n- B={xN/x mod 2 = 0}\n\n- Um conjunto A é subconjunto de um conjunto B, AB, se cada elemento de A também é elemento de B\n- A={0,1,2}\n- N={0,1,2,3,...}\n- AN\n- AA\n- A, o vazio está contido em qualquer conjunto\n\n- União AB = {x / xA ou xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - AB={0,1,2,4,6}\n- Intersecção AB = {x / xA e xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - AB={0,2}\n- Diferença A-B ou A/B = {x / xA e xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - A-B={1}\n\n- Conjunto das partes, ou conjunto potência, de um conjunto A, escrito (A), é o conjunto de todos os subconjuntos do conjunto A\n- A={0,1}\n- (A)={,{0},{1},{0,1}}\n\n- O produto cartesiano entre dois conjuntos A e B, escrito AxB, é o conjunto de todos os pares ordenados (a,b) tal que aA e bB\n- A={0,1}\n- B={x,y}\n- AxB={(0,x),(0,y),(1,x),(1,y)}\n\n- O produto cartesiano generalizado A<sup>n</sup> , com n$\\geq$0 é definido como\n  - A<sup>0</sup> = {()}\n  - An+1 = AxA<sup>n</sup>\n- A={0,1}\n- A<sup>3</sup>=AxA<sup>2</sup>=AxAxA<sup>1</sup>=AxAxAxA<sup>0</sup>\n#### Rela",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "introducao",
+   "title": "introducao",
+   "category": "material-de-aula",
+   "auto_tags": [],
+   "raw_target": "introducao.pdf",
+   "source_section_real": "Introdução a Métodos Formais",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **INTRODUÇÃO**\n  - Verificação\n  - Verificação\n  - Validação\n  - Validação\n  - Validação e Verificação\n  - Requisitos\n  - Técnicas de V&V\n  - Técnicas de V&V\n  - O que é um Método Formal?\n  - O que é uma Linguagem de Especificação Formal?\n  - Porque Métodos Formais?\n  - Quando utilizar Métodos Formais?\n- **VERIFICAÇÃO FORMAL DE SISTEMAS**\n  - Verificação Formal\n  - Abordagens para Verificação Formal\n  - Abordagens para Verificação Formal\n  - Abordagens para Verificação Formal\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n## INTRODUÇÃO\n\nConceitos Fundamentais\n\n- Software é um dos mais variados e complexos produtos produzidos de forma regular.\n- Requisitos de qualidade dependentes:\n  - Do domínio da aplicação\n  - Ambiente de execução\n  - Público alvo\n  - Etc.\n- Exige técnicas sofisticadas e específica para cada produto desenvolvido.\n\n#### • Ariane 5:\n\n- Explosão em seu primeiro voo.\n- Causado pelo reuso de algumas partes de código de seu predecessor sem verificação adequada.\n\n#### • Therac-25:\n\n- Máquina de terapia de radiação.\n- Devido a um erro de software, seis pessoas morreram de overdose.\n\n#### • Pentium FDIV:\n\n- Erro de projeto na unidade de divisão de ponto-flutuante.\n- Intel foi forçada a oferecer substituição de todos os processadores defeituosos.\n\n![](content/images/introducao-_page_3_Picture_10.png)\n\n![](content/imag",
+   "expected_block_id": "bloco-02",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-01",
+    "bloco-02"
+   ],
+   "note": "confirmado por label API (12/06): (04/03) introducao a metodos formais -> bloco-02"
+  },
+  {
+   "id": "provasindutivas-especificacoesrecursivas",
+   "title": "ProvasIndutivas_EspecificaçõesRecursivas",
+   "category": "material-de-aula",
+   "auto_tags": [],
+   "raw_target": "ProvasIndutivas_EspecificaçõesRecursivas.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Princípio da indução matemática**\n- **2. Princípio da indução matemática generalizada**\n- **3. Provas por indução de especificações recursivas**\n  - Exemplo 1:\n  - Exemplo 2:\n\n<!-- EXEC_SUMMARY_END -->\n# Provas por Indução de Especificações Recursivas\n\n## 1. Princípio da indução matemática\n\nO princípio da indução matemática sobre os Naturais pode ser definido como: supondo que  $P(x)$  é um predicado sobre os números naturais, para provar:\n\n$$\\forall x \\in \\mathbb{N}. P(x) \\quad (P(x) \\text{ é verdadeiro para todo o natural } x)$$\n\né suficiente provar:\n\n- Caso base:  $P(0)$ ; isto é, o predicado é verdadeiro para  $x$  com valor 0.\n- Caso indutivo:  $\\forall x \\in \\mathbb{N}. (P(x) \\rightarrow P(x+1))$ ; isto é, para um natural arbitrário  $x_0$ , assumimos que  $P(x_0)$  é verdadeiro (isso é chamado de HI – Hipótese de Indução) e provamos que  $P(x_0 + 1)$  também é verdadeiro (isso é chamado de Passo da Indução).\n\n| <i>indução sobre <math>\\mathbb{N}</math></i> |               |                            |\n|----------------------------------------------|---------------|----------------------------|\n| $P(0)$                                       | $P(x_0)$ (HI) |                            |\n|                                              | ...           | $(x_0 \\text{ arbitrário})$ |\n|                                              | $P(x_0 +",
+   "expected_block_id": "bloco-05",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 provas por inducao"
+  },
+  {
+   "id": "provasindutivas-especificacoesrecursivas-arvores",
+   "title": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:sobre"
+   ],
+   "raw_target": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Indução Estrutural sobre Árvores\n\nPodemos provar propriedades sobre especificações recursivas para estruturas de dados indutivas utilizando a técnica de prova chamada de Indução Estrutural. A indução estrutural pode ser vista como uma generalização do processo de indução sobre os naturais para outras estruturas indutivas. Assim, uma prova por indução estrutural de uma propriedade  $P$  consiste em duas partes:\n\n- Mostrar que  $P$  vale para todos os elementos especificados nos casos base da definição indutiva da estrutura;\n- Mostrar que, se  $P$  vale para elementos usado para construir novos elementos nos casos de passo de indução da definição indutiva da estrutura, então  $P$  vale para os novos elementos.\n\nSeja a seguinte definição indutiva para árvores:\n\n$$\\frac{}{\\langle \\rangle \\in ArvBin(\\tau)} \\text{ vazia} \\qquad \\frac{L \\in ArvBin(\\tau) \\quad R \\in ArvBin(\\tau), x \\in \\tau}{\\langle L, x, R \\rangle \\in ArvBin(\\tau)} \\text{ cons}$$\n\nSeja a seguinte definição equacional recursiva para a função capaz de “espelhar” uma árvore binária:\n\n$$\\text{espelho}: ArvBin(\\tau) \\rightarrow ArvBin(\\tau)$$\n\n$$\\text{espelho}(\\langle \\rangle) = \\langle \\rangle \\qquad (\\text{espelho1})$$\n\n$$\\text{espelho}(\\langle L, x, R \\rangle) = \\langle \\text{espelho}(R), x, \\text{espelho}(L) \\rangle \\qquad (\\text{espelho2})$$\n\nDeseja-se provar\n\n$$\\forall A \\in ArvBin(\\tau). \\text{espelho}(\\text{espelho}(A)) = A$$\n\nisto é, que *espelho* é função inversa de si mesmo.\n\nObserve atentamente a propriedad",
+   "expected_block_id": "bloco-05",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 inducao sobre arvores"
+  },
+  {
+   "id": "provasindutivas-especificacoesrecursivas-listas",
+   "title": "ProvasIndutivas_EspecificaçõesRecursivas_Listas",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:sobre"
+   ],
+   "raw_target": "ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Indução Estrutural sobre Listas\n\nPodemos provar propriedades sobre especificações recursivas para estruturas de dados indutivas utilizando a técnica de prova chamada de Indução Estrutural. A indução estrutural pode ser vista como uma generalização do processo de indução sobre os naturais para outras estruturas indutivas. Assim, uma prova por indução estrutural de uma propriedade  $P$  consiste em duas partes:\n\n- Mostrar que  $P$  vale para todos os elementos especificados nos casos base da definição indutiva da estrutura;\n- Mostrar que, se  $P$  vale para elementos usado para construir novos elementos nos casos de passo de indução da definição indutiva da estrutura, então  $P$  vale para os novos elementos.\n\nSeja a seguinte definição indutiva para listas:\n\n$$\\frac{}{[] \\in List(\\tau)} \\text{empty} \\qquad \\frac{L \\in List(\\tau), h \\in \\tau}{h:L \\in List(\\tau)} \\text{cons}$$\n\nSeja a seguinte definição equacional recursiva para a concatenação de duas listas:\n\n$$cat: List(\\tau) \\times List(\\tau) \\rightarrow List(\\tau)$$\n\n$$cat([], l) = l \\qquad (cat1)$$\n\n$$cat(h:T, l) = h: cat(T, l) \\qquad (cat2)$$\n\nDeseja-se provar que  $cat$  é associativa, isto é:\n\n$$\\forall L_1, L_2, L_3 \\in List(\\tau). cat(L_1, cat(L_2, L_3)) = cat(cat(L_1, L_2), L_3)$$\n\nObserve atentamente a propriedade  $P$  que queremos provar por indução em  $L_1$ , já que esse é o parâmetro que sofre o processo de recursão na definição da função  $cat$ :\n\n$$P(L) \\triangleq \\forall L_2, L_3 \\in List(\\tau). cat(L, cat(L",
+   "expected_block_id": "bloco-05",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 inducao sobre listas"
+  },
+  {
+   "id": "exercicioscorrecaoinducaomatematica",
+   "title": "ExerciciosCorrecaoInducaoMatematica",
+   "category": "listas",
+   "auto_tags": [],
+   "raw_target": "ExerciciosCorrecaoInducaoMatematica.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Exercícios\n\n## Provas por Indução de Especificações Equacionais Recursivas\n\n1) Especificar via equações recursivas o cálculo de potenciação de acordo com as informações que seguem e provar sua correção parcial por indução:\n\n$pot :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: pot(b, p) = b^p$\n\n2) Especificar via equações recursivas o cálculo da subtração truncada de acordo com as informações que seguem e provar sua correção parcial por indução:\n\n$minusNat :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: minusNat(m, n) = m - n, se m \\geq n$   \n $garante: minusNat(m, n) = 0, se m \\leq n$\n\n3) Provar por indução a correção parcial da função  $som2kR$  que segue:\n\n$som2kR :: \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: som2kR(x) = \\sum_{0 \\leq k \\leq x} 2k$   \n $som2kR(x) = som2kAux(x, 0)$   \n $onde:$   \n $som2kAux :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: som2kAux(x, a) = \\left( \\sum_{0 \\leq k \\leq x} 2k \\right) + a$   \n $som2kAux(x, a) = a, \\quad se \\ x = 0$   \n $som2kAux(x, a) = som2kAux(x - 1, a + 2x), \\quad se \\ x > 0$\n\n4) Seja a seguinte especificação equacional recursiva para a concatenação de duas listas:\n\n$cat: List(\\tau) \\times List(\\tau) \\rightarrow List(\\tau)$   \n $cat([], l) = l \\quad (1)$\n\n$cat(h:T, l) = h: cat(T, l) \\quad (2)$\n\nProve, via indução estrutural, a seguinte propriedade:\n\n$$\\forall l_1, l_2, l_3 \\in List(",
+   "expected_block_id": "bloco-05",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exercicios de provas de especificacoes recursivas"
+  },
+  {
+   "id": "exerciciosespecificacao-respostas",
+   "title": "ExerciciosEspecificacao_respostas",
+   "category": "gabaritos",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosEspecificacao_respostas.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Métodos Formais\n\n## Especificação Formal\n\n1) Seja a seguinte especificação:\n\nFoi solicitado a um programador a implementação de uma função para verificar a presença ou ausência de um valor  $x$  em um array  $a$ .\n\nAntes de prosseguir, pense nos requisitos que precisamos antes de iniciar a implementação da solução.\n\nAssuma as seguintes perguntas e suas respectivas respostas:\n\n- Qual é o segmento de posições do array que deve ser pesquisado?\n  - O array deve ser pesquisado dentro de um intervalo inteiro  $[0; n - 1]$ , onde  $n$  é o número de instâncias de valores que pertencem à busca. Note que  $n$  não pode ser maior que o tamanho atual do array. Assumir que  $n$  corresponde exatamente ao tamanho do array.\n- Qual é o tipo de  $x$  e como ele deve ser comparado?\n  - O array será composto por números inteiros e comparado através da igualdade usual entre inteiros.\n- Como o resultado deve ser informado?\n  - A função deverá retornar um valor booleano *true* se  $x$  ocorre no array e *false* caso contrário.\n- O segmento do array a ser pesquisado está, por exemplo, ordenado, de modo a permitir um algoritmo mais eficiente de pesquisa?\n  - O conteúdo do array não apresenta nenhuma ordem em particular.\n- É possível que  $x$  possua mais de uma ocorrência e, se sim, tal fato deve ser relevante?\n  - O array pode possuir várias ocorrências do valor  $x$ , mas tal fato é irrelevante.\n- É possível que o segmento do array esteja vazio e, se sim, isso é um erro ou um estado normal?\n  -",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "exerciciosespecificacao",
+   "title": "ExerciciosEspecificacao",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosEspecificacao.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Métodos Formais\n\n## Especificação Formal\n\n1) Seja a seguinte especificação:\n\nFoi solicitado a um programador a implementação de uma função para verificar a presença ou ausência de um valor  $x$  em um array  $a$ .\n\nAntes de prosseguir, pense nos requisitos que precisamos antes de iniciar a implementação da solução.\n\nAssuma as seguintes perguntas e suas respectivas respostas:\n\n- Qual é o segmento de posições do array que deve ser pesquisado?\n  - O array deve ser pesquisado dentro de um intervalo inteiro  $[0; n - 1]$ , onde  $n$  é o número de instâncias de valores que pertencem à busca. Note que  $n$  não pode ser maior que o tamanho atual do array. Assumir que  $n$  corresponde exatamente ao tamanho do array.\n- Qual é o tipo de  $x$  e como ele deve ser comparado?\n  - O array será composto por números inteiros e comparado através da igualdade usual entre inteiros.\n- Como o resultado deve ser informado?\n  - A função deverá retornar um valor booleano *true* se  $x$  ocorre no array e *false* caso contrário.\n- O segmento do array a ser pesquisado está, por exemplo, ordenado, de modo a permitir um algoritmo mais eficiente de pesquisa?\n  - O conteúdo do array não apresenta nenhuma ordem em particular.\n- É possível que  $x$  possua mais de uma ocorrência e, se sim, tal fato deve ser relevante?\n  - O array pode possuir várias ocorrências do valor  $x$ , mas tal fato é irrelevante.\n- É possível que o segmento do array esteja vazio e, se sim, isso é um erro ou um estado normal?\n  -",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "exerciciosformalizacaoalgoritmosrecursao2",
+   "title": "ExerciciosFormalizacaoAlgoritmosRecursao2",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosFormalizacaoAlgoritmosRecursao2.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "# Exercícios\n\n## Formalização de algoritmos como equações recursivas – Parte 2\n\nSobre Listas e sua definição indutiva, responda os seguintes exercícios:\n\n- 1) Compute o valor da seguinte expressão:  $cat([\"a\",\"b\",\"c\"],[\"d\"])$ .\n- 2) Defina uma função recursiva  $length: List(\\tau) \\rightarrow \\mathbb{N}$ , para computar o comprimento de uma lista. Apresente versões com e sem recursão na cauda.\n- 3) Defina uma função recursiva  $rev: List(\\tau) \\rightarrow List(\\tau)$ , que reverte a ordem dos elementos de uma lista.\n- 4) Defina uma função recursiva  $prefix: List(\\tau) \\times \\mathbb{N} \\rightarrow List(\\tau)$ , que recebe uma lista qualquer, um número Natural  $n$  e retorna os  $n$  primeiros elementos da lista. Observação: defina claramente a pré-condição da função.\n- 5) Defina uma função recursiva  $init: List(\\tau) \\rightarrow List(\\tau)$ , que recebe uma lista de elementos e retorna a parte inicial da lista, isto é, a lista sem o último elemento.\n",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "exerciciosisabelle2",
+   "title": "ExerciciosIsabelle2",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
+   "raw_target": "ExerciciosIsabelle2.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "logicaproposicional-semantica",
+   "title": "logicaProposicional_semantica",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:proposicional"
+   ],
+   "raw_target": "logicaProposicional_semantica.pdf",
+   "source_section_real": "Revisão - Lógica e Especificação",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA PROPOSICIONAL ---**\n- **Semântica**\n  - Interpretações\n  - Semântica dos Operadores\n  - Semântica dos Operadores\n- **Fórmulas e Interpretações**\n  - Fórmulas e Interpretações\n  - Modelos\n  - Modelos\n  - Classificação das Fórmulas\n  - Classificação das Fórmulas\n  - Consequência Lógica/Semântica\n  - Consequência Lógica/Semântica\n  - Conjectura e Consequência Lógica\n  - Teoremas Importantes\n  - Equivalências\n  - Equivalências\n  - Teoremas Importantes\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS ---\n\nProf. Júlio Machado\n\n## LÓGICA PROPOSICIONAL ---\n\nSemântica\n\nBaseado nos materiais do Prof. Alfio Martini\n\n## Semântica\n\n- O estudo da semântica da lógica proposicional consiste em atribuir **valores verdade** a **fórmulas**\n- Na lógica clássica há apenas dois valores:\n  - Verdadeiro – V\n  - Falso – F\n\n### Interpretações\n\n- Os símbolos que não possuem significado fixo são chamados de variáveis proposicionais\n- Uma interpretação  $I$  para um conjunto de variáveis proposicionais  $\\Sigma$  é uma função  $I: \\Sigma \\rightarrow B$ , onde  $B = \\{V, F\\}$\n- Exemplo:\n  - Se  $\\Sigma = \\{p, q\\}$ , então temos quatro interpretações possíveis:\n\n$$\\mathcal{I}_1 = \\{p \\mapsto F, q \\mapsto F\\}$$\n\n$$\\mathcal{I}_2 = \\{p \\mapsto F, q \\mapsto V\\}$$\n\n$$\\mathcal{I}_3 = \\{p \\mapsto V, q \\mapsto F\\}$$\n\n$$\\mathcal{I}_4 = \\{p \\mapsto V, q \\mapsto V\\}$$\n\n### Semântica",
+   "expected_block_id": "bloco-03",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-02",
+    "bloco-03"
+   ],
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
+  },
+  {
+   "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+   "title": "ExerciciosFormalizacaoAlgoritmosRecursao_respostas",
+   "category": "gabaritos",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosFormalizacaoAlgoritmosRecursao_respostas.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 0.4,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"exerciciosformalizacaoalgoritmosrecursao-respostas\"\ntitle: \"ExerciciosFormalizacaoAlgoritmosRecursao_respostas\"\nbackend: \"scanned-pages\"\nsource_pdf: \"raw/pdfs/gabaritos/exerciciosformalizacaoalgoritmosrecursao-respostas.pdf\"\npage_range: \"1-3\"\neffective_profile: \"scanned\"\n---\n# ExerciciosFormalizacaoAlgoritmosRecursao_respostas\n\n> Documento tratado como **imagem** porque o perfil efetivo foi `scanned`.\n> Cada página foi convertida em imagem para leitura visual.\n## Página 1\n## Página 2\n## Página 3\n\n<!-- IMAGE_DESCRIPTION_ORPHANS -->\n## Imagens Curadas\n\nDescrições preservadas para imagens detectadas no documento, mas sem referência markdown compatível no corpo principal.\n\n<!-- IMAGE_DESCRIPTION: page-002.jpg -->\n<!-- Tipo: extração-latex -->\n> **[LaTeX extraído]** 11 FIB: $\\mathbb{N} \\to \\mathbb{N}$ $$ \\begin{cases} FIB(0) = 0 \\\\ FIB(1) = 1 \\\\ FIB(m) = FIB(m-2) + FIB(m-1), & \\text{se } m \\geq 2 \\end{cases} $$ e) $DIV: \\mathbb{N} \\times \\mathbb{N} \\to \\mathbb{N}$ PRÉ: $y > 0$...\n<!-- /IMAGE_DESCRIPTION -->\n\n<!-- IMAGE_DESCRIPTION: page-003.jpg -->\n<!-- Tipo: extração-latex -->\n> **[LaTeX extraído]** 11 $$ \\begin{cases} MULT(x, y) = 0, & \\text{se } x = 0 \\\\ MULT(x, y) = MULT\\left(\\frac{x}{2}, 2 \\times y\\right), & \\text{se } x \\text{ é par} \\\\ MULT(x, y) = MULT\\left(\\frac{x-1}{2}, 2 \\times y\\right) + y, & \\text{se }...\n<!-- /IMAGE_DESCRIPTION -->\n<!-- /IMAGE_DESCRIPTION_ORPHANS -->\n",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "formalizacaoalgoritmos-recursao",
+   "title": "FormalizacaoAlgoritmos_Recursao",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "FormalizacaoAlgoritmos_Recursao.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Introdução**\n- **2. Um primeiro algoritmo**\n- **3. Algoritmos especificações equacionais**\n- **4. Tipos de recursão**\n- **5. Computação como uma sequência de estados**\n- **6. Máquina de estados**\n- **7. Completando a especificação formal de algoritmos**\n- **8. Conclusão**\n\n<!-- EXEC_SUMMARY_END -->\n# Formalizando a Noção de Algoritmo Via Equações Recursivas\n\n## 1. Introdução\n\nNosso objetivo é definir uma maneira de formalizar a noção de algoritmo de maneira a permitir, futuramente, a análise e prova de propriedades funcionais sobre estes algoritmos. Essa formalização se dará, inicialmente, na forma de equações recursivas, um modelo matemático adequado aos nossos objetivos.\n\n## 2. Um primeiro algoritmo\n\nSupondo que a soma de dois valores inteiros é a única operação aritmética que um determinado agente computacional é capaz de executar (lembre-se que a operação de subtração pode ser vista como uma soma de um número negativo), vamos analisar um algoritmo para multiplicar dois números inteiros positivos (de forma equivalente dois números naturais).\n\nDadas as restrições do agente computacional, uma forma de computar a multiplicação entre dois números inteiros ( $m \\times n, m \\geq 0, n \\geq 0$ ) é a que segue:\n\n|       |   |            |  |       |   |            |\n|-------|---|------------|--|-------|---|------------|\n| 5 * 3 | = | 5 * 3 + 0  | ",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "formalizacaoalgoritmos-recursao3",
+   "title": "FormalizacaoAlgoritmos_Recursao3",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:sobre"
+   ],
+   "raw_target": "FormalizacaoAlgoritmos_Recursao3.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "exerciciosisabelle",
+   "title": "ExerciciosIsabelle",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
+   "raw_target": "ExerciciosIsabelle.pdf",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "revisao-p1",
+   "title": "revisao_p1",
+   "category": "listas",
+   "auto_tags": [],
+   "raw_target": "revisao_p1.pdf",
+   "source_section_real": "Exercícios de Revisão para Provas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": null,
+   "expected_origin": "excluido",
+   "candidates": [],
+   "note": "bloco manual — nao mede o scorer"
+  },
+  {
+   "id": "t1-2026-1",
+   "title": "t1_2026_1",
+   "category": "trabalhos",
+   "auto_tags": [],
+   "raw_target": "t1_2026_1.pdf",
+   "source_section_real": "TDE Trabalho Discente Efetivo",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Provas por Indução de Especificações Equacionais Recursivas**\n  - Entrega:\n  - IMPORTANTE:\n  - Observações:\n\n<!-- EXEC_SUMMARY_END -->\n# Trabalho 1\n\n## Provas por Indução de Especificações Equacionais Recursivas\n\nO objetivo deste trabalho é construir especificações equacionais recursivas e provas formais por indução e a verificação de sua validade no sistema Isabelle usando obrigatoriamente a linguagem Isar. O trabalho será realizado em grupos de até 5 alunos.\n\nEnunciado dos problemas:\n\n1) Seja a seguinte especificação de uma função recursiva sobre números naturais para o cálculo da potência:\n\n|                                                            |          |\n|------------------------------------------------------------|----------|\n| $pot: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$ |          |\n| $pot(x, 0) = 1$                                            | (poteq1) |\n| $pot(x, y + 1) = x * pot(x, y)$                            | (poteq2) |\n\nProve primeiro o seguinte lema:\n\n$$\\forall x, m, n \\in \\mathbb{N} (pot(x, m + n) = pot(x, m) * pot(x, n))$$\n\nUtilizando o lema como auxiliar, prove o seguinte teorema:\n\n$$\\forall x, m, n \\in \\mathbb{N} (pot(x, m * n) = pot(pot(x, m), n))$$\n\n2) Sejam as seguintes especificações de funções recursivas sobre o tipo indutivo de listas:\n\n|                                                           ",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "sem_gabarito",
+   "candidates": [],
+   "note": "decisao do usuario (12/06, opcao B=conteudo): T1 em Isabelle exercita o arco blocos 04-06; bloco-06 = Isabelle, fim do arco. Deadline 06/05 (bloco-11) rejeitado como convencao."
+  },
+  {
+   "id": "t1-2026-1",
+   "title": "T1 2026 1",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "T1_2026_1.thy",
+   "source_section_real": "TDE Trabalho Discente Efetivo",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"t1-2026-1\"\ntitle: \"T1 2026 1\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"thy\"\nsource: \"raw/code/professor/t1-2026-1.thy\"\n---\n# T1 2026 1\n\n> **Linguagem:** isabelle  |  **Unidade:** thy\n\n```isabelle\ntheory T1_2026_1\n  imports Main\nbegin\n\n(* Coloque aqui o nome dos integrantes do grupo *)\n\nprimrec pot :: \"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\npoteq1: \"pot x 0 = 1\" |\npoteq2: \"pot x (Suc y) = x * pot x y\"\n\nlemma t1: \"\\<forall>x m::nat. pot x (m + n) = pot x m * pot x n\"\n  sorry\n\ntheorem t2: \"\\<forall>x m::nat. pot x (m * n) = pot (pot x m) n\"\n  sorry\n\nprimrec cat :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\ncateq1: \"cat [] ys = ys\" |\ncateq2: \"cat (x#xs) ys = x#cat xs ys\"\n\nprimrec reverso :: \"'a list \\<Rightarrow> 'a list\" where\nreveq1: \"reverso [] = []\" |\nreveq2: \"reverso (x#xs) = cat (reverso xs) [x]\"\n\nprimrec somatorio :: \"nat list \\<Rightarrow> nat\" where\nsomaeq1: \"somatorio [] = 0\" |\nsomaeq2: \"somatorio (x#xs) = x + somatorio xs\"\n\nlemma t3: \"\\<forall>ys::nat list. somatorio (cat xs ys) = somatorio xs + somatorio ys\"\n  sorry\n\ntheorem t4: \"somatorio (reverso xs) = somatorio xs\"\n  sorry\n\nend\n```\n",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "sem_gabarito",
+   "candidates": [],
+   "note": "decisao do usuario (12/06, opcao B=conteudo): T1 em Isabelle exercita o arco blocos 04-06; bloco-06 = Isabelle, fim do arco. Deadline 06/05 (bloco-11) rejeitado como convencao."
+  },
+  {
+   "id": "introducao",
+   "title": "Introducao",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "introducao.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.09327764159999999,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-12",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): Exemplos (introducao a Dafny); topic 11/05 terminacao+introducao dafny"
+  },
+  {
+   "id": "exerciciosformalizacaoalgoritmosrecursao",
+   "title": "ExerciciosFormalizacaoAlgoritmosRecursao",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
+   "raw_target": "ExerciciosFormalizacaoAlgoritmosRecursao.pdf",
+   "source_section_real": "Especificações Indutivas e Recursivas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 0.4,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Formalização de algoritmos como equações recursivas – Parte 1\n\n- 1) Nos exercícios abaixo, salvo restrição específica, o agente computacional é capaz de executar apenas as operações indicadas.\n  - a. Descreva via equações uma função para somar dois números naturais. Use apenas operações de soma/subtração de uma unidade.\n  - b. Descreva via equações uma função para calcular o fatorial de um número natural. A utilização de operação de multiplicação é permitida.\n  - c. Descreva via equações uma função para calcular a potência de dois ( $2^n$ ) para  $n$  um número natural. A utilização de operação de multiplicação é permitida.\n  - d. Descreva via equações uma função para calcular o  $n$ -ésimo termo da série de Fibonacci.\n  - e. Descreva via equações uma função de divisão inteira entre números naturais usando o método das subtrações sucessivas.\n- 2) Analise a sequência de operações abaixo e defina uma função via equações recursivas otimizada para a multiplicação de dois números (a otimização em relação ao exemplo disponível no resumo).\n\n|       |   |             |  |       |   |             |\n|-------|---|-------------|--|-------|---|-------------|\n| 5 * 3 | = | 5 * 3 + 0   |  | 4 * 4 | = | 4 * 4 + 0   |\n|       | = | 2 * 6 + 3   |  |       | = | 2 * 8 + 0   |\n|       | = | 1 * 12 + 3  |  |       | = | 1 * 16 + 0  |\n|       | = | 0 * 24 + 15 |  |       | = | 0 * 32 + 16 |\n|       | = | 15          |  |       |",
+   "expected_block_id": "bloco-04",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "revisao-p1-gabarito",
+   "title": "revisao_p1_gabarito",
+   "category": "provas",
+   "auto_tags": [],
+   "raw_target": "revisao_p1_gabarito.pdf",
+   "source_section_real": "Exercícios de Revisão para Provas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios Revisão para P1\n\n1) Encontre uma definição indutiva para o conjunto  $S=\\{3,4,5,8,9,12,16,17,20,24,33,\\dots\\}$ .  \nDica: pense em como quebrar o conjunto  $S$  em conjuntos menores antes.\n\n2) Assuma as árvores binárias definidas indutivamente como trabalhado em sala de aula.\n\n$$\\frac{}{\\langle \\rangle \\in ArvBin(\\tau)} \\text{vazia}$$\n\n$$\\frac{L \\in ArvBin(\\tau) \\quad R \\in ArvBin(\\tau), x \\in \\tau}{\\langle L, x, R \\rangle \\in ArvBin(\\tau)} \\text{cons}$$\n\nEncontre uma definição indutiva para um conjunto de árvores binárias “Natalinas” cujos primeiros elementos são apresentados a seguir:\n\n```\n\ngraph TD\n    T1((a))\n    T2((a)) --- T2L((a))\n    T2 --- T2R((a))\n    T3((a)) --- T3L((a))\n    T3 --- T3R((a))\n    T3L --- T3LL((a))\n    T3R --- T3RR((a))\n    T4((a)) --- T4L((a))\n    T4 --- T4R((a))\n    T4L --- T4LL((a))\n    T4R --- T4RR((a))\n    \n```\n\nDiagram showing four binary trees with nodes labeled 'a'. The first tree has one node. The second tree has a root with two children. The third tree has a root with two children, and the left child has two children. The fourth tree has a root with two children, and both the left and right children have two children each.\n\n3) Apresente uma definição equacional recursiva para a função  $max: List(\\mathbb{N}) \\rightarrow \\mathbb{N}$ , que recebe uma lista de número Naturais e retorna o maior elemento dessa lista. Especifique formalmente as pré e pós-condições através de fórmulas",
+   "expected_block_id": "bloco-07",
+   "expected_origin": "gabarito_1bloco",
+   "candidates": [],
+   "note": ""
+  },
+  {
+   "id": "arvores",
+   "title": "arvores",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "arvores.thy",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 0.39820248,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"arvores\"\ntitle: \"arvores\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/arvores.thy\"\n---\n# arvores\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory arvores\n  imports Main\nbegin\n\ndatatype 'a ArvBin = ArvVazia | Nodo \"'a ArvBin\" 'a \"'a ArvBin\"\n\nprimrec espelho :: \"'a ArvBin \\<Rightarrow> 'a ArvBin\" where\narv1:\"espelho ArvVazia = ArvVazia\" |\narv2:\"espelho (Nodo e x d) = Nodo (espelho d) x (espelho e)\"\n\ntheorem esp:\"espelho (espelho a) = a\"\nproof (induct a)\n    have \"espelho (espelho ArvVazia) = espelho ArvVazia\" by (simp only:arv1)\n    also have \"... = ArvVazia\" by (simp only:arv1)\n    finally show \"espelho (espelho ArvVazia) = ArvVazia\" by (simp)\nnext\n  fix e::\"'a ArvBin\" and d::\"'a ArvBin\" and x::\"'a\"\n  assume HI1:\"espelho (espelho e) = e\"\n  assume HI2:\"espelho (espelho d) = d\"\n  have \"espelho (espelho (Nodo e x d)) = espelho (Nodo (espelho d) x (espelho e))\" by (simp only:arv2)\n  also have \"... = Nodo (espelho (espelho e)) x (espelho (espelho d))\" by (simp only:arv2)\n  also have \"... = Nodo e x (espelho (espelho d))\" by (simp only:HI1)\n  also have \"... = Nodo e x d\" by (simp only:HI2)\n  finally show \"espelho (espelho (Nodo e x d)) = Nodo e x d\" by (simp)\nqed\nend\n```\n",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
+  },
+  {
+   "id": "exemplos",
+   "title": "exemplos",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "exemplos.thy",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"exemplos\"\ntitle: \"exemplos\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/exemplos.thy\"\n---\n# exemplos\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory exemplos\nimports Main\nbegin\n\ntype_synonym string = \"char list\"\n\ndatatype Nat = Z | suc Nat\n\nprint_theorems\n\ninductive par::\"nat \\<Rightarrow> bool\" where\n\"par 0\" |\n\"par x \\<Longrightarrow> par (Suc(Suc x))\"\n\nthm \"Nat.induct\"\nthm \"nat.induct\"\nthm \"par.induct\"\n\n(*funcao nao-recursiva*)\ndefinition sq::\"nat \\<Rightarrow> nat\" where\n\"sq n = n*n\"\n\nvalue \"sq 2\"\n\n(*funcao recursiva*)\nfun parn::\"nat \\<Rightarrow> bool\" where\n\"parn 0 = True\"|\n\"parn (Suc 0) = False\"|\n\"parn (Suc(Suc x)) = parn x\"\n\nvalue \"parn (Suc 0)\"\nvalue \"parn 8\"\n\nthm \"parn.simps\"\nthm \"parn.induct\"\n\nfun pelomenosdois :: \"nat \\<Rightarrow> bool\" where\n\"pelomenosdois (Suc(Suc _)) = True\"|\n\"pelomenosdois _ = False\"\n\nthm \"pelomenosdois.simps\"\n\nvalue \"pelomenosdois 0\"\nvalue \"pelomenosdois 2\"\nvalue \"pelomenosdois 3\"\n\n(*funcao recursiva*)\nprimrec add::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\n\"add x 0 = x\"|\n\"add x (Suc y) = Suc (add x y)\"\n\nvalue \"add (Suc 0) (Suc (Suc 0))\"\nvalue \"add 1 2\"\n\nthm \"add.simps\"\n\n(*funcao recursiva*)\n(*cuja definicao falha na prova automatica das obrigacoes*)\nfun sum::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\n\"sum i n = (if i>n then 0 else i + sum (Suc i) n)\"\n\nend\n```\n",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
+  },
+  {
+   "id": "intro",
+   "title": "intro",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "intro.thy",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"intro\"\ntitle: \"intro\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/intro.thy\"\n---\n# intro\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory intro\nimports Main\nbegin\n\n(* definição indutiva do tipo dos naturais *)\ndatatype Nat = Z | suc Nat\n\n(* verificando termos do tipo Nat*)\nterm Z\nterm \"Z\"\nterm \"suc Z\"\n\n(* regra de indução para provas nos naturais, criada pelo sistema *)\nthm \"Nat.induct\"\n(* uma forma sintática mais elegante da regra de indução *)\nprint_statement \"Nat.induct\"\n\n(* adição *)\nprimrec add::\"Nat \\<Rightarrow> Nat \\<Rightarrow> Nat\" where\n    add01: \"add x Z = x\" |\n    add02: \"add x (suc y) = suc (add x y)\"\n\nterm \"add (suc (suc Z)) (suc (suc Z))\"\nvalue \"add (suc (suc Z)) (suc (suc Z))\"\nterm \"add (suc Z)\"\nvalue \"add (suc Z)\"\n\n(* nat é o tipo indutivo dos naturais definidos pelo Isabelle *)\nthm \"nat.induct\"\nprint_statement \"nat.induct\"\n\n(* verificando termos do tipo nat *)\nterm \"12::nat\"\nterm \"Suc(5)\"\nvalue \"Suc(5)\"\n\ntheorem th_add01as:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\napply(induction z)\napply(simp)\napply(simp)\ndone\n\nvalue \"(6 div 2)::nat\"\n  \nvalue \"\\<Prod>{1..3::nat}\"\n\nend\n\n```\n",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
+  },
+  {
+   "id": "listas",
+   "title": "listas",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "listas.thy",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 0.39820248,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"listas\"\ntitle: \"listas\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/listas.thy\"\n---\n# listas\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory listas\n  imports Main\nbegin\n\nprimrec cat::\"'a list \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\ncat1:\"cat [] l = l\" |\ncat2:\"cat (h#T) l = h#(cat T l)\"\n\ntheorem assoc:\"\\<forall>l2 l3 :: 'a list . cat l1 (cat l2 l3) = cat (cat l1 l2) l3\"\nproof (induction l1)\n  show \"\\<forall>l2 l3 :: 'a list . cat [] (cat l2 l3) = cat (cat [] l2) l3\"\n  proof (rule allI, rule allI)\n    fix l2::\"'a list\" and l3::\"'a list\"\n    have \"cat [] (cat l2 l3) = cat l2 l3\" by (simp only:cat1)\n    also have \"... = cat (cat [] l2) l3\" by (simp only:cat1)\n    finally show \"cat [] (cat l2 l3) = cat (cat [] l2) l3\" by (simp)\n  qed\nnext\n  fix h::'a and l1::\"'a list\"\n  assume HI:\"\\<forall>l2 l3 :: 'a list . cat l1 (cat l2 l3) = cat (cat l1 l2) l3\"\n  show \"\\<forall>l2 l3 :: 'a list . cat (h#l1) (cat l2 l3) = cat (cat (h#l1) l2) l3\"\n  proof (rule allI, rule allI)\n    fix l2::\"'a list\" and l3::\"'a list\"\n    have \"cat (h#l1) (cat l2 l3) = h#(cat l1 (cat l2 l3))\" by (simp only:cat2)\n    also have \"... = h#(cat (cat l1 l2) l3)\" by (simp only:HI)\n    also have \"... = cat (h#(cat l1 l2)) l3\" by (simp only:cat2)\n    also have \"... = cat (cat (h#l1) l2) l3\" by (simp only:cat2)\n    finally show \"cat (h#l1) (cat l2 l3) = cat (cat (h#l1) l2) l3\" by (simp)\n  qed\nqed\nend\n```\n",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
+  },
+  {
+   "id": "provas",
+   "title": "provas",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "provas.thy",
+   "source_section_real": "Provas por Indução",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "---\nentry_id: \"provas\"\ntitle: \"provas\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/provas.thy\"\n---\n# provas\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory provas\nimports Main\nbegin\n\n(*funcao recursiva de somar nat*)\nprimrec add::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\"\nwhere\n  add01: \"add x 0 = x\" |\n  add02: \"add x (Suc y) = Suc (add x y)\"\n\ntheorem th_add01as:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\napply(induction z)\napply(simp)\napply(simp)\ndone\n\ninductive ev::\"nat \\<Rightarrow> bool\"\nwhere\n  ev0: \"ev 0\" |\n  ev1: \"ev n \\<Longrightarrow> ev (Suc (Suc n))\"\n\nthm \"ev.induct\"\n\nlemma \"ev (Suc(Suc(Suc(Suc 0))))\"\napply(rule ev1)\napply(rule ev1)\napply(rule ev0)\ndone\n\nfun even::\"nat \\<Rightarrow> bool\"\nwhere\n  \"even 0 = True\" |\n  \"even (Suc 0) = False\" |\n  \"even (Suc(Suc n)) = even n\"\n\ntheorem \"ev n \\<Longrightarrow> even n\"\napply(induct rule: ev.induct)\napply(auto)\ndone\n\ntheorem \"even n \\<Longrightarrow> ev n\"\napply(induct rule: even.induct)\napply(simp add: ev0)\napply(simp)\napply(simp add: ev1)\ndone\n\ntheorem \"ev n \\<Longrightarrow> \\<exists>k. n = 2*k\"\napply(induct rule: ev.induct)\napply(simp)\napply(arith)\ndone\n\n(*provas isar*)\n\nthm nat.induct\nprint_statement nat.induct\n\ntheorem th_add01isar:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\nproof (induction z)\n  show \"\\<forall>x y. add (add x y) 0 = add x (add y 0)\" by simp\nnext\n  fix x0::nat\n  assume HI:\"\\<forall>x y. add (add x y) x0 = add x (add y x0)\"\n  show \"\\<forall>x y. add ",
+   "expected_block_id": "bloco-06",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-05",
+    "bloco-06"
+   ],
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
+  },
+  {
+   "id": "correcaoterminacao",
+   "title": "CorrecaoTerminacao",
+   "category": "material-de-aula",
+   "auto_tags": [],
+   "raw_target": "CorrecaoTerminacao.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Correção**\n  - Correção parcial:\n  - Correção total:\n- **2. Relações e ordens**\n- **3. Ordens bem-fundamentadas**\n- **4. Exemplos e construção de ordens bem-fundamentadas**\n- **5. Prova (informal) de terminação**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Correção de Algoritmos\n\n## 1. Correção\n\nUm passo importante no trabalho com algoritmos é ser capaz de argumentar sobre sua correção. Deve-se salientar de antemão que não é razoável falar formalmente que “um algoritmo está correto”. A correção de um algoritmo deve ser dada através da relação com sua especificação, ou seja, diz-se que “o algoritmo está correto com relação à especificação das pré e pós condições e invariantes”.\n\nExistem duas definições para correção:\n\n- Correção parcial;\n- Correção total.\n\n### Correção parcial:\n\nSeja um algoritmo  $A$  com pré-condição  $P$  e pós-condição  $Q$ , diz-se que  $(|P|)A(|Q|)$  é válida sob o critério de correção parcial se e somente se toda computação terminante que começa em um estado que satisfaz  $P$  termina em um estado que satisfaz  $Q$ .\n\n(observação: essa notação se deve ao trabalho de Hoare na prova de correção de algoritmos e programas sequenciais, e é chamada de *Tripla de Hoare*).\n\nO algoritmo  $A$  é parcialmente correto com respeito a  $P$  e  $Q$  se e somente se para todos os valores do domíni",
+   "expected_block_id": "bloco-11",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "confirmado por label API (12/06): (06/05) correcao parcial/total, terminacao -> bloco-11"
+  },
+  {
+   "id": "exercicioscorrecaoterminacao",
+   "title": "ExerciciosCorrecaoTerminacao",
+   "category": "listas",
+   "auto_tags": [],
+   "raw_target": "ExerciciosCorrecaoTerminacao.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Correção e Terminação\n\n1) Acesse o seguinte tutorial do Dafny que tratam sobre a verificação da terminação:\n\n- <https://dafny-lang.github.io/dafny/OnlineTutorial/Termination>\n\n2) Analise o seguinte laço de repetição sobre duas variáveis inteiras.\n\n```\nwhile (x$\\neq$y) {  \n    x = x-1;  \n    y = y+1;  \n}\n```\n\n- a) Qual a condição sobre os valores das variáveis  $x$  e  $y$  implica na terminação do laço?\n- b) Defina o estado da computação e mostre exemplos onde ocorre e não ocorre a terminação.\n- c) Qual a variante de laço a ser utilizada de modo a provar a terminação?\n- d) Implemente o respectivo algoritmo em Dafny e observe se a variante está correta.\n\n3) Observe o seguinte método e responda: Dafny é capaz de verificar sua correção? Caso a resposta seja negativa, apresente as correções necessárias (exercício do tutorial do Dafny).\n\n```\nmethod m()  \n{  \n    var i, n := 0, 20;  \n    while i != n  \n        decreases n - i  \n    {  \n        i := i + 1;  \n    }  \n}\n```\n\n4) Seja a seguinte especificação equacional recursiva para o cálculo do tamanho de uma lista via recursão na cauda, defina a variante a ser utilizada em uma prova de terminação.\n\n$tail\\_len :: List(\\mathbb{N}) \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: tail\\_len([], a) = a \\vee tail\\_len([x_1, \\dots, x_n], a) = n + a$   \n $tail\\_len([], a) = a$   \n $tail\\_len(x:L, a) = tail\\_len(L, a + 1)$\n\n{1}--------------------",
+   "expected_block_id": "bloco-11",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "confirmado por label API (12/06): (06/05) -> bloco-11"
+  },
+  {
+   "id": "exerciciosformalizacaoalgoritmosinvariantes",
+   "title": "ExerciciosFormalizacaoAlgoritmosInvariantes",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:invariantes"
+   ],
+   "raw_target": "ExerciciosFormalizacaoAlgoritmosInvariantes.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n# Formalização de algoritmos com invariantes de laço\n\n1) Dado os seguintes passos de um algoritmo (definido em uma linguagem como Java), defina a noção de estado da computação e mostre os passos de computação a partir do estado inicial para o valor de entrada  $c = 4$ . Defina também uma relação de transição entre os estados.\n\n```\nx=c;  \ny=0;  \nwhile (x>0){  \n    x=x-1;  \n    y=y+1;  \n}\n```\n\n2) Para o algoritmo do exercício anterior, qual a relação entre os valores das variáveis  $c$ ,  $x$  e  $y$  a cada passo da iteração? Defina uma asserção que seja uma invariante.\n\n3) Defina um algoritmo iterativo (não recursivo) para o cálculo do fatorial de um número Natural qualquer.\n\n4) Para o algoritmo do exercício 3 (fatorial), defina uma noção de estado de computação e mostre os passos necessários para computar o valor do fatorial do número 4. Defina também uma relação de transição entre os estados.\n\n5) Para o algoritmo do exercício 3 (fatorial), defina uma asserção que mostre uma propriedade invariante adequada para o laço de repetição.\n\n6) Reescreva o algoritmo de busca binária de modo que os valores  $lo$  e  $hi$  que definem o subintervalo do array sejam ambos inclusos, isto é  $[lo..hi]$ . Modifique corretamente todas as asserções da invariante de laço. Qual o comportamento observado no resultado do algoritmo?\n\n7) Observe e se convença que o algoritmo apresentado no material de estudo não garante que o índice",
+   "expected_block_id": "bloco-11",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "confirmado por label API (12/06): (06/05) -> bloco-11"
+  },
+  {
+   "id": "formalizacaoalgoritmos-invarianteslaco",
+   "title": "FormalizacaoAlgoritmos_InvariantesLaco",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:invariantes"
+   ],
+   "raw_target": "FormalizacaoAlgoritmos_InvariantesLaco.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Introdução**\n- **2. Um primeiro algoritmo**\n- **3. Algoritmos como sequências de estados**\n- **4. Máquina de estados**\n- **5. Princípio da invariante**\n- **6. Invariante de laço**\n- **7. Um segundo algoritmo**\n- **8. Um terceiro algoritmo**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Invariantes de Laço\n## 1. Introdução\n\nNosso objetivo é definir uma maneira de formalizar a noção de especificação de algoritmo de maneira a permitir, futuramente, a análise e prova de propriedades (tal como a correção) sobre estes algoritmos. Estes conceitos são chamados de pré-condições, pós-condições e invariantes. Além disso, o conceito de correção de um algoritmo sempre será uma noção relativa, ou seja, um algoritmo é correto ou não sempre em relação à sua especificação.\n\nUma pré-condição é uma condição sobre a entrada que o usuário do algoritmo ou função deve respeitar. A pré-condição é um predicado (expressão booleana) que deve ser sempre verdadeira antes da execução do algoritmo ou avaliação da função. Se esta condição for violada, o efeito do algoritmo ou função torna-se indefinido e, portanto, pode ou não executar aquilo para o qual foi projetado.\n\nUma pós-condição é a condição sobre a saída do algoritmo ou função que é garantida pelo programador (ou quem projetou o algoritmo ou função). A pós-condição também é uma ",
+   "expected_block_id": "bloco-11",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "confirmado por label API (12/06): (06/05) correcao parcial/total, terminacao -> bloco-11"
+  },
+  {
+   "id": "logicadehoare",
+   "title": "LogicaDeHoare",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:hoare"
+   ],
+   "raw_target": "LogicaDeHoare.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.4,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Triplas de Hoare**\n  - Exemplo 1:\n  - Exemplo 2:\n  - Exercícios:\n- **Linguagem de Programação Simplificada**\n  - SINTAXE (BNF):\n  - Expressões aritméticas:\n  - Expressões lógicas:\n  - Comandos:\n  - Exercício:\n- **Cálculo de Floyd-Hoare**\n  - Exemplo:\n- **ATRIBUIÇÃO**\n  - Exemplo:\n- **CONSEQUÊNCIA (PreForte e PosFraco)**\n  - Exemplo:\n  - Exercício:\n- **COMPOSIÇÃO**\n  - Exemplo:\n  - Exemplo completo com o uso de Atribuição + PreForte + Composicao:\n  - Exercício:\n- **CONDICIONAL**\n  - Exemplo:\n  - Exemplo completo com o uso de Atribuição + PreForte + Condicional:\n  - Exercícios:\n  - Exercícios:\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Lógica de Floyd-Hoare\n\n- Método axiomático para provar que determinados programas são corretos.\n- Introduzido por Charles Antony Richard Hoare e Robert Floyd na década de 1960.\n- Também utilizado para especificar a semântica (axiomática) de linguagens de programação.\n- Por que devemos especificar e verificar código?\n  - Para redução de falhas que são introduzidas durante a especificação do sistema e, assim, reduzir o seu custo final;\n  - Código bem especificado e verificado é mais fácil de reutilizar, uma vez que temos um claro entendimento do que o sistema deve fazer;\n  - Para sistemas críticos (aviões, usinas nucleares, ...) isto se torna muito mais importante, pois se esper",
+   "expected_block_id": "bloco-10",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): topic Logica de Hoare 27/04-04/05 (parte 1)"
+  },
+  {
+   "id": "logicadehoare2",
+   "title": "LogicaDeHoare2",
+   "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:enquanto",
+    "ferramenta:hoare"
+   ],
+   "raw_target": "LogicaDeHoare2.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Cálculo de Floyd-Hoare (continuação)**\n- **LAÇOS ENQUANTO**\n  - Exemplo completo com o uso de Atribuição + Consequência + Enquanto:\n  - Exercícios:\n- **ARRAYS**\n  - Exemplo:\n  - Exemplo completo com o uso de ArrayAtribuição:\n  - **Exercícios:**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Lógica de Floyd-Hoare\n\n## Cálculo de Floyd-Hoare (continuação)\n\n## LAÇOS ENQUANTO\n\n$$\\frac{(\\{I \\wedge B\\}) \\ C \\ (\\{I\\})}{(\\{I\\}) \\ \\text{while } B \\ \\{C\\} \\ (\\{I \\wedge \\neg B\\})} \\text{EnquantoParcial}$$\n\nNa regra apresentada  $I$  deve ser uma invariante de laço. Uma invariante de laço é uma condição que é verdadeira antes e depois de cada iteração do laço, assim como ao final dele, ou seja, sempre é verdadeira. Do ponto de vista da metodologia de programação, a invariante de laço pode ser vista como uma especificação mais abstrata do laço, o qual caracteriza o propósito mais profundo do laço além dos detalhes da implementação.\n\nExemplo: cálculo do fatorial de  $x$\n\n```\n(| ? |)\ny := 1;\nz := 0;\nwhile (z != x) {\n  z := z + 1;\n  y := y * z;\n}\n(| y = x! |)\n```\n\nObserve que queremos calcular a condição mais fraca  $\\phi$  tal que:\n\n$$(\\{ \\phi \\}) \\ \\text{while } B \\ \\{C\\} \\ (\\{ \\phi \\})$$\n\nEsta  $\\phi$  pode ser calculada da seguinte maneira:\n\na) Descobrir uma fórmula  $Inv$  que seja uma invariante de laço.\n\nb) Demonstrar:\n",
+   "expected_block_id": "bloco-10",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): topic Logica de Hoare 27/04-04/05 (parte 2)"
+  },
+  {
+   "id": "exerciciosdafny1",
+   "title": "ExerciciosDafny1",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "ExerciciosDafny1.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny\n\n1) Acesse o tutorial do Dafny e leia as seguintes seções:\n\n- Introduction\n- Methods\n- Pre and Post Conditions\n- Assertions\n- Functions\n- Loop Invariants\n- Termination\n\n2) Compute uma função Fibonacci. O primeiro código é a especificação recursiva da função. O segundo código é a implementação iterativa. Anote a implementação iterativa de modo que possa ser verificada pelo Dafny.\n\n```\nghost function Fib(n: nat): nat\n{\n  if n < 2 then n else Fib(n-2) + Fib(n-1)\n}\n\nmethod Compute_Fib(n: nat) returns (x: nat)\nensures x == Fib(n)\n{\n  x := 0;\n  var y := 1;\n  var i := 0;\n  while i < n\n  {\n    x, y := y, x + y;\n    i := i + 1;\n  }\n}\n```\n\n3) Especifique uma função recursiva  $Sum: \\mathbb{N} \\rightarrow \\mathbb{N}$ , que calcule a soma dos naturais no intervalo  $[0, n]$ . Depois, constrói um método que implementa essa função e verifique sua correção em Dafny.\n\n```\nghost function Sum(n: nat): nat\n{\n}\n```\n\n{1}------------------------------------------------\n\n```\nmethod Compute_Sum(n: nat) returns (s: nat)\nensures s == Sum(n)\n{\n}\n}\n```\n\n4) Sem alterar o código de implementação a seguir, usando apenas as anotações de especificação, faça com que o seguinte método seja verificado no Dafny. Dica: esse método está calculando certos somatórios.\n\n```\nmethod Cube(N: int) returns (c: int)\n  requires 0 <= N\n  ensures c == N*N*N\n{\n  c := 0;\n  var n := 0;\n  var k := 1;\n  var m := 6;\n  while n <",
+   "expected_block_id": "bloco-12",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida: intro Dafny atravessa 11/05 (b12) e 13/05 (b13) - segmentacao da timeline; mantido b12, ALTERNATIVA b13"
+  },
+  {
+   "id": "exerciciosdafny2",
+   "title": "ExerciciosDafny2",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "ExerciciosDafny2.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Exercícios**\n- **Programação e Verificação com Dafny (Arrays)**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Métodos Formais\n\nProf. Júlio Machado\n\n## Exercícios\n\n## Programação e Verificação com Dafny (Arrays)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Arrays\n- Quantifiers\n- Predicates\n- Framing\n- Binary Search\n\n2) Complete as seguintes definições para encontrar o maior elemento de um array. Observe atentamente a diferença entre os dois métodos. Anote a implementação de modo que possa ser verificada a correção total.\n\n```\nmethod FindMaxIndex(a: array<int>) returns (i: int)\n// Anote este metodo com pre e pos condicoes\n{\n    // Retorna o indice do maior elemento.\n}\n```\n\n```\nmethod FindMaxValue(a: array<int>) returns (m: int)\n// Anote este metodo com pre e pos condicoes\n{\n    // Retorna o maior elemento.\n}\n```\n\n3) Dado o seguinte predicado em Dafny, complete sua definição para indicar quando um array possua somente elementos distintos e em ordem crescente. Observe atentamente a necessidade de um frame de leitura. Depois crie um método Main para verificar o funcionamento.\n\n```\nghost predicate Sorted(a: array<int>)\n    reads a\n{\n}\n```\n\n4) A seguinte função em Dafny especifica o cálculo do produto dos números em um array. Ela é definida em termos de uma função recur",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): arrays no topic do bloco-13 (13-25/05)"
+  },
+  {
+   "id": "exerciciosdafny3",
+   "title": "ExerciciosDafny3",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "ExerciciosDafny3.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Sequences)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Collection Types / Sequences <https://dafny-lang.github.io/dafny/OnlineTutorial/ValueTypes>\n- Sequences <https://dafny-lang.github.io/dafny/OnlineTutorial/Sequences>\n\n2) O seguinte predicado em Dafny pode ser utilizado para indicar se uma sequência possui os elementos em ordem crescente.\n\n```\nghost predicate ordenado(s: seq<int>)\n{\n  forall i,j :: 0 <= i < j < |s| ==> s[i] <= s[j]\n}\n```\n\nConstrua uma versão recursiva para o mesmo predicado.\n\n3) O seguinte predicado em Dafny pode ser utilizado para indicar se um elemento não pertence a um array.\n\n```\nghost predicate naopertence(x:int, a:array<int>)\nreads a\n{\n  forall i :: 0 <= i < a.Length ==> x != a[i]\n}\n```\n\nConstrua uma versão que não utiliza o quantificador universal para o mesmo predicado. Dica: use sequências como um tipo auxiliar.\n\n4) O uso de sequências é muito útil para simplificar especificações sobre outros tipos de coleções, tal como arrays. Estamos interessados em calcular o somatório de todos os elementos de um array de inteiros. Implemente e prove correta sua especificação, utilizando obrigatoriamente *seq* para facilitar a construção das especificações necessárias. Primeiro, especifique uma função recursiva adequada para representar o somatório de elementos de uma sequência. Somente depois, implemente um ",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): sequencias no topic do bloco-13"
+  },
+  {
+   "id": "exerciciosdafny4",
+   "title": "ExerciciosDafny4",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "ExerciciosDafny4.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Sets, Multisets)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Collection Types / Sets / Multisets / Maps <https://dafny-lang.github.io/dafny/OnlineTutorial/ValueTypes>\n- Sets <https://dafny-lang.github.io/dafny/OnlineTutorial/Sets>\n\n2) Explique com suas palavras o que cada asserção descrita no seguinte código significa:\n\n```\nmethod FazAlgo(a: array<int>, n: int, e: int)\n  requires 0 <= n < a.Length\n  modifies a\n  ensures multiset(a[..n+1]) == multiset(a[..n]) + multiset{e}\n{\n  a[n] := e;\n  assert a[..n+1] == a[..n] + [e];\n}\n```\n\n3) O uso de sequências, conjuntos e multiconjuntos é muito útil para simplificar especificações sobre outros tipos de coleções. Deseja-se especificar um predicado capaz de indicar se um determinado array é uma permutação de outro array. Tal predicado é bastante útil na especificação de algoritmos de ordenação, por exemplo.\n\na) De que forma você verificaria se um array é uma permutação de outro? Pense em um algoritmo antes de executar as instruções do exercício que segue.\n\nb) Seja a seguinte definição: um array  $a$  é uma permutação de um array  $b$  se e somente se para todo elemento  $e$ , tem-se que a cardinalidade de  $e$  em  $a$  é a mesma que a cardinalidade de  $e$  em  $b$ . Com base nessa definição, defina um predicado  $permutacao: sequencia\\langle\\mathbb{Z}\\rangle \\times sequencia\\langle\\",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): conjuntos no topic do bloco-13"
+  },
+  {
+   "id": "exerciciosdafny5",
+   "title": "ExerciciosDafny5",
+   "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
+   "raw_target": "ExerciciosDafny5.pdf",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-01-metodos-formais",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Classes)\n\n1) Quando utilizamos objetos, Dafny necessita da descrição clara dos objetos que podem ter seus campos lidos ou modificados através do conceito de *frames* de leitura/escrita. Considere a seguinte classe e explique o problema que o Dafny encontrou. O quê está faltando na especificação?\n\n```\nclass WrapArray\n{\n  var intarray: array<int>\n  constructor (i:int)\n    requires i > 0\n  {\n    intarray := new int[i];\n  }\n  method init(i: int)\n    modifies intarray\n  {\n    var index: int := 0;\n    while (index < intarray.Length)\n    {\n      intarray[index] := i;\n      index := index+1;\n    }\n  }\n}\n\nmethod Main()\n{\n  var sh:= new WrapArray(5);\n  sh.init(4);\n}\n```\n\n2) Implemente e verifique em Dafny a correção de uma classe que represente uma ContaCorrente com operações de depósito, saque e consulta de saldo. Sabe-se que os objetos ContaCorrente possuem um valor máximo de saldo negativo garantido pelo banco e que jamais poderão extrapolar esse limite.\n\n{1}------------------------------------------------\n\n3) Em sala de aula foi apresentada a especificação de uma estrutura de dados do tipo fila de tamanho limitado e sua implementação através de um array. Modifique a especificação para suportar uma fila de tamanho ilimitado (lembre-se que agora não existe mais o impedimento de inserção caso o array esteja cheio, necessitando a substituição por um array maior). Altere de maneira",
+   "expected_block_id": "bloco-15",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exercicios classes (topic OO do bloco-15)"
+  },
+  {
+   "id": "classes-parte1",
+   "title": "classes_parte1",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "classes_parte1.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.09327764159999999,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-15",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos classes parte 1 (topic OO)"
+  },
+  {
+   "id": "colecoes-arrays",
+   "title": "colecoes_arrays",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "colecoes_arrays.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.09327764159999999,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos arrays"
+  },
+  {
+   "id": "colecoes-conjuntos",
+   "title": "colecoes_conjuntos",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "colecoes_conjuntos.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.6018576416000001,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos conjuntos/multiconjuntos"
+  },
+  {
+   "id": "colecoes-sequences",
+   "title": "colecoes_sequences",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "colecoes_sequences.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.09327764159999999,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos sequencias"
+  },
+  {
+   "id": "exercicios-conjuntos",
+   "title": "exercicios_conjuntos",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "exercicios_conjuntos.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.6018576416000001,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-13",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): respostas dos exercicios de conjuntos"
+  },
+  {
+   "id": "hoare",
+   "title": "hoare",
+   "category": "codigo-professor",
+   "auto_tags": [
+    "ferramenta:hoare"
+   ],
+   "raw_target": "hoare.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-10",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos Floyd-Hoare (unico bloco com topic hoare); ALTERNATIVA bloco-12 (usado na intro Dafny)"
+  },
+  {
+   "id": "invariantes",
+   "title": "invariantes",
+   "category": "codigo-professor",
+   "auto_tags": [
+    "ferramenta:invariantes"
+   ],
+   "raw_target": "invariantes.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-11",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): exemplos invariantes (correcao parcial); ALTERNATIVA bloco-12"
+  },
+  {
+   "id": "terminacao",
+   "title": "terminacao",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "terminacao.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 1.0,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-12",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): topic Terminacao introducao dafny 11/05; ALTERNATIVA bloco-11"
+  },
+  {
+   "id": "tiposindutivos",
+   "title": "tiposindutivos",
+   "category": "codigo-professor",
+   "auto_tags": [],
+   "raw_target": "tiposindutivos.zip",
+   "source_section_real": "Verificação de Programas",
+   "unit_guess": {
+    "slug": "unidade-02-verificacao-de-programas",
+    "confidence": 0.09327764159999999,
+    "ambiguous": false
+   },
+   "markdown": "",
+   "expected_block_id": "bloco-15",
+   "expected_origin": "precisa_decisao",
+   "candidates": [
+    "bloco-10",
+    "bloco-11",
+    "bloco-12",
+    "bloco-13",
+    "bloco-14",
+    "bloco-15"
+   ],
+   "note": "decisao assistida (Claude, 12/06): ordem do card Moodle: apos label semana 01/06"
+  }
+ ]
+}

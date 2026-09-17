@@ -1,0 +1,30 @@
+=== CRU — 53 conflitos ===
+  corte                       dispara   GANHA   PERDE   saldo
+  A sempre (refutado)              53      17      32     -15
+  H so janela-1                    17      11       6      +5
+  I janela-1 E confiante           16      11       5      +6
+  J janela-1 ou due-*              19      13       6      +7
+  K tudo MENOS disamb*             31      16      12      +4
+
+=== PRODUTO — 33 conflitos ===
+  corte                       dispara   GANHA   PERDE   saldo
+  A sempre (refutado)              33      12      19      -7
+  H so janela-1                    12       7       5      +2
+  I janela-1 E confiante            9       5       4      +1
+  J janela-1 ou due-*              15      10       5      +5
+  K tudo MENOS disamb*             29      12      15      -3
+
+TESTE DE APROVACAO (ganha no cru E nao regride o produto):
+  A sempre (refutado)        cru -15 · produto  -7   nao passa
+  H so janela-1              cru  +5 · produto  +2   PASSA
+  I janela-1 E confiante     cru  +6 · produto  +1   PASSA
+  J janela-1 ou due-*        cru  +7 · produto  +5   PASSA
+  K tudo MENOS disamb*       cru  +4 · produto  -3   nao passa
+
+POR CURSO, o corte H (so janela-1), no CRU:
+  CG    ganha  2 · perde  1 · saldo +1
+  ES2   ganha  2 · perde  0 · saldo +2
+  IA    ganha  0 · perde  1 · saldo -1
+  MF    ganha  0 · perde  3 · saldo -3
+  SO    ganha  7 · perde  0 · saldo +7
+  TCC   ganha  0 · perde  1 · saldo -1

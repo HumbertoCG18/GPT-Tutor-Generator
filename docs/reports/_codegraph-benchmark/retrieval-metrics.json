@@ -1,0 +1,974 @@
+[
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "baseline",
+    "seconds": 0.042250400001648813,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "graphify",
+    "seconds": 0.6430289999989327,
+    "calls": 1,
+    "raw_chars": 886,
+    "source_chars": 6881
+  },
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "cbm",
+    "seconds": 3.8493414000040502,
+    "calls": 1,
+    "raw_chars": 381,
+    "source_chars": 969
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "baseline",
+    "seconds": 0.04487199999857694,
+    "calls": 1,
+    "raw_chars": 409,
+    "source_chars": 4421
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "graphify",
+    "seconds": 0.5396881999986363,
+    "calls": 1,
+    "raw_chars": 383,
+    "source_chars": 4421
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "cbm",
+    "seconds": 4.032794200000353,
+    "calls": 1,
+    "raw_chars": 469,
+    "source_chars": 4421
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "baseline",
+    "seconds": 0.027486599996336736,
+    "calls": 1,
+    "raw_chars": 184,
+    "source_chars": 2223
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "graphify",
+    "seconds": 0.5656690999967395,
+    "calls": 1,
+    "raw_chars": 547,
+    "source_chars": 2223
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "cbm",
+    "seconds": 3.8301448000056553,
+    "calls": 1,
+    "raw_chars": 325,
+    "source_chars": 2223
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "baseline",
+    "seconds": 0.09699910000199452,
+    "calls": 1,
+    "raw_chars": 3262,
+    "source_chars": 23933
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "graphify",
+    "seconds": 0.4810375000015483,
+    "calls": 1,
+    "raw_chars": 684,
+    "source_chars": 3803
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "cbm",
+    "seconds": 7.072925100001157,
+    "calls": 2,
+    "raw_chars": 2006,
+    "source_chars": 17245
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "baseline",
+    "seconds": 0.04205879999790341,
+    "calls": 1,
+    "raw_chars": 536,
+    "source_chars": 4984
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "graphify",
+    "seconds": 0.5095529000027454,
+    "calls": 1,
+    "raw_chars": 465,
+    "source_chars": 4984
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "cbm",
+    "seconds": 7.252818299995852,
+    "calls": 2,
+    "raw_chars": 1185,
+    "source_chars": 4984
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "baseline",
+    "seconds": 0.16436640000029,
+    "calls": 1,
+    "raw_chars": 1411,
+    "source_chars": 18378
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "graphify",
+    "seconds": 1.1434310999975423,
+    "calls": 2,
+    "raw_chars": 2009,
+    "source_chars": 18378
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "cbm",
+    "seconds": 14.070956399998977,
+    "calls": 4,
+    "raw_chars": 7070,
+    "source_chars": 18378
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "baseline",
+    "seconds": 0.04801239999505924,
+    "calls": 1,
+    "raw_chars": 1337,
+    "source_chars": 9281
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "graphify",
+    "seconds": 2.1667721000048914,
+    "calls": 4,
+    "raw_chars": 1989,
+    "source_chars": 9281
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "cbm",
+    "seconds": 21.865185299997393,
+    "calls": 6,
+    "raw_chars": 4762,
+    "source_chars": 9281
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "baseline",
+    "seconds": 0.1102893999996013,
+    "calls": 1,
+    "raw_chars": 4337,
+    "source_chars": 30522
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "graphify",
+    "seconds": 2.1868632000041544,
+    "calls": 4,
+    "raw_chars": 2475,
+    "source_chars": 10392
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "cbm",
+    "seconds": 22.425191099995573,
+    "calls": 6,
+    "raw_chars": 4625,
+    "source_chars": 23137
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "baseline",
+    "seconds": 0.0731962999998359,
+    "calls": 1,
+    "raw_chars": 663,
+    "source_chars": 7253
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "graphify",
+    "seconds": 1.7764353000020492,
+    "calls": 3,
+    "raw_chars": 888,
+    "source_chars": 7253
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "cbm",
+    "seconds": 17.25734139999986,
+    "calls": 4,
+    "raw_chars": 2646,
+    "source_chars": 7253
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "baseline",
+    "seconds": 0.06288179999683052,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "graphify",
+    "seconds": 1.0638509999989765,
+    "calls": 2,
+    "raw_chars": 931,
+    "source_chars": 6881
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "cbm",
+    "seconds": 14.340491499999189,
+    "calls": 4,
+    "raw_chars": 1942,
+    "source_chars": 969
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "baseline",
+    "seconds": 0.061274200001207646,
+    "calls": 1,
+    "raw_chars": 1050,
+    "source_chars": 5771
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "graphify",
+    "seconds": 1.0928659000055632,
+    "calls": 2,
+    "raw_chars": 424,
+    "source_chars": 5771
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "cbm",
+    "seconds": 16.64782759999798,
+    "calls": 4,
+    "raw_chars": 1564,
+    "source_chars": 5771
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "baseline",
+    "seconds": 0.4596811999945203,
+    "calls": 1,
+    "raw_chars": 11096,
+    "source_chars": 106204
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "graphify",
+    "seconds": 1.1210203000009642,
+    "calls": 2,
+    "raw_chars": 913,
+    "source_chars": 13834
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "cbm",
+    "seconds": 14.967842199999723,
+    "calls": 4,
+    "raw_chars": 7861,
+    "source_chars": 94422
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "graphify",
+    "seconds": 0.49935289999848465,
+    "calls": 1,
+    "raw_chars": 886,
+    "source_chars": 6881
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "cbm",
+    "seconds": 3.5604848000002676,
+    "calls": 1,
+    "raw_chars": 381,
+    "source_chars": 969
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "baseline",
+    "seconds": 0.0365860999954748,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "graphify",
+    "seconds": 0.4904935000013211,
+    "calls": 1,
+    "raw_chars": 383,
+    "source_chars": 4421
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "cbm",
+    "seconds": 3.653618100004678,
+    "calls": 1,
+    "raw_chars": 469,
+    "source_chars": 4421
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "baseline",
+    "seconds": 0.08874690000084229,
+    "calls": 1,
+    "raw_chars": 409,
+    "source_chars": 4421
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "graphify",
+    "seconds": 0.5019338999991305,
+    "calls": 1,
+    "raw_chars": 547,
+    "source_chars": 2223
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "cbm",
+    "seconds": 3.609744800000044,
+    "calls": 1,
+    "raw_chars": 325,
+    "source_chars": 2223
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "baseline",
+    "seconds": 0.0357330999977421,
+    "calls": 1,
+    "raw_chars": 184,
+    "source_chars": 2223
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "graphify",
+    "seconds": 0.49194059999717865,
+    "calls": 1,
+    "raw_chars": 684,
+    "source_chars": 3803
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "cbm",
+    "seconds": 7.335754599997017,
+    "calls": 2,
+    "raw_chars": 2006,
+    "source_chars": 17245
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "baseline",
+    "seconds": 0.15485369999805698,
+    "calls": 1,
+    "raw_chars": 3262,
+    "source_chars": 23933
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "graphify",
+    "seconds": 0.5106966999956057,
+    "calls": 1,
+    "raw_chars": 465,
+    "source_chars": 4984
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "cbm",
+    "seconds": 7.944352999998955,
+    "calls": 2,
+    "raw_chars": 1185,
+    "source_chars": 4984
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "baseline",
+    "seconds": 0.06464600000617793,
+    "calls": 1,
+    "raw_chars": 536,
+    "source_chars": 4984
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "graphify",
+    "seconds": 1.4400007000003825,
+    "calls": 2,
+    "raw_chars": 2009,
+    "source_chars": 18378
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "cbm",
+    "seconds": 19.11545330000081,
+    "calls": 4,
+    "raw_chars": 7070,
+    "source_chars": 18378
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "baseline",
+    "seconds": 0.4631368000045768,
+    "calls": 1,
+    "raw_chars": 1411,
+    "source_chars": 18378
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "graphify",
+    "seconds": 3.1035818999953335,
+    "calls": 4,
+    "raw_chars": 1989,
+    "source_chars": 9281
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "cbm",
+    "seconds": 19.04064289999951,
+    "calls": 6,
+    "raw_chars": 4762,
+    "source_chars": 9281
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "baseline",
+    "seconds": 0.06003209999471437,
+    "calls": 1,
+    "raw_chars": 1337,
+    "source_chars": 9281
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "graphify",
+    "seconds": 2.913285200003884,
+    "calls": 4,
+    "raw_chars": 2475,
+    "source_chars": 10392
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "cbm",
+    "seconds": 20.785703199995623,
+    "calls": 6,
+    "raw_chars": 4625,
+    "source_chars": 23137
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "baseline",
+    "seconds": 0.17704899999807822,
+    "calls": 1,
+    "raw_chars": 4337,
+    "source_chars": 30522
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "graphify",
+    "seconds": 2.1866210000007413,
+    "calls": 3,
+    "raw_chars": 888,
+    "source_chars": 7253
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "cbm",
+    "seconds": 14.980158400001528,
+    "calls": 4,
+    "raw_chars": 2646,
+    "source_chars": 7253
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "baseline",
+    "seconds": 0.05348550000053365,
+    "calls": 1,
+    "raw_chars": 663,
+    "source_chars": 7253
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "graphify",
+    "seconds": 1.4796019999994314,
+    "calls": 2,
+    "raw_chars": 931,
+    "source_chars": 6881
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "cbm",
+    "seconds": 14.30902430000424,
+    "calls": 4,
+    "raw_chars": 1942,
+    "source_chars": 969
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "baseline",
+    "seconds": 0.03427639999426901,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "graphify",
+    "seconds": 0.9857818999953452,
+    "calls": 2,
+    "raw_chars": 424,
+    "source_chars": 5771
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "cbm",
+    "seconds": 15.057823199997074,
+    "calls": 4,
+    "raw_chars": 1564,
+    "source_chars": 5771
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "baseline",
+    "seconds": 0.0896534999992582,
+    "calls": 1,
+    "raw_chars": 1050,
+    "source_chars": 5771
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "graphify",
+    "seconds": 1.4512291999999434,
+    "calls": 2,
+    "raw_chars": 913,
+    "source_chars": 13834
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "cbm",
+    "seconds": 18.770315399997344,
+    "calls": 4,
+    "raw_chars": 7861,
+    "source_chars": 94422
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "baseline",
+    "seconds": 0.436511400002928,
+    "calls": 1,
+    "raw_chars": 11096,
+    "source_chars": 106204
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "cbm",
+    "seconds": 3.651203599998553,
+    "calls": 1,
+    "raw_chars": 381,
+    "source_chars": 969
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "baseline",
+    "seconds": 0.053212899998470675,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "graphify",
+    "seconds": 0.5157574999975623,
+    "calls": 1,
+    "raw_chars": 886,
+    "source_chars": 6881
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "cbm",
+    "seconds": 3.7617927999963285,
+    "calls": 1,
+    "raw_chars": 469,
+    "source_chars": 4421
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "baseline",
+    "seconds": 0.06531900000118185,
+    "calls": 1,
+    "raw_chars": 409,
+    "source_chars": 4421
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "graphify",
+    "seconds": 0.582826899997599,
+    "calls": 1,
+    "raw_chars": 383,
+    "source_chars": 4421
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "cbm",
+    "seconds": 3.7712241999979597,
+    "calls": 1,
+    "raw_chars": 325,
+    "source_chars": 2223
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "baseline",
+    "seconds": 0.026949499995680526,
+    "calls": 1,
+    "raw_chars": 184,
+    "source_chars": 2223
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "graphify",
+    "seconds": 0.49976340000284836,
+    "calls": 1,
+    "raw_chars": 547,
+    "source_chars": 2223
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "cbm",
+    "seconds": 8.23009219999949,
+    "calls": 2,
+    "raw_chars": 2006,
+    "source_chars": 17245
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "baseline",
+    "seconds": 0.29243319999659434,
+    "calls": 1,
+    "raw_chars": 3262,
+    "source_chars": 23933
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "graphify",
+    "seconds": 0.5279789999985951,
+    "calls": 1,
+    "raw_chars": 684,
+    "source_chars": 3803
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "cbm",
+    "seconds": 7.488311900000554,
+    "calls": 2,
+    "raw_chars": 1185,
+    "source_chars": 4984
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "baseline",
+    "seconds": 0.07917960000486346,
+    "calls": 1,
+    "raw_chars": 536,
+    "source_chars": 4984
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "graphify",
+    "seconds": 0.5672388999955729,
+    "calls": 1,
+    "raw_chars": 465,
+    "source_chars": 4984
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "cbm",
+    "seconds": 14.98576630000025,
+    "calls": 4,
+    "raw_chars": 7070,
+    "source_chars": 18378
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "baseline",
+    "seconds": 0.3034687999970629,
+    "calls": 1,
+    "raw_chars": 1411,
+    "source_chars": 18378
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "graphify",
+    "seconds": 1.6502045999950496,
+    "calls": 2,
+    "raw_chars": 2009,
+    "source_chars": 18378
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "cbm",
+    "seconds": 24.758195199996408,
+    "calls": 6,
+    "raw_chars": 4762,
+    "source_chars": 9281
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "baseline",
+    "seconds": 0.07815829999890411,
+    "calls": 1,
+    "raw_chars": 1337,
+    "source_chars": 9281
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "graphify",
+    "seconds": 2.5384405000004335,
+    "calls": 4,
+    "raw_chars": 1989,
+    "source_chars": 9281
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "cbm",
+    "seconds": 25.318363899998076,
+    "calls": 6,
+    "raw_chars": 4625,
+    "source_chars": 23137
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "baseline",
+    "seconds": 0.23543100000097184,
+    "calls": 1,
+    "raw_chars": 4337,
+    "source_chars": 30522
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "graphify",
+    "seconds": 2.814187600000878,
+    "calls": 4,
+    "raw_chars": 2475,
+    "source_chars": 10392
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "cbm",
+    "seconds": 16.652894699996978,
+    "calls": 4,
+    "raw_chars": 2646,
+    "source_chars": 7253
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "baseline",
+    "seconds": 0.062039000004006084,
+    "calls": 1,
+    "raw_chars": 663,
+    "source_chars": 7253
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "graphify",
+    "seconds": 1.657703800003219,
+    "calls": 3,
+    "raw_chars": 888,
+    "source_chars": 7253
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "cbm",
+    "seconds": 18.95898780000425,
+    "calls": 4,
+    "raw_chars": 1942,
+    "source_chars": 969
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "baseline",
+    "seconds": 0.04336489999695914,
+    "calls": 1,
+    "raw_chars": 864,
+    "source_chars": 6881
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "graphify",
+    "seconds": 1.039607500002603,
+    "calls": 2,
+    "raw_chars": 931,
+    "source_chars": 6881
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "cbm",
+    "seconds": 14.330687699999544,
+    "calls": 4,
+    "raw_chars": 1564,
+    "source_chars": 5771
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "baseline",
+    "seconds": 0.06186880000313977,
+    "calls": 1,
+    "raw_chars": 1050,
+    "source_chars": 5771
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "graphify",
+    "seconds": 1.0599774000002071,
+    "calls": 2,
+    "raw_chars": 424,
+    "source_chars": 5771
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "cbm",
+    "seconds": 14.889292699997895,
+    "calls": 4,
+    "raw_chars": 7861,
+    "source_chars": 94422
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "baseline",
+    "seconds": 0.4065465000021504,
+    "calls": 1,
+    "raw_chars": 11096,
+    "source_chars": 106204
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "graphify",
+    "seconds": 1.1095163999998476,
+    "calls": 2,
+    "raw_chars": 913,
+    "source_chars": 13834
+  }
+]

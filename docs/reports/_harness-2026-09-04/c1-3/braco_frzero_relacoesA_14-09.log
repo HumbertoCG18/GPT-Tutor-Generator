@@ -1,0 +1,35 @@
+[relacoes] 2 aliases injetados no FR do zero (relacoes_A_14-09.json)
+[profile] relacoes-relacoes_A_14-09: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] relacoes-relacoes_A_14-09: bloco 19/20 -> 19/20 (backup: manifest.json.bak)
+[relacoes] reprocess 13s · contadores: {'relacoes_injetadas': 2}
+n = 18 no primario: diferenca de 1-2 materiais e ruido.
+
+sandbox .frzero: 20 materiais � produto 22 (pontuado so nos 20 em comum; sem status no produto: 0)
+material                                 secao  unid sb  unid prod sub sb                     sub prod                   gold sub               revisar sb
+plano-de-ensino-20262                    -      1        1         (vazio)                    (vazio)                    -                      ok
+01-protocolos-de-rede                    U1     1        1         modelos-osi-e-tcpip        conceito-de-protocolo-de-r conceito-de-protocolo- ok
+02-modelos-de-referencia                 U1     1        1         modelos-osi-e-tcpip        modelos-osi-e-tcpip        modelos-osi-e-tcpip    ok
+02-poster-network-protocols              U1     1        1         (vazio)                    (vazio)                    -                      duvida
+03-tipos-de-redes                        U1     1        1         conceito-de-protocolo-de-r conceito-de-protocolo-de-r classificacao-e-topolo ok
+unidade1-exercicios                      U1     1        1         (vazio)                    modelos-osi-e-tcpip        conceito-de-protocolo- duvida
+04-camada-de-aplicacao                   U2     2        2         protocolos-de-aplicacao-pa paradigmas-clienteservidor funcoes-e-caracteristi ok
+04-protocolo-http                        U2     2        2         paradigmas-clienteservidor protocolos-de-aplicacao-pa protocolos-de-aplicaca ok
+05-protocolo-dns                         U2     2        2         protocolos-de-aplicacao-pa protocolos-de-aplicacao-pa protocolos-de-aplicaca ok
+06-protocolo-dhcp                        U2     2        2         protocolos-de-aplicacao-pa protocolos-de-aplicacao-pa protocolos-de-aplicaca ok
+07-protocolos-de-e-mail                  U2     2        2         protocolos-de-aplicacao-pa protocolos-de-aplicacao-pa protocolos-de-aplicaca ok
+08-desenvolvimento-de-aplicacoes         U2     2        2         (vazio)                    implementacao-de-sockets   implementacao-de-socke duvida
+lista-de-exercicios-1-camada-de-aplicaca U2     2        2         paradigmas-clienteservidor protocolos-de-aplicacao-pa funcoes-e-caracteristi duvida
+tcp-chat-c                               U2     2        2         paradigmas-clienteservidor implementacao-de-sockets   implementacao-de-socke duvida
+tcp-example                              U2     2        2         paradigmas-clienteservidor implementacao-de-sockets   implementacao-de-socke duvida
+udp-example-c                            U2     2        2         paradigmas-clienteservidor implementacao-de-sockets   implementacao-de-socke duvida
+udp-example-java                         U2     2        2         paradigmas-clienteservidor implementacao-de-sockets   implementacao-de-socke duvida
+unidade2-exercicios-dhcp                 U2     2        2         protocolos-de-aplicacao-pa protocolos-de-aplicacao-pa protocolos-de-aplicaca duvida
+unidade2-exercicios-dns                  U2     2        2         protocolos-de-aplicacao-pa protocolos-de-aplicacao-pa protocolos-de-aplicaca duvida
+unidade2-exercicios-http                 U2     2        2         paradigmas-clienteservidor protocolos-de-aplicacao-pa protocolos-de-aplicaca ok
+== unidade contra a secao do professor (U1/U2), sem gold � reproducao do sinal explicito, nao validacao semantica (astra 12/09)
+  sandbox .frzero                    acerto 19/19 � precisao do confiante 9/9 � erros confiantes 0 � fila 10 (pega 0 erros)
+  produto (vocab LLM + 13 votos)     acerto 19/19 � precisao do confiante 18/18 � erros confiantes 0 � fila 1 (pega 0 erros)
+== subunidade contra subunit_gt_FR (18): 'acerto' aceita as alternativas do gold; 'primario' so o rotulo principal
+  sandbox .frzero                    acerto 7/18 (primario 6/18) � precisao do confiante 4/9 � erros confiantes 5 � fila 9 (pega 6 erros)
+  produto (vocab LLM + 13 votos)     acerto 18/18 (primario 16/18) � precisao do confiante 17/17 � erros confiantes 0 � fila 1 (pega 0 erros)
+

@@ -1,0 +1,25 @@
+IA: 56 materiais, 4 unidades com material, 4 chamadas previstas (cap)
+  unidade-de-aprendizagem-01-visao-geral mats   3  zips 0  membros   0  bundle  1809 chars
+  unidade-de-aprendizagem-02-solucao-de-problemas mats  13  zips 3  membros  14  bundle  6897 chars
+  unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento mats   1  zips 0  membros   0  bundle   891 chars
+  unidade-de-aprendizagem-05-aprendizado-de-maquina mats  39  zips 1  membros   1  bundle 22991 chars
+  chamada 1/4
+  chamada 2/4
+  chamada 3/4
+  chamada 4/4
+chamadas feitas: 4/4; modelo gemini-3.5-flash; sidecar manual devolvido: True
+gravado .glossary_curation.llm.json: 14 topicos com termos, 76 termos, erros: []
+  Conceituação: ['Inteligência Artificial', 'Inteligência Adaptativa', 'modelos de IA']
+  Subáreas e disciplinas afins: ['IA generativa', 'generative', 'ChatGPT', 'Copilot']
+  Introdução a agentes em ambientes determinísticos: ['Agentes e Algoritmos de Busca']
+  Representação de problemas: ['Estados de mundo', 'Estado de Mundo', 'Espaço de Busca']
+  Busca informada (heurística): ['Algoritmos de Busca Informada', 'Busca Informada']
+  Algoritmos de Busca com Informação: ['Algoritmo Hill-Climbing', 'Hill-Climbing', 'Algoritmo Simulated Annealing', 'Simulated Annealing', 'Busca Local por Refinamentos Sucessivos', 'Dijkstra', 'Algoritmo de Dijkstra']
+  Problemas de Otimização: ['Algoritmos Genéticos', 'Algoritmo Genético Simples', 'Roda da Roleta', 'Crossover e Mutação', 'Elitismo', 'Crossover de N Pontos', 'Representação Real', 'Representação Binária', 'Cálculo da Aptidão', 'Seleção', 'Operações Genéticas', 'Crossover OBX', 'Crossover PBX', 'Crossover PMX', 'Crossover CX', 'Otimização Convencional']
+  Busca Adversária: ['Teoria dos Jogos', 'Árvore de Busca', 'Transposição', 'Redução por simetria', 'Algoritmo Minimax', 'Minimax']
+  Agentes em Lógica: ['Ambientes', 'Agentes puramente reativos', 'Agentes Reativos', 'Agente Reativo baseado em Modelo', 'Agente Reativo baseado em Modelos']
+  Introdução ao aprendizado de máquina: ['Machine Learning', 'Deep Learning', 'aprendizado indutivo', 'Exploração dos Dados', 'Análise Exploratória dos Dados', 'Caracterização dos Dados', 'Generalização']
+  Paradigmas de aprendizado: ['Aprendizado Supervisionado', 'Aprendizado Não Supervisionado']
+  Modelos Preditivos: ['Classificação', 'Regressão', 'Rede Neural Perceptron', 'MultiLayer Perceptron', 'Árvore de Decisão', 'k-NN', 'Classificador Linear', 'Redes Feed Forward', 'Redes Recorrentes', 'Backpropagation']
+  Modelos Descritivos: ['Agrupamento', 'Agrupamento Hierárquico', 'Agrupamento Particional', 'k-Means', 'Clustering', 'Mapa auto-organizável']
+  Métricas de Avaliação: ['Matriz de Confusão', 'Accuracy', 'Micro-médias', 'Macro-médias']

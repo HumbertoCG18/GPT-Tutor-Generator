@@ -1,0 +1,133 @@
+{
+  "courses": {
+    "CG": {
+      "counts": {
+        "common": 86,
+        "bloco_n": 35,
+        "bloco_before": 33,
+        "bloco_after": 33,
+        "bloco_gains": 0,
+        "bloco_losses": 0,
+        "bloco_common_n": 35,
+        "unidade_n": 93,
+        "unidade_before": 70,
+        "unidade_after": 70,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "unidade_common_n": 86,
+        "sub_aceito_n": 82,
+        "sub_aceito_before": 42,
+        "sub_aceito_after": 42,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 75,
+        "sub_primario_n": 82,
+        "sub_primario_before": 28,
+        "sub_primario_after": 28,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 75,
+        "absent": 7
+      },
+      "flips": [],
+      "source_hashes_checked": 86,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Computacao-Grafica-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "37768b7f230cd28b3a20a266888576cca3415f8dac6dbad4bc9cdcf2eafd868c",
+        "additive": {
+          "labels": 0,
+          "posting": 32,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 31,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 86,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "origensdacomputacaografica",
+          "before_chars": 3258,
+          "after_chars": 3253
+        },
+        {
+          "id": "segmentacaodetexturas",
+          "before_chars": 10634,
+          "after_chars": 10599
+        },
+        {
+          "id": "csg",
+          "before_chars": 3953,
+          "after_chars": 3943
+        },
+        {
+          "id": "elemoculto",
+          "before_chars": 21558,
+          "after_chars": 21438
+        },
+        {
+          "id": "fundamentosmatematicos",
+          "before_chars": 17853,
+          "after_chars": 17798
+        },
+        {
+          "id": "colisao",
+          "before_chars": 13172,
+          "after_chars": 13057
+        },
+        {
+          "id": "instanciamento",
+          "before_chars": 13010,
+          "after_chars": 12990
+        },
+        {
+          "id": "mapeamento",
+          "before_chars": 4573,
+          "after_chars": 4563
+        },
+        {
+          "id": "recorte",
+          "before_chars": 6989,
+          "after_chars": 6984
+        },
+        {
+          "id": "curvasparametricas",
+          "before_chars": 15225,
+          "after_chars": 15205
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    }
+  },
+  "total": {
+    "common": 86,
+    "bloco_n": 35,
+    "bloco_before": 33,
+    "bloco_after": 33,
+    "bloco_gains": 0,
+    "bloco_losses": 0,
+    "bloco_common_n": 35,
+    "unidade_n": 93,
+    "unidade_before": 70,
+    "unidade_after": 70,
+    "unidade_gains": 0,
+    "unidade_losses": 0,
+    "unidade_common_n": 86,
+    "sub_aceito_n": 82,
+    "sub_aceito_before": 42,
+    "sub_aceito_after": 42,
+    "sub_aceito_gains": 0,
+    "sub_aceito_losses": 0,
+    "sub_aceito_common_n": 75,
+    "sub_primario_n": 82,
+    "sub_primario_before": 28,
+    "sub_primario_after": 28,
+    "sub_primario_gains": 0,
+    "sub_primario_losses": 0,
+    "sub_primario_common_n": 75,
+    "absent": 7
+  }
+}

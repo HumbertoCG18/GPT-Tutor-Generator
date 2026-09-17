@@ -1,0 +1,62 @@
+limiar 50% da forca do vencedor: agiria em  26 · ganha  7 · perde 13 · neutro   6
+      PERDE MF provasindutivas-especificacoes 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF provasindutivas-especificacoes 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF exerciciosisabelle2            1.3.3   (1 irmaos fortes) -> pai 1.3    | gold provadores-de-teoremas
+      PERDE MF formalizacaoalgoritmos-recursa 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF exerciciosisabelle             1.3.3   (1 irmaos fortes) -> pai 1.3    | gold provadores-de-teoremas
+      PERDE MF intro                          1.2.3   (1 irmaos fortes) -> pai 1.2    | gold provadores-de-teoremas
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+limiar 60% da forca do vencedor: agiria em  22 · ganha  7 · perde 10 · neutro   5
+      PERDE MF provasindutivas-especificacoes 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF provasindutivas-especificacoes 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF intro                          1.2.3   (1 irmaos fortes) -> pai 1.2    | gold provadores-de-teoremas
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE MF hoare                          1.3.2   (2 irmaos fortes) -> pai 1.3    | gold logica-de-hoare
+      PERDE MF introducao-zip                 1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE ES2 web                            1.3.2   (1 irmaos fortes) -> pai 1.3    | gold cliente-servidor
+limiar 70% da forca do vencedor: agiria em  21 · ganha  7 · perde  9 · neutro   5
+      PERDE MF provasindutivas-especificacoes 1.2.3   (1 irmaos fortes) -> pai 1.2    | gold especificacao-de-funcoes-r
+      PERDE MF intro                          1.2.3   (1 irmaos fortes) -> pai 1.2    | gold provadores-de-teoremas
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE MF hoare                          1.3.2   (2 irmaos fortes) -> pai 1.3    | gold logica-de-hoare
+      PERDE MF introducao-zip                 1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE ES2 web                            1.3.2   (1 irmaos fortes) -> pai 1.3    | gold cliente-servidor
+      GANHA CG basico3d-py                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+limiar 80% da forca do vencedor: agiria em  19 · ganha  6 · perde  8 · neutro   5
+      PERDE MF intro                          1.2.3   (1 irmaos fortes) -> pai 1.2    | gold provadores-de-teoremas
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE MF hoare                          1.3.2   (2 irmaos fortes) -> pai 1.3    | gold logica-de-hoare
+      PERDE MF introducao-zip                 1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE ES2 web                            1.3.2   (1 irmaos fortes) -> pai 1.3    | gold cliente-servidor
+      GANHA CG basico3d-py                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+      GANHA CG opengl3dcpp                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+limiar 60% + >= 2 irmaos fortes: agiria em  13 · ganha  3 · perde  5 · neutro   5
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE MF hoare                          1.3.2   (2 irmaos fortes) -> pai 1.3    | gold logica-de-hoare
+      PERDE MF introducao-zip                 1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      GANHA CG basico3d-py                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+      GANHA CG opengl3dcpp                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+      PERDE CG basico3d-cpp                   7.1.1.1 (3 irmaos fortes) -> pai 7.1.1  | gold tecnicas-de-modelagem-3d
+      GANHA CG paginas-com-videos-sobre-model 7.2.3   (2 irmaos fortes) -> pai 7.2    | gold tecnicas-de-modelagem-3d
+limiar 60% + >= 3 irmaos fortes: agiria em   3 · ganha  0 · perde  2 · neutro   1
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE CG basico3d-cpp                   7.1.1.1 (3 irmaos fortes) -> pai 7.1.1  | gold tecnicas-de-modelagem-3d
+limiar 60% + >= 4 irmaos fortes: agiria em   0 · ganha  0 · perde  0 · neutro   0
+limiar 80% + >= 2 irmaos fortes: agiria em  12 · ganha  3 · perde  5 · neutro   4
+      PERDE MF colecoes-conjuntos             1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE MF hoare                          1.3.2   (2 irmaos fortes) -> pai 1.3    | gold logica-de-hoare
+      PERDE MF introducao-zip                 1.3.2   (2 irmaos fortes) -> pai 1.3    | gold softwares-de-suporte-a-ver
+      GANHA CG basico3d-py                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+      GANHA CG opengl3dcpp                    6.3.2   (2 irmaos fortes) -> pai 6.3    | gold conceito-de-camera-sinteti
+      PERDE CG basico3d-cpp                   7.1.1.1 (3 irmaos fortes) -> pai 7.1.1  | gold tecnicas-de-modelagem-3d
+      GANHA CG paginas-com-videos-sobre-model 7.2.3   (2 irmaos fortes) -> pai 7.2    | gold tecnicas-de-modelagem-3d
+limiar 80% + >= 3 irmaos fortes: agiria em   3 · ganha  0 · perde  2 · neutro   1
+      PERDE MF exercicios-conjuntos           2.1.3   (3 irmaos fortes) -> pai 2.1    | gold softwares-de-suporte-a-ver
+      PERDE CG basico3d-cpp                   7.1.1.1 (3 irmaos fortes) -> pai 7.1.1  | gold tecnicas-de-modelagem-3d
+limiar 80% + >= 4 irmaos fortes: agiria em   0 · ganha  0 · perde  0 · neutro   0
