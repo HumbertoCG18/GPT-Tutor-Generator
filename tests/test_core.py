@@ -3688,6 +3688,8 @@ class TestGlossarySeed:
         builder.build()
 
         assert [entry_payload] in captured_manifest_entries
+        # DeepTutor fica como inspiração futura; o builder não exporta mais .deeptutor/ (17/09).
+        assert not (repo / ".deeptutor").exists()
         assert captured_manifest_entries.count([entry_payload]) >= 1
 
     def test_no_timeline_without_teaching_plan(self):
@@ -3855,6 +3857,7 @@ class TestGeneratedRepoGitignore:
         assert "course/.tag_catalog.json" in text
         assert "setup/" in text
         assert "*.bak" in text  # T19: backups de retag/reprocess nao versionados
+        assert ".deeptutor/" in text  # legado: pasta antiga nos tutores; exportador removido em 17/09
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
@@ -4500,6 +4503,7 @@ class TestIncrementalBuildLowTokenRollout:
 
         builder.incremental_build()
 
+        assert not (repo / ".deeptutor").exists()
         file_map = (repo / "course" / "FILE_MAP.md").read_text(encoding="utf-8")
         course_map = (repo / "course" / "COURSE_MAP.md").read_text(encoding="utf-8")
         content_taxonomy = json.loads((repo / "course" / ".content_taxonomy.json").read_text(encoding="utf-8"))

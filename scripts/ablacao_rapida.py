@@ -28,7 +28,7 @@ REPO = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA"
         "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "CG": "Computacao-Grafica-Tutor"}
 COPY_DIR = Path(os.environ.get("TUTOR_REPOS_COPY") or (GEN / ".ablacao"))
 # raw/, staging/ e content/images ficam: sem eles image_curation muda em todos os repos e o MF perde entries (gate 2026-08-26).
-EXCLUDE_DIRS = (".git", "build", "__pycache__", ".deeptutor")
+EXCLUDE_DIRS = (".git", "build", "__pycache__", ".deeptutor")  # .deeptutor: legado nos tutores; exportador removido em 17/09
 KEEP_IN_COPY = ("material_curation.json",)  # cache de votos nu acumula entre rodadas
 
 

@@ -17,7 +17,7 @@ EXAM = ("provas", "fotos-de-prova")
 TARGETS = {"MF": {"provasindutivas-especificacoesrecursivas", "provasindutivas-especificacoesrecursivas-arvores",
                   "provasindutivas-especificacoesrecursivas-listas"}, "IA": set()}
 EXPECTED_REF = json.loads((HERE / "verificacao_pacote_7cursos_15-09.json").read_text(encoding="utf-8"))["courses"]
-DERIVED = ("exams/EXAM_INDEX.md", "course/FILE_MAP.md", "course/FILE_MAP_TRACE.md", ".deeptutor/knowledge/EXAM_INDEX.md")
+DERIVED = ("exams/EXAM_INDEX.md", "course/FILE_MAP.md", "course/FILE_MAP_TRACE.md")
 
 
 def sha(path):

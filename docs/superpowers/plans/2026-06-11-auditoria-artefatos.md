@@ -109,7 +109,7 @@ Classes:
 | `exams/EXAM_INDEX.md` | pedagogical_regeneration.py:321 | tutor | tutor-facing | manter |
 | `assignments/ASSIGNMENT_INDEX.md` | pedagogical_regeneration.py:343 | tutor | tutor-facing | manter |
 | `whiteboard/WHITEBOARD_INDEX.md` | pedagogical_regeneration.py:404 | tutor | tutor-facing | manter |
-| `.deeptutor/*` (SOUL, README, knowledge/*) | deeptutor.py:266 | export externo (todo build) | código-lê | manter |
+| `.deeptutor/*` (SOUL, README, knowledge/*) | deeptutor.py:266 | export externo (todo build) | código-lê | manter — superado em 17/09: exportador removido; DeepTutor é implementação futura, depois do ambiente web |
 | `staging/*`, `raw/*`, `manual-review/*` | engine.py / importers | intermediários de processamento | código-lê | manter |
 
 ## Ação desta passada (11/06/2026)

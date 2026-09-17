@@ -1,5 +1,26 @@
 # Pendências — tracker vivo
 
+## Concluído: DeepTutor fora do builder (17/09)
+
+- Decisão do usuário: DeepTutor é projeto distinto, usado só como inspiração, nunca rodado de
+  verdade; o ambiente web próprio vem primeiro e o substitui. Exportar para DeepTutor fica como
+  implementação futura, não como parte do produto.
+- Removido `src/builder/artifacts/deeptutor.py` (278 linhas: `SOUL.md`, `README.md`, cópia de
+  `course/*.md`) e as chamadas em `build_workflow.py` e `incremental_build.py`. Teste vermelho
+  primeiro: asserções `not .deeptutor` nos 2 testes de build (2 failed → verdes). Suíte
+  2357 passed / 4 skipped, igual a 16/09.
+- Astra (read-only, `01a0ae19`, 9 min 33 s): REPROVAR com 1 BLOQUEIA + 3 AJUSTE, todos
+  verificados na fonte e aplicados: `.deeptutor/` volta ao `.gitignore` gerado como exclusão de
+  legado (os 8 tutores são repositórios git e a pasta antiga existe), com asserção em
+  `TestGeneratedRepoGitignore`; `ablacao_rapida.py` mantém a exclusão no robocopy; BACKLOG não
+  atribui remoção a `MODES.md` (segue gerado por `pedagogy.py`); plano 2026-06-11 marcado como
+  superado; template de SOUL sem "colar no DeepTutor". 4 NOTA: nenhum leitor restante, os 2
+  testes cobrem os 2 pontos removidos, poda de órfãos não toca `.deeptutor/`, brief dizia +25
+  (é +14). Cópia em `c1-3/astra_revisao_deeptutor_17-09.md`.
+- Não tocado: `.deeptutor/` antigo nos 8 tutores e nas cópias `.frzero`; citações históricas em
+  `Feitos/`, `_archive/` e benchmark. `docs/deeptutor-soul-template.md` fica como referência de
+  persona para o ambiente web.
+
 ## Concluído: categoria prova em cópia nova (17/09)
 
 - Item 4.2 do handoff 16/09 medido em build real desde as fontes: pacote com a categoria

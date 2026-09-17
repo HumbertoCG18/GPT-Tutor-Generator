@@ -5,7 +5,6 @@ import logging
 import re
 from datetime import datetime
 
-from src.builder.artifacts.deeptutor import write_deeptutor_export
 from src.builder.ops.build_workflow import _run_auto_code_summarization
 from src.builder.ops.lifecycle_ops import assign_dedup_id
 from src.utils.helpers import write_text, write_json_manifest
@@ -122,13 +121,5 @@ def incremental_build_impl(builder, *, student_state_md_fn) -> None:
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)
-
-    write_deeptutor_export(
-        builder.root_dir,
-        builder.course_meta,
-        student_profile=getattr(builder, "student_profile", None),
-        subject_profile=getattr(builder, "subject_profile", None),
-    )
-    logger.info("DeepTutor export written to .deeptutor/")
 
     logger.info("Incremental build completed. %d new entries added.", len(new_entries))

@@ -33,7 +33,8 @@ subunidade, que o replay não reavaliava, ficaram idênticas.
   inclusive errado → errado).
 - Controles internos `revisao-p1` e `revisao-p1-gabarito`: categoria `provas` e previsões
   invariantes.
-- Derivados: `exams/EXAM_INDEX.md` e `.deeptutor/knowledge/EXAM_INDEX.md` com os 3 alvos
+- Derivados: `exams/EXAM_INDEX.md` (e sua cópia em `.deeptutor/`, exportação removida do
+  builder em 17/09) com os 3 alvos
   fora (3 → 0) e os 2 controles dentro (2 → 2), 0 links quebrados. `course/FILE_MAP.md`: 6
   linhas divergentes = linhas 29–31 dos alvos (categoria e grupo "provas e revisão" →
   "teoria base"). `course/FILE_MAP_TRACE.md`: 6 linhas = caminho `raw/pdfs/provas/` →

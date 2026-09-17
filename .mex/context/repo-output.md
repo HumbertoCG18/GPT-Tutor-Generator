@@ -78,7 +78,6 @@ README.md                                    # generated repository readme
 | `src/builder/artifacts/cronograma_health.py` | Renders CRONOGRAMA_HEALTH from timeline and curation conflict data. |
 | `src/builder/artifacts/temporal_context.py` | Renders setup/CONTEXTO_TEMPORAL.md from current timeline blocks. |
 | `src/builder/routing/file_map.py` | Builds routing indexes, unit matching, subtopic matching, and timeline scoring used by the generated routing index. |
-| `src/builder/artifacts/deeptutor.py` | Exports selected generated artifacts into the DeepTutor knowledge directory. |
 | `src/builder/core/code_summarization.py` | Generates Gemini summaries, assigns timeline blocks via concept overlap, prunes stale curation. |
 | `src/builder/core/reference_summary.py` | Generates optional Gemini reference summaries and deterministic unit/topic mappings in references_curation.json. |
 | `src/builder/core/reference_navigation.py` | Injects mapped references as support lines in COURSE_MAP with overflow pointers to BIBLIOGRAPHY. |

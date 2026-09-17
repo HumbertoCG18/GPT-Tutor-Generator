@@ -1,6 +1,10 @@
 # Soul do Tutor — [NOME_DO_CURSO]
 
-> Substitua os campos entre [COLCHETES] antes de colar no DeepTutor.
+> **Status (17/09/2026):** DeepTutor é inspiração; nunca houve uma run real. O builder deixou
+> de exportar `.deeptutor/` e o ambiente web próprio vem primeiro, substituindo o DeepTutor.
+> Este template fica como referência de persona para essa implementação futura.
+
+> Substitua os campos entre [COLCHETES] ao reaproveitar este texto como persona do tutor (uso futuro; hoje sem consumidor).
 
 ---
 

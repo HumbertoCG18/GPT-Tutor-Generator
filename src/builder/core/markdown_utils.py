@@ -132,6 +132,6 @@ def generated_repo_gitignore_text() -> str:
         "__pycache__/",
         "*.pyc",
         ".DS_Store",
-        "# Exportação local para DeepTutor (não commitada)",
+        "# Legado: exportação DeepTutor removida do builder em 17/09; a pasta antiga pode existir",
         ".deeptutor/",
     ])
