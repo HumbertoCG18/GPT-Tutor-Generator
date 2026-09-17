@@ -1,0 +1,35 @@
+# Revisão Astra do plano 4.2 (17/09, read-only)
+
+session id: 01a0ad85-db64-7ca1-ad46-a168dc680ef5 | codex-cli 0.154.0 | gpt-6-astra, effort high | sandbox read-only | 01:00:25→01:07:06 | 109.584 tokens | 30 comandos de leitura | árvore limpa após a chamada.
+
+Brief: scratchpad/brief-astra-plano-4.2.md (não versionado). Mensagem final consumida via -o, sem concatenar eventos.
+
+---
+
+1. [NOTA] A — Correção da premissa confirmada por leitura — c1-3/motor_copia_nova_15-09.py:26–30 chama sync_fresh e motor regua; motor_3eixos_12-09.py:69–70 sincroniza o tutor-produto, incluindo manifest. Já cru_fontes_15-09.py:77–82 constrói entradas do stash. Manter pacote_fontes como caminho do experimento. Nesta resposta, c1-3 significa docs/reports/_harness-2026-09-04/c1-3.
+
+2. [AJUSTE] B — Injeção correta; sobrescrita do destino precisa ocorrer no ponto certo — stash_import.py:104 consulta o atributo global auto_detect_category; importar scan_stash_cards dentro de main não congela esse atributo. Porém pacote_fontes_15-09.py:59–62 redefine sys.argv imediatamente antes de chamar cru.main(). Envolver pacote.base.main para substituir o destino nesse momento; definir sys.argv apenas antes de pacote.main() não funciona. Preservar a recusa de destino existente.
+
+3. [NOTA] B — Categoria propaga sem segunda classificação no caminho examinado — stash_import.py:141 copia item.category; ops/entry_processing.py:29 grava a categoria no manifest; moodle.py:579–589 e :621–626 alteram rótulos/datas/seções, sem reclassificar. ZIP contorna o wrapper por convenção em stash_import.py:99–100, sem afetar os três PDFs. Registrar origem, nome efetivamente classificado, categoria original/proposta e conferir a categoria final por origem; registrar ZIPs também no inventário.
+
+4. [AJUSTE] B/F — Importar candidate tem efeitos laterais — verifica_categoria_prova_15-09.py:13–15 importa diagnosis, que instala outro contador de rede em diagnostica_perdas_metadados_15-09.py:14–15; metadados_blocos_15-09.py:18 define TUTOR_REPOS_ORIG. Isso é local ao processo, mas a ordem importa. Importar candidate antes dos bloqueios finais do driver, garantir que chamadas sejam contabilizadas em cru.CALLS e restaurar patches em finally. Hipótese por leitura, sem execução do wrapper.
+
+5. [AJUSTE] C — Reconstrução cobre os quatro eixos; faltam gates explícitos — pacote_fontes_15-09.py:40–49 executa build e regeneração; pedagogical_regeneration.py:589–605 recalcula temporal, unidade e subunidade. Acrescentar failed_entries=[] no resultado e manifest, conjuntos de origens iguais e únicos, ausência de pinos/curadoria importados e comparação dos metadados de entrada. Esses gates constam parcialmente em verifica_pacote_fontes_15-09.py:39–53. Conferir opções efetivas, além de profile_input: cru_fontes_15-09.py:93–94 registra apenas parte do perfil.
+
+6. [AJUSTE] C — Manifest pontuado não valida os derivados — compare.predictions lê campos do manifest, conforme compara_herancas_15-09.py:39–45. Categoria também altera raw/pdfs/<categoria> em entry_processing.py:105 e EXAM_INDEX em pedagogical_regeneration.py:623–625. Acrescentar verificação de FILE_MAP, FILE_MAP_TRACE, índices temporal/taxonômico e exams/EXAM_INDEX.md: três materiais matemáticos deixam o índice de provas; controles permanecem; links resolvem. Reportar diferenças esperadas, sem exigir identidade dos derivados. Texto ausente/ilegível deve falhar: navigation.py:84–95 pode devolver vazio nos dois lados.
+
+7. [NOTA] D — Referência imediata correta: pacote de 15/09 — Recalcular ambos os lados contra o gold, como proposto. Não reutilizar before=int(row[axis]) de verifica_pacote_fontes_15-09.py:80: esse CSV representa o cru. Preservar os ausentes nos denominadores e reportar comuns: JSON lido registra MF 62 comuns/4 ausentes; IA 40/2. Cru 169/234/99/76 e herdado 222/253/142/100 cabem como contexto histórico dos sete cursos, sem necessidade de novo braço. Não comparar esses totais diretamente com apenas MF/IA.
+
+8. [AJUSTE] E — IA é controle externo adequado; explicitar os controles internos — verificacao_categoria_prova_verificada_15-09.json registra MF revisao-p1 e revisao-p1-gabarito, ambos provas; IA tem quatro entradas, mas três PDFs distintos por SHA256. Exigir invariância de categoria e atribuições desses controles, preservando também os seis casos sintéticos. Comparar previsões individuais, não apenas acertos: uma mudança errado→errado não aparece no placar. Em MF, listar quaisquer alterações fora dos três alvos.
+
+9. [AJUSTE] F — Paralelismo tem precedente de saturação — protocolo-herancas-cru_15-09.md:55–60 registra interrupção de MF/IA com 50 threads por processo e retomada com OMP_NUM_THREADS=1, OPENBLAS_NUM_THREADS=1 e MKL_NUM_THREADS=1. Os logs seriais terminam normalmente: MF :252, IA :192; não demonstram corrupção compartilhada. SubjectStore apenas carrega nesse fluxo (core.py:367–379), e cru_fontes:69 copia o perfil antes de alterar repo_root. Manter dois processos somente com esses limites definidos antes dos imports, destinos/logs separados e monitoramento de recursos; isolamento completo dos caches de terceiros não foi demonstrado.
+
+10. [AJUSTE] G — Suspender pontuação é correto; liberar aceite seria perigoso — protocolo-pacote-fontes_15-09.md:24–28 manda suspender a pontuação afetada; o verificador antigo aborta em :47. O novo pode terminar e publicar o achado, mas deve marcar o eixo não comparável e impedir aceite/promoção enquanto faltar um eixo exigido. Não converter suspensão em zero perdas. Unidade/subunidade só continuam interpretáveis se seus identificadores e contratos também permanecerem comparáveis.
+
+11. [NOTA] H — Dois cursos bastam para esta etapa, não para validar uma heurística geral — handoff de 15/09:160–161 recomenda MF mais IA; categoria-prova-verificacao_15-09.md:65–68 declara três positivos conhecidos, sem holdout. Após os gates, pode-se abrir orch-fix-defect com Gate 1 próprio e teste vermelho. Reconstruir sete cursos não é pré-requisito para abrir essa tarefa. Na correção futura, manter a verificação barata das 338 classificações e dos marcadores; ampliar builds se a regra ou o alcance mudar.
+
+12. [AJUSTE] I — Placar confirmado; custo excluído incorreto — JSONs lidos confirmam MF 50/66, 61/66, 29/58, 25/58 e IA 38/42, 39/42, 5/39, 4/39. MF 53/66 continua hipótese de build, medida somente no replay. Logs do pacote registram MF 3.980,57 s e IA 3.502,43 s; ~66 min paralelos é estimativa. Os outros cinco somam 6.616,51 s (~1h50 serial), calculados dos logs SO:180, ES2:147, TCC:139, CG:180 e FR:84, não ~4 h. Os “335 restantes” incluem controles de MF/IA; os cinco cursos excluídos contêm 210 entradas. Branch e HEAD a0ce66a confirmados; status sem alterações, desabilitando apenas a leitura do ignore global inacessível.
+
+VEREDITO: APROVAR COM AJUSTES
+NÃO VERIFIQUEI: execução dos novos drivers/scorer; reconstrução e resultado 53/66; invariância futura de fontes e derivados; paralelismo sob carga e caches de terceiros. Revisão estática com leitura de evidências históricas, sem build, testes, escrita, delegação ou chamadas externas.
+

@@ -1,0 +1,594 @@
+{
+  "accepted": true,
+  "protected_hash_drift": [],
+  "courses": {
+    "MF": {
+      "accepted": true,
+      "gates_failed": [],
+      "counts": {
+        "absent": 4,
+        "bloco_n": 66,
+        "bloco_ref": 50,
+        "bloco_novo": 53,
+        "bloco_gains": 3,
+        "bloco_losses": 0,
+        "unidade_n": 66,
+        "unidade_ref": 61,
+        "unidade_novo": 61,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "sub_aceito_n": 58,
+        "sub_aceito_ref": 29,
+        "sub_aceito_novo": 29,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_primario_n": 58,
+        "sub_primario_ref": 25,
+        "sub_primario_novo": 25,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "common": 62
+      },
+      "flips": [
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-arvores",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        }
+      ],
+      "prediction_changes": [
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas",
+          "ref_id": "provasindutivas-especificacoesrecursivas",
+          "target": true,
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "scored": {
+            "bloco": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-arvores",
+          "ref_id": "provasindutivas-especificacoesrecursivas-arvores",
+          "target": true,
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "scored": {
+            "bloco": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+          "ref_id": "provasindutivas-especificacoesrecursivas-listas",
+          "target": true,
+          "pred_ref": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "pred_novo": [
+            "bloco-05",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ],
+          "scored": {
+            "bloco": [
+              0,
+              1
+            ]
+          }
+        }
+      ],
+      "prediction_changes_outside_targets": [],
+      "category_changes": [
+        {
+          "id": "provasindutivas-especificacoesrecursivas",
+          "before": "provas",
+          "after": "material-de-aula"
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas-arvores",
+          "before": "provas",
+          "after": "material-de-aula"
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas-listas",
+          "before": "provas",
+          "after": "material-de-aula"
+        }
+      ],
+      "controls": [
+        {
+          "id": "revisao-p1",
+          "category": "provas",
+          "invariant": true
+        },
+        {
+          "id": "revisao-p1-gabarito",
+          "category": "provas",
+          "invariant": true
+        }
+      ],
+      "temporal_identical": true,
+      "taxonomy_identical": true,
+      "text_changes": [
+        {
+          "id": "exercicioslogicatemporal",
+          "before_chars": 3643,
+          "after_chars": 3676
+        },
+        {
+          "id": "verificacaomodelos",
+          "before_chars": 23853,
+          "after_chars": 24024
+        },
+        {
+          "id": "conjuntosindutivos",
+          "before_chars": 14423,
+          "after_chars": 14438
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao",
+          "before_chars": 14865,
+          "after_chars": 14871
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao2",
+          "before_chars": 2888,
+          "after_chars": 2891
+        },
+        {
+          "id": "introducao",
+          "before_chars": 12563,
+          "after_chars": 12635
+        },
+        {
+          "id": "exerciciosisabelle2",
+          "before_chars": 2921,
+          "after_chars": 2927
+        },
+        {
+          "id": "mcs",
+          "before_chars": 1854243,
+          "after_chars": 1856919
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas",
+          "before_chars": 6617,
+          "after_chars": 6630
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas-arvores",
+          "before_chars": 2443,
+          "after_chars": 2453
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas-listas",
+          "before_chars": 2617,
+          "after_chars": 2627
+        },
+        {
+          "id": "logicapredicados-semantica",
+          "before_chars": 9280,
+          "after_chars": 9334
+        },
+        {
+          "id": "logicapredicados-sintaxe",
+          "before_chars": 10279,
+          "after_chars": 10342
+        },
+        {
+          "id": "logicaproposicional-semantica",
+          "before_chars": 12726,
+          "after_chars": 12807
+        },
+        {
+          "id": "logicaproposicional-sintaxe",
+          "before_chars": 8964,
+          "after_chars": 9018
+        },
+        {
+          "id": "revisao",
+          "before_chars": 8402,
+          "after_chars": 8468
+        },
+        {
+          "id": "formalizacaoalgoritmos-invarianteslaco",
+          "before_chars": 20852,
+          "after_chars": 20858
+        },
+        {
+          "id": "ieeesoftwaredafny2017",
+          "before_chars": 16898,
+          "after_chars": 16901
+        },
+        {
+          "id": "logicadehoare",
+          "before_chars": 14508,
+          "after_chars": 14517
+        }
+      ],
+      "content_changes_after_repo_path_normalization": [],
+      "text_changes_only_category_path": [
+        "provasindutivas-especificacoesrecursivas",
+        "provasindutivas-especificacoesrecursivas-arvores",
+        "provasindutivas-especificacoesrecursivas-listas"
+      ],
+      "empty_text_both_sides": [],
+      "options_diff": [],
+      "derived": {
+        "exams/EXAM_INDEX.md": {
+          "targets_ref": 3,
+          "targets_novo": 0,
+          "controls_ref": 2,
+          "controls_novo": 2,
+          "diff_lines": 3,
+          "diff_lines_mentioning_targets": 3,
+          "broken_links_novo": []
+        },
+        "course/FILE_MAP.md": {
+          "targets_ref": 0,
+          "targets_novo": 0,
+          "controls_ref": 0,
+          "controls_novo": 0,
+          "diff_lines": 6,
+          "diff_lines_mentioning_targets": 0,
+          "broken_links_novo": []
+        },
+        "course/FILE_MAP_TRACE.md": {
+          "targets_ref": 3,
+          "targets_novo": 3,
+          "controls_ref": 2,
+          "controls_novo": 2,
+          "diff_lines": 6,
+          "diff_lines_mentioning_targets": 6,
+          "broken_links_novo": []
+        },
+        ".deeptutor/knowledge/EXAM_INDEX.md": {
+          "targets_ref": 3,
+          "targets_novo": 0,
+          "controls_ref": 2,
+          "controls_novo": 2,
+          "diff_lines": 3,
+          "diff_lines_mentioning_targets": 3,
+          "broken_links_novo": []
+        }
+      },
+      "raw_pdf_moves": {
+        "provasindutivas-especificacoesrecursivas": [
+          true,
+          true
+        ],
+        "provasindutivas-especificacoesrecursivas-arvores": [
+          true,
+          true
+        ],
+        "provasindutivas-especificacoesrecursivas-listas": [
+          true,
+          true
+        ]
+      },
+      "build": {
+        "seconds": 2053.77,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "entries": [
+        67,
+        67
+      ],
+      "source_hashes_checked": 67
+    },
+    "IA": {
+      "accepted": true,
+      "gates_failed": [],
+      "counts": {
+        "absent": 2,
+        "bloco_n": 42,
+        "bloco_ref": 38,
+        "bloco_novo": 38,
+        "bloco_gains": 0,
+        "bloco_losses": 0,
+        "unidade_n": 42,
+        "unidade_ref": 39,
+        "unidade_novo": 39,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "common": 40,
+        "sub_aceito_n": 39,
+        "sub_aceito_ref": 5,
+        "sub_aceito_novo": 5,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_primario_n": 39,
+        "sub_primario_ref": 4,
+        "sub_primario_novo": 4,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0
+      },
+      "flips": [],
+      "prediction_changes": [],
+      "prediction_changes_outside_targets": [],
+      "category_changes": [],
+      "controls": [
+        {
+          "id": "p2-202401",
+          "category": "provas",
+          "invariant": true
+        },
+        {
+          "id": "p2-202402",
+          "category": "provas",
+          "invariant": true
+        },
+        {
+          "id": "prova-1-2024-02",
+          "category": "provas",
+          "invariant": true
+        },
+        {
+          "id": "prova-1-202402",
+          "category": "provas",
+          "invariant": true
+        }
+      ],
+      "temporal_identical": true,
+      "taxonomy_identical": true,
+      "text_changes": [
+        {
+          "id": "future-of-jobs-report-2025",
+          "before_chars": 1099107,
+          "after_chars": 1099128
+        },
+        {
+          "id": "visao-geral-introducao-e-historico",
+          "before_chars": 27600,
+          "after_chars": 27603
+        },
+        {
+          "id": "algoritmo-genetico",
+          "before_chars": 63272,
+          "after_chars": 64004
+        },
+        {
+          "id": "cap-sobre-algoritmos-geneticos-lacerda-e-outros",
+          "before_chars": 109399,
+          "after_chars": 109480
+        },
+        {
+          "id": "introducao-a-busca-informada",
+          "before_chars": 19554,
+          "after_chars": 19674
+        },
+        {
+          "id": "algoritmo-dijkstra",
+          "before_chars": 23496,
+          "after_chars": 23508
+        },
+        {
+          "id": "hill-climbing-e-simulated-annealing",
+          "before_chars": 45197,
+          "after_chars": 45671
+        },
+        {
+          "id": "minimax-teoria",
+          "before_chars": 72206,
+          "after_chars": 73121
+        },
+        {
+          "id": "minimax",
+          "before_chars": 67327,
+          "after_chars": 68242
+        },
+        {
+          "id": "introducao-a-agentes",
+          "before_chars": 14727,
+          "after_chars": 14733
+        },
+        {
+          "id": "caracteristicas-dos-dados",
+          "before_chars": 23621,
+          "after_chars": 23633
+        },
+        {
+          "id": "introducao-a-ml",
+          "before_chars": 33032,
+          "after_chars": 33161
+        },
+        {
+          "id": "algoritmo-de-classificacao-k-nn",
+          "before_chars": 14985,
+          "after_chars": 15012
+        },
+        {
+          "id": "artigo-usando-k-nn-em-texto",
+          "before_chars": 35853,
+          "after_chars": 35889
+        },
+        {
+          "id": "introducao-a-redes-neurais",
+          "before_chars": 12495,
+          "after_chars": 12498
+        },
+        {
+          "id": "rede-perceptron",
+          "before_chars": 31812,
+          "after_chars": 31815
+        },
+        {
+          "id": "mlp",
+          "before_chars": 70579,
+          "after_chars": 70972
+        },
+        {
+          "id": "como-analisar-resultados-acc-pr-re-e-f1",
+          "before_chars": 72376,
+          "after_chars": 73123
+        },
+        {
+          "id": "arvores-de-decisao",
+          "before_chars": 55372,
+          "after_chars": 55387
+        },
+        {
+          "id": "aula-sobre-agrupamento-parte-1-particional",
+          "before_chars": 42943,
+          "after_chars": 42946
+        }
+      ],
+      "content_changes_after_repo_path_normalization": [],
+      "text_changes_only_category_path": [],
+      "empty_text_both_sides": [],
+      "options_diff": [],
+      "derived": {
+        "exams/EXAM_INDEX.md": {
+          "targets_ref": 0,
+          "targets_novo": 0,
+          "controls_ref": 4,
+          "controls_novo": 4,
+          "diff_lines": 0,
+          "diff_lines_mentioning_targets": 0,
+          "broken_links_novo": []
+        },
+        "course/FILE_MAP.md": {
+          "targets_ref": 0,
+          "targets_novo": 0,
+          "controls_ref": 0,
+          "controls_novo": 0,
+          "diff_lines": 0,
+          "diff_lines_mentioning_targets": 0,
+          "broken_links_novo": []
+        },
+        "course/FILE_MAP_TRACE.md": {
+          "targets_ref": 0,
+          "targets_novo": 0,
+          "controls_ref": 4,
+          "controls_novo": 4,
+          "diff_lines": 0,
+          "diff_lines_mentioning_targets": 0,
+          "broken_links_novo": []
+        },
+        ".deeptutor/knowledge/EXAM_INDEX.md": {
+          "targets_ref": 0,
+          "targets_novo": 0,
+          "controls_ref": 4,
+          "controls_novo": 4,
+          "diff_lines": 0,
+          "diff_lines_mentioning_targets": 0,
+          "broken_links_novo": []
+        }
+      },
+      "raw_pdf_moves": {},
+      "build": {
+        "seconds": 3371.18,
+        "calls": {},
+        "failed_entries": [],
+        "completed": true
+      },
+      "entries": [
+        61,
+        61
+      ],
+      "source_hashes_checked": 61
+    }
+  },
+  "total": {
+    "absent": 6,
+    "bloco_n": 108,
+    "bloco_ref": 88,
+    "bloco_novo": 91,
+    "bloco_gains": 3,
+    "bloco_losses": 0,
+    "unidade_n": 108,
+    "unidade_ref": 100,
+    "unidade_novo": 100,
+    "unidade_gains": 0,
+    "unidade_losses": 0,
+    "sub_aceito_n": 97,
+    "sub_aceito_ref": 34,
+    "sub_aceito_novo": 34,
+    "sub_aceito_gains": 0,
+    "sub_aceito_losses": 0,
+    "sub_primario_n": 97,
+    "sub_primario_ref": 29,
+    "sub_primario_novo": 29,
+    "sub_primario_gains": 0,
+    "sub_primario_losses": 0,
+    "common": 102
+  }
+}

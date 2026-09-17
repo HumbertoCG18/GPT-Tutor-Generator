@@ -1,5 +1,29 @@
 # Pendências — tracker vivo
 
+## Concluído: categoria prova em cópia nova (17/09)
+
+- Item 4.2 do handoff 16/09 medido em build real desde as fontes: pacote com a categoria
+  corrigida na entrada, 0 rede, `src/` intocado. MF: 3 categorias alteradas (os 3 alvos
+  `ProvasIndutivas_*`), bloco 50 → 53/66 (+3/0), unidade 61/66, sub 29/58 e 25/58 sem
+  perda, 0 previsões alteradas fora dos alvos, controles `revisao-p1`/`-gabarito`
+  invariantes. IA (controle): 0 alterações, placar 38/42, 39/42, 5/39, 4/39 idêntico,
+  4 provas reais em `provas`. Derivados: `EXAM_INDEX` 3 → 0 alvos, controles mantidos, 0
+  links quebrados; `FILE_MAP*` só as 3 linhas dos alvos; textos idênticos após normalizar
+  caminho do repositório e `raw/pdfs/<categoria>`; temporal e taxonomia idênticas; drift
+  de hashes protegidos nenhum (86 arquivos).
+- Astra revisou o plano, read-only (`01a0ad85`, APROVAR COM AJUSTES, 8 ajustes, 0 bloqueios);
+  todos incorporados no driver e no scorer. Única chamada Astra da tarefa.
+- Relatório `categoria-prova-copia_17-09.md`; JSON
+  `c1-3/verificacao_pacote_categoria_MF_IA_17-09.json`; builds MF 2.054 s e IA 3.371 s em
+  paralelo com `OMP/OPENBLAS/MKL_NUM_THREADS=1` (15/09: 3.981 s e 3.502 s).
+- Limites: 3 positivos sem holdout; 2 cursos (SO/ES2/TCC/CG/FR, 210 entradas, fora; ~110 min
+  seriais se completar). Próximo: `orch-fix-defect` em `helpers.py:682`, Gate 1 próprio,
+  teste vermelho primeiro (3 nomes MF, 6 sondas sintéticas, 4 provas IA, 338 classificações
+  de 15/09).
+- Sessão Claude `78faa17a` caiu com "Connection lost mid-response" às 01:15 (socket fechado
+  no streaming; Windows sem evento de rede; status page sem incidente) antes de escrever
+  arquivo; zero efeito colateral, retomada de `active-task.md`.
+
 ## Concluído: árvore fechada, push e handoff (16/09)
 
 - 4 commits separados por natureza: `c392e7c` docs(reports), `e1133a4` chore(harness),
@@ -3380,6 +3404,20 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     Relação com o existente: C7 imagens (galeria curada + dHash, `decisions.md`) cuida
     de dedup/logos, não de exibição no chat; "Citação por página" acima é o par
     natural (página de origem por imagem).
+  Ideias adicionadas 2026-09-17:
+  - **Extração local CPU + GPU para quem não tem Datalab** [IDEIA FUTURA /
+    NÃO IMPLEMENTAR AGORA]: surgiu no build do item 4.2 (17/09): MF e IA em paralelo
+    com `pymupdf4llm` em CPU ocuparam 15 de 16 núcleos; IA passou mais de 13 min só no
+    "Future of Jobs Report 2025" (290 páginas, 18 MB). Medido: o único backend com
+    caminho de GPU é o marker via torch, e o torch instalado é `2.10.0+cpu`
+    (`cuda: False`), apesar de `marker_torch_device: cuda` no manifest e de haver uma
+    RTX 4050 na máquina; a opção hoje é inerte. Futuro: (1) torch com CUDA e marker na
+    GPU validados como caminho local padrão para quem não tem chave Datalab;
+    (2) roteamento por peso do PDF: pesado → marker/GPU, leve → `pymupdf4llm`;
+    (3) medir tempo e texto contra a referência atual antes de trocar o default.
+    Fora do 4.2 por construção: trocar o backend muda o texto extraído, e o scorer
+    exige texto idêntico ao pacote de 15/09; comparar exigiria refazer a referência
+    com o mesmo backend.
 
 ## HARNESS 10/09 — GRAPHIFY MCP NOS 3 CLIs (user: "quero usar ele no claude code, no codex e no agy")
 Estado: Claude Code via `.mcp.json` (local) · agy via `agy mcp add` · Codex `enabled = false` no global porque o
