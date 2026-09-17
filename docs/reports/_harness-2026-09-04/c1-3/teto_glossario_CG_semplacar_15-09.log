@@ -1,0 +1,11 @@
+  [regua] CG: copia pronta, 78 aliases do LLM vetados na taxonomia, cache de 12 resumos de codigo zerado (sera regenerado sem o vocab), SEM curadoria do benchmark: -3 topicos/-4 termos, 0 vetos neutralizados
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+  [regua] CG: reprocess 53s
+reprocess x1 em 53s · TENTATIVAS DE REDE BLOQUEADAS: 0
+
+=== 3 EIXOS — configuracao 'regua' (veto=texto, voter OFF), copia em C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.motor3eixos ===
+
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+reprocess extra CG · TENTATIVAS DE REDE BLOQUEADAS: 0

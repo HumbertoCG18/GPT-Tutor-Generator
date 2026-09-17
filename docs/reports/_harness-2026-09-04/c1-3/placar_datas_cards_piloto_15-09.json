@@ -1,0 +1,357 @@
+{
+  "counts": {
+    "ES2/datas_cards": {
+      "bloco_n": 28,
+      "bloco_before": 11,
+      "bloco_after": 19,
+      "bloco_gains": 9,
+      "bloco_losses": 1,
+      "unidade_n": 28,
+      "unidade_before": 26,
+      "unidade_after": 26,
+      "unidade_gains": 2,
+      "unidade_losses": 2,
+      "sub_aceito_n": 28,
+      "sub_aceito_before": 2,
+      "sub_aceito_after": 4,
+      "sub_aceito_gains": 2,
+      "sub_aceito_losses": 0,
+      "sub_primario_n": 28,
+      "sub_primario_before": 2,
+      "sub_primario_after": 4,
+      "sub_primario_gains": 2,
+      "sub_primario_losses": 0
+    },
+    "IA/datas_cards": {
+      "bloco_n": 42,
+      "bloco_before": 25,
+      "bloco_after": 38,
+      "bloco_gains": 14,
+      "bloco_losses": 1,
+      "unidade_n": 42,
+      "unidade_before": 39,
+      "unidade_after": 39,
+      "unidade_gains": 0,
+      "unidade_losses": 0,
+      "sub_aceito_n": 39,
+      "sub_aceito_before": 5,
+      "sub_aceito_after": 5,
+      "sub_aceito_gains": 0,
+      "sub_aceito_losses": 0,
+      "sub_primario_n": 39,
+      "sub_primario_before": 4,
+      "sub_primario_after": 4,
+      "sub_primario_gains": 0,
+      "sub_primario_losses": 0
+    }
+  },
+  "flips": [
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "revisaoarquiteturapadroes",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ],
+        "unidade": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "microsservicos3",
+      "flips": {
+        "bloco": [
+          1,
+          0
+        ],
+        "unidade": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "servicos",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "web",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "microsservicos6",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ],
+        "unidade": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "microsservicos7",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ],
+        "unidade": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "roteiro7",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ],
+        "sub_aceito": [
+          0,
+          1
+        ],
+        "sub_primario": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "roteiro7-filas",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "roteiro7-history-service",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ],
+        "sub_aceito": [
+          0,
+          1
+        ],
+        "sub_primario": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "ES2",
+      "arm": "datas_cards",
+      "entry_id": "roteiro8-autenticacao-autorizacao",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "visao-geral-introducao-e-historico",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "aula-sobre-agrupamento-parte-1-particional",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "aula-sobre-agrupamento-parte-2-hierarquico",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "caracteristicas-dos-dados",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "algoritmo-de-classificacao-k-nn",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "artigo-usando-k-nn-em-texto",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "exemplo-de-programa-com-k-nn-em-java",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "como-analisar-resultados-acc-pr-re-e-f1",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "artigo-usando-agrupamento",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "analise-exploratoria-de-dados-exemplo-1",
+      "flips": {
+        "bloco": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "exemplo-com-k-nn",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "course": "IA",
+      "arm": "datas_cards",
+      "entry_id": "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "flips": {
+        "bloco": [
+          0,
+          1
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+DISCOVERY
+total: 2
+results: 2  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.engine (src/builder/engine.py):
+  _build_page_chunks Variable 383-383 0 0 -
+codegraph-pilot-20260915.src.builder.runtime.backend_runtime (src/builder/runtime/backend_runtime.py):
+  build_page_chunks Function 21-25 2 3 _run_chunked_datalab;build_marker_page_chunks;len;list;range
+has_more: false
+
+function: build_page_chunks
+direction: both
+callees_total: 3
+callees: 3  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+builtins:
+  len 1 lsp 0.92
+  list 1 lsp 0.88
+  range 1 lsp 0.88
+callers_total: 4
+callers: 4  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.engine.DatalabCloudBackend:
+  _run_chunked_datalab 1 lsp 0.97
+  run 2 lsp 0.90
+codegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend:
+  _run_chunked_marker 2 lsp 0.97
+codegraph-pilot-20260915.src.builder.runtime.backend_runtime:
+  build_marker_page_chunks 1 lsp 0.97
+
+SOURCE VERIFICATION
+src/builder/runtime/backend_runtime.py:16: _DOCLING_PYTHON_API_CACHE = None
+src/builder/runtime/backend_runtime.py:17: _MARKER_CAPABILITIES_CACHE = None
+src/builder/runtime/backend_runtime.py:18: MARKER_OLLAMA_SERVICE = "marker.services.ollama.OllamaService"
+src/builder/runtime/backend_runtime.py:19: 
+src/builder/runtime/backend_runtime.py:20: 
+src/builder/runtime/backend_runtime.py:21: def build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:22:     selected = sorted(pages if pages is not None else list(range(page_count)))
+src/builder/runtime/backend_runtime.py:23:     if not selected:
+src/builder/runtime/backend_runtime.py:24:         return []
+src/builder/runtime/backend_runtime.py:25:     return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+src/builder/runtime/backend_runtime.py:26: 
+src/builder/runtime/backend_runtime.py:27: 
+src/builder/runtime/backend_runtime.py:28: def build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+src/builder/runtime/backend_runtime.py:29:     return build_page_chunks(pages, page_count, chunk_size=chunk_size)
+src/builder/runtime/backend_runtime.py:30: 
+src/builder/runtime/backend_runtime.py:31: 
+src/builder/runtime/backend_runtime.py:32: def selected_page_count(ctx: "BackendContext") -> int:
+src/builder/runtime/backend_runtime.py:33:     if ctx.pages is not None:
+src/builder/runtime/backend_runtime.py:34:         return len(ctx.pages)
+src/builder/runtime/backend_runtime.py:35:     return max(int(ctx.report.page_count or 0), 0)
+src/builder/runtime/backend_runtime.py:36: 
+src/builder/runtime/backend_runtime.py:37: 

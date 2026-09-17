@@ -1,0 +1,144 @@
+[
+  {
+    "name": "graphify",
+    "startup_seconds": 1.8284667000043555,
+    "server": {
+      "name": "graphify",
+      "title": null,
+      "version": "0.9.42",
+      "description": null,
+      "website_url": null,
+      "icons": null
+    },
+    "tool": "get_neighbors",
+    "args": {
+      "label": "unit_short_label",
+      "token_budget": 2000
+    },
+    "trials": [
+      {
+        "seconds": 0.002977299998747185,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Neighbors of unit_short_label():\n  --> unit_number() [calls] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L26\n  <-- temporal_context.py [imports] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L12\n  <-- build_temporal_context_rows() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L77\n  <-- build_unit_legend() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L165\n  <-- unit_labels.py [contains] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L21\n  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L22\n  <-- timeline_dashboard.py [imports] [EXTRACTED] at=src/ui/timeline_dashboard.py:L21",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      },
+      {
+        "seconds": 0.00328579999768408,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Neighbors of unit_short_label():\n  --> unit_number() [calls] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L26\n  <-- temporal_context.py [imports] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L12\n  <-- build_temporal_context_rows() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L77\n  <-- build_unit_legend() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L165\n  <-- unit_labels.py [contains] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L21\n  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L22\n  <-- timeline_dashboard.py [imports] [EXTRACTED] at=src/ui/timeline_dashboard.py:L21",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      },
+      {
+        "seconds": 0.003104100003838539,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Neighbors of unit_short_label():\n  --> unit_number() [calls] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L26\n  <-- temporal_context.py [imports] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L12\n  <-- build_temporal_context_rows() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L77\n  <-- build_unit_legend() [calls] [EXTRACTED] at=src/builder/artifacts/temporal_context.py:L165\n  <-- unit_labels.py [contains] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L21\n  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] at=src/builder/timeline/unit_labels.py:L22\n  <-- timeline_dashboard.py [imports] [EXTRACTED] at=src/ui/timeline_dashboard.py:L21",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      }
+    ]
+  },
+  {
+    "name": "cbm",
+    "startup_seconds": 5.740099399998144,
+    "server": {
+      "name": "codebase-memory-mcp",
+      "title": null,
+      "version": "0.10.8",
+      "description": null,
+      "website_url": null,
+      "icons": null
+    },
+    "tool": "search_graph",
+    "args": {
+      "project": "codegraph-pilot-20260915",
+      "name_pattern": "^unit_short_label$",
+      "include_connected": true,
+      "limit": 30
+    },
+    "trials": [
+      {
+        "seconds": 0.024225200002547354,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "total: 1\nresults: 1  (rows: name label lines in out connected; qn = group prefix + \".\" + name)\ncodegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):\n  unit_short_label Function 21-27 3 2 build_temporal_context_rows;build_unit_legend;_populate;str;unit_number\nhas_more: false\n",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      },
+      {
+        "seconds": 0.008846800003084354,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "total: 1\nresults: 1  (rows: name label lines in out connected; qn = group prefix + \".\" + name)\ncodegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):\n  unit_short_label Function 21-27 3 2 build_temporal_context_rows;build_unit_legend;_populate;str;unit_number\nhas_more: false\n",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      },
+      {
+        "seconds": 0.022006500003044493,
+        "response": {
+          "meta": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "total: 1\nresults: 1  (rows: name label lines in out connected; qn = group prefix + \".\" + name)\ncodegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):\n  unit_short_label Function 21-27 3 2 build_temporal_context_rows;build_unit_legend;_populate;str;unit_number\nhas_more: false\n",
+              "annotations": null,
+              "meta": null
+            }
+          ],
+          "structured_content": null,
+          "is_error": false,
+          "result_type": "complete"
+        }
+      }
+    ]
+  }
+]

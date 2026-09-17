@@ -1,0 +1,2483 @@
+{
+  "summary": {
+    "CG": {
+      "counts": {
+        "comuns": 86,
+        "bloco_n": 35,
+        "bloco_base": 33,
+        "bloco_novo": 33,
+        "bloco_comum_n": 35,
+        "bloco_comum_base": 33,
+        "bloco_comum_novo": 33,
+        "unidade_n": 93,
+        "unidade_base": 81,
+        "unidade_novo": 70,
+        "unidade_comum_n": 86,
+        "unidade_comum_base": 75,
+        "unidade_comum_novo": 70,
+        "sub_aceito_n": 82,
+        "sub_aceito_base": 51,
+        "sub_aceito_novo": 42,
+        "sub_aceito_comum_n": 75,
+        "sub_aceito_comum_base": 47,
+        "sub_aceito_comum_novo": 42,
+        "sub_primario_n": 82,
+        "sub_primario_base": 37,
+        "sub_primario_novo": 28,
+        "sub_primario_comum_n": 75,
+        "sub_primario_comum_base": 33,
+        "sub_primario_comum_novo": 28,
+        "unidade_perdas": 12,
+        "sub_aceito_perdas": 10,
+        "sub_primario_perdas": 10,
+        "unidade_ganhos": 1,
+        "sub_aceito_ganhos": 1,
+        "sub_primario_ganhos": 1,
+        "entrada_ausente": 7,
+        "manifest_base": 93,
+        "manifest_novo": 86,
+        "novas_origens": 0
+      },
+      "changed_fields": {
+        "texto_extraido": 53,
+        "title": 16,
+        "category": 16
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "CG",
+      "entry_id": "intro",
+      "new_id": "intro",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\1 - origens da computação gráfica\\intro\\intro.htm",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        777,
+        777
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "origensdacomputacaografica",
+      "new_id": "origensdacomputacaografica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\1 - origens da computação gráfica\\origensdacomputacaografica.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5075,
+        3258
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "segmentacaopptx",
+      "new_id": "segmentacaopptx",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\10 - segmentação de imagens\\segmentacao.pptx.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11108,
+        5712
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "segmentacaodetexturas",
+      "new_id": "segmentacaodetexturas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\10 - segmentação de imagens\\segmentacaodetexturas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11779,
+        10634
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "morfologiamatematicapptx",
+      "new_id": "morfologiamatematicapptx",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\11 - morfologia matemática\\morfologiamatematica.pptx.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6717,
+        2560
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-08",
+        "unidade-06-processo-de-visualizacao-3d",
+        "a-matematica-das-projecoes-planares"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "csg",
+      "new_id": "csg",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\12 - modelagem geométrica\\csg.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        8644,
+        3953
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "geometria-solida-construtiva-csg"
+      ],
+      "pred_after": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "geometria-solida-construtiva-csg"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "modelagem3d",
+      "new_id": "modelagem3d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\12 - modelagem geométrica\\modelagem3d\\modelagem3d.htm",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11071,
+        9568
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "representacao-aramada"
+      ],
+      "pred_after": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "representacao-aramada"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "atividade",
+      "new_id": "atividade",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\atividade.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        295,
+        295
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-19",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ],
+      "pred_after": [
+        "bloco-19",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-py",
+      "new_id": "basico3d-py",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\basico3d-py.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "pipeline-de-visualizacao-3d"
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "pipeline-de-visualizacao-3d"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "opengl3d",
+      "new_id": "opengl3d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\opengl3d\\opengl3d.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6474,
+        5698
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "perspectiva"
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "opengl3dcpp-vdi",
+      "new_id": "opengl3dcpp-vdi",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\opengl3dcpp-vdi.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "opengl3dcpp",
+      "new_id": "opengl3dcpp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\opengl3dcpp.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "vis3d",
+      "new_id": "vis3d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\vis3d\\vis3d.htm",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13527,
+        11791
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-cpp",
+      "new_id": "basico3d-cpp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\14 - exercícios sobre modelagem geométrica\\basico3d-cpp.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-py-zip",
+      "new_id": "basico3d-py-zip",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\14 - exercícios sobre modelagem geométrica\\basico3d-py.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exerciciodemodelagem",
+      "new_id": "exerciciodemodelagem",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\14 - exercícios sobre modelagem geométrica\\exerciciodemodelagem.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5397,
+        5028
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "tecnicas-de-modelagem-3d"
+      ],
+      "pred_after": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "tecnicas-de-modelagem-3d"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "elemoculto",
+      "new_id": "elemoculto",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\15 - remoção de elementos ocultos\\elemoculto.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        32312,
+        21558
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exemplozbuffer",
+      "new_id": "exemplozbuffer",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\15 - remoção de elementos ocultos\\exemplozbuffer.pdf",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        2942,
+        2942
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmo-z-buffer"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "iluminacao",
+      "new_id": "iluminacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\16 - síntese de imagens realísticas\\iluminacao\\iluminacao.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11034,
+        7300
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ],
+      "pred_after": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "programabasico3d",
+      "new_id": "programabasico3d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\16 - síntese de imagens realísticas\\programabasico3d.cpp",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12885,
+        8849
+      ],
+      "gains": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "metodos-de-sombreamento-flat-gouraud-phong"
+      ],
+      "pred_after": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "maptextures",
+      "new_id": "maptextures",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\17 - mapeamento de texturas\\maptextures\\maptextures.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        4249,
+        4249
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios",
+      "new_id": "exercicios",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\2 - biblioteca opengl\\exercicios.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        456,
+        456
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "opengl-cpp",
+      "new_id": "opengl-cpp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\2 - biblioteca opengl\\opengl-cpp.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "opengl-py",
+      "new_id": "opengl-py",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\2 - biblioteca opengl\\opengl-py.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "openglbasico",
+      "new_id": "openglbasico",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\2 - biblioteca opengl\\openglbasico.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        19931,
+        19546
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "texturas-v3",
+      "new_id": "texturas-v3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\2 - biblioteca opengl\\texturas_v3.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exemplodemanipulacaodeimagens",
+      "new_id": "exemplodemanipulacaodeimagens",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\exemplodemanipulacaodeimagens.cpp",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        12149,
+        12149
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicio-com-animacao",
+      "new_id": "exercicio-com-animacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\exercicio-com-animacao.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        539,
+        539
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicio-com-poligonos",
+      "new_id": "exercicio-com-poligonos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\exercicio-com-poligonos.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        376,
+        376
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicio-de-animacao-foguete",
+      "new_id": "exercicio-de-animacao-foguete",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\exercicio-de-animacao-foguete.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        555,
+        555
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "fundamentosmatematicos",
+      "new_id": "fundamentosmatematicos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\fundamentosmatematicos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        26445,
+        17853
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "matematica",
+      "new_id": "matematica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\matematica.cpp",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        1275,
+        1275
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        ""
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "colisao",
+      "new_id": "colisao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\4 - detecção de colisão\\colisao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        20828,
+        13172
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-deteccao-e-calculo-de-interseccao"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-deteccao-e-calculo-de-interseccao"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "geomcomp",
+      "new_id": "geomcomp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\5 - geometria computacional\\geomcomp\\geomcomp.htm",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        754,
+        754
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "animacao-v2",
+      "new_id": "animacao-v2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\animacao-v2.zip",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11122,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+      "new_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\exercicios-teoricos-sobre-processo-de-visualizacao-2d.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        918,
+        918
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "instanciamento",
+      "new_id": "instanciamento",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\instanciamento.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        14613,
+        13010
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "mapeamento",
+      "new_id": "mapeamento",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\mapeamento.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5463,
+        4573
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-instanciamento",
+      "new_id": "pagina-com-videos-sobre-instanciamento",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\pagina-com-videos-sobre-instanciamento.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        9822,
+        9822
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "recorte",
+      "new_id": "recorte",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\recorte.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        8096,
+        6989
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "transformacoesgeometricas",
+      "new_id": "transformacoesgeometricas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\transformacoesgeometricas.zip",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11042,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "transformacoesgl",
+      "new_id": "transformacoesgl",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\transformacoesgl\\transformacoesgl.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        3616,
+        3616
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "sistema-de-coordenadas-cartesianas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "vis2d",
+      "new_id": "vis2d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\vis2d.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5932,
+        4592
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "bezier-animacao",
+      "new_id": "bezier-animacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\bezier-animacao.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "bezier-cpp",
+      "new_id": "bezier-cpp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\bezier-cpp.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "bezier-py",
+      "new_id": "bezier-py",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\bezier-py.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "bezier-python",
+      "new_id": "bezier-python",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\bezier-python.zip",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "bezier-e-algoritmo-de-casteljau"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "curvas",
+      "new_id": "curvas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\curvas\\curvas.htm",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12510,
+        8646
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "curvasparametricas",
+      "new_id": "curvasparametricas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\curvasparametricas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        23687,
+        15225
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "representacao-de-curvas-parametricas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "representacao-de-curvas-parametricas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-sobre-curvas",
+      "new_id": "exercicios-sobre-curvas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\exercicios-sobre-curvas.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        1148,
+        1148
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "floodfill",
+      "new_id": "floodfill",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\8 - manipulação de imagens\\floodfill\\floodfill.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1356,
+        1269
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "img",
+      "new_id": "img",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\8 - manipulação de imagens\\img\\img.htm",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11029,
+        8673
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "remocaoderuido",
+      "new_id": "remocaoderuido",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\8 - manipulação de imagens\\remocaoderuido\\remocaoderuido.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1893,
+        1778
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-de-processamento-de-imagens",
+      "new_id": "exercicios-de-processamento-de-imagens",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\9 - introdução ao processamento de imagens\\exercicios-de-processamento-de-imagens.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        466,
+        466
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "introducaoprocimg",
+      "new_id": "introducaoprocimg",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\9 - introdução ao processamento de imagens\\introducaoprocimg.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10351,
+        4533
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "filtros"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "filtros"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-de-geometria-computacional",
+      "new_id": "exercicios-de-geometria-computacional",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios 2d\\exercicios-de-geometria-computacional.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        722,
+        722
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-sobre-curvas-html",
+      "new_id": "exercicios-sobre-curvas-html",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios 2d\\exercicios-sobre-curvas.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        1148,
+        1148
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html",
+      "new_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios 2d\\exercicios-teoricos-sobre-processo-de-visualizacao-2d.html",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        918,
+        918
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ],
+      "pred_after": [
+        "",
+        "unidade-04-processo-de-visualizacao-2d",
+        "desenho-de-linhas"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exerciciosfundamentosmatematicos",
+      "new_id": "exerciciosfundamentosmatematicos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios 2d\\exerciciosfundamentosmatematicos\\exerciciosfundamentosmatematicos.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1758,
+        1037
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-fundamentos-matematicos",
+        "operacoes-com-vetores"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-2d",
+      "new_id": "resolucao-de-prova-de-computacao-grafica-2d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios 2d\\resolucao-de-prova-de-computacao-grafica-2d.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2918,
+        1757
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "conceitos-basicos-de-ray-tracing-e-radiosidade"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "listadeexercicios2026-1",
+      "new_id": "listadeexercicios2026-1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\exercícios para p2\\listadeexercícios2026-1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13050,
+        9291
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ],
+      "pred_after": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "cronograma2026-2",
+      "new_id": "cronograma2026-2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\plano de ensino\\cronograma2026-2.pdf",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        4034,
+        4034
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
+      "new_id": "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\plano de ensino\\planodeensino-4645z-04-fundamentos de computação gráfica.pdf",
+      "matched": true,
+      "observed_differences": [],
+      "text_chars": [
+        7494,
+        7494
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "videoscg-v2",
+      "new_id": "videoscg-v2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\plano de ensino\\videoscg-v2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11927,
+        11148
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "mapeamento-de-textura"
+      ],
+      "pred_after": [
+        "",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "mapeamento-de-textura"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-2d-html",
+      "new_id": "resolucao-de-prova-de-computacao-grafica-2d-html",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\provas resolvidas\\resolucao-de-prova-de-computacao-grafica-2d.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2968,
+        1807
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "conceitos-basicos-de-ray-tracing-e-radiosidade"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "new_id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\provas resolvidas\\resolucao-de-prova-de-computacao-grafica-3d.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6254,
+        1742
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "domina",
+      "new_id": "domina",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\5 - geometria computacional\\domina\\domina.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2013,
+        1730
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "planesweep",
+      "new_id": "planesweep",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\5 - geometria computacional\\planesweep\\planesweep.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        843,
+        345
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "slab",
+      "new_id": "slab",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\5 - geometria computacional\\slab\\slab.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2819,
+        2193
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicioduascores",
+      "new_id": "exercicioduascores",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\8 - manipulação de imagens\\exercicioduascores\\exercicioduascores.html",
+      "matched": true,
+      "observed_differences": [
+        "texto_extraido"
+      ],
+      "text_chars": [
+        740,
+        321
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-sobre-origens-da-computacao-grafica-806e66",
+      "new_id": null,
+      "source": "https://youtu.be/vjTe2O_Dvr0",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        407,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+      "new_id": null,
+      "source": "https://youtu.be/F8hUevviLw4",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        419,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "aplicacoes"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+      "new_id": null,
+      "source": "https://youtu.be/6PXnrjSxb-I",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        422,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-sobre-mapeamento-em-opengl-1dad3c",
+      "new_id": null,
+      "source": "https://youtu.be/PeJm70QOETU",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        397,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "aula-gravada-975b85",
+      "new_id": null,
+      "source": "https://youtu.be/Wlorjfqy7Uw",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        351,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-sobre-prechimento-de-areas-duracao-330-defae7",
+      "new_id": null,
+      "source": "https://www.youtube.com/watch?v=tY3DezWpDNw",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        412,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "areas-relacionadas"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "video-sobre-prechimento-de-areas-duracao-1300-d87e5f",
+      "new_id": null,
+      "source": "https://www.youtube.com/watch?v=M4a4wOZC1u0",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        368,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9",
+      "new_id": "pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\3 - fundamentos matemáticos para computação gráfica\\pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1524,
+        1531
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-poligonos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84",
+      "new_id": "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\4 - detecção de colisão\\videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2281,
+        2288
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-02-fundamentos-matematicos",
+        ""
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-02-fundamentos-matematicos",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-geometria-computacional-ebca9a",
+      "new_id": "pagina-com-videos-sobre-geometria-computacional-ebca9a",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\5 - geometria computacional\\pagina-com-videos-sobre-geometria-computacional-ebca9a.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        534,
+        541
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-fundamentos-matematicos",
+        "algoritmos-de-geometria-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-recorte-e257d3",
+      "new_id": "pagina-com-videos-sobre-recorte-e257d3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\pagina-com-videos-sobre-recorte-e257d3.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        275,
+        282
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+      "new_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\6 - processo de visualização 2d\\pagina-com-videos-sobre-mapeamento-9f410e.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        191,
+        198
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        ""
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-curvas-parametricas-63d902",
+      "new_id": "pagina-com-videos-sobre-curvas-parametricas-63d902",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\7 - curvas paramétricas\\pagina-com-videos-sobre-curvas-parametricas-63d902.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1670,
+        1677
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "hermite"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+      "new_id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\8 - manipulação de imagens\\pagina-com-videos-sobre-manipulacao-de-imagens-61ddde.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1101,
+        1108
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+      "new_id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\9 - introdução ao processamento de imagens\\pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1756,
+        1763
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "filtros"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "filtros"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+      "new_id": "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\10 - segmentação de imagens\\pagina-com-videos-sobre-segmentacao-de-imagens-d0627f.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        852,
+        859
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+      "new_id": "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\10 - segmentação de imagens\\pagina-com-videos-sobre-segmentacao-por-texturas-e03566.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1332,
+        1339
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "new_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\11 - morfologia matemática\\pagina-com-videos-sobre-morfologia-matematica-06265a.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        727,
+        734
+      ],
+      "gains": [],
+      "losses": [
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "segmentacao"
+      ],
+      "pred_after": [
+        "bloco-08",
+        "unidade-06-processo-de-visualizacao-3d",
+        "a-matematica-das-projecoes-planares"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "paginas-com-videos-sobre-modelagem-geometrica-f2614a",
+      "new_id": "paginas-com-videos-sobre-modelagem-geometrica-f2614a",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\12 - modelagem geométrica\\paginas-com-videos-sobre-modelagem-geometrica-f2614a.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1391,
+        1398
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "geometria-solida-construtiva-csg"
+      ],
+      "pred_after": [
+        "bloco-15",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "geometria-solida-construtiva-csg"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-visualizacao-3d-35a833",
+      "new_id": "pagina-com-videos-sobre-visualizacao-3d-35a833",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\13 - computação gráfica 3d\\pagina-com-videos-sobre-visualizacao-3d-35a833.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1895,
+        1902
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-06-processo-de-visualizacao-3d",
+        ""
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a",
+      "new_id": "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\15 - remoção de elementos ocultos\\pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        865,
+        872
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmos-de-remocao-de-elementos-ocultos"
+      ],
+      "pred_after": [
+        "bloco-20",
+        "unidade-06-processo-de-visualizacao-3d",
+        "algoritmos-de-remocao-de-elementos-ocultos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "new_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\16 - síntese de imagens realísticas\\pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1478,
+        1485
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ],
+      "pred_after": [
+        "bloco-21",
+        "unidade-08-sintese-de-imagens-realisticas",
+        "modelos-de-reflexao-ambiente-difusa-especular"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "new_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\computacao-grafica\\stash\\17 - mapeamento de texturas\\pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3.html",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "category",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        512,
+        519
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        ""
+      ],
+      "pred_after": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        ""
+      ]
+    }
+  ]
+}

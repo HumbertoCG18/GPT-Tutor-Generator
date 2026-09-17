@@ -1,0 +1,444 @@
+{
+  "courses": {
+    "ES2": {
+      "counts": {
+        "common": 31,
+        "bloco_n": 28,
+        "bloco_before": 11,
+        "bloco_after": 27,
+        "bloco_gains": 16,
+        "bloco_losses": 0,
+        "bloco_common_n": 28,
+        "unidade_n": 28,
+        "unidade_before": 26,
+        "unidade_after": 25,
+        "unidade_gains": 2,
+        "unidade_losses": 3,
+        "unidade_common_n": 28,
+        "sub_aceito_n": 28,
+        "sub_aceito_before": 2,
+        "sub_aceito_after": 8,
+        "sub_aceito_gains": 6,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 28,
+        "sub_primario_n": 28,
+        "sub_primario_before": 2,
+        "sub_primario_after": 7,
+        "sub_primario_gains": 5,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 28
+      },
+      "flips": [
+        {
+          "entry_id": "revisaoarquiteturapadroes",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "roteiro2-nameserver",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "servicos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "orientada-a-servicos"
+          ]
+        },
+        {
+          "entry_id": "web",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "cliente-servidor"
+          ]
+        },
+        {
+          "entry_id": "microsservicos5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "entrega-continua-cd"
+          ]
+        },
+        {
+          "entry_id": "microsservicos6",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-10",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "microsservicos7",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "roteiro2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-arquitetura-de-software",
+            ""
+          ]
+        },
+        {
+          "entry_id": "roteiro4-circuitbreaker",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-07",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "roteiro5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro5-conteiners",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro6",
+          "changes": {
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro7",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro7-filas",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "roteiro7-history-service",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro8-autenticacao-autorizacao",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-10",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "azure",
+          "changes": {
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro4",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-07",
+            "unidade-01-arquitetura-de-software",
+            ""
+          ]
+        }
+      ],
+      "source_hashes_checked": 35,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "d6c077bb13522e06a32a1f65bc974f11490db732d0a4fdde8c3310ded436d4ac",
+        "additive": {
+          "labels": 35,
+          "posting": 35,
+          "lessons": 18
+        },
+        "consumed": {
+          "sections": 35,
+          "card_labels": 4
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 35,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "devops",
+          "before_chars": 19863,
+          "after_chars": 20022
+        },
+        {
+          "id": "kubernetes",
+          "before_chars": 4080,
+          "after_chars": 4110
+        },
+        {
+          "id": "microsservicos",
+          "before_chars": 30988,
+          "after_chars": 30991
+        },
+        {
+          "id": "microsservicos3",
+          "before_chars": 5904,
+          "after_chars": 5910
+        },
+        {
+          "id": "microsservicos4",
+          "before_chars": 5992,
+          "after_chars": 5998
+        },
+        {
+          "id": "microsservicos5",
+          "before_chars": 10926,
+          "after_chars": 10938
+        },
+        {
+          "id": "microsservicos6",
+          "before_chars": 13830,
+          "after_chars": 13833
+        },
+        {
+          "id": "microsservicos7",
+          "before_chars": 11254,
+          "after_chars": 11278
+        },
+        {
+          "id": "roteiro2-nameserver",
+          "before_chars": 14063,
+          "after_chars": 14069
+        },
+        {
+          "id": "revisaoarquiteturapadroes",
+          "before_chars": 47107,
+          "after_chars": 47332
+        },
+        {
+          "id": "servicos",
+          "before_chars": 15803,
+          "after_chars": 15842
+        }
+      ]
+    }
+  },
+  "total": {
+    "common": 31,
+    "bloco_n": 28,
+    "bloco_before": 11,
+    "bloco_after": 27,
+    "bloco_gains": 16,
+    "bloco_losses": 0,
+    "bloco_common_n": 28,
+    "unidade_n": 28,
+    "unidade_before": 26,
+    "unidade_after": 25,
+    "unidade_gains": 2,
+    "unidade_losses": 3,
+    "unidade_common_n": 28,
+    "sub_aceito_n": 28,
+    "sub_aceito_before": 2,
+    "sub_aceito_after": 8,
+    "sub_aceito_gains": 6,
+    "sub_aceito_losses": 0,
+    "sub_aceito_common_n": 28,
+    "sub_primario_n": 28,
+    "sub_primario_before": 2,
+    "sub_primario_after": 7,
+    "sub_primario_gains": 5,
+    "sub_primario_losses": 0,
+    "sub_primario_common_n": 28
+  }
+}

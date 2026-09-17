@@ -1,0 +1,1282 @@
+{
+  "courses": {
+    "MF": {
+      "counts": {
+        "absent": 4,
+        "bloco_n": 66,
+        "bloco_before": 45,
+        "bloco_after": 50,
+        "bloco_gains": 9,
+        "bloco_losses": 4,
+        "unidade_n": 66,
+        "unidade_before": 59,
+        "unidade_after": 61,
+        "unidade_gains": 2,
+        "unidade_losses": 0,
+        "sub_aceito_n": 58,
+        "sub_aceito_before": 29,
+        "sub_aceito_after": 29,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_primario_n": 58,
+        "sub_primario_before": 25,
+        "sub_primario_after": 25,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "common": 62,
+        "bloco_common_n": 62,
+        "unidade_common_n": 62,
+        "sub_aceito_common_n": 57,
+        "sub_primario_common_n": 57
+      },
+      "flips": [
+        {
+          "entry_id": "revisao",
+          "changes": {
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-metodos-formais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-arvores",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "exerciciosisabelle2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "logicaproposicional-semantica",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-metodos-formais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exerciciosisabelle",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "provadores-de-teoremas"
+          ]
+        },
+        {
+          "entry_id": "t1-2026-1-thy",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-11",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exemplos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "exemplos-de-aplicacoes"
+          ]
+        },
+        {
+          "entry_id": "exerciciosdafny5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "correcao-parcial-e-total"
+          ]
+        },
+        {
+          "entry_id": "classes-parte1",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "invariante-e-variante-de-laco"
+          ]
+        },
+        {
+          "entry_id": "terminacao",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-11",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "tiposindutivos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "classes-parte2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "invariante-e-variante-de-laco"
+          ]
+        }
+      ],
+      "source_hashes_checked": 67,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "d3e23b602f59faf03438765b15b6d291c831604a4df2fb103cedf87006320afc",
+        "additive": {
+          "labels": 66,
+          "posting": 66,
+          "lessons": 39
+        },
+        "consumed": {
+          "sections": 66,
+          "card_labels": 7
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 67,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "exercicioslogicatemporal",
+          "before_chars": 3687,
+          "after_chars": 3643
+        },
+        {
+          "id": "verificacaomodelos",
+          "before_chars": 24081,
+          "after_chars": 23853
+        },
+        {
+          "id": "conjuntosindutivos",
+          "before_chars": 14443,
+          "after_chars": 14423
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao",
+          "before_chars": 14873,
+          "after_chars": 14865
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao2",
+          "before_chars": 2892,
+          "after_chars": 2888
+        },
+        {
+          "id": "introducao",
+          "before_chars": 12659,
+          "after_chars": 12563
+        },
+        {
+          "id": "exerciciosisabelle2",
+          "before_chars": 2929,
+          "after_chars": 2921
+        },
+        {
+          "id": "mcs",
+          "before_chars": 1857811,
+          "after_chars": 1854243
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas",
+          "before_chars": 6621,
+          "after_chars": 6617
+        },
+        {
+          "id": "logicapredicados-semantica",
+          "before_chars": 9352,
+          "after_chars": 9280
+        },
+        {
+          "id": "logicapredicados-sintaxe",
+          "before_chars": 10363,
+          "after_chars": 10279
+        },
+        {
+          "id": "logicaproposicional-semantica",
+          "before_chars": 12834,
+          "after_chars": 12726
+        },
+        {
+          "id": "logicaproposicional-sintaxe",
+          "before_chars": 9036,
+          "after_chars": 8964
+        },
+        {
+          "id": "revisao",
+          "before_chars": 8490,
+          "after_chars": 8402
+        },
+        {
+          "id": "formalizacaoalgoritmos-invarianteslaco",
+          "before_chars": 20860,
+          "after_chars": 20852
+        },
+        {
+          "id": "ieeesoftwaredafny2017",
+          "before_chars": 16902,
+          "after_chars": 16898
+        },
+        {
+          "id": "logicadehoare",
+          "before_chars": 14520,
+          "after_chars": 14508
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    },
+    "SO": {
+      "counts": {
+        "common": 39,
+        "bloco_n": 39,
+        "bloco_before": 29,
+        "bloco_after": 36,
+        "bloco_gains": 8,
+        "bloco_losses": 1,
+        "bloco_common_n": 39,
+        "unidade_n": 37,
+        "unidade_before": 23,
+        "unidade_after": 27,
+        "unidade_gains": 5,
+        "unidade_losses": 1,
+        "unidade_common_n": 37,
+        "sub_aceito_n": 15,
+        "sub_aceito_before": 5,
+        "sub_aceito_after": 8,
+        "sub_aceito_gains": 3,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 15,
+        "sub_primario_n": 15,
+        "sub_primario_before": 4,
+        "sub_primario_after": 7,
+        "sub_primario_gains": 3,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 15
+      },
+      "flips": [
+        {
+          "entry_id": "exercicios",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-02-gerencia-do-processador",
+            ""
+          ]
+        },
+        {
+          "entry_id": "apresentacao-da-disciplina",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "questoes-do-enade-sobre-sisop",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            "chamadas-de-sistema"
+          ]
+        },
+        {
+          "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            "chamadas-de-sistema"
+          ]
+        },
+        {
+          "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            "chamadas-de-sistema"
+          ]
+        },
+        {
+          "entry_id": "laminas-sockets-material-alternativo-em-pt",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ],
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-02-gerencia-do-processador",
+            "algoritmos-de-escalonamento"
+          ]
+        },
+        {
+          "entry_id": "programa",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+            ""
+          ]
+        }
+      ],
+      "source_hashes_checked": 42,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Sistemas-Operacionais-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "588743e0803f0cc62eced3a1ec3674899ca0ba87516ee5043a0c600485d9da52",
+        "additive": {
+          "labels": 40,
+          "posting": 40,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 2,
+          "card_labels": 1
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 42,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "2306-laminas-gerencia-de-arquivos",
+          "before_chars": 14050,
+          "after_chars": 14068
+        },
+        {
+          "id": "0206-laminas-gerencia-de-i-o-livro-texto",
+          "before_chars": 22413,
+          "after_chars": 22506
+        },
+        {
+          "id": "0206-laminas-mecanismos-de-interrupcao",
+          "before_chars": 12969,
+          "after_chars": 12972
+        },
+        {
+          "id": "2603-algoritmos-de-escalonamento",
+          "before_chars": 23170,
+          "after_chars": 23383
+        },
+        {
+          "id": "1404-laminas-ipc",
+          "before_chars": 17388,
+          "after_chars": 17391
+        },
+        {
+          "id": "laminas-sockets-material-alternativo-em-pt",
+          "before_chars": 15716,
+          "after_chars": 15728
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    },
+    "ES2": {
+      "counts": {
+        "common": 31,
+        "bloco_n": 28,
+        "bloco_before": 11,
+        "bloco_after": 27,
+        "bloco_gains": 16,
+        "bloco_losses": 0,
+        "bloco_common_n": 28,
+        "unidade_n": 28,
+        "unidade_before": 26,
+        "unidade_after": 25,
+        "unidade_gains": 2,
+        "unidade_losses": 3,
+        "unidade_common_n": 28,
+        "sub_aceito_n": 28,
+        "sub_aceito_before": 2,
+        "sub_aceito_after": 8,
+        "sub_aceito_gains": 6,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 28,
+        "sub_primario_n": 28,
+        "sub_primario_before": 2,
+        "sub_primario_after": 7,
+        "sub_primario_gains": 5,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 28
+      },
+      "flips": [
+        {
+          "entry_id": "revisaoarquiteturapadroes",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "roteiro2-nameserver",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "servicos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "orientada-a-servicos"
+          ]
+        },
+        {
+          "entry_id": "web",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-01",
+            "unidade-01-arquitetura-de-software",
+            "cliente-servidor"
+          ]
+        },
+        {
+          "entry_id": "microsservicos5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "entrega-continua-cd"
+          ]
+        },
+        {
+          "entry_id": "microsservicos6",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-10",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "microsservicos7",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "roteiro2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-arquitetura-de-software",
+            ""
+          ]
+        },
+        {
+          "entry_id": "roteiro4-circuitbreaker",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-07",
+            "unidade-01-arquitetura-de-software",
+            "estilos-e-padroes-arquiteturais"
+          ]
+        },
+        {
+          "entry_id": "roteiro5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro5-conteiners",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro6",
+          "changes": {
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro7",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro7-filas",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "roteiro7-history-service",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "sub_aceito": [
+              0,
+              1
+            ],
+            "sub_primario": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-09",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro8-autenticacao-autorizacao",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-10",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "gerenciamento-da-configuracao"
+          ]
+        },
+        {
+          "entry_id": "azure",
+          "changes": {
+            "unidade": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-08",
+            "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+            "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+          ]
+        },
+        {
+          "entry_id": "roteiro4",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-07",
+            "unidade-01-arquitetura-de-software",
+            ""
+          ]
+        }
+      ],
+      "source_hashes_checked": 35,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Engenharia-Software-2-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "d6c077bb13522e06a32a1f65bc974f11490db732d0a4fdde8c3310ded436d4ac",
+        "additive": {
+          "labels": 35,
+          "posting": 35,
+          "lessons": 18
+        },
+        "consumed": {
+          "sections": 35,
+          "card_labels": 4
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 35,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "devops",
+          "before_chars": 19863,
+          "after_chars": 20022
+        },
+        {
+          "id": "kubernetes",
+          "before_chars": 4080,
+          "after_chars": 4110
+        },
+        {
+          "id": "microsservicos",
+          "before_chars": 30988,
+          "after_chars": 30991
+        },
+        {
+          "id": "microsservicos3",
+          "before_chars": 5904,
+          "after_chars": 5910
+        },
+        {
+          "id": "microsservicos4",
+          "before_chars": 5992,
+          "after_chars": 5998
+        },
+        {
+          "id": "microsservicos5",
+          "before_chars": 10926,
+          "after_chars": 10938
+        },
+        {
+          "id": "microsservicos6",
+          "before_chars": 13830,
+          "after_chars": 13833
+        },
+        {
+          "id": "microsservicos7",
+          "before_chars": 11254,
+          "after_chars": 11278
+        },
+        {
+          "id": "roteiro2-nameserver",
+          "before_chars": 14063,
+          "after_chars": 14069
+        },
+        {
+          "id": "revisaoarquiteturapadroes",
+          "before_chars": 47107,
+          "after_chars": 47332
+        },
+        {
+          "id": "servicos",
+          "before_chars": 15803,
+          "after_chars": 15842
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    },
+    "TCC": {
+      "counts": {
+        "common": 27,
+        "bloco_n": 27,
+        "bloco_before": 26,
+        "bloco_after": 26,
+        "bloco_gains": 0,
+        "bloco_losses": 0,
+        "bloco_common_n": 27,
+        "unidade_n": 18,
+        "unidade_before": 17,
+        "unidade_after": 17,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "unidade_common_n": 18,
+        "sub_aceito_n": 11,
+        "sub_aceito_before": 9,
+        "sub_aceito_after": 9,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 11,
+        "sub_primario_n": 11,
+        "sub_primario_before": 7,
+        "sub_primario_after": 7,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 11
+      },
+      "flips": [],
+      "source_hashes_checked": 27,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\TCC-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "ac7a829da06e1e60ca8fd80430937e58de6dec051be09911cce89360325e5fab",
+        "additive": {
+          "labels": 25,
+          "posting": 25,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 3,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 27,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "3d-matching",
+          "before_chars": 11163,
+          "after_chars": 11184
+        },
+        {
+          "id": "3dm-caetano-gabriel-e-gustavo",
+          "before_chars": 11940,
+          "after_chars": 11961
+        },
+        {
+          "id": "integer-programming-0001",
+          "before_chars": 8278,
+          "after_chars": 8281
+        },
+        {
+          "id": "programacao-inteira-01-20260617-154423-0000",
+          "before_chars": 9284,
+          "after_chars": 9287
+        },
+        {
+          "id": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais",
+          "before_chars": 25514,
+          "after_chars": 25517
+        },
+        {
+          "id": "aula-05-minimizacao-de-funcoes-recursivas-parciais",
+          "before_chars": 22092,
+          "after_chars": 22095
+        },
+        {
+          "id": "aula-14-problema-da-correspondencia-de-post",
+          "before_chars": 16280,
+          "after_chars": 16283
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    },
+    "CG": {
+      "counts": {
+        "common": 86,
+        "bloco_n": 35,
+        "bloco_before": 33,
+        "bloco_after": 33,
+        "bloco_gains": 0,
+        "bloco_losses": 0,
+        "bloco_common_n": 35,
+        "unidade_n": 93,
+        "unidade_before": 70,
+        "unidade_after": 70,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "unidade_common_n": 86,
+        "sub_aceito_n": 82,
+        "sub_aceito_before": 42,
+        "sub_aceito_after": 42,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 75,
+        "sub_primario_n": 82,
+        "sub_primario_before": 28,
+        "sub_primario_after": 28,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 75,
+        "absent": 7
+      },
+      "flips": [],
+      "source_hashes_checked": 86,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Computacao-Grafica-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "37768b7f230cd28b3a20a266888576cca3415f8dac6dbad4bc9cdcf2eafd868c",
+        "additive": {
+          "labels": 0,
+          "posting": 32,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 31,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 86,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "origensdacomputacaografica",
+          "before_chars": 3258,
+          "after_chars": 3253
+        },
+        {
+          "id": "segmentacaodetexturas",
+          "before_chars": 10634,
+          "after_chars": 10599
+        },
+        {
+          "id": "csg",
+          "before_chars": 3953,
+          "after_chars": 3943
+        },
+        {
+          "id": "elemoculto",
+          "before_chars": 21558,
+          "after_chars": 21438
+        },
+        {
+          "id": "fundamentosmatematicos",
+          "before_chars": 17853,
+          "after_chars": 17798
+        },
+        {
+          "id": "colisao",
+          "before_chars": 13172,
+          "after_chars": 13057
+        },
+        {
+          "id": "instanciamento",
+          "before_chars": 13010,
+          "after_chars": 12990
+        },
+        {
+          "id": "mapeamento",
+          "before_chars": 4573,
+          "after_chars": 4563
+        },
+        {
+          "id": "recorte",
+          "before_chars": 6989,
+          "after_chars": 6984
+        },
+        {
+          "id": "curvasparametricas",
+          "before_chars": 15225,
+          "after_chars": 15205
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    },
+    "FR": {
+      "counts": {
+        "common": 18,
+        "sub_aceito_n": 18,
+        "sub_aceito_before": 7,
+        "sub_aceito_after": 7,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 18,
+        "sub_primario_n": 18,
+        "sub_primario_before": 6,
+        "sub_primario_after": 6,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 18
+      },
+      "flips": [],
+      "source_hashes_checked": 20,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Fundamentos-de-Redes-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "e59719f6b092b45f2f0c49ab9445d800ef3510a5605a8beb0102f72f69a32a1c",
+        "additive": {
+          "labels": 0,
+          "posting": 20,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 20,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 20,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "03-tipos-de-redes",
+          "before_chars": 7341,
+          "after_chars": 7323
+        },
+        {
+          "id": "04-protocolo-http",
+          "before_chars": 23889,
+          "after_chars": 23883
+        },
+        {
+          "id": "07-protocolos-de-e-mail",
+          "before_chars": 12907,
+          "after_chars": 12895
+        },
+        {
+          "id": "08-desenvolvimento-de-aplicacoes",
+          "before_chars": 5729,
+          "after_chars": 5663
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    }
+  },
+  "total": {
+    "absent": 11,
+    "bloco_n": 195,
+    "bloco_before": 144,
+    "bloco_after": 172,
+    "bloco_gains": 33,
+    "bloco_losses": 5,
+    "unidade_n": 242,
+    "unidade_before": 195,
+    "unidade_after": 200,
+    "unidade_gains": 9,
+    "unidade_losses": 4,
+    "sub_aceito_n": 212,
+    "sub_aceito_before": 94,
+    "sub_aceito_after": 103,
+    "sub_aceito_gains": 9,
+    "sub_aceito_losses": 0,
+    "sub_primario_n": 212,
+    "sub_primario_before": 72,
+    "sub_primario_after": 80,
+    "sub_primario_gains": 8,
+    "sub_primario_losses": 0,
+    "common": 263,
+    "bloco_common_n": 191,
+    "unidade_common_n": 231,
+    "sub_aceito_common_n": 204,
+    "sub_primario_common_n": 204
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "courses": {
+    "FR": {
+      "counts": {
+        "common": 18,
+        "sub_aceito_n": 18,
+        "sub_aceito_before": 7,
+        "sub_aceito_after": 7,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 18,
+        "sub_primario_n": 18,
+        "sub_primario_before": 6,
+        "sub_primario_after": 6,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 18
+      },
+      "flips": [],
+      "source_hashes_checked": 20,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Fundamentos-de-Redes-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "e59719f6b092b45f2f0c49ab9445d800ef3510a5605a8beb0102f72f69a32a1c",
+        "additive": {
+          "labels": 0,
+          "posting": 20,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 20,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 20,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "03-tipos-de-redes",
+          "before_chars": 7341,
+          "after_chars": 7323
+        },
+        {
+          "id": "04-protocolo-http",
+          "before_chars": 23889,
+          "after_chars": 23883
+        },
+        {
+          "id": "07-protocolos-de-e-mail",
+          "before_chars": 12907,
+          "after_chars": 12895
+        },
+        {
+          "id": "08-desenvolvimento-de-aplicacoes",
+          "before_chars": 5729,
+          "after_chars": 5663
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    }
+  },
+  "total": {
+    "common": 18,
+    "sub_aceito_n": 18,
+    "sub_aceito_before": 7,
+    "sub_aceito_after": 7,
+    "sub_aceito_gains": 0,
+    "sub_aceito_losses": 0,
+    "sub_aceito_common_n": 18,
+    "sub_primario_n": 18,
+    "sub_primario_before": 6,
+    "sub_primario_after": 6,
+    "sub_primario_gains": 0,
+    "sub_primario_losses": 0,
+    "sub_primario_common_n": 18
+  }
+}

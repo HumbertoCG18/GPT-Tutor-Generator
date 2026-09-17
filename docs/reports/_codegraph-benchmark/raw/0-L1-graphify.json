@@ -1,0 +1,17 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "unit_short_label",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6263534999961848,
+    "returncode": 0,
+    "stdout": "Node: unit_short_label()\n  ID:        src_builder_timeline_unit_labels_unit_short_label\n  Source:    src/builder/timeline/unit_labels.py L21\n  Type:      code\n  Community: \n  Degree:    7\n\nConnections (7):\n  <-- timeline_dashboard.py [imports] [EXTRACTED] src/ui/timeline_dashboard.py:L21\n  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12\n  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L165\n  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L21\n  --> unit_number() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26\n  <-- build_temporal_context_rows() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L77\n  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L22\n",
+    "stderr": ""
+  }
+]

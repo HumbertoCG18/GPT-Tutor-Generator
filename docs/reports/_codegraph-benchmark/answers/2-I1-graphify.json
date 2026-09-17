@@ -1,0 +1,13 @@
+{
+  "id": "I1",
+  "arm": "graphify",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 9.42237419999583,
+  "returncode": 0,
+  "evidence_sha256": "99a7a0dee1cf2e5f3e2814f78bb643975965009c7c433ef3f5a90c57c1f3e6dd",
+  "prompt_chars": 8634,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77e-7ec3-7d11-822b-c821f8f8556b\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/builder/artifacts/temporal_context.py:build_temporal_context_rows\\\",\\\"src/builder/artifacts/temporal_context.py:build_unit_legend\\\",\\\"src/ui/timeline_dashboard.py:TimelineDashboardView._populate\\\"],\\\"evidence\\\":[\\\"src/builder/artifacts/temporal_context.py:77\\\",\\\"src/builder/artifacts/temporal_context.py:80\\\",\\\"src/builder/artifacts/temporal_context.py:165\\\",\\\"src/ui/timeline_dashboard.py:789\\\",\\\"src/ui/timeline_dashboard.py:794\\\"],\\\"caveat\\\":\\\"\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":21271,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":121,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

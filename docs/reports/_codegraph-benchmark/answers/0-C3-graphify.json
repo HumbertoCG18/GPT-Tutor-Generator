@@ -1,0 +1,13 @@
+{
+  "id": "C3",
+  "arm": "graphify",
+  "rep": 0,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 6.627668599998287,
+  "returncode": 0,
+  "evidence_sha256": "1ad66afe30c96b26b3b6dc308cd2d5acbfabfbb4ebfdc2847c9479760b638254",
+  "prompt_chars": 11987,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76a-365d-75b3-95bb-d9f143a255dd\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/ui/maintenance_panel.py:MaintenancePanel.refresh\\\",\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep\\\"],\\\"evidence\\\":[\\\"src/ui/maintenance_panel.py:77\\\",\\\"src/ui/maintenance_panel.py:80\\\"],\\\"caveat\\\":\\\"\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":22113,\"cached_input_tokens\":11648,\"cache_write_input_tokens\":0,\"output_tokens\":61,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

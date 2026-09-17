@@ -1,0 +1,13 @@
+{
+  "id": "P3",
+  "arm": "graphify",
+  "rep": 0,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 12.07152109999879,
+  "returncode": 0,
+  "evidence_sha256": "7c85673a14a08912412316743642510f4031f372de49672ddafabacd00fff95a",
+  "prompt_chars": 12764,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a76a-980c-7453-855f-cd801f2118a1\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep\\\",\\\"src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker\\\",\\\"src/builder/engine.py:RepoBuilder.sweep_orphans\\\",\\\"src/builder/ops/lifecycle_ops.py:sweep_orphans\\\"],\\\"evidence\\\":[\\\"src/ui/maintenance_panel.py:147\\\",\\\"src/ui/maintenance_panel.py:184\\\",\\\"src/ui/maintenance_panel.py:168\\\",\\\"src/ui/maintenance_panel.py:170\\\",\\\"src/ui/maintenance_panel.py:174\\\",\\\"src/builder/engine.py:2218\\\",\\\"src/builder/engine.py:2219\\\",\\\"src/builder/engine.py:152\\\",\\\"src/builder/ops/lifecycle_ops.py:263\\\"],\\\"caveat\\\":\\\"Cadeia pressupõe que self._make_builder() retorne uma instância de RepoBuilder; a evidência não confirma esse tipo. O worker executa em thread após passar pelas guardas e pela confirmação.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":22361,\"cached_input_tokens\":14592,\"cache_write_input_tokens\":0,\"output_tokens\":204,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

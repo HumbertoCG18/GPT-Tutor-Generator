@@ -1,0 +1,1248 @@
+{
+  "summary": {
+    "IA": {
+      "counts": {
+        "entrada_ausente": 2,
+        "bloco_n": 42,
+        "bloco_base": 41,
+        "bloco_novo": 25,
+        "bloco_perdas": 17,
+        "unidade_n": 42,
+        "unidade_base": 42,
+        "unidade_novo": 39,
+        "unidade_perdas": 3,
+        "comuns": 40,
+        "bloco_comum_n": 40,
+        "bloco_comum_base": 39,
+        "bloco_comum_novo": 25,
+        "unidade_comum_n": 40,
+        "unidade_comum_base": 40,
+        "unidade_comum_novo": 39,
+        "sub_aceito_n": 39,
+        "sub_aceito_base": 5,
+        "sub_aceito_novo": 5,
+        "sub_aceito_comum_n": 39,
+        "sub_aceito_comum_base": 5,
+        "sub_aceito_comum_novo": 5,
+        "sub_primario_n": 39,
+        "sub_primario_base": 4,
+        "sub_primario_novo": 4,
+        "sub_primario_comum_n": 39,
+        "sub_primario_comum_base": 4,
+        "sub_primario_comum_novo": 4,
+        "bloco_ganhos": 1,
+        "manifest_base": 59,
+        "manifest_novo": 61,
+        "novas_origens": 4
+      },
+      "changed_fields": {
+        "category": 11,
+        "moodle_label": 40,
+        "posting_date": 40,
+        "texto_extraido": 15,
+        "manual_timeline_block_id": 2
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "IA",
+      "entry_id": "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+      "new_id": null,
+      "source": "https://www.oracle.com/br/artificial-intelligence/what-is-ai/",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        16381,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-de-aprendizagem-01-visao-geral",
+        "breve-historico-de-ia"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "ia-responsável-7c4626",
+      "new_id": null,
+      "source": "https://www.microsoft.com/pt-br/ai/responsible-ai?activetab=pivot1:primaryr6",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        249,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-de-aprendizagem-01-visao-geral",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "visao-geral-introducao-e-historico",
+      "new_id": "visao-geral-introducao-e-historico",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 1 - 02.03 a 06.03 - plano de ensino e introdução a ia\\visão geral - introdução e histórico.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        80392,
+        27604
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-de-aprendizagem-01-visao-geral",
+        "conceituacao"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron",
+      "new_id": "rede-perceptron",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        111512,
+        31816
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "mlp",
+      "new_id": "mlp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\mlp.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        163856,
+        71103
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "arvores-de-decisao",
+      "new_id": "arvores-de-decisao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 7 - 13.04 a 17.04 - ml - aprendizado supervisionado\\árvores de decisão.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        139132,
+        55392
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "aula-sobre-agrupamento-parte-1-particional",
+      "new_id": "aula-sobre-agrupamento-parte-1-particional",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 8 - 20.04 a 24.04 - ml - aprendizado não supervisionado\\aula sobre agrupamento - parte 1 (particional).pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        56734,
+        42947
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "aula-sobre-agrupamento-parte-2-hierarquico",
+      "new_id": "aula-sobre-agrupamento-parte-2-hierarquico",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 9 - 27.04 a 01.05 - ml - aprendizado não supervisionado\\aula sobre agrupamento - parte 2 (hierarquico).pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        89225,
+        38182
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "caracteristicas-dos-dados",
+      "new_id": "caracteristicas-dos-dados",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 2 - 09.03 a 13.03 - introdução a ia (continuação) e introdução a ml\\características dos dados.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        57871,
+        23637
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "introducao-a-ml",
+      "new_id": "introducao-a-ml",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 2 - 09.03 a 13.03 - introdução a ia (continuação) e introdução a ml\\introdução a ml.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        65166,
+        33204
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "algoritmo-de-classificacao-k-nn",
+      "new_id": "algoritmo-de-classificacao-k-nn",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\algoritmo de classificação k-nn.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        37779,
+        15021
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "analise-exploratoria-dos-dados-exemplo-2",
+      "new_id": "analise-exploratoria-dos-dados-exemplo-2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\analise exploratória dos dados - exemplo 2.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        8070,
+        8070
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "artigo-usando-k-nn-em-texto",
+      "new_id": "artigo-usando-k-nn-em-texto",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\artigo usando k-nn em texto.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        41219,
+        35901
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-de-programa-com-k-nn-em-java",
+      "new_id": "exemplo-de-programa-com-k-nn-em-java",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\exemplo de programa com k-nn (em java).zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "introducao-a-redes-neurais",
+      "new_id": "introducao-a-redes-neurais",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\introducao a redes neurais.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        39616,
+        12499
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-e-equacao-de-reta",
+      "new_id": "rede-perceptron-e-equacao-de-reta",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\rede perceptron e equação de reta.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        4351,
+        3424
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "como-analisar-resultados-acc-pr-re-e-f1",
+      "new_id": "como-analisar-resultados-acc-pr-re-e-f1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 6 - 06.04 a 10.04 - ml - aprendizado supervisionado\\como analisar resultados acc, pr, re e f1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        27905,
+        73372
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "new_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 8 - 20.04 a 24.04 - ml - aprendizado não supervisionado\\agrupamento usando k-means exemplo 1 (.ipynb).ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        7648,
+        7648
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "agrupamento-usando-k-means-exemplo-2-ipynb",
+      "new_id": "agrupamento-usando-k-means-exemplo-2-ipynb",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 8 - 20.04 a 24.04 - ml - aprendizado não supervisionado\\agrupamento usando k-means exemplo 2 (.ipynb).ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        9177,
+        9177
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "artigo-usando-agrupamento",
+      "new_id": "artigo-usando-agrupamento",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 8 - 20.04 a 24.04 - ml - aprendizado não supervisionado\\artigo usando agrupamento.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        25951,
+        23844
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "survey-on-clustering",
+      "new_id": "survey-on-clustering",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 8 - 20.04 a 24.04 - ml - aprendizado não supervisionado\\survey on clustering.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        94725,
+        74832
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "analise-exploratoria-de-dados-exemplo-1",
+      "new_id": "analise-exploratoria-de-dados-exemplo-1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\análise exploratória de dados - exemplo 1.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        11077,
+        11077
+      ],
+      "gains": [
+        "bloco"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "new_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\exemplo 2 k-nn (com iris.csv) - mais completo.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        8048,
+        8048
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-com-k-nn",
+      "new_id": "exemplo-com-k-nn",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 3 - 16.03 a 20.03 - machine learning e dados\\exemplo com k-nn.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        5994,
+        5994
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exercicio-2-solucao-com-rede-perceptron-atualizado",
+      "new_id": "exercicio-2-solucao-com-rede-perceptron-atualizado",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\exercicio 2 - solução com rede perceptron (atualizado).ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        9907,
+        9907
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "k-nn-para-classificacao-exemplo-cardio",
+      "new_id": "k-nn-para-classificacao-exemplo-cardio",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\k-nn para classificação exemplo cardio.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        7572,
+        7572
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "k-nn-para-regressao-exemplo-imc",
+      "new_id": "k-nn-para-regressao-exemplo-imc",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\k-nn para regressão exemplo imc.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        4981,
+        4981
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-classificacao-planta-iris",
+      "new_id": "rede-perceptron-classificacao-planta-iris",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron - classificacao - planta iris.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        9892,
+        9892
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-classificacao-de-cliente",
+      "new_id": "rede-perceptron-classificacao-de-cliente",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron - classificacao de cliente.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        8700,
+        8700
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-exemplo-atualizado",
+      "new_id": "rede-perceptron-exemplo-atualizado",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron - exemplo atualizado.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        4842,
+        4842
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-or-em-python",
+      "new_id": "rede-perceptron-or-em-python",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron - or em python.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        3100,
+        3100
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "rede-perceptron-reconhecendo-letras",
+      "new_id": "rede-perceptron-reconhecendo-letras",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 4 - 23.03 a 27.03 - machine learning aprendizado supervisionado\\rede perceptron - reconhecendo letras.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        6769,
+        6769
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "mlp-xoripynb",
+      "new_id": "mlp-xoripynb",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\mlp - xor.ipynb.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        3756,
+        3756
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "new_id": "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\mlp classificação - inadimplência (normalização e gridsearchcv).ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        11421,
+        11421
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "mlp-classificacao-iris-atualizado",
+      "new_id": "mlp-classificacao-iris-atualizado",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\mlp classificação - iris atualizado.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        10251,
+        10251
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "mlp-regressao-cardio",
+      "new_id": "mlp-regressao-cardio",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\mlp regressão - cardio.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        9760,
+        9760
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "xor-backpropagation-em-python",
+      "new_id": "xor-backpropagation-em-python",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 5 -30.03 a 01.04 ml - aprendizado supervisionado\\xor - backpropagation em python.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        7556,
+        7556
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "new_id": "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 7 - 13.04 a 17.04 - ml - aprendizado supervisionado\\exemplo 1 - árvores de decisão classificação - planta iris.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        3949,
+        3949
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "new_id": "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 7 - 13.04 a 17.04 - ml - aprendizado supervisionado\\exemplo 2 - arvores de decisão - regressão - diabetes.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        3678,
+        3678
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "exemplo-complementar-classificacao-com-arvores-de-decisao",
+      "new_id": "exemplo-complementar-classificacao-com-arvores-de-decisao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 7 - 13.04 a 17.04 - ml - aprendizado supervisionado\\exemplo complementar - classificação com árvores de decisão.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        3581,
+        3581
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "metricas-de-avaliacao"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "metricas-de-avaliacao"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "agrupamento-hierarquico-exemplo-1",
+      "new_id": "agrupamento-hierarquico-exemplo-1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 9 - 27.04 a 01.05 - ml - aprendizado não supervisionado\\agrupamento hierarquico - exemplo 1.ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        5058,
+        5058
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    },
+    {
+      "curso": "IA",
+      "entry_id": "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+      "new_id": "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\inteligencia-artificial\\semana 9 - 27.04 a 01.05 - ml - aprendizado não supervisionado\\agrupamento hierarquico - exemplo 2 (use o dataset da planta iris).ipynb",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        7493,
+        7493
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "introducao-ao-aprendizado-de-maquina"
+      ]
+    }
+  ]
+}

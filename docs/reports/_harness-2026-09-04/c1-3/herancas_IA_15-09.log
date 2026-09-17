@@ -1,0 +1,6 @@
+IA: comuns=40 ausentes=2 ambiguos=0 novas_origens=4
+  bloco: base=41/42 novo=25/42 ganhos=1 perdas=17 | comuns=39->25/40
+  unidade: base=42/42 novo=39/42 ganhos=0 perdas=3 | comuns=40->39/40
+  sub_aceito: base=5/39 novo=5/39 ganhos=0 perdas=0 | comuns=5->5/39
+  sub_primario: base=4/39 novo=4/39 ganhos=0 perdas=0 | comuns=4->4/39
+  diferencas observadas (nao causas isoladas): {'category': 11, 'moodle_label': 40, 'posting_date': 40, 'texto_extraido': 15, 'manual_timeline_block_id': 2}

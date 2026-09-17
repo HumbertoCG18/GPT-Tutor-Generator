@@ -1,0 +1,6 @@
+ES2: comuns=31 ausentes=0 ambiguos=0 novas_origens=0
+  bloco: base=27/28 novo=11/28 ganhos=0 perdas=16 | comuns=27->11/28
+  unidade: base=24/28 novo=26/28 ganhos=4 perdas=2 | comuns=24->26/28
+  sub_aceito: base=16/28 novo=2/28 ganhos=0 perdas=14 | comuns=16->2/28
+  sub_primario: base=14/28 novo=2/28 ganhos=0 perdas=12 | comuns=14->2/28
+  diferencas observadas (nao causas isoladas): {'category': 22, 'moodle_label': 31, 'posting_date': 31, 'texto_extraido': 23, 'manual_timeline_block_id': 1}

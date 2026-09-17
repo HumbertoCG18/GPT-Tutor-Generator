@@ -1,0 +1,77 @@
+DISCOVERY
+GRAPHIFY
+Node: unit_number()
+  ID:        src_builder_timeline_unit_labels_unit_number
+  Source:    src/builder/timeline/unit_labels.py L15
+  Type:      code
+  Community: 
+  Degree:    5
+
+Connections (5):
+  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12
+  <-- unit_short_label() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26
+  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L161
+  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L15
+  <-- Número da unidade no slug, ou None se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L16
+
+CBM
+total: 7
+results: 7  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.artifacts.student_state (src/builder/artifacts/student_state.py):
+  _unit_number_from_title Function 106-110 1 1 _topic_outline_label;int
+codegraph-pilot-20260915.src.builder.routing.file_map (src/builder/routing/file_map.py):
+  _unit_number_from_slug Function 454-456 2 3 unit_named_by_section;auto_map_entry_unit;str;int
+  explicit_unit_number Function 444-451 2 4 unit_named_by_section;auto_map_entry_unit;str;int;get
+codegraph-pilot-20260915.src.builder.timeline (src/builder/timeline/index.py):
+  _extract_declared_unit_numbers Function 998-1033 1 4 _parse_assessments_from_teaching_plan;int;list;append;normalize_match_text
+  _timeline_unit_number_from_text Function 475-485 1 2 _assessment_scope_unit_slugs;int;normalize_match_text
+  _timeline_unit_number_from_unit Function 488-496 1 3 _assessment_scope_unit_slugs;str;int;get
+codegraph-pilot-20260915.src.builder.timeline.unit_labels (src/builder/timeline/unit_labels.py):
+  unit_number Function 15-18 2 3 temporal_context.py;unit_short_label;str;int
+has_more: false
+
+function: unit_number
+direction: both
+callees_total: 2
+callees: 2  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+builtins:
+  int 1 lsp 0.88
+  str 1 lsp 0.88
+callers_total: 5
+callers: 5  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.artifacts.temporal_context:
+  build_temporal_context_rows 2 lsp 0.97
+  build_unit_legend 2 lsp 0.97
+codegraph-pilot-20260915.src.builder.artifacts.temporal_context.py:
+  __file__ 1 heuristic 0.95
+codegraph-pilot-20260915.src.builder.timeline.unit_labels:
+  unit_short_label 1 lsp 0.97
+codegraph-pilot-20260915.src.ui.timeline_dashboard.TimelineDashboardView:
+  _populate 2 lsp 0.97
+
+SOURCE VERIFICATION
+src/builder/timeline/unit_labels.py:10: from typing import Optional
+src/builder/timeline/unit_labels.py:11: 
+src/builder/timeline/unit_labels.py:12: _UNIT_NUM_RE = re.compile(r"unidade[-_\s]*0*(\d+)", re.IGNORECASE)
+src/builder/timeline/unit_labels.py:13: 
+src/builder/timeline/unit_labels.py:14: 
+src/builder/timeline/unit_labels.py:15: def unit_number(slug: str) -> Optional[int]:
+src/builder/timeline/unit_labels.py:16:     """Número da unidade no slug, ou None se não casar o padrão."""
+src/builder/timeline/unit_labels.py:17:     m = _UNIT_NUM_RE.search(str(slug or ""))
+src/builder/timeline/unit_labels.py:18:     return int(m.group(1)) if m else None
+src/builder/timeline/unit_labels.py:19: 
+src/builder/timeline/unit_labels.py:20: 
+src/builder/timeline/unit_labels.py:21: def unit_short_label(slug: str) -> str:
+src/builder/timeline/unit_labels.py:22:     """'unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão."""
+src/builder/timeline/unit_labels.py:23:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:24:     if not s:
+src/builder/timeline/unit_labels.py:25:         return ""
+src/builder/timeline/unit_labels.py:26:     n = unit_number(s)
+src/builder/timeline/unit_labels.py:27:     return f"U{n}" if n is not None else s
+src/builder/timeline/unit_labels.py:28: 
+src/builder/timeline/unit_labels.py:29: 
+src/builder/timeline/unit_labels.py:30: def unit_name_from_slug(slug: str) -> str:
+src/builder/timeline/unit_labels.py:31:     """'unidade-01-limites' -> 'Limites'. Sem sufixo de nome -> o próprio slug."""
+src/builder/timeline/unit_labels.py:32:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:33:     if not s:
+src/builder/timeline/unit_labels.py:34:         return ""

@@ -1,0 +1,16 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "load_docling_python_api",
+      "src"
+    ],
+    "seconds": 0.017278100000112318,
+    "returncode": 0,
+    "stdout": "src\\builder\\engine.py:70:    load_docling_python_api as _backend_load_docling_python_api,\nsrc\\builder\\engine.py:426:_load_docling_python_api = _backend_load_docling_python_api\nsrc\\builder\\engine.py:427:has_docling_python_api = lambda: bool(_load_docling_python_api())\nsrc\\builder\\engine.py:736:        api = _load_docling_python_api()\nsrc\\builder\\runtime\\backend_runtime.py:222:def load_docling_python_api():\n",
+    "stderr": ""
+  }
+]

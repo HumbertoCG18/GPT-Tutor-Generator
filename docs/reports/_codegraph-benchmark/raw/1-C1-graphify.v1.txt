@@ -1,0 +1,69 @@
+DISCOVERY
+Node: unit_number()
+  ID:        src_builder_timeline_unit_labels_unit_number
+  Source:    src/builder/timeline/unit_labels.py L15
+  Type:      code
+  Community: 
+  Degree:    5
+
+Connections (5):
+  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12
+  <-- unit_short_label() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26
+  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L161
+  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L15
+  <-- Número da unidade no slug, ou None se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L16
+
+SOURCE VERIFICATION
+src/builder/artifacts/temporal_context.py:9: from typing import Optional
+src/builder/artifacts/temporal_context.py:10: 
+src/builder/artifacts/temporal_context.py:11: from src.builder.extraction.content_taxonomy import _exam_code_from_block
+src/builder/artifacts/temporal_context.py:12: from src.builder.timeline.unit_labels import (
+src/builder/artifacts/temporal_context.py:13:     unit_name_from_slug,
+src/builder/artifacts/temporal_context.py:14:     unit_number,
+src/builder/artifacts/temporal_context.py:15:     unit_short_label,
+src/builder/artifacts/temporal_context.py:16: )
+src/builder/artifacts/temporal_context.py:17: 
+src/builder/artifacts/temporal_context.py:18: # kind do bloco -> rótulo curto pra coluna "tipo" (assessment é tratado à parte).
+src/builder/artifacts/temporal_context.py:19: _KIND_TIPO = {
+src/builder/artifacts/temporal_context.py:20:     "class": "aula",
+src/builder/artifacts/temporal_context.py:21:     "review": "revisão",
+src/builder/artifacts/temporal_context.py:22:     "holiday": "feriado",
+src/builder/artifacts/temporal_context.py:146: def build_unit_legend(rows: list) -> list:
+src/builder/artifacts/temporal_context.py:156:         for s in candidates:
+src/builder/artifacts/temporal_context.py:157:             if s and s not in seen:
+src/builder/artifacts/temporal_context.py:158:                 seen.add(s)
+src/builder/artifacts/temporal_context.py:159:                 slugs.append(s)
+src/builder/artifacts/temporal_context.py:160:     def _sort_key(s):
+src/builder/artifacts/temporal_context.py:161:         n = unit_number(s)
+src/builder/artifacts/temporal_context.py:162:         return (n if n is not None else 9999, s)
+src/builder/artifacts/temporal_context.py:163:     slugs.sort(key=_sort_key)
+src/builder/artifacts/temporal_context.py:164:     return [
+src/builder/artifacts/temporal_context.py:165:         {"label": unit_short_label(s), "slug": s, "nome": unit_name_from_slug(s)}
+src/builder/artifacts/temporal_context.py:166:         for s in slugs
+src/builder/artifacts/temporal_context.py:167:     ]
+
+src/builder/timeline/unit_labels.py:10: from typing import Optional
+src/builder/timeline/unit_labels.py:11: 
+src/builder/timeline/unit_labels.py:12: _UNIT_NUM_RE = re.compile(r"unidade[-_\s]*0*(\d+)", re.IGNORECASE)
+src/builder/timeline/unit_labels.py:13: 
+src/builder/timeline/unit_labels.py:14: 
+src/builder/timeline/unit_labels.py:15: def unit_number(slug: str) -> Optional[int]:
+src/builder/timeline/unit_labels.py:16:     """Número da unidade no slug, ou None se não casar o padrão."""
+src/builder/timeline/unit_labels.py:17:     m = _UNIT_NUM_RE.search(str(slug or ""))
+src/builder/timeline/unit_labels.py:18:     return int(m.group(1)) if m else None
+src/builder/timeline/unit_labels.py:19: 
+src/builder/timeline/unit_labels.py:20: 
+src/builder/timeline/unit_labels.py:21: def unit_short_label(slug: str) -> str:
+src/builder/timeline/unit_labels.py:22:     """'unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão."""
+src/builder/timeline/unit_labels.py:23:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:24:     if not s:
+src/builder/timeline/unit_labels.py:25:         return ""
+src/builder/timeline/unit_labels.py:26:     n = unit_number(s)
+src/builder/timeline/unit_labels.py:27:     return f"U{n}" if n is not None else s
+src/builder/timeline/unit_labels.py:28: 
+src/builder/timeline/unit_labels.py:29: 
+src/builder/timeline/unit_labels.py:30: def unit_name_from_slug(slug: str) -> str:
+src/builder/timeline/unit_labels.py:31:     """'unidade-01-limites' -> 'Limites'. Sem sufixo de nome -> o próprio slug."""
+src/builder/timeline/unit_labels.py:32:     s = str(slug or "").strip()
+src/builder/timeline/unit_labels.py:33:     if not s:
+src/builder/timeline/unit_labels.py:34:         return ""

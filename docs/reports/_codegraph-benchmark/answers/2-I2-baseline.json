@@ -1,0 +1,13 @@
+{
+  "id": "I2",
+  "arm": "baseline",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 9.416333499997563,
+  "returncode": 0,
+  "evidence_sha256": "99d9fa6f81a691944dac05932fcf66a029fda10c0fb22d49a430c30471a56ee5",
+  "prompt_chars": 8160,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77e-9270-7aa0-8062-8bb797f0549e\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"docling.document_converter\\\",\\\"docling.datamodel.pipeline_options\\\",\\\"docling.datamodel.base_models\\\",\\\"docling.datamodel.accelerator_options\\\",\\\"docling.datamodel.settings\\\"],\\\"evidence\\\":[\\\"src/builder/runtime/backend_runtime.py:229\\\",\\\"src/builder/runtime/backend_runtime.py:230\\\",\\\"src/builder/runtime/backend_runtime.py:231\\\",\\\"src/builder/runtime/backend_runtime.py:232\\\",\\\"src/builder/runtime/backend_runtime.py:233\\\"],\\\"caveat\\\":\\\"O código tenta importar esses módulos; a evidência não confirma que estejam instalados.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20988,\"cached_input_tokens\":11776,\"cache_write_input_tokens\":0,\"output_tokens\":118,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

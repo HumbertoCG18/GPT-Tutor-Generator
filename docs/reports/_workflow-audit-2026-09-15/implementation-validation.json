@@ -1,0 +1,114 @@
+{
+  "agy_common_skills": {
+    "graphify-windows": 1,
+    "troglodita": 1,
+    "medir-uso-antes-de-remover": 1,
+    "systematic-debugging": 1,
+    "heredoc-git-bash-windows": 1,
+    "mex-check-falso-positivo": 1
+  },
+  "rtk": [
+    {
+      "name": "status",
+      "reduction_percent": 1.86,
+      "exit_preserved": true,
+      "facts_checked": false,
+      "facts_preserved": null
+    },
+    {
+      "name": "diff-stat",
+      "reduction_percent": 66.68,
+      "exit_preserved": true,
+      "facts_checked": false,
+      "facts_preserved": null
+    },
+    {
+      "name": "grep",
+      "reduction_percent": 94.03,
+      "exit_preserved": false,
+      "facts_checked": false,
+      "facts_preserved": null
+    },
+    {
+      "name": "pytest-pass",
+      "reduction_percent": 99.52,
+      "exit_preserved": true,
+      "facts_checked": true,
+      "facts_preserved": true
+    },
+    {
+      "name": "pytest-fail",
+      "reduction_percent": 75.94,
+      "exit_preserved": true,
+      "facts_checked": true,
+      "facts_preserved": true
+    }
+  ],
+  "mcp": [
+    {
+      "cli": "codex",
+      "server": {
+        "name": "codebase-memory-mcp",
+        "version": "0.10.8"
+      },
+      "tools": 15,
+      "list_projects": "ok"
+    },
+    {
+      "cli": "claude",
+      "server": {
+        "name": "codebase-memory-mcp",
+        "version": "0.10.8"
+      },
+      "tools": 15,
+      "list_projects": "ok"
+    },
+    {
+      "cli": "agy",
+      "server": {
+        "name": "codebase-memory-mcp",
+        "version": "0.10.8"
+      },
+      "tools": 15,
+      "list_projects": "ok"
+    }
+  ],
+  "codex_smoke": [
+    {
+      "sample": "-1",
+      "reply_ok": true,
+      "shortened_warning": false,
+      "timeout_warning": false
+    },
+    {
+      "sample": "-2",
+      "reply_ok": true,
+      "shortened_warning": false,
+      "timeout_warning": false
+    },
+    {
+      "sample": "-3",
+      "reply_ok": true,
+      "shortened_warning": false,
+      "timeout_warning": false
+    }
+  ],
+  "claude_common_skills": {
+    "graphify": 1,
+    "troglodita": 1,
+    "medir-uso-antes-de-remover": 1,
+    "systematic-debugging": 1,
+    "heredoc-git-bash-windows": 1,
+    "mex-check-falso-positivo": 1
+  },
+  "codex_common_skills": {
+    "graphify-windows": 1,
+    "troglodita": 1,
+    "medir-uso-antes-de-remover": 1,
+    "systematic-debugging": 1,
+    "heredoc-git-bash-windows": 1,
+    "mex-check-falso-positivo": 1
+  },
+  "alethe_reopen": "pending_user_confirmation",
+  "agy_agent_mcp": "headless_permission_denied; configured transport check passed"
+}

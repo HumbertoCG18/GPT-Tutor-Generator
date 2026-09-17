@@ -1,0 +1,6 @@
+TCC: comuns=27 ausentes=0 ambiguos=0 novas_origens=0
+  bloco: base=26/27 novo=26/27 ganhos=0 perdas=0 | comuns=26->26/27
+  unidade: base=18/18 novo=17/18 ganhos=0 perdas=1 | comuns=18->17/18
+  sub_aceito: base=8/11 novo=9/11 ganhos=2 perdas=1 | comuns=8->9/11
+  sub_primario: base=6/11 novo=7/11 ganhos=2 perdas=1 | comuns=6->7/11
+  diferencas observadas (nao causas isoladas): {'moodle_label': 26, 'posting_date': 26, 'texto_extraido': 27, 'manual_timeline_block_id': 3, 'category': 6, 'base_backend': 1}

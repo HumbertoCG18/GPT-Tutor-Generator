@@ -1,0 +1,152 @@
+[
+  {
+    "repo": "Kc1t/alethe-agents",
+    "branch": "main",
+    "sha": "c619628c195d46c8cbfca4acd750b274c0f906a3",
+    "pushed_at": "2026-09-14T20:07:05Z",
+    "archived": false,
+    "license": "AGPL-3.0",
+    "readme_url": "https://raw.githubusercontent.com/Kc1t/alethe-agents/c619628c195d46c8cbfca4acd750b274c0f906a3/README.md",
+    "bytes": 21041
+  },
+  {
+    "repo": "NousResearch/hermes-agent",
+    "branch": "main",
+    "sha": "416a8177c25d87aa9929dfcf31f7964137d7fcdd",
+    "pushed_at": "2026-09-16T00:42:51Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/416a8177c25d87aa9929dfcf31f7964137d7fcdd/README.md",
+    "bytes": 17688
+  },
+  {
+    "repo": "Hermes-brasil/hermes-brasil",
+    "branch": "main",
+    "sha": "ca275d668c086ffd5d087a112400a18ae80fbb79",
+    "pushed_at": "2026-08-05T22:43:54Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/Hermes-brasil/hermes-brasil/ca275d668c086ffd5d087a112400a18ae80fbb79/README.md",
+    "bytes": 4355
+  },
+  {
+    "repo": "joeynyc/hermes-hud",
+    "branch": "main",
+    "sha": "ad6300ff4b99226684f33edb95f600d079d33166",
+    "pushed_at": "2026-07-05T12:48:22Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/joeynyc/hermes-hud/ad6300ff4b99226684f33edb95f600d079d33166/README.md",
+    "bytes": 4365
+  },
+  {
+    "repo": "pivoshenko/kasetto",
+    "branch": "main",
+    "sha": "6b4149936f5abc87d710091c5c673c3a51aa0efc",
+    "pushed_at": "2026-09-14T06:49:09Z",
+    "archived": false,
+    "license": "NOASSERTION",
+    "readme_url": "https://raw.githubusercontent.com/pivoshenko/kasetto/6b4149936f5abc87d710091c5c673c3a51aa0efc/README.md",
+    "bytes": 16491
+  },
+  {
+    "repo": "Yu-Xiao-Sheng/codex-memory-trim",
+    "branch": "main",
+    "sha": "3a5742a0216459013cd219b76152aab05be86edc",
+    "pushed_at": "2026-08-25T05:40:18Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/Yu-Xiao-Sheng/codex-memory-trim/3a5742a0216459013cd219b76152aab05be86edc/README.md",
+    "bytes": 11329
+  },
+  {
+    "repo": "DobermanCore/Doberman-Core",
+    "branch": "main",
+    "sha": "78f6d4df152b410ff715d774efb255f46fd8c15c",
+    "pushed_at": "2026-09-10T17:30:40Z",
+    "archived": false,
+    "license": "Apache-2.0",
+    "readme_url": "https://raw.githubusercontent.com/DobermanCore/Doberman-Core/78f6d4df152b410ff715d774efb255f46fd8c15c/README.md",
+    "bytes": 17593
+  },
+  {
+    "repo": "eljulians/skillfile",
+    "branch": "master",
+    "sha": "93328d20b8de80794ab4989bb4830c33451a6d6e",
+    "pushed_at": "2026-09-07T18:14:23Z",
+    "archived": false,
+    "license": "Apache-2.0",
+    "readme_url": "https://raw.githubusercontent.com/eljulians/skillfile/93328d20b8de80794ab4989bb4830c33451a6d6e/README.md",
+    "bytes": 9133
+  },
+  {
+    "repo": "diegosouzapw/OmniRoute",
+    "branch": "release/v3.8.51",
+    "sha": "c44f5da3884225130f4e090bada32ff8df8be31c",
+    "pushed_at": "2026-09-16T00:35:03Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/diegosouzapw/OmniRoute/c44f5da3884225130f4e090bada32ff8df8be31c/README.md",
+    "bytes": 134918
+  },
+  {
+    "repo": "miso-choi/TruthProbe",
+    "branch": "main",
+    "sha": "e93b3a2cec58a79e5cda94a5bfef616cbdd0f960",
+    "pushed_at": "2026-07-15T07:21:30Z",
+    "archived": false,
+    "license": null,
+    "readme_url": "https://raw.githubusercontent.com/miso-choi/TruthProbe/e93b3a2cec58a79e5cda94a5bfef616cbdd0f960/README.md",
+    "bytes": 4879
+  },
+  {
+    "repo": "jarrodwatts/claude-hud",
+    "branch": "main",
+    "sha": "939eb66485832dead1b0a28a954f76f7aa2bdb06",
+    "pushed_at": "2026-09-12T21:32:41Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/jarrodwatts/claude-hud/939eb66485832dead1b0a28a954f76f7aa2bdb06/README.md",
+    "bytes": 37326
+  },
+  {
+    "repo": "bytedance/deer-flow",
+    "branch": "main",
+    "sha": "f7f4a022e6a95228430d794326c2f109287a31c6",
+    "pushed_at": "2026-09-15T14:22:13Z",
+    "archived": false,
+    "license": "MIT",
+    "readme_url": "https://raw.githubusercontent.com/bytedance/deer-flow/f7f4a022e6a95228430d794326c2f109287a31c6/README.md",
+    "bytes": 155997
+  },
+  {
+    "repo": "headroomlabs-ai/headroom",
+    "branch": "main",
+    "sha": "d9757dcc6b693a02d484b1695d5821f7dc8ff6f0",
+    "pushed_at": "2026-09-15T23:59:06Z",
+    "archived": false,
+    "license": "Apache-2.0",
+    "readme_url": "https://raw.githubusercontent.com/headroomlabs-ai/headroom/d9757dcc6b693a02d484b1695d5821f7dc8ff6f0/README.md",
+    "bytes": 32168
+  },
+  {
+    "repo": "rtk-ai/rtk",
+    "branch": "develop",
+    "sha": "5e0f92cd108fc5a985022c5eb525a401f97fa11f",
+    "pushed_at": "2026-09-15T09:15:47Z",
+    "archived": false,
+    "license": "Apache-2.0",
+    "readme_url": "https://raw.githubusercontent.com/rtk-ai/rtk/5e0f92cd108fc5a985022c5eb525a401f97fa11f/README.md",
+    "bytes": 26527
+  },
+  {
+    "repo": "rebelytics/one-skill-to-rule-them-all",
+    "branch": "main",
+    "sha": "7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f",
+    "pushed_at": "2026-09-11T10:46:42Z",
+    "archived": false,
+    "license": "CC-BY-4.0",
+    "readme_url": "https://raw.githubusercontent.com/rebelytics/one-skill-to-rule-them-all/7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f/README.md",
+    "bytes": 17928
+  }
+]

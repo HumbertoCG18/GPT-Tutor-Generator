@@ -1,0 +1,8 @@
+{
+  "version": "0.9.42",
+  "seconds": 22.17527549999795,
+  "nodes": 2472,
+  "edges": 6371,
+  "directed": true,
+  "mode": "AST only; no semantic LLM calls"
+}

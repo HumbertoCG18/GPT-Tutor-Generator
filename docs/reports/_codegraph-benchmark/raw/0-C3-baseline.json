@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "MaintenancePanel",
+      "-e",
+      "_build_ui",
+      "src"
+    ],
+    "seconds": 0.020349799997347873,
+    "returncode": 0,
+    "stdout": "src\\ui\\app.py:38:from src.ui.maintenance_panel import MaintenancePanel\nsrc\\ui\\app.py:218:        self._build_ui()\nsrc\\ui\\app.py:246:    def _build_ui(self):\nsrc\\ui\\app.py:588:        self._maint_panel = MaintenancePanel(\nsrc\\ui\\codes_panel.py:58:        self._build_ui()\nsrc\\ui\\codes_panel.py:61:    def _build_ui(self):\nsrc\\ui\\image_curator.py:302:        self._build_ui()\nsrc\\ui\\image_curator.py:310:    def _build_ui(self):\nsrc\\ui\\dialogs.py:1283:        self._build_ui()\nsrc\\ui\\dialogs.py:1286:    def _build_ui(self):\nsrc\\ui\\dialogs.py:1600:        self._build_ui()\nsrc\\ui\\dialogs.py:1602:    def _build_ui(self):\nsrc\\ui\\dialogs.py:1758:        self._show_all = None  # BooleanVar criado no _build_ui\nsrc\\ui\\dialogs.py:1760:        self._build_ui()\nsrc\\ui\\dialogs.py:1780:    def _build_ui(self):\nsrc\\ui\\dialogs.py:2052:        self._build_ui(p)\nsrc\\ui\\dialogs.py:2054:    def _build_ui(self, p):\nsrc\\ui\\dialogs.py:4700:        self._build_ui()\nsrc\\ui\\dialogs.py:4702:    def _build_ui(self):\nsrc\\ui\\curator_studio.py:273:        self._build_ui()\nsrc\\ui\\curator_studio.py:316:    def _build_ui(self):\nsrc\\ui\\maintenance_panel.py:12:class MaintenancePanel(tk.Frame):\nsrc\\ui\\maintenance_panel.py:32:        self._build_ui()\nsrc\\ui\\maintenance_panel.py:35:    def _build_ui(self):\nsrc\\ui\\student_state_curator.py:56:        self._build_ui()\nsrc\\ui\\student_state_curator.py:60:    def _build_ui(self) -> None:\n",
+    "stderr": ""
+  }
+]

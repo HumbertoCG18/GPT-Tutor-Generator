@@ -1,0 +1,507 @@
+{
+  "summary": {
+    "FR": {
+      "counts": {
+        "comuns": 18,
+        "sub_aceito_n": 18,
+        "sub_aceito_base": 7,
+        "sub_aceito_novo": 7,
+        "sub_aceito_comum_n": 18,
+        "sub_aceito_comum_base": 7,
+        "sub_aceito_comum_novo": 7,
+        "sub_primario_n": 18,
+        "sub_primario_base": 6,
+        "sub_primario_novo": 6,
+        "sub_primario_comum_n": 18,
+        "sub_primario_comum_base": 6,
+        "sub_primario_comum_novo": 6,
+        "manifest_base": 22,
+        "manifest_novo": 20,
+        "novas_origens": 0
+      },
+      "changed_fields": {
+        "moodle_label": 18,
+        "texto_extraido": 9
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "FR",
+      "entry_id": "01-protocolos-de-rede",
+      "new_id": "01-protocolos-de-rede",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u1 - redes de computadores\\01 - protocolos de rede.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        8179,
+        6330
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "modelos-osi-e-tcpip"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "modelos-osi-e-tcpip"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "02-modelos-de-referencia",
+      "new_id": "02-modelos-de-referencia",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u1 - redes de computadores\\02 - modelos de referencia.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10451,
+        8864
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "modelos-osi-e-tcpip"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "modelos-osi-e-tcpip"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "03-tipos-de-redes",
+      "new_id": "03-tipos-de-redes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u1 - redes de computadores\\03 - tipos de redes.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12003,
+        7341
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-introducao-a-redes-de-computadores",
+        "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "unidade1-exercicios",
+      "new_id": "unidade1-exercicios",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u1 - redes de computadores\\unidade1-exercicios.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        7540,
+        7540
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "",
+        "unidade-01-introducao-a-redes-de-computadores",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-introducao-a-redes-de-computadores",
+        ""
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "04-camada-de-aplicacao",
+      "new_id": "04-camada-de-aplicacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\04 - camada de aplicação.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5027,
+        3890
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "04-protocolo-http",
+      "new_id": "04-protocolo-http",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\04 - protocolo http.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        32376,
+        23889
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "05-protocolo-dns",
+      "new_id": "05-protocolo-dns",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\05 - protocolo dns.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        21822,
+        15841
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "06-protocolo-dhcp",
+      "new_id": "06-protocolo-dhcp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\06 - protocolo dhcp.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11166,
+        8178
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "07-protocolos-de-e-mail",
+      "new_id": "07-protocolos-de-e-mail",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\07 - protocolos de e-mail.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        14354,
+        12907
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "08-desenvolvimento-de-aplicacoes",
+      "new_id": "08-desenvolvimento-de-aplicacoes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\08 - desenvolvimento de aplicações.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        8134,
+        5729
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        ""
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        ""
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "lista-de-exercicios-1-camada-de-aplicacao",
+      "new_id": "lista-de-exercicios-1-camada-de-aplicacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\lista de exercícios 1 - camada de aplicação.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        6919,
+        6919
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "unidade2-exercicios-dhcp",
+      "new_id": "unidade2-exercicios-dhcp",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\unidade2-exercicios-dhcp.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        6360,
+        6360
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "unidade2-exercicios-dns",
+      "new_id": "unidade2-exercicios-dns",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\unidade2-exercicios-dns.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        6082,
+        6082
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-02-nivel-de-aplicacao",
+        "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "unidade2-exercicios-http",
+      "new_id": "unidade2-exercicios-http",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\unidade2-exercicios-http.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        7583,
+        7583
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "tcp-chat-c",
+      "new_id": "tcp-chat-c",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\tcp_chat_c.tar.gz",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "tcp-example",
+      "new_id": "tcp-example",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\tcp_example.tar.gz",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "udp-example-c",
+      "new_id": "udp-example-c",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\udp_example_c.tar.gz",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    },
+    {
+      "curso": "FR",
+      "entry_id": "udp-example-java",
+      "new_id": "udp-example-java",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\fundamentos-de-redes-de-computadores\\stash\\u2 - camada de aplicação\\udp_example_java.tar.gz",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-02-nivel-de-aplicacao",
+        "paradigmas-clienteservidor-e-p2p"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "build_temporal_context_rows",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.7736294999995152,
+    "returncode": 0,
+    "stdout": "Node: build_temporal_context_rows()\n  ID:        src_builder_artifacts_temporal_context_build_temporal_context_rows\n  Source:    src/builder/artifacts/temporal_context.py L56\n  Type:      code\n  Community: \n  Degree:    5\n\nConnections (5):\n  <-- temporal_context.py [contains] [EXTRACTED] src/builder/artifacts/temporal_context.py:L56\n  <-- temporal_context_md() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L108\n  --> unit_short_label() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L77\n  --> _tipo_label() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L76\n  <-- Mapeia blocos do cronograma em linhas compactas. Blocos sem data ISO de início… [rationale_for] [EXTRACTED] src/builder/artifacts/temporal_context.py:L57\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "unit_short_label",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.726413299998967,
+    "returncode": 0,
+    "stdout": "Node: unit_short_label()\n  ID:        src_builder_timeline_unit_labels_unit_short_label\n  Source:    src/builder/timeline/unit_labels.py L21\n  Type:      code\n  Community: \n  Degree:    7\n\nConnections (7):\n  <-- timeline_dashboard.py [imports] [EXTRACTED] src/ui/timeline_dashboard.py:L21\n  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12\n  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L165\n  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L21\n  --> unit_number() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26\n  <-- build_temporal_context_rows() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L77\n  <-- unidade-01-limites' -> 'U1'. Mantém o original se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L22\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "unit_number",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6659160999988671,
+    "returncode": 0,
+    "stdout": "Node: unit_number()\n  ID:        src_builder_timeline_unit_labels_unit_number\n  Source:    src/builder/timeline/unit_labels.py L15\n  Type:      code\n  Community: \n  Degree:    5\n\nConnections (5):\n  <-- temporal_context.py [imports] [EXTRACTED] src/builder/artifacts/temporal_context.py:L12\n  <-- unit_short_label() [calls] [EXTRACTED] src/builder/timeline/unit_labels.py:L26\n  <-- build_unit_legend() [calls] [EXTRACTED] src/builder/artifacts/temporal_context.py:L161\n  <-- unit_labels.py [contains] [EXTRACTED] src/builder/timeline/unit_labels.py:L15\n  <-- Número da unidade no slug, ou None se não casar o padrão. [rationale_for] [EXTRACTED] src/builder/timeline/unit_labels.py:L16\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "path",
+      "build_temporal_context_rows",
+      "unit_number",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.7232555999944452,
+    "returncode": 0,
+    "stdout": "Shortest path (2 hops):\n  build_temporal_context_rows() --calls [EXTRACTED]--> unit_short_label() --calls [EXTRACTED]--> unit_number()\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "claude": {
+    "files_sampled": 30,
+    "rule": "30 most recently modified JSONL files; all records in those files; not a fixed date window",
+    "tool_call_records": 62,
+    "parse_errors": 0,
+    "tools": {
+      "Bash": 23,
+      "Grep": 16,
+      "Read": 14,
+      "Glob": 3,
+      "Edit": 3,
+      "mcp__plugin_claude-mem_mcp-search__search": 1,
+      "mcp__plugin_claude-mem_mcp-search__get_observations": 1,
+      "Write": 1
+    },
+    "explicit_skills": {}
+  },
+  "codex": {
+    "files_sampled": 30,
+    "rule": "30 most recently modified JSONL files; all records in those files; not a fixed date window",
+    "tool_call_records": 167,
+    "parse_errors": 0,
+    "tools": {
+      "exec": 146,
+      "wait": 21
+    },
+    "explicit_skills": {}
+  },
+  "agy": {
+    "limitation": "Conversation storage not parsed; imported plugins and filesystem inventory only. No inference of non-use."
+  }
+}

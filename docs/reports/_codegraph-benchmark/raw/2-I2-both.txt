@@ -1,0 +1,117 @@
+DISCOVERY
+GRAPHIFY
+Node: load_docling_python_api()
+  ID:        src_builder_runtime_backend_runtime_load_docling_python_api
+  Source:    src/builder/runtime/backend_runtime.py L222
+  Type:      code
+  Community: 
+  Degree:    2
+
+Connections (2):
+  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61
+  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L222
+
+No node matching 'import_module' found.
+
+CBM
+total: 2
+results: 2  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.engine (src/builder/engine.py):
+  _load_docling_python_api Variable 426-426 1 0 src/builder/engine.py
+codegraph-pilot-20260915.src.builder.runtime.backend_runtime (src/builder/runtime/backend_runtime.py):
+  load_docling_python_api Function 222-248 1 1 run
+has_more: false
+
+function: load_docling_python_api
+direction: both
+callees_total: 0
+callees: 0  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+callers_total: 1
+callers: 1  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.engine.DoclingPythonBackend:
+  run 1 lsp 0.97
+
+total: 0
+results: 0  (rows: name label lines in out connected; qn = group prefix + "." + name)
+has_more: false
+hint: "No nodes match this pattern. Check spelling or try a broader regex."
+
+{"error":"function not found","function_name":"import_module","hint":"Use search_graph(name_pattern=\".*import_module.*\") to find the exact name, then pass it to trace_path."}
+SOURCE VERIFICATION
+src/builder/engine.py:65:     build_page_chunks as _backend_build_page_chunks,
+src/builder/engine.py:66:     configure_docling_python_standard_gpu as _backend_configure_docling_python_standard_gpu,
+src/builder/engine.py:67:     datalab_chunk_size_for_workload as _backend_datalab_chunk_size_for_workload,
+src/builder/engine.py:68:     datalab_should_chunk as _backend_datalab_should_chunk,
+src/builder/engine.py:69:     detect_marker_capabilities as _backend_detect_marker_capabilities,
+src/builder/engine.py:70:     load_docling_python_api as _backend_load_docling_python_api,
+src/builder/engine.py:71:     marker_chunk_size_for_workload as _backend_marker_chunk_size_for_workload,
+src/builder/engine.py:72:     marker_effective_torch_device as _backend_marker_effective_torch_device,
+src/builder/engine.py:73:     marker_model_is_cloud_variant as _backend_marker_model_is_cloud_variant,
+src/builder/engine.py:74:     marker_model_is_probably_vision as _backend_marker_model_is_probably_vision,
+src/builder/engine.py:75:     marker_model_is_qwen3_vl_8b as _backend_marker_model_is_qwen3_vl_8b,
+src/builder/engine.py:76:     marker_ollama_model as _backend_marker_ollama_model,
+src/builder/engine.py:77:     marker_progress_hints as _backend_marker_progress_hints,
+src/builder/engine.py:78:     marker_should_redo_inline_math as _backend_marker_should_redo_inline_math,
+src/builder/engine.py:421: _marker_model_is_qwen3_vl_8b = _backend_marker_model_is_qwen3_vl_8b
+src/builder/engine.py:422: _marker_model_is_cloud_variant = _backend_marker_model_is_cloud_variant
+src/builder/engine.py:423: _marker_model_is_probably_vision = _backend_marker_model_is_probably_vision
+src/builder/engine.py:424: _marker_should_redo_inline_math = _backend_marker_should_redo_inline_math
+src/builder/engine.py:425: _marker_progress_hints = _backend_marker_progress_hints
+src/builder/engine.py:426: _load_docling_python_api = _backend_load_docling_python_api
+src/builder/engine.py:427: has_docling_python_api = lambda: bool(_load_docling_python_api())
+src/builder/engine.py:428: 
+src/builder/engine.py:429: _advanced_cli_stall_timeout = lambda backend_name, ctx: _backend_advanced_cli_stall_timeout(
+src/builder/engine.py:430:     backend_name,
+src/builder/engine.py:431:     ctx,
+src/builder/engine.py:432:     effective_document_profile_fn=_effective_document_profile,
+src/builder/engine.py:433:     selected_page_count_fn=_selected_page_count,
+src/builder/engine.py:434: )
+src/builder/engine.py:435: 
+src/builder/engine.py:728: class DoclingPythonBackend(ExtractionBackend):
+src/builder/engine.py:731: 
+src/builder/engine.py:732:     def available(self) -> bool:
+src/builder/engine.py:733:         return has_docling_python_api()
+src/builder/engine.py:734: 
+src/builder/engine.py:735:     def run(self, ctx: BackendContext) -> BackendRunResult:
+src/builder/engine.py:736:         api = _load_docling_python_api()
+src/builder/engine.py:737:         if not api:
+src/builder/engine.py:738:             return BackendRunResult(
+src/builder/engine.py:739:                 name=self.name,
+src/builder/engine.py:740:                 layer=self.layer,
+src/builder/engine.py:741:                 status="error",
+src/builder/engine.py:742:                 error="Docling Python API não está disponível no ambiente atual.",
+src/builder/engine.py:743:             )
+src/builder/engine.py:744: 
+
+src/builder/runtime/backend_runtime.py:217:         hints.append(f"Fase '{phase}' concluída sem itens para processar.")
+src/builder/runtime/backend_runtime.py:218: 
+src/builder/runtime/backend_runtime.py:219:     return phase, hints
+src/builder/runtime/backend_runtime.py:220: 
+src/builder/runtime/backend_runtime.py:221: 
+src/builder/runtime/backend_runtime.py:222: def load_docling_python_api():
+src/builder/runtime/backend_runtime.py:223:     global _DOCLING_PYTHON_API_CACHE
+src/builder/runtime/backend_runtime.py:224: 
+src/builder/runtime/backend_runtime.py:225:     if _DOCLING_PYTHON_API_CACHE is not None:
+src/builder/runtime/backend_runtime.py:226:         return _DOCLING_PYTHON_API_CACHE
+src/builder/runtime/backend_runtime.py:227: 
+src/builder/runtime/backend_runtime.py:228:     try:
+src/builder/runtime/backend_runtime.py:229:         document_converter = importlib.import_module("docling.document_converter")
+src/builder/runtime/backend_runtime.py:230:         pipeline_options = importlib.import_module("docling.datamodel.pipeline_options")
+src/builder/runtime/backend_runtime.py:231:         base_models = importlib.import_module("docling.datamodel.base_models")
+src/builder/runtime/backend_runtime.py:232:         accelerator_options = importlib.import_module("docling.datamodel.accelerator_options")
+src/builder/runtime/backend_runtime.py:233:         settings_module = importlib.import_module("docling.datamodel.settings")
+src/builder/runtime/backend_runtime.py:234:         _DOCLING_PYTHON_API_CACHE = {
+src/builder/runtime/backend_runtime.py:235:             "DocumentConverter": document_converter.DocumentConverter,
+src/builder/runtime/backend_runtime.py:236:             "PdfFormatOption": document_converter.PdfFormatOption,
+src/builder/runtime/backend_runtime.py:237:             "PdfPipelineOptions": pipeline_options.PdfPipelineOptions,
+src/builder/runtime/backend_runtime.py:238:             "ThreadedPdfPipelineOptions": getattr(pipeline_options, "ThreadedPdfPipelineOptions", pipeline_options.PdfPipelineOptions),
+src/builder/runtime/backend_runtime.py:239:             "RapidOcrOptions": getattr(pipeline_options, "RapidOcrOptions", None),
+src/builder/runtime/backend_runtime.py:240:             "AcceleratorOptions": accelerator_options.AcceleratorOptions,
+src/builder/runtime/backend_runtime.py:241:             "AcceleratorDevice": accelerator_options.AcceleratorDevice,
+src/builder/runtime/backend_runtime.py:242:             "settings": settings_module.settings,
+src/builder/runtime/backend_runtime.py:243:             "InputFormat": base_models.InputFormat,
+src/builder/runtime/backend_runtime.py:244:         }
+src/builder/runtime/backend_runtime.py:245:     except Exception:
+src/builder/runtime/backend_runtime.py:246:         _DOCLING_PYTHON_API_CACHE = None
+src/builder/runtime/backend_runtime.py:247: 
+src/builder/runtime/backend_runtime.py:248:     return _DOCLING_PYTHON_API_CACHE

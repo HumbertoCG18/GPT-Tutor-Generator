@@ -1,0 +1,6 @@
+FR: comuns=18 ausentes=0 ambiguos=0 novas_origens=0
+  bloco: base=0/0 novo=0/0 ganhos=0 perdas=0 | comuns=0->0/0
+  unidade: base=0/0 novo=0/0 ganhos=0 perdas=0 | comuns=0->0/0
+  sub_aceito: base=7/18 novo=7/18 ganhos=0 perdas=0 | comuns=7->7/18
+  sub_primario: base=6/18 novo=6/18 ganhos=0 perdas=0 | comuns=6->6/18
+  diferencas observadas (nao causas isoladas): {'moodle_label': 18, 'texto_extraido': 9}

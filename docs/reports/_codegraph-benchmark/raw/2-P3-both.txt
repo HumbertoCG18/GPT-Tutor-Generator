@@ -1,0 +1,222 @@
+DISCOVERY
+GRAPHIFY
+Node: ._on_sweep()
+  ID:        src_ui_maintenance_panel_maintenancepanel_on_sweep
+  Source:    src/ui/maintenance_panel.py L147
+  Type:      code
+  Community: 
+  Degree:    4
+
+Connections (4):
+  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L147
+  --> Path [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166
+  --> ._log_line() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L166
+  --> ._clear_log() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L165
+
+Ambiguous: 'sweep_orphans' matches 2 nodes in different files.
+  src/builder/engine.py
+    id: src_builder_engine_repobuilder_sweep_orphans
+  src/builder/ops/lifecycle_ops.py
+    id: src_builder_ops_lifecycle_ops_sweep_orphans
+Retry with the repo-relative path or the full node id.
+
+No directed path found between '_on_sweep' and 'sweep_orphans'. Re-run with --undirected to search ignoring edge direction.
+
+Node: .sweep_orphans()
+  ID:        src_builder_engine_repobuilder_sweep_orphans
+  Source:    src/builder/engine.py L2218
+  Type:      code
+  Community: 
+  Degree:    1
+
+Connections (1):
+  <-- RepoBuilder [method] [EXTRACTED] src/builder/engine.py:L2218
+
+Node: sweep_orphans()
+  ID:        src_builder_ops_lifecycle_ops_sweep_orphans
+  Source:    src/builder/ops/lifecycle_ops.py L263
+  Type:      code
+  Community: 
+  Degree:    4
+
+Connections (4):
+  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L149
+  --> write_json_manifest() [calls] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L298
+  <-- lifecycle_ops.py [contains] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L263
+  <-- Retroativo: pruna curations + regenera sidecars derivativos. Não reprocessa… [rationale_for] [EXTRACTED] src/builder/ops/lifecycle_ops.py:L264
+
+CBM
+total: 1
+results: 1  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel (src/ui/maintenance_panel.py):
+  _on_sweep Method 147-184 1 2 _log_line;_clear_log
+has_more: false
+
+function: _on_sweep
+direction: both
+callees_total: 3
+callees: 3  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.models.core.SubjectStore:
+  delete 2 heuristic 0.38
+codegraph-pilot-20260915.src.ui.maintenance_panel.MaintenancePanel:
+  _clear_log 1 heuristic 0.38
+  _log_line 1 lsp 0.90
+callers_total: 0
+callers: 0  (rows: name hop strategy confidence; qn = group prefix + "." + name)
+
+total: 2
+results: 2  (rows: name label lines in out connected; qn = group prefix + "." + name)
+codegraph-pilot-20260915.src.builder.engine.RepoBuilder (src/builder/engine.py):
+  sweep_orphans Method 2218-2219 1 1 maintenance_panel.py;sweep_orphans
+codegraph-pilot-20260915.src.builder.ops.lifecycle_ops (src/builder/ops/lifecycle_ops.py):
+  sweep_orphans Function 263-310 1 9 sweep_orphans;len;append;write_json_manifest;_effective_course_meta;_prune_stale_image_curation;_prune_stale_code_curation;_regenerate_pedagogical_files;load
+has_more: false
+
+{"status":"ambiguous","message":"2 matches for \"sweep_orphans\". Pick a qualified_name from suggestions below, or use search_graph(name_pattern=\"...\") to narrow results.","suggestions":[{"qualified_name":"codegraph-pilot-20260915.src.builder.ops.lifecycle_ops.sweep_orphans","name":"sweep_orphans","label":"Function","file_path":"src/builder/ops/lifecycle_ops.py"},{"qualified_name":"codegraph-pilot-20260915.src.builder.engine.RepoBuilder.sweep_orphans","name":"sweep_orphans","label":"Method","file_path":"src/builder/engine.py"}]}
+SOURCE VERIFICATION
+src/builder/engine.py:147:     incremental_build_impl as _incremental_build_incremental_build_impl,
+src/builder/engine.py:148: )
+src/builder/engine.py:149: from src.builder.ops.lifecycle_ops import (
+src/builder/engine.py:150:     process_single_impl as _lifecycle_ops_process_single_impl,
+src/builder/engine.py:151:     reject as _lifecycle_ops_reject,
+src/builder/engine.py:152:     sweep_orphans as _lifecycle_ops_sweep_orphans,
+src/builder/engine.py:153:     unprocess as _lifecycle_ops_unprocess,
+src/builder/engine.py:154: )
+src/builder/engine.py:155: from src.builder.ops.bootstrap_ops import (
+src/builder/engine.py:156:     create_structure as _bootstrap_ops_create_structure,
+src/builder/engine.py:157:     write_root_files as _bootstrap_ops_write_root_files,
+src/builder/engine.py:158: )
+src/builder/engine.py:159: from src.builder.ops.build_workflow import (
+src/builder/engine.py:160:     build_impl as _build_workflow_build_impl,
+src/builder/engine.py:1729: class RepoBuilder:
+src/builder/engine.py:2213:         return _lifecycle_ops_unprocess(self, entry_id)
+src/builder/engine.py:2214: 
+src/builder/engine.py:2215:     def reject(self, entry_id: str) -> Optional[Dict[str, object]]:
+src/builder/engine.py:2216:         return _lifecycle_ops_reject(self, entry_id)
+src/builder/engine.py:2217: 
+src/builder/engine.py:2218:     def sweep_orphans(self) -> Dict[str, object]:
+src/builder/engine.py:2219:         return _lifecycle_ops_sweep_orphans(self)
+src/builder/engine.py:2220: 
+src/builder/engine.py:2221: 
+src/builder/engine.py:2222: # ---------------------------------------------------------------------------
+src/builder/engine.py:2223: # Free functions — Pedagogical file generators
+src/builder/engine.py:2224: # ---------------------------------------------------------------------------
+src/builder/engine.py:2225: 
+src/builder/engine.py:2226: _TEACHING_PLAN_SECTION_STOP = re.compile(
+src/builder/engine.py:2227:     r'^(?:PROCEDIMENTOS|AVALIA[ÇC][AÃ]O|BIBLIOGRAFIA|METODOLOGIA)',
+
+src/builder/ops/lifecycle_ops.py:258: 
+src/builder/ops/lifecycle_ops.py:259:     logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
+src/builder/ops/lifecycle_ops.py:260:     return True
+src/builder/ops/lifecycle_ops.py:261: 
+src/builder/ops/lifecycle_ops.py:262: 
+src/builder/ops/lifecycle_ops.py:263: def sweep_orphans(builder) -> Dict[str, object]:
+src/builder/ops/lifecycle_ops.py:264:     """Retroativo: pruna curations + regenera sidecars derivativos.
+src/builder/ops/lifecycle_ops.py:265: 
+src/builder/ops/lifecycle_ops.py:266:     Não reprocessa entries (zero custo de extractor/AI). Útil para limpar
+src/builder/ops/lifecycle_ops.py:267:     resíduos deixados por unprocess/reject anteriores à correção.
+src/builder/ops/lifecycle_ops.py:268: 
+src/builder/ops/lifecycle_ops.py:269:     Returns dict com counts e status de cada etapa.
+src/builder/ops/lifecycle_ops.py:270:     """
+src/builder/ops/lifecycle_ops.py:271:     report: Dict[str, object] = {
+src/builder/ops/lifecycle_ops.py:272:         "code_curation_removed": 0,
+src/builder/ops/lifecycle_ops.py:273:         "image_curation_removed": 0,
+src/builder/ops/lifecycle_ops.py:274:         "regenerated": False,
+src/builder/ops/lifecycle_ops.py:275:         "errors": [],
+src/builder/ops/lifecycle_ops.py:276:     }
+src/builder/ops/lifecycle_ops.py:277: 
+src/builder/ops/lifecycle_ops.py:278:     manifest_path = builder.root_dir / "manifest.json"
+src/builder/ops/lifecycle_ops.py:279:     if not manifest_path.exists():
+src/builder/ops/lifecycle_ops.py:280:         report["errors"].append("manifest.json não encontrado")
+src/builder/ops/lifecycle_ops.py:281:         return report
+src/builder/ops/lifecycle_ops.py:282: 
+src/builder/ops/lifecycle_ops.py:283:     try:
+src/builder/ops/lifecycle_ops.py:284:         report["code_curation_removed"] = builder._prune_stale_code_curation()
+src/builder/ops/lifecycle_ops.py:285:     except Exception as exc:
+src/builder/ops/lifecycle_ops.py:286:         report["errors"].append(f"prune code_curation: {exc}")
+src/builder/ops/lifecycle_ops.py:287: 
+src/builder/ops/lifecycle_ops.py:288:     try:
+src/builder/ops/lifecycle_ops.py:289:         report["image_curation_removed"] = builder._prune_stale_image_curation()
+src/builder/ops/lifecycle_ops.py:290:     except Exception as exc:
+src/builder/ops/lifecycle_ops.py:291:         report["errors"].append(f"prune image_curation: {exc}")
+src/builder/ops/lifecycle_ops.py:292: 
+src/builder/ops/lifecycle_ops.py:293:     try:
+src/builder/ops/lifecycle_ops.py:294:         with open(manifest_path, "r", encoding="utf-8") as f:
+src/builder/ops/lifecycle_ops.py:295:             manifest = json.load(f)
+src/builder/ops/lifecycle_ops.py:296:         builder.course_meta = builder._effective_course_meta(manifest)
+src/builder/ops/lifecycle_ops.py:297:         builder._regenerate_pedagogical_files(manifest)
+src/builder/ops/lifecycle_ops.py:298:         write_json_manifest(manifest_path, manifest)
+src/builder/ops/lifecycle_ops.py:299:         report["regenerated"] = True
+src/builder/ops/lifecycle_ops.py:300:     except Exception as exc:
+src/builder/ops/lifecycle_ops.py:301:         report["errors"].append(f"regen pedagogical: {exc}")
+src/builder/ops/lifecycle_ops.py:302: 
+src/builder/ops/lifecycle_ops.py:303:     logger.info(
+src/builder/ops/lifecycle_ops.py:304:         "[sweep_orphans] code=%s img=%s regen=%s errors=%s",
+src/builder/ops/lifecycle_ops.py:305:         report["code_curation_removed"],
+src/builder/ops/lifecycle_ops.py:306:         report["image_curation_removed"],
+src/builder/ops/lifecycle_ops.py:307:         report["regenerated"],
+src/builder/ops/lifecycle_ops.py:308:         len(report["errors"]),
+src/builder/ops/lifecycle_ops.py:309:     )
+src/builder/ops/lifecycle_ops.py:310:     return report
+src/builder/ops/lifecycle_ops.py:311: 
+src/builder/ops/lifecycle_ops.py:312: 
+
+src/ui/maintenance_panel.py:12: class MaintenancePanel(tk.Frame):
+src/ui/maintenance_panel.py:35:     def _build_ui(self):
+src/ui/maintenance_panel.py:75:         toolbar.pack(fill="x", padx=12, pady=(12, 4))
+src/ui/maintenance_panel.py:76:         ttk.Button(
+src/ui/maintenance_panel.py:77:             toolbar, text="🔍 Detectar resíduos", command=self.refresh
+src/ui/maintenance_panel.py:78:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:79:         ttk.Button(
+src/ui/maintenance_panel.py:80:             toolbar, text="🧹 Executar limpeza", command=self._on_sweep
+src/ui/maintenance_panel.py:81:         ).pack(side="left", padx=2)
+src/ui/maintenance_panel.py:82: 
+src/ui/maintenance_panel.py:83:         # ── Log
+src/ui/maintenance_panel.py:84:         log_frame = ttk.LabelFrame(self, text="Log")
+src/ui/maintenance_panel.py:85:         log_frame.pack(fill="both", expand=True, padx=12, pady=12)
+src/ui/maintenance_panel.py:86:         self._log = tk.Text(log_frame, wrap="word", height=12, font=("Consolas", 9))
+src/ui/maintenance_panel.py:87:         self._log.pack(fill="both", expand=True, padx=4, pady=4)
+src/ui/maintenance_panel.py:88:         self._log.configure(state="disabled")
+src/ui/maintenance_panel.py:142: 
+src/ui/maintenance_panel.py:143:         present = [p.name for p in self._sidecar_files(repo_dir) if p.exists()]
+src/ui/maintenance_panel.py:144:         self._var_sidecar_age.set(f"{len(present)}/5 presentes (serão regerados)")
+src/ui/maintenance_panel.py:145: 
+src/ui/maintenance_panel.py:146:     # ---------------------------------------------------------- sweep
+src/ui/maintenance_panel.py:147:     def _on_sweep(self) -> None:
+src/ui/maintenance_panel.py:148:         if self._busy:
+src/ui/maintenance_panel.py:149:             return
+src/ui/maintenance_panel.py:150:         repo_dir = self._get_repo_dir() if self._get_repo_dir else None
+src/ui/maintenance_panel.py:151:         if not repo_dir:
+src/ui/maintenance_panel.py:152:             messagebox.showwarning("Manutenção", "Selecione uma matéria primeiro.")
+src/ui/maintenance_panel.py:153:             return
+src/ui/maintenance_panel.py:154: 
+src/ui/maintenance_panel.py:155:         if not messagebox.askyesno(
+src/ui/maintenance_panel.py:156:             "Confirmar limpeza",
+src/ui/maintenance_panel.py:157:             "Vai purgar entries órfãs de code_curation/image_curation e "
+src/ui/maintenance_panel.py:158:             "regenerar sidecars derivativos.\n\n"
+src/ui/maintenance_panel.py:159:             "Não reprocessa entries (zero custo Gemini/extractor).\n\n"
+src/ui/maintenance_panel.py:160:             "Continuar?",
+src/ui/maintenance_panel.py:161:         ):
+src/ui/maintenance_panel.py:162:             return
+src/ui/maintenance_panel.py:163: 
+src/ui/maintenance_panel.py:164:         self._busy = True
+src/ui/maintenance_panel.py:165:         self._clear_log()
+src/ui/maintenance_panel.py:166:         self._log_line(f"[start] repo={Path(repo_dir).name}")
+src/ui/maintenance_panel.py:167: 
+src/ui/maintenance_panel.py:168:         def _worker():
+src/ui/maintenance_panel.py:169:             try:
+src/ui/maintenance_panel.py:170:                 builder = self._make_builder()
+src/ui/maintenance_panel.py:171:                 if builder is None:
+src/ui/maintenance_panel.py:172:                     self.after(0, lambda: self._log_line("[erro] builder indisponível"))
+src/ui/maintenance_panel.py:173:                     return
+src/ui/maintenance_panel.py:174:                 report = builder.sweep_orphans()
+src/ui/maintenance_panel.py:175:                 self.after(0, lambda r=report: self._render_report(r))
+src/ui/maintenance_panel.py:176:             except Exception as exc:
+src/ui/maintenance_panel.py:177:                 self.after(0, lambda e=exc: self._log_line(f"[erro] {e}"))
+src/ui/maintenance_panel.py:178:             finally:
+src/ui/maintenance_panel.py:179:                 def _done():
+src/ui/maintenance_panel.py:180:                     self._busy = False
+src/ui/maintenance_panel.py:181:                     self.refresh()
+src/ui/maintenance_panel.py:182:                 self.after(0, _done)
+src/ui/maintenance_panel.py:183: 
+src/ui/maintenance_panel.py:184:         threading.Thread(target=_worker, daemon=True).start()

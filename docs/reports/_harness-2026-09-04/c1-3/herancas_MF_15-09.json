@@ -1,0 +1,2030 @@
+{
+  "summary": {
+    "MF": {
+      "counts": {
+        "entrada_ausente": 4,
+        "bloco_n": 66,
+        "bloco_base": 59,
+        "bloco_novo": 45,
+        "bloco_perdas": 15,
+        "unidade_n": 66,
+        "unidade_base": 61,
+        "unidade_novo": 59,
+        "unidade_perdas": 3,
+        "sub_aceito_n": 58,
+        "sub_aceito_base": 46,
+        "sub_aceito_novo": 29,
+        "sub_primario_n": 58,
+        "sub_primario_base": 25,
+        "sub_primario_novo": 25,
+        "comuns": 62,
+        "bloco_comum_n": 62,
+        "bloco_comum_base": 55,
+        "bloco_comum_novo": 45,
+        "unidade_comum_n": 62,
+        "unidade_comum_base": 60,
+        "unidade_comum_novo": 59,
+        "sub_aceito_comum_n": 57,
+        "sub_aceito_comum_base": 46,
+        "sub_aceito_comum_novo": 29,
+        "sub_primario_comum_n": 57,
+        "sub_primario_comum_base": 25,
+        "sub_primario_comum_novo": 25,
+        "sub_aceito_perdas": 19,
+        "sub_primario_perdas": 4,
+        "sub_primario_ganhos": 4,
+        "sub_aceito_ganhos": 2,
+        "bloco_ganhos": 1,
+        "unidade_ganhos": 1,
+        "manifest_base": 66,
+        "manifest_novo": 67,
+        "novas_origens": 5
+      },
+      "changed_fields": {
+        "moodle_label": 61,
+        "posting_date": 61,
+        "manual_unit_slug": 13,
+        "manual_timeline_block_id": 19,
+        "texto_extraido": 45,
+        "category": 19,
+        "title": 12,
+        "base_backend": 2
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "MF",
+      "entry_id": "eth2",
+      "new_id": null,
+      "source": "https://github.com/ConsenSys/eth2.0-dafny",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        12638,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "aws-encryption-sdk",
+      "new_id": null,
+      "source": "https://github.com/aws/aws-encryption-sdk",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        5211,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "archive-of-formal-proofs-355fb8",
+      "new_id": null,
+      "source": "https://www.isa-afp.org/",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        473,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosrecursao3",
+      "new_id": "exerciciosformalizacaoalgoritmosrecursao3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosformalizacaoalgoritmosrecursao3.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1230,
+        1567
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "formalizacaoalgoritmos-recursao2",
+      "new_id": "formalizacaoalgoritmos-recursao2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\formalizacaoalgoritmos_recursao2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2773,
+        2892
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosconjuntosindutivos",
+      "new_id": "exerciciosconjuntosindutivos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosconjuntosindutivos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2171,
+        2101
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-conjuntos-indutivos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-conjuntos-indutivos"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "conjuntosindutivos",
+      "new_id": "conjuntosindutivos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\conjuntosindutivos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13752,
+        14443
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-conjuntos-indutivos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-conjuntos-indutivos"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicapredicados-semantica",
+      "new_id": "logicapredicados-semantica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\logicapredicados_semantica.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5578,
+        9352
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicapredicados-sintaxe",
+      "new_id": "logicapredicados-sintaxe",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\logicapredicados_sintaxe.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        6323,
+        10363
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicaproposicional-sintaxe",
+      "new_id": "logicaproposicional-sintaxe",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\logicaproposicional_sintaxe.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5424,
+        9036
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "revisao",
+      "new_id": "revisao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\revisao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        4705,
+        8490
+      ],
+      "gains": [],
+      "losses": [
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-conjuntos-indutivos"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "introducao",
+      "new_id": "introducao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\introdução a métodos formais\\introducao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        8739,
+        12659
+      ],
+      "gains": [
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "exemplos-de-aplicacoes"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "provasindutivas-especificacoesrecursivas",
+      "new_id": "provasindutivas-especificacoesrecursivas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\provasindutivas_especificaçõesrecursivas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7110,
+        6621
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "provasindutivas-especificacoesrecursivas-arvores",
+      "new_id": "provasindutivas-especificacoesrecursivas-arvores",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\provasindutivas_especificaçõesrecursivas_arvores.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2790,
+        2443
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+      "new_id": "provasindutivas-especificacoesrecursivas-listas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\provasindutivas_especificaçõesrecursivas_listas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2544,
+        2617
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exercicioscorrecaoinducaomatematica",
+      "new_id": "exercicioscorrecaoinducaomatematica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\exercicioscorrecaoinducaomatematica.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1972,
+        2173
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosespecificacao-respostas",
+      "new_id": "exerciciosespecificacao-respostas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\exerciciosespecificacao_respostas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5264,
+        5628
+      ],
+      "gains": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "linguagens-de-especificacao-e-logicas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosespecificacao",
+      "new_id": "exerciciosespecificacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\exerciciosespecificacao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3366,
+        3585
+      ],
+      "gains": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "linguagens-de-especificacao-e-logicas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosrecursao2",
+      "new_id": "exerciciosformalizacaoalgoritmosrecursao2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosformalizacaoalgoritmosrecursao2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        967,
+        1227
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosisabelle2",
+      "new_id": "exerciciosisabelle2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\exerciciosisabelle2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2981,
+        2929
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicaproposicional-semantica",
+      "new_id": "logicaproposicional-semantica",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\revisão - lógica e especificação\\logicaproposicional_semantica.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        10581,
+        12834
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "softwares-de-suporte-a-verificacao-formal-de-modelos"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+      "new_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosformalizacaoalgoritmosrecursao_respostas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1414,
+        843
+      ],
+      "gains": [
+        "bloco"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-03",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "formalizacaoalgoritmos-recursao",
+      "new_id": "formalizacaoalgoritmos-recursao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\formalizacaoalgoritmos_recursao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        19315,
+        14873
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "formalizacaoalgoritmos-recursao3",
+      "new_id": "formalizacaoalgoritmos-recursao3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\formalizacaoalgoritmos_recursao3.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2360,
+        1858
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosisabelle",
+      "new_id": "exerciciosisabelle",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\exerciciosisabelle.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2561,
+        2657
+      ],
+      "gains": [
+        "sub_primario"
+      ],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "provadores-de-teoremas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "revisao-p1",
+      "new_id": "revisao-p1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\exercícios de revisão para provas\\revisao_p1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_unit_slug",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2736,
+        2434
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "t1-2026-1",
+      "new_id": null,
+      "source": "c:\\users\\humberto\\downloads\\t1_2026_1.pdf",
+      "matched": false,
+      "observed_differences": [
+        "entrada_ausente"
+      ],
+      "text_chars": [
+        3950,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "sistema-de-prova"
+      ],
+      "pred_after": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "t1-2026-1-thy",
+      "new_id": "t1-2026-1-thy",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\tde trabalho discente efetivo\\t1_2026_1.thy",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1166,
+        1150
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosrecursao",
+      "new_id": "exerciciosformalizacaoalgoritmosrecursao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosformalizacaoalgoritmosrecursao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2007,
+        1966
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "revisao-p1-gabarito",
+      "new_id": "revisao-p1-gabarito",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\exercícios de revisão para provas\\revisao_p1_gabarito.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7491,
+        4652
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-07",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "arvores",
+      "new_id": "arvores",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\arvores.thy",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id"
+      ],
+      "text_chars": [
+        1239,
+        1239
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exemplos",
+      "new_id": "exemplos-thy",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\exemplos.thy",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1382,
+        1390
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "exemplos-de-aplicacoes"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "exemplos-de-aplicacoes"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "intro",
+      "new_id": "intro",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\intro.thy",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        1175,
+        1175
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "fundamentos-de-logica-de-primeira-ordem"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "listas",
+      "new_id": "listas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\listas.thy",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id"
+      ],
+      "text_chars": [
+        1447,
+        1447
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "provas",
+      "new_id": "provas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\provas por indução\\provas.thy",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        2559,
+        2559
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "pred_after": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "correcaoterminacao",
+      "new_id": "correcaoterminacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\correcaoterminacao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12176,
+        10989
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exercicioscorrecaoterminacao",
+      "new_id": "exercicioscorrecaoterminacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exercicioscorrecaoterminacao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1686,
+        1822
+      ],
+      "gains": [],
+      "losses": [
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosinvariantes",
+      "new_id": "exerciciosformalizacaoalgoritmosinvariantes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosformalizacaoalgoritmosinvariantes.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        2179,
+        2428
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "formalizacaoalgoritmos-invarianteslaco",
+      "new_id": "formalizacaoalgoritmos-invarianteslaco",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\formalizacaoalgoritmos_invarianteslaco.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        28628,
+        20860
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicadehoare",
+      "new_id": "logicadehoare",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\logicadehoare.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        19135,
+        14520
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "logica-de-hoare"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "logica-de-hoare"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicadehoare2",
+      "new_id": "logicadehoare2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\logicadehoare2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5913,
+        4911
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny1",
+      "new_id": "exerciciosdafny1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosdafny1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1580,
+        1760
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-12",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-12",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny2",
+      "new_id": "exerciciosdafny2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosdafny2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3848,
+        3731
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "pre-e-pos-condicoes"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny3",
+      "new_id": "exerciciosdafny3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosdafny3.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1559,
+        1766
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny4",
+      "new_id": "exerciciosdafny4",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosdafny4.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3429,
+        3541
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny5",
+      "new_id": "exerciciosdafny5",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exerciciosdafny5.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1815,
+        2000
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "verificacaomodelos",
+      "new_id": "verificacaomodelos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificação e verificação de modelos\\verificacaomodelos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        44296,
+        24081
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "verificacao-de-modelos-model-checking"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "verificacao-de-modelos-model-checking"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exercicioslogicatemporal",
+      "new_id": "exercicioslogicatemporal",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificação e verificação de modelos\\exercicioslogicatemporal.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5153,
+        3687
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "logica-temporal-linear"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "modelos-de-kripke"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosnusmv",
+      "new_id": "exerciciosnusmv",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificação e verificação de modelos\\exerciciosnusmv.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3937,
+        3485
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "verificacao-de-modelos-model-checking"
+      ],
+      "pred_after": [
+        "bloco-18",
+        "unidade-03-verificacao-de-modelos",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "classes-parte1",
+      "new_id": "classes-parte1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\classes_parte1.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "colecoes-arrays",
+      "new_id": "colecoes-arrays",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\colecoes_arrays.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "colecoes-conjuntos",
+      "new_id": "colecoes-conjuntos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\colecoes_conjuntos.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "colecoes-sequences",
+      "new_id": "colecoes-sequences",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\colecoes_sequences.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exercicios-conjuntos",
+      "new_id": "exercicios-conjuntos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exercicios_conjuntos.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "hoare",
+      "new_id": "hoare",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\hoare.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "correcao-parcial-e-total"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "introducao-zip",
+      "new_id": "introducao-zip",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\introducao.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "invariantes",
+      "new_id": "invariantes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\invariantes.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ],
+      "pred_after": [
+        "bloco-11",
+        "unidade-02-verificacao-de-programas",
+        "sistema-de-prova"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "terminacao",
+      "new_id": "terminacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\terminacao.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-12",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ],
+      "pred_after": [
+        "bloco-12",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "tiposindutivos",
+      "new_id": "tiposindutivos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\tiposindutivos.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exemplos-zip",
+      "new_id": "exemplos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificação e verificação de modelos\\exemplos.zip",
+      "matched": true,
+      "observed_differences": [
+        "title",
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "verificacao-de-modelos-model-checking"
+      ],
+      "pred_after": [
+        "bloco-16",
+        "unidade-03-verificacao-de-modelos",
+        "maquinas-de-estado"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+      "new_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\especificações indutivas e recursivas\\exerciciosformalizacaoalgoritmosrecursao3_respostas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "base_backend",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        1028,
+        602
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "plano",
+      "new_id": "plano",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\plano de ensino\\plano.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5564,
+        5421
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "t2-2026-1",
+      "new_id": "t2-2026-1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\tde trabalho discente efetivo\\t2_2026_1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3155,
+        3087
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-18",
+        "unidade-03-verificacao-de-modelos",
+        "modelos-de-kripke"
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-verificacao-de-programas",
+        ""
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "classes-parte2",
+      "new_id": "classes-parte2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\classes_parte2.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-15",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "invariante-e-variante-de-laco"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exercicios-arrays",
+      "new_id": "exercicios-arrays",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\exercicios_arrays.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "verificacao-de-programas"
+      ],
+      "pred_after": [
+        "bloco-13",
+        "unidade-02-verificacao-de-programas",
+        "sistema-de-prova"
+      ]
+    },
+    {
+      "curso": "MF",
+      "entry_id": "logicadehoare-exercicios-respostas",
+      "new_id": "logicadehoare-exercicios-respostas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\metodos-formais-para-computacao\\verificação de programas\\logicadehoare_exercicios_respostas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "base_backend",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        3298,
+        1052
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "logica-de-hoare"
+      ],
+      "pred_after": [
+        "bloco-10",
+        "unidade-02-verificacao-de-programas",
+        "logica-de-hoare"
+      ]
+    }
+  ]
+}

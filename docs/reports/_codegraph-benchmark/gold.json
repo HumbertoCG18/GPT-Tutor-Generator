@@ -1,0 +1,205 @@
+[
+  {
+    "id": "L1",
+    "expected": [
+      "src/builder/timeline/unit_labels.py:unit_short_label"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/timeline/unit_labels.py:unit_short_label",
+        "definition_line": 21
+      }
+    ]
+  },
+  {
+    "id": "L2",
+    "expected": [
+      "src/builder/runtime/backend_runtime.py:load_docling_python_api"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/runtime/backend_runtime.py:load_docling_python_api",
+        "definition_line": 222
+      }
+    ]
+  },
+  {
+    "id": "L3",
+    "expected": [
+      "src/ui/maintenance_panel.py:MaintenancePanel._detect_orphans"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._detect_orphans",
+        "definition_line": 102
+      }
+    ]
+  },
+  {
+    "id": "C1",
+    "expected": [
+      "src/builder/timeline/unit_labels.py:unit_short_label"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/timeline/unit_labels.py:unit_short_label",
+        "definition_line": 21
+      }
+    ]
+  },
+  {
+    "id": "C2",
+    "expected": [
+      "src/builder/runtime/backend_runtime.py:build_marker_page_chunks"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/runtime/backend_runtime.py:build_marker_page_chunks",
+        "definition_line": 28
+      }
+    ]
+  },
+  {
+    "id": "C3",
+    "expected": [
+      "src/ui/maintenance_panel.py:MaintenancePanel.refresh",
+      "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel.refresh",
+        "definition_line": 127
+      },
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep",
+        "definition_line": 147
+      }
+    ]
+  },
+  {
+    "id": "P1",
+    "expected": [
+      "src/builder/engine.py:MarkerCLIBackend._run_chunked_marker",
+      "src/builder/runtime/backend_runtime.py:build_marker_page_chunks",
+      "src/builder/runtime/backend_runtime.py:build_page_chunks"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/engine.py:MarkerCLIBackend._run_chunked_marker",
+        "definition_line": 1447
+      },
+      {
+        "symbol": "src/builder/runtime/backend_runtime.py:build_marker_page_chunks",
+        "definition_line": 28
+      },
+      {
+        "symbol": "src/builder/runtime/backend_runtime.py:build_page_chunks",
+        "definition_line": 21
+      }
+    ]
+  },
+  {
+    "id": "P2",
+    "expected": [
+      "src/builder/artifacts/temporal_context.py:build_temporal_context_rows",
+      "src/builder/timeline/unit_labels.py:unit_short_label",
+      "src/builder/timeline/unit_labels.py:unit_number"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/artifacts/temporal_context.py:build_temporal_context_rows",
+        "definition_line": 56
+      },
+      {
+        "symbol": "src/builder/timeline/unit_labels.py:unit_short_label",
+        "definition_line": 21
+      },
+      {
+        "symbol": "src/builder/timeline/unit_labels.py:unit_number",
+        "definition_line": 15
+      }
+    ]
+  },
+  {
+    "id": "P3",
+    "expected": [
+      "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep",
+      "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker",
+      "src/builder/engine.py:RepoBuilder.sweep_orphans",
+      "src/builder/ops/lifecycle_ops.py:sweep_orphans"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep",
+        "definition_line": 147
+      },
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker",
+        "definition_line": 168
+      },
+      {
+        "symbol": "src/builder/engine.py:RepoBuilder.sweep_orphans",
+        "definition_line": 2218
+      },
+      {
+        "symbol": "src/builder/ops/lifecycle_ops.py:sweep_orphans",
+        "definition_line": 263
+      }
+    ]
+  },
+  {
+    "id": "I1",
+    "expected": [
+      "src/builder/artifacts/temporal_context.py:build_temporal_context_rows",
+      "src/builder/artifacts/temporal_context.py:build_unit_legend",
+      "src/ui/timeline_dashboard.py:TimelineDashboardView._populate"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/builder/artifacts/temporal_context.py:build_temporal_context_rows",
+        "definition_line": 56
+      },
+      {
+        "symbol": "src/builder/artifacts/temporal_context.py:build_unit_legend",
+        "definition_line": 146
+      },
+      {
+        "symbol": "src/ui/timeline_dashboard.py:TimelineDashboardView._populate",
+        "definition_line": 757
+      }
+    ]
+  },
+  {
+    "id": "I2",
+    "expected": [
+      "docling.document_converter",
+      "docling.datamodel.pipeline_options",
+      "docling.datamodel.base_models",
+      "docling.datamodel.accelerator_options",
+      "docling.datamodel.settings"
+    ],
+    "evidence": []
+  },
+  {
+    "id": "I3",
+    "expected": [
+      "src/ui/maintenance_panel.py:MaintenancePanel.refresh",
+      "src/ui/maintenance_panel.py:MaintenancePanel._build_ui",
+      "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker._done"
+    ],
+    "evidence": [
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel.refresh",
+        "definition_line": 127
+      },
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._build_ui",
+        "definition_line": 35
+      },
+      {
+        "symbol": "src/ui/maintenance_panel.py:MaintenancePanel._on_sweep._worker._done",
+        "definition_line": 179
+      }
+    ]
+  }
+]

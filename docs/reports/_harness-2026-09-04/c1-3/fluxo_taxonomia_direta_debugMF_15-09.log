@@ -1,0 +1,36 @@
+  [regua] MF: copia pronta, 85 aliases do LLM vetados na taxonomia, cache de 13 resumos de codigo zerado (sera regenerado sem o vocab)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fluxo_taxonomia_direta_15-09.py", line 237, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fluxo_taxonomia_direta_15-09.py", line 207, in main
+    rc = motor.main([
+         ^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\motor_3eixos_12-09.py", line 402, in main
+    ra.reprocess(DEST / NOMES[sig], [])
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\scripts\reprocess_assignments.py", line 115, in reprocess
+    builder.incremental_build()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2114, in incremental_build
+    self._incremental_build_impl()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2117, in _incremental_build_impl
+    _incremental_build_incremental_build_impl(
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\incremental_build.py", line 110, in incremental_build_impl
+    builder._regenerate_pedagogical_files(manifest)
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2134, in _regenerate_pedagogical_files
+    _pedagogical_regeneration_regenerate_pedagogical_files(
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\pedagogical_regeneration.py", line 455, in regenerate_pedagogical_files
+    content_taxonomy = build_rich_content_taxonomy_fn(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py", line 2293, in _build_rich_content_taxonomy
+    return _ops_build_rich_content_taxonomy(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\ops\taxonomy_inputs.py", line 40, in build_rich_content_taxonomy
+    return taxonomy_fn(course_meta, subject_profile, live)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fluxo_taxonomia_direta_15-09.py", line 131, in taxonomia_direta
+    terms, compact = termos_estruturados(
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\fluxo_taxonomia_direta_15-09.py", line 107, in termos_estruturados
+    raise AssertionError(
+AssertionError: termos diretos divergem do glossario integral: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.frzero\Metodos-Formais-Tutor; quantidades=23/24; primeiro=(1, {'term': '1.1 Sistemas Formais', 'unit_hint': 'Unidade 01 — Métodos Formais', 'synonyms': [], 'definition': 'Conceito central de métodos formais que deve ser reconhecido e usado corretamente nas respostas e revisões.'}, {'term': '[Termo]', 'unit_hint': '[unidades / tópicos onde é usado]', 'synonyms': ['[outros nomes para o mesmo conceito]'], 'definition': '[definição precisa usada nesta disciplina]'})

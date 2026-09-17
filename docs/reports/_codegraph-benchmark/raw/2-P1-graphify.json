@@ -1,0 +1,63 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_run_chunked_marker",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5014061000038055,
+    "returncode": 0,
+    "stdout": "Node: ._run_chunked_marker()\n  ID:        src_builder_engine_markerclibackend_run_chunked_marker\n  Source:    src/builder/engine.py L1447\n  Type:      code\n  Community: \n  Degree:    10\n\nConnections (10):\n  --> write_text() [calls] [EXTRACTED] src/builder/engine.py:L1506\n  --> safe_rel() [calls] [EXTRACTED] src/builder/engine.py:L1510\n  --> BackendContext [references] [EXTRACTED] src/builder/engine.py:L1447\n  --> Path [references] [EXTRACTED] src/builder/engine.py:L1447\n  --> BackendRunResult [references] [EXTRACTED] src/builder/engine.py:L1447\n  <-- MarkerCLIBackend [method] [EXTRACTED] src/builder/engine.py:L1447\n  --> ._run_single_marker() [calls] [EXTRACTED] src/builder/engine.py:L1456\n  <-- .run() [calls] [EXTRACTED] src/builder/engine.py:L1566\n  --> wrap_frontmatter() [calls] [EXTRACTED] src/builder/engine.py:L1506\n  --> pages_to_marker_range() [calls] [EXTRACTED] src/builder/engine.py:L1501\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "build_marker_page_chunks",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5747155999997631,
+    "returncode": 0,
+    "stdout": "Node: build_marker_page_chunks()\n  ID:        src_builder_runtime_backend_runtime_build_marker_page_chunks\n  Source:    src/builder/runtime/backend_runtime.py L28\n  Type:      code\n  Community: \n  Degree:    3\n\nConnections (3):\n  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61\n  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L28\n  --> build_page_chunks() [calls] [EXTRACTED] src/builder/runtime/backend_runtime.py:L29\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "build_page_chunks",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.758814099994197,
+    "returncode": 0,
+    "stdout": "Node: build_page_chunks()\n  ID:        src_builder_runtime_backend_runtime_build_page_chunks\n  Source:    src/builder/runtime/backend_runtime.py L21\n  Type:      code\n  Community: \n  Degree:    3\n\nConnections (3):\n  <-- engine.py [imports] [EXTRACTED] src/builder/engine.py:L61\n  <-- backend_runtime.py [contains] [EXTRACTED] src/builder/runtime/backend_runtime.py:L21\n  <-- build_marker_page_chunks() [calls] [EXTRACTED] src/builder/runtime/backend_runtime.py:L29\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "path",
+      "_run_chunked_marker",
+      "build_page_chunks",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.6536573999983375,
+    "returncode": 0,
+    "stdout": "No directed path found between '_run_chunked_marker' and 'build_page_chunks'. Re-run with --undirected to search ignoring edge direction.\n",
+    "stderr": ""
+  }
+]

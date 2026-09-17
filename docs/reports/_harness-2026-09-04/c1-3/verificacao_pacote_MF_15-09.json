@@ -1,0 +1,369 @@
+{
+  "courses": {
+    "MF": {
+      "counts": {
+        "absent": 4,
+        "bloco_n": 66,
+        "bloco_before": 45,
+        "bloco_after": 50,
+        "bloco_gains": 9,
+        "bloco_losses": 4,
+        "unidade_n": 66,
+        "unidade_before": 59,
+        "unidade_after": 61,
+        "unidade_gains": 2,
+        "unidade_losses": 0,
+        "sub_aceito_n": 58,
+        "sub_aceito_before": 29,
+        "sub_aceito_after": 29,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_primario_n": 58,
+        "sub_primario_before": 25,
+        "sub_primario_after": 25,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "common": 62,
+        "bloco_common_n": 62,
+        "unidade_common_n": 62,
+        "sub_aceito_common_n": 57,
+        "sub_primario_common_n": 57
+      },
+      "flips": [
+        {
+          "entry_id": "revisao",
+          "changes": {
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-04",
+            "unidade-01-metodos-formais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-arvores",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "exerciciosisabelle2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "especificacao-de-funcoes-recursivas"
+          ]
+        },
+        {
+          "entry_id": "logicaproposicional-semantica",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ],
+            "unidade": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-03",
+            "unidade-01-metodos-formais",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exerciciosisabelle",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "provadores-de-teoremas"
+          ]
+        },
+        {
+          "entry_id": "t1-2026-1-thy",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-11",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "exemplos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-06",
+            "unidade-01-metodos-formais",
+            "exemplos-de-aplicacoes"
+          ]
+        },
+        {
+          "entry_id": "exerciciosdafny5",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "correcao-parcial-e-total"
+          ]
+        },
+        {
+          "entry_id": "classes-parte1",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "invariante-e-variante-de-laco"
+          ]
+        },
+        {
+          "entry_id": "terminacao",
+          "changes": {
+            "bloco": [
+              1,
+              0
+            ]
+          },
+          "prediction": [
+            "bloco-11",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "tiposindutivos",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            ""
+          ]
+        },
+        {
+          "entry_id": "classes-parte2",
+          "changes": {
+            "bloco": [
+              0,
+              1
+            ]
+          },
+          "prediction": [
+            "bloco-15",
+            "unidade-02-verificacao-de-programas",
+            "invariante-e-variante-de-laco"
+          ]
+        }
+      ],
+      "source_hashes_checked": 67,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\Metodos-Formais-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "d3e23b602f59faf03438765b15b6d291c831604a4df2fb103cedf87006320afc",
+        "additive": {
+          "labels": 66,
+          "posting": 66,
+          "lessons": 39
+        },
+        "consumed": {
+          "sections": 66,
+          "card_labels": 7
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 67,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "exercicioslogicatemporal",
+          "before_chars": 3687,
+          "after_chars": 3643
+        },
+        {
+          "id": "verificacaomodelos",
+          "before_chars": 24081,
+          "after_chars": 23853
+        },
+        {
+          "id": "conjuntosindutivos",
+          "before_chars": 14443,
+          "after_chars": 14423
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao",
+          "before_chars": 14873,
+          "after_chars": 14865
+        },
+        {
+          "id": "formalizacaoalgoritmos-recursao2",
+          "before_chars": 2892,
+          "after_chars": 2888
+        },
+        {
+          "id": "introducao",
+          "before_chars": 12659,
+          "after_chars": 12563
+        },
+        {
+          "id": "exerciciosisabelle2",
+          "before_chars": 2929,
+          "after_chars": 2921
+        },
+        {
+          "id": "mcs",
+          "before_chars": 1857811,
+          "after_chars": 1854243
+        },
+        {
+          "id": "provasindutivas-especificacoesrecursivas",
+          "before_chars": 6621,
+          "after_chars": 6617
+        },
+        {
+          "id": "logicapredicados-semantica",
+          "before_chars": 9352,
+          "after_chars": 9280
+        },
+        {
+          "id": "logicapredicados-sintaxe",
+          "before_chars": 10363,
+          "after_chars": 10279
+        },
+        {
+          "id": "logicaproposicional-semantica",
+          "before_chars": 12834,
+          "after_chars": 12726
+        },
+        {
+          "id": "logicaproposicional-sintaxe",
+          "before_chars": 9036,
+          "after_chars": 8964
+        },
+        {
+          "id": "revisao",
+          "before_chars": 8490,
+          "after_chars": 8402
+        },
+        {
+          "id": "formalizacaoalgoritmos-invarianteslaco",
+          "before_chars": 20860,
+          "after_chars": 20852
+        },
+        {
+          "id": "ieeesoftwaredafny2017",
+          "before_chars": 16902,
+          "after_chars": 16898
+        },
+        {
+          "id": "logicadehoare",
+          "before_chars": 14520,
+          "after_chars": 14508
+        }
+      ],
+      "content_changes_after_repo_path_normalization": []
+    }
+  },
+  "total": {
+    "absent": 4,
+    "bloco_n": 66,
+    "bloco_before": 45,
+    "bloco_after": 50,
+    "bloco_gains": 9,
+    "bloco_losses": 4,
+    "unidade_n": 66,
+    "unidade_before": 59,
+    "unidade_after": 61,
+    "unidade_gains": 2,
+    "unidade_losses": 0,
+    "sub_aceito_n": 58,
+    "sub_aceito_before": 29,
+    "sub_aceito_after": 29,
+    "sub_aceito_gains": 0,
+    "sub_aceito_losses": 0,
+    "sub_primario_n": 58,
+    "sub_primario_before": 25,
+    "sub_primario_after": 25,
+    "sub_primario_gains": 0,
+    "sub_primario_losses": 0,
+    "common": 62,
+    "bloco_common_n": 62,
+    "unidade_common_n": 62,
+    "sub_aceito_common_n": 57,
+    "sub_primario_common_n": 57
+  }
+}

@@ -1,0 +1,1005 @@
+{
+  "summary": {
+    "ES2": {
+      "counts": {
+        "comuns": 31,
+        "bloco_n": 28,
+        "bloco_base": 27,
+        "bloco_novo": 11,
+        "bloco_comum_n": 28,
+        "bloco_comum_base": 27,
+        "bloco_comum_novo": 11,
+        "bloco_perdas": 16,
+        "unidade_n": 28,
+        "unidade_base": 24,
+        "unidade_novo": 26,
+        "unidade_comum_n": 28,
+        "unidade_comum_base": 24,
+        "unidade_comum_novo": 26,
+        "unidade_perdas": 2,
+        "sub_aceito_n": 28,
+        "sub_aceito_base": 16,
+        "sub_aceito_novo": 2,
+        "sub_aceito_comum_n": 28,
+        "sub_aceito_comum_base": 16,
+        "sub_aceito_comum_novo": 2,
+        "sub_aceito_perdas": 14,
+        "sub_primario_n": 28,
+        "sub_primario_base": 14,
+        "sub_primario_novo": 2,
+        "sub_primario_comum_n": 28,
+        "sub_primario_comum_base": 14,
+        "sub_primario_comum_novo": 2,
+        "sub_primario_perdas": 12,
+        "unidade_ganhos": 4,
+        "manifest_base": 35,
+        "manifest_novo": 35,
+        "novas_origens": 0
+      },
+      "changed_fields": {
+        "category": 22,
+        "moodle_label": 31,
+        "posting_date": 31,
+        "texto_extraido": 23,
+        "manual_timeline_block_id": 1
+      }
+    }
+  },
+  "entries": [
+    {
+      "curso": "ES2",
+      "entry_id": "revisaoarquiteturapadroes",
+      "new_id": "revisaoarquiteturapadroes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\revisão\\revisaoarquiteturapadroes.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        59389,
+        47107
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "conceito-de-arquitetura-de-software"
+      ],
+      "pred_after": [
+        "",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "revisao-p1",
+      "new_id": "revisao-p1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\exercícios revisão para provas\\revisao_p1.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7746,
+        4690
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos2",
+      "new_id": "microsservicos2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos2.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        16014,
+        5111
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos3",
+      "new_id": "microsservicos3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos3.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        20236,
+        5904
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro1-introducao",
+      "new_id": "roteiro1-introducao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro1_introducao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        25081,
+        21725
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro2-nameserver",
+      "new_id": "roteiro2-nameserver",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro2_nameserver.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        20925,
+        14063
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "servicos",
+      "new_id": "servicos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\revisão\\servicos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        22031,
+        15803
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-servicos"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-servicos"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "web",
+      "new_id": "web",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\revisão\\web.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        19106,
+        8750
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "cliente-servidor"
+      ],
+      "pred_after": [
+        "",
+        "unidade-01-arquitetura-de-software",
+        "cliente-servidor"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos5",
+      "new_id": "microsservicos5",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos5.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        26159,
+        10926
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [
+        "bloco",
+        "sub_aceito"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos6",
+      "new_id": "microsservicos6",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos6.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        31408,
+        13830
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "unidade"
+      ],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "gerenciamento-da-configuracao"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos7",
+      "new_id": "microsservicos7",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos7.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        27277,
+        11254
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro1",
+      "new_id": "roteiro1",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro1.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro2",
+      "new_id": "roteiro2",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro2.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro3",
+      "new_id": "roteiro3",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro3.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro4-circuitbreaker",
+      "new_id": "roteiro4-circuitbreaker",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro4_circuitbreaker.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        21385,
+        16098
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro5",
+      "new_id": "roteiro5",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro5.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro5-conteiners",
+      "new_id": "roteiro5-conteiners",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro5_conteiners.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        22786,
+        19640
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro6",
+      "new_id": "roteiro6",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro6.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro6-conteiners-composicao",
+      "new_id": "roteiro6-conteiners-composicao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro6_conteiners_composicao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        11177,
+        9930
+      ],
+      "gains": [],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro7",
+      "new_id": "roteiro7",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro7.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro7-filas",
+      "new_id": "roteiro7-filas",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro7_filas.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        29932,
+        23588
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro7-history-service",
+      "new_id": "roteiro7-history-service",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro7_history-service.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-09",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro8-autenticacao-autorizacao",
+      "new_id": "roteiro8-autenticacao-autorizacao",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro8_autenticacao_autorizacao.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        14337,
+        7870
+      ],
+      "gains": [],
+      "losses": [
+        "bloco"
+      ],
+      "pred_before": [
+        "bloco-10",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "gerenciamento-da-configuracao"
+      ],
+      "pred_after": [
+        "bloco-02",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "plano",
+      "new_id": "plano",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\plano de ensino\\plano.pdf",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date",
+        "manual_timeline_block_id",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        5904,
+        4958
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos",
+      "new_id": "microsservicos",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        82464,
+        30988
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "azure",
+      "new_id": "azure",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\azure.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        12152,
+        3081
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [],
+      "pred_before": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-01",
+        "unidade-01-arquitetura-de-software",
+        "orientada-a-servicos"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos4",
+      "new_id": "microsservicos4",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\microsservicos4.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        13656,
+        5992
+      ],
+      "gains": [
+        "unidade"
+      ],
+      "losses": [
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-07",
+        "unidade-01-arquitetura-de-software",
+        "estilos-e-padroes-arquiteturais"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro3-gateway",
+      "new_id": "roteiro3-gateway",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro3_gateway.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        15307,
+        10430
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "arquitetura-serverless"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        "cliente-servidor"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "devops",
+      "new_id": "devops",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\devops\\devops.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        36596,
+        19863
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-12",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "integracao-continua-ci"
+      ],
+      "pred_after": [
+        "bloco-12",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "integracao-continua-ci"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "kubernetes",
+      "new_id": "kubernetes",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\devops\\kubernetes.pdf",
+      "matched": true,
+      "observed_differences": [
+        "category",
+        "moodle_label",
+        "posting_date",
+        "texto_extraido"
+      ],
+      "text_chars": [
+        7496,
+        4080
+      ],
+      "gains": [],
+      "losses": [],
+      "pred_before": [
+        "bloco-12",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        ""
+      ],
+      "pred_after": [
+        "bloco-08",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro4",
+      "new_id": "roteiro4",
+      "source": "c:\\users\\humberto\\desktop\\moodle\\engenharia-de-software-ii\\microsserviços\\roteiro4.zip",
+      "matched": true,
+      "observed_differences": [
+        "moodle_label",
+        "posting_date"
+      ],
+      "text_chars": [
+        0,
+        0
+      ],
+      "gains": [],
+      "losses": [
+        "bloco",
+        "sub_aceito",
+        "sub_primario"
+      ],
+      "pred_before": [
+        "bloco-07",
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "pred_after": [
+        "bloco-04",
+        "unidade-01-arquitetura-de-software",
+        ""
+      ]
+    }
+  ]
+}

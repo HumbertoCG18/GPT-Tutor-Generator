@@ -1,0 +1,80 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "search_graph",
+      "{\"project\": \"codegraph-pilot-20260915\", \"name_pattern\": \".*_run_chunked_marker.*\", \"include_connected\": true, \"limit\": 30}"
+    ],
+    "seconds": 4.671239800001786,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"total: 1\\nresults: 1  (rows: name label lines in out connected; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend (src/builder/engine.py):\\n  _run_chunked_marker Method 1447-1530 1 16 run;len;append;strip_frontmatter_block;rewrite_markdown_asset_paths;write_text;pages_to_marker_range;safe_rel;sanitize_external_markdown_text;_run_single_marker;_marker_chunk_size_for_workload\\nhas_more: false\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli search_graph' is deprecated and will be removed in a future release; use flags (run 'cli search_graph --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "trace_path",
+      "{\"project\": \"codegraph-pilot-20260915\", \"function_name\": \"_run_chunked_marker\", \"direction\": \"both\", \"depth\": 2, \"limit\": 40, \"include_evidence\": true}"
+    ],
+    "seconds": 3.675850300001912,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"function: _run_chunked_marker\\ndirection: both\\ncallees_total: 31\\ncallees: 31  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\nbuiltins:\\n  int 2 lsp 0.88\\n  len 1 lsp 0.92\\nbuiltins.list:\\n  append 1 heuristic 0.38\\nbuiltins:\\n  str 2 lsp 0.88\\ncodegraph-pilot-20260915.src.builder.core.html_material._PageImages:\\n  replace 2 lsp 0.97\\ncodegraph-pilot-20260915.src.builder.core.markdown_utils:\\n  rewrite_markdown_asset_paths 1 lsp 0.97\\n  strip_frontmatter_block 1 lsp 0.97\\ncodegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend:\\n  _run_single_marker 1 lsp 0.88\\ncodegraph-pilot-20260915.src.builder.engine:\\n  _marker_chunk_size_for_workload 1 heuristic 0.90\\n  _run_cli_with_timeout 2 heuristic 0.90\\n  wrap_frontmatter 1 heuristic 0.90\\ncodegraph-pilot-20260915.src.builder.runtime.backend_runtime:\\n  build_marker_page_chunks 1 lsp 0.97\\n  build_page_chunks 2 lsp 0.92\\n  marker_effective_torch_device 2 lsp 0.97\\n  marker_model_is_cloud_variant 2 lsp 0.97\\n  marker_model_is_probably_vision 2 lsp 0.97\\n  marker_model_is_qwen3_vl_8b 2 lsp 0.97\\n  marker_ollama_model 2 lsp 0.97\\n  marker_should_redo_inline_math 2 lsp 0.97\\n  marker_should_use_llm 2 lsp 0.97\\n  marker_torch_device 2 lsp 0.97\\n  selected_page_count 1 lsp 0.97\\n  should_force_ocr_for_marker 2 lsp 0.97\\ncodegraph-pilot-20260915.src.builder.text.sanitization:\\n  repair_mojibake_text 2 lsp 0.88\\n  sanitize_external_markdown_text 1 heuristic 0.38\\ncodegraph-pilot-20260915.src.models.core:\\n  BackendRunResult 1 lsp 0.85\\ncodegraph-pilot-20260915.src.ui.theme.AppConfig:\\n  get 2 heuristic 0.28\\ncodegraph-pilot-20260915.src.utils.helpers:\\n  ensure_dir 2 lsp 0.95\\n  pages_to_marker_range 1 lsp 0.88\\n  safe_rel 1 lsp 0.97\\n  write_text 1 heuristic 0.38\\ncallers_total: 1\\ncallers: 1  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend:\\n  run 1 lsp 0.90\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli trace_path' is deprecated and will be removed in a future release; use flags (run 'cli trace_path --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "search_graph",
+      "{\"project\": \"codegraph-pilot-20260915\", \"name_pattern\": \".*build_marker_page_chunks.*\", \"include_connected\": true, \"limit\": 30}"
+    ],
+    "seconds": 3.6544594000006327,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"total: 2\\nresults: 2  (rows: name label lines in out connected; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine (src/builder/engine.py):\\n  _build_marker_page_chunks Variable 384-384 0 0 -\\ncodegraph-pilot-20260915.src.builder.runtime.backend_runtime (src/builder/runtime/backend_runtime.py):\\n  build_marker_page_chunks Function 28-29 1 1 _run_chunked_marker;build_page_chunks\\nhas_more: false\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli search_graph' is deprecated and will be removed in a future release; use flags (run 'cli search_graph --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "trace_path",
+      "{\"project\": \"codegraph-pilot-20260915\", \"function_name\": \"build_marker_page_chunks\", \"direction\": \"both\", \"depth\": 2, \"limit\": 40, \"include_evidence\": true}"
+    ],
+    "seconds": 3.969413600003463,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"function: build_marker_page_chunks\\ndirection: both\\ncallees_total: 4\\ncallees: 4  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\nbuiltins:\\n  len 2 lsp 0.92\\n  list 2 lsp 0.88\\n  range 2 lsp 0.88\\ncodegraph-pilot-20260915.src.builder.runtime.backend_runtime:\\n  build_page_chunks 1 lsp 0.92\\ncallers_total: 2\\ncallers: 2  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend:\\n  _run_chunked_marker 1 lsp 0.97\\n  run 2 lsp 0.90\\n\"}],\"isError\":false}\n",
+    "stderr": "level=info msg=version_cohort.claimed_unheld build=b4b403b1d7c4def3785f148b93f345ce8427858f4f5489ce28580c4387a336a6\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli trace_path' is deprecated and will be removed in a future release; use flags (run 'cli trace_path --help'), --args-file <path>, or piped stdin.\nhint: this command started a temporary CBM daemon. `codebase-memory-mcp daemon start` keeps one warm and removes this startup cost from every CLI command.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "search_graph",
+      "{\"project\": \"codegraph-pilot-20260915\", \"name_pattern\": \".*build_page_chunks.*\", \"include_connected\": true, \"limit\": 30}"
+    ],
+    "seconds": 1.3284999999959837,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"total: 2\\nresults: 2  (rows: name label lines in out connected; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine (src/builder/engine.py):\\n  _build_page_chunks Variable 383-383 0 0 -\\ncodegraph-pilot-20260915.src.builder.runtime.backend_runtime (src/builder/runtime/backend_runtime.py):\\n  build_page_chunks Function 21-25 2 3 _run_chunked_datalab;build_marker_page_chunks;len;list;range\\nhas_more: false\\n\"}],\"isError\":false}\n",
+    "stderr": "level=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli search_graph' is deprecated and will be removed in a future release; use flags (run 'cli search_graph --help'), --args-file <path>, or piped stdin.\n"
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\.local\\bin\\codebase-memory-mcp.exe",
+      "cli",
+      "--json",
+      "trace_path",
+      "{\"project\": \"codegraph-pilot-20260915\", \"function_name\": \"build_page_chunks\", \"direction\": \"both\", \"depth\": 2, \"limit\": 40, \"include_evidence\": true}"
+    ],
+    "seconds": 1.6994687000042177,
+    "returncode": 0,
+    "stdout": "{\"content\":[{\"type\":\"text\",\"text\":\"function: build_page_chunks\\ndirection: both\\ncallees_total: 3\\ncallees: 3  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\nbuiltins:\\n  len 1 lsp 0.92\\n  list 1 lsp 0.88\\n  range 1 lsp 0.88\\ncallers_total: 4\\ncallers: 4  (rows: name hop strategy confidence; qn = group prefix + \\\".\\\" + name)\\ncodegraph-pilot-20260915.src.builder.engine.DatalabCloudBackend:\\n  _run_chunked_datalab 1 lsp 0.97\\n  run 2 lsp 0.90\\ncodegraph-pilot-20260915.src.builder.engine.MarkerCLIBackend:\\n  _run_chunked_marker 2 lsp 0.97\\ncodegraph-pilot-20260915.src.builder.runtime.backend_runtime:\\n  build_marker_page_chunks 1 lsp 0.97\\n\"}],\"isError\":false}\n",
+    "stderr": "level=warn msg=daemon.runtime_child_acl_repaired repaired=1 failed=0\nlevel=warn msg=mem.allocator.preloading_completed still_preloading=false detail=allocator_was_still_preloading,_so_arena_creation_and_purging_were_disabled;_process_init_completed_explicitly\nlevel=info msg=mem.allocator.owned classes=all\nlevel=info msg=mem.init budget_mb=2048 total_ram_mb=32471 source=CBM_MEM_BUDGET_MB\nwarning: passing raw JSON to 'cli trace_path' is deprecated and will be removed in a future release; use flags (run 'cli trace_path --help'), --args-file <path>, or piped stdin.\n"
+  }
+]

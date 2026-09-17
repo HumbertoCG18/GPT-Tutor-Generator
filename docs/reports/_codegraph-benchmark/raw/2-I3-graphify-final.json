@@ -1,0 +1,47 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "_detect_orphans",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.4853573000000324,
+    "returncode": 0,
+    "stdout": "Node: ._detect_orphans()\n  ID:        src_ui_maintenance_panel_maintenancepanel_detect_orphans\n  Source:    src/ui/maintenance_panel.py L102\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L102\n  --> Path [references] [EXTRACTED] src/ui/maintenance_panel.py:L102\n  <-- .refresh() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L137\n  <-- Read-only: conta órfãos em code_curation contra manifest. [rationale_for] [EXTRACTED] src/ui/maintenance_panel.py:L103\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "refresh",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5519465999968816,
+    "returncode": 1,
+    "stdout": "Ambiguous: 'refresh' matches 3 nodes in different files.\n  src/ui/codes_panel.py\n    id: src_ui_codes_panel_codespanel_refresh\n  src/ui/maintenance_panel.py\n    id: src_ui_maintenance_panel_maintenancepanel_refresh\n  src/ui/timeline_dashboard.py\n    id: src_ui_timeline_dashboard_timelinedashboardview_refresh\nRetry with the repo-relative path or the full node id.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-m",
+      "graphify",
+      "explain",
+      "src_ui_maintenance_panel_maintenancepanel_refresh",
+      "--graph",
+      "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_codegraph-benchmark\\snapshot\\graphify-out\\graph.json"
+    ],
+    "seconds": 0.5570920999962254,
+    "returncode": 0,
+    "stdout": "Node: .refresh()\n  ID:        src_ui_maintenance_panel_maintenancepanel_refresh\n  Source:    src/ui/maintenance_panel.py L127\n  Type:      code\n  Community: \n  Degree:    4\n\nConnections (4):\n  <-- MaintenancePanel [method] [EXTRACTED] src/ui/maintenance_panel.py:L127\n  --> Path [calls] [EXTRACTED] src/ui/maintenance_panel.py:L134\n  --> ._detect_orphans() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L137\n  --> ._sidecar_files() [calls] [EXTRACTED] src/ui/maintenance_panel.py:L143\n",
+    "stderr": ""
+  }
+]

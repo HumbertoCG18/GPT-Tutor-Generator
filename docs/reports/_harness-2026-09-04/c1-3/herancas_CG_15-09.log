@@ -1,0 +1,6 @@
+CG: comuns=86 ausentes=7 ambiguos=0 novas_origens=0
+  bloco: base=33/35 novo=33/35 ganhos=0 perdas=0 | comuns=33->33/35
+  unidade: base=81/93 novo=70/93 ganhos=1 perdas=12 | comuns=75->70/86
+  sub_aceito: base=51/82 novo=42/82 ganhos=1 perdas=10 | comuns=47->42/75
+  sub_primario: base=37/82 novo=28/82 ganhos=1 perdas=10 | comuns=33->28/75
+  diferencas observadas (nao causas isoladas): {'texto_extraido': 53, 'title': 16, 'category': 16}

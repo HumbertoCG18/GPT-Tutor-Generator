@@ -1,0 +1,13 @@
+{
+  "id": "C1",
+  "arm": "cbm",
+  "rep": 2,
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "seconds": 6.774270600006275,
+  "returncode": 0,
+  "evidence_sha256": "1d32605cfd85b543bb12773d151ca2895d6bf43a4f2648895b11447221cfa0dd",
+  "prompt_chars": 18587,
+  "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a0a77d-97fe-7ab3-adcb-b8f4d74095ea\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"{\\\"answers\\\":[\\\"src/builder/timeline/unit_labels.py:unit_short_label\\\"],\\\"evidence\\\":[],\\\"caveat\\\":\\\"Chamada direta indicada pelo grafo (hop 1); trecho fornecido não inclui a linha da chamada.\\\"}\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":23997,\"cached_input_tokens\":11776,\"cache_write_input_tokens\":0,\"output_tokens\":52,\"reasoning_output_tokens\":0}}\n",
+  "stderr": ""
+}

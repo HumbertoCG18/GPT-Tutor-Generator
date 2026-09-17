@@ -1,0 +1,1442 @@
+[
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "baseline",
+    "query_seconds": 0.023446799998055212,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "graphify",
+    "query_seconds": 0.6263534999961848,
+    "calls": 1,
+    "packet_chars": 7798,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "cbm",
+    "query_seconds": 3.84866989999864,
+    "calls": 1,
+    "packet_chars": 1318,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L1",
+    "arm": "both",
+    "query_seconds": 4.475023399994825,
+    "calls": 2,
+    "packet_chars": 8130,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "baseline",
+    "query_seconds": 0.021128699998371303,
+    "calls": 1,
+    "packet_chars": 6732,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "graphify",
+    "query_seconds": 0.5116015000021434,
+    "calls": 1,
+    "packet_chars": 6706,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "cbm",
+    "query_seconds": 4.006511400002637,
+    "calls": 1,
+    "packet_chars": 6727,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L2",
+    "arm": "both",
+    "query_seconds": 4.51811290000478,
+    "calls": 2,
+    "packet_chars": 7124,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "baseline",
+    "query_seconds": 0.024536800003261305,
+    "calls": 1,
+    "packet_chars": 2853,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "graphify",
+    "query_seconds": 0.5629485999961616,
+    "calls": 1,
+    "packet_chars": 3216,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "cbm",
+    "query_seconds": 3.8268632000035723,
+    "calls": 1,
+    "packet_chars": 2931,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "L3",
+    "arm": "both",
+    "query_seconds": 4.389811799999734,
+    "calls": 2,
+    "packet_chars": 3492,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "baseline",
+    "query_seconds": 0.02069140000094194,
+    "calls": 1,
+    "packet_chars": 5035,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "graphify",
+    "query_seconds": 0.47837459999573184,
+    "calls": 1,
+    "packet_chars": 2457,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "cbm",
+    "query_seconds": 7.026392600004328,
+    "calls": 2,
+    "packet_chars": 3629,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C1",
+    "arm": "both",
+    "query_seconds": 7.50476720000006,
+    "calls": 3,
+    "packet_chars": 4327,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "baseline",
+    "query_seconds": 0.02101319999928819,
+    "calls": 1,
+    "packet_chars": 2315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "graphify",
+    "query_seconds": 0.4874656000029063,
+    "calls": 1,
+    "packet_chars": 2244,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "cbm",
+    "query_seconds": 7.226965299996664,
+    "calls": 2,
+    "packet_chars": 2822,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C2",
+    "arm": "both",
+    "query_seconds": 7.71443089999957,
+    "calls": 3,
+    "packet_chars": 3301,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "baseline",
+    "query_seconds": 0.020349799997347873,
+    "calls": 1,
+    "packet_chars": 10281,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "graphify",
+    "query_seconds": 1.5215217000004486,
+    "calls": 3,
+    "packet_chars": 11219,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "cbm",
+    "query_seconds": 13.928781599999638,
+    "calls": 4,
+    "packet_chars": 13470,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "C3",
+    "arm": "both",
+    "query_seconds": 15.450303300000087,
+    "calls": 7,
+    "packet_chars": 15833,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "baseline",
+    "query_seconds": 0.022756000005756505,
+    "calls": 1,
+    "packet_chars": 15641,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "graphify",
+    "query_seconds": 2.1428704999998445,
+    "calls": 4,
+    "packet_chars": 16293,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "cbm",
+    "query_seconds": 21.83861179999076,
+    "calls": 6,
+    "packet_chars": 18610,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P1",
+    "arm": "both",
+    "query_seconds": 23.981482299990603,
+    "calls": 10,
+    "packet_chars": 20613,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "baseline",
+    "query_seconds": 0.020731800002977252,
+    "calls": 1,
+    "packet_chars": 20368,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "graphify",
+    "query_seconds": 2.1692117000056896,
+    "calls": 4,
+    "packet_chars": 13604,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "cbm",
+    "query_seconds": 22.2950817000019,
+    "calls": 6,
+    "packet_chars": 20214,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 0,
+    "id": "P2",
+    "arm": "both",
+    "query_seconds": 24.46429340000759,
+    "calls": 10,
+    "packet_chars": 22703,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "baseline",
+    "query_seconds": 0.025924299996404443,
+    "calls": 1,
+    "packet_chars": 10860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "graphify",
+    "query_seconds": 2.825402299997222,
+    "calls": 5,
+    "packet_chars": 11920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "cbm",
+    "query_seconds": 17.23373650000576,
+    "calls": 4,
+    "packet_chars": 11981,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "P3",
+    "arm": "both",
+    "query_seconds": 20.059138800002984,
+    "calls": 9,
+    "packet_chars": 13718,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "baseline",
+    "query_seconds": 0.03808720000233734,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "graphify",
+    "query_seconds": 1.028073100002075,
+    "calls": 2,
+    "packet_chars": 7843,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "cbm",
+    "query_seconds": 14.339521699992474,
+    "calls": 4,
+    "packet_chars": 8370,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I1",
+    "arm": "both",
+    "query_seconds": 15.36759479999455,
+    "calls": 6,
+    "packet_chars": 9315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "baseline",
+    "query_seconds": 0.02677140000014333,
+    "calls": 1,
+    "packet_chars": 7373,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "graphify",
+    "query_seconds": 1.0323790999973426,
+    "calls": 2,
+    "packet_chars": 6747,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "cbm",
+    "query_seconds": 16.59046600000147,
+    "calls": 4,
+    "packet_chars": 7422,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I2",
+    "arm": "both",
+    "query_seconds": 17.622845099998813,
+    "calls": 6,
+    "packet_chars": 7860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "baseline",
+    "query_seconds": 0.026219499995931983,
+    "calls": 1,
+    "packet_chars": 16813,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "graphify",
+    "query_seconds": 1.6105526000028476,
+    "calls": 3,
+    "packet_chars": 7118,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "cbm",
+    "query_seconds": 14.492741499991098,
+    "calls": 4,
+    "packet_chars": 12505,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 0,
+    "id": "I3",
+    "arm": "both",
+    "query_seconds": 16.103294099993946,
+    "calls": 7,
+    "packet_chars": 13920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "baseline",
+    "query_seconds": 0.022103699993749615,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "graphify",
+    "query_seconds": 0.48522340000636177,
+    "calls": 1,
+    "packet_chars": 7798,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "cbm",
+    "query_seconds": 3.5598299999983283,
+    "calls": 1,
+    "packet_chars": 1318,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L1",
+    "arm": "both",
+    "query_seconds": 4.04505340000469,
+    "calls": 2,
+    "packet_chars": 8130,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "baseline",
+    "query_seconds": 0.030909900000551715,
+    "calls": 1,
+    "packet_chars": 6732,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "graphify",
+    "query_seconds": 0.46701690000190865,
+    "calls": 1,
+    "packet_chars": 6706,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "cbm",
+    "query_seconds": 3.63257270000031,
+    "calls": 1,
+    "packet_chars": 6727,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L2",
+    "arm": "both",
+    "query_seconds": 4.0995896000022185,
+    "calls": 2,
+    "packet_chars": 7124,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "baseline",
+    "query_seconds": 0.030586399996536784,
+    "calls": 1,
+    "packet_chars": 2853,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "graphify",
+    "query_seconds": 0.49975950000225566,
+    "calls": 1,
+    "packet_chars": 3216,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "cbm",
+    "query_seconds": 3.607474299999012,
+    "calls": 1,
+    "packet_chars": 2931,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "L3",
+    "arm": "both",
+    "query_seconds": 4.107233800001268,
+    "calls": 2,
+    "packet_chars": 3492,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "baseline",
+    "query_seconds": 0.020706999996036757,
+    "calls": 1,
+    "packet_chars": 5035,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "graphify",
+    "query_seconds": 0.4895856000002823,
+    "calls": 1,
+    "packet_chars": 2457,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "cbm",
+    "query_seconds": 7.252557500003604,
+    "calls": 2,
+    "packet_chars": 3629,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C1",
+    "arm": "both",
+    "query_seconds": 7.7421431000038865,
+    "calls": 3,
+    "packet_chars": 4327,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "baseline",
+    "query_seconds": 0.02667949999886332,
+    "calls": 1,
+    "packet_chars": 2315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "graphify",
+    "query_seconds": 0.4882304999991902,
+    "calls": 1,
+    "packet_chars": 2244,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "cbm",
+    "query_seconds": 7.882839300000342,
+    "calls": 2,
+    "packet_chars": 2822,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C2",
+    "arm": "both",
+    "query_seconds": 8.371069799999532,
+    "calls": 3,
+    "packet_chars": 3301,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "baseline",
+    "query_seconds": 0.02701600000000326,
+    "calls": 1,
+    "packet_chars": 10281,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "graphify",
+    "query_seconds": 1.6601138999976683,
+    "calls": 3,
+    "packet_chars": 11219,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "cbm",
+    "query_seconds": 18.705840000002354,
+    "calls": 4,
+    "packet_chars": 13470,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "C3",
+    "arm": "both",
+    "query_seconds": 20.365953900000022,
+    "calls": 7,
+    "packet_chars": 15833,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "baseline",
+    "query_seconds": 0.023334999998041894,
+    "calls": 1,
+    "packet_chars": 15641,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "graphify",
+    "query_seconds": 3.0167252000028384,
+    "calls": 4,
+    "packet_chars": 16293,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "cbm",
+    "query_seconds": 18.998931800007995,
+    "calls": 6,
+    "packet_chars": 18610,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P1",
+    "arm": "both",
+    "query_seconds": 22.015657000010833,
+    "calls": 10,
+    "packet_chars": 20613,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "baseline",
+    "query_seconds": 0.026519499995629303,
+    "calls": 1,
+    "packet_chars": 20368,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "graphify",
+    "query_seconds": 2.8892144999917946,
+    "calls": 4,
+    "packet_chars": 13604,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "cbm",
+    "query_seconds": 20.696572000000742,
+    "calls": 6,
+    "packet_chars": 20214,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 1,
+    "id": "P2",
+    "arm": "both",
+    "query_seconds": 23.585786499992537,
+    "calls": 10,
+    "packet_chars": 22703,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "baseline",
+    "query_seconds": 0.020056299996213056,
+    "calls": 1,
+    "packet_chars": 10860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "graphify",
+    "query_seconds": 3.3147838999939268,
+    "calls": 5,
+    "packet_chars": 11920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "cbm",
+    "query_seconds": 14.94907129999774,
+    "calls": 4,
+    "packet_chars": 11981,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "P3",
+    "arm": "both",
+    "query_seconds": 18.263855199991667,
+    "calls": 9,
+    "packet_chars": 13718,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "baseline",
+    "query_seconds": 0.01674270000512479,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "graphify",
+    "query_seconds": 1.4577892000015709,
+    "calls": 2,
+    "packet_chars": 7843,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "cbm",
+    "query_seconds": 14.30826540000271,
+    "calls": 4,
+    "packet_chars": 8370,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I1",
+    "arm": "both",
+    "query_seconds": 15.766054600004281,
+    "calls": 6,
+    "packet_chars": 9315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "baseline",
+    "query_seconds": 0.032715100001951214,
+    "calls": 1,
+    "packet_chars": 7373,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "graphify",
+    "query_seconds": 0.9602534000005107,
+    "calls": 2,
+    "packet_chars": 6747,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "cbm",
+    "query_seconds": 14.988563399994746,
+    "calls": 4,
+    "packet_chars": 7422,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I2",
+    "arm": "both",
+    "query_seconds": 15.948816799995257,
+    "calls": 6,
+    "packet_chars": 7860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "baseline",
+    "query_seconds": 0.025535500004480127,
+    "calls": 1,
+    "packet_chars": 16813,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "graphify",
+    "query_seconds": 2.0201996000032523,
+    "calls": 3,
+    "packet_chars": 7118,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "cbm",
+    "query_seconds": 18.29005640000105,
+    "calls": 4,
+    "packet_chars": 12505,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 1,
+    "id": "I3",
+    "arm": "both",
+    "query_seconds": 20.3102560000043,
+    "calls": 7,
+    "packet_chars": 13920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "baseline",
+    "query_seconds": 0.02268210000329418,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "graphify",
+    "query_seconds": 0.501523899998574,
+    "calls": 1,
+    "packet_chars": 7798,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "cbm",
+    "query_seconds": 3.6489383000007365,
+    "calls": 1,
+    "packet_chars": 1318,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L1",
+    "arm": "both",
+    "query_seconds": 4.1504621999993105,
+    "calls": 2,
+    "packet_chars": 8130,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "baseline",
+    "query_seconds": 0.017278100000112318,
+    "calls": 1,
+    "packet_chars": 6732,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "graphify",
+    "query_seconds": 0.5164571999994223,
+    "calls": 1,
+    "packet_chars": 6706,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "cbm",
+    "query_seconds": 3.73801850000018,
+    "calls": 1,
+    "packet_chars": 6727,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L2",
+    "arm": "both",
+    "query_seconds": 4.2544756999996025,
+    "calls": 2,
+    "packet_chars": 7124,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "baseline",
+    "query_seconds": 0.02319809999607969,
+    "calls": 1,
+    "packet_chars": 2853,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "graphify",
+    "query_seconds": 0.49725719999696594,
+    "calls": 1,
+    "packet_chars": 3216,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "cbm",
+    "query_seconds": 3.767072399998142,
+    "calls": 1,
+    "packet_chars": 2931,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "L3",
+    "arm": "both",
+    "query_seconds": 4.264329599995108,
+    "calls": 2,
+    "packet_chars": 3492,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "baseline",
+    "query_seconds": 0.06451349999406375,
+    "calls": 1,
+    "packet_chars": 5035,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "graphify",
+    "query_seconds": 0.5243858999965596,
+    "calls": 1,
+    "packet_chars": 2457,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "cbm",
+    "query_seconds": 8.124149900002521,
+    "calls": 2,
+    "packet_chars": 3629,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C1",
+    "arm": "both",
+    "query_seconds": 8.648535799999081,
+    "calls": 3,
+    "packet_chars": 4327,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "baseline",
+    "query_seconds": 0.03268270000262419,
+    "calls": 1,
+    "packet_chars": 2315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "graphify",
+    "query_seconds": 0.5201661000028253,
+    "calls": 1,
+    "packet_chars": 2244,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "cbm",
+    "query_seconds": 7.4519232000020565,
+    "calls": 2,
+    "packet_chars": 2822,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C2",
+    "arm": "both",
+    "query_seconds": 7.972089300004882,
+    "calls": 3,
+    "packet_chars": 3301,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "baseline",
+    "query_seconds": 0.03354659999604337,
+    "calls": 1,
+    "packet_chars": 10281,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "graphify",
+    "query_seconds": 1.9718998999960604,
+    "calls": 3,
+    "packet_chars": 11219,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "cbm",
+    "query_seconds": 14.61514479998732,
+    "calls": 4,
+    "packet_chars": 13470,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "C3",
+    "arm": "both",
+    "query_seconds": 16.58704469998338,
+    "calls": 7,
+    "packet_chars": 15833,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "baseline",
+    "query_seconds": 0.03376140000182204,
+    "calls": 1,
+    "packet_chars": 15641,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "graphify",
+    "query_seconds": 2.488593199996103,
+    "calls": 4,
+    "packet_chars": 16293,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "cbm",
+    "query_seconds": 24.720656199999212,
+    "calls": 6,
+    "packet_chars": 18610,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P1",
+    "arm": "both",
+    "query_seconds": 27.209249399995315,
+    "calls": 10,
+    "packet_chars": 20613,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "baseline",
+    "query_seconds": 0.02869710000231862,
+    "calls": 1,
+    "packet_chars": 20368,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "graphify",
+    "query_seconds": 2.766034899999795,
+    "calls": 4,
+    "packet_chars": 13604,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "cbm",
+    "query_seconds": 25.16795419999835,
+    "calls": 6,
+    "packet_chars": 20214,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 2,
+    "id": "P2",
+    "arm": "both",
+    "query_seconds": 27.933989099998144,
+    "calls": 10,
+    "packet_chars": 22703,
+    "discovery_truncated": false,
+    "source_truncated": true
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "baseline",
+    "query_seconds": 0.02117089999956079,
+    "calls": 1,
+    "packet_chars": 10860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "graphify",
+    "query_seconds": 3.0604286000016145,
+    "calls": 5,
+    "packet_chars": 11920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "cbm",
+    "query_seconds": 16.627584200003184,
+    "calls": 4,
+    "packet_chars": 11981,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "P3",
+    "arm": "both",
+    "query_seconds": 19.6880128000048,
+    "calls": 9,
+    "packet_chars": 13718,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "baseline",
+    "query_seconds": 0.01974490000429796,
+    "calls": 1,
+    "packet_chars": 7776,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "graphify",
+    "query_seconds": 0.9999854999914533,
+    "calls": 2,
+    "packet_chars": 7843,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "cbm",
+    "query_seconds": 18.95759619999444,
+    "calls": 4,
+    "packet_chars": 8370,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I1",
+    "arm": "both",
+    "query_seconds": 19.957581699985894,
+    "calls": 6,
+    "packet_chars": 9315,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "baseline",
+    "query_seconds": 0.029513200002838857,
+    "calls": 1,
+    "packet_chars": 7373,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "graphify",
+    "query_seconds": 0.9896634999968228,
+    "calls": 2,
+    "packet_chars": 6747,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "cbm",
+    "query_seconds": 14.270884099998511,
+    "calls": 4,
+    "packet_chars": 7422,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I2",
+    "arm": "both",
+    "query_seconds": 15.260547599995334,
+    "calls": 6,
+    "packet_chars": 7860,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "baseline",
+    "query_seconds": 0.021733099994889926,
+    "calls": 1,
+    "packet_chars": 16813,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "graphify",
+    "query_seconds": 1.5943959999931394,
+    "calls": 3,
+    "packet_chars": 7118,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "cbm",
+    "query_seconds": 14.468177999988256,
+    "calls": 4,
+    "packet_chars": 12505,
+    "discovery_truncated": false,
+    "source_truncated": false
+  },
+  {
+    "rep": 2,
+    "id": "I3",
+    "arm": "both",
+    "query_seconds": 16.062573999981396,
+    "calls": 7,
+    "packet_chars": 13920,
+    "discovery_truncated": false,
+    "source_truncated": false
+  }
+]

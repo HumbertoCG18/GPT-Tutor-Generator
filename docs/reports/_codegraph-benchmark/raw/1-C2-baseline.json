@@ -1,0 +1,16 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "-F",
+      "-e",
+      "build_page_chunks",
+      "src"
+    ],
+    "seconds": 0.02667949999886332,
+    "returncode": 0,
+    "stdout": "src\\builder\\engine.py:65:    build_page_chunks as _backend_build_page_chunks,\nsrc\\builder\\engine.py:383:_build_page_chunks = _backend_build_page_chunks\nsrc\\builder\\engine.py:1062:        chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)\nsrc\\builder\\runtime\\backend_runtime.py:21:def build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:\nsrc\\builder\\runtime\\backend_runtime.py:29:    return build_page_chunks(pages, page_count, chunk_size=chunk_size)\n",
+    "stderr": ""
+  }
+]

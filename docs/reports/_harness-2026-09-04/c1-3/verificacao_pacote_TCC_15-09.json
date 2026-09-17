@@ -1,0 +1,115 @@
+{
+  "courses": {
+    "TCC": {
+      "counts": {
+        "common": 27,
+        "bloco_n": 27,
+        "bloco_before": 26,
+        "bloco_after": 26,
+        "bloco_gains": 0,
+        "bloco_losses": 0,
+        "bloco_common_n": 27,
+        "unidade_n": 18,
+        "unidade_before": 17,
+        "unidade_after": 17,
+        "unidade_gains": 0,
+        "unidade_losses": 0,
+        "unidade_common_n": 18,
+        "sub_aceito_n": 11,
+        "sub_aceito_before": 9,
+        "sub_aceito_after": 9,
+        "sub_aceito_gains": 0,
+        "sub_aceito_losses": 0,
+        "sub_aceito_common_n": 11,
+        "sub_primario_n": 11,
+        "sub_primario_before": 7,
+        "sub_primario_after": 7,
+        "sub_primario_gains": 0,
+        "sub_primario_losses": 0,
+        "sub_primario_common_n": 11
+      },
+      "flips": [],
+      "source_hashes_checked": 27,
+      "capture": {
+        "source": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\implementacao_taxonomia_15-09\\TCC-Tutor\\raw\\moodle\\contents.json",
+        "sha256": "ac7a829da06e1e60ca8fd80430937e58de6dec051be09911cce89360325e5fab",
+        "additive": {
+          "labels": 25,
+          "posting": 25,
+          "lessons": 0
+        },
+        "consumed": {
+          "sections": 3,
+          "card_labels": 0
+        },
+        "policy": "payload bruto; sem campos ou mapas historicos"
+      },
+      "entries": 27,
+      "temporal_identical": true,
+      "text_changes": [
+        {
+          "id": "3d-matching",
+          "before_chars": 11163,
+          "after_chars": 11184
+        },
+        {
+          "id": "3dm-caetano-gabriel-e-gustavo",
+          "before_chars": 11940,
+          "after_chars": 11961
+        },
+        {
+          "id": "integer-programming-0001",
+          "before_chars": 8278,
+          "after_chars": 8281
+        },
+        {
+          "id": "programacao-inteira-01-20260617-154423-0000",
+          "before_chars": 9284,
+          "after_chars": 9287
+        },
+        {
+          "id": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais",
+          "before_chars": 25514,
+          "after_chars": 25517
+        },
+        {
+          "id": "aula-05-minimizacao-de-funcoes-recursivas-parciais",
+          "before_chars": 22092,
+          "after_chars": 22095
+        },
+        {
+          "id": "aula-14-problema-da-correspondencia-de-post",
+          "before_chars": 16280,
+          "after_chars": 16283
+        }
+      ]
+    }
+  },
+  "total": {
+    "common": 27,
+    "bloco_n": 27,
+    "bloco_before": 26,
+    "bloco_after": 26,
+    "bloco_gains": 0,
+    "bloco_losses": 0,
+    "bloco_common_n": 27,
+    "unidade_n": 18,
+    "unidade_before": 17,
+    "unidade_after": 17,
+    "unidade_gains": 0,
+    "unidade_losses": 0,
+    "unidade_common_n": 18,
+    "sub_aceito_n": 11,
+    "sub_aceito_before": 9,
+    "sub_aceito_after": 9,
+    "sub_aceito_gains": 0,
+    "sub_aceito_losses": 0,
+    "sub_aceito_common_n": 11,
+    "sub_primario_n": 11,
+    "sub_primario_before": 7,
+    "sub_primario_after": 7,
+    "sub_primario_gains": 0,
+    "sub_primario_losses": 0,
+    "sub_primario_common_n": 11
+  }
+}
