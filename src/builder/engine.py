@@ -320,6 +320,7 @@ def _build_content_taxonomy(
     glossary_md: str,
     strong_headings: Optional[List[str]] = None,
     semantic_profile: Optional[dict] = None,
+    glossary_terms: Optional[List[dict]] = None,
 ) -> dict:
     return _content_taxonomy.build_content_taxonomy(
         teaching_plan=teaching_plan,
@@ -330,6 +331,7 @@ def _build_content_taxonomy(
         parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
         topic_text=_topic_text,
         normalize_unit_slug=_normalize_unit_slug,
+        glossary_terms=glossary_terms,
     )
 
 
@@ -353,6 +355,10 @@ def _write_tag_catalog(
         course_map_text=course_map_text,
         glossary_text=glossary_text,
         manifest_entries=manifest_entries,
+        glossary_terms=_course_terms(
+            {"course_name": root_dir.name}, subject_profile,
+            root_dir=root_dir, manifest_entries=manifest_entries,
+        ),
     )
 
 
@@ -2239,6 +2245,7 @@ _glossary_aliases = _build_glossary_aliases(
     topic_text=_topic_text,
 )
 glossary_md = _glossary_aliases["glossary_md"]
+_course_terms = _glossary_aliases["course_terms"]
 _clamp_navigation_artifact = _glossary_aliases["_clamp_navigation_artifact"]
 _find_glossary_evidence = _glossary_aliases["_find_glossary_evidence"]
 _seed_glossary_fields = _glossary_aliases["_seed_glossary_fields"]
@@ -2267,6 +2274,7 @@ _file_map_aliases = _build_file_map_aliases(
     timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
     score_timeline_unit_phrase=_score_timeline_unit_phrase,
     glossary_md=glossary_md,
+    course_terms_fn=_course_terms,
     collect_strong_heading_candidates=_collect_strong_heading_candidates,
     resolve_semantic_profile_fn=resolve_semantic_profile,
     build_content_taxonomy_fn=_build_content_taxonomy,

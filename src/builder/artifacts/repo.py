@@ -1791,6 +1791,8 @@ def glossary_md(
     seed_glossary_fields_fn: Callable[[str, str, str], tuple[str, str, str]],
     clamp_navigation_artifact_fn: Callable[..., str],
 ) -> str:
+    from src.builder.core.course_vocabulary import build_course_terms, course_terms_text
+
     course_name = course_meta.get("course_name", "Curso")
 
     lines = [
@@ -1816,34 +1818,20 @@ def glossary_md(
         "",
     ]
 
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    units = parse_units_from_teaching_plan_fn(teaching_plan) if teaching_plan else []
-    evidence_docs = collect_glossary_evidence_fn(
-        root_dir, manifest_entries=manifest_entries, unit_titles=[title for title, _t in units],
-    ) if root_dir else []
-    curated_synonyms = load_glossary_curation(root_dir)
-
-    candidates = []
-    for unit_title, topics in units:
-        for topic in topics:
-            candidates.append((topic_text_fn(topic), unit_title))
-
-    if candidates:
+    terms = build_course_terms(
+        subject_profile, root_dir=root_dir, manifest_entries=manifest_entries,
+        parse_units_from_teaching_plan_fn=parse_units_from_teaching_plan_fn,
+        topic_text_fn=topic_text_fn, collect_glossary_evidence_fn=collect_glossary_evidence_fn,
+        find_glossary_evidence_fn=find_glossary_evidence_fn,
+        seed_glossary_fields_fn=seed_glossary_fields_fn,
+        load_curation_fn=load_glossary_curation, curation_key_fn=_glossary_curation_key,
+        merge_synonyms_fn=merge_glossary_synonyms,
+    )
+    if terms:
         lines.append("> Termos extraídos automaticamente do plano de ensino.")
         lines.append("> Definições iniciais curtas são geradas no build para reduzir custo de contexto no tutor web.")
         lines.append("")
-        for term, unit_title in candidates:
-            evidence = find_glossary_evidence_fn(term, unit_title, evidence_docs)
-            definition, synonyms, not_confuse = seed_glossary_fields_fn(term, unit_title, evidence=evidence)
-            synonyms = merge_glossary_synonyms(synonyms, curated_synonyms.get(_glossary_curation_key(term), []))
-            lines += [
-                f"## {term}",
-                f"**Definição:** {definition}",
-                f"**Sinônimos aceitos:** {synonyms}",
-                f"**Não confundir com:** {not_confuse}",
-                f"**Aparece em:** {unit_title}",
-                "",
-            ]
+        lines.append(course_terms_text(terms))
     else:
         lines.append("> ⏳ **Nenhum termo foi detectado automaticamente ainda.**")
         lines.append("> Reprocesse o repositório após enriquecer o conteúdo curado ou ajustar o material de origem.")

@@ -38,6 +38,7 @@ def build_file_map_aliases(
     normalize_document_profile_fn,
     exam_categories,
     exercise_categories,
+    course_terms_fn=None,
 ):
     no_unit_categories = {"cronograma", "bibliografia", "referencias"}
     bundle_priority_score = partial(
@@ -91,6 +92,7 @@ def build_file_map_aliases(
         collect_strong_heading_candidates=collect_strong_heading_candidates,
         resolve_semantic_profile_fn=resolve_semantic_profile_fn,
         build_content_taxonomy_fn=build_content_taxonomy_fn,
+        course_terms_fn=course_terms_fn,
     )
 
     auto_map_entry_subtopic = partial(
@@ -151,6 +153,7 @@ def build_file_map_aliases(
         collapse_ws_fn=collapse_ws,
         unit_generic_tokens=unit_generic_tokens,
         timeline_unit_neutral_tokens=timeline_unit_neutral_tokens,
+        course_terms_fn=course_terms_fn,
     )
 
     return {

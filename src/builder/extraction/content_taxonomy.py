@@ -519,6 +519,7 @@ def build_content_taxonomy(
     parse_units_from_teaching_plan: Callable[[str], list],
     topic_text: Callable[[object], str],
     normalize_unit_slug: Callable[[str], str],
+    glossary_terms: Optional[List[dict]] = None,
 ) -> dict:
     units = parse_units_from_teaching_plan(teaching_plan or "")
     # O CONTEUDOS do plano e lista humana: nao passa pelo filtro de ruido de
@@ -532,7 +533,8 @@ def build_content_taxonomy(
     if not units and course_map_md:
         units = parse_units_from_teaching_plan(course_map_md)
 
-    glossary_terms = _parse_glossary_terms(glossary_md or "")
+    if glossary_terms is None:
+        glossary_terms = _parse_glossary_terms(glossary_md or "")
     heading_sources = [heading for heading in (strong_headings or []) if _collapse_ws(heading)]
 
     result_units = []
@@ -874,7 +876,11 @@ def write_tag_catalog(
     course_map_text: str,
     glossary_text: str,
     manifest_entries: Optional[List[dict]],
+    glossary_terms: Optional[List[dict]] = None,
 ) -> dict:
+    if glossary_terms is not None:
+        from src.builder.core.course_vocabulary import course_terms_text
+        glossary_text = course_terms_text(glossary_terms)
     catalog_path = root_dir / "course" / ".tag_catalog.json"
     strong_headings = collect_strong_heading_candidates(root_dir, manifest_entries)
     semantic_profile = resolve_semantic_profile(

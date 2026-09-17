@@ -32,6 +32,20 @@ EXCLUDE_DIRS = (".git", "build", "__pycache__", ".deeptutor")
 KEEP_IN_COPY = ("material_curation.json",)  # cache de votos nu acumula entre rodadas
 
 
+def sync_fresh(src: Path, dst: Path, *, sync_fn=None) -> None:
+    """Copia de experimento: destino novo e exclusivo sob .frzero."""
+    src, dst = src.resolve(), dst.resolve()
+    allowed = (GEN / ".frzero").resolve()
+    if dst == allowed or not dst.is_relative_to(allowed):
+        raise ValueError(f"destino fora da area experimental: {dst}")
+    if src == dst or src.is_relative_to(dst) or dst.is_relative_to(src):
+        raise ValueError("origem e destino sobrepostos")
+    if not src.is_dir():
+        raise FileNotFoundError(src)
+    dst.mkdir(parents=True, exist_ok=False)
+    (sync_fn or sync)(src, dst)
+
+
 def sync(src: Path, dst: Path) -> None:
     dst.mkdir(parents=True, exist_ok=True)
     cmd = ["robocopy", str(src), str(dst), "/E", "/XD", *EXCLUDE_DIRS, "/XF", "*.bak", "/XJD", "/NFL", "/NDL", "/NJH", "/NJS", "/NP", "/R:1", "/W:1"]

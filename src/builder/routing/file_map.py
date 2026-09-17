@@ -1248,6 +1248,7 @@ def build_file_map_content_taxonomy_from_course(
     collect_strong_heading_candidates: Callable[[Optional[object], Optional[List[dict]]], List[str]],
     resolve_semantic_profile_fn: Callable[..., dict],
     build_content_taxonomy_fn: Callable[..., dict],
+    course_terms_fn: Optional[Callable[..., list]] = None,
 ) -> dict:
     test_taxonomy = course_meta.get("_content_taxonomy") or course_meta.get("_content_taxonomy_for_tests")
     if test_taxonomy:
@@ -1276,7 +1277,14 @@ def build_file_map_content_taxonomy_from_course(
     course_map_text = "\n".join(course_map_lines)
 
     glossary_text = ""
-    if subject_profile:
+    glossary_terms = None
+    if subject_profile and course_terms_fn is not None:
+        from src.builder.core.course_vocabulary import course_terms_text
+        glossary_terms = course_terms_fn(
+            course_meta, subject_profile, root_dir=root_dir, manifest_entries=manifest_entries,
+        )
+        glossary_text = course_terms_text(glossary_terms)
+    elif subject_profile:
         try:
             glossary_text = glossary_md_fn(
                 course_meta,
@@ -1302,6 +1310,7 @@ def build_file_map_content_taxonomy_from_course(
         glossary_md=glossary_text,
         strong_headings=strong_headings,
         semantic_profile=semantic_profile,
+        **({"glossary_terms": glossary_terms} if glossary_terms is not None else {}),
     )
 
 
@@ -1379,6 +1388,7 @@ def build_file_map_unit_index_from_course(
     collapse_ws_fn: Callable[[str], str],
     unit_generic_tokens: set[str],
     timeline_unit_neutral_tokens: set[str],
+    course_terms_fn: Optional[Callable[..., list]] = None,
 ) -> list:
     test_index = course_meta.get("_unit_index_for_tests")
     if test_index:
@@ -1400,13 +1410,14 @@ def build_file_map_unit_index_from_course(
                                                  course_name=str(course_meta.get("course_name") or ""))
     _def_generic = course_generic if course_generic is not None else (set(unit_generic_tokens) | set(timeline_unit_neutral_tokens))
     root_dir = course_meta.get("_repo_root")
-    glossary_text = ""
-    try:
-        glossary_text = glossary_md_fn(course_meta, subject_profile, root_dir=root_dir, manifest_entries=None)
-    except Exception:
-        glossary_text = ""
-
-    glossary_terms = parse_glossary_terms_fn(glossary_text)
+    if course_terms_fn is not None:
+        glossary_terms = course_terms_fn(course_meta, subject_profile, root_dir=root_dir, manifest_entries=None)
+    else:
+        try:
+            glossary_text = glossary_md_fn(course_meta, subject_profile, root_dir=root_dir, manifest_entries=None)
+        except Exception:
+            glossary_text = ""
+        glossary_terms = parse_glossary_terms_fn(glossary_text)
     unit_specs = []
     for title, topics in parsed_units:
         normalized_unit = normalize_match_text_fn(title)
