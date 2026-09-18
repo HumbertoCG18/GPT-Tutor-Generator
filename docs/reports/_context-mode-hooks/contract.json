@@ -1,0 +1,19 @@
+{
+  "issue": 19,
+  "upstream_sha": "c127f2fe8496fefc36e0ebef36ded92d4fa8f570",
+  "upstream_version": "1.0.169",
+  "gate_1": "approved 2026-09-18",
+  "rules": [
+    "Do not install or register Context Mode globally",
+    "Run hook entrypoints only with isolated homes and storage",
+    "Preserve hashes of real Claude, Codex and AGY/Gemini configs",
+    "Use a synthetic secret and publish only presence booleans",
+    "Measure full subprocess latency and context bytes",
+    "Recommend activation only when rollback and collision risks are bounded"
+  ],
+  "platforms": {
+    "claude-code": ["pretooluse", "posttooluse", "userpromptsubmit", "precompact", "sessionstart", "stop"],
+    "codex": ["pretooluse", "posttooluse", "userpromptsubmit", "precompact", "sessionstart", "stop"],
+    "antigravity-cli": ["pretooluse", "posttooluse", "stop"]
+  }
+}
