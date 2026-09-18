@@ -1,0 +1,26 @@
+name: Python quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TUTOR_COURSES_DIR: ${{ runner.temp }}/missing-courses
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pytest tests -q --cov=src --cov-report=json:coverage.json
+      - run: python scripts/verify_python_quality.py --coverage coverage.json
