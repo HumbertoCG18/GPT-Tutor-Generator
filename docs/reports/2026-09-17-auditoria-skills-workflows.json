@@ -1,6 +1,6 @@
 {
   "date": "2026-09-17",
-  "generatedUtc": "2026-09-18T19:16:58.815230+00:00",
+  "generatedUtc": "2026-09-18T19:25:09.019021+00:00",
   "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15",
   "layers": [
     {
@@ -12784,7 +12784,7 @@
       "state": "Enforcement ativo para o core Python",
       "mechanism": "Issue → PR → check core obrigatório e atualizado → merge rastreável.",
       "gap": "Release por alvo, rollback e observabilidade continuam em #10/#12/#14.",
-      "proof": ".github/pull_request_template.md; PR #30; branch protection da main",
+      "proof": "PR #30; run 35384137514; proteção da main; PR #29/run 35385445001",
       "next": "Fechar #10/#12/#14 por alvo; manter #13 como baseline concluído."
     },
     {
@@ -12918,12 +12918,20 @@
       "sha256": "10959facb4ba96950c9602179598e7f1d72ddc153a587130f7603ccf2d87577a"
     },
     {
-      "path": ".mex/patterns/engenharia-produto.md",
-      "sha256": "7a5c170a5d27af458ba198b97278be6636e5649c74ae58a6c1da932c9978a8d1"
-    },
-    {
       "path": ".github/workflows/validate-timeline.yml",
       "sha256": "8aca54991795d3ebe04a5013292eca11c71ebef17c71adf59ab2d1bf540ad19d"
+    },
+    {
+      "path": ".github/workflows/python-quality.yml",
+      "sha256": "2b7709a1b864819d30a8c950578ed1a83167e5eca6b75c8af7c028fbbebc7e1c"
+    },
+    {
+      "path": ".github/python-quality-baseline.json",
+      "sha256": "3620a8a8cdb2dfde8b2989cf08827f4967fb11bbcb19cf7d2af56698811a5288"
+    },
+    {
+      "path": "scripts/verify_python_quality.py",
+      "sha256": "8ac4d6a94a9026fe7f6c23ddbb0519bf7dc2e3198f0b687eec57a0f6baf845e5"
     }
   ],
   "sources": [
