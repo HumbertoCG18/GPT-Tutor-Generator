@@ -114,7 +114,7 @@ def main() -> int:
     coverage = read_coverage_percent(args.coverage)
     minimum = float(baseline["coverage_percent"])
     if coverage + 1e-9 < minimum:
-        failures.append(f"Cobertura {coverage:.4f}% < baseline {minimum:.4f}%")
+        failures.append(f"Cobertura {coverage:.12f}% < baseline {minimum:.12f}%")
 
     if failures:
         print("\n".join(failures), file=sys.stderr)
