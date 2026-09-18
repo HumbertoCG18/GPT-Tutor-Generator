@@ -80,3 +80,20 @@ Plugins habilitados não foram classificados como desperdício só por baixa inv
 5. Graphify MCP: comparar `explain` e `path` via MCP e CLI local com o mesmo `graph.json`; retirar apenas entradas redundantes, nunca a skill nem o fallback documentado.
 
 Cada item vira issue própria. Gate 1 aprova desenho e rollback; Gate 2 aprova o diff. Configurações atuais ficam intactas até esses pilotos.
+
+## Follow-up executado — issue #27
+
+Gate 1 foi autorizado em 2026-09-18. O piloto aplicou a escolha explícita de `gh` como dono do GitHub e preservou rollback local em `~/.config-backups/capability-cleanup-27-20260918-021024`.
+
+| Item | Antes | Depois | Verificação |
+|---|---|---|---|
+| GitHub MCP externo | configurado nas três CLIs; no Claude faltava `GITHUB_TOKEN` | removido das três CLIs | `gh` 2.98.0 autenticado; leitura pós-mudança passou; comentário na issue #27 comprovou escrita |
+| Perssua | configurado nas três; zero chamada estruturada no baseline | removido do escopo user do Claude; `disabled` no Codex e AGY | estados confirmados; busca em hooks, scripts e workflow retornou zero dependência |
+| Skills duplicadas | catálogo Codex 77 total/26 ativas; duas entradas ativas para cada nome e duas cópias antigas desativadas | catálogo 73 total/24 ativas; uma entrada ativa por nome | app-server novo, zero erro de catálogo |
+| Graphify no Codex | MCP desativado | mantido desativado; skill/CLI preservada | `explain AnchorEngine` passou; `AnchorEngine -> MotorContext` retornou caminho de 1 hop |
+
+As cópias canônicas continuam em `~/.agents/skills/learned/`, gerenciadas por `agent-workflow-lab/deployed-skills.json`. Foram removidas duas cópias raiz byte a byte idênticas e duas cópias antigas do Codex com frontmatter divergente. Saíram quatro entradas de override: duas globais e duas da configuração local do GPT Tutor. `verify.py` foi ajustado de 54 para 52 paths e passou com `managed_skill_files=75`, sem erros. O dry-run de `repor-podas.py` indicou zero remoções/reposições e não gerencia essas quatro pastas.
+
+Graphify permanece sem MCP no Codex porque o histórico registrou reescrita inválida do comando pelo Alethe. O caminho CLI não depende dessa entrada e passou no grafo atual. Claude e AGY ainda mantêm seus MCPs Graphify ativos.
+
+O Claude Code só oferece o toggle de MCP por projeto; para desativar Perssua globalmente sem depender de cada checkout, a entrada user foi removida e preservada no backup. A restauração copia os quatro arquivos de configuração, as quatro pastas e `agent-workflow-lab-verify.py` do backup para seus caminhos originais; depois roda o `verify.py` restaurado e abre sessões novas nas três CLIs. Referência: [Claude Code — Disable a server without removing it](https://code.claude.com/docs/en/mcp#disable-a-server-without-removing-it).
