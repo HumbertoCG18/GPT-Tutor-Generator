@@ -8,6 +8,7 @@ import sys
 import tempfile
 from dataclasses import asdict
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 # Mock tkinter before importing the main module (not available in headless CI)
@@ -364,7 +365,7 @@ class TestCliResolution:
         local_marker.write_text("", encoding="utf-8")
 
         monkeypatch.setattr(helpers_module, "__file__", str(project_root / "src" / "utils" / "helpers.py"))
-        monkeypatch.setattr(helpers_module.os, "name", "nt")
+        monkeypatch.setattr(helpers_module, "os", SimpleNamespace(name="nt"))
         monkeypatch.setattr(helpers_module.shutil, "which", lambda _: "C:/Windows/marker_single.exe")
 
         resolved = helpers_module._resolve_cli_from_project_venv("marker_single")
