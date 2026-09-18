@@ -7,6 +7,7 @@ import ast
 from collections import Counter
 import json
 from pathlib import Path
+import platform
 import subprocess
 import sys
 
@@ -57,6 +58,14 @@ def find_architecture_violations(root: Path) -> Counter[str]:
 def read_coverage_percent(report: Path) -> float:
     data = json.loads(report.read_text(encoding="utf-8-sig"))
     return float(data["totals"]["percent_covered"])
+
+
+def coverage_minimum(baselines: dict[str, float], system: str | None = None) -> float:
+    system = system or platform.system()
+    try:
+        return float(baselines[system])
+    except KeyError as error:
+        raise ValueError(f"Sem baseline de cobertura para {system}") from error
 
 
 def _ruff_findings(root: Path) -> Counter[str]:
@@ -112,7 +121,7 @@ def main() -> int:
     failures.extend(f"Arquitetura +{count}: {key}" for key, count in architecture_excess.items())
 
     coverage = read_coverage_percent(args.coverage)
-    minimum = float(baseline["coverage_percent"])
+    minimum = coverage_minimum(baseline["coverage_percent"])
     if coverage + 1e-9 < minimum:
         failures.append(f"Cobertura {coverage:.12f}% < baseline {minimum:.12f}%")
 

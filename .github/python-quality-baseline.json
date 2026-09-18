@@ -1,5 +1,8 @@
 {
-  "coverage_percent": 79.6889295516926,
+  "coverage_percent": {
+    "Linux": 79.622390418365,
+    "Windows": 79.6889295516926
+  },
   "ruff": {
     "src/builder/artifacts/repo.py|B007": 1,
     "src/builder/core/code_summarization.py|B007": 1,

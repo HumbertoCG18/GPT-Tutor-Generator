@@ -3,6 +3,7 @@ import json
 
 from scripts.verify_python_quality import (
     compare_counts,
+    coverage_minimum,
     find_architecture_violations,
     read_coverage_percent,
 )
@@ -53,3 +54,7 @@ def test_read_coverage_percent_uses_report_total(tmp_path):
     )
 
     assert read_coverage_percent(report) == 79.68726607335939
+
+
+def test_coverage_minimum_selects_current_platform():
+    assert coverage_minimum({"Windows": 79.68, "Linux": 79.62}, "Linux") == 79.62
