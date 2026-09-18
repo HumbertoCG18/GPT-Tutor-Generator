@@ -4,6 +4,7 @@ last_updated: 2026-06-08
 
 Read `.mex/AGENTS.md` for project identity, non-negotiables, and commands.
 Read `.mex/ROUTER.md` before starting any task.
+Read `.mex/patterns/engenharia-produto.md` for issue/PR/release, UI, observability and quality requirements. Apply them in every model/CLI; distinguish desktop requirements from the future web campaign.
 
 <!-- shared-workflow-start -->
 Antes de executar ou continuar uma tarefa, ler `.workflow/README.md` e seguir a política

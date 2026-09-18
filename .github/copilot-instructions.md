@@ -1,3 +1,6 @@
+Read `AGENTS.md` and `.mex/patterns/engenharia-produto.md` before changing this project.
+Follow the shared issue/PR/release contract and the desktop/web-specific quality requirements.
+
 <claude-mem-context>
 # claude-mem: Cross-Session Memory
 

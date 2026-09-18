@@ -4,8 +4,9 @@ Ler [workflow.md](workflow.md) antes de executar ou continuar uma tarefa. Essa p
 substitui as regras antigas que exigiam pedido explícito para toda chamada Astra ou
 autorizavam Astra a assumir a implementação automaticamente. Restrições explícitas do usuário prevalecem.
 
-Snapshot da fonte agent-workflow-lab, aprovado em 16/09/2026; hashes em manifest.json.
-Atualização manual revisada, mesma cópia nas branches. Não editar snapshots isoladamente.
+Snapshot da fonte agent-workflow-lab, base aprovada em 16/09/2026; contrato de delegação
+atualizado nesta branch em 17/09/2026. Hashes em manifest.json. Atualização manual
+revisada; propagar às demais branches separadamente. Não editar snapshots isoladamente.
 Os contratos de agents/ são inline; não pressupõem um subagente nativo instalado.
 
 Copiar task-state.template.md para .workflow-local/active-task.md ao iniciar trabalho
