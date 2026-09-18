@@ -1,6 +1,6 @@
 {
   "date": "2026-09-17",
-  "generatedUtc": "2026-09-18T05:34:28.032675+00:00",
+  "generatedUtc": "2026-09-18T19:16:58.815230+00:00",
   "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15",
   "layers": [
     {
@@ -56,8 +56,8 @@
       "number": "07",
       "name": "Qualidade e revisão",
       "baseline": "pytest · Ruff no contrato · revisão delimitada",
-      "coverage": "CI localizada no timeline",
-      "gap": "Checks amplos e baseline de cobertura ainda são tarefas #13/#14."
+      "coverage": "CI geral do core: pytest, cobertura, Ruff e contrato arquitetural; check core obrigatório na main.",
+      "gap": "Cobertura útil cresce por ratchet; web/E2E permanece em #14 e CLI terá contrato próprio."
     },
     {
       "id": "seguranca",
@@ -88,8 +88,8 @@
       "number": "11",
       "name": "Entrega e observabilidade",
       "baseline": "issue → PR → release · templates · #10/#12",
-      "coverage": "Issue → branch → PR praticado nas issues #24, #23 e #27",
-      "gap": "CI geral, proteção de branch, release e telemetria ainda não impostos."
+      "coverage": "Issue → PR → check core obrigatório → merge; proteção da main verificada.",
+      "gap": "Release por alvo e telemetria permanecem em #10/#12/#14."
     }
   ],
   "candidates": [
@@ -101,10 +101,10 @@
       "decision": "Adotado parcialmente",
       "fit": "Três deltas incorporados na issue #17: baseline/ratchet e piso de qualidade, checkpoint de contexto e observabilidade orientada a perguntas.",
       "overlap": "ECC orch-*, contrato de delegação e engenharia já definem o ciclo; incorporar apenas deltas úteis.",
-      "risk": "A adaptação é documental: ainda não impõe checks. O floor-guard regex upstream não foi ativado antes do baseline de #13.",
+      "risk": "A adaptação original foi documental; o floor-guard regex upstream segue desativado. O gate Python de #13 usa ratchet local compatível.",
       "cost": "Um pattern local curto; nenhum plugin, hook ou dependência instalado. Efeito em qualidade/contexto ainda não medido.",
       "platform": "MIT; pacote local vale nas três CLIs via MEX. Fable/Astra, Graphify e Gates 1/2 permanecem donos.",
-      "check": "Adoção documental concluída. #12/#13 devem medir baseline e validar falha, falso positivo, custo e rollback antes de ativar checks.",
+      "check": "Adoção documental concluída. #13 mediu baseline, provou red/green e ativou checks; #12 ainda deve medir observabilidade antes de exportar dados.",
       "identity": "confirmada pela URL fornecida pelo usuário",
       "alternatives": [],
       "license": "MIT",
@@ -144,7 +144,7 @@
         "bytes": 4754,
         "installed": false,
         "owners_preserved": true,
-        "checks_activated": false
+        "checks_activated": true
       }
     },
     {
@@ -12763,11 +12763,11 @@
     {
       "stage": "05 · Verificação",
       "owner": "executor / CI",
-      "state": "Parcial no CI",
-      "mechanism": "Workflow timeline roda schema e três arquivos de testes, com filtro por paths.",
-      "gap": "O único YAML encontrado em .github/workflows não cobre a suite/lint/E2E geral. Branch protection não auditada.",
-      "proof": ".github/workflows/validate-timeline.yml",
-      "next": "Tratar baseline e checks Python em #13; web em #14."
+      "state": "Imposto no CI",
+      "mechanism": "Python quality roda suíte hermética, cobertura do core, Ruff e contrato arquitetural em PR/main.",
+      "gap": "Ratchets preservam 69 achados Ruff, 1 import core→UI e cobertura por plataforma sem permitir regressão.",
+      "proof": ".github/workflows/python-quality.yml; PR #30; run 35384137514; proteção da main com core strict",
+      "next": "Elevar cobertura com testes úteis; web/E2E em #14; observabilidade em #12."
     },
     {
       "stage": "06 · Revisão",
@@ -12781,11 +12781,11 @@
     {
       "stage": "07 · Entrega",
       "owner": "humano + GitHub",
-      "state": "Prática validada; enforcement parcial",
-      "mechanism": "Commit autorizado → PR com Closes/Refs → checks → release rastreável.",
-      "gap": "Issues #24/#23/#27 passaram por branch e PR; branch protection e pipeline geral não foram verificados.",
-      "proof": ".github/pull_request_template.md; .mex/patterns/engenharia-produto.md",
-      "next": "Fechar #10/#13/#14 com checks e rollback por alvo."
+      "state": "Enforcement ativo para o core Python",
+      "mechanism": "Issue → PR → check core obrigatório e atualizado → merge rastreável.",
+      "gap": "Release por alvo, rollback e observabilidade continuam em #10/#12/#14.",
+      "proof": ".github/pull_request_template.md; PR #30; branch protection da main",
+      "next": "Fechar #10/#12/#14 por alvo; manter #13 como baseline concluído."
     },
     {
       "stage": "08 · Continuidade",
@@ -12822,8 +12822,8 @@
     {
       "priority": "P1",
       "title": "Qualidade e release impostos",
-      "detail": "Issues e PRs foram praticados, mas CI geral, branch protection, cobertura e release verificável continuam abertos.",
-      "action": "Seguir #10/#13/#14: baseline → checks proporcionais → proteção e rollback por alvo.",
+      "detail": "CI geral, cobertura e branch protection estão impostos para o core Python; release e observabilidade continuam abertos.",
+      "action": "Seguir #10/#12/#14: release, telemetria, web/E2E e rollback por alvo.",
       "layer": "entrega"
     },
     {
@@ -15690,7 +15690,8 @@
     "models": "A atualização usou inspeção local e GitHub CLI. Astra será usada uma vez, somente leitura, após o diff estabilizar.",
     "scope": "Inventário atualizado em 18/09 para Claude, Codex, AGY e fonte ECC; classificação por nome continua heurística. Uso real vem do relatório da issue #23.",
     "limits": "Aplicação de skills no AGY e chamadas filhas do invólucro Codex não são observáveis integralmente. Não é auditoria de segurança completa nem prova de economia de tokens.",
-    "cleanup": "Issue #27/PR #28: GitHub MCP removido; Perssua removido/desabilitado; quatro cópias redundantes de duas skills removidas; Graphify CLI preservado."
+    "cleanup": "Issue #27/PR #28: GitHub MCP removido; Perssua removido/desabilitado; quatro cópias redundantes de duas skills removidas; Graphify CLI preservado.",
+    "pythonQuality": "PR #30 merged em a0a2bd3; run 35384137514 verde; main protegida com core strict, PR obrigatório, zero aprovações externas e force-push/delete bloqueados."
   },
   "followUps": [
     {
@@ -15708,8 +15709,8 @@
     {
       "priority": "P1",
       "item": "Qualidade/CI/observabilidade",
-      "state": "#10/#12/#13/#14 abertas",
-      "next": "Baselines antes de adicionar ferramentas."
+      "state": "#13 concluída; #10/#12/#14 abertas",
+      "next": "Elevar cobertura útil; definir observabilidade e gates da campanha web."
     },
     {
       "priority": "P2",

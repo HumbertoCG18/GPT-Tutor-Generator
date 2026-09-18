@@ -31,11 +31,11 @@ O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados a
 | 04 · Pesquisa e ingestão | AGY inline · Context7 · padrões PDF | Benchmark de conversão; evitar cookies e serviços externos sem necessidade. |
 | 05 · Planejamento e delegação | ECC orch-* · Fable executor · Astra read-only | Supervisor externo, timeout real, teto de tentativas e sessão nova. |
 | 06 · Implementação | ECC tdd-guide inline · Python · stdlib primeiro | Selecionar skill de stack por tarefa; não carregar todas as linguagens. |
-| 07 · Qualidade e revisão | pytest · Ruff no contrato · revisão delimitada | Checks amplos e baseline de cobertura ainda são tarefas #13/#14. |
+| 07 · Qualidade e revisão | pytest · Ruff · cobertura · contrato arquitetural | CI geral do core e proteção da `main` impostos; cobertura cresce por ratchet. Web/E2E permanece em #14. |
 | 08 · Segurança e limites | permissões nativas · contratos · corpus protegido | Negação técnica, isolamento de credenciais e logs sem segredos para o loop. |
 | 09 · Design e acessibilidade | ECC motion/taste na fonte · contrato #11 | Escolher um guia visual; medir estados assíncronos e redução de movimento. |
 | 10 · Browser e jornadas | E2E no contrato · ferramentas de browser da sessão | Fixtures e teste reproduzível; comparar Playwright CLI com MCP. |
-| 11 · Entrega e observabilidade | issue → PR → release · templates · #10/#12 | CI geral, proteção de branch, release e telemetria ainda não impostos. |
+| 11 · Entrega e observabilidade | issue → PR → check obrigatório → merge | CI e proteção da `main` impostos para o core; release e telemetria permanecem em #10/#12/#14. |
 
 ## Candidatos — decisão individual
 
@@ -79,9 +79,9 @@ O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados a
 | 02 · Escopo | issue + ponytail + ECC | Documentado — Issue não aprova código. Os gates são instruções, não uma barreira técnica universal. |
 | 03 · Contexto | Graphify / MEX / AGY | Contrato + pilotos isolados — Graphify CLI passou; Context Mode MCP ainda não tem evidência em tarefa real. Hooks foram rejeitados. |
 | 04 · Implementação | Fable + tdd-guide | Contrato definido — Subagentes nativos variam por CLI. Contratos inline preservam o papel, não criam ferramenta. |
-| 05 · Verificação | executor / CI | Parcial no CI — O único YAML encontrado em .github/workflows não cobre a suite/lint/E2E geral. Branch protection não auditada. |
+| 05 · Verificação | executor / CI | Imposto no CI — suíte hermética, cobertura do core, Ruff e contrato arquitetural; check `core` obrigatório e strict na `main`. |
 | 06 · Revisão | Astra read-only | Política observada — Astra revisou #27 uma vez e o diff foi corrigido; timeout/contagem continuam responsabilidade do chamador. |
-| 07 · Entrega | humano + GitHub | Prática validada; enforcement parcial — Issues #24/#23/#27 passaram por branch e PR; branch protection e pipeline geral não foram verificados. |
+| 07 · Entrega | humano + GitHub | Enforcement ativo para o core — PR #30 verde e mesclado; `main` exige PR atualizado + check `core`, inclusive para admins. |
 | 08 · Continuidade | coordenador / futuro loop | Loop ainda planejado — Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção. |
 
 ## Fila atual
@@ -90,13 +90,13 @@ O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados a
 |---|---|---|---|
 | P0 | Controlador do loop noturno | Sem implementação | Issue própria no agent-workflow-lab + fixture de ação proibida. |
 | P1 | Context Mode MCP | #22 aberta | 12 tarefas reais; hooks continuam rejeitados. |
-| P1 | Qualidade/CI/observabilidade | #10/#12/#13/#14 abertas | Baselines antes de adicionar ferramentas. |
+| P1 | Qualidade/CI/observabilidade | #13 concluída; #10/#12/#14 abertas | Elevar cobertura útil; definir observabilidade e gates da campanha web. |
 | P2 | UI e motion | #11 aberta | Auditar jornadas reais; web somente quando C6 existir. |
 | Sob demanda | Novas skills/MCPs | Sem gap novo | Usar find-skills só após gap comprovado; não instalar agora. |
 
 ## O que adicionar agora
 
-Nenhuma nova skill ou MCP. Os gaps restantes são: contenção do loop, experimento real do Context Mode, CI/qualidade/observabilidade e auditoria de jornadas da UI. Adicionar catálogo antes dessas medições recriaria o problema de orçamento e sobreposição.
+Nenhuma nova skill ou MCP. Os gaps restantes são: contenção do loop, experimento real do Context Mode, observabilidade/release, qualidade da futura web/CLI e auditoria de jornadas da UI. Adicionar catálogo antes dessas medições recriaria o problema de orçamento e sobreposição.
 
 ## Método e limites
 
