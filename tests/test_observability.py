@@ -1,6 +1,7 @@
 import json
 import logging
 from contextlib import nullcontext
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -81,13 +82,21 @@ def test_operation_scope_records_failure_type_and_rethrows_same_exception(tmp_pa
 
 
 def test_configuration_is_idempotent_and_rotates_jsonl(tmp_path):
+    external_handler = logging.NullHandler()
+    logging.getLogger(LOGGER_NAME).addHandler(external_handler)
     log_path = configure_local_observability(
         tmp_path, version="dev", max_bytes=300, backup_count=1
     )
     assert configure_local_observability(
         tmp_path, version="dev", max_bytes=300, backup_count=1
     ) == log_path
-    assert len(logging.getLogger(LOGGER_NAME).handlers) == 1
+    handlers = logging.getLogger(LOGGER_NAME).handlers
+    assert external_handler in handlers
+    assert len([
+        handler for handler in handlers
+        if isinstance(handler, RotatingFileHandler)
+        and Path(handler.baseFilename) == log_path.resolve()
+    ]) == 1
 
     for _ in range(6):
         with operation_scope("process_single"):
