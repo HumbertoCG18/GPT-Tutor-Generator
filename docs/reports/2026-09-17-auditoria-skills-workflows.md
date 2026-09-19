@@ -1,18 +1,18 @@
 # Auditoria visual de skills e workflows — snapshot 17/09, atualização 19/09/2026
 
-Origem: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Atualização: [#33](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/33). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
+Origem: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Atualização: [#35](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/35). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
 
 ## Resultado
 
-O núcleo do workflow já tem cobertura documental ampla. O fechamento agora exige entregar a #33, reconciliar #16/#22 e provar uma retomada real. O loop noturno mantém severidade P0, mas é a última entrega por decisão de sequência. Instalar outra suite inteira não demonstra resolver esses gaps.
+O núcleo do workflow já tem cobertura documental ampla. #16/#22/#33 e a prova de retomada estão fechadas; falta entregar a reconciliação no PR #36. O loop noturno mantém severidade P0, mas é a última entrega por decisão de sequência. Instalar outra suite inteira não demonstra resolver esses gaps.
 
-**Atualização — issue #16:** Karpathy Skills foi adotado parcialmente como regras nas instruções compartilhadas, sem instalar plugin. Quatro deltas: premissas materiais, estilo local, órfãos da própria mudança e verificação por etapa. Adição de 16 linhas/1027 bytes; fonte e três cópias idênticas, verify.py aprovado com 75 arquivos e zero divergências. Comportamento/consumo ainda não medidos. O inventário permanece o snapshot de 17/09; esta atualização não é nova varredura do catálogo.
+**Atualização — issue #16:** Karpathy Skills foi adotado parcialmente como regras nas instruções compartilhadas, sem instalar plugin. Quatro deltas: premissas materiais, estilo local, órfãos da própria mudança e verificação por etapa. Adição de 16 linhas/1027 bytes; fonte e três cópias idênticas, verify.py aprovado com 75 arquivos e zero divergências. Comportamento/consumo ainda não medidos. A issue foi fechada com a limitação de o laboratório não ter remote. O inventário permanece o snapshot de 17/09; esta atualização não é nova varredura do catálogo.
 
 **Atualização — issue #17:** três referências do Agent Skills foram adaptadas em um pattern local: piso de qualidade com baseline/ratchet, checkpoint de contexto e observabilidade orientada a perguntas. O bloco de qualidade agora é imposto pelo gate Python `core` da #13; nenhum plugin/hook upstream foi instalado. Fable/Astra, MEX/Graphify e Gates 1/2 permanecem.
 
-**Atualização — issues #18/#19/#22:** o MCP isolado passou 10/10, mas os hooks foram rejeitados (7/10; persistência de segredo sintético e stderr). Em 12 execuções reais, 10/12 respostas foram corretas e 9/12 conformes ao schema. Claude ficou MCP manual via `server.bundle.mjs`, sem hooks; Codex e AGY foram removidos.
+**Atualização — issues #18/#19/#22:** o MCP isolado passou 10/10, mas os hooks foram rejeitados (7/10; persistência de segredo sintético e stderr). Em 12 execuções reais, 10/12 respostas foram corretas e 9/12 conformes ao schema. Em 19/09, a decisão foi não adotar: registros e dados ativos foram removidos das três CLIs, com backup recuperável.
 
-1. **Context Mode:** manter apenas no Claude, manual e para corpus grande. Codex falhou nas duas tarefas ON; AGY ficou mais lento/verboso. Não generalizar economia de contexto.
+1. **Context Mode:** não adotado; removido das três CLIs. Codex falhou nas duas tarefas ON; AGY ficou mais lento/verboso; zero uso interativo foi medido no Claude. Não generalizar economia de contexto.
 2. **Agent-pd:** candidato a observabilidade do agente, condicionado à privacidade dos logs. Não bloqueia ações; armazena inputs completos e pode guardar segredos em texto puro.
 3. **UI:** reutilizar as fontes ECC e design-motion-principles já referenciada. Comparar Impeccable com um único guia atual quando houver uma tela web da C6.
 4. **MarkItDown:** benchmark de conversão com fixtures, já relacionado à caixa de ideias. Sem substituir o pipeline atual antes de medir fidelidade.
@@ -73,7 +73,7 @@ As 736 entradas são classificadas por camada predominante usando o nome da skil
 | wshobson agents | Marketplace de agentes e skills | Referência seletiva | [wshobson/agents](https://github.com/wshobson/agents/blob/4236bb91f8395b0435f1d8b8baf9e8e4c69a8620/README.md) |
 | prompt-master | Skill de escrita de prompts | Reutilizar o atual | [nidhinjs/prompt-master](https://github.com/nidhinjs/prompt-master/blob/2bd92518e26bf659e21e3d9ab90573fcf3ddeccb/README.md) |
 | security sweep | Skill de revisão de segurança | Reutilizar o atual | [Onome-AJ/security-sweep-plugin](https://github.com/Onome-AJ/security-sweep-plugin/blob/6ca48b6ef582b5c6050e717202b3e35fa575449c/README.md) |
-| context mode | MCP + armazenamento + hooks | Claude restrito; Codex/AGY removidos | [mksglu/context-mode](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/README.md) |
+| context mode | MCP + armazenamento + hooks | Não adotado; removido das três CLIs | [mksglu/context-mode](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/README.md) |
 | claude-video | Skill + scripts de vídeo | Adiar por escopo | [bradautomates/claude-video](https://github.com/bradautomates/claude-video/blob/83da59fa78c3eee9e20f515fe75c438bb5166efd/README.md) |
 | manifest | Gateway de modelos | Adiar por conflito | [mnfst/manifest](https://github.com/mnfst/llm-gateway/blob/b8022df157a7b3bca8d8e86b78631fb718415a82/README.md) |
 | skill-bus | Hooks de composição de skills | Referência seletiva | [joeymnguyen/skill-bus](https://github.com/joeymnguyen/skill-bus/blob/77fd804aa4fa1d4d7081725d41da511cfcd3de1f/README.md) |

@@ -9,7 +9,13 @@ Base do corpus: `origin/main` em `2ba355f`
 Versão avaliada: `mksglu/context-mode@c127f2fe8496fef36e0ebef36ded92d4fa8f570`
 (`1.0.169`).
 
-## Decisão
+**Atualização de 19/09/2026:** a decisão abaixo foi superada. O usuário removeu
+o Context Mode das três CLIs e a #22 foi fechada como não adotada. Os diretórios de
+dados ativos foram movidos para o backup recuperável
+`agent-workflow-lab/private/backups/context-mode-removal-20260919-014312`.
+Os resultados medidos permanecem inalterados como evidência histórica.
+
+## Decisão da medição em 18/09 (superada em 19/09)
 
 - **Claude Code:** manter somente como MCP manual para corpus grande, iniciado por
   `server.bundle.mjs`, com armazenamento exclusivo. Não instalar plugin nem hooks.

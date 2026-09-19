@@ -1,7 +1,7 @@
 {
   "date": "2026-09-19",
-  "generatedUtc": "2026-09-19T03:55:57.510307+00:00",
-  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/33",
+  "generatedUtc": "2026-09-19T04:55:18.692691+00:00",
+  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/35",
   "layers": [
     {
       "id": "governanca",
@@ -632,13 +632,13 @@
       "repo": "mksglu/context-mode",
       "layer": "contexto",
       "kind": "MCP + armazenamento + hooks",
-      "decision": "Claude restrito; Codex/AGY removidos",
+      "decision": "Não adotado; removido das três CLIs",
       "fit": "MCP isolado passou na #18; hooks foram rejeitados na #19. Na #22, 12 execuções reais produziram 10/12 respostas corretas e 9/12 conformes ao schema.",
       "overlap": "Complementa contrato de leitura e RTK limitado ao pytest; sobrepõe parte da memória/continuidade.",
       "risk": "Hooks persistiram segredo sintético e emitiram stderr; o launcher `start.mjs` também criou hook global. Codex bloqueou ferramentas sob approval=never; AGY ficou mais lento e verboso.",
       "cost": "Claude melhorou no corpus grande, mas encareceu a tarefa UI. Codex aumentou fortemente tempo/tokens; AGY foi inconsistente. Bytes não equivalem a quota.",
-      "platform": "Windows + Node 24: Claude usa `server.bundle.mjs` com storage exclusivo e sem hooks; registros removidos de Codex e AGY.",
-      "check": "Repetir somente após corrigir incompatibilidades; mesma fixture, resposta final validada e schema separado do conteúdo.",
+      "platform": "Windows + Node 24: registros e dados ativos removidos de Claude, Codex e AGY; backup recuperável preservado.",
+      "check": "Não repetir. Nova avaliação exige correção upstream, mesma fixture e issue nova.",
       "identity": "correspondência provável",
       "alternatives": [],
       "license": "Elastic License 2.0 (arquivo LICENSE lido)",
@@ -705,17 +705,17 @@
         "global_configs_unchanged": 4,
         "hooks_evaluated": true,
         "hooks_activated": false,
-        "mcp_registered": true,
+        "mcp_registered": false,
         "real_runs": 12,
         "content_correct": 10,
         "schema_conformant": 9,
-        "enabled_clis": [
-          "Claude Code"
-        ],
+        "enabled_clis": [],
         "removed_clis": [
+          "Claude Code",
           "Codex",
           "AGY"
-        ]
+        ],
+        "backup": "agent-workflow-lab/private/backups/context-mode-removal-20260919-014312"
       }
     },
     {
@@ -12823,24 +12823,17 @@
   "gaps": [
     {
       "priority": "P0",
-      "title": "Fechar a entrega documental #33",
-      "detail": "Auditoria validada e entregue no PR #34. Gate 2 e merge foram autorizados; o merge fecha a issue.",
-      "action": "Confirmar checks e conversas resolvidas no PR #34; se já estiver mesclado, seguir para o próximo gap.",
+      "title": "Fechar a reconciliação no PR #36",
+      "detail": "#16/#22 estão fechadas, a retomada foi comprovada e o tracker foi reconciliado. O diff ampliado aguarda novo Gate 2 antes de commit/push.",
+      "action": "Conferir o diff, aprovar Gate 2, executar checks e mesclar sob autorização separada.",
       "layer": "entrega"
     },
     {
       "priority": "P1",
-      "title": "Provar retomada real do contrato",
-      "detail": "Revisões Astra foram aplicadas aos diffs de #31/#32, mas a retomada de uma tarefa interrompida pelo estado salvo ainda não tem prova fim a fim.",
-      "action": "Na próxima interrupção real, retomar sem repetir chamada, conferir branch/HEAD/diff/testes e registrar o resultado.",
+      "title": "Excluir plugins sincronizados no Claude.ai",
+      "detail": "Cinco plugins removidos localmente continuam sincronizados na conta: Desktop Commander, PDF Viewer, Engineering, Design e cowork-plugin-management.",
+      "action": "Excluir na conta autenticada e confirmar que não reaparecem numa sessão nova.",
       "layer": "governanca"
-    },
-    {
-      "priority": "P1",
-      "title": "Encerrar #16 e #22 sem repetir pilotos",
-      "detail": "#16 está aplicado e verificado, mas o laboratório não tem remote. #22 concluiu 12 execuções e permanece aberto por duas incompatibilidades Codex já delimitadas.",
-      "action": "Registrar a limitação de #16; em #22, abrir defeitos separados se ainda acionáveis e fechar a medição sem nova rodada genérica.",
-      "layer": "contexto"
     },
     {
       "priority": "P2",
@@ -12930,7 +12923,7 @@
     },
     {
       "path": ".workflow/PENDING.md",
-      "sha256": "6dae4e77db5cee1442aa8abd02733f4b40c3fea55402bda4902b296bb30ef2d2"
+      "sha256": "754ac21f9092e0a0189dc6fb0fa12eb114396901380841894cd57af93ae05bb8"
     },
     {
       "path": ".workflow/agents/README.md",
@@ -12954,11 +12947,11 @@
     },
     {
       "path": "docs/reports/2026-09-18-context-mode-real-measurement.md",
-      "sha256": "f8e409bf75cf343cf05417ecab1bc7fb301377db5d8301527e19f68fa9731463"
+      "sha256": "9726b62d6f44d431678b7b256c8fb4af0343b551ae6330132bdb288a36f09184"
     },
     {
       "path": "docs/reports/2026-09-19-handoff-workflow.md",
-      "sha256": "ce1d30fd01a142f99de4c121d2f2b5464bb3bf49d9e0682eabad2ee17be183a0"
+      "sha256": "ac1d35f7c57151cfa3a694fabc0c1a99920bf268d0109ffa133ca8d6b2dfb4cc"
     }
   ],
   "sources": [
@@ -15702,7 +15695,7 @@
     "verify": "ok=true; 75 arquivos gerenciados; errors=[]",
     "codexCatalog": "snapshot de 17/09: 77 entradas, 26 habilitadas, 51 desabilitadas",
     "models": "Medição #22: 12 sessões novas; 10/12 respostas corretas; 9/12 conformes ao schema. Revisão Astra aplicada aos diffs de #31/#32.",
-    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#17/#19/#22 sem nova enumeração do catálogo.",
+    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#16/#17/#19/#22/#33 e a prova de retomada, sem nova enumeração do catálogo.",
     "limits": "Duas tarefas não provam benefício geral do Context Mode. Classificação por nome continua heurística; não é auditoria integral de segurança nem medição geral de economia."
   }
 }
