@@ -1,12 +1,12 @@
 # Handoff — fechamento da rodada de construção do workflow
 
-Data: 2026-09-19. Branch: `docs/35-reconciliar-tracker`. Base: `main`
-em `c17e01f`. Entrega ativa: [PR #36](https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/36).
+Data: 2026-09-19. `main` em `9b33f8b`. Reconciliação concluída no
+[PR #36](https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/36).
 
 ## Objetivo da próxima sessão
 
-Mesclar o PR #36 após Gate 2 e checks, então auditar gaps antes de construir outra
-capacidade. O loop noturno continua como última entrega planejada.
+Rodada de reconciliação encerrada. O loop noturno continua como última entrega planejada;
+#11, #12 e #14 permanecem roadmap separado do produto.
 
 ## Estado verificado
 
@@ -24,20 +24,16 @@ capacidade. O loop noturno continua como última entrega planejada.
 - Limpeza local de plugins desativados: sete instalações Claude, uma Codex e cinco
   registros Gemini/AGY removidos. Backup em
   `C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/private/backups/plugin-off-cleanup-20260919-001529`.
-  Cinco plugins sincronizados ainda exigem exclusão na conta Claude.ai: Desktop Commander,
-  PDF Viewer, Engineering, Design e `cowork-plugin-management`.
+  Desktop Commander, PDF Viewer, Engineering, Design e `cowork-plugin-management`
+  permanecem intencionalmente na conta Claude.ai para possível uso futuro; não são gap.
 - A branch `feat/motor-atribuicao` e seu estado local pertencem à frente de produto.
   Não transportar seus diffs para esta worktree.
 
 ## Gaps na ordem de execução
 
-1. **Fechar o PR #36:** conferir o diff ampliado, aprovar Gate 2, executar checks e mesclar;
-   a issue #35 fecha pelo PR.
-2. **Excluir cinco plugins sincronizados no Claude.ai:** Desktop Commander, PDF Viewer,
-   Engineering, Design e `cowork-plugin-management`; exige ação autenticada na conta.
-3. **Manter produto separado:** #11, #12 e #14 seguem válidas, mas não bloqueiam o workflow.
+1. **Manter produto separado:** #11, #12 e #14 seguem válidas, mas não bloqueiam o workflow.
    Tkinter recebe só correção funcional; #12 começa local-first; #14 espera a stack C6.
-4. **Construir o loop noturno por último:** abrir issue e piloto isolado no
+2. **Construir o loop noturno por último:** abrir issue e piloto isolado no
    `agent-workflow-lab`; só depois integrar às três CLIs.
 
 ## Medições sem ação agora
@@ -64,8 +60,7 @@ capacidade. O loop noturno continua como última entrega planejada.
 
 ## Retomada operacional
 
-1. Abrir `C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-capability-audit`.
-2. Consultar `gh pr view 36` e `gh pr checks 36`.
-3. Confirmar o diff ampliado e registrar Gate 2 antes de commit/push.
-4. Após o merge autorizado separadamente, excluir a worktree e a branch já integradas.
-5. Não reinstalar ou repetir o piloto Context Mode; a decisão futura exige correção upstream e issue nova.
+1. Partir de `main` em `9b33f8b` ou posterior.
+2. Abrir issue do loop noturno somente quando essa frente for iniciada.
+3. Preservar os cinco plugins Claude.ai; reavaliar apenas com uso medido ou nova decisão.
+4. Não reinstalar ou repetir o piloto Context Mode; nova avaliação exige correção upstream e issue nova.
