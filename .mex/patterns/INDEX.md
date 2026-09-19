@@ -6,6 +6,8 @@ Lookup table for all pattern files in this directory. Check here before starting
 
 | Pattern | Use when |
 |---------|----------|
+| [engenharia-produto.md](engenharia-produto.md) | Toda mudança: issues/PRs/releases, estados da UI, observabilidade e qualidade por stack (desktop e C6 web) |
+| [agent-skills-adapted.md](agent-skills-adapted.md) | Aplicar baseline/ratchet, checkpoint de contexto ou observabilidade orientada a perguntas sem instalar a coleção Agent Skills |
 | [add-build-artifact.md](add-build-artifact.md) | Adding a new generated file to the output repository |
 | [add-builder-submodule.md](add-builder-submodule.md) | Adding new processing logic to any `src/builder/` subpackage |
 | [add-ui-feature.md](add-ui-feature.md) | Adding dialogs, tabs, dashboard widgets, or new entry controls to the Tkinter UI |

@@ -1,6 +1,9 @@
 # Estado da tarefa — copiar para .workflow-local/active-task.md
 
 - task_id: <ID estável>
+- issue_url:
+- pr_url_e_base:
+- alvo_de_release_e_rollback:
 - objetivo_e_escopo_aprovados:
 - branch_e_head:
 - coordenador_e_sessao:
@@ -12,6 +15,8 @@
 - etapa_atual:
 - proxima_acao:
 - arquivos_permitidos:
+- tipo_de_delegacao: <revisao_de_diff | pesquisa | implementacao | nenhuma>
+- skills_necessarias_e_evidencia_de_uso:
 - criterio_de_termino:
 - evidencias_e_tentativas:
 - diff_e_testes:
