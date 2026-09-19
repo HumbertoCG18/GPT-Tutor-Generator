@@ -1,7 +1,7 @@
 {
   "date": "2026-09-19",
-  "generatedUtc": "2026-09-19T04:55:18.692691+00:00",
-  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/35",
+  "generatedUtc": "2026-09-19T05:25:16.701414+00:00",
+  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/37",
   "layers": [
     {
       "id": "governanca",
@@ -12822,20 +12822,6 @@
   ],
   "gaps": [
     {
-      "priority": "P0",
-      "title": "Fechar a reconciliação no PR #36",
-      "detail": "#16/#22 estão fechadas, a retomada foi comprovada e o tracker foi reconciliado. O diff ampliado aguarda novo Gate 2 antes de commit/push.",
-      "action": "Conferir o diff, aprovar Gate 2, executar checks e mesclar sob autorização separada.",
-      "layer": "entrega"
-    },
-    {
-      "priority": "P1",
-      "title": "Excluir plugins sincronizados no Claude.ai",
-      "detail": "Cinco plugins removidos localmente continuam sincronizados na conta: Desktop Commander, PDF Viewer, Engineering, Design e cowork-plugin-management.",
-      "action": "Excluir na conta autenticada e confirmar que não reaparecem numa sessão nova.",
-      "layer": "governanca"
-    },
-    {
       "priority": "P2",
       "title": "Separar roadmap do produto do fechamento do workflow",
       "detail": "#11, #12 e #14 continuam válidas, porém tratam UI, observabilidade e stack web. Não bloqueiam a conclusão desta rodada de governança.",
@@ -12923,7 +12909,7 @@
     },
     {
       "path": ".workflow/PENDING.md",
-      "sha256": "754ac21f9092e0a0189dc6fb0fa12eb114396901380841894cd57af93ae05bb8"
+      "sha256": "e7669266a344f5873e1087c460e6d7aa3b2dbedbed975f17e949668142bc230e"
     },
     {
       "path": ".workflow/agents/README.md",
@@ -12951,7 +12937,7 @@
     },
     {
       "path": "docs/reports/2026-09-19-handoff-workflow.md",
-      "sha256": "ac1d35f7c57151cfa3a694fabc0c1a99920bf268d0109ffa133ca8d6b2dfb4cc"
+      "sha256": "a25e2857fc10a0be84664440939ac3a625605bf8a57a40e0f943ca11a84f98c6"
     }
   ],
   "sources": [
@@ -15695,7 +15681,7 @@
     "verify": "ok=true; 75 arquivos gerenciados; errors=[]",
     "codexCatalog": "snapshot de 17/09: 77 entradas, 26 habilitadas, 51 desabilitadas",
     "models": "Medição #22: 12 sessões novas; 10/12 respostas corretas; 9/12 conformes ao schema. Revisão Astra aplicada aos diffs de #31/#32.",
-    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#16/#17/#19/#22/#33 e a prova de retomada, sem nova enumeração do catálogo.",
+    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#16/#17/#19/#22/#33/#35, a prova de retomada e a decisão de preservar os plugins sincronizados, sem nova enumeração do catálogo.",
     "limits": "Duas tarefas não provam benefício geral do Context Mode. Classificação por nome continua heurística; não é auditoria integral de segurança nem medição geral de economia."
   }
 }

@@ -1,10 +1,10 @@
 # Auditoria visual de skills e workflows — snapshot 17/09, atualização 19/09/2026
 
-Origem: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Atualização: [#35](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/35). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
+Origem: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Atualização: [#37](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/37). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
 
 ## Resultado
 
-O núcleo do workflow já tem cobertura documental ampla. #16/#22/#33 e a prova de retomada estão fechadas; falta entregar a reconciliação no PR #36. O loop noturno mantém severidade P0, mas é a última entrega por decisão de sequência. Instalar outra suite inteira não demonstra resolver esses gaps.
+O núcleo do workflow já tem cobertura documental ampla. #16/#22/#33/#35 e a prova de retomada estão fechadas. Os cinco plugins sincronizados foram preservados por decisão do usuário e não são gap. O loop noturno mantém severidade P0, mas é a última entrega por decisão de sequência. Instalar outra suite inteira não demonstra resolver esses gaps.
 
 **Atualização — issue #16:** Karpathy Skills foi adotado parcialmente como regras nas instruções compartilhadas, sem instalar plugin. Quatro deltas: premissas materiais, estilo local, órfãos da própria mudança e verificação por etapa. Adição de 16 linhas/1027 bytes; fonte e três cópias idênticas, verify.py aprovado com 75 arquivos e zero divergências. Comportamento/consumo ainda não medidos. A issue foi fechada com a limitação de o laboratório não ter remote. O inventário permanece o snapshot de 17/09; esta atualização não é nova varredura do catálogo.
 
