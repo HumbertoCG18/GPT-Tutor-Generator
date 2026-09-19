@@ -21,6 +21,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
+from src.observability import operation_scope
+
 from src.builder.runtime.datalab_client import (
     convert_document_to_markdown,
     get_datalab_base_url,
@@ -1814,8 +1816,9 @@ class RepoBuilder:
         )
 
     def build(self) -> None:
-        with self._sleep_guard("build do repositorio"):
-            self._build_impl()
+        with operation_scope("build"):
+            with self._sleep_guard("build do repositorio"):
+                self._build_impl()
 
     def _build_impl(self) -> None:
         _build_workflow_build_impl(
@@ -2155,8 +2158,9 @@ class RepoBuilder:
         )
 
     def incremental_build(self) -> None:
-        with self._sleep_guard("build incremental do repositorio"):
-            self._incremental_build_impl()
+        with operation_scope("incremental_build"):
+            with self._sleep_guard("build incremental do repositorio"):
+                self._incremental_build_impl()
 
     def _incremental_build_impl(self) -> None:
         _incremental_build_incremental_build_impl(
@@ -2234,8 +2238,9 @@ class RepoBuilder:
         )
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
-        with self._sleep_guard(f"processamento de {entry.title}"):
-            return self._process_single_impl(entry, force=force)
+        with operation_scope("process_single"):
+            with self._sleep_guard(f"processamento de {entry.title}"):
+                return self._process_single_impl(entry, force=force)
 
     def _process_single_impl(self, entry: "FileEntry", force: bool = False) -> str:
         return _lifecycle_ops_process_single_impl(
