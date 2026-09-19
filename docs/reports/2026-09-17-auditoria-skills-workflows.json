@@ -1,23 +1,23 @@
 {
-  "date": "2026-09-17",
-  "generatedUtc": "2026-09-18T19:25:09.019021+00:00",
-  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15",
+  "date": "2026-09-19",
+  "generatedUtc": "2026-09-19T03:55:57.510307+00:00",
+  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/33",
   "layers": [
     {
       "id": "governanca",
       "number": "01",
       "name": "Governança e seleção",
-      "baseline": "ponytail · troglodita · verify.py · descoberta sob demanda",
-      "coverage": "Catálogo Codex deduplicado; find-skills desabilitada por política",
-      "gap": "Medir descoberta e aplicação em sessão nova no Claude e AGY."
+      "baseline": "ponytail · troglodita · verify.py · overrides",
+      "coverage": "Coberta por política e verificações locais",
+      "gap": "Validar sessão nova por CLI; evitar dois gestores de skills."
     },
     {
       "id": "contexto",
       "number": "02",
       "name": "Contexto e navegação",
-      "baseline": "MEX · Graphify/CLI · CBM fallback · contrato de leitura",
-      "coverage": "Graphify CLI medido; Context Mode aprovado só em sandbox",
-      "gap": "Executar #22 antes de registrar o MCP; saída bruta e tokens por tarefa."
+      "baseline": "MEX · Graphify · CBM fallback · contrato de leitura",
+      "coverage": "Cobertura existente; eficiência ainda exige benchmark",
+      "gap": "Recuperar saída bruta sob demanda e medir contexto por tarefa."
     },
     {
       "id": "memoria",
@@ -40,7 +40,7 @@
       "number": "05",
       "name": "Planejamento e delegação",
       "baseline": "ECC orch-* · Fable executor · Astra read-only",
-      "coverage": "Contrato definido; execução noturna pendente",
+      "coverage": "Contrato definido; execução noturna é a última entrega",
       "gap": "Supervisor externo, timeout real, teto de tentativas e sessão nova."
     },
     {
@@ -55,9 +55,9 @@
       "id": "qualidade",
       "number": "07",
       "name": "Qualidade e revisão",
-      "baseline": "pytest · Ruff no contrato · revisão delimitada",
-      "coverage": "CI geral do core: pytest, cobertura, Ruff e contrato arquitetural; check core obrigatório na main.",
-      "gap": "Cobertura útil cresce por ratchet; web/E2E permanece em #14 e CLI terá contrato próprio."
+      "baseline": "pytest · Ruff · arquitetura · cobertura · revisão delimitada",
+      "coverage": "Gate Python `core` imposto na main",
+      "gap": "Web #14 aguarda stack C6; E2E desktop continua sem matriz completa."
     },
     {
       "id": "seguranca",
@@ -88,8 +88,8 @@
       "number": "11",
       "name": "Entrega e observabilidade",
       "baseline": "issue → PR → release · templates · #10/#12",
-      "coverage": "Issue → PR → check core obrigatório → merge; proteção da main verificada.",
-      "gap": "Release por alvo e telemetria permanecem em #10/#12/#14."
+      "coverage": "Templates e proteção `core` entregues",
+      "gap": "Release/deploy e telemetria de produto continuam sem implementação comprovada."
     }
   ],
   "candidates": [
@@ -101,10 +101,10 @@
       "decision": "Adotado parcialmente",
       "fit": "Três deltas incorporados na issue #17: baseline/ratchet e piso de qualidade, checkpoint de contexto e observabilidade orientada a perguntas.",
       "overlap": "ECC orch-*, contrato de delegação e engenharia já definem o ciclo; incorporar apenas deltas úteis.",
-      "risk": "A adaptação original foi documental; o floor-guard regex upstream segue desativado. O gate Python de #13 usa ratchet local compatível.",
-      "cost": "Um pattern local curto; nenhum plugin, hook ou dependência instalado. Efeito em qualidade/contexto ainda não medido.",
+      "risk": "A adaptação permanece documental; o gate Python da #13 implementa o bloco de qualidade por mecanismo próprio. O floor-guard regex upstream não foi adotado.",
+      "cost": "Um pattern local curto; nenhum plugin, hook ou dependência instalado. O gate `core` reutiliza pytest/Ruff e o verificador do projeto.",
       "platform": "MIT; pacote local vale nas três CLIs via MEX. Fable/Astra, Graphify e Gates 1/2 permanecem donos.",
-      "check": "Adoção documental concluída. #13 mediu baseline, provou red/green e ativou checks; #12 ainda deve medir observabilidade antes de exportar dados.",
+      "check": "Qualidade ativada pela #13 com baseline/ratchet próprio; contexto e observabilidade continuam condicionados às suas medições.",
       "identity": "confirmada pela URL fornecida pelo usuário",
       "alternatives": [],
       "license": "MIT",
@@ -140,8 +140,8 @@
           "observability-questions"
         ],
         "pattern": ".mex/patterns/agent-skills-adapted.md",
-        "lines": 74,
-        "bytes": 4754,
+        "lines": 76,
+        "bytes": 4981,
         "installed": false,
         "owners_preserved": true,
         "checks_activated": true
@@ -180,11 +180,12 @@
       "adoption": {
         "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/16",
         "source_sha": "2c606141936f1eeef17fa3043a72095b4765b9c2",
+        "backup": "C:\\Users\\Humberto\\Documents\\GitHub\\agent-workflow-lab\\private\\karpathy-delta-20260917\\backup-20260918T013148Z",
         "files": [
-          "agent-workflow-lab/personal-instructions.md",
-          "~/.claude/CLAUDE.md",
-          "~/.codex/AGENTS.md",
-          "~/.gemini/GEMINI.md"
+          "C:\\Users\\Humberto\\Documents\\GitHub\\agent-workflow-lab\\personal-instructions.md",
+          "C:\\Users\\Humberto\\.claude\\CLAUDE.md",
+          "C:\\Users\\Humberto\\.codex\\AGENTS.md",
+          "C:\\Users\\Humberto\\.gemini\\GEMINI.md"
         ],
         "before_sha256": "792e077b638e028cfa236039dd26f64c5f62ec82feb0d2396cc3b6d6a740d539",
         "after_sha256": "acc834ac720c940fb82c072f45e07c82007f2bfc0d627fd28a4902fd8e11d084",
@@ -631,13 +632,13 @@
       "repo": "mksglu/context-mode",
       "layer": "contexto",
       "kind": "MCP + armazenamento + hooks",
-      "decision": "MCP aprovado; hooks rejeitados",
-      "fit": "O MCP isolado passou 10/10 na #18. Os hooks passaram 7/10 na #19 e foram rejeitados para todas as CLIs; nenhuma configuração global mudou.",
-      "overlap": "MCP pode complementar leitura delimitada e RTK; hooks conflitam com Alethe/claude-mem e ampliam persistência. #22 mede somente o MCP.",
-      "risk": "Hooks persistiram segredo sintético em Claude/Codex e falharam no stderr SQLite/JSON malformado do dispatcher Codex. Ativação completa rejeitada.",
-      "cost": "MCP: 14.280 bytes → resposta inicial de 1.705, sem prova de tokens. Hooks p50/p95: Claude 68,269/89,439 ms; Codex 88,598/101,294 ms; AGY 87,240/99,281 ms.",
-      "platform": "Windows medido em sandbox. Hooks não ativados. MCP ainda não registrado; #22 exige 12 tarefas reais, quatro por CLI, com backup e rollback.",
-      "check": "Issue #22: medir somente o MCP em 12 tarefas reais; manter/remover por CLI. Não reabrir hooks sem corrigir as três falhas críticas e novo Gate 1.",
+      "decision": "Claude restrito; Codex/AGY removidos",
+      "fit": "MCP isolado passou na #18; hooks foram rejeitados na #19. Na #22, 12 execuções reais produziram 10/12 respostas corretas e 9/12 conformes ao schema.",
+      "overlap": "Complementa contrato de leitura e RTK limitado ao pytest; sobrepõe parte da memória/continuidade.",
+      "risk": "Hooks persistiram segredo sintético e emitiram stderr; o launcher `start.mjs` também criou hook global. Codex bloqueou ferramentas sob approval=never; AGY ficou mais lento e verboso.",
+      "cost": "Claude melhorou no corpus grande, mas encareceu a tarefa UI. Codex aumentou fortemente tempo/tokens; AGY foi inconsistente. Bytes não equivalem a quota.",
+      "platform": "Windows + Node 24: Claude usa `server.bundle.mjs` com storage exclusivo e sem hooks; registros removidos de Codex e AGY.",
+      "check": "Repetir somente após corrigir incompatibilidades; mesma fixture, resposta final validada e schema separado do conteúdo.",
       "identity": "correspondência provável",
       "alternatives": [],
       "license": "Elastic License 2.0 (arquivo LICENSE lido)",
@@ -645,7 +646,7 @@
       "sha": "c127f2fe8496fefc36e0ebef36ded92d4fa8f570",
       "treeSkillFiles": 11,
       "readmeBytes": 94871,
-      "depth": "MCP e hooks executados em ambientes isolados; manifests e caminhos de persistência avaliados. Sem ativação global.",
+      "depth": "README, skill, manifests/hooks e código dirigido aos riscos; servidor MCP executado em sandbox no Windows. Hooks não executados.",
       "evidence": [
         {
           "label": "LICENSE",
@@ -676,16 +677,16 @@
           "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/19"
         },
         {
-          "label": "PR #21 — avaliação isolada dos hooks",
-          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/21"
+          "label": "Issue #22 — medição real",
+          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/22"
         },
         {
-          "label": "Issue #22 — medição real do MCP",
-          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/22"
+          "label": "PR #32 — relatório comparativo",
+          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/32"
         }
       ],
       "adoption": {
-        "issue": 18,
+        "issue": 22,
         "hooks_issue": 19,
         "pull_request": 20,
         "commit": "7652c7e",
@@ -704,17 +705,17 @@
         "global_configs_unchanged": 4,
         "hooks_evaluated": true,
         "hooks_activated": false,
-        "mcp_registered": false,
-        "hooks_checks_passed": 7,
-        "hooks_checks_total": 10,
-        "hooks_pull_request": 21,
-        "hooks_commit": "1eaaf6f",
-        "hooks_failures": [
-          "segredo sintético persistido em Claude/Codex",
-          "stderr SQLite",
-          "JSON malformado no dispatcher Codex"
+        "mcp_registered": true,
+        "real_runs": 12,
+        "content_correct": 10,
+        "schema_conformant": 9,
+        "enabled_clis": [
+          "Claude Code"
         ],
-        "real_world_issue": 22
+        "removed_clis": [
+          "Codex",
+          "AGY"
+        ]
       }
     },
     {
@@ -930,48 +931,6 @@
           "url": "https://github.com/varmabudharaju/agent-pd/blob/9f68a6b5067123bef87877d2ad09c035d83cd978/pyproject.toml"
         }
       ]
-    },
-    {
-      "name": "find-skills",
-      "repo": "vercel-labs/skills",
-      "layer": "governanca",
-      "kind": "Skill + CLI de descoberta",
-      "decision": "Governada; desabilitada por padrão",
-      "fit": "Busca candidatos somente após gap comprovado; a rota adotada exige auditoria, piloto isolado, issue e Gates 1/2 antes de instalar.",
-      "overlap": "skill-installer e plugin-management já cuidam da instalação/gestão. find-skills serve apenas para descoberta sob demanda.",
-      "risk": "Ranking, estrelas e instalações não provam segurança ou qualidade. A skill upstream oferece instalação; o workflow local proíbe instalação automática.",
-      "cost": "Fica fora do catálogo ativo, evitando ampliar o contexto inicial. Uma busca só ocorre após registrar o gap e com telemetria desativada.",
-      "platform": "Arquivo compartilhado em ~/.agents/skills; política canônica vale para Claude, Codex e AGY. Catálogo Codex confirma estado desabilitado.",
-      "check": "Para cada busca: fixar origem/commit/licença, auditar hooks/rede/segredos, comparar alternativa atual e só então abrir piloto próprio.",
-      "identity": "origem confirmada pelo lockfile; commit Git exato da versão instalada não registrado",
-      "alternatives": [],
-      "license": "MIT",
-      "source": "https://github.com/vercel-labs/skills/tree/7407f3893ad4dceab546ac002c3ef806e4000c73/skills/find-skills",
-      "sha": "7407f3893ad4dceab546ac002c3ef806e4000c73",
-      "treeSkillFiles": 1,
-      "readmeBytes": 27375,
-      "depth": "SKILL.md local lido; origem e hash da pasta conferidos no lockfile. O commit exibido é a referência upstream inspecionada, não a versão instalada. Política adotada na issue #24.",
-      "evidence": [
-        {
-          "label": "Issue #24 — governança de descoberta",
-          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/24"
-        },
-        {
-          "label": "PR #25 — política adotada",
-          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/25"
-        }
-      ],
-      "adoption": {
-        "issue": 24,
-        "pull_request": 25,
-        "installed": true,
-        "enabled_by_default": false,
-        "source": "vercel-labs/skills",
-        "skill_folder_hash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
-        "automatic_install": false,
-        "gates_preserved": true,
-        "installed_commit": null
-      }
     }
   ],
   "inventory": {
@@ -6445,8 +6404,8 @@
         "description": "Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, tool discipline failures, hidden repair loops, and rendering corruption. Produces severity-ranked findings with code-first fixes. Essential for developers building agent applications, autonomous loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves and the failing layer is unknown, or before shipping an agent stack.",
         "bytes": 10278,
         "sha256": "64f57e232c3533877403703bc95b3c75df9de23f657899a306f13c703009ff57",
-        "application": "não rastreada individualmente",
-        "depth": "metadados e presença do arquivo"
+        "application": "critérios lidos e usados nesta auditoria; avaliação inline, sem subagentes",
+        "depth": "instruções de auditoria lidas; escopo e avaliação adaptados ao relatório solicitado"
       },
       {
         "name": "ecc:agent-eval",
@@ -10445,8 +10404,8 @@
         "description": "\"Use when auditing Claude skills and commands for quality. Supports Quick Scan (changed skills only) and Full Stocktake modes with sequential subagent batch evaluation.\"",
         "bytes": 7819,
         "sha256": "aa8f287c48c5a33bf15094358ffccbe0d4faff9eee9fa2ffcd70c8e9f3d22cdd",
-        "application": "não rastreada individualmente",
-        "depth": "metadados e presença do arquivo"
+        "application": "critérios lidos e usados nesta auditoria; avaliação inline, sem subagentes",
+        "depth": "instruções de auditoria lidas; escopo e avaliação adaptados ao relatório solicitado"
       },
       {
         "name": "ecc:social-graph-ranker",
@@ -11556,6 +11515,22 @@
         "name": "heredoc-git-bash-windows",
         "cli": "Codex",
         "origin": null,
+        "path": "~\\.agents\\skills\\heredoc-git-bash-windows\\SKILL.md",
+        "exists": true,
+        "policy": "habilitada",
+        "runtime": "descoberta por skills/list",
+        "layer": "governanca",
+        "classification": "heurística pelo nome; camada predominante, não avaliação de qualidade",
+        "description": "\"Escape de barra invertida e aspas quebra em quatro lugares diferentes no Windows com Git Bash — heredoc, printf dentro de JSON, string Python com \\\\b, e cmd /c com aspas. Use quando for gerar código, JSON ou comando com `\\\\n`, `\\\\\\\\`, caminho Windows ou aspas a partir do Bash tool. Sintoma: SyntaxError em Node, JSON.parse falhando, caminho corrompido, ou \\\"Cannot find module\\\" com aspas dentro do caminho.\"",
+        "bytes": 2599,
+        "sha256": "a07998b1b38dae99ed45b0ca589465622d1b088bfc70b8c4c035ced3c84bd147",
+        "application": "não rastreada individualmente",
+        "depth": "metadados e presença do arquivo"
+      },
+      {
+        "name": "heredoc-git-bash-windows",
+        "cli": "Codex",
+        "origin": null,
         "path": "~\\.agents\\skills\\learned\\heredoc-git-bash-windows\\SKILL.md",
         "exists": true,
         "policy": "habilitada",
@@ -11565,6 +11540,22 @@
         "description": "\"Escape de barra invertida e aspas quebra em quatro lugares diferentes no Windows com Git Bash — heredoc, printf dentro de JSON, string Python com \\\\b, e cmd /c com aspas. Use quando for gerar código, JSON ou comando com `\\\\n`, `\\\\\\\\`, caminho Windows ou aspas a partir do Bash tool. Sintoma: SyntaxError em Node, JSON.parse falhando, caminho corrompido, ou \\\"Cannot find module\\\" com aspas dentro do caminho.\"",
         "bytes": 2599,
         "sha256": "a07998b1b38dae99ed45b0ca589465622d1b088bfc70b8c4c035ced3c84bd147",
+        "application": "não rastreada individualmente",
+        "depth": "metadados e presença do arquivo"
+      },
+      {
+        "name": "heredoc-git-bash-windows",
+        "cli": "Codex",
+        "origin": null,
+        "path": "~\\.codex\\skills\\learned-heredoc-git-bash-windows\\SKILL.md",
+        "exists": true,
+        "policy": "desabilitada",
+        "runtime": "descoberta por skills/list",
+        "layer": "governanca",
+        "classification": "heurística pelo nome; camada predominante, não avaliação de qualidade",
+        "description": "Escape de barra invertida e aspas quebra em quatro lugares diferentes no Windows com Git Bash — heredoc, printf dentro de JSON, string Python com \\b, e cmd /c com aspas. Use quando for gerar código, JSON ou comando com `\\n`, `\\\\`, caminho Windows ou aspas a partir do Bash tool. Sintoma: SyntaxError em Node, JSON.parse falhando, caminho corrompido, ou \"Cannot find module\" com aspas dentro do caminho.",
+        "bytes": 2591,
+        "sha256": "29523695ef2d90fc69b7070bcee9b554ed2c8c95669c81e733ef88417152c9fd",
         "application": "não rastreada individualmente",
         "depth": "metadados e presença do arquivo"
       },
@@ -11613,6 +11604,38 @@
         "description": "\"O `mex check` trata qualquer texto entre crases parecido com caminho como afirmação de caminho, e a maioria dos seus erros é falso positivo. Use antes de rodar `mex sync` ou de reescrever arquivos do scaffold `.mex/` para \\\"corrigir drift\\\". Sintoma: drift score 0/100 com mais de 100 erros num scaffold que está correto.\"",
         "bytes": 1975,
         "sha256": "d74ca338a06c41cefe82ebe552cdadee548548ffaf8dece82eb0665dde90728f",
+        "application": "não rastreada individualmente",
+        "depth": "metadados e presença do arquivo"
+      },
+      {
+        "name": "mex-check-falso-positivo",
+        "cli": "Codex",
+        "origin": null,
+        "path": "~\\.agents\\skills\\mex-check-falso-positivo\\SKILL.md",
+        "exists": true,
+        "policy": "habilitada",
+        "runtime": "descoberta por skills/list",
+        "layer": "contexto",
+        "classification": "heurística pelo nome; camada predominante, não avaliação de qualidade",
+        "description": "\"O `mex check` trata qualquer texto entre crases parecido com caminho como afirmação de caminho, e a maioria dos seus erros é falso positivo. Use antes de rodar `mex sync` ou de reescrever arquivos do scaffold `.mex/` para \\\"corrigir drift\\\". Sintoma: drift score 0/100 com mais de 100 erros num scaffold que está correto.\"",
+        "bytes": 1975,
+        "sha256": "d74ca338a06c41cefe82ebe552cdadee548548ffaf8dece82eb0665dde90728f",
+        "application": "não rastreada individualmente",
+        "depth": "metadados e presença do arquivo"
+      },
+      {
+        "name": "mex-check-falso-positivo",
+        "cli": "Codex",
+        "origin": null,
+        "path": "~\\.codex\\skills\\learned-mex-check-falso-positivo\\SKILL.md",
+        "exists": true,
+        "policy": "desabilitada",
+        "runtime": "descoberta por skills/list",
+        "layer": "contexto",
+        "classification": "heurística pelo nome; camada predominante, não avaliação de qualidade",
+        "description": "O `mex check` trata qualquer texto entre crases parecido com caminho como afirmação de caminho, e a maioria dos seus erros é falso positivo. Use antes de rodar `mex sync` ou de reescrever arquivos do scaffold `.mex/` para \"corrigir drift\". Sintoma: drift score 0/100 com mais de 100 erros num scaffold que está correto.",
+        "bytes": 1971,
+        "sha256": "cebf1ec3fd1e2729bdbdb0f635c0f972598935c3df2008a639305b703c08f59d",
         "application": "não rastreada individualmente",
         "depth": "metadados e presença do arquivo"
       },
@@ -12692,7 +12715,7 @@
     "counts": {
       "Claude": 340,
       "Fonte ECC": 286,
-      "Codex": 73,
+      "Codex": 77,
       "AGY": 33
     },
     "claudePlugins": {
@@ -12721,7 +12744,7 @@
       "ponytail": true,
       "science": false
     },
-    "codexEnabled": 24
+    "codexEnabled": 26
   },
   "workflows": [
     {
@@ -12729,9 +12752,9 @@
       "owner": "MEX / coordenador",
       "state": "Documentado",
       "mechanism": "ROUTER → tracker/handoff → workflow → estado por tarefa",
-      "gap": "Codex teve sessão nova sem warning após a deduplicação; Claude e AGY ainda precisam do mesmo smoke de catálogo.",
+      "gap": "Bootstrap não deve recarregar todo o histórico. Sessão antiga pode reter catálogo anterior.",
       "proof": ".mex/ROUTER.md; .workflow/README.md",
-      "next": "Repetir smoke de sessão nova no Claude e AGY e registrar catálogo visível."
+      "next": "Checklist de sessão nova e identificação de catálogo por CLI."
     },
     {
       "stage": "02 · Escopo",
@@ -12745,11 +12768,11 @@
     {
       "stage": "03 · Contexto",
       "owner": "Graphify / MEX / AGY",
-      "state": "Contrato + pilotos isolados",
+      "state": "Contrato definido",
       "mechanism": "explain/path antes de query; rg delimitado; referências e corpus seletivos.",
-      "gap": "Graphify CLI passou; Context Mode MCP ainda não tem evidência em tarefa real. Hooks foram rejeitados.",
+      "gap": "Catálogo instalado não prova que a skill foi lida/aplicada; saída truncada ainda pode perder evidência.",
       "proof": ".workflow/workflow.md: Delegação com contexto delimitado",
-      "next": "Executar #22 sem hooks e comparar com o baseline."
+      "next": "Benchmark de leitura: fonte bruta recuperável, mesmo aceite, tempo e tokens reportados."
     },
     {
       "stage": "04 · Implementação",
@@ -12763,75 +12786,75 @@
     {
       "stage": "05 · Verificação",
       "owner": "executor / CI",
-      "state": "Imposto no CI",
-      "mechanism": "Python quality roda suíte hermética, cobertura do core, Ruff e contrato arquitetural em PR/main.",
-      "gap": "Ratchets preservam 69 achados Ruff, 1 import core→UI e cobertura por plataforma sem permitir regressão.",
-      "proof": ".github/workflows/python-quality.yml; PR #30; run 35384137514; proteção da main com core strict",
-      "next": "Elevar cobertura com testes úteis; web/E2E em #14; observabilidade em #12."
+      "state": "Gate Python imposto",
+      "mechanism": "Workflow `core`: suíte pytest, cobertura por plataforma, Ruff e contrato arquitetural.",
+      "gap": "Tkinter não tem matriz E2E completa; gates web permanecem bloqueados até existir stack C6.",
+      "proof": ".github/workflows/python-quality.yml; .github/python-quality-baseline.json",
+      "next": "Preservar o ratchet Python; ativar #14 somente com a stack web."
     },
     {
       "stage": "06 · Revisão",
       "owner": "Astra read-only",
-      "state": "Política observada",
+      "state": "Política; não supervisor",
       "mechanism": "Uma tentativa por tarefa relevante, diff fixado, timeout de 10 minutos exigido no chamador.",
-      "gap": "Astra revisou #27 uma vez e o diff foi corrigido; timeout/contagem continuam responsabilidade do chamador.",
+      "gap": "O próprio contrato declara não impor quota/contagem/timeout por servidor. Revisão nativa adicional pode duplicar custo se roteada sem critério.",
       "proof": ".workflow/workflow.md: Executor Fable e revisor Astra",
-      "next": "Manter uma revisão por tarefa e registrar falha/timeout sem retry."
+      "next": "Medir uma delegação real e falha/timeout sem retry; não repetir revisão por compactação."
     },
     {
       "stage": "07 · Entrega",
       "owner": "humano + GitHub",
-      "state": "Enforcement ativo para o core Python",
-      "mechanism": "Issue → PR → check core obrigatório e atualizado → merge rastreável.",
-      "gap": "Release por alvo, rollback e observabilidade continuam em #10/#12/#14.",
-      "proof": "PR #30; run 35384137514; proteção da main; PR #29/run 35385445001",
-      "next": "Fechar #10/#12/#14 por alvo; manter #13 como baseline concluído."
+      "state": "Contrato entregue",
+      "mechanism": "Issue → Gate 1 → branch/PR → `core` → Gate 2 → merge rastreável.",
+      "gap": "Templates e branch protection existem; release/deploy ainda dependem do alvo e de autorização própria.",
+      "proof": ".github/pull_request_template.md; .mex/patterns/engenharia-produto.md; PR #31",
+      "next": "Aplicar o contrato nas próximas mudanças e definir rollback por release."
     },
     {
       "stage": "08 · Continuidade",
       "owner": "coordenador / futuro loop",
-      "state": "Loop ainda planejado",
+      "state": "Última entrega planejada",
       "mechanism": "active-task + tracker/handoff; quota salva estado, sem mudar provider.",
-      "gap": "Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção.",
+      "gap": "Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção. O loop só avança após o fechamento dos gaps anteriores.",
       "proof": ".workflow/PENDING.md; .workflow/workflow.md: Retomada e limites",
-      "next": "Job isolado com budget, kill switch, ledger e rotação antes de 100k; Opus na infraestrutura."
+      "next": "Por último: job isolado com budget, kill switch, ledger e rotação antes de 100k; Opus na infraestrutura."
     }
   ],
   "gaps": [
     {
       "priority": "P0",
-      "title": "Contenção do loop noturno",
-      "detail": "Ainda faltam barreiras externas para paths, rede, segredos, tempo, tentativas, diff e kill switch. Skills e logs não impõem contenção.",
-      "action": "Especificar o controlador no agent-workflow-lab e testar uma tentativa proibida antes do modo noturno.",
-      "layer": "seguranca"
+      "title": "Fechar a entrega documental #33",
+      "detail": "Auditoria validada e entregue no PR #34. Gate 2 e merge foram autorizados; o merge fecha a issue.",
+      "action": "Confirmar checks e conversas resolvidas no PR #34; se já estiver mesclado, seguir para o próximo gap.",
+      "layer": "entrega"
     },
     {
       "priority": "P1",
-      "title": "Context Mode em trabalho real",
-      "detail": "MCP passou no sandbox; hooks foram rejeitados. Bytes menores não provam economia de tokens, quota ou tempo.",
-      "action": "Executar #22: 12 tarefas comparáveis, quatro por CLI, com backup, rollback e tokens do host.",
-      "layer": "contexto"
-    },
-    {
-      "priority": "P1",
-      "title": "Telemetria de descoberta e aplicação",
-      "detail": "Codex está em 73/24 sem duplicatas. Claude e AGY ainda não provam catálogo novo e aplicação por skill; wrappers do Codex ocultam chamadas filhas.",
-      "action": "Registrar catálogo, leitura e resultado em sessão nova por CLI sem carregar find-skills por padrão.",
+      "title": "Provar retomada real do contrato",
+      "detail": "Revisões Astra foram aplicadas aos diffs de #31/#32, mas a retomada de uma tarefa interrompida pelo estado salvo ainda não tem prova fim a fim.",
+      "action": "Na próxima interrupção real, retomar sem repetir chamada, conferir branch/HEAD/diff/testes e registrar o resultado.",
       "layer": "governanca"
     },
     {
       "priority": "P1",
-      "title": "Qualidade e release impostos",
-      "detail": "CI geral, cobertura e branch protection estão impostos para o core Python; release e observabilidade continuam abertos.",
-      "action": "Seguir #10/#12/#14: release, telemetria, web/E2E e rollback por alvo.",
-      "layer": "entrega"
+      "title": "Encerrar #16 e #22 sem repetir pilotos",
+      "detail": "#16 está aplicado e verificado, mas o laboratório não tem remote. #22 concluiu 12 execuções e permanece aberto por duas incompatibilidades Codex já delimitadas.",
+      "action": "Registrar a limitação de #16; em #22, abrir defeitos separados se ainda acionáveis e fechar a medição sem nova rodada genérica.",
+      "layer": "contexto"
     },
     {
       "priority": "P2",
-      "title": "UI validada por jornada",
-      "detail": "Skills de motion/design não provam skeleton, progresso, teclado, cancelamento ou reduced motion no produto.",
-      "action": "Executar #11 sobre jornadas reais; comparar Impeccable apenas quando existir tela web da C6.",
+      "title": "Separar roadmap do produto do fechamento do workflow",
+      "detail": "#11, #12 e #14 continuam válidas, porém tratam UI, observabilidade e stack web. Não bloqueiam a conclusão desta rodada de governança.",
+      "action": "Manter #11 reativa no Tkinter, executar #12 local-first em fatia própria e ativar #14 somente quando existir stack C6.",
       "layer": "design"
+    },
+    {
+      "priority": "P0",
+      "title": "Contenção do loop noturno — última entrega",
+      "detail": "Risco continua alto: faltam provas de controle externo de paths, rede, segredos, tempo, tentativas, diff, orçamento e kill switch. Sequência deliberada: construir somente após os quatro gaps anteriores.",
+      "action": "Criar issue e piloto isolado no agent-workflow-lab; testar tentativa proibida, checkpoint/rotação antes de 100k e encerramento seguro antes de integrar às três CLIs.",
+      "layer": "seguranca"
     }
   ],
   "architecture": [
@@ -12899,15 +12922,15 @@
   "localEvidence": [
     {
       "path": ".workflow/README.md",
-      "sha256": "4e6ecae82efd01face440c1291c285846aef5736fe71a8339fa17eac8cf9645d"
+      "sha256": "0ba9ab5b8174612e97bb4e6509664ced705d226f5b1e95d63222bc894ded5742"
     },
     {
       "path": ".workflow/workflow.md",
-      "sha256": "d0cb42fcfc1f6afde1aaa378864685db496b6b7f09acf212eaf22640e65ef3b9"
+      "sha256": "c81409ac2b770ce777c4ee1b04a7777afde330ca13058ece13cd6612feb2b6a1"
     },
     {
       "path": ".workflow/PENDING.md",
-      "sha256": "f8cd2725404a6433812a36cb87e12659ab206038bee7c3e69d930ca8686ae7f7"
+      "sha256": "6dae4e77db5cee1442aa8abd02733f4b40c3fea55402bda4902b296bb30ef2d2"
     },
     {
       "path": ".workflow/agents/README.md",
@@ -12915,23 +12938,27 @@
     },
     {
       "path": ".mex/ROUTER.md",
-      "sha256": "10959facb4ba96950c9602179598e7f1d72ddc153a587130f7603ccf2d87577a"
+      "sha256": "0942ffd00c16d51b2cbb9f6aceb13afa4c4672b1fef33b4dfb3843a7789c71a9"
+    },
+    {
+      "path": ".mex/patterns/engenharia-produto.md",
+      "sha256": "ab2f05f75115e2f900c4e1f02b8658aba437c0a7ad17a73a5113e3a47fc2cfca"
     },
     {
       "path": ".github/workflows/validate-timeline.yml",
-      "sha256": "8aca54991795d3ebe04a5013292eca11c71ebef17c71adf59ab2d1bf540ad19d"
+      "sha256": "f075ca6f7d6b17e32711d54c05a9319609b2c993d7986db4542862981bdd96f4"
     },
     {
       "path": ".github/workflows/python-quality.yml",
-      "sha256": "2b7709a1b864819d30a8c950578ed1a83167e5eca6b75c8af7c028fbbebc7e1c"
+      "sha256": "23f9fba2b9ec64beeb75a6b2b4cd144b055a409aed098e72a531392970d3b353"
     },
     {
-      "path": ".github/python-quality-baseline.json",
-      "sha256": "3620a8a8cdb2dfde8b2989cf08827f4967fb11bbcb19cf7d2af56698811a5288"
+      "path": "docs/reports/2026-09-18-context-mode-real-measurement.md",
+      "sha256": "f8e409bf75cf343cf05417ecab1bc7fb301377db5d8301527e19f68fa9731463"
     },
     {
-      "path": "scripts/verify_python_quality.py",
-      "sha256": "8ac4d6a94a9026fe7f6c23ddbb0519bf7dc2e3198f0b687eec57a0f6baf845e5"
+      "path": "docs/reports/2026-09-19-handoff-workflow.md",
+      "sha256": "ce1d30fd01a142f99de4c121d2f2b5464bb3bf49d9e0682eabad2ee17be183a0"
     }
   ],
   "sources": [
@@ -15669,68 +15696,13 @@
       "readme_path": "README.md",
       "readme_bytes": 19044,
       "readme_url": "https://github.com/tt-a1i/archify/blob/72c750bb070d95171dbb2244e5b62b1b7da69c12/README.md"
-    },
-    {
-      "full_name": "vercel-labs/skills",
-      "html_url": "https://github.com/vercel-labs/skills",
-      "description": "The open agent skills tool - npx skills",
-      "default_branch": "main",
-      "archived": false,
-      "pushed_at": "2026-09-17T15:00:21Z",
-      "requested": "find-skills",
-      "license": "MIT",
-      "sha": "7407f3893ad4dceab546ac002c3ef806e4000c73",
-      "tree_truncated": false,
-      "skill_files": [
-        "skills/find-skills/SKILL.md"
-      ],
-      "entrypoints": [
-        "package.json"
-      ],
-      "readme_path": "README.md",
-      "readme_bytes": 27375,
-      "readme_url": "https://github.com/vercel-labs/skills/blob/7407f3893ad4dceab546ac002c3ef806e4000c73/README.md"
     }
   ],
   "measurements": {
     "verify": "ok=true; 75 arquivos gerenciados; errors=[]",
-    "codexCatalog": "app-server novo: 73 entradas, 24 habilitadas, 49 desabilitadas, 24 nomes habilitados únicos, errors=[]",
-    "models": "A atualização usou inspeção local e GitHub CLI. Astra será usada uma vez, somente leitura, após o diff estabilizar.",
-    "scope": "Inventário atualizado em 18/09 para Claude, Codex, AGY e fonte ECC; classificação por nome continua heurística. Uso real vem do relatório da issue #23.",
-    "limits": "Aplicação de skills no AGY e chamadas filhas do invólucro Codex não são observáveis integralmente. Não é auditoria de segurança completa nem prova de economia de tokens.",
-    "cleanup": "Issue #27/PR #28: GitHub MCP removido; Perssua removido/desabilitado; quatro cópias redundantes de duas skills removidas; Graphify CLI preservado.",
-    "pythonQuality": "PR #30 merged em a0a2bd3; run 35384137514 verde; main protegida com core strict, PR obrigatório, zero aprovações externas e force-push/delete bloqueados."
-  },
-  "followUps": [
-    {
-      "priority": "P0",
-      "item": "Controlador do loop noturno",
-      "state": "Sem implementação",
-      "next": "Issue própria no agent-workflow-lab + fixture de ação proibida."
-    },
-    {
-      "priority": "P1",
-      "item": "Context Mode MCP",
-      "state": "#22 aberta",
-      "next": "12 tarefas reais; hooks continuam rejeitados."
-    },
-    {
-      "priority": "P1",
-      "item": "Qualidade/CI/observabilidade",
-      "state": "#13 concluída; #10/#12/#14 abertas",
-      "next": "Elevar cobertura útil; definir observabilidade e gates da campanha web."
-    },
-    {
-      "priority": "P2",
-      "item": "UI e motion",
-      "state": "#11 aberta",
-      "next": "Auditar jornadas reais; web somente quando C6 existir."
-    },
-    {
-      "priority": "Sob demanda",
-      "item": "Novas skills/MCPs",
-      "state": "Sem gap novo",
-      "next": "Usar find-skills só após gap comprovado; não instalar agora."
-    }
-  ]
+    "codexCatalog": "snapshot de 17/09: 77 entradas, 26 habilitadas, 51 desabilitadas",
+    "models": "Medição #22: 12 sessões novas; 10/12 respostas corretas; 9/12 conformes ao schema. Revisão Astra aplicada aos diffs de #31/#32.",
+    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#17/#19/#22 sem nova enumeração do catálogo.",
+    "limits": "Duas tarefas não provam benefício geral do Context Mode. Classificação por nome continua heurística; não é auditoria integral de segurança nem medição geral de economia."
+  }
 }
