@@ -1,45 +1,58 @@
-# Auditoria visual de skills e workflows — atualizada em 18/09/2026
+# Auditoria visual de skills e workflows — snapshot 17/09, atualização 19/09/2026
 
-Issue: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
+Origem: [#15](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15). Atualização: [#33](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/33). Abrir o [painel interativo offline](2026-09-17-auditoria-skills-workflows.html) ou os [dados estruturados](2026-09-17-auditoria-skills-workflows.json).
 
 ## Resultado
 
-O workflow já cobre seleção, contexto, implementação, revisão e entrega. A atualização pós-#27 reduziu o catálogo Codex de 77/26 para 73/24 e eliminou as duas duplicatas habilitadas. Não há gap que justifique instalar outra suíte agora.
+O núcleo do workflow já tem cobertura documental ampla. O fechamento agora exige entregar a #33, reconciliar #16/#22 e provar uma retomada real. O loop noturno mantém severidade P0, mas é a última entrega por decisão de sequência. Instalar outra suite inteira não demonstra resolver esses gaps.
 
-`find-skills` foi adicionada à auditoria como capacidade instalada e desabilitada. Serve somente para busca após gap comprovado; cada candidato continua sujeito a origem/licença fixadas, auditoria, piloto isolado, issue e Gates 1/2.
+**Atualização — issue #16:** Karpathy Skills foi adotado parcialmente como regras nas instruções compartilhadas, sem instalar plugin. Quatro deltas: premissas materiais, estilo local, órfãos da própria mudança e verificação por etapa. Adição de 16 linhas/1027 bytes; fonte e três cópias idênticas, verify.py aprovado com 75 arquivos e zero divergências. Comportamento/consumo ainda não medidos. O inventário permanece o snapshot de 17/09; esta atualização não é nova varredura do catálogo.
 
-O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados após 7/10 checks (#19) e medição real ainda aberta na #22.
+**Atualização — issue #17:** três referências do Agent Skills foram adaptadas em um pattern local: piso de qualidade com baseline/ratchet, checkpoint de contexto e observabilidade orientada a perguntas. O bloco de qualidade agora é imposto pelo gate Python `core` da #13; nenhum plugin/hook upstream foi instalado. Fable/Astra, MEX/Graphify e Gates 1/2 permanecem.
+
+**Atualização — issues #18/#19/#22:** o MCP isolado passou 10/10, mas os hooks foram rejeitados (7/10; persistência de segredo sintético e stderr). Em 12 execuções reais, 10/12 respostas foram corretas e 9/12 conformes ao schema. Claude ficou MCP manual via `server.bundle.mjs`, sem hooks; Codex e AGY foram removidos.
+
+1. **Context Mode:** manter apenas no Claude, manual e para corpus grande. Codex falhou nas duas tarefas ON; AGY ficou mais lento/verboso. Não generalizar economia de contexto.
+2. **Agent-pd:** candidato a observabilidade do agente, condicionado à privacidade dos logs. Não bloqueia ações; armazena inputs completos e pode guardar segredos em texto puro.
+3. **UI:** reutilizar as fontes ECC e design-motion-principles já referenciada. Comparar Impeccable com um único guia atual quando houver uma tela web da C6.
+4. **MarkItDown:** benchmark de conversão com fixtures, já relacionado à caixa de ideias. Sem substituir o pipeline atual antes de medir fidelidade.
+5. **Suites e nomes ambíguos:** GStack/agências são referências seletivas; Graft (trailhq), Archify (tt-a1i) e Agent Skills (addyosmani) tiveram URLs confirmadas pelo usuário; Manifest e outros homônimos ainda exigem confirmação.
 
 ## Medido
 
-| Escopo | Entradas | Estado |
+| Escopo | Entradas | O que isso prova |
 |---|---:|---|
-| Claude | 340 | arquivos/configuração selecionados; catálogo novo não aferido |
-| Codex | 73 | app-server novo; 24 habilitadas, 49 desabilitadas, 24 nomes únicos |
-| AGY | 33 | arquivos/configuração; aplicação por skill não observável |
-| Fonte ECC | 286 | reserva disponível; não implica ativação |
+| Claude | 340 | Arquivos em skills pessoais/plugins selecionados e política local |
+| Codex | 77 | skills/list novo, por duas rotas de app-server |
+| Codex habilitadas | 26 | 24 nomes únicos; não prova aplicação |
+| AGY | 33 | Arquivos e configuração, sem inventário efetivo de sessão nova |
+| Fonte ECC | 286 | Reserva disponível no marketplace; não significa ativação |
 
-`verify.py`: ok=true, 75 arquivos gerenciados, errors=[]. Issue #27/PR #28: GitHub MCP removido, Perssua removido/desabilitado, quatro cópias redundantes removidas e Graphify CLI preservado.
+`verify.py`: ok=true, 75 arquivos gerenciados, errors=[]. Claude: 266 user-invocable-only; 21 off; 16 em plugins desabilitados; 37 sem override explícito. AGY: 27 entradas em plugins habilitados e 6 pessoais. Duplicatas habilitadas Codex: heredoc-git-bash-windows e mex-check-falso-positivo. Nenhuma removida.
+
+A sessão anuncia caminhos de skill-stocktake e agent-architecture-audit ausentes no cache Codex. Os critérios dessas skills foram lidos na fonte Claude do marketplace. Isso evidencia divergência entre a lista desta sessão e os arquivos presentes; o catálogo novo não reescreve o contexto já carregado.
 
 ## Camadas
 
-| Camada | Baseline | Gap principal |
+| Camada | Baseline existente | Gap principal |
 |---|---|---|
-| 01 · Governança e seleção | ponytail · troglodita · verify.py · descoberta sob demanda | Medir descoberta e aplicação em sessão nova no Claude e AGY. |
-| 02 · Contexto e navegação | MEX · Graphify/CLI · CBM fallback · contrato de leitura | Executar #22 antes de registrar o MCP; saída bruta e tokens por tarefa. |
+| 01 · Governança e seleção | ponytail · troglodita · verify.py · overrides | Validar sessão nova por CLI; evitar dois gestores de skills. |
+| 02 · Contexto e navegação | MEX · Graphify · CBM fallback · contrato de leitura | Recuperar saída bruta sob demanda e medir contexto por tarefa. |
 | 03 · Memória e continuidade | tracker · handoff · claude-mem · estado local | Distinguir memória do produto, memória do agente e continuidade do job. |
 | 04 · Pesquisa e ingestão | AGY inline · Context7 · padrões PDF | Benchmark de conversão; evitar cookies e serviços externos sem necessidade. |
 | 05 · Planejamento e delegação | ECC orch-* · Fable executor · Astra read-only | Supervisor externo, timeout real, teto de tentativas e sessão nova. |
 | 06 · Implementação | ECC tdd-guide inline · Python · stdlib primeiro | Selecionar skill de stack por tarefa; não carregar todas as linguagens. |
-| 07 · Qualidade e revisão | pytest · Ruff · cobertura · contrato arquitetural | CI geral do core e proteção da `main` impostos; cobertura cresce por ratchet. Web/E2E permanece em #14. |
+| 07 · Qualidade e revisão | pytest · Ruff · arquitetura · cobertura · revisão delimitada | Web #14 aguarda stack C6; E2E desktop continua sem matriz completa. |
 | 08 · Segurança e limites | permissões nativas · contratos · corpus protegido | Negação técnica, isolamento de credenciais e logs sem segredos para o loop. |
 | 09 · Design e acessibilidade | ECC motion/taste na fonte · contrato #11 | Escolher um guia visual; medir estados assíncronos e redução de movimento. |
 | 10 · Browser e jornadas | E2E no contrato · ferramentas de browser da sessão | Fixtures e teste reproduzível; comparar Playwright CLI com MCP. |
-| 11 · Entrega e observabilidade | issue → PR → check obrigatório → merge | CI e proteção da `main` impostos para o core; release e telemetria permanecem em #10/#12/#14. |
+| 11 · Entrega e observabilidade | issue → PR → release · templates · #10/#12 | Release/deploy e telemetria de produto continuam sem implementação comprovada. |
+
+As 736 entradas são classificadas por camada predominante usando o nome da skill. É uma heurística para navegação, não avaliação semântica integral de cada arquivo. O painel permite buscar a descrição e inspecionar caminho, origem, configuração e evidência de runtime.
 
 ## Candidatos — decisão individual
 
-| Candidato | Natureza | Decisão | Fonte |
+| Candidato | Natureza | Decisão | Fonte fixada |
 |---|---|---|---|
 | Agent Skills | Coleção de engenharia | Adotado parcialmente | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills/blob/a120596f6d7ff9b967a3f5e0331ea911376ee5ef/README.md) |
 | Karpathy Skills | Regras incorporadas ao contrato | Adotado parcialmente | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/skills/karpathy-guidelines/SKILL.md) |
@@ -60,7 +73,7 @@ O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados a
 | wshobson agents | Marketplace de agentes e skills | Referência seletiva | [wshobson/agents](https://github.com/wshobson/agents/blob/4236bb91f8395b0435f1d8b8baf9e8e4c69a8620/README.md) |
 | prompt-master | Skill de escrita de prompts | Reutilizar o atual | [nidhinjs/prompt-master](https://github.com/nidhinjs/prompt-master/blob/2bd92518e26bf659e21e3d9ab90573fcf3ddeccb/README.md) |
 | security sweep | Skill de revisão de segurança | Reutilizar o atual | [Onome-AJ/security-sweep-plugin](https://github.com/Onome-AJ/security-sweep-plugin/blob/6ca48b6ef582b5c6050e717202b3e35fa575449c/README.md) |
-| context mode | MCP + armazenamento + hooks | MCP aprovado; hooks rejeitados | [mksglu/context-mode](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/README.md) |
+| context mode | MCP + armazenamento + hooks | Claude restrito; Codex/AGY removidos | [mksglu/context-mode](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/README.md) |
 | claude-video | Skill + scripts de vídeo | Adiar por escopo | [bradautomates/claude-video](https://github.com/bradautomates/claude-video/blob/83da59fa78c3eee9e20f515fe75c438bb5166efd/README.md) |
 | manifest | Gateway de modelos | Adiar por conflito | [mnfst/manifest](https://github.com/mnfst/llm-gateway/blob/b8022df157a7b3bca8d8e86b78631fb718415a82/README.md) |
 | skill-bus | Hooks de composição de skills | Referência seletiva | [joeymnguyen/skill-bus](https://github.com/joeymnguyen/skill-bus/blob/77fd804aa4fa1d4d7081725d41da511cfcd3de1f/README.md) |
@@ -69,41 +82,42 @@ O Context Mode ficou dividido: MCP aprovado no sandbox (#18), hooks rejeitados a
 | Graft | Grafo de código/contexto + CLI/MCP/hooks | Benchmark pontual | [trailhq/Graft](https://github.com/trailhq/Graft/blob/33d805905b01761e2bc83c043610689386f31927/README.md) |
 | Archify | JSON tipado → diagramas HTML/SVG | Piloto condicionado | [tt-a1i/archify](https://github.com/tt-a1i/archify/blob/72c750bb070d95171dbb2244e5b62b1b7da69c12/README.md) |
 | agent-pd | Hook de log + detectores | Piloto condicionado | [varmabudharaju/agent-pd](https://github.com/varmabudharaju/agent-pd/blob/9f68a6b5067123bef87877d2ad09c035d83cd978/README.md) |
-| find-skills | Skill + CLI de descoberta | Governada; desabilitada por padrão | [vercel-labs/skills](https://github.com/vercel-labs/skills/blob/7407f3893ad4dceab546ac002c3ef806e4000c73/skills/find-skills/SKILL.md) |
 
-## Workflow
+Cada ficha no HTML/JSON inclui função, sobreposição, risco, custo qualitativo, compatibilidade, licença, critério de piloto e confiança na identidade. Nomes sem URL foram associados a correspondências prováveis, sem presumir confirmação do usuário.
 
-| Etapa | Dono | Estado e lacuna |
+## Workflows
+
+| Etapa | Dono | Estado observado |
 |---|---|---|
-| 01 · Entrada | MEX / coordenador | Documentado — Codex teve sessão nova sem warning após a deduplicação; Claude e AGY ainda precisam do mesmo smoke de catálogo. |
+| 01 · Entrada | MEX / coordenador | Documentado — Bootstrap não deve recarregar todo o histórico. Sessão antiga pode reter catálogo anterior. |
 | 02 · Escopo | issue + ponytail + ECC | Documentado — Issue não aprova código. Os gates são instruções, não uma barreira técnica universal. |
-| 03 · Contexto | Graphify / MEX / AGY | Contrato + pilotos isolados — Graphify CLI passou; Context Mode MCP ainda não tem evidência em tarefa real. Hooks foram rejeitados. |
+| 03 · Contexto | Graphify / MEX / AGY | Contrato definido — Catálogo instalado não prova que a skill foi lida/aplicada; saída truncada ainda pode perder evidência. |
 | 04 · Implementação | Fable + tdd-guide | Contrato definido — Subagentes nativos variam por CLI. Contratos inline preservam o papel, não criam ferramenta. |
-| 05 · Verificação | executor / CI | Imposto no CI — suíte hermética, cobertura do core, Ruff e contrato arquitetural; check `core` obrigatório e strict na `main`. |
-| 06 · Revisão | Astra read-only | Política observada — Astra revisou #27 uma vez e o diff foi corrigido; timeout/contagem continuam responsabilidade do chamador. |
-| 07 · Entrega | humano + GitHub | Enforcement ativo para o core — PR #30 verde e mesclado; `main` exige PR atualizado + check `core`, inclusive para admins. |
-| 08 · Continuidade | coordenador / futuro loop | Loop ainda planejado — Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção. |
+| 05 · Verificação | executor / CI | Gate Python imposto — Tkinter não tem matriz E2E completa; gates web permanecem bloqueados até existir stack C6. |
+| 06 · Revisão | Astra read-only | Política; não supervisor — O próprio contrato declara não impor quota/contagem/timeout por servidor. Revisão nativa adicional pode duplicar custo se roteada sem critério. |
+| 07 · Entrega | humano + GitHub | Contrato entregue — Templates e branch protection existem; release/deploy ainda dependem do alvo e de autorização própria. |
+| 08 · Continuidade | coordenador / futuro loop | Última entrega planejada — Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção. O loop só avança após o fechamento dos gaps anteriores. |
 
-## Fila atual
+Além de validate-timeline.yml, a #13 adicionou o workflow Python `core`: suíte pytest, cobertura por plataforma, Ruff e contrato arquitetural. A proteção da `main` exige `core` atualizado e conversas resolvidas; PRs #31/#32 passaram e foram mesclados. O plano noturno está em .workflow/PENDING.md, sem implementação afirmada aqui. O contrato explicita ausência de daemon e de limite técnico global de quota/contagem.
 
-| Prioridade | Item | Estado | Próximo passo |
-|---|---|---|---|
-| P0 | Controlador do loop noturno | Sem implementação | Issue própria no agent-workflow-lab + fixture de ação proibida. |
-| P1 | Context Mode MCP | #22 aberta | 12 tarefas reais; hooks continuam rejeitados. |
-| P1 | Qualidade/CI/observabilidade | #13 concluída; #10/#12/#14 abertas | Elevar cobertura útil; definir observabilidade e gates da campanha web. |
-| P2 | UI e motion | #11 aberta | Auditar jornadas reais; web somente quando C6 existir. |
-| Sob demanda | Novas skills/MCPs | Sem gap novo | Usar find-skills só após gap comprovado; não instalar agora. |
+## Fontes que mudam a decisão
 
-## O que adicionar agora
-
-Nenhuma nova skill ou MCP. Os gaps restantes são: contenção do loop, experimento real do Context Mode, observabilidade/release, qualidade da futura web/CLI e auditoria de jornadas da UI. Adicionar catálogo antes dessas medições recriaria o problema de orçamento e sobreposição.
+- [Playwright MCP](https://github.com/microsoft/playwright-mcp/blob/ea43eee0d95196ab31f7619b26f78d7b9c664286/README.md): o README recomenda considerar CLI + skills para coding agents.
+- [Context Mode](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/README.md): MCP isolado aprovado na #18; hooks rejeitados na #19; medição real e decisão por CLI na #22/PR #32. [Licença ELv2](https://github.com/mksglu/context-mode/blob/c127f2fe8496fefc36e0ebef36ded92d4fa8f570/LICENSE).
+- [Agent-pd SECURITY.md](https://github.com/varmabudharaju/agent-pd/blob/9f68a6b5067123bef87877d2ad09c035d83cd978/SECURITY.md): logging-only, inputs completos, plaintext, sem bloqueio.
+- [Skill Bus](https://github.com/joeymnguyen/skill-bus/blob/77fd804aa4fa1d4d7081725d41da511cfcd3de1f/README.md): composição por hooks; conclusão é sinal sintético e o encadeamento é experimental.
+- [Graft confirmado: trailhq/Graft](https://github.com/trailhq/Graft/blob/33d805905b01761e2bc83c043610689386f31927/README.md): avaliar navegação e contexto contra o baseline atual. [Telemetria](https://github.com/trailhq/Graft/blob/33d805905b01761e2bc83c043610689386f31927/TELEMETRY.md) inclui background/postinstall; condicionar o piloto à desativação prévia.
+- [Archify confirmado: tt-a1i/archify](https://github.com/tt-a1i/archify/blob/72c750bb070d95171dbb2244e5b62b1b7da69c12/README.md): candidato a piloto visual; a validação é sobre fatos fornecidos, não prova de cobertura do código.
+- [Agent Skills confirmado: addyosmani/agent-skills](https://github.com/addyosmani/agent-skills/blob/a120596f6d7ff9b967a3f5e0331ea911376ee5ef/README.md): três deltas adotados na #17; o bloco de qualidade usa o gate próprio da #13.
 
 ## Método e limites
 
-Inventário local refeito em 18/09; app-server Codex consultado com `forceReload`. Upstreams mantidos nos SHAs do relatório original; `find-skills`: origem e hash da pasta instalados conferidos no lockfile; o commit Git exato da instalação não está registrado. O HEAD upstream `7407f3` foi consultado apenas como referência atual. Classificação por camada usa heurística de nome.
+Leitura local de políticas, metadados de skills, configuração selecionada e catálogo Codex. Upstreams: README fixado por SHA, metadados GitHub, árvore de arquivos e trechos de entrypoints/manifests/licenças dirigidos aos riscos relevantes. Contagens upstream de SKILL.md incluem cópias/fixtures; não são contagens de skills únicas. Não se auditou todo o código executável nem cada dependência transitiva.
 
-O relatório de uso da issue #23 mede chamadas estruturadas; o invólucro Codex não expõe todas as chamadas filhas e o AGY não expõe ativação uniforme de skills. Ausência de telemetria não prova desuso. Bytes não equivalem a tokens.
+Sem LLMs auxiliares/subagentes; o próprio assistente fez a análise. Sem instalação ou mudança de seleção de skills; as instruções pessoais receberam o delta documentado na #16, o projeto recebeu o pattern da #17 e o Context Mode foi medido nas #18/#19/#22. Houve 12 sessões novas no experimento #22; isso não equivale a benchmark geral de quota. Sem reinício de worker, pentest ou deploy. Custos/ganhos dos demais candidatos continuam qualitativos; tamanhos de arquivo não equivalem a tokens.
+
+Coleta reproduzível e evidência bruta local: `agent-workflow-lab/private/skills-audit-20260917/` (collect_sources.py, inventory.py, build_report.py, sources/, upstreams.json). Dados públicos do relatório não incluem valores de credenciais nem conteúdo de configurações completas.
 
 ## Verificação do artefato
 
-Passou: JSON externo = JSON embutido; 29 candidatos; 732 entradas; Codex 73/24 com 24 nomes únicos; HTML offline; IDs únicos; JavaScript válido; filtros `find-skills` (1/29) e Codex habilitadas (24/24) conferidos no Chrome. Layout desktop inspecionado. O breakpoint móvel foi validado estaticamente no CSS, sem emulação de viewport nesta sessão.
+node --check e o validador estático passaram: JSON embutido idêntico à fonte, IDs únicos, zero recurso remoto automático, 28 candidatos, 736 entradas, 11 camadas e oito etapas. Assertions confirmam o gate Python, os PRs #31/#32 e a decisão Context Mode. A inspeção visual via HTTP local confirmou as cinco abas, as contagens principais e o layout desktop sem quebra visível. Viewport móvel, impressão e download permanecem sem teste nesta atualização.

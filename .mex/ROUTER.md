@@ -8,6 +8,10 @@ last_updated: 2026-06-08
 
 Read this file before starting any task.
 
+**Estado vivo:** `docs/reports/2026-09-19-handoff-workflow.md` fecha a rodada atual
+do workflow. `docs/reports/pendencias.md` mantém os gaps. O trabalho do motor na branch
+`feat/motor-atribuicao` é uma frente separada; não misturar seus diffs nesta worktree.
+
 ---
 
 ## Current Project State
