@@ -8,6 +8,18 @@ Claude Code é a entrada principal: esclarece o pedido, conduz ECC e implementa 
 4. Revisão proporcional ao risco: documentação simples recebe conferência local; código relevante recebe revisão independente do diff fixado, critérios e resultados, com Astra no Codex, em modo somente leitura. Mudanças críticas exigem análise aprofundada. O revisor não faz merge.
 5. Gate 2 humano antes de commit. Tracker recebe resultado e pendências; não declarar sucesso por exit code/SUCCESS sem artefato e verificações.
 
+## Issues, PRs e releases
+
+Toda tarefa de correção, melhoria ou nova função, incluindo documentação/CI que altere o projeto, começa por issue no GitHub do repositório correto. Pesquisar duplicatas; reutilizar issue aberta com o mesmo escopo. Uma issue por resultado verificável, não por chamada de ferramenta. Perguntas e diagnóstico exploratório sem mudança não exigem issue. Abrir a issue não aprova implementação nem antecipa campanha futura.
+
+Antes de editar, registrar issue/URL, problema, escopo, critérios de aceite e validação. Trabalhar em branch própria ou worktree isolado quando houver trabalho concorrente; não misturar mudanças de outra tarefa. Se GitHub estiver indisponível, registrar o bloqueio e preparar diagnóstico/rascunho local, sem declarar issue criada.
+
+Entregar por PR para a base correta. A descrição deve mencionar a issue: `Closes #N` quando a entrega completa a resolve, `Refs #N` em entrega parcial. Incluir comportamento alterado, verificações realmente executadas, limitações, riscos e rollback; evidência visual para UI. Usar draft enquanto houver pendências. Issues relacionadas à tarefa são autorizadas por este padrão; Gates 1/2, autorização de commit e critérios de merge permanecem vigentes. Não fechar issue manualmente antes do aceite da entrega.
+
+Release/deploy deve ser rastreável ao PR aprovado e ao commit validado. Definir alvo (desktop, pacote, container, web local ou ambiente remoto), checks, smoke test e rollback antes de publicar. PR não dispara produção por si só; merge, publicação e deploy seguem as autorizações e o pipeline do projeto. Não publicar builds de branch não revisada nem habilitar serviços pagos silenciosamente.
+
+Mudanças de UI, observabilidade e qualidade seguem o contrato de engenharia do projeto e a stack daquela fase. Selecionar ferramentas por capacidade/compatibilidade, não instalar todos os nomes de uma lista. Medir baseline antes de criar gates de cobertura/performance e separar política documentada de check realmente imposto por CI.
+
 ## Executor Fable e revisor Astra
 
 Fable é o executor padrão no Claude Code; Astra é o revisor independente. Escolha explícita do usuário prevalece. Astra não assume implementação automaticamente. Sol ou Astra como executores exigem escolha explícita. Não mudar o modelo global nem a sessão atual silenciosamente.
@@ -21,6 +33,32 @@ Astra recebe brief autocontido, sem segredos: contrato, diff, testes, riscos e a
 Consumir a mensagem final da CLI, sem concatenar eventos intermediários: o piloto detectou aviso do claude-mem antes do JSON final. Registrar sessão, achados e evidências da revisão. Fable corrige os achados e roda as verificações; nova revisão LLM exige autorização explícita. Falha, timeout ou quota consomem a única tentativa automática; preservar estado e reportar revisão incompleta. Pedido de continuar não renova essa tentativa.
 
 O piloto comparativo passou nas duas tarefas para ambos os modelos, mas não mediu superioridade de Astra como revisor nem execução autônoma desta política. A divisão dos papéis é a preferência aprovada pelo usuário.
+
+## Delegação com contexto delimitado
+
+Uma CLI externa inicia sua própria sessão: não presumir herança do catálogo, hooks, skills carregadas ou contexto do coordenador. Não reinstalar skills para corrigir uma chamada. Usar este contrato nas três CLIs, preservando as instruções obrigatórias do destino.
+
+1. Classificar o pedido como revisão de diff, pesquisa ou implementação. A revisão automática Astra responde ao checklist do diff fixado; hipótese nova, varredura de corpus e experimento são pesquisa, não extensão silenciosa da revisão. Registrar lacunas e encerrar ao satisfazer o critério, sem buscar melhorias fora do escopo.
+2. Enviar brief curto e autocontido: objetivo, tipo, cwd absoluto, branch/HEAD e identificação do diff, arquivos permitidos, restrições, critérios de término, testes já executados e dúvidas concretas. Anexar só evidência decisiva com arquivo:linha; logs completos ficam em arquivo. Não copiar histórico, catálogos ou manuais inteiros. Não resumir conjuntos/dados cuja diferença decide o achado.
+3. Indicar somente skills necessárias, com caminho resolvido e motivo. No destino, distinguir instalada, descoberta, lida sem truncamento e aplicada com resultado verificável. Ler a skill selecionada separadamente; usar referências específicas e trechos consecutivos se necessário. Caminho ausente ou ferramenta não exposta exige registrar limitação e seguir o fallback documentado, sem inventar chamada nativa. A leitura do SKILL.md sozinha não prova aplicação.
+4. Localizar com rg em arquivos/diretórios delimitados; para estrutura, usar Graphify explain e path com símbolos/IDs exatos antes de query aberta, conferindo o projeto do grafo. Depois ler função/bloco relevante, com arquivo:linha, e confirmar no código. Grafo orienta navegação, não substitui fonte; ausência de caminho não prova ausência de relação. Não repetir trecho inalterado já presente no contexto. Após compactação ou mudança do arquivo, recuperar apenas o necessário.
+5. Agrupar leituras independentes pequenas, sem esconder skills em um lote grande. Mirar até 2.000 tokens de saída por ferramenta; ajustar explicitamente quando a evidência exigir. Limite de saída não garante completude: detectado truncamento, restringir a consulta e recuperar só a parte omitida, sem repetir o lote inteiro nem concluir sobre conteúdo invisível. JSON/CSV: selecionar colunas e linhas por código determinístico, guardando totais e dados decisivos. Python no Windows: configurar stdout UTF-8 antes de imprimir texto Unicode.
+
+Antes de iniciar, preencher no brief:
+
+```text
+tipo / objetivo / criterio_de_termino:
+cwd / branch / HEAD / diff_fixado:
+arquivos_permitidos / restricoes:
+evidencias_decisivas / testes_ja_executados:
+skills_necessarias: caminho -> acao verificavel (ou nenhuma)
+perguntas_delimitadas:
+saida: achados com arquivo:linha, evidencias, limitacoes; sem repetir o brief
+```
+
+Retornar apenas resultado final ao coordenador; manter eventos completos no log local. Registrar ID da sessão, skills realmente aplicadas e lacunas. Medir chamadas, input total/cache/output separados, crescimento do contexto e tempo. Bytes removidos e tokens em cache não equivalem a economia comprovada de quota; comparar tarefas equivalentes antes de concluir.
+
+O timeout de 10 minutos continua obrigatório no chamador. Uma ferramenta retornar um ID de background não prova que encerrará o processo nesse prazo: conferir o mecanismo do chamador e registrar timeout real ou limitação. Esta política não instala um supervisor nem impõe teto técnico de tokens.
 
 ## Descoberta, adoção e remoção de capacidades
 

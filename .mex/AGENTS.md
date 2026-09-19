@@ -14,6 +14,7 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 
 ## Non-Negotiables
 
+- All models/CLIs follow `patterns/engenharia-produto.md`: issue before a change, PR mentioning the issue, traceable release, and UI/observability/quality criteria appropriate to desktop or web. Preserve Gates 1/2; documenting a requirement does not mean it is implemented.
 - Read existing files before writing. Do not re-read unless the file changed.
 - Do not guess APIs, versions, flags, commit SHAs, or package names. Verify by reading code or docs before asserting.
 - New logic goes into the correct subpackage — never into `engine.py`. `engine.py` is a facade only.

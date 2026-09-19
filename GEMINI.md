@@ -1,3 +1,9 @@
+# GPT-Tutor-Generator
+
+Read `AGENTS.md`, `.mex/ROUTER.md` and `.mex/patterns/engenharia-produto.md` before work.
+Follow the current shared workflow for issues, PRs, release, UI, observability and quality.
+These current sources take precedence over the historical tool block below.
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
