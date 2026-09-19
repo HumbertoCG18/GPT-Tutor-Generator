@@ -187,6 +187,40 @@ class _FlexToolbar(ttk.Frame):
             self.grid_columnconfigure(col, weight=1, uniform="toolbar")
 
 
+def _start_progress_bar(progress_bar, total: int, reduce_motion: bool) -> None:
+    progress_bar.stop()
+    indeterminate = total == 0
+    progress_bar.configure(
+        mode="indeterminate" if indeterminate else "determinate",
+        value=50 if indeterminate and reduce_motion else 0,
+        maximum=100 if indeterminate else total,
+    )
+    progress_bar.pack(side="right", padx=6, pady=3)
+    if indeterminate and not reduce_motion:
+        progress_bar.start(50)
+
+
+def _set_progress_bar_paused(progress_bar, paused: bool, reduce_motion: bool) -> None:
+    if str(progress_bar["mode"]) != "indeterminate":
+        return
+    progress_bar.stop()
+    if reduce_motion:
+        progress_bar["value"] = 50
+    elif not paused:
+        progress_bar.start(50)
+
+
+def _step_progress_bar(progress_bar, current: int, total: int) -> None:
+    progress_bar.configure(mode="determinate", maximum=max(total, 1))
+    progress_bar["value"] = current + 1
+
+
+def _end_progress_bar(progress_bar) -> None:
+    progress_bar.stop()
+    progress_bar.pack_forget()
+    progress_bar["value"] = 0
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -689,6 +723,7 @@ class App(tk.Tk):
         self._clear_pending_operation()
         self._cancel_event.set()
         self._pause_event.set()
+        self._set_progress_paused(True)
         self._btn_build.configure(state="disabled", text="⏳ Cancelando...")
         if hasattr(self, "_btn_pause_build"):
             self._btn_pause_build.configure(state="disabled")
@@ -696,11 +731,13 @@ class App(tk.Tk):
     def _toggle_pause_build(self):
         if self._pause_event.is_set():
             self._pause_event.clear()
+            self._set_progress_paused(True)
             self._set_status("Build pausado.")
             if hasattr(self, "_btn_pause_build"):
                 self._btn_pause_build.configure(text="▶ Retomar Build")
         else:
             self._pause_event.set()
+            self._set_progress_paused(False)
             self._set_status("Build retomado...")
             if hasattr(self, "_btn_pause_build"):
                 self._btn_pause_build.configure(text="⏸ Pausar Build")
@@ -733,6 +770,7 @@ class App(tk.Tk):
         self._clear_pending_operation()
         self._cancel_event.set()
         self._pause_event.set()  # desbloqueia se estiver pausado
+        self._set_progress_paused(True)
         self._btn_process.configure(state="disabled", text="⏳ Cancelando...")
         if hasattr(self, "_btn_pause"):
             self._btn_pause.configure(state="disabled")
@@ -742,43 +780,42 @@ class App(tk.Tk):
             # Pausar
             self._pause_event.clear()
             self._btn_pause.configure(text="▶ Retomar")
-            self._progress_animate = False
+            self._set_progress_paused(True)
             self._set_status("Processamento pausado.")
         else:
             # Retomar
             self._pause_event.set()
             self._btn_pause.configure(text="⏸ Pausar")
-            self._progress_animate = True
-            self._tick_fake_indeterminate()
+            self._set_progress_paused(False)
             self._set_status("Processamento retomado...")
 
     def _start_progress(self, total: int):
-        """Exibe a barra de progresso. total=0 → animação manual (fake indeterminate)."""
-        self._progress_animate = False  # para animação anterior, se houver
-        self._progress_bar.configure(mode="determinate", value=0,
-                                     maximum=100 if total == 0 else total)
-        self._progress_bar.pack(side="right", padx=6, pady=3)
-        if total == 0:
-            self._progress_animate = True
-            self._tick_fake_indeterminate()
+        """Exibe progresso real; total=0 usa o modo indeterminado nativo."""
+        _start_progress_bar(
+            self._progress_bar,
+            total,
+            bool(self.config_obj.get("reduce_motion", False)),
+        )
         self.update_idletasks()
 
-    def _tick_fake_indeterminate(self):
-        """Avança a barra manualmente para simular animação indeterminate."""
-        if not getattr(self, "_progress_animate", False):
-            return
-        v = self._progress_bar["value"]
-        self._progress_bar["value"] = (v + 4) % 101
-        self.after(40, self._tick_fake_indeterminate)
+    def _set_progress_paused(self, paused: bool):
+        _set_progress_bar_paused(
+            self._progress_bar,
+            paused,
+            bool(self.config_obj.get("reduce_motion", False)),
+        )
+
+    def _apply_reduce_motion_preference(self):
+        if self._progress_bar.winfo_ismapped():
+            paused = not self._pause_event.is_set() or self._cancel_event.is_set()
+            self._set_progress_paused(paused)
 
     def _step_progress(self, current: int, total: int):
-        self._progress_bar["value"] = current + 1
+        _step_progress_bar(self._progress_bar, current, total)
         self.update_idletasks()
 
     def _end_progress(self):
-        self._progress_animate = False
-        self._progress_bar.pack_forget()
-        self._progress_bar["value"] = 0
+        _end_progress_bar(self._progress_bar)
         self.update_idletasks()
 
     def _save_current_queue(self):
@@ -1029,10 +1066,12 @@ class App(tk.Tk):
             return
         if self._pause_event.is_set():
             self._pause_event.clear()
+            self._set_progress_paused(True)
             self._set_status("Fila de repositórios pausada.")
             self._btn_pause_repo_queue.configure(text="▶ Retomar Fila")
         else:
             self._pause_event.set()
+            self._set_progress_paused(False)
             self._set_status("Fila de repositórios retomada.")
             self._btn_pause_repo_queue.configure(text="⏸ Pausar Fila")
 
@@ -1042,6 +1081,7 @@ class App(tk.Tk):
         self._repo_queue_cancel_requested = True
         self._cancel_event.set()
         self._pause_event.set()
+        self._set_progress_paused(True)
         self._set_status("Cancelando fila de repositórios...")
         self._btn_cancel_repo_queue.configure(state="disabled")
 

@@ -86,6 +86,7 @@ class AppConfig:
 
     DEFAULTS: Dict[str, object] = {
         "theme": "dark",
+        "reduce_motion": False,
         "default_mode": "auto",
         "default_ocr_language": DEFAULT_OCR_LANGUAGE,
         "default_backend": "auto",
