@@ -181,6 +181,15 @@ class SettingsDialog(tk.Toplevel):
             swatch.create_rectangle(27, 1, 52, 17, fill=sw_p["accent2"], outline="")
             swatch.create_rectangle(53, 1, 79, 17, fill=sw_p["input_bg"], outline="")
 
+        self._var_reduce_motion = tk.BooleanVar(
+            value=bool(self.config.get("reduce_motion", False))
+        )
+        ttk.Checkbutton(
+            tab_app,
+            text="Reduzir movimento (barra indeterminada estática)",
+            variable=self._var_reduce_motion,
+        ).grid(row=len(theme_desc) + 1, column=0, columnspan=3, sticky="w", pady=(12, 0))
+
         # ── Processing tab (scrollable: content can exceed screen height) ──
         tab_proc_outer = ttk.Frame(nb)
         nb.add(tab_proc_outer, text="  ⚙  Processamento  ")
@@ -452,6 +461,7 @@ class SettingsDialog(tk.Toplevel):
 
     def _save(self):
         self.config.set("theme", self._var_theme.get())
+        self.config.set("reduce_motion", bool(self._var_reduce_motion.get()))
         self.config.set("default_mode", self._var_mode.get())
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_backend", self._var_backend.get())
@@ -476,6 +486,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
+        self.parent._apply_reduce_motion_preference()  # type: ignore[attr-defined]
         self._saved = True
         self.destroy()
 
