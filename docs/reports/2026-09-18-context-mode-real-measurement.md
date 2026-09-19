@@ -14,7 +14,7 @@ Versão avaliada: `mksglu/context-mode@c127f2fe8496fef36e0ebef36ded92d4fa8f570`
 - **Claude Code:** manter somente como MCP manual para corpus grande, iniciado por
   `server.bundle.mjs`, com armazenamento exclusivo. Não instalar plugin nem hooks.
 - **Codex:** remover. O modo `approval_policy = "never"` bloqueou ferramentas de execução;
-  houve uma resposta incorreta, tempo muito maior e mais tokens de entrada.
+  houve duas respostas incorretas, tempo muito maior e mais tokens de entrada.
 - **AGY:** remover. As duas respostas ficaram corretas, mas o resultado foi inconsistente e
   sempre mais lento e verboso.
 - Não generalizar economia de contexto: bytes, cache e tokens têm semânticas diferentes em
