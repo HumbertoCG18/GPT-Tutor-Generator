@@ -18,7 +18,7 @@ somente depois dos gaps 1–4 abaixo.
   Codex e AGY foram removidos desse caminho. PR #32 mesclado; #22 continua aberta.
 - #33: HTML/JSON/Markdown regenerados e validados nesta worktree. A inspeção visual
   via HTTP local confirmou as cinco abas, contagens principais e layout desktop sem quebra.
-  O diff continua sem commit por Gate 2.
+  Gate 2 aprovado; entrega no PR #34, iniciado pelo commit `08266d9`; check `core` verde.
 - Limpeza local de plugins desativados: sete instalações Claude, uma Codex e cinco
   registros Gemini/AGY removidos. Backup em
   `C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/private/backups/plugin-off-cleanup-20260919-001529`.
@@ -29,8 +29,8 @@ somente depois dos gaps 1–4 abaixo.
 
 ## Gaps na ordem de execução
 
-1. **Fechar #33:** validar o HTML via servidor local, revisar o diff fixado, obter Gate 2,
-   commitar, abrir PR com `Closes #33`, aguardar `core` e mesclar após autorização.
+1. **Fechar #33:** confirmar checks e conversas resolvidas no PR #34 e mesclar sob a
+   autorização já registrada. Se o PR já estiver mesclado, seguir diretamente ao gap 2.
 2. **Provar retomada real:** na próxima interrupção real, retomar por `active-task.md`
    conferindo branch/HEAD/diff/testes e sem repetir chamada Astra.
 3. **Encerrar #16/#22:** registrar em #16 a limitação do laboratório sem remote; em #22,
@@ -57,9 +57,7 @@ somente depois dos gaps 1–4 abaixo.
 ## Retomada operacional
 
 1. Abrir `C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-audit-html-33`.
-2. Conferir `git status --short --branch` e `git diff --cached --check`.
-3. Regenerar pela fonte privada em
-   `C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/private/skills-audit-20260917`.
-4. Rodar `validate_report.py` e `validate_refresh.py`.
-5. Servir a raiz da worktree por HTTP e inspecionar o painel.
-6. Apresentar o diff fixado para Gate 2. Não commitar antes dele.
+2. Consultar `gh pr view 34` e `gh pr checks 34`.
+3. Se aberto, confirmar HEAD, checks e conversas antes do merge já autorizado.
+4. Se mesclado, continuar pelo gap 2 sem repetir Gate 2, auditoria ou piloto.
+5. Regenerar pela fonte privada apenas se o conteúdo do relatório mudar.

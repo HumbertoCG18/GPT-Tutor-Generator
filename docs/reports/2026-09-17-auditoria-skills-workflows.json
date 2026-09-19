@@ -1,6 +1,6 @@
 {
   "date": "2026-09-19",
-  "generatedUtc": "2026-09-19T03:43:21.835892+00:00",
+  "generatedUtc": "2026-09-19T03:55:57.510307+00:00",
   "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/33",
   "layers": [
     {
@@ -12824,8 +12824,8 @@
     {
       "priority": "P0",
       "title": "Fechar a entrega documental #33",
-      "detail": "Auditoria regenerada; validações estática e visual via HTTP local passaram. Faltam Gate 2, commit, PR e merge.",
-      "action": "Confirmar o diff fixado e entregar o PR que fecha #33.",
+      "detail": "Auditoria validada e entregue no PR #34. Gate 2 e merge foram autorizados; o merge fecha a issue.",
+      "action": "Confirmar checks e conversas resolvidas no PR #34; se já estiver mesclado, seguir para o próximo gap.",
       "layer": "entrega"
     },
     {
@@ -12938,27 +12938,27 @@
     },
     {
       "path": ".mex/ROUTER.md",
-      "sha256": "a9ff08fdf66e1dfc784ef098d0d7652334da799523bb7661dba531b588247c38"
+      "sha256": "0942ffd00c16d51b2cbb9f6aceb13afa4c4672b1fef33b4dfb3843a7789c71a9"
     },
     {
       "path": ".mex/patterns/engenharia-produto.md",
-      "sha256": "72a784efc932bcf600ec0ffe30c88945d7e5062b0739c9abfa6ff19764ab51a4"
+      "sha256": "ab2f05f75115e2f900c4e1f02b8658aba437c0a7ad17a73a5113e3a47fc2cfca"
     },
     {
       "path": ".github/workflows/validate-timeline.yml",
-      "sha256": "8aca54991795d3ebe04a5013292eca11c71ebef17c71adf59ab2d1bf540ad19d"
+      "sha256": "f075ca6f7d6b17e32711d54c05a9319609b2c993d7986db4542862981bdd96f4"
     },
     {
       "path": ".github/workflows/python-quality.yml",
-      "sha256": "2b7709a1b864819d30a8c950578ed1a83167e5eca6b75c8af7c028fbbebc7e1c"
+      "sha256": "23f9fba2b9ec64beeb75a6b2b4cd144b055a409aed098e72a531392970d3b353"
     },
     {
       "path": "docs/reports/2026-09-18-context-mode-real-measurement.md",
-      "sha256": "c0df7ba1718a49bdc565833b33577a03fd420acf046777d9119e13e2d256d43e"
+      "sha256": "f8e409bf75cf343cf05417ecab1bc7fb301377db5d8301527e19f68fa9731463"
     },
     {
       "path": "docs/reports/2026-09-19-handoff-workflow.md",
-      "sha256": "84b54a4caeee505b239a51721d4c90a332778b7ca8b551d920079f7127a0661c"
+      "sha256": "ce1d30fd01a142f99de4c121d2f2b5464bb3bf49d9e0682eabad2ee17be183a0"
     }
   ],
   "sources": [
