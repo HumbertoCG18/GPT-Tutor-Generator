@@ -2,11 +2,13 @@
 
 Spec: 2026-07-22-janela-de-prazo-tier2-design.md + adendo F5b 2026-08-03.
 Matching: posicional (file_dues por filename, D-G) com fallback stem (D-C).
-Janela (D-H/D-I): só bloco DE CONTEÚDO (kind fora de _NON_CONTENT_KINDS) ancora
-— containment -> band pela fonte; senão último bloco de conteúdo anterior ->
-media+FLAG. `kind` é required no schema (topics não é: curso recém-rolado
-pode ter topics=[] num bloco de aula legítimo — T17).
-Nunca chuta: sem due casado -> None -> funil. NUNCA disambiguator, NUNCA voto LLM.
+Janela (D-H/D-I): só bloco elegível (kind fora de _NON_CONTENT_KINDS) ancora
+— containment -> band pela fonte; senão último bloco elegível anterior ->
+media+FLAG. Elegíveis = blocos de conteúdo e, desde #48, o bloco de prova
+(`assessment`) que hospeda a entrega. `kind` é required no schema (topics não
+é: curso recém-rolado pode ter topics=[] num bloco de aula legítimo — T17).
+Nunca chuta: sem due casado -> None (trabalhos/provas seguem ao funil; seção
+TDE fora do Tier 2 volta ao fora-de-escopo). NUNCA disambiguator, NUNCA voto LLM.
 """
 from __future__ import annotations
 
@@ -23,15 +25,20 @@ _STEM_RE = re.compile(r"\bt(\d+)\b")
 _CONF_ALTA, _CONF_MEDIA = 0.95, 0.75
 
 # T17 + expansao D-H (2026-08-06): kinds NAO-CONTEUDO do filtro (bloco nunca
-# ancora due-window). assessment/review = prova/revisao (T17, coerente com
-# content_taxonomy.py:966,973); NON_ACADEMIC_KINDS (kinds.py) = conjunto
+# ancora due-window). review = revisao (T17, coerente com content_taxonomy.py:
+# 966,973; assessment saiu do filtro na #48, abaixo); NON_ACADEMIC_KINDS (kinds.py) = conjunto
 # canonico "sem unit/topic/files esperados" (holiday, suspended,
 # academic_event, office_hours, planning, reserved, results) — nenhum pode
 # ser "ultimo bloco de conteudo" de entrega, mesmo com topics populado
 # (fecha o fail-open pre-rollout ES2/curso novo). makeup/overview/unknown
 # ficam CONTEUDO: reposicao/introducao sao aula; kind ausente/desconhecido
 # segue fail-open (nao inventa exclusao para kind fora do enum do schema).
-_NON_CONTENT_KINDS = frozenset({"assessment", "review"}) | frozenset(
+# 2026-09-22 (#48, decisao do usuario de 06/09): o bloco de PROVA hospeda a
+# entrega — `assessment` sai do filtro (vencimento dentro da prova ancora
+# nela; tambem vale como "ultimo bloco anterior" no straddle). Medido nos 7
+# cursos: MF T2 -> bloco-20 (= gold), 0 perda; nenhuma entrada de provas/
+# trabalhos ancorava por straddle antes. `review` e os nao academicos ficam.
+_NON_CONTENT_KINDS = frozenset({"review"}) | frozenset(
     k.value for k in NON_ACADEMIC_KINDS)
 
 
@@ -42,6 +49,13 @@ def tier2_due_scope(entry: dict) -> bool:
         return True
     sec = str(entry.get("source_section") or "").strip()
     return cat.startswith("codigo") and sec.startswith(_TDE_PREFIX)
+
+
+def tde_section(entry: dict) -> bool:
+    """Secao TDE do Moodle (#48): tenta o prazo antes de sair de escopo, qualquer
+    categoria — o PDF `t1_2026_1.pdf` chegava como `outros` pelo stash e caia
+    direto no fora-de-escopo sem bloco. Sem due casado, segue fora (B-4)."""
+    return str(entry.get("source_section") or "").strip().startswith(_TDE_PREFIX)
 
 
 def _card_entry(entry: dict, ctx: MotorContext) -> Optional[dict]:
@@ -109,7 +123,7 @@ def resolve_due_window(entry: dict, ctx: MotorContext) -> Optional[AnchorDecisio
     contain = prev = None
     for b in ctx.blocks:  # ordenados por period_start (contrato do MotorContext)
         if str(b.get("kind") or "") in _NON_CONTENT_KINDS:
-            continue  # D-H: só bloco DE CONTEÚDO ancora entrega (admin/prova fora)
+            continue  # D-H: revisão/admin não ancoram entrega (prova ancora desde #48)
         start = str(b.get("period_start") or "")
         end = str(b.get("period_end") or "") or start
         if not start:

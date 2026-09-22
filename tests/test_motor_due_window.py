@@ -173,13 +173,15 @@ def test_posicional_companion_thy_casa_igual():
     assert d.block_ref == "bloco-11"
 
 
-def test_due_em_bloco_sem_topicos_cai_no_ultimo_bloco_de_conteudo():
-    # due 2026-07-06 CONTIDO no bloco-18 (admin) -> pula 18/17 -> bloco-16, media+FLAG
+def test_due_dentro_da_prova_ancora_na_prova():
+    # #48: due 2026-07-06 CONTIDO no bloco-18 (assessment) -> ancora NELE, alta,
+    # sem flag (antes pulava 18/17 e caia em bloco-16 por straddle). E o caso
+    # real do T2 do MF (gold bloco-20 no indice completo).
     d = resolve_due_window(
         _t("t2-2026-1", source_path="files/t2_2026_1.pdf"),
         _ctx_mf_real(TDE_POSICIONAL))
-    assert d.block_ref == "bloco-16" and d.band == "media" and d.flag
-    assert d.method == "due-straddle"
+    assert d.block_ref == "bloco-18" and d.band == "alta" and not d.flag
+    assert d.method == "due-contain"
 
 
 def test_sem_file_dues_sem_stem_vai_pro_funil():
@@ -217,9 +219,9 @@ def test_sem_file_dues_sem_stem_vai_pro_funil():
 #
 # assessment/review batem com o uso ja existente em content_taxonomy.py:966,973
 # (prova/revisao). Confirmado no MF real: bloco-17 kind=review topics=[],
-# bloco-18 kind=assessment topics=[] — os dois blocos que o teste
-# `test_due_em_bloco_sem_topicos_cai_no_ultimo_bloco_de_conteudo` acima
-# preserva pulados, agora via kind (nao mais via topics vazio).
+# bloco-18 kind=assessment topics=[]. Desde #48 so review continua pulado
+# (`test_kind_review_continua_fora_do_due_window`); a prova que contem o
+# vencimento ancora (`test_due_dentro_da_prova_ancora_na_prova`), via kind.
 
 
 def _ctx_kind_gate(card_map):
@@ -242,14 +244,42 @@ def test_kind_class_topics_vazio_ancora():
     assert d.block_ref == "bloco-20" and d.method == "due-contain"
 
 
-def test_kind_assessment_nunca_ancora_mesmo_com_topics():
-    """kind=assessment e NAO-CONTEUDO incondicional: mesmo com topics
-    preenchido (o filtro antigo teria ancorado), devolve straddle para o
-    ultimo bloco de conteudo, nunca a propria prova."""
+def test_kind_assessment_que_contem_o_vencimento_ancora():
+    """#48 (decisao do usuario 06/09, "bloco de prova hospeda entrega"): o
+    vencimento dentro do bloco de prova ancora NELE, nao no ultimo bloco de
+    conteudo anterior. Medido nos 7 cursos: MF T2 -> bloco-20 (= gold), 0 perda;
+    nenhuma entrada de provas/trabalhos ancorava por straddle antes."""
     cm = {"TDE": {"assign_dues": [
         {"name": "Entrega T2", "due": "2026-08-08", "source": "structured"}]}}
     d = resolve_due_window(_t("t2-x", sec="TDE"), _ctx_kind_gate(cm))
+    assert d.block_ref == "bloco-21" and d.method == "due-contain"
+    assert d.band == "alta" and not d.flag
+
+
+def test_kind_review_continua_fora_do_due_window():
+    """review (e os kinds nao academicos) seguem NAO-CONTEUDO: vencimento
+    dentro da revisao cai em straddle para o ultimo bloco de conteudo."""
+    blocks = [
+        {"id": "bloco-20", "block_uuid": "u20", "period_start": "2026-08-01",
+         "period_end": "2026-08-05", "kind": "class", "topics": []},
+        {"id": "bloco-21", "block_uuid": "u21", "period_start": "2026-08-06",
+         "period_end": "2026-08-10", "kind": "review", "topics": ["revisao"]},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={"TDE": {"assign_dues": [
+        {"name": "Entrega T2", "due": "2026-08-08", "source": "structured"}]}}, lessons_index={})
+    d = resolve_due_window(_t("t2-x", sec="TDE"), ctx)
     assert d.block_ref == "bloco-20" and d.method == "due-straddle" and d.flag
+
+
+def test_secao_tde_e_reconhecida_com_qualquer_categoria():
+    """#48: PDF da secao TDE com categoria `outros` (t1/t2 do MF no pacote) caia
+    em fora-de-escopo sem tentar o prazo. `tier2_due_scope` fica como esta (o
+    funil continua so para trabalhos/provas); a secao TDE e tratada em apply."""
+    from src.builder.routing.motor.due_window import tde_section
+    assert tde_section(_t("t2-2026-1", cat="outros"))
+    assert tde_section(_t("t2-2026-1", cat="pdfs", sec="TDE"))
+    assert not tde_section(_t("x", cat="outros", sec="Aulas"))
+    assert not tier2_due_scope(_t("x", cat="outros", sec="TDE Trabalho Discente Efetivo"))
 
 
 # --- D-H expansao admin-kinds (pendencia pre-rollout ES2/curso novo) --------
@@ -292,3 +322,14 @@ def test_makeup_e_overview_seguem_conteudo():
         d = resolve_due_window(_t("t1-x", sec="TDE"), _ctx_admin_kind(kind))
         assert d is not None and d.block_ref == "bloco-31", (kind, d)
         assert d.method == "due-contain", kind
+
+
+def test_vencimento_depois_da_prova_faz_straddle_para_a_prova():
+    """#48 (revisao Astra): consequencia do contrato — a prova tambem vale como
+    "ultimo bloco anterior": vencimento DEPOIS do period_end da prova cai nela por
+    straddle (media + flag), nao no bloco de aula anterior."""
+    cm = {"TDE": {"assign_dues": [
+        {"name": "Entrega T2", "due": "2026-08-12", "source": "structured"}]}}
+    d = resolve_due_window(_t("t2-x", sec="TDE"), _ctx_kind_gate(cm))
+    assert d.block_ref == "bloco-21" and d.method == "due-straddle"
+    assert d.band == "media" and d.flag

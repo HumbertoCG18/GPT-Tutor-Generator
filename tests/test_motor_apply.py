@@ -390,3 +390,27 @@ def test_referencia_sem_card_recebe_primeiro_bloco_no_apply(tmp_path):
     apply_anchor_engine(entries, repo, "MF", voter=_VoterFunil("bloco-02"))
     assert entries[0]["temporal_block_method"] == "ref-generica"
     assert entries[0]["temporal_block_id"] == "u-1"
+
+
+def test_secao_tde_tenta_o_prazo_com_qualquer_categoria_e_sem_due_segue_fora(tmp_path):
+    """#48: o PDF `t1_2026_1.pdf` chegava como `outros` pelo stash e saia sem bloco
+    (fora-de-escopo antes do prazo). Com due casado, ancora como trabalhos; sem
+    due, continua fora de escopo (B-4), nao cai no funil."""
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-15", "block_uuid": "u15", "kind": "class",
+                 "period_start": "2026-06-01", "period_end": "2026-06-10", "topics": ["t"]}],
+        card_map={"TDE Trabalho Discente Efetivo": {"assign_dues": [
+            {"name": "Entrega T1", "due": "2026-06-10", "source": "structured"}]}},
+    )
+    entries = [
+        {"id": "t1-2026-1", "title": "t1 2026 1", "category": "outros",
+         "source_section": "TDE Trabalho Discente Efetivo"},
+        {"id": "t9-sem-due", "title": "t9 sem due", "category": "outros",
+         "source_section": "TDE Trabalho Discente Efetivo"},
+    ]
+    out = apply_anchor_engine(entries, repo, "MF", enabled=True, voter=None)
+    by = {e["id"]: e for e in out}
+    assert by["t1-2026-1"]["temporal_block_id"] == "u15"
+    assert by["t1-2026-1"]["temporal_block_method"] == "due-contain"
+    assert all(k not in by["t9-sem-due"] for k in TEMPORAL_KEYS)

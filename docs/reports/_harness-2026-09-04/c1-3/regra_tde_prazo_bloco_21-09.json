@@ -1,0 +1,603 @@
+{
+  "head": "9220a57",
+  "freeze_sha256_decisoes": "a3dfb5fd6c7fdae49284e9d5e84750f1df08932efe5e25d5967e8e279e6cad32",
+  "checks": {
+    "V1-tde-tenta-prazo": {
+      "bloco_maior_igual_214": false,
+      "bloco": "213/237",
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_no_bloco": true,
+      "nenhum_curso_regride_na_unidade": false,
+      "unidade_244_284": false,
+      "unidade": "243/284",
+      "sub_primaria_84": true,
+      "sub_aceita_107": true,
+      "sub": "84/107/251",
+      "ACEITE": false
+    },
+    "V2-tde-vira-trabalhos": {
+      "bloco_maior_igual_214": false,
+      "bloco": "213/237",
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_no_bloco": true,
+      "nenhum_curso_regride_na_unidade": false,
+      "unidade_244_284": false,
+      "unidade": "243/284",
+      "sub_primaria_84": true,
+      "sub_aceita_107": true,
+      "sub": "84/107/251",
+      "ACEITE": false
+    }
+  },
+  "base_reproduzida": {
+    "bloco": "213/237",
+    "unidade": "244/284",
+    "sub_primaria": 84,
+    "sub_aceita": 107,
+    "bloco_ausente": 6
+  },
+  "totais": {
+    "base": {
+      "bloco_n": 237,
+      "bloco_ausente": 6,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 244,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 107
+    },
+    "V1-tde-tenta-prazo": {
+      "bloco_n": 237,
+      "bloco_ausente": 6,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 243,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 107
+    },
+    "V2-tde-vira-trabalhos": {
+      "bloco_n": 237,
+      "bloco_ausente": 6,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 243,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 107
+    }
+  },
+  "cursos": {
+    "base": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 61,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 30,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7
+      }
+    },
+    "V1-tde-tenta-prazo": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 60,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 30,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7
+      }
+    },
+    "V2-tde-vira-trabalhos": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 60,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 30,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7
+      }
+    }
+  },
+  "mudancas": [
+    {
+      "curso": "MF",
+      "variante": "V1-tde-tenta-prazo",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-11",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "provider_depois": "due-window",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "unidade_antes": "unidade-01-metodos-formais",
+      "unidade_depois": "unidade-02-verificacao-de-programas",
+      "sub_antes": "especificacao-de-funcoes-recursivas",
+      "sub_depois": "sistema-de-prova",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "MF",
+      "variante": "V1-tde-tenta-prazo",
+      "id": "t2-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-18",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-verificacao-de-programas",
+      "unidade_depois": "unidade-03-verificacao-de-modelos",
+      "sub_antes": "",
+      "sub_depois": "modelos-de-kripke",
+      "gold": {
+        "bloco": "bloco-20",
+        "unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "sub_primario": [],
+        "gold_id": "t2-2026-1"
+      },
+      "na_regua": true,
+      "delta": {
+        "unidade": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "curso": "MF",
+      "variante": "V2-tde-vira-trabalhos",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-11",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "provider_depois": "due-window",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "unidade_antes": "unidade-01-metodos-formais",
+      "unidade_depois": "unidade-02-verificacao-de-programas",
+      "sub_antes": "especificacao-de-funcoes-recursivas",
+      "sub_depois": "sistema-de-prova",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "MF",
+      "variante": "V2-tde-vira-trabalhos",
+      "id": "t2-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-18",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-verificacao-de-programas",
+      "unidade_depois": "unidade-03-verificacao-de-modelos",
+      "sub_antes": "",
+      "sub_depois": "modelos-de-kripke",
+      "gold": {
+        "bloco": "bloco-20",
+        "unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "sub_primario": [],
+        "gold_id": "t2-2026-1"
+      },
+      "na_regua": true,
+      "delta": {
+        "unidade": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "curso": "ES2",
+      "variante": "V1-tde-tenta-prazo",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-12",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "unidade_depois": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "sub_antes": "entrega-continua-cd",
+      "sub_depois": "entrega-continua-cd",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "ES2",
+      "variante": "V2-tde-vira-trabalhos",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-12",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "unidade_depois": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "sub_antes": "entrega-continua-cd",
+      "sub_depois": "entrega-continua-cd",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    }
+  ],
+  "fora_da_regua": [
+    {
+      "curso": "MF",
+      "variante": "V1-tde-tenta-prazo",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-11",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "provider_depois": "due-window",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "unidade_antes": "unidade-01-metodos-formais",
+      "unidade_depois": "unidade-02-verificacao-de-programas",
+      "sub_antes": "especificacao-de-funcoes-recursivas",
+      "sub_depois": "sistema-de-prova",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "MF",
+      "variante": "V2-tde-vira-trabalhos",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-11",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "provider_depois": "due-window",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "unidade_antes": "unidade-01-metodos-formais",
+      "unidade_depois": "unidade-02-verificacao-de-programas",
+      "sub_antes": "especificacao-de-funcoes-recursivas",
+      "sub_depois": "sistema-de-prova",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "ES2",
+      "variante": "V1-tde-tenta-prazo",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-12",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "unidade_depois": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "sub_antes": "entrega-continua-cd",
+      "sub_depois": "entrega-continua-cd",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "ES2",
+      "variante": "V2-tde-vira-trabalhos",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-12",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "provider_depois": "due-window",
+      "band_depois": "media",
+      "flag_depois": true,
+      "unidade_antes": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "unidade_depois": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "sub_antes": "entrega-continua-cd",
+      "sub_depois": "entrega-continua-cd",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    }
+  ],
+  "tde_por_curso": {
+    "MF": [
+      {
+        "id": "t1-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\TDE Trabalho Discente Efetivo\\t1_2026_1.pdf",
+        "title": "t1_2026_1"
+      },
+      {
+        "id": "t1-2026-1-thy",
+        "category": "codigo-professor",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\TDE Trabalho Discente Efetivo\\T1_2026_1.thy",
+        "title": "T1_2026_1"
+      },
+      {
+        "id": "t2-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\TDE Trabalho Discente Efetivo\\t2_2026_1.pdf",
+        "title": "t2_2026_1"
+      }
+    ],
+    "SO": [],
+    "IA": [
+      {
+        "id": "p2-202401",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\TDE Trabalho Discente Efetivo\\P2 2024.01.pdf",
+        "title": "P2 2024.01"
+      },
+      {
+        "id": "p2-202402",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\TDE Trabalho Discente Efetivo\\P2 2024.02.pdf",
+        "title": "P2 2024.02"
+      },
+      {
+        "id": "prova-1-2024-02",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\TDE Trabalho Discente Efetivo\\Prova 1 2024 02.pdf",
+        "title": "Prova 1 2024 02"
+      },
+      {
+        "id": "prova-1-202402",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\TDE Trabalho Discente Efetivo\\Prova 1 2024.02.pdf",
+        "title": "Prova 1 2024.02"
+      }
+    ],
+    "ES2": [
+      {
+        "id": "t1-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\TDE Trabalho Discente Efetivo\\t1_2026_1.pdf",
+        "title": "t1_2026_1"
+      }
+    ],
+    "TCC": [],
+    "CG": [],
+    "FR": []
+  },
+  "v2_alvo_por_curso": {
+    "MF": [
+      "t1-2026-1",
+      "t2-2026-1"
+    ],
+    "SO": [],
+    "IA": [
+      "p2-202401",
+      "p2-202402",
+      "prova-1-2024-02",
+      "prova-1-202402"
+    ],
+    "ES2": [
+      "t1-2026-1"
+    ],
+    "TCC": [],
+    "CG": [],
+    "FR": []
+  },
+  "scope": "apply_anchor_engine e apply_unit_subunit_fields reais; patch so em atributos de modulo, restaurado; voter=None.",
+  "limitations": [
+    "Ausentes permanecem no denominador da regua (t1-2026-1 nao casa por origem).",
+    "Sem build/rebuild, rede ou LLM; sidecar de votos nao usado.",
+    "Unidade so re-rodada onde a variante pode mudar; demais cursos herdam a base."
+  ]
+}

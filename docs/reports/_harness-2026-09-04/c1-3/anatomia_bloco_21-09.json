@@ -1,0 +1,1339 @@
+{
+  "head": "9220a57",
+  "escopo": "Diagnostico read-only sobre manifests de 15/17-09; nenhum build, rede ou LLM.",
+  "checks": {
+    "bloco_213_237": true,
+    "ausentes_6": true,
+    "vizinho_8": true,
+    "distante_7": true,
+    "vazio_3": true,
+    "MF_53_66": true,
+    "ausentes_links_5_de_6": true
+  },
+  "total": {
+    "n": 237,
+    "ausente": 6,
+    "certo": 213
+  },
+  "por_curso": {
+    "MF": {
+      "n": 66,
+      "ausente": 4,
+      "certo": 53
+    },
+    "SO": {
+      "n": 39,
+      "certo": 36
+    },
+    "IA": {
+      "n": 42,
+      "ausente": 2,
+      "certo": 38
+    },
+    "ES2": {
+      "n": 28,
+      "certo": 27
+    },
+    "TCC": {
+      "n": 27,
+      "certo": 26
+    },
+    "CG": {
+      "n": 35,
+      "certo": 33
+    },
+    "FR": {}
+  },
+  "classes": {
+    "ausente": 6,
+    "vizinho±1": 8,
+    "distante": 7,
+    "vazio": 3
+  },
+  "por_metodo_banda_erros": {
+    "disamb/alta": 3,
+    "disamb/baixa": 6,
+    "janela-1/media": 4,
+    "disamb/media": 2,
+    "-/-": 3
+  },
+  "risco_por_metodo_banda": {
+    "disamb/alta": {
+      "MF": 17,
+      "TOTAL": 21,
+      "IA": 2,
+      "CG": 2
+    },
+    "disamb/baixa": {
+      "MF": 2,
+      "TOTAL": 13,
+      "SO": 4,
+      "IA": 2,
+      "CG": 5
+    },
+    "disamb/media": {
+      "MF": 11,
+      "TOTAL": 15,
+      "SO": 1,
+      "CG": 3
+    },
+    "janela-1/media": {
+      "MF": 11,
+      "TOTAL": 38,
+      "SO": 8,
+      "ES2": 11,
+      "TCC": 5,
+      "CG": 3
+    }
+  },
+  "alavancas": {
+    "revisar-disamb": {
+      "tocadas": 6,
+      "entradas": [
+        "MF:exerciciosdafny2",
+        "MF:exerciciosnusmv",
+        "SO:laminas-cs-4244-internet-programming-sockets-programming",
+        "SO:laminas-sockets-material-alternativo-em-pt",
+        "CG:basico3d-cpp",
+        "CG:basico3d-py-zip"
+      ],
+      "chaves": [
+        "metodo:disamb|alta",
+        "metodo:disamb|baixa"
+      ],
+      "em_risco": 34,
+      "risco_por_curso": {
+        "MF": 19,
+        "SO": 4,
+        "IA": 4,
+        "CG": 7
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.18
+    },
+    "ingestao-link": {
+      "tocadas": 5,
+      "entradas": [
+        "MF:eth2",
+        "MF:aws-encryption-sdk",
+        "MF:archive-of-formal-proofs-355fb8",
+        "IA:o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+        "IA:ia-responsável-7c4626"
+      ],
+      "chaves": [
+        "fora do denominador casado"
+      ],
+      "em_risco": 0,
+      "risco_por_curso": {},
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": null
+    },
+    "fronteira-disamb": {
+      "tocadas": 3,
+      "entradas": [
+        "MF:revisao",
+        "MF:introducao",
+        "MF:terminacao"
+      ],
+      "chaves": [
+        "metodo:disamb|alta",
+        "metodo:disamb|baixa",
+        "metodo:disamb|media"
+      ],
+      "em_risco": 49,
+      "risco_por_curso": {
+        "MF": 30,
+        "SO": 5,
+        "IA": 4,
+        "CG": 10
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.06
+    },
+    "fronteira-janela-1": {
+      "tocadas": 3,
+      "entradas": [
+        "MF:intro",
+        "MF:provas",
+        "ES2:azure"
+      ],
+      "chaves": [
+        "metodo:janela-1|media"
+      ],
+      "em_risco": 38,
+      "risco_por_curso": {
+        "MF": 11,
+        "SO": 8,
+        "ES2": 11,
+        "TCC": 5,
+        "CG": 3
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.08
+    },
+    "fora-de-escopo": {
+      "tocadas": 2,
+      "entradas": [
+        "MF:t1-2026-1",
+        "MF:t2-2026-1"
+      ],
+      "chaves": [
+        "fora_de_escopo_disamb"
+      ],
+      "em_risco": 8,
+      "risco_por_curso": {
+        "MF": 3,
+        "SO": 4,
+        "TCC": 1
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.25
+    },
+    "secao-datada-vence": {
+      "tocadas": 2,
+      "entradas": [
+        "IA:algoritmo-de-classificacao-k-nn",
+        "IA:analise-exploratoria-de-dados-exemplo-1"
+      ],
+      "chaves": [
+        "secao_datada"
+      ],
+      "em_risco": 63,
+      "risco_por_curso": {
+        "IA": 38,
+        "TCC": 25
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.03
+    },
+    "revisar-janela-1": {
+      "tocadas": 1,
+      "entradas": [
+        "MF:introducao-zip"
+      ],
+      "chaves": [
+        "metodo:janela-1|media"
+      ],
+      "em_risco": 38,
+      "risco_por_curso": {
+        "MF": 11,
+        "SO": 8,
+        "ES2": 11,
+        "TCC": 5,
+        "CG": 3
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.03
+    },
+    "funil-piso": {
+      "tocadas": 1,
+      "entradas": [
+        "SO:definicao-e-historico"
+      ],
+      "chaves": [
+        "engine-None"
+      ],
+      "em_risco": 0,
+      "risco_por_curso": {},
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": null
+    },
+    "prazo-sem-due": {
+      "tocadas": 1,
+      "entradas": [
+        "TCC:t1-enunciado"
+      ],
+      "chaves": [
+        "escopo_prazo"
+      ],
+      "em_risco": 8,
+      "risco_por_curso": {
+        "MF": 3,
+        "SO": 4,
+        "TCC": 1
+      },
+      "em_risco_com_pino_manual": 0,
+      "razao_tocadas_por_risco": 0.12
+    }
+  },
+  "erros": [
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-cpp",
+      "id": "basico3d-cpp",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "janela_ids": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "previsto": "bloco-05",
+      "gold": "bloco-15",
+      "distancia": -10,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+      "computed_block_id": "bloco-15",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": true,
+      "title": "Basico3D-CPP",
+      "file_type": "zip",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-07-28",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "14 - Exercícios sobre Modelagem Geométrica"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|baixa"
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-py-zip",
+      "id": "basico3d-py-zip",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "janela_ids": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "previsto": "bloco-05",
+      "gold": "bloco-15",
+      "distancia": -10,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+      "computed_block_id": "bloco-15",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": true,
+      "title": "Basico3D-PY",
+      "file_type": "zip",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "14 - Exercícios sobre Modelagem Geométrica"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|baixa"
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "azure",
+      "id": "azure",
+      "classe": "vizinho±1",
+      "metodo": "janela-1",
+      "banda": "media",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-08"
+      ],
+      "janela_ids": [
+        "bloco-08"
+      ],
+      "previsto": "bloco-08",
+      "gold": "bloco-09",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "computed_block_id": "bloco-01",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": true,
+      "title": "Azure",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Microsserviços"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "fronteira-janela-1",
+      "chave_risco": "metodo:janela-1|media"
+    },
+    {
+      "curso": "IA",
+      "entry_id": "algoritmo-de-classificacao-k-nn",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "classe": "vizinho±1",
+      "metodo": "disamb",
+      "banda": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "14c6323a-b32a-4e52-bb57-7dc6b349995f",
+        "b7086435-ab2a-4bf0-94ff-b3e9de391066"
+      ],
+      "janela_ids": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "previsto": "bloco-04",
+      "gold": "bloco-05",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+      "computed_block_id": "bloco-23",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "Algoritmo de Classificação k-NN",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": true,
+        "secao_com_semana": true,
+        "posting_date": "2026-02-24",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "secao-datada-vence",
+      "chave_risco": "secao_datada"
+    },
+    {
+      "curso": "IA",
+      "entry_id": "analise-exploratoria-de-dados-exemplo-1",
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "classe": "vizinho±1",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "14c6323a-b32a-4e52-bb57-7dc6b349995f",
+        "b7086435-ab2a-4bf0-94ff-b3e9de391066"
+      ],
+      "janela_ids": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "previsto": "bloco-05",
+      "gold": "bloco-04",
+      "distancia": 1,
+      "sentido": "gold anterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+      "computed_block_id": "bloco-04",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "Análise Exploratória de Dados - Exemplo 1",
+      "file_type": "code",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": true,
+        "secao_com_semana": true,
+        "posting_date": "2026-02-24",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "secao-datada-vence",
+      "chave_risco": "secao_datada"
+    },
+    {
+      "curso": "IA",
+      "entry_id": "ia-responsável-7c4626",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-01",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "IA Responsável",
+      "file_type": "url",
+      "categoria": "references",
+      "source_path": "https://www.microsoft.com/pt-br/ai/responsible-ai?activetab=pivot1:primaryr6",
+      "eh_link": true,
+      "existe_no_pacote_por_id": false,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "references",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": ""
+      },
+      "sinais_no_pacote": null,
+      "degrau": "link nunca ingerido: nao existe entry no pacote, nenhuma regra de bloco o alcanca",
+      "alavanca": "ingestao-link",
+      "chave_risco": "fora do denominador casado"
+    },
+    {
+      "curso": "IA",
+      "entry_id": "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-01",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "O que é Inteligência Artificial (IA)? | Oracle Brasil",
+      "file_type": "url",
+      "categoria": "references",
+      "source_path": "https://www.oracle.com/br/artificial-intelligence/what-is-ai/",
+      "eh_link": true,
+      "existe_no_pacote_por_id": false,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "references",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": ""
+      },
+      "sinais_no_pacote": null,
+      "degrau": "link nunca ingerido: nao existe entry no pacote, nenhuma regra de bloco o alcanca",
+      "alavanca": "ingestao-link",
+      "chave_risco": "fora do denominador casado"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "archive-of-formal-proofs-355fb8",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-01",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "Archive of Formal Proofs",
+      "file_type": "url",
+      "categoria": "references",
+      "source_path": "https://www.isa-afp.org/",
+      "eh_link": true,
+      "existe_no_pacote_por_id": false,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "references",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": ""
+      },
+      "sinais_no_pacote": null,
+      "degrau": "link nunca ingerido: nao existe entry no pacote, nenhuma regra de bloco o alcanca",
+      "alavanca": "ingestao-link",
+      "chave_risco": "fora do denominador casado"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "aws-encryption-sdk",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-01",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "GitHub - aws/aws-encryption-sdk: AWS Encryption SDK · GitHub",
+      "file_type": "github-repo",
+      "categoria": "bibliografia",
+      "source_path": "https://github.com/aws/aws-encryption-sdk",
+      "eh_link": true,
+      "existe_no_pacote_por_id": false,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "bibliografia",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": ""
+      },
+      "sinais_no_pacote": null,
+      "degrau": "link nunca ingerido: nao existe entry no pacote, nenhuma regra de bloco o alcanca",
+      "alavanca": "ingestao-link",
+      "chave_risco": "fora do denominador casado"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "eth2",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-01",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "GitHub - Consensys/eth2.0-dafny: Eth2.0 spec in Dafny · GitHub",
+      "file_type": "github-repo",
+      "categoria": "bibliografia",
+      "source_path": "https://github.com/ConsenSys/eth2.0-dafny",
+      "eh_link": true,
+      "existe_no_pacote_por_id": false,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "",
+        "ordinal": "",
+        "categoria": "bibliografia",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": ""
+      },
+      "sinais_no_pacote": null,
+      "degrau": "link nunca ingerido: nao existe entry no pacote, nenhuma regra de bloco o alcanca",
+      "alavanca": "ingestao-link",
+      "chave_risco": "fora do denominador casado"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosdafny2",
+      "id": "exerciciosdafny2",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "acb5cc16-8839-48ee-9f6a-edbd0c7ca34d",
+        "e7b3e376-209c-4159-9575-ae70ec035d9d",
+        "6a574498-5da3-4e08-8c5d-cfe73d6e22d4",
+        "90f4d7f4-ec7a-4723-bc9c-1d5602d08472",
+        "5744f7a5-085a-42ac-8a69-9c665bf99a8b"
+      ],
+      "janela_ids": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "previsto": "bloco-11",
+      "gold": "bloco-13",
+      "distancia": -2,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-02-verificacao-de-programas",
+      "computed_block_id": "bloco-11",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "ExerciciosDafny2",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "2",
+        "categoria": "listas",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Verificação de Programas"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|alta"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "exerciciosnusmv",
+      "id": "exerciciosnusmv",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "d7f464c0-c1c0-4a63-a547-50f781b17f2f",
+        "e7eb740b-b0cd-45df-9d46-edfb807f266f",
+        "041ee28f-e3df-49ee-ad2d-82139a496fb7",
+        "c982893e-9b83-4a5d-808b-0d4162c0fe15"
+      ],
+      "janela_ids": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "previsto": "bloco-18",
+      "gold": "bloco-16",
+      "distancia": 2,
+      "sentido": "gold anterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-03-verificacao-de-modelos",
+      "computed_block_id": "bloco-14",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "ExerciciosNusmv",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "listas",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Especificação e Verificação de Modelos"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|alta"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "intro",
+      "id": "intro",
+      "classe": "vizinho±1",
+      "metodo": "janela-1",
+      "banda": "media",
+      "flag": false,
+      "provider": "card",
+      "janela": [
+        "bloco-05"
+      ],
+      "janela_ids": [
+        "bloco-05"
+      ],
+      "previsto": "bloco-05",
+      "gold": "bloco-06",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-01-metodos-formais",
+      "computed_block_id": "bloco-05",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "intro",
+      "file_type": "code",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Provas por Indução"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "fronteira-janela-1",
+      "chave_risco": "metodo:janela-1|media"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "introducao",
+      "id": "introducao",
+      "classe": "vizinho±1",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "056e996c-cf7c-4090-8d95-da38968d624b",
+        "e3cfe9b4-3c2b-4bbd-b0c7-7d6e788c8c7b"
+      ],
+      "janela_ids": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "previsto": "bloco-01",
+      "gold": "bloco-02",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-01-metodos-formais",
+      "computed_block_id": "bloco-06",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "introducao",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Introdução a Métodos Formais"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "fronteira-disamb",
+      "chave_risco": "metodo:disamb|baixa"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "introducao-zip",
+      "id": "introducao-zip",
+      "classe": "distante",
+      "metodo": "janela-1",
+      "banda": "media",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-10"
+      ],
+      "janela_ids": [
+        "bloco-10"
+      ],
+      "previsto": "bloco-10",
+      "gold": "bloco-12",
+      "distancia": -2,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-02-verificacao-de-programas",
+      "computed_block_id": "bloco-12",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "introducao",
+      "file_type": "zip",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-05-11",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Verificação de Programas"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "revisar-janela-1",
+      "chave_risco": "metodo:janela-1|media"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "provas",
+      "id": "provas",
+      "classe": "vizinho±1",
+      "metodo": "janela-1",
+      "banda": "media",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-05"
+      ],
+      "janela_ids": [
+        "bloco-05"
+      ],
+      "previsto": "bloco-05",
+      "gold": "bloco-06",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-01-metodos-formais",
+      "computed_block_id": "bloco-06",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "provas",
+      "file_type": "code",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Provas por Indução"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "fronteira-janela-1",
+      "chave_risco": "metodo:janela-1|media"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "revisao",
+      "id": "revisao",
+      "classe": "vizinho±1",
+      "metodo": "disamb",
+      "banda": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "c071c1db-e124-4a5e-8928-18239d4af83f",
+        "19c4a5d4-a8c6-4442-9933-c85ff295658b"
+      ],
+      "janela_ids": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "previsto": "bloco-04",
+      "gold": "bloco-03",
+      "distancia": 1,
+      "sentido": "gold anterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-01-metodos-formais",
+      "computed_block_id": "bloco-11",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "revisao",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-02-18",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Revisão - Lógica e Especificação"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": true,
+      "alavanca": "fronteira-disamb",
+      "chave_risco": "metodo:disamb|alta"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "t1-2026-1",
+      "classe": "ausente",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "previsto": "",
+      "gold": "bloco-11",
+      "distancia": null,
+      "sentido": "",
+      "computed_block_id": "",
+      "computed_acertaria": null,
+      "computed_metodo": "",
+      "unidade_errada": null,
+      "title": "t1_2026_1",
+      "file_type": "pdf",
+      "categoria": "trabalhos",
+      "source_path": "C:/Users/Humberto/Downloads/t1_2026_1.pdf",
+      "eh_link": false,
+      "existe_no_pacote_por_id": true,
+      "previsto_por_id": "",
+      "metodo_por_id": "",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-04-15",
+        "ordinal": "",
+        "categoria": "trabalhos",
+        "escopo_prazo": true,
+        "fora_de_escopo_disamb": true,
+        "source_section": "TDE Trabalho Discente Efetivo"
+      },
+      "sinais_no_pacote": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-04-15",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": true,
+        "source_section": "TDE Trabalho Discente Efetivo"
+      },
+      "degrau": "existe no pacote com o mesmo id, mas source_path mudou e a regua nao casa a origem",
+      "alavanca": "fora-de-escopo",
+      "chave_risco": "fora_de_escopo_disamb"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "t2-2026-1",
+      "id": "t2-2026-1",
+      "classe": "vazio",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "janela_ids": [],
+      "previsto": "",
+      "gold": "bloco-20",
+      "distancia": null,
+      "sentido": "",
+      "gold_kind": "assessment",
+      "gold_unit_slug": "",
+      "computed_block_id": "bloco-11",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "t2_2026_1",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-06-14",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": true,
+        "source_section": "TDE Trabalho Discente Efetivo"
+      },
+      "manual_pin": "",
+      "degrau": "apply.py:97-104 is_out_of_disamb_scope -> temporal limpo (hipotese)",
+      "gold_na_janela": null,
+      "alavanca": "fora-de-escopo",
+      "chave_risco": "fora_de_escopo_disamb"
+    },
+    {
+      "curso": "MF",
+      "entry_id": "terminacao",
+      "id": "terminacao",
+      "classe": "vizinho±1",
+      "metodo": "disamb",
+      "banda": "media",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "janela_ids": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "previsto": "bloco-11",
+      "gold": "bloco-12",
+      "distancia": -1,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-02-verificacao-de-programas",
+      "computed_block_id": "bloco-11",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "terminacao",
+      "file_type": "zip",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-05-11",
+        "ordinal": "",
+        "categoria": "codigo-professor",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Verificação de Programas"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "fronteira-disamb",
+      "chave_risco": "metodo:disamb|media"
+    },
+    {
+      "curso": "SO",
+      "entry_id": "definicao-e-historico",
+      "id": "definicao-e-historico",
+      "classe": "vazio",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "janela_ids": [],
+      "previsto": "",
+      "gold": "bloco-03",
+      "distancia": null,
+      "sentido": "",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "computed_block_id": "bloco-03",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": false,
+      "title": "Definição e Histórico",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-03-10",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Introdução aos Sistemas Operacionais"
+      },
+      "manual_pin": "",
+      "degrau": "apply.py:117-119 engine.resolve None (funil-piso) (hipotese)",
+      "gold_na_janela": null,
+      "alavanca": "funil-piso",
+      "chave_risco": "engine-None"
+    },
+    {
+      "curso": "SO",
+      "entry_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "janela_ids": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "previsto": "bloco-06",
+      "gold": "bloco-09",
+      "distancia": -3,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-03-programacao-concorrente",
+      "computed_block_id": "bloco-09",
+      "computed_acertaria": true,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": true,
+      "title": "Lâminas CS 4244 Internet Programming Sockets Programming",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-03-10",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Sincronização e Comunicação de Processos"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|baixa"
+    },
+    {
+      "curso": "SO",
+      "entry_id": "laminas-sockets-material-alternativo-em-pt",
+      "id": "laminas-sockets-material-alternativo-em-pt",
+      "classe": "distante",
+      "metodo": "disamb",
+      "banda": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "janela_ids": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "previsto": "bloco-06",
+      "gold": "bloco-09",
+      "distancia": -3,
+      "sentido": "gold posterior",
+      "gold_kind": "class",
+      "gold_unit_slug": "unidade-03-programacao-concorrente",
+      "computed_block_id": "bloco-26",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": true,
+      "title": "Lâminas Sockets (material alternativo em PT)",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": false,
+        "posting_date": "2026-03-10",
+        "ordinal": "",
+        "categoria": "outros",
+        "escopo_prazo": false,
+        "fora_de_escopo_disamb": false,
+        "source_section": "Sincronização e Comunicação de Processos"
+      },
+      "manual_pin": "",
+      "degrau": "",
+      "gold_na_janela": false,
+      "alavanca": "revisar-disamb",
+      "chave_risco": "metodo:disamb|baixa"
+    },
+    {
+      "curso": "TCC",
+      "entry_id": "t1-enunciado",
+      "id": "t1-enunciado",
+      "classe": "vazio",
+      "metodo": "",
+      "banda": "",
+      "flag": null,
+      "provider": "",
+      "janela": [],
+      "janela_ids": [],
+      "previsto": "",
+      "gold": "bloco-04",
+      "distancia": null,
+      "sentido": "",
+      "gold_kind": "deliverable",
+      "gold_unit_slug": "",
+      "computed_block_id": "bloco-03",
+      "computed_acertaria": false,
+      "computed_metodo": "concept-fused",
+      "unidade_errada": null,
+      "title": "T1 - Enunciado",
+      "file_type": "pdf",
+      "sinais": {
+        "data_no_nome": "",
+        "secao_com_data": false,
+        "secao_com_semana": true,
+        "posting_date": "2026-03-18",
+        "ordinal": "",
+        "categoria": "trabalhos",
+        "escopo_prazo": true,
+        "fora_de_escopo_disamb": true,
+        "source_section": "Semana 3 - Operações de Minimização e Trabalho T1"
+      },
+      "manual_pin": "",
+      "degrau": "apply.py:92-94 due-window sem casar e resolve_unscoped None (hipotese)",
+      "gold_na_janela": null,
+      "alavanca": "prazo-sem-due",
+      "chave_risco": "escopo_prazo"
+    }
+  ],
+  "limitacoes": [
+    "Metodo/banda/provider/janela sao os campos GRAVADOS; o degrau exato da cascata nao e persistido.",
+    "Degrau dos vazios e HIPOTESE derivada de tier2_due_scope/is_out_of_disamb_scope avaliados agora sobre a entry gravada.",
+    "Alavancas sao hipoteses NAO medidas: 'tocadas' e 'em risco' sao contagens, nao ganho.",
+    "computed_block_id e o scorer de conceito; a regua de bloco nao o usa. 'computed_acertaria' e contrafactual de campo, nao de execucao."
+  ]
+}

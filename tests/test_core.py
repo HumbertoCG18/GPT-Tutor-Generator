@@ -5786,3 +5786,24 @@ def test_backlog_unit_status_explica_secao_que_venceu_o_bloco(tmp_path):
     assert status["source"] == "Seção do Moodle confirmada pelo texto (auto)"
     assert "mais confiante" not in status["note"]
     assert "seção" in status["note"].lower() and "bloco-07" in status["note"]
+
+
+def test_backlog_unit_status_explica_texto_que_venceu_o_vizinho(tmp_path):
+    # Revisao Astra (#48): `texto-vence-vizinho=` decide por proveniencia (bloco sem
+    # unidade propria), nao por confianca — a nota nao pode dizer "mais confiante".
+    from src.ui.dialogs import _resolve_backlog_unit_status
+
+    status = _resolve_backlog_unit_status(
+        {
+            "title": "t2 2026 1",
+            "category": "trabalhos",
+            "computed_unit_slug": "unidade-02",
+            "unit_match_reasons": ["winner_score=21.87", "texto-vence-vizinho=bloco-18"],
+            "unit_block_conflict": {"unit": "unidade-02", "block_unit": "unidade-03", "block_id": "bloco-20"},
+        },
+        tmp_path / "repo",
+    )
+
+    assert status["source"] == "Texto do material (bloco sem unidade própria)"
+    assert "mais confiante" not in status["note"]
+    assert "bloco-18" in status["note"] and "bloco-20" in status["note"]

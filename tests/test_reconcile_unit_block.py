@@ -184,3 +184,48 @@ def test_unidade_explicita_mantem_o_rotulo_mesmo_com_secao_corroborada():
     assert unit == "unidade-3"
     assert reasons == ["explicita-vence-bloco=bloco-2"]
     assert conflict == {"unit": "unidade-3", "block_unit": "unidade-2", "block_id": "bloco-2"}
+
+
+# --- #48: unidade herdada do vizinho nao vence texto gated discordante ---
+
+def test_texto_gated_vence_unidade_herdada_do_vizinho():
+    """Medido nos 7 cursos (21/09): onde o bloco nao tem unidade propria e o texto
+    gated discorda da herdada do vizinho, o vizinho acertava 0/5; unidade 244 -> 246."""
+    unit, reasons, conflict = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.55,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+        neighbor_block_id="bloco-1",
+    )
+    assert unit == "unidade-3"
+    assert reasons == ["texto-vence-vizinho=bloco-1"]
+    assert conflict == {"unit": "unidade-3", "block_unit": "unidade-1", "block_id": "bloco-2"}
+
+
+def test_vizinho_ainda_vence_texto_vazio_e_bloco_proprio_ainda_vence_texto():
+    unit, reasons, conflict = _call(
+        computed_unit_slug="", unit_confidence=0.3,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+        neighbor_block_id="bloco-1",
+    )
+    assert (unit, reasons, conflict) == ("unidade-1", ["herdada_do_bloco=bloco-2"], {})
+    unit, reasons, _ = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.9,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+    )
+    assert (unit, reasons) == ("unidade-1", ["reconciliada_do_bloco=bloco-2"])
+
+
+def test_manual_e_explicita_vencem_mesmo_com_vizinho():
+    unit, reasons, _ = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.9,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+        block_is_manual=True, neighbor_block_id="bloco-1",
+    )
+    assert (unit, reasons) == ("unidade-1", ["unidade_do_bloco_manual"])
+    unit, reasons, _ = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.95,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+        unit_is_explicit=True, neighbor_block_id="bloco-1",
+    )
+    assert (unit, reasons) == ("unidade-3", ["explicita-vence-bloco=bloco-2"])
+

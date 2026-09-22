@@ -25,7 +25,7 @@ from src.builder.routing.motor.anchor_engine import (
 from src.builder.routing.motor.card_stream import card_windows
 from src.builder.routing.motor.context import build_motor_context
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
-from src.builder.routing.motor.due_window import resolve_due_window, tier2_due_scope
+from src.builder.routing.motor.due_window import resolve_due_window, tde_section, tier2_due_scope
 from src.builder.routing.motor.llm_vote import content_key, detect_same_theme_series
 
 TEMPORAL_KEYS = (
@@ -100,6 +100,13 @@ def apply_anchor_engine(
             # (bibliografia/TDE) herdaria a decisão do gêmeo in-scope (cache-hit)
             # OU, na ordem inversa, gravaria decided[key]=None e apagaria a
             # decisão do gêmeo in-scope processado depois (cache-poison).
+            # #48 (2026-09-22): a seção TDE tenta o prazo antes de sair (t1/t2 do
+            # MF chegavam como `outros` e ficavam sem bloco); sem due casado, segue
+            # fora de escopo como antes — não cai no funil (B-4).
+            decision = resolve_due_window(entry, ctx) if tde_section(entry) else None
+            if decision is not None:
+                _write_temporal(entry, decision, ctx)
+                continue
             _clear_temporal(entry)
             continue
         # B-6: referencia sem card -> primeiro bloco de aula (convencao dos pinos).

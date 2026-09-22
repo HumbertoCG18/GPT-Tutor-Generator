@@ -4105,12 +4105,16 @@ def _resolve_backlog_unit_status(
     reasons = [str(r) for r in (entry_data.get("unit_match_reasons") or [])]
     conflict = entry_data.get("unit_block_conflict") or {}
     secao_venceu = any(r.startswith("secao-vence-bloco=") for r in reasons)
+    # #48: bloco sem unidade propria — o texto gated venceu a unidade herdada do vizinho.
+    vizinho_perdeu = next((r.split("=", 1)[1] for r in reasons if r.startswith("texto-vence-vizinho=")), "")
 
     def _auto_source(default: str) -> str:
         if any(r == "unidade_do_bloco_manual" for r in reasons):
             return "Definida pelo bloco manual"
         if secao_venceu:
             return "Seção do Moodle confirmada pelo texto (auto)"
+        if vizinho_perdeu:
+            return "Texto do material (bloco sem unidade própria)"
         if any(r.startswith("reconciliada_do_bloco=") for r in reasons):
             return "Reconciliada do bloco (auto)"
         if any(r.startswith("herdada_do_bloco=") for r in reasons):
@@ -4120,6 +4124,13 @@ def _resolve_backlog_unit_status(
     def _conflict_note() -> str:
         if not conflict:
             return ""
+        if vizinho_perdeu:
+            # #48: decide por proveniencia (a unidade do bloco veio do vizinho), nao por confianca.
+            return (
+                f" ⚠ Conflito: o bloco «{conflict.get('block_id', '')}» não tem unidade própria e herdaria "
+                f"«{conflict.get('block_unit', '')}» do vizinho «{vizinho_perdeu}», mas o texto do material "
+                f"aponta «{conflict.get('unit', '')}», que prevaleceu. Revise."
+            )
         if secao_venceu:
             # #47: vence sem comparar confianca — pode estar abaixo do gate de unidade.
             return (

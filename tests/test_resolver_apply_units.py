@@ -298,3 +298,31 @@ def test_secao_corroborada_vence_unidade_herdada_do_vizinho_sem_rotular_vizinho(
     assert out[0]["computed_unit_slug"] == "u2"
     assert any(r.startswith("secao-vence-bloco=") for r in out[0]["unit_match_reasons"])
     assert not any(r.startswith("herdada_do_vizinho") for r in out[0]["unit_match_reasons"])
+
+
+# --- #48: unidade herdada do vizinho nao vence texto gated discordante ---
+
+_BLOCKS_48 = [
+    {"id": "bloco-01", "block_uuid": "u-1", "unit_slug": "u1", "kind": "class", "period_start": "2026-03-01"},
+    {"id": "bloco-02", "block_uuid": "u-2", "unit_slug": "", "kind": "assessment", "period_start": "2026-03-08"},
+]
+
+
+def test_texto_gated_vence_unidade_herdada_do_vizinho_na_fase():
+    e = _entry(computed_block_id="u-2")
+    m = SimpleNamespace(slug="u2", confidence=0.7, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields([e], _BLOCKS_48, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert "texto-vence-vizinho=bloco-01" in out[0]["unit_match_reasons"]
+    assert not any(r.startswith("herdada_do_vizinho") for r in out[0]["unit_match_reasons"])
+    assert out[0]["unit_block_conflict"] == {"unit": "u2", "block_unit": "u1", "block_id": "bloco-02"}
+
+
+def test_texto_ambiguo_ou_abaixo_do_gate_ainda_herda_do_vizinho():
+    e = _entry(computed_block_id="u-2")
+    m = SimpleNamespace(slug="u2", confidence=0.3, ambiguous=True, reasons=["ambiguous"])
+    out = apply_unit_subunit_fields([e], _BLOCKS_48, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u1"
+    assert any(r.startswith("herdada_do_vizinho=bloco-01") for r in out[0]["unit_match_reasons"])
+    assert not any(r.startswith("texto-vence-vizinho") for r in out[0]["unit_match_reasons"])
+

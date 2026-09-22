@@ -1,0 +1,624 @@
+{
+  "head": "9220a57",
+  "variante": "V3-tde-prazo+assessment-hospeda",
+  "freeze_sha256_decisoes": "11a917bc9a1a6a605f00dafb28fe40136b0856e1d5e699bc43fd4bcae39c4baa",
+  "patch": {
+    "a_V1": "motor_apply.tier2_due_scope -> True quando source_section comeca com _TDE_PREFIX; senao delega ao original.",
+    "b_C": "due_window._NON_CONTENT_KINDS := frozenset(original - {'assessment'}); review e NON_ACADEMIC_KINDS intactos. resolve_due_window le o global no loop (:111), logo due-contain/due-straddle/band/flag ficam as regras reais.",
+    "restauracao": "ambos os atributos de modulo restaurados no __exit__."
+  },
+  "checks": {
+    "bloco_maior_igual_214": true,
+    "bloco": "214/237",
+    "zero_perda_de_bloco": true,
+    "nenhum_curso_regride_no_bloco": true,
+    "nenhum_curso_regride_na_unidade": false,
+    "nenhum_curso_regride_na_sub": true,
+    "unidade_244_284": false,
+    "unidade": "243/284",
+    "sub_primaria_84": true,
+    "sub_aceita_107": true,
+    "sub": "84/107/251",
+    "ACEITE": false
+  },
+  "perdas": {
+    "bloco": [],
+    "unidade": [
+      "t2-2026-1"
+    ],
+    "sub_primaria": [],
+    "sub_aceita": []
+  },
+  "ganhos": {
+    "bloco": [
+      "t2-2026-1"
+    ],
+    "unidade": [],
+    "sub_primaria": [],
+    "sub_aceita": []
+  },
+  "base_reproduzida": {
+    "bloco": "213/237",
+    "unidade": "244/284",
+    "sub_primaria": 84,
+    "sub_aceita": 107,
+    "bloco_ausente": 6
+  },
+  "totais": {
+    "base": {
+      "bloco_n": 237,
+      "bloco_ausente": 6,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 244,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 107
+    },
+    "V3-tde-prazo+assessment-hospeda": {
+      "bloco_n": 237,
+      "bloco_ausente": 6,
+      "bloco": 214,
+      "unidade_n": 284,
+      "unidade": 243,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 107
+    }
+  },
+  "cursos": {
+    "base": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 61,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 30,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7
+      }
+    },
+    "V3-tde-prazo+assessment-hospeda": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 54,
+        "unidade_n": 66,
+        "unidade": 60,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 30,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7
+      }
+    }
+  },
+  "mudancas": [
+    {
+      "curso": "MF",
+      "variante": "V3-tde-prazo+assessment-hospeda",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-11",
+      "kind_bloco_depois": "deliverable",
+      "unit_slug_bloco_depois": "",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "provider_depois": "due-window",
+      "decisao_depois": {
+        "block_ref": "bloco-11",
+        "conf": 0.95,
+        "band": "alta",
+        "flag": false,
+        "provider": "due-window",
+        "method": "due-contain",
+        "window": [
+          "bloco-11"
+        ]
+      },
+      "unidade_antes": "unidade-01-metodos-formais",
+      "unidade_depois": "unidade-02-verificacao-de-programas",
+      "razoes_unidade_antes": [
+        "winner_score=31.35",
+        "topic_score=8.98"
+      ],
+      "razoes_unidade_depois": [
+        "winner_score=31.35",
+        "topic_score=8.98",
+        "reconciliada_do_bloco=bloco-11",
+        "herdada_do_vizinho=bloco-10"
+      ],
+      "conf_unidade_depois": 0.5141112631709909,
+      "conflito_depois": {
+        "unit": "unidade-01-metodos-formais",
+        "block_unit": "unidade-02-verificacao-de-programas",
+        "block_id": "bloco-11"
+      },
+      "scorer_bruto_antes": {
+        "slug": "unidade-01-metodos-formais",
+        "confidence": 0.5141112631709909,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=31.35",
+          "topic_score=8.98"
+        ]
+      },
+      "scorer_bruto_depois": {
+        "slug": "unidade-01-metodos-formais",
+        "confidence": 0.5141112631709909,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=31.35",
+          "topic_score=8.98"
+        ]
+      },
+      "sub_antes": "especificacao-de-funcoes-recursivas",
+      "sub_depois": "sistema-de-prova",
+      "gold": {
+        "bloco": "bloco-11",
+        "unidade": [
+          "unidade-01-metodos-formais"
+        ],
+        "sub_primario": [],
+        "gold_id": "t1-2026-1",
+        "na_regua": false
+      },
+      "na_regua": false,
+      "delta": {}
+    },
+    {
+      "curso": "MF",
+      "variante": "V3-tde-prazo+assessment-hospeda",
+      "id": "t2-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-20",
+      "kind_bloco_depois": "assessment",
+      "unit_slug_bloco_depois": "",
+      "metodo_antes": null,
+      "metodo_depois": "due-contain",
+      "band_depois": "alta",
+      "flag_depois": false,
+      "provider_depois": "due-window",
+      "decisao_depois": {
+        "block_ref": "bloco-20",
+        "conf": 0.95,
+        "band": "alta",
+        "flag": false,
+        "provider": "due-window",
+        "method": "due-contain",
+        "window": [
+          "bloco-20"
+        ]
+      },
+      "unidade_antes": "unidade-02-verificacao-de-programas",
+      "unidade_depois": "unidade-03-verificacao-de-modelos",
+      "razoes_unidade_antes": [
+        "winner_score=21.87",
+        "topic_score=0.14",
+        "herdada_do_vizinho=bloco-10"
+      ],
+      "razoes_unidade_depois": [
+        "winner_score=21.87",
+        "topic_score=0.14",
+        "reconciliada_do_bloco=bloco-20",
+        "herdada_do_vizinho=bloco-18"
+      ],
+      "conf_unidade_depois": 0.5486555697823303,
+      "conflito_depois": {
+        "unit": "unidade-02-verificacao-de-programas",
+        "block_unit": "unidade-03-verificacao-de-modelos",
+        "block_id": "bloco-20"
+      },
+      "scorer_bruto_antes": {
+        "slug": "unidade-02-verificacao-de-programas",
+        "confidence": 0.5486555697823303,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=21.87",
+          "topic_score=0.14"
+        ]
+      },
+      "scorer_bruto_depois": {
+        "slug": "unidade-02-verificacao-de-programas",
+        "confidence": 0.5486555697823303,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=21.87",
+          "topic_score=0.14"
+        ]
+      },
+      "sub_antes": "",
+      "sub_depois": "modelos-de-kripke",
+      "gold": {
+        "bloco": "bloco-20",
+        "unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "sub_primario": [],
+        "gold_id": "t2-2026-1",
+        "na_regua": true
+      },
+      "na_regua": true,
+      "delta": {
+        "bloco": [
+          false,
+          true
+        ],
+        "unidade": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "curso": "ES2",
+      "variante": "V3-tde-prazo+assessment-hospeda",
+      "id": "t1-2026-1",
+      "tde": true,
+      "category": "outros",
+      "source_section": "TDE Trabalho Discente Efetivo",
+      "bloco_antes": "",
+      "bloco_depois": "bloco-13",
+      "kind_bloco_depois": "assessment",
+      "unit_slug_bloco_depois": "",
+      "metodo_antes": null,
+      "metodo_depois": "due-straddle",
+      "band_depois": "media",
+      "flag_depois": true,
+      "provider_depois": "due-window",
+      "decisao_depois": {
+        "block_ref": "bloco-13",
+        "conf": 0.75,
+        "band": "media",
+        "flag": true,
+        "provider": "due-window",
+        "method": "due-straddle",
+        "window": [
+          "bloco-13"
+        ]
+      },
+      "unidade_antes": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "unidade_depois": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+      "razoes_unidade_antes": [
+        "winner_score=12.81",
+        "topic_score=7.35",
+        "herdada_do_vizinho=bloco-12"
+      ],
+      "razoes_unidade_depois": [
+        "winner_score=12.81",
+        "topic_score=7.35",
+        "herdada_do_vizinho=bloco-12"
+      ],
+      "conf_unidade_depois": 0.688078388677191,
+      "conflito_depois": {},
+      "scorer_bruto_antes": {
+        "slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "confidence": 0.688078388677191,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=12.81",
+          "topic_score=7.35"
+        ]
+      },
+      "scorer_bruto_depois": {
+        "slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "confidence": 0.688078388677191,
+        "ambiguous": false,
+        "reasons": [
+          "winner_score=12.81",
+          "topic_score=7.35"
+        ]
+      },
+      "sub_antes": "entrega-continua-cd",
+      "sub_depois": "entrega-continua-cd",
+      "gold": null,
+      "na_regua": false,
+      "delta": {}
+    }
+  ],
+  "risco_due_straddle": {
+    "MF": {
+      "metodos_base": {
+        "disamb": 36,
+        "titulo-topico": 9,
+        "prep-prova": 2,
+        "meta-generica": 1,
+        "janela-1": 16,
+        "-": 2,
+        "due-contain": 1
+      },
+      "due_window_base_n": 1,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "SO": {
+      "metodos_base": {
+        "janela-1": 24,
+        "disamb": 7,
+        "secao-geral": 5,
+        "prep-prova": 4,
+        "meta-generica": 1,
+        "-": 1
+      },
+      "due_window_base_n": 0,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "IA": {
+      "metodos_base": {
+        "disamb": 14,
+        "disamb-curto": 4,
+        "janela-1": 39,
+        "due-contain": 3,
+        "-": 1
+      },
+      "due_window_base_n": 3,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "ES2": {
+      "metodos_base": {
+        "titulo-topico": 4,
+        "disamb": 1,
+        "prep-prova": 4,
+        "janela-1": 16,
+        "irmao-card": 8,
+        "meta-generica": 1,
+        "-": 1
+      },
+      "due_window_base_n": 0,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "TCC": {
+      "metodos_base": {
+        "meta-generica": 1,
+        "janela-1": 24,
+        "prep-prova": 1,
+        "-": 1
+      },
+      "due_window_base_n": 0,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "CG": {
+      "metodos_base": {
+        "janela-1": 33,
+        "disamb": 28,
+        "titulo-topico": 11,
+        "disamb-curto": 1,
+        "irmao-card": 2,
+        "-": 8,
+        "prep-prova": 1,
+        "meta-generica": 2
+      },
+      "due_window_base_n": 0,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    },
+    "FR": {
+      "metodos_base": {
+        "meta-generica": 1,
+        "janela-1": 9,
+        "-": 2,
+        "disamb": 8
+      },
+      "due_window_base_n": 0,
+      "due_straddle_base_n": 0,
+      "mudaram_com_C": 0,
+      "itens": []
+    }
+  },
+  "placar_lateral_por_identidade": {
+    "totais": {
+      "base": {
+        "bloco_n": 237,
+        "bloco_ausente": 5,
+        "bloco": 213,
+        "unidade_n": 284,
+        "unidade": 245,
+        "sub_n": 251,
+        "sub_primaria": 84,
+        "sub_aceita": 107
+      },
+      "V3-tde-prazo+assessment-hospeda": {
+        "bloco_n": 237,
+        "bloco_ausente": 5,
+        "bloco": 215,
+        "unidade_n": 284,
+        "unidade": 243,
+        "sub_n": 251,
+        "sub_primaria": 84,
+        "sub_aceita": 107
+      }
+    },
+    "ids_casados_por_identidade": [
+      {
+        "curso": "MF",
+        "gold_id": "t1-2026-1",
+        "id": "t1-2026-1"
+      }
+    ]
+  },
+  "tde_por_curso": {
+    "MF": [
+      {
+        "id": "t1-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "t1_2026_1"
+      },
+      {
+        "id": "t1-2026-1-thy",
+        "category": "codigo-professor",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "T1_2026_1"
+      },
+      {
+        "id": "t2-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "t2_2026_1"
+      }
+    ],
+    "SO": [],
+    "IA": [
+      {
+        "id": "p2-202401",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "P2 2024.01"
+      },
+      {
+        "id": "p2-202402",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "P2 2024.02"
+      },
+      {
+        "id": "prova-1-2024-02",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "Prova 1 2024 02"
+      },
+      {
+        "id": "prova-1-202402",
+        "category": "provas",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "Prova 1 2024.02"
+      }
+    ],
+    "ES2": [
+      {
+        "id": "t1-2026-1",
+        "category": "outros",
+        "source_section": "TDE Trabalho Discente Efetivo",
+        "title": "t1_2026_1"
+      }
+    ],
+    "TCC": [],
+    "CG": [],
+    "FR": []
+  },
+  "scope": "apply_anchor_engine e apply_unit_subunit_fields reais; patch so em atributos de modulo, restaurado; voter=None.",
+  "limitations": [
+    "Ausentes permanecem no denominador da regua oficial; placar lateral e informativo.",
+    "Sem build/rebuild, rede ou LLM; sidecar de votos nao usado.",
+    "Unidade so re-rodada onde a variante mudou bloco; demais cursos herdam a base."
+  ]
+}
