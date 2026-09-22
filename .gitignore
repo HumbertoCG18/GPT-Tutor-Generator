@@ -289,3 +289,5 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 /.claude/**/*.bak*
 /.agents/**/*.bak*
 /.workflow/local/
+# Legado: estado de worktrees ainda nao migradas.
+/.workflow-local/
