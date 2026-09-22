@@ -13,6 +13,10 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Callable, Optional
 
+from src.builder.extraction.content_taxonomy import (
+    _exam_code_from_block,
+    load_internal_content_taxonomy,
+)
 from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation, set_block_override
@@ -115,24 +119,24 @@ def _format_date_ddmmyy(raw: str) -> str:
 
 def _extract_exam_code(block: dict) -> str:
     """Extrai o código da avaliação (P1/P2/PS/G2/PF/EXAME) dos labels crus do bloco.
-    Ordem de prioridade evita confundir PS/G2 com o padrão P\\d genérico."""
-    parts = [str(block.get("topic_text") or ""), str(block.get("period_label") or "")]
-    for sess in block.get("sessions", []) or []:
-        if isinstance(sess, dict):
-            parts.append(str(sess.get("label") or ""))
-    text = " ".join(parts).lower()
-    if re.search(r"\bps\b", text):
-        return "PS"
-    if re.search(r"\bg2\b", text):
-        return "G2"
-    if re.search(r"\bpf\b", text) or "prova final" in text:
-        return "PF"
-    m = re.search(r"\bp\s*(\d+)\b", text)
-    if m:
-        return f"P{int(m.group(1))}"
-    if "exame" in text:
-        return "EXAME"
-    return ""
+    Fonte única: content_taxonomy._exam_code_from_block (era regex duplicada aqui)."""
+    return _exam_code_from_block(block)
+
+
+def _available_unit_slugs(blocks: list, course_dir: Path) -> list:
+    """Unidades selecionáveis no override manual: as da taxonomia (mesmo sem
+    bloco ainda mapeado, ex. unidade 06 do FR) ∪ as que algum bloco já tem."""
+    slugs = {
+        str(b.get("unit_slug") or "").strip()
+        for b in blocks
+        if str(b.get("unit_slug") or "").strip()
+    }
+    taxonomy = load_internal_content_taxonomy(Path(course_dir).parent)
+    for unit in taxonomy.get("units", []) or []:
+        slug = str(unit.get("slug") or "").strip()
+        if slug:
+            slugs.add(slug)
+    return sorted(slugs)
 
 
 
@@ -638,12 +642,8 @@ class TimelineDashboardView(tk.Frame):
         self._manifest_path = manifest_path
         self._course_dir = timeline_path.parent
         self._kind_filter = {block_kind(b) for b in blocks}
-        # unidades disponíveis pra atribuição manual (as que algum bloco já tem)
-        self._unit_slugs = sorted({
-            str(b.get("unit_slug") or "").strip()
-            for b in blocks
-            if str(b.get("unit_slug") or "").strip()
-        })
+        # unidades disponíveis pra atribuição manual (taxonomia ∪ as que algum bloco já tem)
+        self._unit_slugs = _available_unit_slugs(blocks, self._course_dir)
         # injeta contagem de arquivos por bloco (usada por sort/coluna Arq.)
         for block in blocks:
             bid = str(block.get("id") or "")

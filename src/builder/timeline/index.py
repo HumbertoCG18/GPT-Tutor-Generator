@@ -884,7 +884,10 @@ def timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
 # (Cutover passo 3: o serializador fantasma _serialize_timeline_index que vivia
 # aqui morreu — serializador único = core_utils.persist_enriched_timeline_index.)
 
-_TEACHING_PLAN_ASSESSMENT_START = re.compile(r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b", re.IGNORECASE)
+_TEACHING_PLAN_ASSESSMENT_START = re.compile(
+    r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b|^[^:]{0,60}\bAVALIA[ÇC][AÃ]O\s*:?\s*$",
+    re.IGNORECASE,
+)
 _TEACHING_PLAN_ASSESSMENT_STOP = re.compile(
     r"^(?:BIBLIOGRAFIA|METODOLOGIA|CRONOGRAMA|CONTEUDO PROGRAMATICO|CONTEUDO)\b",
     re.IGNORECASE,
@@ -1161,7 +1164,11 @@ def _assessment_block_label(block: Dict[str, object]) -> str:
             text += " " + str(sess.get("label", "") or "")
     if not _normalize_match_text(text):
         return ""
-    return _canonical_assessment_label(text, normalize_match_text=_normalize_match_text)
+    # Import local: evita ciclo com content_taxonomy -> routing.file_map,
+    # que importa timeline.index tardiamente dentro de funcao.
+    from src.builder.extraction.content_taxonomy import _exam_code_from_text
+
+    return _exam_code_from_text(text)
 
 
 _FULL_SCOPE_LABELS = {"PS", "G2", "PF", "EXAME"}

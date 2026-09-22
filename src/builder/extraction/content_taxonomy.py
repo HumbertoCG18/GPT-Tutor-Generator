@@ -976,11 +976,11 @@ def _exam_code_from_text(text: str) -> str:
         return "PS"
     if re.search(r"\bg2\b", t):
         return "G2"
-    if re.search(r"\bpf\b", t) or "prova final" in t:
+    if re.search(r"\bpf\b", t) or re.search(r"\bp\s+final\b", t) or "prova final" in t:
         return "PF"
-    m = re.search(r"\bp\s*(\d+)\b", t)
+    m = re.search(r"\bp\s*(\d+)\b|\bprova\s*-?\s*(\d)\b(?![\s/.\-]*\d)", t)
     if m:
-        return f"P{int(m.group(1))}"
+        return f"P{int(m.group(1) or m.group(2))}"
     if "exame" in t:
         return "EXAME"
     return ""

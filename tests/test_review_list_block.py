@@ -47,6 +47,15 @@ def test_exam_code_from_text():
     assert _exam_code_from_text("g2 prova") == "G2"
     assert _exam_code_from_text("prova final") == "PF"
     assert _exam_code_from_text("nada aqui") == ""
+    assert _exam_code_from_text("prova 2 prova") == "P2"
+    assert _exam_code_from_text("1 dia 26 11 2026 prova 2 prova") == "P2"
+    assert _exam_code_from_text("revisao prova 2") == "P2"
+    assert _exam_code_from_text("prova 26 11 2026") == ""
+    assert _exam_code_from_text("prova ps") == "PS"
+    assert _exam_code_from_text("prova 6/11") == ""
+    assert _exam_code_from_text("prova 6.11") == ""
+    assert _exam_code_from_text("prova 6 11") == ""
+    assert _exam_code_from_text("p final") == "PF"
 
 
 def test_exam_code_from_block():

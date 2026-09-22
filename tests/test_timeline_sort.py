@@ -83,11 +83,13 @@ def test_extract_exam_code():
     assert _extract_exam_code(blk("prova final")) == "PF"
     assert _extract_exam_code(blk("exame")) == "EXAME"
     assert _extract_exam_code(blk("aula normal")) == ""
+    assert _extract_exam_code(blk("prova 2 prova")) == "P2"
 
 
 def test_block_name():
     from src.ui.timeline_dashboard import _block_name
     assert _block_name({"sessions": [{"label": "prova p1 prova"}]}, "assessment") == "P1"
+    assert _block_name({"sessions": [{"label": "prova 2 prova"}]}, "assessment") == "P2"
     assert _block_name({}, "assessment") == "Avaliação"
     assert _block_name({}, "review") == "Revisão"
     assert _block_name({"primary_topic_label": "Indução"}, "class") == "Indução"
