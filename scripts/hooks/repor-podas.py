@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """Repoe as podas de skills do ECC e do claude-mem no Codex e no agy.
 
-Nenhum dos dois tem equivalente ao skillOverrides do Claude Code. O controle e
+Codex tambem usa seletores nativos por nome em skills.config (ver verify.py no
+agent-workflow-lab); esta poda e complementar. No agy, o controle e
 podar a copia que cada um materializa — e essa poda nao sobrevive a um
 `agy plugin install` ou a um update do plugin no Codex, que recopiam tudo.
 

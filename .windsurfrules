@@ -1,44 +1,12 @@
-<!--
-code-review-graph MCP tools
-last_updated: 2026-09-11
--->
-## MCP Tools: code-review-graph
+# GPT-Tutor-Generator
 
-**IMPORTANT: This project has a knowledge graph. ALWAYS use the
-code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
-the codebase.** The graph is faster, cheaper (fewer tokens), and gives
-you structural context (callers, dependents, test coverage) that file
-scanning cannot.
+Instruções completas: `AGENTS.md`, `.mex/ROUTER.md` e `.workflow/README.md`.
 
-### When to use graph tools FIRST
+## Navegação estrutural
 
-- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
-- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
-- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
-- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
-- **Architecture questions**: `get_architecture_overview` + `list_communities`
-
-Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
-
-Before calling a `mcp__code-review-graph__*` tool, load its schema with
-`ToolSearch select:<tool-name>`.
-
-### Key Tools
-
-| Tool | Use when |
-|------|----------|
-| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context` | Need source snippets for review — token-efficient |
-| `get_impact_radius` | Understanding blast radius of a change |
-| `get_affected_flows` | Finding which execution paths are impacted |
-| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes` | Finding functions/classes by name or keyword |
-| `get_architecture_overview` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
-
-### Workflow
-
-1. The graph auto-updates on file changes (via hooks).
-2. Use `detect_changes` for code review.
-3. Use `get_affected_flows` to understand impact.
-4. Use `query_graph` pattern="tests_for" to check coverage.
+Graphify é o grafo principal deste projeto (`graphify-out/graph.json`). Para
+estrutura, callers e dependências: Graphify explain/path com o símbolo exato;
+query aberta só com budget. Sem cobertura, ambiguidade ou falha: codebase-memory-mcp
+como fallback, conforme `.mex/patterns/codegraph-fallback.md`. O grafo orienta a
+navegação; confirmar no código-fonte antes de concluir ou editar.
+code-review-graph foi removido: não usar suas ferramentas.

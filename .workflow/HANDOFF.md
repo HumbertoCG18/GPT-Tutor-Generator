@@ -1,22 +1,31 @@
-# Retomar no Claude Code
+# Continuidade do workflow
 
-Ler README.md e workflow.md nesta pasta. Fable executa; Astra revisa somente leitura,
-com no máximo uma chamada automática por tarefa relevante. Fable corrige os achados.
-Escolha explícita prevalece; gates, escopo e permissões permanecem aplicáveis.
+21/09, decisão seguinte: matriz T0..T3/C1..C3 aprovada; investigador decide classificação,
+coordenador registra. Fonte operacional: references/routing.md; Sonnet/Opus/Fable por nível,
+perfis AGY Pro3.1/Sonnet4.6/Opus4.6Thinking opcionais, sem superioridade medida.
+Fluxo diurno Claude→AGY já validado para auditoria (estado routing-daytime-44.md no checkout principal).
+Nova matriz é política documental; seleção de cada perfil ainda não validada E2E. Noite não liberada.
 
-A rodada de configuração e o piloto comparativo terminaram. Não repetir testes ou
-chamadas de modelo apenas ao abrir a sessão. A lista de pendências não é uma tarefa nova aprovada;
-consultar PENDING.md para os aceites ainda abertos.
+21/09: reconciliação #43/#44 distribuída; política sob demanda em references/campaigns.md,
+fila viva em docs/reports/pendencias.md. Evidências e baseline: laboratório/private/campaign-43-reconcile-20260921/.
+Histórico tracker preservado byte a byte; Gate 2 pendente, sem commit. Estado #43 no worktree próprio.
+Próximo: validar fluxo diurno; depois apresentar diagnóstico #42 delimitado para autorização específica.
 
-Para a tarefa de produto escolhida pelo usuário, ler .mex/ROUTER.md, tracker e handoff
-vivos. Conferir branch/HEAD e alterações locais antes de editar. Preservar trabalho de
-outras sessões. Estado concluído em .workflow-local/active-task.md não deve ser reaberto
-para renovar o limite de chamadas. Nova tarefa recebe ID próprio e escopo aprovado.
+Frente atual: [#44](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/44).
+Consolidação em agent-workflow-lab-context-44 e GPT-Tutor-Generator-context-44.
+Fonte instalada: agent-workflow-lab/workflow.md; detalhes por ação em references/.
 
-Usar contratos de agents/ inline se o papel nativo não estiver disponível. Não inferir
-registro nativo a partir de arquivo instalado. Consumir o artefato final do Codex, não a
-concatenação de mensagens: o piloto observou aviso do claude-mem antes do JSON final.
-Não reiniciar o worker por quota. Credenciais ficam nas configurações locais, nunca no brief.
+Estado da #44: .workflow/local/active-task.md (legado: .workflow-local/) do worktree correspondente; não reutilizar estado do motor.
 
-Commits desta rodada são locais; nenhum push foi solicitado. A continuação normal é
-trabalhar na tarefa que o usuário escolher, não abrir outra rodada de configuração.
+Night-agent: #42, pacote em agent-workflow-lab-night-42/pilots/night-agent.
+Fila compartilhada: #43, worktree GPT-Tutor-Generator-campaign-43; inspecionar antes de estender.
+Smoke noturno anterior falhou por unexpected_model; generic_night/Codex executor/suspensão bloqueados.
+Não reiniciar claude-mem por quota nem repetir revisão consumida. Commit/merge seguem seus Gates.
+
+22/09: frente do motor — bloco 214/237 (>90 %) com #47 commitada (9220a57) e #48 implementada sem commit (Gate 2 pendente); CRU-02 (subunidade) iniciada com protocolo do Astra, workers W-P1/W-Q interrompidos. Handoff: docs/reports/2026-09-22-handoff-motor-cru02-claude.md; estado em .workflow/local/active-task.md.
+
+22/09 (tarde), frente do motor: #48 (b726d4c) e #49 (410592d) commitadas; bloco 217/237 (91,6 %), unidade 246/284,
+subunidade cru 84/251. CRU-02 medida ate o teto da declaracao (W-P1, W-P2, W-S: alias por expressao 118/251;
+guarda + pergunta por material 213/251 com custo 261). Handoff: docs/reports/2026-09-22-handoff-motor-49-claude.md.
+Proximo: decisao do usuario sobre o rumo da CRU-02; nenhum Gate 1 aberto.
+22/09 13:40: W-T (unidade: regras reprovadas; 12 links offline = unico caminho para 90 %) e W-U (relacoes explicitas cobrem 56/106 mas nao discriminam) conferidos; adendo no handoff de 22/09; decisoes (a)/(b)/(c) pendentes do usuario.
