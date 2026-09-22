@@ -1,0 +1,266 @@
+{
+  "checks": {
+    "base_reproduzida_239_213_84_108": true,
+    "bloco_213_de_237": true,
+    "mudancas_sao_as_8_medidas": true,
+    "nenhum_curso_regride_na_unidade": true,
+    "sub_primaria_ao_menos_84": true,
+    "unidade_244_de_284": true,
+    "zero_perda_de_unidade": true
+  },
+  "cursos": {
+    "CG": {
+      "antes": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 42,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "unidade": 70,
+        "unidade_n": 93
+      },
+      "depois": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "unidade": 72,
+        "unidade_n": 93
+      }
+    },
+    "ES2": {
+      "antes": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "depois": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 25,
+        "unidade_n": 28
+      }
+    },
+    "FR": {
+      "antes": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "depois": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      }
+    },
+    "IA": {
+      "antes": {
+        "bloco": 38,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "depois": {
+        "bloco": 38,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      }
+    },
+    "MF": {
+      "antes": {
+        "bloco": 53,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 61,
+        "unidade_n": 66
+      },
+      "depois": {
+        "bloco": 53,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 61,
+        "unidade_n": 66
+      }
+    },
+    "SO": {
+      "antes": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 27,
+        "unidade_n": 37
+      },
+      "depois": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 30,
+        "unidade_n": 37
+      }
+    },
+    "TCC": {
+      "antes": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      },
+      "depois": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    }
+  },
+  "custo_aceito": "subunidade aceita 108 -> 107 (acoplamento da 2a passada), aceito pelo usuario em 21/09",
+  "issue": 47,
+  "mudancas_de_unidade": [
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "0704-laminas-comunicacao-e-sincronizacao",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=20.87",
+        "topic_score=9.16",
+        "secao-vence-bloco=bloco-06"
+      ]
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "0904-laminas-semaforos",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=12.88",
+        "topic_score=7.35",
+        "secao-vence-bloco=bloco-06"
+      ]
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "14-04-troca-de-mensagens",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=19.59",
+        "topic_score=15.36",
+        "secao-vence-bloco=bloco-07"
+      ]
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "1404-laminas-ipc",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=24.11",
+        "topic_score=9.16",
+        "secao-vence-bloco=bloco-07"
+      ]
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "1404-troca-de-mensagens",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=19.59",
+        "topic_score=15.36",
+        "secao-vence-bloco=bloco-07"
+      ]
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=1.76",
+        "topic_score=0.00",
+        "secao-vence-bloco=bloco-06"
+      ]
+    },
+    {
+      "antes": "unidade-04-processo-de-visualizacao-2d",
+      "curso": "CG",
+      "depois": "unidade-08-sintese-de-imagens-realisticas",
+      "id": "maptextures",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=23.93",
+        "topic_score=17.35",
+        "secao-vence-bloco=bloco-06"
+      ]
+    },
+    {
+      "antes": "unidade-04-processo-de-visualizacao-2d",
+      "curso": "CG",
+      "depois": "unidade-08-sintese-de-imagens-realisticas",
+      "id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "medida_nas_8": true,
+      "razoes": [
+        "winner_score=30.23",
+        "topic_score=25.50",
+        "secao-vence-bloco=bloco-06"
+      ]
+    }
+  ],
+  "perdas_de_unidade": [],
+  "totais": {
+    "antes": {
+      "bloco": 213,
+      "bloco_n": 237,
+      "sub_aceita": 108,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": 239,
+      "unidade_n": 284
+    },
+    "depois": {
+      "bloco": 213,
+      "bloco_n": 237,
+      "sub_aceita": 107,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": 244,
+      "unidade_n": 284
+    }
+  }
+}

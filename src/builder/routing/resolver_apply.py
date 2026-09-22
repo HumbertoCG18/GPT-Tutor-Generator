@@ -452,6 +452,7 @@ def apply_unit_subunit_fields(
                 texto_para_unidade = f"{markdown_text}\n\n{resumo}" if markdown_text else resumo
 
         manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
+        section_unit = ""
         if manual_unit:
             resolved_unit_slug, unit_confidence = manual_unit, 1.0
             unit_ambiguous, unit_reasons = False, ["manual"]
@@ -465,6 +466,11 @@ def apply_unit_subunit_fields(
             unit_confidence = match.confidence
             unit_ambiguous = match.ambiguous
             unit_reasons = list(match.reasons)
+            # #47: a secao so vale corroborada pelo vencedor BRUTO do texto (antes do gate).
+            # Sem isso, medido: troca a unidade de uma aula do TCC e perde a subunidade.
+            secao = str(getattr(match, "section_slug", "") or "")
+            if secao and not unit_ambiguous and secao == resolved_unit_slug:
+                section_unit = secao
 
         gated_unit = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
 
@@ -513,6 +519,7 @@ def apply_unit_subunit_fields(
             block_is_manual=block_is_manual,
             has_manual_unit=bool(manual_unit),
             unit_is_explicit=any(str(r).startswith("unidade-explicita=") for r in (unit_reasons or [])),
+            section_unit_slug=section_unit,
         )
         if vizinho and reconciled == block_unit and not manual_unit:
             suffix = list(suffix) + [f"herdada_do_vizinho={vizinho}"]

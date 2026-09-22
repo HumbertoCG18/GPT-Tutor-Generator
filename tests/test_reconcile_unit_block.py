@@ -112,3 +112,75 @@ def test_unidade_do_bloco_ou_do_vizinho_de_conteudo():
     assert unit_of_block_or_neighbor("b0", blocks) == ("u1", "b1")
     assert unit_of_block_or_neighbor("b4", blocks) == ("u2", "")
     assert unit_of_block_or_neighbor("inexistente", blocks) == ("", "")
+
+
+# --- #47: secao mapeada ao plano, corroborada pelo texto, vence unidade herdada do bloco ---
+
+def test_secao_corroborada_vence_bloco_discordante():
+    """2026-09-21 (#47): medido pela fase real nos 7 cursos, unidade 239 -> 244/284,
+    0 perda; a secao com vencedor unico no plano acerta 45/45."""
+    unit, reasons, conflict = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.7,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        section_unit_slug="unidade-3",
+    )
+    assert unit == "unidade-3"
+    assert reasons == ["secao-vence-bloco=bloco-2"]
+    assert conflict == {"unit": "unidade-3", "block_unit": "unidade-2", "block_id": "bloco-2"}
+
+
+def test_secao_corroborada_vence_heranca_quando_unidade_nao_passou_no_gate():
+    unit, reasons, conflict = _call(
+        computed_unit_slug="", unit_confidence=0.3,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        section_unit_slug="unidade-3",
+    )
+    assert unit == "unidade-3"
+    assert reasons == ["secao-vence-bloco=bloco-2"]
+    assert conflict == {"unit": "unidade-3", "block_unit": "unidade-2", "block_id": "bloco-2"}
+
+
+def test_secao_igual_ao_bloco_mantem_a_heranca():
+    unit, reasons, conflict = _call(
+        computed_unit_slug="", unit_confidence=0.3,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        section_unit_slug="unidade-2",
+    )
+    assert unit == "unidade-2"
+    assert reasons == ["herdada_do_bloco=bloco-2"]
+    assert conflict == {}
+
+
+def test_bloco_manual_e_unidade_manual_vencem_a_secao():
+    unit, reasons, _ = _call(
+        computed_unit_slug="unidade-3", unit_confidence=1.0,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        block_is_manual=True, section_unit_slug="unidade-3",
+    )
+    assert (unit, reasons) == ("unidade-2", ["unidade_do_bloco_manual"])
+    unit, reasons, _ = _call(
+        computed_unit_slug="unidade-1", unit_confidence=1.0,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        has_manual_unit=True, section_unit_slug="unidade-3",
+    )
+    assert (unit, reasons) == ("unidade-1", [])
+
+
+def test_sem_bloco_a_secao_nao_dispara():
+    unit, reasons, conflict = _call(
+        computed_unit_slug="unidade-1", unit_confidence=0.8, section_unit_slug="unidade-3",
+    )
+    assert unit == "unidade-1"
+    assert reasons == [] and conflict == {}
+
+
+def test_unidade_explicita_mantem_o_rotulo_mesmo_com_secao_corroborada():
+    """Revisao Astra (#47): explicita e secao ao mesmo tempo — a explicita decide e rotula."""
+    unit, reasons, conflict = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.95,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-2",
+        unit_is_explicit=True, section_unit_slug="unidade-3",
+    )
+    assert unit == "unidade-3"
+    assert reasons == ["explicita-vence-bloco=bloco-2"]
+    assert conflict == {"unit": "unidade-3", "block_unit": "unidade-2", "block_id": "bloco-2"}

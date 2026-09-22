@@ -1,0 +1,2263 @@
+{
+ "scope": "Replay read-only da subunidade (1a + 2a passada reais) sobre os builds existentes, com scorer trocavel.\n\nSem build, sem rede, sem LLM, sem escrita em src/ nem nos builds (entries em deepcopy). Gold so para avaliar.\nA unidade e a GRAVADA no manifest (`computed_unit_slug`): o replay isola o eixo de subunidade.\n\n  base  scorer de subtopico atual (`timeline/index.py:_score_entry_against_taxonomy_topic`)\n  h2    base + bonus por token exclusivo entre irmaos da unidade presente em heading (0.8) / titulo (0.55)\n  h3    scorer de UNIDADE (`file_map.py:score_entry_against_unit`) sobre os subtopicos irmaos como pseudo-unidades;\n        indice CONGELADO na 1a taxonomia — defeito apontado pela pesquisa Astra de 21/09, mantido so para o pareamento\n  h3a   h3 com o indice refeito por taxonomia: enxerga os aliases que a 2a passada propaga\n  h3ad  h3a + frases de label/alias deduplicadas por forma normalizada\n  h3b   pos-hoc: base inteira; h3 so onde 1a e 2a passada nao decidiram (vazio/ambiguo/empate), sem sobrepor decisao\n\nFidelidade = predicao do replay `base` igual a gravada. Sem fidelidade, ganho/perda de h2/h3 e so indicio.\n",
+ "total": {
+  "manifest_processadas": 329,
+  "manifest_fieis": 329,
+  "n": 251,
+  "ausente": 8,
+  "gold_fiel": 243,
+  "acerto_gravado": 84,
+  "acerto_base": 84,
+  "acerto_h2": 86,
+  "acerto_h3": 88,
+  "acerto_h3a": 95,
+  "acerto_h3ad": 95,
+  "acerto_h3b": 89,
+  "h2_ganho": 4,
+  "h2_perda": 2,
+  "h3_ganho": 18,
+  "h3_perda": 14,
+  "h3a_ganho": 18,
+  "h3a_perda": 7,
+  "h3ad_ganho": 19,
+  "h3ad_perda": 8,
+  "h3b_ganho": 5,
+  "h3b_perda": 0,
+  "h2_abst_erro": 7,
+  "h3_abst_erro": 11,
+  "h3a_abst_erro": 14,
+  "h3ad_abst_erro": 14,
+  "h3b_abst_erro": 11,
+  "h3a_abst_acerto": 7,
+  "h3ad_abst_acerto": 7,
+  "h3_abst_acerto": 5,
+  "h3b_abst_acerto": 5,
+  "h2_abst_acerto": 2
+ },
+ "courses": {
+  "MF": {
+   "manifest_processadas": 66,
+   "manifest_fieis": 66,
+   "n": 58,
+   "ausente": 1,
+   "gold_fiel": 57,
+   "acerto_gravado": 25,
+   "acerto_base": 25,
+   "acerto_h2": 25,
+   "acerto_h3": 25,
+   "acerto_h3a": 25,
+   "acerto_h3ad": 25,
+   "acerto_h3b": 25,
+   "h2_ganho": 1,
+   "h2_perda": 1,
+   "h3_ganho": 2,
+   "h3_perda": 2,
+   "h3a_ganho": 1,
+   "h3a_perda": 1,
+   "h3ad_ganho": 1,
+   "h3ad_perda": 1,
+   "h3b_ganho": 0,
+   "h3b_perda": 0,
+   "h2_abst_erro": 4,
+   "h3_abst_erro": 9,
+   "h3a_abst_erro": 9,
+   "h3ad_abst_erro": 9,
+   "h3b_abst_erro": 9
+  },
+  "SO": {
+   "manifest_processadas": 39,
+   "manifest_fieis": 39,
+   "n": 15,
+   "gold_fiel": 15,
+   "acerto_gravado": 7,
+   "acerto_base": 7,
+   "acerto_h2": 7,
+   "acerto_h3": 4,
+   "acerto_h3a": 9,
+   "acerto_h3ad": 9,
+   "acerto_h3b": 7,
+   "h2_ganho": 0,
+   "h2_perda": 0,
+   "h3_ganho": 0,
+   "h3_perda": 3,
+   "h3a_ganho": 2,
+   "h3a_perda": 0,
+   "h3ad_ganho": 2,
+   "h3ad_perda": 0,
+   "h3b_ganho": 0,
+   "h3b_perda": 0,
+   "h3a_abst_acerto": 2,
+   "h3ad_abst_acerto": 2
+  },
+  "IA": {
+   "manifest_processadas": 61,
+   "manifest_fieis": 61,
+   "n": 39,
+   "gold_fiel": 39,
+   "acerto_gravado": 4,
+   "acerto_base": 4,
+   "acerto_h2": 4,
+   "acerto_h3": 4,
+   "acerto_h3a": 4,
+   "acerto_h3ad": 4,
+   "acerto_h3b": 4,
+   "h2_ganho": 0,
+   "h2_perda": 0,
+   "h3_ganho": 0,
+   "h3_perda": 0,
+   "h3a_ganho": 0,
+   "h3a_perda": 0,
+   "h3ad_ganho": 0,
+   "h3ad_perda": 0,
+   "h3b_ganho": 0,
+   "h3b_perda": 0
+  },
+  "ES2": {
+   "manifest_processadas": 34,
+   "manifest_fieis": 34,
+   "n": 28,
+   "gold_fiel": 28,
+   "acerto_gravado": 7,
+   "acerto_base": 7,
+   "acerto_h2": 7,
+   "acerto_h3": 13,
+   "acerto_h3a": 14,
+   "acerto_h3ad": 15,
+   "acerto_h3b": 10,
+   "h2_ganho": 0,
+   "h2_perda": 0,
+   "h3_ganho": 6,
+   "h3_perda": 0,
+   "h3a_ganho": 8,
+   "h3a_perda": 1,
+   "h3ad_ganho": 9,
+   "h3ad_perda": 1,
+   "h3b_ganho": 3,
+   "h3b_perda": 0,
+   "h3_abst_acerto": 3,
+   "h3a_abst_acerto": 3,
+   "h3ad_abst_acerto": 3,
+   "h3b_abst_acerto": 3,
+   "h3_abst_erro": 1,
+   "h3a_abst_erro": 1,
+   "h3ad_abst_erro": 1,
+   "h3b_abst_erro": 1
+  },
+  "TCC": {
+   "manifest_processadas": 26,
+   "manifest_fieis": 26,
+   "n": 11,
+   "gold_fiel": 11,
+   "acerto_gravado": 7,
+   "acerto_base": 7,
+   "acerto_h2": 6,
+   "acerto_h3": 9,
+   "acerto_h3a": 9,
+   "acerto_h3ad": 9,
+   "acerto_h3b": 7,
+   "h2_ganho": 0,
+   "h2_perda": 1,
+   "h3_ganho": 2,
+   "h3_perda": 0,
+   "h3a_ganho": 2,
+   "h3a_perda": 0,
+   "h3ad_ganho": 2,
+   "h3ad_perda": 0,
+   "h3b_ganho": 0,
+   "h3b_perda": 0,
+   "h2_abst_erro": 2
+  },
+  "CG": {
+   "manifest_processadas": 84,
+   "manifest_fieis": 84,
+   "n": 82,
+   "gold_fiel": 75,
+   "acerto_gravado": 28,
+   "acerto_base": 28,
+   "acerto_h2": 30,
+   "acerto_h3": 28,
+   "acerto_h3a": 30,
+   "acerto_h3ad": 30,
+   "acerto_h3b": 29,
+   "h2_ganho": 2,
+   "h2_perda": 0,
+   "h3_ganho": 5,
+   "h3_perda": 5,
+   "h3a_ganho": 3,
+   "h3a_perda": 1,
+   "h3ad_ganho": 4,
+   "h3ad_perda": 2,
+   "h3b_ganho": 1,
+   "h3b_perda": 0,
+   "h3a_abst_erro": 3,
+   "h3ad_abst_erro": 3,
+   "h2_abst_acerto": 1,
+   "h3_abst_acerto": 1,
+   "h3b_abst_acerto": 1,
+   "ausente": 7,
+   "h3a_abst_acerto": 1,
+   "h3ad_abst_acerto": 1
+  },
+  "FR": {
+   "manifest_processadas": 19,
+   "manifest_fieis": 19,
+   "n": 18,
+   "gold_fiel": 18,
+   "acerto_gravado": 6,
+   "acerto_base": 6,
+   "acerto_h2": 7,
+   "acerto_h3": 5,
+   "acerto_h3a": 4,
+   "acerto_h3ad": 3,
+   "acerto_h3b": 7,
+   "h2_ganho": 1,
+   "h2_perda": 0,
+   "h3_ganho": 3,
+   "h3_perda": 4,
+   "h3a_ganho": 2,
+   "h3a_perda": 4,
+   "h3ad_ganho": 1,
+   "h3ad_perda": 4,
+   "h3b_ganho": 1,
+   "h3b_perda": 0,
+   "h2_abst_acerto": 1,
+   "h3_abst_acerto": 1,
+   "h3a_abst_acerto": 1,
+   "h3ad_abst_acerto": 1,
+   "h3b_abst_acerto": 1,
+   "h2_abst_erro": 1,
+   "h3_abst_erro": 1,
+   "h3a_abst_erro": 1,
+   "h3ad_abst_erro": 1,
+   "h3b_abst_erro": 1
+  }
+ },
+ "detalhe": [
+  {
+   "curso": "MF",
+   "entry_id": "logicaproposicional-sintaxe",
+   "gold": [
+    "linguagens-de-especificacao-e-logicas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "",
+   "reasons_gravado": [
+    "empate-exato 4x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 4x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosisabelle2",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "gravado": "especificacao-de-funcoes-recursivas",
+   "base": "especificacao-de-funcoes-recursivas",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "especificacao-de-funcoes-recursivas",
+   "h3ad": "especificacao-de-funcoes-recursivas",
+   "h3b": "especificacao-de-funcoes-recursivas",
+   "reasons_gravado": [
+    "winner_score=4.58",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=4.58",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "logicaproposicional-semantica",
+   "gold": [
+    "linguagens-de-especificacao-e-logicas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "provadores-de-teoremas",
+   "h3": "provadores-de-teoremas",
+   "h3a": "provadores-de-teoremas",
+   "h3ad": "provadores-de-teoremas",
+   "h3b": "provadores-de-teoremas",
+   "reasons_gravado": [
+    "empate-exato 2x score=0.12"
+   ],
+   "reasons_base": [
+    "empate-exato 2x score=0.12"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "gravado": "especificacao-de-funcoes-recursivas",
+   "base": "especificacao-de-funcoes-recursivas",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "especificacao-de-funcoes-recursivas",
+   "h3ad": "especificacao-de-funcoes-recursivas",
+   "h3b": "especificacao-de-funcoes-recursivas",
+   "reasons_gravado": [
+    "winner_score=3.49",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.49",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosisabelle",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "gravado": "provadores-de-teoremas",
+   "base": "provadores-de-teoremas",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "provadores-de-teoremas",
+   "h3a": "provadores-de-teoremas",
+   "h3ad": "provadores-de-teoremas",
+   "h3b": "provadores-de-teoremas",
+   "reasons_gravado": [
+    "winner_score=0.99"
+   ],
+   "reasons_base": [
+    "winner_score=0.99"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "intro",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "",
+   "reasons_gravado": [
+    "empate-exato 4x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 4x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "provas",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "",
+   "reasons_gravado": [
+    "empate-exato 4x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 4x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exercicioscorrecaoterminacao",
+   "gold": [
+    "correcao-parcial-e-total"
+   ],
+   "gravado": "invariante-e-variante-de-laco",
+   "base": "invariante-e-variante-de-laco",
+   "h2": "invariante-e-variante-de-laco",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "invariante-e-variante-de-laco",
+   "reasons_gravado": [
+    "winner_score=0.99"
+   ],
+   "reasons_base": [
+    "winner_score=0.99"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "logicadehoare",
+   "gold": [
+    "logica-de-hoare"
+   ],
+   "gravado": "logica-de-hoare",
+   "base": "logica-de-hoare",
+   "h2": "logica-de-hoare",
+   "h3": "logica-de-hoare",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "logica-de-hoare",
+   "reasons_gravado": [
+    "winner_score=4.27"
+   ],
+   "reasons_base": [
+    "winner_score=4.27"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "logicadehoare2",
+   "gold": [
+    "logica-de-hoare"
+   ],
+   "gravado": "invariante-e-variante-de-laco",
+   "base": "invariante-e-variante-de-laco",
+   "h2": "invariante-e-variante-de-laco",
+   "h3": "logica-de-hoare",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "invariante-e-variante-de-laco",
+   "h3b": "invariante-e-variante-de-laco",
+   "reasons_gravado": [
+    "winner_score=10.89",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=10.89",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosdafny1",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "correcao-parcial-e-total",
+   "base": "correcao-parcial-e-total",
+   "h2": "correcao-parcial-e-total",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "correcao-parcial-e-total",
+   "reasons_gravado": [
+    "winner_score=0.16"
+   ],
+   "reasons_base": [
+    "winner_score=0.16"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosdafny2",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "pre-e-pos-condicoes",
+   "base": "pre-e-pos-condicoes",
+   "h2": "pre-e-pos-condicoes",
+   "h3": "pre-e-pos-condicoes",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "pre-e-pos-condicoes",
+   "reasons_gravado": [
+    "winner_score=4.27"
+   ],
+   "reasons_base": [
+    "winner_score=4.27"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosdafny3",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosdafny4",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "correcao-parcial-e-total",
+   "base": "correcao-parcial-e-total",
+   "h2": "correcao-parcial-e-total",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "correcao-parcial-e-total",
+   "reasons_gravado": [
+    "winner_score=0.16"
+   ],
+   "reasons_base": [
+    "winner_score=0.16"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosdafny5",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "correcao-parcial-e-total",
+   "base": "correcao-parcial-e-total",
+   "h2": "correcao-parcial-e-total",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "correcao-parcial-e-total",
+   "reasons_gravado": [
+    "winner_score=0.99"
+   ],
+   "reasons_base": [
+    "winner_score=0.99"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exercicioslogicatemporal",
+   "gold": [
+    "fundamentos-de-logicas-temporais"
+   ],
+   "gravado": "modelos-de-kripke",
+   "base": "modelos-de-kripke",
+   "h2": "modelos-de-kripke",
+   "h3": "logica-temporal-linear",
+   "h3a": "logica-temporal-linear",
+   "h3ad": "logica-temporal-linear",
+   "h3b": "modelos-de-kripke",
+   "reasons_gravado": [
+    "winner_score=0.99"
+   ],
+   "reasons_base": [
+    "winner_score=0.99"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "classes-parte1",
+   "gold": [
+    "pre-e-pos-condicoes"
+   ],
+   "gravado": "invariante-e-variante-de-laco",
+   "base": "invariante-e-variante-de-laco",
+   "h2": "invariante-e-variante-de-laco",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "invariante-e-variante-de-laco",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "colecoes-arrays",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "colecoes-conjuntos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "colecoes-sequences",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exercicios-conjuntos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "hoare",
+   "gold": [
+    "logica-de-hoare"
+   ],
+   "gravado": "correcao-parcial-e-total",
+   "base": "correcao-parcial-e-total",
+   "h2": "logica-de-hoare",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "correcao-parcial-e-total",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "introducao-zip",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "invariantes",
+   "gold": [
+    "invariante-e-variante-de-laco"
+   ],
+   "gravado": "sistema-de-prova",
+   "base": "sistema-de-prova",
+   "h2": "sistema-de-prova",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "sistema-de-prova",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "terminacao",
+   "gold": [
+    "correcao-parcial-e-total"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "tiposindutivos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "verificacao-de-programas",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exemplos-zip",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-modelos"
+   ],
+   "gravado": "maquinas-de-estado",
+   "base": "maquinas-de-estado",
+   "h2": "maquinas-de-estado",
+   "h3": "logica-temporal-linear",
+   "h3a": "logica-temporal-linear",
+   "h3ad": "logica-temporal-linear",
+   "h3b": "maquinas-de-estado",
+   "reasons_gravado": [
+    "winner_score=0.11"
+   ],
+   "reasons_base": [
+    "winner_score=0.11"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "gravado": "especificacao-de-funcoes-recursivas",
+   "base": "especificacao-de-funcoes-recursivas",
+   "h2": "especificacao-de-funcoes-recursivas",
+   "h3": "",
+   "h3a": "especificacao-de-funcoes-recursivas",
+   "h3ad": "especificacao-de-funcoes-recursivas",
+   "h3b": "especificacao-de-funcoes-recursivas",
+   "reasons_gravado": [
+    "winner_score=3.49",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.49",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "classes-parte2",
+   "gold": [
+    "verificacao-de-programas"
+   ],
+   "gravado": "invariante-e-variante-de-laco",
+   "base": "invariante-e-variante-de-laco",
+   "h2": "invariante-e-variante-de-laco",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "invariante-e-variante-de-laco",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "MF",
+   "entry_id": "exercicios-arrays",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "gravado": "sistema-de-prova",
+   "base": "sistema-de-prova",
+   "h2": "sistema-de-prova",
+   "h3": "verificacao-de-programas",
+   "h3a": "verificacao-de-programas",
+   "h3ad": "verificacao-de-programas",
+   "h3b": "sistema-de-prova",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exercicios",
+   "gold": [
+    "algoritmos-de-escalonamento"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "",
+   "h3a": "algoritmos-de-escalonamento",
+   "h3ad": "algoritmos-de-escalonamento",
+   "h3b": "",
+   "reasons_gravado": [
+    "sem-sinal (winner_score=0)"
+   ],
+   "reasons_base": [
+    "sem-sinal (winner_score=0)"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "definicao-e-historico",
+   "gold": [
+    "evolucao-historica"
+   ],
+   "gravado": "servicos-dos-sistemas-operacionais",
+   "base": "servicos-dos-sistemas-operacionais",
+   "h2": "chamadas-de-sistema",
+   "h3": "servicos-dos-sistemas-operacionais",
+   "h3a": "chamadas-de-sistema",
+   "h3ad": "chamadas-de-sistema",
+   "h3b": "servicos-dos-sistemas-operacionais",
+   "reasons_gravado": [
+    "winner_score=0.44"
+   ],
+   "reasons_base": [
+    "winner_score=0.44"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+   "gold": [
+    "chamadas-de-sistema"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "",
+   "h3a": "chamadas-de-sistema",
+   "h3ad": "chamadas-de-sistema",
+   "h3b": "",
+   "reasons_gravado": [
+    "sem-sinal (winner_score=0)"
+   ],
+   "reasons_base": [
+    "sem-sinal (winner_score=0)"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+   "gold": [
+    "chamadas-de-sistema"
+   ],
+   "gravado": "chamadas-de-sistema",
+   "base": "chamadas-de-sistema",
+   "h2": "chamadas-de-sistema",
+   "h3": "",
+   "h3a": "chamadas-de-sistema",
+   "h3ad": "chamadas-de-sistema",
+   "h3b": "chamadas-de-sistema",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+   "gold": [
+    "chamadas-de-sistema"
+   ],
+   "gravado": "chamadas-de-sistema",
+   "base": "chamadas-de-sistema",
+   "h2": "chamadas-de-sistema",
+   "h3": "",
+   "h3a": "chamadas-de-sistema",
+   "h3ad": "chamadas-de-sistema",
+   "h3b": "chamadas-de-sistema",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+   "gold": [
+    "chamadas-de-sistema"
+   ],
+   "gravado": "chamadas-de-sistema",
+   "base": "chamadas-de-sistema",
+   "h2": "chamadas-de-sistema",
+   "h3": "",
+   "h3a": "chamadas-de-sistema",
+   "h3ad": "chamadas-de-sistema",
+   "h3b": "chamadas-de-sistema",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-threads-em-c-exemplo1",
+   "gold": [
+    "conceitos-basicos"
+   ],
+   "gravado": "algoritmos-de-escalonamento",
+   "base": "algoritmos-de-escalonamento",
+   "h2": "algoritmos-de-escalonamento",
+   "h3": "",
+   "h3a": "algoritmos-de-escalonamento",
+   "h3ad": "algoritmos-de-escalonamento",
+   "h3b": "algoritmos-de-escalonamento",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "SO",
+   "entry_id": "exemplo-threads-em-c-exemplo2",
+   "gold": [
+    "conceitos-basicos"
+   ],
+   "gravado": "algoritmos-de-escalonamento",
+   "base": "algoritmos-de-escalonamento",
+   "h2": "algoritmos-de-escalonamento",
+   "h3": "",
+   "h3a": "algoritmos-de-escalonamento",
+   "h3ad": "algoritmos-de-escalonamento",
+   "h3b": "algoritmos-de-escalonamento",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "IA",
+   "entry_id": "exemplo-complementar-classificacao-com-arvores-de-decisao",
+   "gold": [
+    "modelos-preditivos"
+   ],
+   "gravado": "metricas-de-avaliacao",
+   "base": "metricas-de-avaliacao",
+   "h2": "metricas-de-avaliacao",
+   "h3": "metricas-de-avaliacao",
+   "h3a": "introducao-ao-aprendizado-de-maquina",
+   "h3ad": "introducao-ao-aprendizado-de-maquina",
+   "h3b": "metricas-de-avaliacao",
+   "reasons_gravado": [
+    "winner_score=5.16"
+   ],
+   "reasons_base": [
+    "winner_score=5.16"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "revisaoarquiteturapadroes",
+   "gold": [
+    "conceito-de-arquitetura-de-software"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "",
+   "h3a": "estilos-e-padroes-arquiteturais",
+   "h3ad": "estilos-e-padroes-arquiteturais",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=8.40",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=8.40",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "microsservicos2",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "cliente-servidor",
+   "h3a": "estilos-e-padroes-arquiteturais",
+   "h3ad": "estilos-e-padroes-arquiteturais",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=15.23",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=15.23",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro1-introducao",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "cliente-servidor",
+   "h3a": "cliente-servidor",
+   "h3ad": "cliente-servidor",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro2-nameserver",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "cliente-servidor",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "servicos",
+   "gold": [
+    "orientada-a-servicos"
+   ],
+   "gravado": "orientada-a-servicos",
+   "base": "orientada-a-servicos",
+   "h2": "orientada-a-servicos",
+   "h3": "orientada-a-servicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "orientada-a-servicos",
+   "reasons_gravado": [
+    "winner_score=10.40"
+   ],
+   "reasons_base": [
+    "winner_score=10.40"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "microsservicos5",
+   "gold": [
+    "plataformas-de-devops"
+   ],
+   "gravado": "entrega-continua-cd",
+   "base": "entrega-continua-cd",
+   "h2": "entrega-continua-cd",
+   "h3": "gerenciamento-da-configuracao",
+   "h3a": "entrega-continua-cd",
+   "h3ad": "entrega-continua-cd",
+   "h3b": "entrega-continua-cd",
+   "reasons_gravado": [
+    "winner_score=2.16",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=2.16",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "microsservicos7",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "gerenciamento-da-configuracao",
+   "base": "gerenciamento-da-configuracao",
+   "h2": "gerenciamento-da-configuracao",
+   "h3": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3ad": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3b": "gerenciamento-da-configuracao",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro1",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro2",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro3",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro4-circuitbreaker",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=1.15",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=1.15",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro6-conteiners-composicao",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "gerenciamento-da-configuracao",
+   "base": "gerenciamento-da-configuracao",
+   "h2": "gerenciamento-da-configuracao",
+   "h3": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3ad": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3b": "gerenciamento-da-configuracao",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro7-filas",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "gerenciamento-da-configuracao",
+   "base": "gerenciamento-da-configuracao",
+   "h2": "gerenciamento-da-configuracao",
+   "h3": "gerenciamento-da-configuracao",
+   "h3a": "gerenciamento-da-configuracao",
+   "h3ad": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3b": "gerenciamento-da-configuracao",
+   "reasons_gravado": [
+    "winner_score=1.32"
+   ],
+   "reasons_base": [
+    "winner_score=1.32"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro8-autenticacao-autorizacao",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "gerenciamento-da-configuracao",
+   "base": "gerenciamento-da-configuracao",
+   "h2": "gerenciamento-da-configuracao",
+   "h3": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3ad": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "h3b": "gerenciamento-da-configuracao",
+   "reasons_gravado": [
+    "winner_score=0.12"
+   ],
+   "reasons_base": [
+    "winner_score=0.12"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "microsservicos",
+   "gold": [
+    "orientada-a-microsservicos"
+   ],
+   "gravado": "estilos-e-padroes-arquiteturais",
+   "base": "estilos-e-padroes-arquiteturais",
+   "h2": "estilos-e-padroes-arquiteturais",
+   "h3": "cliente-servidor",
+   "h3a": "estilos-e-padroes-arquiteturais",
+   "h3ad": "estilos-e-padroes-arquiteturais",
+   "h3b": "estilos-e-padroes-arquiteturais",
+   "reasons_gravado": [
+    "winner_score=5.21",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=5.21",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro3-gateway",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "gravado": "cliente-servidor",
+   "base": "cliente-servidor",
+   "h2": "cliente-servidor",
+   "h3": "cliente-servidor",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "cliente-servidor",
+   "reasons_gravado": [
+    "winner_score=1.35"
+   ],
+   "reasons_base": [
+    "winner_score=1.35"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "devops",
+   "gold": [
+    "conceito-de-devops"
+   ],
+   "gravado": "integracao-continua-ci",
+   "base": "integracao-continua-ci",
+   "h2": "integracao-continua-ci",
+   "h3": "gerenciamento-da-configuracao",
+   "h3a": "integracao-continua-ci",
+   "h3ad": "integracao-continua-ci",
+   "h3b": "integracao-continua-ci",
+   "reasons_gravado": [
+    "winner_score=10.14"
+   ],
+   "reasons_base": [
+    "winner_score=10.14"
+   ]
+  },
+  {
+   "curso": "ES2",
+   "entry_id": "roteiro4",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3a": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3ad": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "h3b": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+   "reasons_gravado": [
+    "empate-exato 5x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 5x score=0.02"
+   ]
+  },
+  {
+   "curso": "TCC",
+   "entry_id": "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",
+   "gold": [
+    "conjuntos-enumeraveis"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "",
+   "reasons_gravado": [
+    "revisao-sem-assunto-dominante (winner_score=1.17 < 7.0)"
+   ],
+   "reasons_base": [
+    "revisao-sem-assunto-dominante (winner_score=1.17 < 7.0)"
+   ]
+  },
+  {
+   "curso": "TCC",
+   "entry_id": "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor",
+   "gold": [
+    "argumento-diagonal-de-cantor-e-conjuntos-incontaveis"
+   ],
+   "gravado": "conjuntos-enumeraveis",
+   "base": "conjuntos-enumeraveis",
+   "h2": "conjuntos-enumeraveis",
+   "h3": "argumento-diagonal-de-cantor-e-conjuntos-incontaveis",
+   "h3a": "argumento-diagonal-de-cantor-e-conjuntos-incontaveis",
+   "h3ad": "argumento-diagonal-de-cantor-e-conjuntos-incontaveis",
+   "h3b": "conjuntos-enumeraveis",
+   "reasons_gravado": [
+    "winner_score=10.66"
+   ],
+   "reasons_base": [
+    "winner_score=10.66"
+   ]
+  },
+  {
+   "curso": "TCC",
+   "entry_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+   "gold": [
+    ""
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "",
+   "reasons_gravado": [
+    "revisao-sem-assunto-dominante (winner_score=0.11 < 7.0)"
+   ],
+   "reasons_base": [
+    "revisao-sem-assunto-dominante (winner_score=0.11 < 7.0)"
+   ]
+  },
+  {
+   "curso": "TCC",
+   "entry_id": "aula-09-variacoes-de-maquinas-de-turing",
+   "gold": [
+    "variacoes-de-maquinas-de-turing"
+   ],
+   "gravado": "maquinas-de-turing",
+   "base": "maquinas-de-turing",
+   "h2": "maquinas-de-turing",
+   "h3": "variacoes-de-maquinas-de-turing",
+   "h3a": "variacoes-de-maquinas-de-turing",
+   "h3ad": "variacoes-de-maquinas-de-turing",
+   "h3b": "maquinas-de-turing",
+   "reasons_gravado": [
+    "winner_score=14.08",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=14.08",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "modelagem3d",
+   "gold": [
+    "formas-de-representacao"
+   ],
+   "gravado": "representacao-aramada",
+   "base": "representacao-aramada",
+   "h2": "representacao-aramada",
+   "h3": "tecnicas-de-modelagem-3d",
+   "h3a": "tecnicas-de-modelagem-3d",
+   "h3ad": "tecnicas-de-modelagem-3d",
+   "h3b": "representacao-aramada",
+   "reasons_gravado": [
+    "winner_score=5.78"
+   ],
+   "reasons_base": [
+    "winner_score=5.78"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "atividade",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "",
+   "h3a": "algoritmo-z-buffer",
+   "h3ad": "algoritmo-z-buffer",
+   "h3b": "",
+   "reasons_gravado": [
+    "empate-exato 7x score=0.02"
+   ],
+   "reasons_base": [
+    "empate-exato 7x score=0.02"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "basico3d-py",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "gravado": "pipeline-de-visualizacao-3d",
+   "base": "pipeline-de-visualizacao-3d",
+   "h2": "pipeline-de-visualizacao-3d",
+   "h3": "",
+   "h3a": "algoritmo-z-buffer",
+   "h3ad": "algoritmo-z-buffer",
+   "h3b": "pipeline-de-visualizacao-3d",
+   "reasons_gravado": [
+    "winner_score=0.11"
+   ],
+   "reasons_base": [
+    "winner_score=0.11"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "opengl3d",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "conceito-de-camera-sintetica",
+   "h3": "conceito-de-camera-sintetica",
+   "h3a": "algoritmo-z-buffer",
+   "h3ad": "algoritmo-z-buffer",
+   "h3b": "conceito-de-camera-sintetica",
+   "reasons_gravado": [
+    "empate-exato 2x score=2.04"
+   ],
+   "reasons_base": [
+    "empate-exato 2x score=2.04"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "vis3d",
+   "gold": [
+    "projecoes"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "",
+   "h3a": "algoritmo-z-buffer",
+   "h3ad": "algoritmo-z-buffer",
+   "h3b": "",
+   "reasons_gravado": [
+    "empate-exato 2x score=9.46"
+   ],
+   "reasons_base": [
+    "empate-exato 2x score=9.46"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "basico3d-cpp",
+   "gold": [
+    "tecnicas-de-modelagem-3d"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "operacoes-com-vetores",
+   "h3": "algoritmos-de-poligonos",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=0.39"
+   ],
+   "reasons_base": [
+    "winner_score=0.39"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "basico3d-py-zip",
+   "gold": [
+    "tecnicas-de-modelagem-3d"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "operacoes-com-vetores",
+   "h3": "",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=31.68",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=31.68",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "elemoculto",
+   "gold": [
+    "algoritmos-de-remocao-de-elementos-ocultos"
+   ],
+   "gravado": "algoritmo-z-buffer",
+   "base": "algoritmo-z-buffer",
+   "h2": "algoritmos-de-remocao-de-elementos-ocultos",
+   "h3": "algoritmos-de-remocao-de-elementos-ocultos",
+   "h3a": "algoritmo-z-buffer",
+   "h3ad": "algoritmo-z-buffer",
+   "h3b": "algoritmo-z-buffer",
+   "reasons_gravado": [
+    "winner_score=10.18"
+   ],
+   "reasons_base": [
+    "winner_score=10.18"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exemplozbuffer",
+   "gold": [
+    "algoritmo-z-buffer"
+   ],
+   "gravado": "algoritmo-z-buffer",
+   "base": "algoritmo-z-buffer",
+   "h2": "algoritmo-z-buffer",
+   "h3": "algoritmos-de-remocao-de-elementos-ocultos",
+   "h3a": "algoritmos-de-remocao-de-elementos-ocultos",
+   "h3ad": "algoritmos-de-remocao-de-elementos-ocultos",
+   "h3b": "algoritmo-z-buffer",
+   "reasons_gravado": [
+    "winner_score=0.14"
+   ],
+   "reasons_base": [
+    "winner_score=0.14"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios",
+   "gold": [
+    "aplicacoes"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=11.34",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=11.34",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "opengl-cpp",
+   "gold": [
+    "aplicacoes"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "operacoes-com-vetores",
+   "h3": "algoritmos-de-poligonos",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=0.39"
+   ],
+   "reasons_base": [
+    "winner_score=0.39"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "opengl-py",
+   "gold": [
+    "aplicacoes"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "operacoes-com-vetores",
+   "h3": "",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=39.22",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=39.22",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "openglbasico",
+   "gold": [
+    "aplicacoes"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "algoritmos-de-poligonos",
+   "h3": "algoritmos-de-poligonos",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=0.44"
+   ],
+   "reasons_base": [
+    "winner_score=0.44"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "matematica",
+   "gold": [
+    "operacoes-com-vetores"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.45",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "recorte",
+   "gold": [
+    "recorte"
+   ],
+   "gravado": "recorte",
+   "base": "recorte",
+   "h2": "recorte",
+   "h3": "recorte",
+   "h3a": "recorte",
+   "h3ad": "2d-3d-mao-direita-e-mao-esquerda",
+   "h3b": "recorte",
+   "reasons_gravado": [
+    "winner_score=14.16"
+   ],
+   "reasons_base": [
+    "winner_score=14.16"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "transformacoesgeometricas",
+   "gold": [
+    ""
+   ],
+   "gravado": "recorte",
+   "base": "recorte",
+   "h2": "recorte",
+   "h3": "",
+   "h3a": "sistema-de-coordenadas-cartesianas",
+   "h3ad": "sistema-de-coordenadas-cartesianas",
+   "h3b": "recorte",
+   "reasons_gravado": [
+    "winner_score=3.49",
+    "ambiguous",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.49",
+    "ambiguous",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "bezier-animacao",
+   "gold": [
+    "bezier-e-algoritmo-de-casteljau"
+   ],
+   "gravado": "bezier-e-algoritmo-de-casteljau",
+   "base": "bezier-e-algoritmo-de-casteljau",
+   "h2": "bezier-e-algoritmo-de-casteljau",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "bezier-e-algoritmo-de-casteljau",
+   "h3ad": "bezier-e-algoritmo-de-casteljau",
+   "h3b": "bezier-e-algoritmo-de-casteljau",
+   "reasons_gravado": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "bezier-cpp",
+   "gold": [
+    "bezier-e-algoritmo-de-casteljau"
+   ],
+   "gravado": "bezier-e-algoritmo-de-casteljau",
+   "base": "bezier-e-algoritmo-de-casteljau",
+   "h2": "bezier-e-algoritmo-de-casteljau",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "bezier-e-algoritmo-de-casteljau",
+   "h3ad": "bezier-e-algoritmo-de-casteljau",
+   "h3b": "bezier-e-algoritmo-de-casteljau",
+   "reasons_gravado": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "bezier-py",
+   "gold": [
+    "bezier-e-algoritmo-de-casteljau"
+   ],
+   "gravado": "bezier-e-algoritmo-de-casteljau",
+   "base": "bezier-e-algoritmo-de-casteljau",
+   "h2": "bezier-e-algoritmo-de-casteljau",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "bezier-e-algoritmo-de-casteljau",
+   "h3ad": "bezier-e-algoritmo-de-casteljau",
+   "h3b": "bezier-e-algoritmo-de-casteljau",
+   "reasons_gravado": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "bezier-python",
+   "gold": [
+    "bezier-e-algoritmo-de-casteljau"
+   ],
+   "gravado": "bezier-e-algoritmo-de-casteljau",
+   "base": "bezier-e-algoritmo-de-casteljau",
+   "h2": "bezier-e-algoritmo-de-casteljau",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "bezier-e-algoritmo-de-casteljau",
+   "h3ad": "bezier-e-algoritmo-de-casteljau",
+   "h3b": "bezier-e-algoritmo-de-casteljau",
+   "reasons_gravado": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=10.95",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "curvas",
+   "gold": [
+    "representacao-de-curvas-parametricas"
+   ],
+   "gravado": "hermite",
+   "base": "hermite",
+   "h2": "hermite",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "representacao-de-curvas-parametricas",
+   "h3ad": "representacao-de-curvas-parametricas",
+   "h3b": "hermite",
+   "reasons_gravado": [
+    "winner_score=4.84"
+   ],
+   "reasons_base": [
+    "winner_score=4.84"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios-sobre-curvas",
+   "gold": [
+    "catmull-rom"
+   ],
+   "gravado": "hermite",
+   "base": "hermite",
+   "h2": "hermite",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "representacao-de-curvas-parametricas",
+   "h3ad": "representacao-de-curvas-parametricas",
+   "h3b": "hermite",
+   "reasons_gravado": [
+    "winner_score=4.92"
+   ],
+   "reasons_base": [
+    "winner_score=4.92"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios-sobre-curvas-html",
+   "gold": [
+    "catmull-rom"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "",
+   "h3": "",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=3.53",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=3.53",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9",
+   "gold": [
+    "entidades-geometricas"
+   ],
+   "gravado": "algoritmos-de-poligonos",
+   "base": "algoritmos-de-poligonos",
+   "h2": "algoritmos-de-poligonos",
+   "h3": "algoritmos-de-poligonos",
+   "h3a": "operacoes-com-vetores",
+   "h3ad": "operacoes-com-vetores",
+   "h3b": "algoritmos-de-poligonos",
+   "reasons_gravado": [
+    "winner_score=0.44"
+   ],
+   "reasons_base": [
+    "winner_score=0.44"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84",
+   "gold": [
+    "algoritmos-de-deteccao-e-calculo-de-interseccao"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "",
+   "h3": "",
+   "h3a": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+   "h3ad": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+   "h3b": "",
+   "reasons_gravado": [
+    "sem-sinal (winner_score=0)"
+   ],
+   "reasons_base": [
+    "sem-sinal (winner_score=0)"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "pagina-com-videos-sobre-curvas-parametricas-63d902",
+   "gold": [
+    "representacao-de-curvas-parametricas"
+   ],
+   "gravado": "hermite",
+   "base": "hermite",
+   "h2": "hermite",
+   "h3": "representacao-de-curvas-parametricas",
+   "h3a": "representacao-de-curvas-parametricas",
+   "h3ad": "representacao-de-curvas-parametricas",
+   "h3b": "hermite",
+   "reasons_gravado": [
+    "winner_score=4.84"
+   ],
+   "reasons_base": [
+    "winner_score=4.84"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+   "gold": [
+    "introducao-e-exemplos-de-aplicacoes"
+   ],
+   "gravado": "filtros",
+   "base": "filtros",
+   "h2": "filtros",
+   "h3": "filtros",
+   "h3a": "filtros",
+   "h3ad": "introducao-e-exemplos-de-aplicacoes",
+   "h3b": "filtros",
+   "reasons_gravado": [
+    "winner_score=4.80"
+   ],
+   "reasons_base": [
+    "winner_score=4.80"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "01-protocolos-de-rede",
+   "gold": [
+    "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia"
+   ],
+   "gravado": "modelos-osi-e-tcpip",
+   "base": "modelos-osi-e-tcpip",
+   "h2": "modelos-osi-e-tcpip",
+   "h3": "",
+   "h3a": "",
+   "h3ad": "",
+   "h3b": "modelos-osi-e-tcpip",
+   "reasons_gravado": [
+    "winner_score=0.11"
+   ],
+   "reasons_base": [
+    "winner_score=0.11"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "02-modelos-de-referencia",
+   "gold": [
+    "modelos-osi-e-tcpip"
+   ],
+   "gravado": "modelos-osi-e-tcpip",
+   "base": "modelos-osi-e-tcpip",
+   "h2": "modelos-osi-e-tcpip",
+   "h3": "conceitos-de-redes-de-computadores-e-internet",
+   "h3a": "conceitos-de-redes-de-computadores-e-internet",
+   "h3ad": "conceitos-de-redes-de-computadores-e-internet",
+   "h3b": "modelos-osi-e-tcpip",
+   "reasons_gravado": [
+    "winner_score=1.64"
+   ],
+   "reasons_base": [
+    "winner_score=1.64"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "unidade1-exercicios",
+   "gold": [
+    "modelos-osi-e-tcpip"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "modelos-osi-e-tcpip",
+   "h3": "modelos-osi-e-tcpip",
+   "h3a": "modelos-osi-e-tcpip",
+   "h3ad": "modelos-osi-e-tcpip",
+   "h3b": "modelos-osi-e-tcpip",
+   "reasons_gravado": [
+    "empate-exato 2x score=0.14"
+   ],
+   "reasons_base": [
+    "empate-exato 2x score=0.14"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "04-camada-de-aplicacao",
+   "gold": [
+    "funcoes-e-caracteristicas-do-nivel-de-aplicacao"
+   ],
+   "gravado": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "base": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h2": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3": "paradigmas-clienteservidor-e-p2p",
+   "h3a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3ad": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3b": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "reasons_gravado": [
+    "winner_score=7.16",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=7.16",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "04-protocolo-http",
+   "gold": [
+    "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+   ],
+   "gravado": "paradigmas-clienteservidor-e-p2p",
+   "base": "paradigmas-clienteservidor-e-p2p",
+   "h2": "paradigmas-clienteservidor-e-p2p",
+   "h3": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3a": "paradigmas-clienteservidor-e-p2p",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "paradigmas-clienteservidor-e-p2p",
+   "reasons_gravado": [
+    "winner_score=4.64",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=4.64",
+    "propagado-headings"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "06-protocolo-dhcp",
+   "gold": [
+    "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   ],
+   "gravado": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "base": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h2": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h3": "paradigmas-clienteservidor-e-p2p",
+   "h3a": "paradigmas-clienteservidor-e-p2p",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "reasons_gravado": [
+    "winner_score=12.10",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=12.10",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "08-desenvolvimento-de-aplicacoes",
+   "gold": [
+    "implementacao-de-sockets"
+   ],
+   "gravado": "",
+   "base": "",
+   "h2": "paradigmas-clienteservidor-e-p2p",
+   "h3": "paradigmas-clienteservidor-e-p2p",
+   "h3a": "paradigmas-clienteservidor-e-p2p",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "paradigmas-clienteservidor-e-p2p",
+   "reasons_gravado": [
+    "empate-exato 2x score=1.04"
+   ],
+   "reasons_base": [
+    "empate-exato 2x score=1.04"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "unidade2-exercicios-dhcp",
+   "gold": [
+    "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   ],
+   "gravado": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "base": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h2": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h3": "paradigmas-clienteservidor-e-p2p",
+   "h3a": "paradigmas-clienteservidor-e-p2p",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "reasons_gravado": [
+    "winner_score=12.00",
+    "rotulo-decomposto"
+   ],
+   "reasons_base": [
+    "winner_score=12.00",
+    "rotulo-decomposto"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "unidade2-exercicios-dns",
+   "gold": [
+    "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   ],
+   "gravado": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "base": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h2": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "h3": "paradigmas-clienteservidor-e-p2p",
+   "h3a": "paradigmas-clienteservidor-e-p2p",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "reasons_gravado": [
+    "winner_score=0.96"
+   ],
+   "reasons_base": [
+    "winner_score=0.96"
+   ]
+  },
+  {
+   "curso": "FR",
+   "entry_id": "unidade2-exercicios-http",
+   "gold": [
+    "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+   ],
+   "gravado": "paradigmas-clienteservidor-e-p2p",
+   "base": "paradigmas-clienteservidor-e-p2p",
+   "h2": "paradigmas-clienteservidor-e-p2p",
+   "h3": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+   "h3ad": "paradigmas-clienteservidor-e-p2p",
+   "h3b": "paradigmas-clienteservidor-e-p2p",
+   "reasons_gravado": [
+    "winner_score=4.72",
+    "propagado-headings"
+   ],
+   "reasons_base": [
+    "winner_score=4.72",
+    "propagado-headings"
+   ]
+  }
+ ]
+}

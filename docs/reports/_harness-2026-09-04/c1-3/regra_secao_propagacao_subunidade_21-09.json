@@ -1,0 +1,128 @@
+{
+  "head": "ce02a8f47285c30c16f12b131bdf86c46dcba64e",
+  "course": "CG",
+  "patches": {
+    "maptextures": {
+      "subunit_changes": [
+        {
+          "manifest_id": "maptextures",
+          "before": "sistema-de-coordenadas-cartesianas",
+          "after": "mapeamento-de-textura",
+          "unit_changed": true,
+          "before_reasons": [
+            "winner_score=0.91"
+          ],
+          "after_reasons": [
+            "winner_score=10.36"
+          ]
+        },
+        {
+          "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+          "before": "",
+          "after": "recorte",
+          "unit_changed": false,
+          "before_reasons": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after_reasons": [
+            "winner_score=10.95",
+            "propagado-headings"
+          ]
+        },
+        {
+          "manifest_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+          "before": "",
+          "after": "recorte",
+          "unit_changed": false,
+          "before_reasons": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after_reasons": [
+            "winner_score=10.95",
+            "propagado-headings"
+          ]
+        }
+      ],
+      "collateral_subunit_changes": [
+        {
+          "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+          "before": "",
+          "after": "recorte",
+          "unit_changed": false,
+          "before_reasons": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after_reasons": [
+            "winner_score=10.95",
+            "propagado-headings"
+          ]
+        },
+        {
+          "manifest_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+          "before": "",
+          "after": "recorte",
+          "unit_changed": false,
+          "before_reasons": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after_reasons": [
+            "winner_score=10.95",
+            "propagado-headings"
+          ]
+        }
+      ]
+    },
+    "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3": {
+      "subunit_changes": [
+        {
+          "manifest_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+          "before": "modelos-de-reflexao-ambiente-difusa-especular",
+          "after": "mapeamento-de-textura",
+          "unit_changed": false,
+          "before_reasons": [
+            "winner_score=1.80"
+          ],
+          "after_reasons": [
+            "winner_score=15.30",
+            "propagado-headings"
+          ]
+        },
+        {
+          "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+          "before": "",
+          "after": "mapeamento-de-textura",
+          "unit_changed": true,
+          "before_reasons": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after_reasons": [
+            "winner_score=14.84"
+          ]
+        }
+      ],
+      "collateral_subunit_changes": [
+        {
+          "manifest_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+          "before": "modelos-de-reflexao-ambiente-difusa-especular",
+          "after": "mapeamento-de-textura",
+          "unit_changed": false,
+          "before_reasons": [
+            "winner_score=1.80"
+          ],
+          "after_reasons": [
+            "winner_score=15.30",
+            "propagado-headings"
+          ]
+        }
+      ]
+    }
+  },
+  "input_hashes": {
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_unidade_21-09.json": "2af303fa5ce592c1862afd90837df80d627aa07d40b580bacb2e0328bd7b29ca",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\Computacao-Grafica-Tutor\\manifest.json": "9f54fb3ca699df7685b4225d155e30229abd3094c0faa26616e2c71943b71326"
+  },
+  "limitations": [
+    "Somente CG; blocos congelados; patch em memoria; sem gold, rede, LLM, build ou escrita em src/."
+  ]
+}

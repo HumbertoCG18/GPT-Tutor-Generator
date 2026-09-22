@@ -5766,3 +5766,23 @@ def test_auto_detect_category_ementa_so_como_palavra():
     from src.utils.helpers import auto_detect_category
     assert auto_detect_category("material-complementar.pdf") != "cronograma"
     assert auto_detect_category("ementa-2026.pdf") == "cronograma"
+
+
+def test_backlog_unit_status_explica_secao_que_venceu_o_bloco(tmp_path):
+    # Revisao Astra (#47): a razao `secao-vence-bloco=` nao e "matcher mais confiante".
+    from src.ui.dialogs import _resolve_backlog_unit_status
+
+    status = _resolve_backlog_unit_status(
+        {
+            "title": "Laminas semaforos",
+            "category": "slides",
+            "computed_unit_slug": "unidade-03",
+            "unit_match_reasons": ["winner_score=9.10", "secao-vence-bloco=bloco-07"],
+            "unit_block_conflict": {"unit": "unidade-03", "block_unit": "unidade-02", "block_id": "bloco-07"},
+        },
+        tmp_path / "repo",
+    )
+
+    assert status["source"] == "Seção do Moodle confirmada pelo texto (auto)"
+    assert "mais confiante" not in status["note"]
+    assert "seção" in status["note"].lower() and "bloco-07" in status["note"]

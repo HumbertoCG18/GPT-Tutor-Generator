@@ -1,0 +1,2455 @@
+{
+  "head": "ce02a8f47285c30c16f12b131bdf86c46dcba64e",
+  "course": "CG",
+  "runs": {
+    "without_patch": {
+      "parameters": {
+        "conf_min": 0.7,
+        "min_entries": 2,
+        "df_max": 0.25,
+        "passe1_entries": 84
+      },
+      "target": {
+        "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+        "pass1": {
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "confidence": 0.49599999999999994,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=1.80"
+          ],
+          "indecision": {
+            "empty": false,
+            "ambiguous": false,
+            "below_conf_min": true,
+            "conf_min": 0.7
+          }
+        },
+        "scores_pass1": {
+          "mapeamento-de-textura": 0.12240000000000001,
+          "modelos-de-reflexao-ambiente-difusa-especular": 1.7999999999999998
+        },
+        "scores_pass2": {
+          "mapeamento-de-textura": 0.12240000000000001,
+          "modelos-de-reflexao-ambiente-difusa-especular": 12.094
+        },
+        "pass2": {
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "confidence": 0.36695882255663964,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=12.09"
+          ],
+          "indecision": {
+            "empty": false,
+            "ambiguous": false,
+            "below_conf_min": true,
+            "conf_min": 0.7
+          }
+        },
+        "final": {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "subunit_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "confidence": 0.49599999999999994,
+          "reasons": [
+            "winner_score=1.80"
+          ]
+        }
+      },
+      "changed_entries": 19,
+      "learned_aliases": [
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "aliases": [
+            "Algoritmos de detecção",
+            "cálculo de intersecção",
+            "detecção e cálculo de intersecção"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-geometria-computacional",
+          "aliases": [
+            "Geometria Computacional"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "aliases": [
+            "basico",
+            "bezier",
+            "class",
+            "desenha",
+            "exibe",
+            "freeglut",
+            "glut",
+            "image",
+            "imagens",
+            "instancia",
+            "manipulacao",
+            "open",
+            "opengl",
+            "projeto"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "operacoes-com-vetores",
+          "aliases": [
+            "ponto"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "aliases": [
+            "Algoritmos de Quantização",
+            "Amostragem",
+            "Quantização e Amostragem"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "aliases": [
+            "atividades",
+            "ferramentas",
+            "tipos de imagens"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "introducao-e-exemplos-de-aplicacoes",
+          "aliases": [
+            "Exemplos de Aplicações"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "aliases": [
+            "pptx",
+            "texturas"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "visao-computacional-e-conceito-de-reconhecimento-de-padroes",
+          "aliases": [
+            "conceito de reconhecimento de padrões"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "aliases": [
+            "mão direita",
+            "mão esquerda"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "algoritmos-de-rasterizacao",
+          "aliases": [
+            "Rasterização"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "desenho-de-linhas",
+          "aliases": [
+            "teoricos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "aliases": [
+            "janela",
+            "selecao"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "sistema-de-coordenadas-cartesianas",
+          "aliases": [
+            "transformacoes"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "composicao-de-transformacoes-2d",
+          "aliases": [
+            "transformações 2D"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "aliases": [
+            "Mapeamento Window",
+            "Viewport"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "aliases": [
+            "coordenadas homogêneas 2D"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "a-matematica-das-projecoes-planares",
+          "aliases": [
+            "morfologia"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "algoritmos-de-remocao-de-elementos-ocultos",
+          "aliases": [
+            "Remoção de Elementos Ocultos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "aliases": [
+            "Algoritmo de Casteljau",
+            "Bézier"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "geometria-solida-construtiva-csg",
+          "aliases": [
+            "Geometria Sólida Construtiva"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "vetorial-ou-matricial",
+          "aliases": [
+            "Vetorial"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "aliases": [
+            "Conceitos Básicos de Ray Tracing",
+            "Radiosidade"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "aliases": [
+            "Flat",
+            "Gouraud",
+            "Métodos de sombreamento",
+            "Phong"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "aliases": [
+            "Iluminação: luz pontual, direcional, spot",
+            "Modelos de Iluminação",
+            "direcional",
+            "luz pontual",
+            "spot"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "aliases": [
+            "Modelos de Reflexão",
+            "Reflexão: ambiente, difusa, especular",
+            "ambiente",
+            "difusa",
+            "especular"
+          ]
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "aliases": [
+            "Temas atuais",
+            "avançados de Computação Gráfica"
+          ]
+        }
+      ],
+      "alias_evidence": [
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "Algoritmos de detecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "cálculo de intersecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "detecção e cálculo de intersecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-geometria-computacional",
+          "alias": "Geometria Computacional",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "basico",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "bezier",
+          "generic_stem": false,
+          "document_frequency": 9,
+          "df_rate": 0.10714285714285714,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "class",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "desenha",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 3,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "exibe",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "freeglut",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "glut",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "image",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "imagens",
+          "generic_stem": false,
+          "document_frequency": 13,
+          "df_rate": 0.15476190476190477,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "instancia",
+          "generic_stem": false,
+          "document_frequency": 8,
+          "df_rate": 0.09523809523809523,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "manipulacao",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "open",
+          "generic_stem": false,
+          "document_frequency": 10,
+          "df_rate": 0.11904761904761904,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "opengl",
+          "generic_stem": false,
+          "document_frequency": 11,
+          "df_rate": 0.13095238095238096,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "projeto",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "operacoes-com-vetores",
+          "alias": "ponto",
+          "generic_stem": false,
+          "document_frequency": 11,
+          "df_rate": 0.13095238095238096,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "operacoes-com-vetores"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "exerciciosfundamentosmatematicos",
+            "fundamentosmatematicos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Algoritmos de Quantização",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Amostragem",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Quantização e Amostragem",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "atividades",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "cores-e-tipos-de-imagens"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "floodfill",
+            "remocaoderuido"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "ferramentas",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "cores-e-tipos-de-imagens"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "floodfill",
+            "remocaoderuido"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "tipos de imagens",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "introducao-e-exemplos-de-aplicacoes",
+          "alias": "Exemplos de Aplicações",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "alias": "pptx",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "segmentacao"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+            "segmentacaopptx"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "alias": "texturas",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "segmentacao"
+          ],
+          "donor_count": 3,
+          "donor_entries": [
+            "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+            "segmentacaodetexturas",
+            "segmentacaopptx"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "visao-computacional-e-conceito-de-reconhecimento-de-padroes",
+          "alias": "conceito de reconhecimento de padrões",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "alias": "mão direita",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "alias": "mão esquerda",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "algoritmos-de-rasterizacao",
+          "alias": "Rasterização",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "desenho-de-linhas",
+          "alias": "teoricos",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "desenho-de-linhas"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+            "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "alias": "janela",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "recorte"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "mapeamento",
+            "recorte"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "alias": "selecao",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "recorte"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "mapeamento",
+            "recorte"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "sistema-de-coordenadas-cartesianas",
+          "alias": "transformacoes",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "sistema-de-coordenadas-cartesianas"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "instanciamento",
+            "transformacoesgl"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "composicao-de-transformacoes-2d",
+          "alias": "transformações 2D",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "alias": "Mapeamento Window",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "alias": "Viewport",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "alias": "coordenadas homogêneas 2D",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "a-matematica-das-projecoes-planares",
+          "alias": "morfologia",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "a-matematica-das-projecoes-planares"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "morfologiamatematicapptx",
+            "pagina-com-videos-sobre-morfologia-matematica-06265a"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "algoritmos-de-remocao-de-elementos-ocultos",
+          "alias": "Remoção de Elementos Ocultos",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "alias": "Algoritmo de Casteljau",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "alias": "Bézier",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "geometria-solida-construtiva-csg",
+          "alias": "Geometria Sólida Construtiva",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "vetorial-ou-matricial",
+          "alias": "Vetorial",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "alias": "Conceitos Básicos de Ray Tracing",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "alias": "Radiosidade",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Flat",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Gouraud",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Métodos de sombreamento",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Phong",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "Iluminação: luz pontual, direcional, spot",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "Modelos de Iluminação",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "direcional",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "luz pontual",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "spot",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "Modelos de Reflexão",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "Reflexão: ambiente, difusa, especular",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "ambiente",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "difusa",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "especular",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "alias": "Temas atuais",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "alias": "avançados de Computação Gráfica",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        }
+      ]
+    },
+    "with_patch": {
+      "parameters": {
+        "conf_min": 0.7,
+        "min_entries": 2,
+        "df_max": 0.25,
+        "passe1_entries": 84
+      },
+      "target": {
+        "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+        "pass1": {
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "confidence": 0.49599999999999994,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=1.80"
+          ],
+          "indecision": {
+            "empty": false,
+            "ambiguous": false,
+            "below_conf_min": true,
+            "conf_min": 0.7
+          }
+        },
+        "scores_pass1": {
+          "mapeamento-de-textura": 0.12240000000000001,
+          "modelos-de-reflexao-ambiente-difusa-especular": 1.7999999999999998
+        },
+        "scores_pass2": {
+          "mapeamento-de-textura": 15.297999999999996,
+          "modelos-de-reflexao-ambiente-difusa-especular": 12.094
+        },
+        "pass2": {
+          "topic_slug": "mapeamento-de-textura",
+          "confidence": 0.2094391423715517,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=15.30"
+          ],
+          "indecision": {
+            "empty": false,
+            "ambiguous": false,
+            "below_conf_min": true,
+            "conf_min": 0.7
+          }
+        },
+        "final": {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "subunit_slug": "mapeamento-de-textura",
+          "confidence": 0.2094391423715517,
+          "reasons": [
+            "winner_score=15.30",
+            "propagado-headings"
+          ]
+        }
+      },
+      "changed_entries": 21,
+      "learned_aliases": [
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "aliases": [
+            "Algoritmos de detecção",
+            "cálculo de intersecção",
+            "detecção e cálculo de intersecção"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-geometria-computacional",
+          "aliases": [
+            "Geometria Computacional"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "aliases": [
+            "basico",
+            "bezier",
+            "class",
+            "desenha",
+            "exibe",
+            "freeglut",
+            "glut",
+            "image",
+            "imagens",
+            "instancia",
+            "manipulacao",
+            "open",
+            "opengl",
+            "projeto"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "operacoes-com-vetores",
+          "aliases": [
+            "ponto"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "aliases": [
+            "Algoritmos de Quantização",
+            "Amostragem",
+            "Quantização e Amostragem"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "aliases": [
+            "atividades",
+            "ferramentas",
+            "tipos de imagens"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "introducao-e-exemplos-de-aplicacoes",
+          "aliases": [
+            "Exemplos de Aplicações"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "aliases": [
+            "pptx",
+            "texturas"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "visao-computacional-e-conceito-de-reconhecimento-de-padroes",
+          "aliases": [
+            "conceito de reconhecimento de padrões"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "aliases": [
+            "mão direita",
+            "mão esquerda"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "algoritmos-de-rasterizacao",
+          "aliases": [
+            "Rasterização"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "desenho-de-linhas",
+          "aliases": [
+            "teoricos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "aliases": [
+            "janela",
+            "mapeamento",
+            "selecao"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "sistema-de-coordenadas-cartesianas",
+          "aliases": [
+            "transformacoes"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "composicao-de-transformacoes-2d",
+          "aliases": [
+            "transformações 2D"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "aliases": [
+            "Mapeamento Window",
+            "Viewport"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "aliases": [
+            "coordenadas homogêneas 2D"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "a-matematica-das-projecoes-planares",
+          "aliases": [
+            "morfologia"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "algoritmos-de-remocao-de-elementos-ocultos",
+          "aliases": [
+            "Remoção de Elementos Ocultos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "aliases": [
+            "Algoritmo de Casteljau",
+            "Bézier"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "geometria-solida-construtiva-csg",
+          "aliases": [
+            "Geometria Sólida Construtiva"
+          ]
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "vetorial-ou-matricial",
+          "aliases": [
+            "Vetorial"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "aliases": [
+            "Conceitos Básicos de Ray Tracing",
+            "Radiosidade"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "mapeamento-de-textura",
+          "aliases": [
+            "texturas",
+            "videos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "aliases": [
+            "Flat",
+            "Gouraud",
+            "Métodos de sombreamento",
+            "Phong"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "aliases": [
+            "Iluminação: luz pontual, direcional, spot",
+            "Modelos de Iluminação",
+            "direcional",
+            "luz pontual",
+            "spot"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "aliases": [
+            "Modelos de Reflexão",
+            "Reflexão: ambiente, difusa, especular",
+            "ambiente",
+            "difusa",
+            "especular"
+          ]
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "aliases": [
+            "Temas atuais",
+            "avançados de Computação Gráfica"
+          ]
+        }
+      ],
+      "alias_evidence": [
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "Algoritmos de detecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "cálculo de intersecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-deteccao-e-calculo-de-interseccao",
+          "alias": "detecção e cálculo de intersecção",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-geometria-computacional",
+          "alias": "Geometria Computacional",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "basico",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "bezier",
+          "generic_stem": false,
+          "document_frequency": 9,
+          "df_rate": 0.10714285714285714,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "class",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "desenha",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 3,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "exibe",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "freeglut",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "glut",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "image",
+          "generic_stem": false,
+          "document_frequency": 4,
+          "df_rate": 0.047619047619047616,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "imagens",
+          "generic_stem": false,
+          "document_frequency": 13,
+          "df_rate": 0.15476190476190477,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "instancia",
+          "generic_stem": false,
+          "document_frequency": 8,
+          "df_rate": 0.09523809523809523,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "manipulacao",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "opengl-cpp"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "open",
+          "generic_stem": false,
+          "document_frequency": 10,
+          "df_rate": 0.11904761904761904,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "opengl",
+          "generic_stem": false,
+          "document_frequency": 11,
+          "df_rate": 0.13095238095238096,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "opengl-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "algoritmos-de-poligonos",
+          "alias": "projeto",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "algoritmos-de-poligonos"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "basico3d-cpp",
+            "openglbasico"
+          ]
+        },
+        {
+          "unit_slug": "unidade-02-fundamentos-matematicos",
+          "topic_slug": "operacoes-com-vetores",
+          "alias": "ponto",
+          "generic_stem": false,
+          "document_frequency": 11,
+          "df_rate": 0.13095238095238096,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "operacoes-com-vetores"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "exerciciosfundamentosmatematicos",
+            "fundamentosmatematicos"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Algoritmos de Quantização",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Amostragem",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "algoritmos-de-quantizacao-e-amostragem",
+          "alias": "Quantização e Amostragem",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "atividades",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "cores-e-tipos-de-imagens"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "floodfill",
+            "remocaoderuido"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "ferramentas",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "cores-e-tipos-de-imagens"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "floodfill",
+            "remocaoderuido"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "cores-e-tipos-de-imagens",
+          "alias": "tipos de imagens",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "introducao-e-exemplos-de-aplicacoes",
+          "alias": "Exemplos de Aplicações",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "alias": "pptx",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "segmentacao"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+            "segmentacaopptx"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "segmentacao",
+          "alias": "texturas",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "segmentacao"
+          ],
+          "donor_count": 3,
+          "donor_entries": [
+            "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+            "segmentacaodetexturas",
+            "segmentacaopptx"
+          ]
+        },
+        {
+          "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "topic_slug": "visao-computacional-e-conceito-de-reconhecimento-de-padroes",
+          "alias": "conceito de reconhecimento de padrões",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "alias": "mão direita",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "2d-3d-mao-direita-e-mao-esquerda",
+          "alias": "mão esquerda",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "algoritmos-de-rasterizacao",
+          "alias": "Rasterização",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "desenho-de-linhas",
+          "alias": "teoricos",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "desenho-de-linhas"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+            "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "alias": "janela",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "recorte"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "mapeamento",
+            "recorte"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "alias": "mapeamento",
+          "generic_stem": false,
+          "document_frequency": 6,
+          "df_rate": 0.07142857142857142,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "recorte"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "mapeamento",
+            "vis2d"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "recorte",
+          "alias": "selecao",
+          "generic_stem": false,
+          "document_frequency": 2,
+          "df_rate": 0.023809523809523808,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "recorte"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "mapeamento",
+            "recorte"
+          ]
+        },
+        {
+          "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+          "topic_slug": "sistema-de-coordenadas-cartesianas",
+          "alias": "transformacoes",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "sistema-de-coordenadas-cartesianas"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "instanciamento",
+            "transformacoesgl"
+          ]
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "composicao-de-transformacoes-2d",
+          "alias": "transformações 2D",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "alias": "Mapeamento Window",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "mapeamento-window-e-viewport",
+          "alias": "Viewport",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-05-transformacoes-geometricas",
+          "topic_slug": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "alias": "coordenadas homogêneas 2D",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "a-matematica-das-projecoes-planares",
+          "alias": "morfologia",
+          "generic_stem": false,
+          "document_frequency": 3,
+          "df_rate": 0.03571428571428571,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "a-matematica-das-projecoes-planares"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "morfologiamatematicapptx",
+            "pagina-com-videos-sobre-morfologia-matematica-06265a"
+          ]
+        },
+        {
+          "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+          "topic_slug": "algoritmos-de-remocao-de-elementos-ocultos",
+          "alias": "Remoção de Elementos Ocultos",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "alias": "Algoritmo de Casteljau",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "bezier-e-algoritmo-de-casteljau",
+          "alias": "Bézier",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "geometria-solida-construtiva-csg",
+          "alias": "Geometria Sólida Construtiva",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos",
+          "topic_slug": "vetorial-ou-matricial",
+          "alias": "Vetorial",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "alias": "Conceitos Básicos de Ray Tracing",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "conceitos-basicos-de-ray-tracing-e-radiosidade",
+          "alias": "Radiosidade",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "mapeamento-de-textura",
+          "alias": "texturas",
+          "generic_stem": false,
+          "document_frequency": 7,
+          "df_rate": 0.08333333333333333,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "mapeamento-de-textura"
+          ],
+          "donor_count": 3,
+          "donor_entries": [
+            "maptextures",
+            "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+            "videoscg-v2"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "mapeamento-de-textura",
+          "alias": "videos",
+          "generic_stem": false,
+          "document_frequency": 18,
+          "df_rate": 0.21428571428571427,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [
+            "mapeamento-de-textura"
+          ],
+          "donor_count": 2,
+          "donor_entries": [
+            "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+            "videoscg-v2"
+          ]
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Flat",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Gouraud",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Métodos de sombreamento",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "metodos-de-sombreamento-flat-gouraud-phong",
+          "alias": "Phong",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "Iluminação: luz pontual, direcional, spot",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "Modelos de Iluminação",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "direcional",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "luz pontual",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+          "alias": "spot",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "Modelos de Reflexão",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "Reflexão: ambiente, difusa, especular",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "ambiente",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "difusa",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+          "topic_slug": "modelos-de-reflexao-ambiente-difusa-especular",
+          "alias": "especular",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "alias": "Temas atuais",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        },
+        {
+          "unit_slug": "unidade-09-topicos-especiais-em-pesquisa-em-cg",
+          "topic_slug": "temas-atuais-e-avancados-de-computacao-grafica",
+          "alias": "avançados de Computação Gráfica",
+          "generic_stem": false,
+          "document_frequency": 0,
+          "df_rate": 0.0,
+          "df_limit_count": 21.0,
+          "confident_owners_in_unit": [],
+          "donor_count": 0,
+          "donor_entries": []
+        }
+      ]
+    }
+  },
+  "learned_alias_diff": [
+    {
+      "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+      "topic_slug": "recorte",
+      "added_with_patch": [
+        "mapeamento"
+      ],
+      "removed_with_patch": []
+    },
+    {
+      "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+      "topic_slug": "mapeamento-de-textura",
+      "added_with_patch": [
+        "texturas",
+        "videos"
+      ],
+      "removed_with_patch": []
+    }
+  ],
+  "source_locations": {
+    "safeguards": "src/builder/routing/resolver_apply.py:264-272",
+    "alias_selection": "src/builder/routing/resolver_apply.py:289-313",
+    "real_call": "src/builder/routing/resolver_apply.py:574-576",
+    "indecision_gate": "src/builder/routing/resolver_apply.py:318-335",
+    "scoring": "src/builder/routing/file_map.py:172-257"
+  },
+  "input_hashes": {
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_efeito_subunidade_21-09.py": "602d4278dd85c3a17771161a2a45b58887f4477fc2bba2c0a71d72f41f89ce35",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_unidade_21-09.json": "2af303fa5ce592c1862afd90837df80d627aa07d40b580bacb2e0328bd7b29ca",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\Computacao-Grafica-Tutor\\manifest.json": "9f54fb3ca699df7685b4225d155e30229abd3094c0faa26616e2c71943b71326"
+  },
+  "limitations": [
+    "Somente CG; duas entradas patchadas juntas; patch e instrumentacao em memoria; sem gold, rede, LLM, build ou escrita em src/."
+  ]
+}

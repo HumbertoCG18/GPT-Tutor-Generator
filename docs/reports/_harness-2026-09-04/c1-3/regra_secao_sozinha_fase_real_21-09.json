@@ -1,0 +1,708 @@
+{
+  "head": "ce02a8f47285c30c16f12b131bdf86c46dcba64e",
+  "rule": "A = seção sozinha; inherited verdadeiro, section_match.slug não vazio e before diferente de section_match.slug; 10 decisões congeladas antes do gold",
+  "executed_courses": [
+    "CG",
+    "SO",
+    "TCC"
+  ],
+  "copied_baseline_courses": [
+    "ES2",
+    "FR",
+    "IA",
+    "MF"
+  ],
+  "patch_point": {
+    "product": "src/builder/routing/file_map.py:795-812, chamada em resolver_apply.py:507",
+    "harness": "monkeypatch em memória de file_map.reconcile_unit_with_block; src/ intacto",
+    "reason": "secao-vence-bloco=<id>"
+  },
+  "input_hashes": {
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\Sistemas-Operacionais-Tutor\\manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\TCC-Tutor\\manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\Computacao-Grafica-Tutor\\manifest.json": "9f54fb3ca699df7685b4225d155e30229abd3094c0faa26616e2c71943b71326",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\replay_unidade_21-09.json": "8971a419ca105bb3611a3d53364ab8fe6a523e9fe60f08cdb03db485e62242c8",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_unidade_21-09.json": "2af303fa5ce592c1862afd90837df80d627aa07d40b580bacb2e0328bd7b29ca",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_efeito_subunidade_21-09.json": "2af4c7d5839e4e0fd4c638b6200ac8166dd7923617ae197c71f91d3ffb820df0"
+  },
+  "fidelity": {
+    "manifest_n": 155,
+    "baseline_fiel": 155
+  },
+  "totals": {
+    "baseline": {
+      "bloco_n": 237,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 239,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "sub_aceita": 108,
+      "sub_ausente": 8
+    },
+    "patched": {
+      "bloco_n": 237,
+      "bloco": 213,
+      "unidade_n": 284,
+      "unidade": 245,
+      "sub_n": 251,
+      "sub_primaria": 83,
+      "sub_aceita": 106,
+      "sub_ausente": 8
+    }
+  },
+  "courses": {
+    "baseline": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 61,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29,
+        "sub_ausente": 1
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5,
+        "sub_ausente": 0
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7,
+        "sub_ausente": 0
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8,
+        "sub_ausente": 0
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 27,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8,
+        "sub_ausente": 0
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "sub_aceita": 9,
+        "sub_ausente": 0
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 70,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 42,
+        "sub_ausente": 7
+      }
+    },
+    "patched": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco": 53,
+        "unidade_n": 66,
+        "unidade": 61,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "sub_aceita": 29,
+        "sub_ausente": 1
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco": 38,
+        "unidade_n": 42,
+        "unidade": 39,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "sub_aceita": 5,
+        "sub_ausente": 0
+      },
+      "FR": {
+        "sub_n": 18,
+        "sub_primaria": 6,
+        "sub_aceita": 7,
+        "sub_ausente": 0
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27,
+        "unidade_n": 28,
+        "unidade": 25,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "sub_aceita": 8,
+        "sub_ausente": 0
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36,
+        "unidade_n": 37,
+        "unidade": 31,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "sub_aceita": 8,
+        "sub_ausente": 0
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26,
+        "unidade_n": 18,
+        "unidade": 17,
+        "sub_n": 11,
+        "sub_primaria": 6,
+        "sub_aceita": 8,
+        "sub_ausente": 0
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33,
+        "unidade_n": 93,
+        "unidade": 72,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "sub_aceita": 41,
+        "sub_ausente": 7
+      }
+    }
+  },
+  "ten_decisions": [
+    {
+      "curso": "SO",
+      "manifest_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "0904-laminas-semaforos",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "14-04-troca-de-mensagens",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "1404-laminas-ipc",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "1404-troca-de-mensagens",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "laminas-sockets-material-alternativo-em-pt",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true
+    },
+    {
+      "curso": "TCC",
+      "manifest_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "before": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+      "after": "unidade-02-turing-computabilidade",
+      "before_correct": null,
+      "after_correct": null
+    },
+    {
+      "curso": "CG",
+      "manifest_id": "maptextures",
+      "before": "unidade-04-processo-de-visualizacao-2d",
+      "after": "unidade-08-sintese-de-imagens-realisticas",
+      "before_correct": false,
+      "after_correct": true
+    },
+    {
+      "curso": "CG",
+      "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "before": "unidade-04-processo-de-visualizacao-2d",
+      "after": "unidade-08-sintese-de-imagens-realisticas",
+      "before_correct": false,
+      "after_correct": true
+    }
+  ],
+  "unit_changes": [
+    {
+      "curso": "SO",
+      "id": "0704-laminas-comunicacao-e-sincronizacao",
+      "manifest_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": "0904-laminas-semaforos",
+      "manifest_id": "0904-laminas-semaforos",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": "14-04-troca-de-mensagens",
+      "manifest_id": "14-04-troca-de-mensagens",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": "1404-laminas-ipc",
+      "manifest_id": "1404-laminas-ipc",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": null,
+      "manifest_id": "1404-troca-de-mensagens",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": null,
+      "after_correct": null,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "manifest_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-sockets-material-alternativo-em-pt",
+      "manifest_id": "laminas-sockets-material-alternativo-em-pt",
+      "before": "unidade-02-gerencia-do-processador",
+      "after": "unidade-03-programacao-concorrente",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    },
+    {
+      "curso": "TCC",
+      "id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "manifest_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "before": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+      "after": "unidade-02-turing-computabilidade",
+      "before_correct": null,
+      "after_correct": null,
+      "frozen_ten": true
+    },
+    {
+      "curso": "CG",
+      "id": "maptextures",
+      "manifest_id": "maptextures",
+      "before": "unidade-04-processo-de-visualizacao-2d",
+      "after": "unidade-08-sintese-de-imagens-realisticas",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "before": "unidade-04-processo-de-visualizacao-2d",
+      "after": "unidade-08-sintese-de-imagens-realisticas",
+      "before_correct": false,
+      "after_correct": true,
+      "frozen_ten": true
+    }
+  ],
+  "unit_changes_beyond_frozen_ten": [],
+  "subunit_changes": [
+    {
+      "curso": "SO",
+      "id": "0704-laminas-comunicacao-e-sincronizacao",
+      "manifest_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "before": "escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "0904-laminas-semaforos",
+      "manifest_id": "0904-laminas-semaforos",
+      "before": "escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "14-04-troca-de-mensagens",
+      "manifest_id": "14-04-troca-de-mensagens",
+      "before": "algoritmos-de-escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "1404-laminas-ipc",
+      "manifest_id": "1404-laminas-ipc",
+      "before": "algoritmos-de-escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": null,
+      "manifest_id": "1404-troca-de-mensagens",
+      "before": "algoritmos-de-escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "manifest_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "before": "algoritmos-de-escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-sockets-material-alternativo-em-pt",
+      "manifest_id": "laminas-sockets-material-alternativo-em-pt",
+      "before": "algoritmos-de-escalonamento",
+      "after": "comunicacao-e-sincronizacao-de-processos",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-threads-em-c-exemplo1",
+      "manifest_id": "exemplo-threads-em-c-exemplo1",
+      "before": "algoritmos-de-escalonamento",
+      "after": "",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": false
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-threads-em-c-exemplo2",
+      "manifest_id": "exemplo-threads-em-c-exemplo2",
+      "before": "algoritmos-de-escalonamento",
+      "after": "",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": false
+    },
+    {
+      "curso": "TCC",
+      "id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "manifest_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "before": "",
+      "after": "maquinas-de-turing",
+      "primary_gain": false,
+      "primary_loss": true,
+      "accepted_gain": false,
+      "accepted_loss": true,
+      "unit_changed": true
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "manifest_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "before": "modelos-de-reflexao-ambiente-difusa-especular",
+      "after": "mapeamento-de-textura",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": true,
+      "unit_changed": false
+    },
+    {
+      "curso": "CG",
+      "id": "maptextures",
+      "manifest_id": "maptextures",
+      "before": "sistema-de-coordenadas-cartesianas",
+      "after": "mapeamento-de-textura",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "manifest_id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "before": "",
+      "after": "mapeamento-de-textura",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": true
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-mapeamento-9f410e",
+      "manifest_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+      "before": "",
+      "after": "recorte",
+      "primary_gain": false,
+      "primary_loss": false,
+      "accepted_gain": false,
+      "accepted_loss": false,
+      "unit_changed": false
+    }
+  ],
+  "subunit_deltas": {
+    "primary": {
+      "gains": [],
+      "losses": [
+        {
+          "curso": "TCC",
+          "id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+          "manifest_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+          "before": "",
+          "after": "maquinas-de-turing",
+          "primary_gain": false,
+          "primary_loss": true,
+          "accepted_gain": false,
+          "accepted_loss": true,
+          "unit_changed": true
+        }
+      ]
+    },
+    "accepted": {
+      "gains": [],
+      "losses": [
+        {
+          "curso": "TCC",
+          "id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+          "manifest_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+          "before": "",
+          "after": "maquinas-de-turing",
+          "primary_gain": false,
+          "primary_loss": true,
+          "accepted_gain": false,
+          "accepted_loss": true,
+          "unit_changed": true
+        },
+        {
+          "curso": "CG",
+          "id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+          "manifest_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+          "before": "modelos-de-reflexao-ambiente-difusa-especular",
+          "after": "mapeamento-de-textura",
+          "primary_gain": false,
+          "primary_loss": false,
+          "accepted_gain": false,
+          "accepted_loss": true,
+          "unit_changed": false
+        }
+      ]
+    }
+  },
+  "diagnostic_changes_outside_unit_changes": [
+    {
+      "curso": "SO",
+      "manifest_id": "2603-algoritmos-de-escalonamento",
+      "fields": {
+        "subunit_match_reasons": {
+          "before": [
+            "winner_score=14.48",
+            "ambiguous",
+            "propagado-headings"
+          ],
+          "after": [
+            "winner_score=15.06",
+            "ambiguous",
+            "propagado-headings"
+          ]
+        },
+        "subunit_match_confidence": {
+          "before": 0.0697513812154696,
+          "after": 0.10557768924302788
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "exemplo-threads-em-c-exemplo1",
+      "fields": {
+        "subunit_match_reasons": {
+          "before": [
+            "winner_score=3.45",
+            "propagado-headings"
+          ],
+          "after": [
+            "sem-sinal (winner_score=0)"
+          ]
+        },
+        "subunit_match_confidence": {
+          "before": 1.0,
+          "after": 0.0
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "manifest_id": "exemplo-threads-em-c-exemplo2",
+      "fields": {
+        "subunit_match_reasons": {
+          "before": [
+            "winner_score=3.45",
+            "propagado-headings"
+          ],
+          "after": [
+            "sem-sinal (winner_score=0)"
+          ]
+        },
+        "subunit_match_confidence": {
+          "before": 1.0,
+          "after": 0.0
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "manifest_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "fields": {
+        "subunit_match_reasons": {
+          "before": [
+            "winner_score=1.80"
+          ],
+          "after": [
+            "winner_score=15.30",
+            "propagado-headings"
+          ]
+        },
+        "subunit_match_confidence": {
+          "before": 0.49599999999999994,
+          "after": 0.2094391423715517
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "manifest_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+      "fields": {
+        "subunit_match_reasons": {
+          "before": [
+            "empate-exato 4x score=0.02"
+          ],
+          "after": [
+            "winner_score=10.95",
+            "propagado-headings"
+          ]
+        },
+        "subunit_match_confidence": {
+          "before": 0.0,
+          "after": 0.998211506849315
+        }
+      }
+    }
+  ],
+  "comparison_r_sem_misto": {
+    "unidade": 244,
+    "sub_primaria": 84,
+    "sub_aceita": 107
+  },
+  "limitations": [
+    "Somente SO, CG e TCC foram reexecutados; MF, IA, ES2 e FR copiaram courses.baseline do JSON R-sem-misto.",
+    "Blocos são congelados; a fase real reexecutada não recalcula o motor de bloco.",
+    "A lista das 10 decisões é congelada; o harness não reimplementa a régua de seção.",
+    "Gold é carregado somente depois das decisões e serve apenas para avaliação.",
+    "Ausentes permanecem nos denominadores; 0 rede, LLM, build/rebuild e escrita em src/."
+  ]
+}

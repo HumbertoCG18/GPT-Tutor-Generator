@@ -249,3 +249,52 @@ def test_manual_subunit_vence_gate_de_meta():
     m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_subunit_slug"] == "sman"
+
+
+# --- #47: secao mapeada ao plano, corroborada pelo texto, vence unidade herdada do bloco ---
+
+def test_secao_corroborada_pelo_texto_vence_o_bloco():
+    e = _entry()
+    m = SimpleNamespace(slug="u1", confidence=0.7, ambiguous=False, reasons=["score"], section_slug="u1")
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u1"
+    assert "secao-vence-bloco=bloco-02" in out[0]["unit_match_reasons"]
+    assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "bloco-02"}
+
+
+def test_secao_corroborada_vence_mesmo_com_texto_abaixo_do_gate():
+    """O vencedor BRUTO do texto corrobora a secao; o gate UNIT_TAG so decide a tag."""
+    e = _entry()
+    m = SimpleNamespace(slug="u1", confidence=T.UNIT_TAG - 0.1, ambiguous=False, reasons=["score"], section_slug="u1")
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u1"
+    assert "secao-vence-bloco=bloco-02" in out[0]["unit_match_reasons"]
+
+
+def test_secao_sem_corroboracao_do_texto_nao_vence_o_bloco():
+    """Medido (#47): sem corroboracao a regra troca a unidade de uma aula do TCC e
+    perde a subunidade primaria e a aceita."""
+    e = _entry()
+    discordante = SimpleNamespace(slug="u2", confidence=0.7, ambiguous=False, reasons=["score"], section_slug="u1")
+    out = apply_unit_subunit_fields([e], [dict(b) for b in BLOCKS], {}, None, None, {}, **_fns(discordante))
+    assert out[0]["computed_unit_slug"] == "u2"
+    e2 = _entry()
+    ambiguo = SimpleNamespace(slug="u1", confidence=0.3, ambiguous=True, reasons=["ambiguous"], section_slug="u1")
+    out = apply_unit_subunit_fields([e2], BLOCKS, {}, None, None, {}, **_fns(ambiguo))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert not any(str(r).startswith("secao-vence-bloco") for r in out[0]["unit_match_reasons"])
+
+
+def test_secao_corroborada_vence_unidade_herdada_do_vizinho_sem_rotular_vizinho():
+    """Revisao Astra (#47): bloco sem unidade herda do vizinho; se a secao vence, a razao
+    `herdada_do_vizinho` nao pode aparecer."""
+    blocks = [
+        {"id": "bloco-01", "block_uuid": "u-1", "unit_slug": "u1", "kind": "class", "period_start": "2026-03-01"},
+        {"id": "bloco-02", "block_uuid": "u-2", "unit_slug": "", "kind": "assessment", "period_start": "2026-03-08"},
+    ]
+    e = _entry(computed_block_id="u-2")
+    m = SimpleNamespace(slug="u2", confidence=0.7, ambiguous=False, reasons=["score"], section_slug="u2")
+    out = apply_unit_subunit_fields([e], blocks, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert any(r.startswith("secao-vence-bloco=") for r in out[0]["unit_match_reasons"])
+    assert not any(r.startswith("herdada_do_vizinho") for r in out[0]["unit_match_reasons"])

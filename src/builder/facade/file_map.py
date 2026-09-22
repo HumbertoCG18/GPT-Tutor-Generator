@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from functools import partial
 
+from src.builder.routing.file_map import plan_only_unit_specs
+
 
 def build_file_map_aliases(
     *,
@@ -120,6 +122,17 @@ def build_file_map_aliases(
             _unit_index_memo["indexed"] = build_file_map_unit_index(units)
         return _unit_index_memo["indexed"]
 
+    # #47: indice so-plano da secao, com slot proprio — no mesmo slot ele e o indice completo
+    # se expulsavam e os dois eram refeitos a cada entry (revisao Astra).
+    _plan_index_memo = {"units": None, "indexed": None}
+
+    def _memo_build_plan_unit_index(units):
+        if _plan_index_memo["units"] is not units:
+            _plan_index_memo["units"] = units
+            _plan_index_memo["indexed"] = build_file_map_unit_index(
+                plan_only_unit_specs(_memo_build_unit_index(units)))
+        return _plan_index_memo["indexed"]
+
     def auto_map_entry_unit(entry, units, markdown_text, topic_index=None, unit_tag_index=None, learned_unit_boosts=None):
         return file_map_auto_map_entry_unit(
             entry,
@@ -134,6 +147,7 @@ def build_file_map_aliases(
             normalize_unit_slug=normalize_unit_slug,
             score_entry_against_taxonomy_topic=score_entry_against_taxonomy_topic,
             unit_match_result_factory=unit_match_result_factory,
+            build_plan_unit_index=_memo_build_plan_unit_index,
         )
 
     format_file_map_unit_cell = file_map_format_file_map_unit_cell

@@ -2053,3 +2053,71 @@ def test_unidade_explicita_da_secao_vence_bloco_discordante():
         computed_unit_slug="unidade-02-nivel-de-aplicacao", unit_confidence=0.95, computed_block_id="bloco-22",
         block_confidence=1.0, block_unit_slug="unidade-05-nivel-de-enlace", block_is_manual=False, has_manual_unit=False)
     assert unit2 == "unidade-05-nivel-de-enlace" and reasons2 == ["reconciliada_do_bloco=bloco-22"]
+
+
+# --- #47: vencedor unico da secao do Moodle contra o indice de unidades ---
+
+_UNITS_47 = [
+    {"title": "Unidade 02 — Gerência do Processador", "slug": "unidade-02-gerencia-do-processador",
+     "topics": ["2.1. Escalonamento", "2.2. Algoritmos de Escalonamento"]},
+    {"title": "Unidade 03 — Programação Concorrente", "slug": "unidade-03-programacao-concorrente",
+     "topics": ["3.1. Sincronização e Comunicação de Processos", "3.2. Semáforos"]},
+]
+
+
+def test_auto_map_entry_unit_expoe_vencedor_unico_da_secao():
+    entry = {"title": "Laminas", "category": "slides", "tags": "",
+             "source_section": "Sincronização e Comunicação de Processos"}
+    result = _auto_map_entry_unit(entry, _UNITS_47, markdown_text="")
+    assert result.section_slug == "unidade-03-programacao-concorrente"
+
+
+def test_auto_map_entry_unit_secao_generica_ou_ausente_nao_tem_vencedor():
+    for secao in ("Semana 1 - 02/03 a 06/03", ""):
+        entry = {"title": "Laminas", "category": "slides", "tags": "", "source_section": secao}
+        assert _auto_map_entry_unit(entry, _UNITS_47, markdown_text="").section_slug == ""
+
+
+def test_auto_map_entry_unit_secao_empatada_nao_tem_vencedor():
+    units = [
+        {"title": "Unidade 01 — Parte A", "slug": "unidade-01-parte-a", "topics": ["1.1. Processos Concorrentes"]},
+        {"title": "Unidade 02 — Parte B", "slug": "unidade-02-parte-b", "topics": ["2.1. Processos Concorrentes"]},
+    ]
+    entry = {"title": "Laminas", "category": "slides", "tags": "", "source_section": "Processos Concorrentes"}
+    assert _auto_map_entry_unit(entry, units, markdown_text="").section_slug == ""
+
+
+def test_auto_map_entry_unit_secao_pontua_so_contra_o_plano():
+    """#47: a regra medida (45/45) pontua a secao contra titulo e topicos do PLANO. Com o
+    indice enriquecido por glossario (`extra_signals`), o aceite pelo harness trocou a
+    unidade de uma entrada a mais no IA (`introducao-a-agentes`, sem regua)."""
+    units = [
+        {"title": "Unidade 01 — Busca", "slug": "unidade-01-busca", "topics": ["1.1. Busca Cega"]},
+        {"title": "Unidade 02 — Planejamento", "slug": "unidade-02-planejamento", "topics": ["2.1. Planejamento Clássico"],
+         "extra_signals": ["agentes inteligentes"]},
+    ]
+    entry = {"title": "Laminas", "category": "slides", "tags": "", "source_section": "Agentes Inteligentes"}
+    assert _auto_map_entry_unit(entry, units, markdown_text="").section_slug == ""
+
+
+def test_auto_map_entry_unit_nao_reindexa_as_units_a_cada_entry():
+    """Revisao Astra (#47): o indice so-plano da secao tomava o unico slot do memo por
+    identidade e o indice completo era refeito a cada entry. As units originais so podem
+    ser lidas na primeira indexacao."""
+    class _Contada(dict):
+        leituras = 0
+
+        def get(self, key, default=None):
+            if key == "title":
+                _Contada.leituras += 1
+            return super().get(key, default)
+
+    units = [_Contada(u) for u in _UNITS_47]
+    entradas = [{"title": f"Laminas {i}", "category": "slides", "tags": "",
+                 "source_section": "Sincronização e Comunicação de Processos"} for i in range(4)]
+    assert _auto_map_entry_unit(entradas[0], units, markdown_text="").section_slug
+    apos_primeira = _Contada.leituras
+    assert apos_primeira > 0
+    for entry in entradas[1:]:
+        assert _auto_map_entry_unit(entry, units, markdown_text="").section_slug
+    assert _Contada.leituras == apos_primeira

@@ -1,0 +1,2188 @@
+{
+  "head": "ce02a8f47285c30c16f12b131bdf86c46dcba64e",
+  "course": "SO",
+  "runs": {
+    "without_patch": {
+      "aliases": {
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema": [
+          "estados",
+          "fork",
+          "processo"
+        ],
+        "unidade-02-gerencia-do-processador|escalonamento": [
+          "programa"
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento": [
+          "bloqueante",
+          "buffer",
+          "camento",
+          "consumidor",
+          "direto",
+          "diversas",
+          "endere",
+          "exclus",
+          "indireto",
+          "iveis",
+          "mensagens",
+          "outras",
+          "poss",
+          "primitivas",
+          "producer",
+          "produtor",
+          "quanto",
+          "receive",
+          "send",
+          "tipos",
+          "utua",
+          "varia"
+        ],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos": [
+          "Comunicação",
+          "sincronização de processos"
+        ],
+        "unidade-04-deadlock|deteccao-e-recuperacao": [
+          "Detecção",
+          "recuperação"
+        ],
+        "unidade-07-gerencia-de-entrada-e-saida|dispositivos-de-entrada-e-saida": [
+          "Dispositivos de entrada"
+        ]
+      },
+      "origins": {
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|fork": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1703-chamada-de-sistema",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|processo": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1203-processos",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|estados": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1203-processos",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|escalonamento|programa": [
+          {
+            "manifest_id": "0704-laminas-comunicacao-e-sincronizacao",
+            "confidence": 0.9745
+          },
+          {
+            "manifest_id": "3103-threads",
+            "confidence": 0.980875
+          },
+          {
+            "manifest_id": "biblioteca-em-c-pthread",
+            "confidence": 0.9745
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|mensagens": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|receive": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|tipos": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|producer": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|bloqueante": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|send": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|primitivas": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|quanto": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|camento": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|varia": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|buffer": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|outras": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|endere": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|direto": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|produtor": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|indireto": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|exclus": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|diversas": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|poss": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|utua": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|consumidor": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento|iveis": [
+          {
+            "manifest_id": "14-04-troca-de-mensagens",
+            "confidence": 1.0
+          },
+          {
+            "manifest_id": "1404-troca-de-mensagens",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|sincronização de processos": [],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|Comunicação": [],
+        "unidade-04-deadlock|deteccao-e-recuperacao|Detecção": [],
+        "unidade-04-deadlock|deteccao-e-recuperacao|recuperação": [],
+        "unidade-07-gerencia-de-entrada-e-saida|dispositivos-de-entrada-e-saida|Dispositivos de entrada": []
+      },
+      "target_ablations": {
+        "laminas-sockets-material-alternativo-em-pt": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "algoritmos-de-escalonamento",
+            "confidence": 0.912714047582967,
+            "ambiguous": false,
+            "reasons": [
+              "winner_score=13.20"
+            ]
+          },
+          "single_alias_removals": [
+            {
+              "removed_alias": "bloqueante",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "buffer",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "camento",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "consumidor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "direto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "diversas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "endere",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "exclus",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "indireto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "iveis",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "mensagens",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.8826883910386965,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=9.82"
+                ]
+              }
+            },
+            {
+              "removed_alias": "outras",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "poss",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "primitivas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "producer",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "produtor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "quanto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.8826883910386965,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=9.82"
+                ]
+              }
+            },
+            {
+              "removed_alias": "receive",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.9049191152195443,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=12.12"
+                ]
+              }
+            },
+            {
+              "removed_alias": "send",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.9049191152195443,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=12.12"
+                ]
+              }
+            },
+            {
+              "removed_alias": "tipos",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.8826883910386965,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=9.82"
+                ]
+              }
+            },
+            {
+              "removed_alias": "utua",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            },
+            {
+              "removed_alias": "varia",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 0.912714047582967,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=13.20"
+                ]
+              }
+            }
+          ]
+        },
+        "exemplo-threads-em-c-exemplo1": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "algoritmos-de-escalonamento",
+            "confidence": 1.0,
+            "ambiguous": false,
+            "reasons": [
+              "winner_score=3.45"
+            ]
+          },
+          "single_alias_removals": [
+            {
+              "removed_alias": "bloqueante",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "buffer",
+              "result": {
+                "topic_slug": "",
+                "confidence": 0.0,
+                "ambiguous": true,
+                "reasons": [
+                  "sem-sinal (winner_score=0)"
+                ]
+              }
+            },
+            {
+              "removed_alias": "camento",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "consumidor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "direto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "diversas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "endere",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "exclus",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "indireto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "iveis",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "mensagens",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "outras",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "poss",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "primitivas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "producer",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "produtor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "quanto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "receive",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "send",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "tipos",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "utua",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "varia",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            }
+          ]
+        },
+        "exemplo-threads-em-c-exemplo2": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "algoritmos-de-escalonamento",
+            "confidence": 1.0,
+            "ambiguous": false,
+            "reasons": [
+              "winner_score=3.45"
+            ]
+          },
+          "single_alias_removals": [
+            {
+              "removed_alias": "bloqueante",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "buffer",
+              "result": {
+                "topic_slug": "",
+                "confidence": 0.0,
+                "ambiguous": true,
+                "reasons": [
+                  "sem-sinal (winner_score=0)"
+                ]
+              }
+            },
+            {
+              "removed_alias": "camento",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "consumidor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "direto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "diversas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "endere",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "exclus",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "indireto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "iveis",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "mensagens",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "outras",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "poss",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "primitivas",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "producer",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "produtor",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "quanto",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "receive",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "send",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "tipos",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "utua",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            },
+            {
+              "removed_alias": "varia",
+              "result": {
+                "topic_slug": "algoritmos-de-escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=3.45"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "with_patch": {
+      "aliases": {
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema": [
+          "estados",
+          "fork",
+          "processo"
+        ],
+        "unidade-02-gerencia-do-processador|escalonamento": [
+          "defini",
+          "programa"
+        ],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos": [
+          "Comunicação",
+          "sincronização de processos",
+          "vantagens"
+        ],
+        "unidade-04-deadlock|deteccao-e-recuperacao": [
+          "Detecção",
+          "recuperação"
+        ],
+        "unidade-07-gerencia-de-entrada-e-saida|dispositivos-de-entrada-e-saida": [
+          "Dispositivos de entrada"
+        ]
+      },
+      "origins": {
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|fork": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1703-chamada-de-sistema",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|processo": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1203-processos",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|estados": [
+          {
+            "manifest_id": "lista1-gab",
+            "confidence": 0.9430955471698114
+          },
+          {
+            "manifest_id": "1203-processos",
+            "confidence": 1.0
+          }
+        ],
+        "unidade-02-gerencia-do-processador|escalonamento|defini": [
+          {
+            "manifest_id": "2403-escalonamento-de-processos",
+            "confidence": 0.992371671388102
+          },
+          {
+            "manifest_id": "3103-threads",
+            "confidence": 0.980875
+          }
+        ],
+        "unidade-02-gerencia-do-processador|escalonamento|programa": [
+          {
+            "manifest_id": "3103-threads",
+            "confidence": 0.980875
+          },
+          {
+            "manifest_id": "biblioteca-em-c-pthread",
+            "confidence": 0.9745
+          }
+        ],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|sincronização de processos": [],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|Comunicação": [],
+        "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|vantagens": [
+          {
+            "manifest_id": "0704-laminas-comunicacao-e-sincronizacao",
+            "confidence": 0.9174757281553397
+          },
+          {
+            "manifest_id": "1404-laminas-ipc",
+            "confidence": 0.9174757281553397
+          }
+        ],
+        "unidade-04-deadlock|deteccao-e-recuperacao|Detecção": [],
+        "unidade-04-deadlock|deteccao-e-recuperacao|recuperação": [],
+        "unidade-07-gerencia-de-entrada-e-saida|dispositivos-de-entrada-e-saida|Dispositivos de entrada": []
+      },
+      "target_ablations": {
+        "laminas-sockets-material-alternativo-em-pt": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "escalonamento",
+            "confidence": 1.0,
+            "ambiguous": false,
+            "reasons": [
+              "winner_score=1.15"
+            ]
+          },
+          "single_alias_removals": [
+            {
+              "removed_alias": "defini",
+              "result": {
+                "topic_slug": "escalonamento",
+                "confidence": 1.0,
+                "ambiguous": false,
+                "reasons": [
+                  "winner_score=1.15"
+                ]
+              }
+            },
+            {
+              "removed_alias": "programa",
+              "result": {
+                "topic_slug": "",
+                "confidence": 0.0,
+                "ambiguous": true,
+                "reasons": [
+                  "sem-sinal (winner_score=0)"
+                ]
+              }
+            }
+          ]
+        },
+        "exemplo-threads-em-c-exemplo1": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "",
+            "confidence": 0.0,
+            "ambiguous": true,
+            "reasons": [
+              "sem-sinal (winner_score=0)"
+            ]
+          },
+          "single_alias_removals": []
+        },
+        "exemplo-threads-em-c-exemplo2": {
+          "winning_unit_slug": "unidade-02-gerencia-do-processador",
+          "full": {
+            "topic_slug": "",
+            "confidence": 0.0,
+            "ambiguous": true,
+            "reasons": [
+              "sem-sinal (winner_score=0)"
+            ]
+          },
+          "single_alias_removals": []
+        }
+      }
+    }
+  },
+  "alias_diff": {
+    "removed_by_patch": {
+      "unidade-02-gerencia-do-processador|algoritmos-de-escalonamento": [
+        "bloqueante",
+        "buffer",
+        "camento",
+        "consumidor",
+        "direto",
+        "diversas",
+        "endere",
+        "exclus",
+        "indireto",
+        "iveis",
+        "mensagens",
+        "outras",
+        "poss",
+        "primitivas",
+        "producer",
+        "produtor",
+        "quanto",
+        "receive",
+        "send",
+        "tipos",
+        "utua",
+        "varia"
+      ]
+    },
+    "added_by_patch": {
+      "unidade-02-gerencia-do-processador|escalonamento": [
+        "defini"
+      ],
+      "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos": [
+        "vantagens"
+      ]
+    }
+  },
+  "patched_unit_ids": [
+    "0704-laminas-comunicacao-e-sincronizacao",
+    "0904-laminas-semaforos",
+    "14-04-troca-de-mensagens",
+    "1404-laminas-ipc",
+    "1404-troca-de-mensagens",
+    "laminas-cs-4244-internet-programming-sockets-programming"
+  ],
+  "collateral_entries": [
+    {
+      "manifest_id": "exemplo-threads-em-c-exemplo1",
+      "unit": "unidade-02-gerencia-do-processador",
+      "before_subunit": "algoritmos-de-escalonamento",
+      "after_subunit": "",
+      "before_reasons": [
+        "winner_score=3.45",
+        "propagado-headings"
+      ],
+      "after_reasons": [
+        "sem-sinal (winner_score=0)"
+      ],
+      "baseline_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "algoritmos-de-escalonamento",
+          "confidence": 1.0,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=3.45"
+          ]
+        },
+        "single_alias_removals": [
+          {
+            "removed_alias": "bloqueante",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "buffer",
+            "result": {
+              "topic_slug": "",
+              "confidence": 0.0,
+              "ambiguous": true,
+              "reasons": [
+                "sem-sinal (winner_score=0)"
+              ]
+            }
+          },
+          {
+            "removed_alias": "camento",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "consumidor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "direto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "diversas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "endere",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "exclus",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "indireto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "iveis",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "mensagens",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "outras",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "poss",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "primitivas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "producer",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "produtor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "quanto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "receive",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "send",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "tipos",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "utua",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "varia",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          }
+        ]
+      },
+      "patched_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "",
+          "confidence": 0.0,
+          "ambiguous": true,
+          "reasons": [
+            "sem-sinal (winner_score=0)"
+          ]
+        },
+        "single_alias_removals": []
+      },
+      "gold": {
+        "in_ruler": true,
+        "primary": [
+          "conceitos-basicos"
+        ],
+        "accepted": [
+          "conceitos-basicos"
+        ]
+      }
+    },
+    {
+      "manifest_id": "exemplo-threads-em-c-exemplo2",
+      "unit": "unidade-02-gerencia-do-processador",
+      "before_subunit": "algoritmos-de-escalonamento",
+      "after_subunit": "",
+      "before_reasons": [
+        "winner_score=3.45",
+        "propagado-headings"
+      ],
+      "after_reasons": [
+        "sem-sinal (winner_score=0)"
+      ],
+      "baseline_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "algoritmos-de-escalonamento",
+          "confidence": 1.0,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=3.45"
+          ]
+        },
+        "single_alias_removals": [
+          {
+            "removed_alias": "bloqueante",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "buffer",
+            "result": {
+              "topic_slug": "",
+              "confidence": 0.0,
+              "ambiguous": true,
+              "reasons": [
+                "sem-sinal (winner_score=0)"
+              ]
+            }
+          },
+          {
+            "removed_alias": "camento",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "consumidor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "direto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "diversas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "endere",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "exclus",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "indireto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "iveis",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "mensagens",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "outras",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "poss",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "primitivas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "producer",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "produtor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "quanto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "receive",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "send",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "tipos",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "utua",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          },
+          {
+            "removed_alias": "varia",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=3.45"
+              ]
+            }
+          }
+        ]
+      },
+      "patched_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "",
+          "confidence": 0.0,
+          "ambiguous": true,
+          "reasons": [
+            "sem-sinal (winner_score=0)"
+          ]
+        },
+        "single_alias_removals": []
+      },
+      "gold": {
+        "in_ruler": true,
+        "primary": [
+          "conceitos-basicos"
+        ],
+        "accepted": [
+          "conceitos-basicos"
+        ]
+      }
+    },
+    {
+      "manifest_id": "laminas-sockets-material-alternativo-em-pt",
+      "unit": "unidade-02-gerencia-do-processador",
+      "before_subunit": "algoritmos-de-escalonamento",
+      "after_subunit": "escalonamento",
+      "before_reasons": [
+        "winner_score=13.20",
+        "propagado-headings"
+      ],
+      "after_reasons": [
+        "winner_score=1.15",
+        "propagado-headings"
+      ],
+      "baseline_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "algoritmos-de-escalonamento",
+          "confidence": 0.912714047582967,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=13.20"
+          ]
+        },
+        "single_alias_removals": [
+          {
+            "removed_alias": "bloqueante",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "buffer",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "camento",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "consumidor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "direto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "diversas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "endere",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "exclus",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "indireto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "iveis",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "mensagens",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.8826883910386965,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=9.82"
+              ]
+            }
+          },
+          {
+            "removed_alias": "outras",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "poss",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "primitivas",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "producer",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "produtor",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "quanto",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.8826883910386965,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=9.82"
+              ]
+            }
+          },
+          {
+            "removed_alias": "receive",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.9049191152195443,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=12.12"
+              ]
+            }
+          },
+          {
+            "removed_alias": "send",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.9049191152195443,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=12.12"
+              ]
+            }
+          },
+          {
+            "removed_alias": "tipos",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.8826883910386965,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=9.82"
+              ]
+            }
+          },
+          {
+            "removed_alias": "utua",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          },
+          {
+            "removed_alias": "varia",
+            "result": {
+              "topic_slug": "algoritmos-de-escalonamento",
+              "confidence": 0.912714047582967,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=13.20"
+              ]
+            }
+          }
+        ]
+      },
+      "patched_alias_ablation": {
+        "winning_unit_slug": "unidade-02-gerencia-do-processador",
+        "full": {
+          "topic_slug": "escalonamento",
+          "confidence": 1.0,
+          "ambiguous": false,
+          "reasons": [
+            "winner_score=1.15"
+          ]
+        },
+        "single_alias_removals": [
+          {
+            "removed_alias": "defini",
+            "result": {
+              "topic_slug": "escalonamento",
+              "confidence": 1.0,
+              "ambiguous": false,
+              "reasons": [
+                "winner_score=1.15"
+              ]
+            }
+          },
+          {
+            "removed_alias": "programa",
+            "result": {
+              "topic_slug": "",
+              "confidence": 0.0,
+              "ambiguous": true,
+              "reasons": [
+                "sem-sinal (winner_score=0)"
+              ]
+            }
+          }
+        ]
+      },
+      "gold": {
+        "in_ruler": true,
+        "primary": [],
+        "accepted": []
+      }
+    }
+  ],
+  "input_hashes": {
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\docs\\reports\\_harness-2026-09-04\\c1-3\\regra_secao_unidade_21-09.json": "2af303fa5ce592c1862afd90837df80d627aa07d40b580bacb2e0328bd7b29ca",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\pacote_fontes_15-09\\Sistemas-Operacionais-Tutor\\manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+  },
+  "instrumentation": "wrapper em memoria de resolver_apply.propagar_vocabulario_por_headings; aliases observados na taxonomia copiada entregue ao scorer; ablacao individual em memoria",
+  "source": "src/builder/routing/resolver_apply.py:262-346",
+  "limitations": [
+    "Somente SO; uma execucao sem patch e uma com as 6 decisoes juntas.",
+    "Blocos congelados; sem rede, LLM, build, escrita em src/ ou proposta de correcao."
+  ]
+}

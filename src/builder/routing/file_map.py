@@ -27,6 +27,8 @@ class UnitMatchResult:
     confidence: float
     ambiguous: bool = False
     reasons: List[str] = field(default_factory=list)
+    # #47: unidade que a SECAO do Moodle aponta sozinha (vencedor estritamente unico); "" se nao ha.
+    section_slug: str = ""
 
 
 def strip_outline_prefix(text: str) -> str:
@@ -456,6 +458,12 @@ def _unit_number_from_slug(slug: str):
     return int(m.group(1)) if m else None
 
 
+def plan_only_unit_specs(indexed_units: list) -> list:
+    """#47: specs so com titulo e topicos do PLANO — sem `extra_signals` do glossario nem
+    `generic_tokens` por curso, como na medicao (45/45 da secao)."""
+    return [{"title": u.get("title", ""), "topics": u.get("topics") or []} for u in indexed_units]
+
+
 def auto_map_entry_unit(
     entry: dict,
     units: list,
@@ -470,6 +478,7 @@ def auto_map_entry_unit(
     normalize_unit_slug: Callable[[str], str],
     score_entry_against_taxonomy_topic: Callable[[dict, dict], float],
     unit_match_result_factory=UnitMatchResult,
+    build_plan_unit_index: Optional[Callable[[list], list]] = None,
 ) -> UnitMatchResult:
     indexed_units = build_file_map_unit_index(units)
     if not indexed_units:
@@ -484,6 +493,22 @@ def auto_map_entry_unit(
                 reasons=[f"unidade-explicita=u{numero}"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
+    # #47: a secao pontuada SOZINHA, contra titulo e topicos do PLANO (sem `extra_signals` do
+    # glossario: com eles o aceite trocou uma unidade a mais no IA, fora do que foi medido).
+    # Maximo positivo estritamente unico, sem piso nem margem: medido nos 7 cursos, acerta
+    # 45/45; zero ou empate = sem vencedor.
+    # `build_plan_unit_index` recebe as `units` ORIGINAIS para quem chama poder memoizar por
+    # identidade sem disputar o slot do indice completo (revisao Astra).
+    section_scores = sorted(
+        ((score_entry_against_unit({"card_text": signals.get("card_text", "")}, unit), str(unit.get("slug") or ""))
+         for unit in (build_plan_unit_index(units) if build_plan_unit_index is not None
+                      else build_file_map_unit_index(plan_only_unit_specs(indexed_units)))),
+        reverse=True,
+    ) if signals.get("card_text") else []
+    section_slug = ""
+    if section_scores and section_scores[0][0] > 0 and (
+            len(section_scores) == 1 or section_scores[0][0] > section_scores[1][0]):
+        section_slug = section_scores[0][1]
     unit_tag_boosts: Dict[str, float] = {}
     if unit_tag_index:
         for tag in [str(t) for t in (entry.get("auto_tags") or []) if t]:
@@ -570,6 +595,7 @@ def auto_map_entry_unit(
         confidence=confidence,
         ambiguous=ambiguous,
         reasons=reasons,
+        section_slug=section_slug,
     )
 
 
@@ -760,6 +786,7 @@ def reconcile_unit_with_block(
     block_is_manual: bool,
     has_manual_unit: bool,
     unit_is_explicit: bool = False,
+    section_unit_slug: str = "",
 ) -> Tuple[str, List[str], Dict[str, str]]:
     """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
 
@@ -779,6 +806,14 @@ def reconcile_unit_with_block(
            ("explicita-vence-bloco=<id>") e o conflito fica registrado. Medido no
            FR reconstruido do zero: os 9 erros de unidade eram todos explicita
            sobreposta por bloco flagado ou herdado do vizinho; no produto, 3.
+         - `section_unit_slug` (2026-09-21, #47): a secao do Moodle tem vencedor
+           estritamente unico no indice de unidades E o vencedor bruto do texto,
+           nao ambiguo, e essa mesma unidade (quem chama garante a corroboracao).
+           Se difere da unidade do bloco, a secao vence ("secao-vence-bloco=<id>")
+           e o conflito fica registrado. Medido pela fase real nos 7 cursos:
+           unidade 239 -> 244/284, 0 perda, bloco igual, subunidade primaria igual,
+           aceita 108 -> 107 (acoplamento da 2a passada). Sem a corroboracao perde
+           subunidade no TCC; com "bloco misto" so corta ganho.
 
     conflict é {} exceto nos casos em que a unidade venceu bloco discordante.
     """
@@ -788,6 +823,12 @@ def reconcile_unit_with_block(
         return computed_unit_slug, [], {}
     if not computed_block_id or not block_unit_slug:
         return computed_unit_slug, [], {}
+    if section_unit_slug and section_unit_slug != block_unit_slug and not unit_is_explicit:
+        return (
+            section_unit_slug,
+            [f"secao-vence-bloco={computed_block_id}"],
+            {"unit": section_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+        )
     if not computed_unit_slug:
         return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
     if block_unit_slug == computed_unit_slug:
