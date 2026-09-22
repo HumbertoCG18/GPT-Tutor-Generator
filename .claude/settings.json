@@ -9,8 +9,7 @@
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/engine-facade-guard.js\"",
             "timeout": 10
           }
-        ],
-        "description": "engine.py e fachada (.mex/AGENTS.md)"
+        ]
       },
       {
         "matcher": "Bash",
@@ -20,9 +19,9 @@
             "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/gemini-antipattern-guard.js\"",
             "timeout": 15
           }
-        ],
-        "description": "anti-padroes Gemini no staged (.mex/AGENTS.md)"
+        ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {}
 }
