@@ -1,0 +1,5933 @@
+{
+  "head": "b726d4c (#48 commitada)",
+  "variantes": {
+    "V0": "raw / sqrt(len(sig)) [atual, controle]",
+    "V1": "raw",
+    "V2": "raw / sqrt(sum_{t in sig} (sig[t]*log(1+m/df[t]))**2)",
+    "V3": "raw / log(2 + len(sig))",
+    "V4": "raw / sqrt(|mat & sig|), 0 se nao casa nada"
+  },
+  "patch": "atributo de modulo disambiguator._score (unico call-site em src/: disambiguator.py:230, nome global do proprio modulo); restaurado no finally. src/ intocado; voter=None; sem rede/LLM.",
+  "freeze_sha256_decisoes": "a8c7c7b6572ff0d81fe37bf575bcfb3bb8a765928b1c1e1f5329d5dcbb35a129",
+  "v0_identico_a_base": true,
+  "placar_bloco": {
+    "V0": "214/237",
+    "V1": "217/237",
+    "V2": "214/237",
+    "V3": "217/237",
+    "V4": "217/237"
+  },
+  "placar_unidade": {
+    "V0": "246/284",
+    "V1": "246/284",
+    "V2": "246/284",
+    "V3": "246/284",
+    "V4": "246/284"
+  },
+  "toques_total_ids_que_mudam_bloco": {
+    "V0": 0,
+    "V1": 3,
+    "V2": 0,
+    "V3": 3,
+    "V4": 3
+  },
+  "ganhos_bloco": {
+    "V0": [],
+    "V1": [
+      "IA:algoritmo-de-classificacao-k-nn",
+      "MF:exerciciosnusmv",
+      "MF:provas"
+    ],
+    "V2": [],
+    "V3": [
+      "IA:algoritmo-de-classificacao-k-nn",
+      "MF:exerciciosnusmv",
+      "MF:provas"
+    ],
+    "V4": [
+      "IA:algoritmo-de-classificacao-k-nn",
+      "MF:exerciciosdafny2",
+      "MF:exerciciosnusmv"
+    ]
+  },
+  "perdas_bloco": {
+    "V0": [],
+    "V1": [],
+    "V2": [],
+    "V3": [],
+    "V4": []
+  },
+  "ids_que_mudam": {
+    "V0": [],
+    "V1": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "antes": "bloco-18",
+        "depois": "bloco-16",
+        "gold": "bloco-16",
+        "com_gold": true,
+        "banda_antes": "alta",
+        "banda_depois": "media",
+        "flag_antes": false,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "janela-1"
+      },
+      {
+        "curso": "MF",
+        "id": "provas",
+        "antes": "bloco-05",
+        "depois": "bloco-06",
+        "gold": "bloco-06",
+        "com_gold": true,
+        "banda_antes": "media",
+        "banda_depois": "alta",
+        "flag_antes": true,
+        "flag_depois": false,
+        "metodo_antes": "janela-1",
+        "metodo_depois": "disamb"
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "antes": "bloco-04",
+        "depois": "bloco-05",
+        "gold": "bloco-05",
+        "com_gold": true,
+        "banda_antes": "media",
+        "banda_depois": "media",
+        "flag_antes": true,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "disamb"
+      }
+    ],
+    "V2": [],
+    "V3": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "antes": "bloco-18",
+        "depois": "bloco-16",
+        "gold": "bloco-16",
+        "com_gold": true,
+        "banda_antes": "alta",
+        "banda_depois": "media",
+        "flag_antes": false,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "janela-1"
+      },
+      {
+        "curso": "MF",
+        "id": "provas",
+        "antes": "bloco-05",
+        "depois": "bloco-06",
+        "gold": "bloco-06",
+        "com_gold": true,
+        "banda_antes": "media",
+        "banda_depois": "alta",
+        "flag_antes": true,
+        "flag_depois": false,
+        "metodo_antes": "janela-1",
+        "metodo_depois": "disamb"
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "antes": "bloco-04",
+        "depois": "bloco-05",
+        "gold": "bloco-05",
+        "com_gold": true,
+        "banda_antes": "media",
+        "banda_depois": "baixa",
+        "flag_antes": true,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "disamb-curto"
+      }
+    ],
+    "V4": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "antes": "bloco-18",
+        "depois": "bloco-16",
+        "gold": "bloco-16",
+        "com_gold": true,
+        "banda_antes": "alta",
+        "banda_depois": "media",
+        "flag_antes": false,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "janela-1"
+      },
+      {
+        "curso": "MF",
+        "id": "exerciciosdafny2",
+        "antes": "bloco-11",
+        "depois": "bloco-13",
+        "gold": "bloco-13",
+        "com_gold": true,
+        "banda_antes": "alta",
+        "banda_depois": "media",
+        "flag_antes": false,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "disamb"
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "antes": "bloco-04",
+        "depois": "bloco-05",
+        "gold": "bloco-05",
+        "com_gold": true,
+        "banda_antes": "media",
+        "banda_depois": "baixa",
+        "flag_antes": true,
+        "flag_depois": true,
+        "metodo_antes": "disamb",
+        "metodo_depois": "disamb"
+      }
+    ]
+  },
+  "cursos_bloco": {
+    "V0": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 54
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    },
+    "V1": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 56
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 39
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    },
+    "V2": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 54
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    },
+    "V3": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 56
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 39
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    },
+    "V4": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 56
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 39
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    }
+  },
+  "cursos_unidade": {
+    "V0": {
+      "MF": {
+        "unidade_n": 66,
+        "unidade": 61
+      },
+      "SO": {
+        "unidade_n": 37,
+        "unidade": 30
+      },
+      "IA": {
+        "unidade_n": 42,
+        "unidade": 39
+      },
+      "ES2": {
+        "unidade_n": 28,
+        "unidade": 25
+      },
+      "TCC": {
+        "unidade_n": 18,
+        "unidade": 17
+      },
+      "CG": {
+        "unidade_n": 93,
+        "unidade": 74
+      },
+      "FR": {}
+    },
+    "V1": {
+      "MF": {
+        "unidade_n": 66,
+        "unidade": 61
+      },
+      "SO": {
+        "unidade_n": 37,
+        "unidade": 30
+      },
+      "IA": {
+        "unidade_n": 42,
+        "unidade": 39
+      },
+      "ES2": {
+        "unidade_n": 28,
+        "unidade": 25
+      },
+      "TCC": {
+        "unidade_n": 18,
+        "unidade": 17
+      },
+      "CG": {
+        "unidade_n": 93,
+        "unidade": 74
+      },
+      "FR": {}
+    },
+    "V2": {
+      "MF": {
+        "unidade_n": 66,
+        "unidade": 61
+      },
+      "SO": {
+        "unidade_n": 37,
+        "unidade": 30
+      },
+      "IA": {
+        "unidade_n": 42,
+        "unidade": 39
+      },
+      "ES2": {
+        "unidade_n": 28,
+        "unidade": 25
+      },
+      "TCC": {
+        "unidade_n": 18,
+        "unidade": 17
+      },
+      "CG": {
+        "unidade_n": 93,
+        "unidade": 74
+      },
+      "FR": {}
+    },
+    "V3": {
+      "MF": {
+        "unidade_n": 66,
+        "unidade": 61
+      },
+      "SO": {
+        "unidade_n": 37,
+        "unidade": 30
+      },
+      "IA": {
+        "unidade_n": 42,
+        "unidade": 39
+      },
+      "ES2": {
+        "unidade_n": 28,
+        "unidade": 25
+      },
+      "TCC": {
+        "unidade_n": 18,
+        "unidade": 17
+      },
+      "CG": {
+        "unidade_n": 93,
+        "unidade": 74
+      },
+      "FR": {}
+    },
+    "V4": {
+      "MF": {
+        "unidade_n": 66,
+        "unidade": 61
+      },
+      "SO": {
+        "unidade_n": 37,
+        "unidade": 30
+      },
+      "IA": {
+        "unidade_n": 42,
+        "unidade": 39
+      },
+      "ES2": {
+        "unidade_n": 28,
+        "unidade": 25
+      },
+      "TCC": {
+        "unidade_n": 18,
+        "unidade": 17
+      },
+      "CG": {
+        "unidade_n": 93,
+        "unidade": 74
+      },
+      "FR": {}
+    }
+  },
+  "efeito_na_unidade_dos_que_mudam": {
+    "V0": [],
+    "V1": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "unidade_V0": "unidade-03-verificacao-de-modelos",
+        "unidade_variante": "unidade-03-verificacao-de-modelos",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "MF",
+        "id": "provas",
+        "unidade_V0": "unidade-01-metodos-formais",
+        "unidade_variante": "unidade-01-metodos-formais",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "unidade_V0": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "unidade_variante": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "mudou_unidade": false
+      }
+    ],
+    "V2": [],
+    "V3": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "unidade_V0": "unidade-03-verificacao-de-modelos",
+        "unidade_variante": "unidade-03-verificacao-de-modelos",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "MF",
+        "id": "provas",
+        "unidade_V0": "unidade-01-metodos-formais",
+        "unidade_variante": "unidade-01-metodos-formais",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "unidade_V0": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "unidade_variante": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "mudou_unidade": false
+      }
+    ],
+    "V4": [
+      {
+        "curso": "MF",
+        "id": "exerciciosnusmv",
+        "unidade_V0": "unidade-03-verificacao-de-modelos",
+        "unidade_variante": "unidade-03-verificacao-de-modelos",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "MF",
+        "id": "exerciciosdafny2",
+        "unidade_V0": "unidade-02-verificacao-de-programas",
+        "unidade_variante": "unidade-02-verificacao-de-programas",
+        "mudou_unidade": false
+      },
+      {
+        "curso": "IA",
+        "id": "algoritmo-de-classificacao-k-nn",
+        "unidade_V0": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "unidade_variante": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "mudou_unidade": false
+      }
+    ]
+  },
+  "banda_flag_sem_mudar_bloco": {
+    "V0": {
+      "contagem": {},
+      "entradas": []
+    },
+    "V1": {
+      "contagem": {
+        "ficou_confiante": 4,
+        "ficou_confiante_certa": 4,
+        "id_vazio_depois": 0,
+        "so_banda": 9,
+        "ficou_flagada": 3,
+        "ficou_flagada_certa": 2,
+        "ficou_flagada_sem_gold": 1
+      },
+      "entradas": [
+        {
+          "curso": "MF",
+          "id": "formalizacaoalgoritmos-recursao",
+          "banda": [
+            "media",
+            "alta"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "logicaproposicional-semantica",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-03",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "correcaoterminacao",
+          "banda": [
+            "media",
+            "alta"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-11",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "terminacao",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-12",
+          "id_final_certo": false
+        },
+        {
+          "curso": "SO",
+          "id": "0205-laminas-segmentacao",
+          "banda": [
+            "media",
+            "alta"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-16",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "visao-geral-introducao-e-historico",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": "bloco-02",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "lista-de-exercicios-i",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "lista1",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "minimax-teoria",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "minimax",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "respostas-da-lista-i-feito-pela-aluna-chiara",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "introducao-a-agentes",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-dos-dados-exemplo-2",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": false
+        },
+        {
+          "curso": "IA",
+          "id": "artigo-usando-k-nn-em-texto",
+          "banda": [
+            "baixa",
+            "alta"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-05",
+          "id_final_certo": true
+        },
+        {
+          "curso": "ES2",
+          "id": "microsservicos4",
+          "banda": [
+            "media",
+            "alta"
+          ],
+          "flag": [
+            false,
+            false
+          ],
+          "gold": "bloco-07",
+          "id_final_certo": true
+        }
+      ]
+    },
+    "V2": {
+      "contagem": {
+        "so_banda": 3,
+        "id_vazio_depois": 0
+      },
+      "entradas": [
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny1",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-12",
+          "id_final_certo": true
+        },
+        {
+          "curso": "CG",
+          "id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "FR",
+          "id": "unidade2-exercicios-dhcp",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        }
+      ]
+    },
+    "V3": {
+      "contagem": {
+        "ficou_confiante": 2,
+        "ficou_confiante_certa": 2,
+        "id_vazio_depois": 0,
+        "so_banda": 3,
+        "ficou_flagada": 1,
+        "ficou_flagada_certa": 1
+      },
+      "entradas": [
+        {
+          "curso": "MF",
+          "id": "correcaoterminacao",
+          "banda": [
+            "media",
+            "media"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-11",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny1",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-12",
+          "id_final_certo": true
+        },
+        {
+          "curso": "SO",
+          "id": "0205-laminas-segmentacao",
+          "banda": [
+            "media",
+            "alta"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-16",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "visao-geral-introducao-e-historico",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": "bloco-02",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": false
+        },
+        {
+          "curso": "IA",
+          "id": "artigo-usando-k-nn-em-texto",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-05",
+          "id_final_certo": true
+        }
+      ]
+    },
+    "V4": {
+      "contagem": {
+        "so_banda": 14,
+        "id_vazio_depois": 0,
+        "ficou_confiante": 1,
+        "ficou_confiante_certa": 1,
+        "ficou_flagada": 5,
+        "ficou_flagada_certa": 2,
+        "ficou_flagada_sem_gold": 3
+      },
+      "entradas": [
+        {
+          "curso": "MF",
+          "id": "exercicioslogicatemporal",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            false
+          ],
+          "gold": "bloco-16",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosespecificacao",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-03",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosespecificacao-respostas",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-03",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "logicaproposicional-semantica",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-03",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "correcaoterminacao",
+          "banda": [
+            "media",
+            "media"
+          ],
+          "flag": [
+            true,
+            false
+          ],
+          "gold": "bloco-11",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny4",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            false
+          ],
+          "gold": "bloco-13",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "formalizacaoalgoritmos-invarianteslaco",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            false
+          ],
+          "gold": "bloco-11",
+          "id_final_certo": true
+        },
+        {
+          "curso": "MF",
+          "id": "terminacao",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-12",
+          "id_final_certo": false
+        },
+        {
+          "curso": "IA",
+          "id": "visao-geral-introducao-e-historico",
+          "banda": [
+            "alta",
+            "baixa"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": "bloco-02",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "lista-de-exercicios-i",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "lista1",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "minimax-teoria",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "minimax",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "respostas-da-lista-i-feito-pela-aluna-chiara",
+          "banda": [
+            "media",
+            "baixa"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "introducao-a-agentes",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-dos-dados-exemplo-2",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": true
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-04",
+          "id_final_certo": false
+        },
+        {
+          "curso": "IA",
+          "id": "artigo-usando-k-nn-em-texto",
+          "banda": [
+            "baixa",
+            "media"
+          ],
+          "flag": [
+            true,
+            true
+          ],
+          "gold": "bloco-05",
+          "id_final_certo": true
+        },
+        {
+          "curso": "CG",
+          "id": "atividade",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        },
+        {
+          "curso": "FR",
+          "id": "unidade2-exercicios-http",
+          "banda": [
+            "alta",
+            "media"
+          ],
+          "flag": [
+            false,
+            true
+          ],
+          "gold": null,
+          "id_final_certo": null
+        }
+      ]
+    }
+  },
+  "inventario_janelas": {
+    "MF": {
+      "disamb_ge2": 36,
+      "certas": 30,
+      "erradas": 5,
+      "sem_gold": 1,
+      "cf_muda_V0": 2,
+      "cf_muda_V3": 2,
+      "cf_muda_V2": 1
+    },
+    "SO": {
+      "disamb_ge2": 7,
+      "certas": 5,
+      "cf_muda_V0": 4,
+      "cf_muda_V2": 4,
+      "cf_muda_V3": 4,
+      "erradas": 2
+    },
+    "IA": {
+      "disamb_ge2": 16,
+      "sem_gold": 6,
+      "certas": 8,
+      "cf_muda_V0": 7,
+      "cf_muda_V2": 6,
+      "cf_muda_V3": 5,
+      "erradas": 2
+    },
+    "ES2": {
+      "disamb_ge2": 1,
+      "sem_gold": 1
+    },
+    "TCC": {},
+    "CG": {
+      "disamb_ge2": 29,
+      "sem_gold": 17,
+      "certas": 10,
+      "cf_muda_V0": 4,
+      "cf_muda_V2": 3,
+      "cf_muda_V3": 3,
+      "erradas": 2
+    },
+    "FR": {
+      "disamb_ge2": 8,
+      "sem_gold": 8,
+      "cf_muda_V0": 1,
+      "cf_muda_V2": 1,
+      "cf_muda_V3": 1
+    }
+  },
+  "erros_de_desempate": [
+    {
+      "curso": "MF",
+      "id": "exerciciosnusmv",
+      "method": "disamb",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": "bloco-16",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-18",
+        "V1": "bloco-16",
+        "V2": "bloco-18",
+        "V3": "bloco-16",
+        "V4": "bloco-16"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "introducao",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": "bloco-02",
+      "certa_hoje": false,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-01",
+        "V1": "bloco-01",
+        "V2": "bloco-01",
+        "V3": "bloco-01",
+        "V4": "bloco-01"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "revisao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-03",
+      "certa_hoje": false,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny2",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-13",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-05",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": false,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-05",
+        "V2": "bloco-04",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-04",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-cpp",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py-zip",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    }
+  ],
+  "correcao_dos_erros_de_desempate": {
+    "V0": {
+      "corrige": [],
+      "permanece": [
+        {
+          "curso": "MF",
+          "id": "exerciciosnusmv",
+          "gold": "bloco-16",
+          "final": "bloco-18"
+        },
+        {
+          "curso": "MF",
+          "id": "introducao",
+          "gold": "bloco-02",
+          "final": "bloco-01"
+        },
+        {
+          "curso": "MF",
+          "id": "revisao",
+          "gold": "bloco-03",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny2",
+          "gold": "bloco-13",
+          "final": "bloco-11"
+        },
+        {
+          "curso": "IA",
+          "id": "algoritmo-de-classificacao-k-nn",
+          "gold": "bloco-05",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "gold": "bloco-04",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-cpp",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-py-zip",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        }
+      ],
+      "vira_outro_erro": []
+    },
+    "V1": {
+      "corrige": [
+        {
+          "curso": "MF",
+          "id": "exerciciosnusmv",
+          "gold": "bloco-16",
+          "final": "bloco-16"
+        },
+        {
+          "curso": "IA",
+          "id": "algoritmo-de-classificacao-k-nn",
+          "gold": "bloco-05",
+          "final": "bloco-05"
+        }
+      ],
+      "permanece": [
+        {
+          "curso": "MF",
+          "id": "introducao",
+          "gold": "bloco-02",
+          "final": "bloco-01"
+        },
+        {
+          "curso": "MF",
+          "id": "revisao",
+          "gold": "bloco-03",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny2",
+          "gold": "bloco-13",
+          "final": "bloco-11"
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "gold": "bloco-04",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-cpp",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-py-zip",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        }
+      ],
+      "vira_outro_erro": []
+    },
+    "V2": {
+      "corrige": [],
+      "permanece": [
+        {
+          "curso": "MF",
+          "id": "exerciciosnusmv",
+          "gold": "bloco-16",
+          "final": "bloco-18"
+        },
+        {
+          "curso": "MF",
+          "id": "introducao",
+          "gold": "bloco-02",
+          "final": "bloco-01"
+        },
+        {
+          "curso": "MF",
+          "id": "revisao",
+          "gold": "bloco-03",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny2",
+          "gold": "bloco-13",
+          "final": "bloco-11"
+        },
+        {
+          "curso": "IA",
+          "id": "algoritmo-de-classificacao-k-nn",
+          "gold": "bloco-05",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "gold": "bloco-04",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-cpp",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-py-zip",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        }
+      ],
+      "vira_outro_erro": []
+    },
+    "V3": {
+      "corrige": [
+        {
+          "curso": "MF",
+          "id": "exerciciosnusmv",
+          "gold": "bloco-16",
+          "final": "bloco-16"
+        },
+        {
+          "curso": "IA",
+          "id": "algoritmo-de-classificacao-k-nn",
+          "gold": "bloco-05",
+          "final": "bloco-05"
+        }
+      ],
+      "permanece": [
+        {
+          "curso": "MF",
+          "id": "introducao",
+          "gold": "bloco-02",
+          "final": "bloco-01"
+        },
+        {
+          "curso": "MF",
+          "id": "revisao",
+          "gold": "bloco-03",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny2",
+          "gold": "bloco-13",
+          "final": "bloco-11"
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "gold": "bloco-04",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-cpp",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-py-zip",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        }
+      ],
+      "vira_outro_erro": []
+    },
+    "V4": {
+      "corrige": [
+        {
+          "curso": "MF",
+          "id": "exerciciosnusmv",
+          "gold": "bloco-16",
+          "final": "bloco-16"
+        },
+        {
+          "curso": "MF",
+          "id": "exerciciosdafny2",
+          "gold": "bloco-13",
+          "final": "bloco-13"
+        },
+        {
+          "curso": "IA",
+          "id": "algoritmo-de-classificacao-k-nn",
+          "gold": "bloco-05",
+          "final": "bloco-05"
+        }
+      ],
+      "permanece": [
+        {
+          "curso": "MF",
+          "id": "introducao",
+          "gold": "bloco-02",
+          "final": "bloco-01"
+        },
+        {
+          "curso": "MF",
+          "id": "revisao",
+          "gold": "bloco-03",
+          "final": "bloco-04"
+        },
+        {
+          "curso": "IA",
+          "id": "analise-exploratoria-de-dados-exemplo-1",
+          "gold": "bloco-04",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-cpp",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        },
+        {
+          "curso": "CG",
+          "id": "basico3d-py-zip",
+          "gold": "bloco-15",
+          "final": "bloco-05"
+        }
+      ],
+      "vira_outro_erro": []
+    }
+  },
+  "contrafactual_comprimento": {
+    "peso_dos_termos_acrescentados": 0.6,
+    "ks": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "janelas_que_mudam_por_variante": {
+      "V0": 18,
+      "V1": 0,
+      "V2": 15,
+      "V3": 15,
+      "V4": 0
+    },
+    "n_janelas": 97
+  },
+  "checks": {
+    "V0": {
+      "bloco_maior_igual_215": false,
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_bloco": true,
+      "unidade_maior_igual_246": true,
+      "unidade_sem_perda": true,
+      "nenhum_curso_regride_unidade": true,
+      "ACEITE": false
+    },
+    "V1": {
+      "bloco_maior_igual_215": true,
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_bloco": true,
+      "unidade_maior_igual_246": true,
+      "unidade_sem_perda": true,
+      "nenhum_curso_regride_unidade": true,
+      "ACEITE": true
+    },
+    "V2": {
+      "bloco_maior_igual_215": false,
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_bloco": true,
+      "unidade_maior_igual_246": true,
+      "unidade_sem_perda": true,
+      "nenhum_curso_regride_unidade": true,
+      "ACEITE": false
+    },
+    "V3": {
+      "bloco_maior_igual_215": true,
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_bloco": true,
+      "unidade_maior_igual_246": true,
+      "unidade_sem_perda": true,
+      "nenhum_curso_regride_unidade": true,
+      "ACEITE": true
+    },
+    "V4": {
+      "bloco_maior_igual_215": true,
+      "zero_perda_de_bloco": true,
+      "nenhum_curso_regride_bloco": true,
+      "unidade_maior_igual_246": true,
+      "unidade_sem_perda": true,
+      "nenhum_curso_regride_unidade": true,
+      "ACEITE": true
+    }
+  },
+  "janelas": [
+    {
+      "curso": "MF",
+      "id": "exemplos",
+      "method": "disamb",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-16",
+        "V1": "bloco-16",
+        "V2": "bloco-16",
+        "V3": "bloco-16",
+        "V4": "bloco-16"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicioslogicatemporal",
+      "method": "disamb",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-16",
+        "V1": "bloco-16",
+        "V2": "bloco-16",
+        "V3": "bloco-16",
+        "V4": "bloco-16"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosnusmv",
+      "method": "disamb",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": "bloco-16",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-18",
+        "V1": "bloco-16",
+        "V2": "bloco-18",
+        "V3": "bloco-16",
+        "V4": "bloco-16"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "conjuntosindutivos",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosconjuntosindutivos",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao2",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao3",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao2",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao3",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "introducao",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": "bloco-02",
+      "certa_hoje": false,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-01",
+        "V1": "bloco-01",
+        "V2": "bloco-01",
+        "V3": "bloco-01",
+        "V4": "bloco-01"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "rigoroussoftwaredevelopment-chapters-1-2",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-01",
+        "V1": "bloco-01",
+        "V2": "bloco-01",
+        "V3": "bloco-01",
+        "V4": "bloco-01"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exemplos-thy",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-06",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        8,
+        1
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-06",
+        "V1": "bloco-06",
+        "V2": "bloco-06",
+        "V3": "bloco-06",
+        "V4": "bloco-06"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosespecificacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosespecificacao-respostas",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "logicaproposicional-semantica",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": false,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "logicaproposicional-sintaxe",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "revisao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-03",
+      "certa_hoje": false,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-arrays",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-conjuntos",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-sequences",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "correcaoterminacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicios-arrays",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicios-conjuntos",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicioscorrecaoterminacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny1",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-12",
+      "gold": "bloco-12",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "1": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ]
+        },
+        "V2": {
+          "5": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-11",
+              "nova_escolha": "bloco-12"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-11",
+              "nova_escolha": "bloco-12"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-11",
+              "nova_escolha": "bloco-12"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-12",
+        "V1": "bloco-12",
+        "V2": "bloco-12",
+        "V3": "bloco-12",
+        "V4": "bloco-12"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny2",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-13",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny3",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny4",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-13",
+        "V1": "bloco-13",
+        "V2": "bloco-13",
+        "V3": "bloco-13",
+        "V4": "bloco-13"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosinvariantes",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-invarianteslaco",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "invariantes",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "terminacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-12",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-11",
+        "V1": "bloco-11",
+        "V2": "bloco-11",
+        "V3": "bloco-11",
+        "V4": "bloco-11"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "0205-laminas-segmentacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-13",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-16",
+        "V1": "bloco-16",
+        "V2": "bloco-16",
+        "V3": "bloco-16",
+        "V4": "bloco-16"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "method": "disamb",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-09",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-06",
+        "V1": "bloco-06",
+        "V2": "bloco-06",
+        "V3": "bloco-06",
+        "V4": "bloco-06"
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-sockets-material-alternativo-em-pt",
+      "method": "disamb",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-09",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-06",
+        "V1": "bloco-06",
+        "V2": "bloco-06",
+        "V3": "bloco-06",
+        "V4": "bloco-06"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "future-of-jobs-report-2025",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        9,
+        3
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-01",
+        "V1": "bloco-01",
+        "V2": "bloco-01",
+        "V3": "bloco-01",
+        "V4": "bloco-01"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "visao-geral-introducao-e-historico",
+      "method": "disamb-curto",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-02",
+      "gold": "bloco-02",
+      "certa_hoje": true,
+      "tam_sig": [
+        9,
+        4
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-02",
+        "V1": "bloco-02",
+        "V2": "bloco-02",
+        "V3": "bloco-02",
+        "V4": "bloco-02"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "implementacaominimax",
+      "method": "disamb",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "lista-de-exercicios-i",
+      "method": "disamb",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "minimax-teoria",
+      "method": "disamb",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "respostas-da-lista-i-feito-pela-aluna-chiara",
+      "method": "disamb",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "introducao-a-agentes",
+      "method": "disamb",
+      "janela": [
+        "bloco-16",
+        "bloco-17"
+      ],
+      "escolha_atual": "bloco-17",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-17",
+        "V1": "bloco-17",
+        "V2": "bloco-17",
+        "V3": "bloco-17",
+        "V4": "bloco-17"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "caracteristicas-dos-dados",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        5
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "introducao-a-ml",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        5
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-05",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": false,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-05",
+        "V2": "bloco-04",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-dos-dados-exemplo-2",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-04",
+        "V1": "bloco-04",
+        "V2": "bloco-04",
+        "V3": "bloco-04",
+        "V4": "bloco-04"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-04",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "artigo-usando-k-nn-em-texto",
+      "method": "disamb",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "method": "disamb-curto",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-com-k-nn",
+      "method": "disamb-curto",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-de-programa-com-k-nn-em-java",
+      "method": "disamb-curto",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "ES2",
+      "id": "kubernetes",
+      "method": "disamb",
+      "janela": [
+        "bloco-12",
+        "bloco-14"
+      ],
+      "escolha_atual": "bloco-12",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-12",
+        "V1": "bloco-12",
+        "V2": "bloco-12",
+        "V3": "bloco-12",
+        "V4": "bloco-12"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "segmentacaopptx",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "segmentacaodetexturas",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "morfologiamatematicapptx",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05",
+        "bloco-08"
+      ],
+      "escolha_atual": "bloco-08",
+      "gold": "bloco-08",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-08",
+        "V1": "bloco-08",
+        "V2": "bloco-08",
+        "V3": "bloco-08",
+        "V4": "bloco-08"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05",
+        "bloco-08"
+      ],
+      "escolha_atual": "bloco-08",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-08",
+        "V1": "bloco-08",
+        "V2": "bloco-08",
+        "V3": "bloco-08",
+        "V4": "bloco-08"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "csg",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": "bloco-15",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "atividade",
+      "method": "disamb-curto",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-19",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        3,
+        3
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-19",
+        "V1": "bloco-19",
+        "V2": "bloco-19",
+        "V3": "bloco-19",
+        "V4": "bloco-19"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py",
+      "method": "disamb",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-18",
+        "V1": "bloco-18",
+        "V2": "bloco-18",
+        "V3": "bloco-18",
+        "V4": "bloco-18"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "opengl3d",
+      "method": "disamb",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        },
+        "V2": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        },
+        "V3": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-18",
+        "V1": "bloco-18",
+        "V2": "bloco-18",
+        "V3": "bloco-18",
+        "V4": "bloco-18"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-visualizacao-3d-35a833",
+      "method": "disamb",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        },
+        "V2": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        },
+        "V3": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-18",
+        "V1": "bloco-18",
+        "V2": "bloco-18",
+        "V3": "bloco-18",
+        "V4": "bloco-18"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-cpp",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py-zip",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exerciciodemodelagem",
+      "method": "disamb",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": "bloco-15",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-15",
+        "V1": "bloco-15",
+        "V2": "bloco-15",
+        "V3": "bloco-15",
+        "V4": "bloco-15"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "method": "disamb",
+      "janela": [
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-21",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-21",
+        "V1": "bloco-21",
+        "V2": "bloco-21",
+        "V3": "bloco-21",
+        "V4": "bloco-21"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "programabasico3d",
+      "method": "disamb",
+      "janela": [
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-21",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-21",
+        "V1": "bloco-21",
+        "V2": "bloco-21",
+        "V3": "bloco-21",
+        "V4": "bloco-21"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exemplodemanipulacaodeimagens",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-com-animacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-com-poligonos",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-de-animacao-foguete",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "matematica",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicioduascores",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "floodfill",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "img",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "remocaoderuido",
+      "method": "disamb",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicios-de-processamento-de-imagens",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": "bloco-07",
+      "certa_hoje": true,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "introducaoprocimg",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": "bloco-07",
+      "certa_hoje": true,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+      "method": "disamb",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ]
+        },
+        "V2": {
+          "5": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ]
+        },
+        "V3": {
+          "5": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-07",
+        "V1": "bloco-07",
+        "V2": "bloco-07",
+        "V3": "bloco-07",
+        "V4": "bloco-07"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "lista-de-exercicios-1-camada-de-aplicacao",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "tcp-chat-c",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "tcp-example",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "udp-example-c",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "udp-example-java",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-dhcp",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": true,
+        "V1": false,
+        "V2": true,
+        "V3": true,
+        "V4": false
+      },
+      "contrafactual_flips": {
+        "V0": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        },
+        "V2": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        },
+        "V3": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      },
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-dns",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-05",
+        "V1": "bloco-05",
+        "V2": "bloco-05",
+        "V3": "bloco-05",
+        "V4": "bloco-05"
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-http",
+      "method": "disamb",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "contrafactual": {
+        "V0": false,
+        "V1": false,
+        "V2": false,
+        "V3": false,
+        "V4": false
+      },
+      "contrafactual_flips": {},
+      "id_final_por_variante": {
+        "V0": "bloco-03",
+        "V1": "bloco-03",
+        "V2": "bloco-03",
+        "V3": "bloco-03",
+        "V4": "bloco-03"
+      }
+    }
+  ],
+  "limitations": [
+    "Sem build/rebuild, rede ou LLM; sidecar de votos nao usado (voter=None).",
+    "Ausentes permanecem no denominador da regua.",
+    "Variantes fixas a priori, sem limiar: nada a calibrar, logo sem LOCO.",
+    "Contrafactual acrescenta termos de peso W_TOPIC com df=1; so V2 depende desse peso (V0/V3 dependem so da contagem; V1/V4 nao dependem).",
+    "Inventario cobre as decisoes finais disamb/disamb-curto com janela >= 2 capturadas; entries que REUSAM decisao cacheada por content_key (apply.py:117-123) nao chamam disambiguate e nao aparecem na captura (acompanham a decisao reusada).",
+    "Unidade re-executada por variante apenas nos cursos cujo bloco mudou.",
+    "O script grava com `assert not OUT.exists()`: nao sobrescreve evidencia."
+  ]
+}

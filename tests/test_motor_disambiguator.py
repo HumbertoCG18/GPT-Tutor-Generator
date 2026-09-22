@@ -1,3 +1,4 @@
+from src.builder.routing.motor import disambiguator as disamb_mod
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.disambiguator import (
     entry_tokens,
@@ -66,8 +67,10 @@ def test_janela_1_emite_band_alta_conf_1():
     assert d.band == "alta" and d.flag is False and d.conf == 1.0
 
 
-def test_len_norm_beats_verbose_sink_block():
-    # bloco-verboso tem assinatura enorme (sink); bloco-alvo é enxuto e casa 'hoare'.
+def test_empate_por_evidencia_igual_fica_com_o_primeiro_da_janela():
+    # (#49, revisão Astra) bloco-10 casa 'hoare' e bloco-11 casa 'logica': mesma
+    # evidência (1 termo, peso e df iguais), scores iguais; sem len-norm o empate
+    # fica com o primeiro da janela (ordem temporal), nunca com o mais verboso.
     blocks = [
         {"id": "bloco-10", "topic_text": "hoare"},
         {"id": "bloco-11", "topic_text": (
@@ -77,7 +80,7 @@ def test_len_norm_beats_verbose_sink_block():
     ]
     ctx = _ctx(blocks)
     d = disambiguate({"title": "Logica de Hoare"}, ["bloco-10", "bloco-11"], ctx)
-    assert d.block_ref == "bloco-10"  # len-norm impede o sumidouro verboso
+    assert d.block_ref == "bloco-10"  # empate exato -> ordem da janela (#49: sem len-norm)
 
 
 def test_session_label_outranks_topic_text_on_multiblock():
@@ -139,12 +142,14 @@ def test_course_name_default_vazio_preserva_fase0():
     assert d.block_ref == "bloco-A"
 
 
-def test_vitoria_so_por_peso_sem_token_exclusivo_flagra():
+def test_vitoria_so_por_peso_sem_token_exclusivo_flagra(monkeypatch):
     # os DOIS blocos casam exatamente os mesmos tokens do material ("inducao",
-    # "estrutural"); o best vence só por peso (session-label 1.0 vs topic 0.6)
-    # + len-norm (assinatura do runner é maior). Margem calculada: s1=0.980,
-    # s2=0.416, rel_margin=0.576 >= MARGIN_TAU(0.55) e s2>0 => o gate ATUAL
-    # dá "alta" sem nenhum token exclusivo — exatamente o furo do D4 proxy.
+    # "estrutural"); o best vence só por peso (session-label 1.0 vs topic 0.6).
+    # Sem len-norm (#49) s1=2·log2 e s2=1,2·log2: rel_margin=0,40 < MARGIN_TAU
+    # (0,55), o que já flagra sozinho. Para isolar a exigência de token
+    # DISCRIMINANTE do D4 (revisão Astra), o limiar é rebaixado abaixo da
+    # margem: só `bool(discriminante)` pode manter a flag.
+    monkeypatch.setattr(disamb_mod, "MARGIN_TAU", 0.30)
     blocks = [
         {"id": "bloco-A", "period_start": "2026-03-01", "topic_text": "",
          "sessions": [{"date": "2026-03-02", "label": "inducao estrutural"}]},
@@ -338,3 +343,47 @@ def test_titulo_topico_ignora_topico_so_de_enchimento():
         card_block_map={}, lessons_index={})
     d = disambiguate({"id": "y", "title": "Introdução aos sistemas"}, ["bloco-01", "bloco-02"], ctx, "")
     assert d.method != "titulo-topico"
+
+
+# #49 (medido 22/09, c1-3/wq_desempate_contrastivo_22-09 e wr_normalizacao_score_bloco_22-09):
+# o divisor sqrt(len(sig)) do _score decidia 18/97 janelas de desempate pelo COMPRIMENTO da
+# assinatura, nao pela evidencia. Sem o divisor: bloco 214 -> 217/237, 0 perda, imune (0/97).
+def test_score_ignora_termos_da_assinatura_que_nao_casam():
+    """Contrafactual do W-Q: acrescentar termos que NAO casam o material a uma
+    assinatura nao pode mudar o score daquele candidato."""
+    from src.builder.routing.motor.disambiguator import _score
+    mat = {"kripke", "temporal"}
+    df = {"kripke": 1, "temporal": 1}
+    curta = {"kripke": 0.6, "temporal": 0.6}
+    longa = dict(curta, buchi=0.6, ltl=0.6, ctl=0.6, tableau=0.6, bisimulacao=0.6)
+    assert _score(mat, curta, 2, df) == _score(mat, longa, 2, df)
+
+
+def test_desempate_prefere_mais_evidencia_a_assinatura_curta():
+    """MF `exerciciosnusmv` (W-R): o bloco certo tinha assinatura longa e 2 termos
+    casados; perdia para um bloco de assinatura curta com 1 termo casado."""
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "hoare triplas", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "kripke temporal buchi ltl ctl tableau bisimulacao rotulagem "
+                       "satisfatibilidade fairness",
+         "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "hoare kripke temporal"}, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-B"
+
+
+def test_empate_positivo_margem_zero_e_flag_independem_do_comprimento():
+    """(#49, revisão Astra) dois candidatos casam o MESMO termo com o mesmo peso,
+    assinaturas de comprimentos diferentes: scores iguais, margem 0, decisão
+    flagada e primeiro da janela; inverter a janela inverte o vencedor."""
+    curta = {"id": "bloco-A", "period_start": "2026-03-01", "topic_text": "kripke", "sessions": []}
+    longa = {"id": "bloco-B", "period_start": "2026-03-08",
+             "topic_text": "kripke buchi ltl ctl tableau bisimulacao", "sessions": []}
+    ctx = MotorContext.from_artifacts(blocks=[curta, longa], card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "modelos kripke"}, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A" and d.flag is True and d.band != "alta"
+    d2 = disambiguate({"title": "modelos kripke"}, ["bloco-B", "bloco-A"], ctx)
+    assert d2.block_ref == "bloco-B" and d2.flag is True

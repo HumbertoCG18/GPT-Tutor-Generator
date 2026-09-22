@@ -1,4 +1,4 @@
-"""Disambiguator: escolhe DENTRO da janela (|janela|>1) por IDF len-norm.
+"""Disambiguator: escolhe DENTRO da janela (|janela|>1) por IDF local ponderado (#49: sem len-norm).
 
 Reúso PURO: concept_resolver.concept_token_weights/concept_vector (bounded à
 janela) — mas a tokenização/stems desta fase espelha marco0 (prova cacheada
@@ -119,14 +119,20 @@ def _block_signature(block: dict, ctx: MotorContext, short_vocab=frozenset()) ->
 
 
 def _score(mat: set, sig: dict, m: int, df: dict) -> float:
-    """IDF local (log(1+m/df)) ponderado pelo peso do token, LEN-NORMalizado."""
+    """IDF local (log(1+m/df)) ponderado pelo peso do token, SEM normalizar
+    pelo tamanho da assinatura.
+
+    O divisor sqrt(len(sig)) de antes decidia 18/97 janelas de desempate pelo
+    COMPRIMENTO da assinatura, nao pela evidencia (#49, medido 22/09 em
+    c1-3/wq_desempate_contrastivo_22-09 e wr_normalizacao_score_bloco_22-09):
+    termos que nao casam o material mudavam a escolha. Sem o divisor: bloco
+    214 -> 217/237, 0 perda, unidade 246/284 igual, imune ao comprimento (0/97)."""
     if not sig:
         return 0.0
     # sorted(): mesmo defeito de concept_resolver.py:360 — soma de float sobre
     # set de str, cuja ordem de iteracao muda a cada processo. Sem isto o score
     # difere no ultimo ULP entre rodadas identicas.
-    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in sorted(mat & set(sig)))
-    return raw / math.sqrt(len(sig))
+    return sum(sig[t] * math.log(1.0 + m / df[t]) for t in sorted(mat & set(sig)))
 
 
 def _global_df(ctx: MotorContext) -> dict:

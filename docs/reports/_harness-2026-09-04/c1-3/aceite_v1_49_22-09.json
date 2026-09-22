@@ -1,0 +1,621 @@
+{
+  "bandas_flags_sem_mudar_bloco": [
+    {
+      "banda": [
+        "media",
+        "alta"
+      ],
+      "curso": "MF",
+      "flag": [
+        true,
+        false
+      ],
+      "id": "formalizacaoalgoritmos-recursao",
+      "id_vazio": false,
+      "tipo": "ficou_confiante"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "MF",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "logicaproposicional-semantica",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "alta"
+      ],
+      "curso": "MF",
+      "flag": [
+        true,
+        false
+      ],
+      "id": "correcaoterminacao",
+      "id_vazio": false,
+      "tipo": "ficou_confiante"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "MF",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "terminacao",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "alta"
+      ],
+      "curso": "SO",
+      "flag": [
+        true,
+        false
+      ],
+      "id": "0205-laminas-segmentacao",
+      "id_vazio": false,
+      "tipo": "ficou_confiante"
+    },
+    {
+      "banda": [
+        "alta",
+        "media"
+      ],
+      "curso": "IA",
+      "flag": [
+        false,
+        true
+      ],
+      "id": "visao-geral-introducao-e-historico",
+      "id_vazio": false,
+      "tipo": "ficou_flagada"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "lista-de-exercicios-i",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "lista1",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "minimax-teoria",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "minimax",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "media",
+        "baixa"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "respostas-da-lista-i-feito-pela-aluna-chiara",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "alta",
+        "media"
+      ],
+      "curso": "IA",
+      "flag": [
+        false,
+        true
+      ],
+      "id": "introducao-a-agentes",
+      "id_vazio": false,
+      "tipo": "ficou_flagada"
+    },
+    {
+      "banda": [
+        "alta",
+        "media"
+      ],
+      "curso": "IA",
+      "flag": [
+        false,
+        true
+      ],
+      "id": "analise-exploratoria-dos-dados-exemplo-2",
+      "id_vazio": false,
+      "tipo": "ficou_flagada"
+    },
+    {
+      "banda": [
+        "baixa",
+        "media"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        true
+      ],
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    },
+    {
+      "banda": [
+        "baixa",
+        "alta"
+      ],
+      "curso": "IA",
+      "flag": [
+        true,
+        false
+      ],
+      "id": "artigo-usando-k-nn-em-texto",
+      "id_vazio": false,
+      "tipo": "ficou_confiante"
+    },
+    {
+      "banda": [
+        "media",
+        "alta"
+      ],
+      "curso": "ES2",
+      "flag": [
+        false,
+        false
+      ],
+      "id": "microsservicos4",
+      "id_vazio": false,
+      "tipo": "so_banda"
+    }
+  ],
+  "base_48": {
+    "blocos_alterados": [
+      [
+        "ES2",
+        "t1-2026-1"
+      ],
+      [
+        "MF",
+        "t1-2026-1"
+      ],
+      [
+        "MF",
+        "t2-2026-1"
+      ]
+    ],
+    "perda_sub_aceita": [
+      [
+        "CG",
+        "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea"
+      ]
+    ],
+    "unidades_alteradas": [
+      [
+        "CG",
+        "maptextures"
+      ],
+      [
+        "CG",
+        "opengl-cpp"
+      ],
+      [
+        "CG",
+        "opengl-py"
+      ],
+      [
+        "CG",
+        "openglbasico"
+      ],
+      [
+        "CG",
+        "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3"
+      ],
+      [
+        "CG",
+        "texturas-v3"
+      ],
+      [
+        "IA",
+        "future-of-jobs-report-2025"
+      ],
+      [
+        "SO",
+        "0704-laminas-comunicacao-e-sincronizacao"
+      ],
+      [
+        "SO",
+        "0904-laminas-semaforos"
+      ],
+      [
+        "SO",
+        "14-04-troca-de-mensagens"
+      ],
+      [
+        "SO",
+        "1404-laminas-ipc"
+      ],
+      [
+        "SO",
+        "1404-troca-de-mensagens"
+      ],
+      [
+        "SO",
+        "laminas-cs-4244-internet-programming-sockets-programming"
+      ]
+    ]
+  },
+  "checks": {
+    "bandas_flags_como_no_wr_4_3_9": true,
+    "bloco_217_de_237": true,
+    "manifests_gravados_sao_pre_47_213_239_84_108": true,
+    "mudancas_de_bloco_sao_48_mais_v1": true,
+    "mudancas_de_unidade_sao_so_as_de_47_e_48": true,
+    "nenhum_curso_regride_vs_48": true,
+    "sub_primaria_84_e_aceita_107_de_251": true,
+    "unica_perda_e_a_conhecida_da_47": true,
+    "unidade_246_de_284": true,
+    "zero_id_vazio_apos_mudanca_de_banda": true,
+    "zero_perda_nova_em_todos_os_eixos": true
+  },
+  "cursos": {
+    "CG": {
+      "antes": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 42,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "unidade": 70,
+        "unidade_n": 93
+      },
+      "depois": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "unidade": 74,
+        "unidade_n": 93
+      }
+    },
+    "ES2": {
+      "antes": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "depois": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 25,
+        "unidade_n": 28
+      }
+    },
+    "FR": {
+      "antes": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "depois": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      }
+    },
+    "IA": {
+      "antes": {
+        "bloco": 38,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "depois": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      }
+    },
+    "MF": {
+      "antes": {
+        "bloco": 53,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 61,
+        "unidade_n": 66
+      },
+      "depois": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 61,
+        "unidade_n": 66
+      }
+    },
+    "SO": {
+      "antes": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 27,
+        "unidade_n": 37
+      },
+      "depois": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 30,
+        "unidade_n": 37
+      }
+    },
+    "TCC": {
+      "antes": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      },
+      "depois": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    }
+  },
+  "cursos_que_regridem_vs_48": [],
+  "issue": 49,
+  "mudancas_de_bloco": [
+    {
+      "antes": "e7eb740b-b0cd-45df-9d46-edfb807f266f",
+      "banda": "media",
+      "curso": "MF",
+      "depois": "d7f464c0-c1c0-4a63-a547-50f781b17f2f",
+      "id": "exerciciosnusmv",
+      "metodo": "janela-1"
+    },
+    {
+      "antes": "a6549787-1ab3-4e0e-bb1a-4591f7203e0a",
+      "banda": "alta",
+      "curso": "MF",
+      "depois": "2f6e621f-b262-4fba-b8f4-e9a61f5343a0",
+      "id": "provas",
+      "metodo": "disamb"
+    },
+    {
+      "antes": null,
+      "banda": "alta",
+      "curso": "MF",
+      "depois": "e7b3e376-209c-4159-9575-ae70ec035d9d",
+      "id": "t1-2026-1",
+      "metodo": "due-contain"
+    },
+    {
+      "antes": null,
+      "banda": "alta",
+      "curso": "MF",
+      "depois": "fa8b73c1-86b3-4121-b8bb-f349c9901b4a",
+      "id": "t2-2026-1",
+      "metodo": "due-contain"
+    },
+    {
+      "antes": "14c6323a-b32a-4e52-bb57-7dc6b349995f",
+      "banda": "media",
+      "curso": "IA",
+      "depois": "b7086435-ab2a-4bf0-94ff-b3e9de391066",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "metodo": "disamb"
+    },
+    {
+      "antes": null,
+      "banda": "media",
+      "curso": "ES2",
+      "depois": "e3a47e47-02c7-472a-83d6-42c67bb2063c",
+      "id": "t1-2026-1",
+      "metodo": "due-straddle"
+    }
+  ],
+  "mudancas_de_unidade": [
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "0704-laminas-comunicacao-e-sincronizacao"
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "0904-laminas-semaforos"
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "14-04-troca-de-mensagens"
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "1404-laminas-ipc"
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "1404-troca-de-mensagens"
+    },
+    {
+      "antes": "unidade-02-gerencia-do-processador",
+      "curso": "SO",
+      "depois": "unidade-03-programacao-concorrente",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming"
+    },
+    {
+      "antes": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+      "curso": "IA",
+      "depois": "unidade-de-aprendizagem-02-solucao-de-problemas",
+      "id": "future-of-jobs-report-2025"
+    },
+    {
+      "antes": "unidade-04-processo-de-visualizacao-2d",
+      "curso": "CG",
+      "depois": "unidade-08-sintese-de-imagens-realisticas",
+      "id": "maptextures"
+    },
+    {
+      "antes": "unidade-04-processo-de-visualizacao-2d",
+      "curso": "CG",
+      "depois": "unidade-08-sintese-de-imagens-realisticas",
+      "id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3"
+    },
+    {
+      "antes": "unidade-02-fundamentos-matematicos",
+      "curso": "CG",
+      "depois": "unidade-01-introducao-ao-processamento-grafico",
+      "id": "opengl-cpp"
+    },
+    {
+      "antes": "unidade-02-fundamentos-matematicos",
+      "curso": "CG",
+      "depois": "unidade-01-introducao-ao-processamento-grafico",
+      "id": "opengl-py"
+    },
+    {
+      "antes": "unidade-02-fundamentos-matematicos",
+      "curso": "CG",
+      "depois": "unidade-03-processamento-de-imagens-e-visao-computacional",
+      "id": "openglbasico"
+    },
+    {
+      "antes": "unidade-02-fundamentos-matematicos",
+      "curso": "CG",
+      "depois": "unidade-01-introducao-ao-processamento-grafico",
+      "id": "texturas-v3"
+    }
+  ],
+  "perdas_novas_vs_48": {
+    "bloco": [],
+    "sub_aceita": [],
+    "sub_primaria": [],
+    "unidade": []
+  },
+  "perdas_vs_manifest_gravado": {
+    "bloco": [],
+    "sub_aceita": [
+      {
+        "curso": "CG",
+        "gold_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+        "id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea"
+      }
+    ],
+    "sub_primaria": [],
+    "unidade": []
+  },
+  "totais": {
+    "antes": {
+      "bloco": 213,
+      "bloco_n": 237,
+      "sub_aceita": 108,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": 239,
+      "unidade_n": 284
+    },
+    "depois": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 107,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": 246,
+      "unidade_n": 284
+    }
+  }
+}

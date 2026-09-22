@@ -1,0 +1,4828 @@
+{
+  "head": "9220a57 + diff nao commitado da #48 em src/",
+  "regra": "R-contrastiva (termo EXCLUSIVO = assinatura de 1 so candidato; troca so com exatamente 1 candidato com exclusivo casado e != escolha atual)",
+  "formula_atual_do_disamb": "src/builder/routing/motor/disambiguator.py:121-129 _score = sum(peso_t * log(1+m/df_t) para t em mat&sig) / sqrt(len(sig)) -> normalizacao pela RAIZ DO TAMANHO DA ASSINATURA (confirma o Astra); escolha e argmax + gate D4 em :232-255.",
+  "freeze_sha256_decisoes": "841b0cfa16c1f1777990285d72ab81708cd911a1fdd9bd46a114e74c2e718171",
+  "patch": "anchor_engine.disambiguate (nome importado em anchor_engine.py:14) trocado por wrapper que delega ao original de disambiguator.py e so substitui block_ref quando a regra dispara; atributo restaurado no __exit__. src/ intocado.",
+  "checks": {
+    "base_reproduz_bloco_214_de_237": true,
+    "bloco_maior_igual_215": false,
+    "zero_perda_de_bloco": true,
+    "nenhum_curso_regride_bloco": true,
+    "unidade_nao_regride": true,
+    "nenhum_curso_regride_unidade": true,
+    "ACEITE": false
+  },
+  "placar_bloco": {
+    "base": "214/237",
+    "R": "214/237"
+  },
+  "placar_unidade": "VACUO — nenhuma entry muda de bloco, a fase de unidade recebe entrada identica; na 1a execucao deste script a fase foi rodada nos 7 cursos e a base bateu 246/284 (MF 61/66, SO 30/37, IA 39/42, ES2 25/28, TCC 17/18, CG 74/93, FR 0/0)",
+  "chamadas_descartadas_ignoradas": {
+    "MF": 31,
+    "SO": 7,
+    "ES2": 21,
+    "CG": 2
+  },
+  "ganhos_bloco": [],
+  "perdas_bloco": [],
+  "cursos_bloco": {
+    "base": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 54
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    },
+    "R": {
+      "MF": {
+        "bloco_n": 66,
+        "bloco_ausente": 4,
+        "bloco": 54
+      },
+      "SO": {
+        "bloco_n": 39,
+        "bloco": 36
+      },
+      "IA": {
+        "bloco_n": 42,
+        "bloco_ausente": 2,
+        "bloco": 38
+      },
+      "ES2": {
+        "bloco_n": 28,
+        "bloco": 27
+      },
+      "TCC": {
+        "bloco_n": 27,
+        "bloco": 26
+      },
+      "CG": {
+        "bloco_n": 35,
+        "bloco": 33
+      },
+      "FR": {}
+    }
+  },
+  "cursos_unidade": {
+    "base": {},
+    "R": {}
+  },
+  "inventario_janelas_multicandidatas": {
+    "MF": {
+      "disamb_ge2": 36,
+      "banda_baixa": 4,
+      "certas": 30,
+      "banda_alta": 21,
+      "erradas": 5,
+      "com_secao_revisao": 2,
+      "banda_media": 11,
+      "sem_gold": 1,
+      "contrafactual_muda": 2,
+      "poda_revisao_mudou": 1
+    },
+    "SO": {
+      "disamb_ge2": 7,
+      "banda_media": 1,
+      "certas": 5,
+      "banda_baixa": 6,
+      "contrafactual_muda": 4,
+      "erradas": 2,
+      "com_secao_revisao": 1
+    },
+    "IA": {
+      "disamb_ge2": 16,
+      "banda_baixa": 5,
+      "sem_gold": 6,
+      "banda_alta": 4,
+      "certas": 8,
+      "com_secao_revisao": 4,
+      "banda_media": 7,
+      "contrafactual_muda": 7,
+      "erradas": 2,
+      "poda_revisao_mudou": 2
+    },
+    "ES2": {
+      "disamb_ge2": 1,
+      "banda_baixa": 1,
+      "sem_gold": 1
+    },
+    "TCC": {},
+    "CG": {
+      "disamb_ge2": 29,
+      "banda_media": 14,
+      "sem_gold": 17,
+      "banda_alta": 4,
+      "certas": 10,
+      "contrafactual_muda": 4,
+      "banda_baixa": 11,
+      "erradas": 2
+    },
+    "FR": {
+      "disamb_ge2": 8,
+      "banda_media": 2,
+      "sem_gold": 8,
+      "banda_baixa": 5,
+      "contrafactual_muda": 1,
+      "banda_alta": 1
+    }
+  },
+  "toques": {
+    "MF": [
+      {
+        "id": "exerciciosdafny1",
+        "de": "bloco-12",
+        "para": "bloco-11",
+        "method": "disamb",
+        "distintivos": {
+          "bloco-11": [
+            "correcao"
+          ]
+        }
+      }
+    ],
+    "SO": [],
+    "IA": [],
+    "ES2": [],
+    "TCC": [],
+    "CG": [],
+    "FR": []
+  },
+  "efeito_na_unidade_dos_que_mudam": [],
+  "erros_de_desempate": [
+    {
+      "curso": "MF",
+      "id": "exerciciosnusmv",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": "bloco-16",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "distintivos": {
+        "bloco-18": [
+          "ferramenta"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-18",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-18",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "introducao",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": "bloco-02",
+      "certa_hoje": false,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        0,
+        0
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-01",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "revisao",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-03",
+      "certa_hoje": false,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 2,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny2",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-13",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao",
+          "invariantes",
+          "laco",
+          "total"
+        ],
+        "bloco-13": [
+          "arrays"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-05",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados",
+          "learning",
+          "machine"
+        ],
+        "bloco-05": [
+          "aprendizado",
+          "regressao",
+          "supervisionado"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-04",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados"
+        ],
+        "bloco-05": [
+          "analise",
+          "resultados"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-cpp",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py-zip",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    }
+  ],
+  "janelas": [
+    {
+      "curso": "MF",
+      "id": "exemplos",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-16",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicioslogicatemporal",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "distintivos": {
+        "bloco-16": [
+          "logica",
+          "temporal"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-16",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-16",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosnusmv",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-16",
+        "bloco-18",
+        "bloco-19",
+        "bloco-21"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": "bloco-16",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        3,
+        4,
+        2
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "distintivos": {
+        "bloco-18": [
+          "ferramenta"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-18",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-18",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "conjuntosindutivos",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "arvores",
+          "conjuntos",
+          "indutivos",
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosconjuntosindutivos",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "arvores",
+          "conjuntos",
+          "indutivos",
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "equacoes",
+          "listas",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao2",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "equacoes",
+          "listas",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao3",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "arvores",
+          "equacoes",
+          "listas",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "logica"
+        ],
+        "bloco-04": [
+          "equacoes",
+          "especificacao",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao2",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "equacoes",
+          "listas",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-recursao3",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "arvores",
+          "equacoes",
+          "especificacao",
+          "recursivas"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "introducao",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": "bloco-02",
+      "certa_hoje": false,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        0,
+        0
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-01",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "rigoroussoftwaredevelopment-chapters-1-2",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        0,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        0,
+        0
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-01",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exemplos-thy",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-05",
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-06",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        8,
+        1
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        2,
+        4,
+        1
+      ],
+      "distintivos": {
+        "bloco-06": [
+          "isabelle",
+          "prova"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-06",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-06",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosespecificacao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "logica",
+          "predicados"
+        ],
+        "bloco-04": [
+          "especificacao",
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosespecificacao-respostas",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "logica",
+          "predicados"
+        ],
+        "bloco-04": [
+          "especificacao",
+          "listas"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "logicaproposicional-semantica",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "logica"
+        ],
+        "bloco-04": [
+          "conjuntos"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "logicaproposicional-sintaxe",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "logica"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-03",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "revisao",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-03",
+      "certa_hoje": false,
+      "tam_sig": [
+        3,
+        9
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        9
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 2,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-arrays",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "arrays",
+          "colecoes"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-conjuntos",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "colecoes",
+          "conjuntos"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "colecoes-sequences",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "colecoes",
+          "sequencias"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "correcaoterminacao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-10": [
+          "hoare"
+        ],
+        "bloco-11": [
+          "correcao",
+          "invariantes",
+          "laco",
+          "parcial",
+          "total"
+        ],
+        "bloco-13": [
+          "conjuntos",
+          "sequencias"
+        ]
+      },
+      "n_candidatos_distintivos": 3,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicios-arrays",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "arrays"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicios-conjuntos",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "conjuntos"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exercicioscorrecaoterminacao",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "card",
+      "janela": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        8
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao",
+          "laco",
+          "terminacao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-11",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny1",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-12",
+      "gold": "bloco-12",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-11",
+      "regra_dispara": true,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "1": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-12",
+              "nova_escolha": "bloco-11"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny2",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-13",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao",
+          "invariantes",
+          "laco",
+          "total"
+        ],
+        "bloco-13": [
+          "arrays"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny3",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-13": [
+          "arrays",
+          "colecoes",
+          "sequencias"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-13",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosdafny4",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-13",
+      "gold": "bloco-13",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao"
+        ],
+        "bloco-13": [
+          "arrays",
+          "colecoes",
+          "conjuntos",
+          "sequencias"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-13",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "exerciciosformalizacaoalgoritmosinvariantes",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "invariantes",
+          "laco"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-11",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "formalizacaoalgoritmos-invarianteslaco",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "correcao",
+          "invariantes",
+          "laco"
+        ],
+        "bloco-13": [
+          "sequencias"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "invariantes",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-10",
+        "bloco-11",
+        "bloco-12",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-11",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        9,
+        2,
+        8,
+        9
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        1,
+        6,
+        0,
+        5,
+        6
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "invariantes",
+          "laco"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-11",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "MF",
+      "id": "terminacao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-10",
+        "bloco-11"
+      ],
+      "escolha_atual": "bloco-11",
+      "gold": "bloco-12",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        9
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        8
+      ],
+      "distintivos": {
+        "bloco-11": [
+          "terminacao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-11",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-11",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "0205-laminas-segmentacao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-13",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-16",
+      "gold": "bloco-16",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {
+        "bloco-16": [
+          "segmentacao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-16",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-16",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "comuns_n": 3,
+      "exclusivos_n": [
+        3,
+        6
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "comuns_n": 3,
+      "exclusivos_n": [
+        3,
+        6
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "comuns_n": 3,
+      "exclusivos_n": [
+        3,
+        6
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        9
+      ],
+      "comuns_n": 3,
+      "exclusivos_n": [
+        3,
+        6
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-09",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-06",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "SO",
+      "id": "laminas-sockets-material-alternativo-em-pt",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "card",
+      "janela": [
+        "bloco-06",
+        "bloco-07"
+      ],
+      "escolha_atual": "bloco-06",
+      "gold": "bloco-09",
+      "certa_hoje": false,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 4,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-06",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "future-of-jobs-report-2025",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-01",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        9,
+        3
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        9,
+        3
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-01",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "visao-geral-introducao-e-historico",
+      "method": "disamb-curto",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-01",
+        "bloco-02"
+      ],
+      "escolha_atual": "bloco-02",
+      "gold": "bloco-02",
+      "certa_hoje": true,
+      "tam_sig": [
+        9,
+        4
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        9,
+        4
+      ],
+      "distintivos": {
+        "bloco-01": [
+          "forma",
+          "historico"
+        ],
+        "bloco-02": [
+          "geral",
+          "ia",
+          "visao"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-02",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "implementacaominimax",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "lista-de-exercicios-i",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "minimax-teoria",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "respostas-da-lista-i-feito-pela-aluna-chiara",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-15",
+        "bloco-16"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        4
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        0,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-16"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "introducao-a-agentes",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-16",
+        "bloco-17"
+      ],
+      "escolha_atual": "bloco-17",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        2
+      ],
+      "distintivos": {
+        "bloco-16": [
+          "busca"
+        ],
+        "bloco-17": [
+          "agentes",
+          "planejamento"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-17",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "caracteristicas-dos-dados",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        5
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        3
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados",
+          "preparacao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-04",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 5,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "introducao-a-ml",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-03",
+        "bloco-04"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        4,
+        5
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        3
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "visao"
+        ],
+        "bloco-04": [
+          "dados"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "algoritmo-de-classificacao-k-nn",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-05",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados",
+          "learning",
+          "machine"
+        ],
+        "bloco-05": [
+          "aprendizado",
+          "regressao",
+          "supervisionado"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-04",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-dos-dados-exemplo-2",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-04",
+      "gold": "bloco-04",
+      "certa_hoje": true,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados",
+          "preparacao"
+        ],
+        "bloco-05": [
+          "analise"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-04",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "analise-exploratoria-de-dados-exemplo-1",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-04",
+      "certa_hoje": false,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "dados"
+        ],
+        "bloco-05": [
+          "analise",
+          "resultados"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "artigo-usando-k-nn-em-texto",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        5,
+        17
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        5,
+        17
+      ],
+      "distintivos": {
+        "bloco-04": [
+          "learning",
+          "preparacao"
+        ],
+        "bloco-05": [
+          "abordagem",
+          "analise",
+          "arvores",
+          "regressao",
+          "resultados",
+          "supervisionada"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 1,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "5": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-05",
+              "nova_escolha": "bloco-04"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "method": "disamb-curto",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        5,
+        19
+      ],
+      "distintivos": {
+        "bloco-05": [
+          "nn"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-05",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-com-k-nn",
+      "method": "disamb-curto",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        5,
+        19
+      ],
+      "distintivos": {
+        "bloco-05": [
+          "nn"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-05",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "IA",
+      "id": "exemplo-de-programa-com-k-nn-em-java",
+      "method": "disamb-curto",
+      "band": "media",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-05",
+      "certa_hoje": true,
+      "tam_sig": [
+        6,
+        20
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        5,
+        19
+      ],
+      "distintivos": {
+        "bloco-05": [
+          "nn"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-05",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "ES2",
+      "id": "kubernetes",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "labels",
+      "janela": [
+        "bloco-12",
+        "bloco-14"
+      ],
+      "escolha_atual": "bloco-12",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-12",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "segmentacaopptx",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "segmentacaodetexturas",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "morfologiamatematicapptx",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05",
+        "bloco-08"
+      ],
+      "escolha_atual": "bloco-08",
+      "gold": "bloco-08",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-08": [
+          "matematica",
+          "morfologia"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-08",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-08",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05",
+        "bloco-08"
+      ],
+      "escolha_atual": "bloco-08",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-08": [
+          "matematica",
+          "morfologia"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-08",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-08",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "csg",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": "bloco-15",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {
+        "bloco-05": [
+          "geometria"
+        ],
+        "bloco-15": [
+          "geometrica",
+          "modelagem"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "10": [
+            {
+              "inflado": "bloco-15",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "atividade",
+      "method": "disamb-curto",
+      "band": "alta",
+      "flag": false,
+      "provider": "topic",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-19",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        3,
+        3
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        1,
+        1
+      ],
+      "distintivos": {
+        "bloco-19": [
+          "observador"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-19",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-19",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        1
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-18",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "opengl3d",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        1
+      ],
+      "distintivos": {
+        "bloco-18": [
+          "projecao"
+        ],
+        "bloco-19": [
+          "observador"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-18",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-visualizacao-3d-35a833",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-18",
+        "bloco-19"
+      ],
+      "escolha_atual": "bloco-18",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        2,
+        2
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        1
+      ],
+      "distintivos": {
+        "bloco-18": [
+          "projecao"
+        ],
+        "bloco-19": [
+          "observador"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-18",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "1": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "3": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-18",
+              "nova_escolha": "bloco-19"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-cpp",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "basico3d-py-zip",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": "bloco-15",
+      "certa_hoje": false,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exerciciodemodelagem",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-05",
+        "bloco-13",
+        "bloco-15"
+      ],
+      "escolha_atual": "bloco-15",
+      "gold": "bloco-15",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        2,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        2,
+        2
+      ],
+      "distintivos": {
+        "bloco-15": [
+          "modelagem"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-15",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-15",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-21",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-21": [
+          "iluminacao"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-21",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-21",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "programabasico3d",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-21",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        1,
+        0
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-21",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exemplodemanipulacaodeimagens",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-com-animacao",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-com-poligonos",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicio-de-animacao-foguete",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "matematica",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-04",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": "bloco-03",
+      "certa_hoje": true,
+      "tam_sig": [
+        2,
+        3,
+        2
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        2,
+        3,
+        2
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicioduascores",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "floodfill",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "img",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "remocaoderuido",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-07",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 0,
+      "exclusivos_n": [
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "exercicios-de-processamento-de-imagens",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "topic",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": "bloco-07",
+      "certa_hoje": true,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        4,
+        4,
+        4,
+        1,
+        1,
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens",
+          "processamento"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-07",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "introducaoprocimg",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": "bloco-07",
+      "certa_hoje": true,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        4,
+        4,
+        4,
+        1,
+        1,
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-06": [
+          "processo"
+        ],
+        "bloco-07": [
+          "imagens",
+          "processamento"
+        ],
+        "bloco-20": [
+          "remocao"
+        ]
+      },
+      "n_candidatos_distintivos": 3,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "CG",
+      "id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-01",
+        "bloco-06",
+        "bloco-07",
+        "bloco-08",
+        "bloco-18",
+        "bloco-19",
+        "bloco-20",
+        "bloco-21",
+        "bloco-29"
+      ],
+      "escolha_atual": "bloco-07",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        1,
+        5,
+        4,
+        4,
+        2,
+        2,
+        4,
+        1,
+        0
+      ],
+      "comuns_n": 1,
+      "exclusivos_n": [
+        1,
+        4,
+        4,
+        4,
+        1,
+        1,
+        4,
+        1,
+        0
+      ],
+      "distintivos": {
+        "bloco-07": [
+          "imagens",
+          "processamento"
+        ],
+        "bloco-20": [
+          "algoritmos",
+          "remocao"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-07",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-07",
+              "nova_escolha": "bloco-20"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "lista-de-exercicios-1-camada-de-aplicacao",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "dhcp",
+          "http"
+        ],
+        "bloco-05": [
+          "dns"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "tcp-chat-c",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "tcp-example",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "udp-example-c",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "udp-example-java",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {},
+      "n_candidatos_distintivos": 0,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-dhcp",
+      "method": "disamb",
+      "band": "baixa",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "dhcp"
+        ],
+        "bloco-05": [
+          "dns"
+        ]
+      },
+      "n_candidatos_distintivos": 2,
+      "vencedor_regra": null,
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": true,
+        "flips": {
+          "3": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "5": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ],
+          "10": [
+            {
+              "inflado": "bloco-03",
+              "nova_escolha": "bloco-05"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-dns",
+      "method": "disamb",
+      "band": "media",
+      "flag": true,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-05",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-05": [
+          "dns"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-05",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-05",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    },
+    {
+      "curso": "FR",
+      "id": "unidade2-exercicios-http",
+      "method": "disamb",
+      "band": "alta",
+      "flag": false,
+      "provider": "topic",
+      "janela": [
+        "bloco-03",
+        "bloco-05"
+      ],
+      "escolha_atual": "bloco-03",
+      "gold": null,
+      "certa_hoje": null,
+      "tam_sig": [
+        4,
+        6
+      ],
+      "comuns_n": 2,
+      "exclusivos_n": [
+        2,
+        4
+      ],
+      "distintivos": {
+        "bloco-03": [
+          "http"
+        ]
+      },
+      "n_candidatos_distintivos": 1,
+      "vencedor_regra": "bloco-03",
+      "regra_dispara": false,
+      "depois_da_regra": "bloco-03",
+      "secoes_revisao_removidas": 0,
+      "contrafactual": {
+        "muda_por_comprimento": false,
+        "flips": {}
+      }
+    }
+  ],
+  "scope": "apply_anchor_engine e apply_unit_subunit_fields reais importados de src/; patch so em atributo de modulo, restaurado; voter=None; gold carregado depois do congelamento.",
+  "limitations": [
+    "Sem build/rebuild, rede ou LLM; sidecar de votos nao usado.",
+    "Ausentes permanecem no denominador da regua.",
+    "Poda de revisao/referencia so onde HA heading Markdown que a identifique; material sem heading nao e podado (contado em com_secao_revisao/poda_revisao_mudou).",
+    "Regra binaria, sem limiar: nao ha parametro para calibrar por LOCO.",
+    "Unidade re-executada apenas nos cursos cujo bloco mudou (identica por construcao nos demais).",
+    "Inventario cobre 97 das 99 decisoes finais disamb/disamb-curto com janela >= 2: IA `lista1` e `minimax` REUSAM a decisao cacheada por content_key (apply.py:117-123) e nao chamam `disambiguate`, logo nao aparecem na captura; como reusam a MESMA decisao, a regra as acompanharia automaticamente.",
+    "1 toque da regra (MF exerciciosdafny1, bloco-12 -> bloco-11, gold bloco-12) NAO alterou o bloco final: o fallback de card do proprio engine (anchor_engine.py:283-291) reconduz ao bloco-12. Mecanismo nao instrumentado nesta medicao; o que esta MEDIDO e o id final inalterado."
+  ]
+}
