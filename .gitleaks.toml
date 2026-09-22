@@ -1,0 +1,11 @@
+# gitleaks (#54): regras padrao + excecao estreita.
+[extend]
+useDefault = true
+
+# Relatorios citam SHAs de commit git (40 hex), que casam com o formato legado
+# de token do Sourcegraph. O projeto nao usa Sourcegraph; so esse formato exato e ignorado.
+[[allowlists]]
+description = "SHA de commit git"
+targetRules = ["sourcegraph-access-token"]
+regexTarget = "secret"
+regexes = ['''^[0-9a-f]{40}$''']
