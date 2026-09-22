@@ -1,0 +1,11 @@
+# Issues, PRs e releases
+
+Toda tarefa de correção, melhoria ou nova função, incluindo documentação/CI que altere o projeto, começa por issue no GitHub do repositório correto. Pesquisar duplicatas; reutilizar issue aberta com o mesmo escopo. Uma issue por resultado verificável, não por chamada de ferramenta. Perguntas e diagnóstico exploratório sem mudança não exigem issue. Abrir a issue não aprova implementação nem antecipa campanha futura.
+
+Antes de editar, registrar issue/URL, problema, escopo, critérios de aceite e validação. Trabalhar em branch própria ou worktree isolado quando houver trabalho concorrente; não misturar mudanças de outra tarefa. Se GitHub estiver indisponível, registrar o bloqueio e preparar diagnóstico/rascunho local, sem declarar issue criada.
+
+Entregar por PR para a base correta. A descrição deve mencionar a issue: `Closes #N` quando a entrega completa a resolve, `Refs #N` em entrega parcial. Incluir comportamento alterado, verificações realmente executadas, limitações, riscos e rollback; evidência visual para UI. Usar draft enquanto houver pendências. Issues relacionadas à tarefa são autorizadas por este padrão; Gates 1/2, autorização de commit e critérios de merge permanecem vigentes. Não fechar issue manualmente antes do aceite da entrega.
+
+Release/deploy deve ser rastreável ao PR aprovado e ao commit validado. Definir alvo (desktop, pacote, container, web local ou ambiente remoto), checks, smoke test e rollback antes de publicar. PR não dispara produção por si só; merge, publicação e deploy seguem as autorizações e o pipeline do projeto. Não publicar builds de branch não revisada nem habilitar serviços pagos silenciosamente.
+
+Mudanças de UI, observabilidade e qualidade seguem o contrato de engenharia do projeto e a stack daquela fase. Selecionar ferramentas por capacidade/compatibilidade, não instalar todos os nomes de uma lista. Medir baseline antes de criar gates de cobertura/performance e separar política documentada de check realmente imposto por CI.
