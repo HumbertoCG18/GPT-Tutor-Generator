@@ -275,7 +275,7 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 .frzero/
 
 # Configuracao compartilhada das CLIs: excecoes aos ignores genericos acima.
-# Estado local, workflows legados e worktrees continuam ignorados.
+# Estado local (.workflow/local/), workflows legados e worktrees continuam ignorados.
 !/.claude/
 /.claude/*
 !/.claude/settings.json
@@ -288,3 +288,4 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 /.claude/settings.local.json
 /.claude/**/*.bak*
 /.agents/**/*.bak*
+/.workflow/local/
