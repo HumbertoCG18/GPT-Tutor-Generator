@@ -1,0 +1,1812 @@
+{
+  "aceite": {
+    "R1_tau0.90": {
+      "bloco_217_237": true,
+      "nenhum_curso_regride": false,
+      "sub_aceita_107": false,
+      "sub_primaria_84": false,
+      "unidade_maior_igual_247": false,
+      "zero_perda_unidade": false
+    },
+    "R2": {
+      "bloco_217_237": true,
+      "nenhum_curso_regride": false,
+      "sub_aceita_107": false,
+      "sub_primaria_84": false,
+      "unidade_maior_igual_247": false,
+      "zero_perda_unidade": false
+    }
+  },
+  "declaracao_pre_medicao": {
+    "aceite": "unidade >= 247/284, 0 perda entre os acertos de unidade, nenhum curso regride, bloco 217/237,\nsubunidade primaria 84 e aceita 107 preservadas.",
+    "base_49": {
+      "bloco": [
+        217,
+        237
+      ],
+      "sub_aceita": 107,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": [
+        246,
+        284
+      ]
+    },
+    "familia": "W-T (CRU-03): duas regras candidatas de unidade, pre-declaradas, medidas pela cadeia REAL.\n\nFAMILIA ATACADA (anatomia do estado #49, `wt_anatomia_unidade_49_22-09.json`): dos 38 erros de unidade,\n6 tem o MESMO mecanismo -- razao `reconciliada_do_bloco=<id>`, scorer de texto NAO ambiguo e acima do gate\n(`gated_unit != \"\"`), vencedor bruto == gold, e mesmo assim o bloco venceu porque\n`reconcile_unit_with_block` compara `block_confidence=1.0 >= unit_confidence` (file_map.py:802-803).\nSao SO/3103-threads, SO/biblioteca-em-c-pthread, IA/visao-geral-introducao-e-historico,\nES2/microsservicos7, TCC/aula-11-...-halting-problem, CG/exercicios-sobre-curvas-html.\nE a mesma clausula que a #48 ja abriu para o vizinho (`texto-vence-vizinho`), aqui estendida ao bloco\ncom unidade PROPRIA.",
+    "grid_tau": [
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ],
+    "regras": "(escritas ANTES de medir; nenhum parametro ajustado ao gold):\n  R2  SEM PARAMETRO. No ramo final de `reconcile_unit_with_block` (bloco decide), se a unidade gated\n      nao e vazia (logo o scorer nao foi ambiguo e passou T.UNIT_TAG), o TEXTO vence o bloco:\n      reason `texto-vence-bloco=<id>`, conflito registrado. Controle honesto de R1.\n  R1  R2 + limiar tau sobre `unit_confidence`: o texto so vence se `unit_confidence >= tau`.\n      tau escolhido por LOCO (leave-one-course-out) no grid GRID; reportado por fold."
+  },
+  "loco_por_fold": {
+    "CG": {
+      "n_no_fold": 93,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 65,
+      "unidade_nos_6_de_treino": 172
+    },
+    "ES2": {
+      "n_no_fold": 28,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 26,
+      "unidade_nos_6_de_treino": 211
+    },
+    "FR": {
+      "n_no_fold": 0,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 0,
+      "unidade_nos_6_de_treino": 237
+    },
+    "IA": {
+      "n_no_fold": 42,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 39,
+      "unidade_nos_6_de_treino": 198
+    },
+    "MF": {
+      "n_no_fold": 66,
+      "tau_escolhido": "R1_tau0.80",
+      "unidade_no_fold": 59,
+      "unidade_nos_6_de_treino": 177
+    },
+    "SO": {
+      "n_no_fold": 37,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 30,
+      "unidade_nos_6_de_treino": 207
+    },
+    "TCC": {
+      "n_no_fold": 18,
+      "tau_escolhido": "R1_tau0.90",
+      "unidade_no_fold": 17,
+      "unidade_nos_6_de_treino": 220
+    }
+  },
+  "por_curso_todos_os_taus": {
+    "R1_tau0.50": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 33,
+        "sub_n": 82,
+        "sub_primaria": 22,
+        "unidade": 60,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 4,
+        "sub_n": 28,
+        "sub_primaria": 3,
+        "unidade": 19,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 40,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 21,
+        "sub_n": 58,
+        "sub_primaria": 17,
+        "unidade": 54,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 5,
+        "sub_n": 15,
+        "sub_primaria": 4,
+        "unidade": 24,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 18,
+        "unidade_n": 18
+      }
+    },
+    "R1_tau0.60": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 34,
+        "sub_n": 82,
+        "sub_primaria": 23,
+        "unidade": 61,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 4,
+        "sub_n": 28,
+        "sub_primaria": 3,
+        "unidade": 19,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 40,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 21,
+        "sub_n": 58,
+        "sub_primaria": 17,
+        "unidade": 55,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 5,
+        "sub_n": 15,
+        "sub_primaria": 4,
+        "unidade": 26,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 18,
+        "unidade_n": 18
+      }
+    },
+    "R1_tau0.70": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 34,
+        "sub_n": 82,
+        "sub_primaria": 23,
+        "unidade": 61,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 26,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 40,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 24,
+        "sub_n": 58,
+        "sub_primaria": 21,
+        "unidade": 58,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 5,
+        "sub_n": 15,
+        "sub_primaria": 4,
+        "unidade": 26,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "R1_tau0.80": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 35,
+        "sub_n": 82,
+        "sub_primaria": 24,
+        "unidade": 65,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 26,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 25,
+        "sub_n": 58,
+        "sub_primaria": 22,
+        "unidade": 59,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "R1_tau0.90": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 35,
+        "sub_n": 82,
+        "sub_primaria": 24,
+        "unidade": 65,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 26,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 60,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "R2": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 33,
+        "sub_n": 82,
+        "sub_primaria": 22,
+        "unidade": 60,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 4,
+        "sub_n": 28,
+        "sub_primaria": 3,
+        "unidade": 19,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 40,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 21,
+        "sub_n": 58,
+        "sub_primaria": 17,
+        "unidade": 54,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 5,
+        "sub_n": 15,
+        "sub_primaria": 4,
+        "unidade": 24,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 18,
+        "unidade_n": 18
+      }
+    },
+    "base": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_n": 82,
+        "sub_primaria": 28,
+        "unidade": 74,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_n": 28,
+        "sub_primaria": 7,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_n": 18,
+        "sub_primaria": 6
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_n": 39,
+        "sub_primaria": 4,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_n": 58,
+        "sub_primaria": 25,
+        "unidade": 61,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_n": 15,
+        "sub_primaria": 7,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_n": 11,
+        "sub_primaria": 7,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    }
+  },
+  "resultados": {
+    "R1_tau0.90": {
+      "cursos_que_regridem": [
+        "MF",
+        "CG"
+      ],
+      "ganhos": {
+        "sub_aceita": [],
+        "sub_primaria": [],
+        "unidade": [
+          [
+            "ES2",
+            "microsservicos7"
+          ]
+        ]
+      },
+      "ids_subunidade_tocados": [
+        [
+          "CG",
+          "animacao-v2"
+        ],
+        [
+          "CG",
+          "basico3d-py"
+        ],
+        [
+          "CG",
+          "bezier-animacao"
+        ],
+        [
+          "CG",
+          "bezier-cpp"
+        ],
+        [
+          "CG",
+          "bezier-py"
+        ],
+        [
+          "CG",
+          "bezier-python"
+        ],
+        [
+          "CG",
+          "exercicio-de-animacao-foguete"
+        ],
+        [
+          "CG",
+          "matematica"
+        ],
+        [
+          "CG",
+          "transformacoesgl"
+        ],
+        [
+          "ES2",
+          "microsservicos7"
+        ],
+        [
+          "ES2",
+          "roteiro8-autenticacao-autorizacao"
+        ],
+        [
+          "MF",
+          "exemplos"
+        ],
+        [
+          "MF",
+          "mcs"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo3"
+        ]
+      ],
+      "ids_unidade_tocados": [
+        [
+          "CG",
+          "animacao-v2"
+        ],
+        [
+          "CG",
+          "basico3d-py"
+        ],
+        [
+          "CG",
+          "bezier-animacao"
+        ],
+        [
+          "CG",
+          "bezier-cpp"
+        ],
+        [
+          "CG",
+          "bezier-py"
+        ],
+        [
+          "CG",
+          "bezier-python"
+        ],
+        [
+          "CG",
+          "exercicio-de-animacao-foguete"
+        ],
+        [
+          "CG",
+          "matematica"
+        ],
+        [
+          "CG",
+          "transformacoesgl"
+        ],
+        [
+          "ES2",
+          "microsservicos7"
+        ],
+        [
+          "ES2",
+          "revisao-p2"
+        ],
+        [
+          "ES2",
+          "revisao-p2-respostas"
+        ],
+        [
+          "ES2",
+          "roteiro8-autenticacao-autorizacao"
+        ],
+        [
+          "MF",
+          "exemplos"
+        ],
+        [
+          "MF",
+          "mcs"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo3"
+        ]
+      ],
+      "perdas": {
+        "sub_aceita": [
+          [
+            "CG",
+            "basico3d-py"
+          ],
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ],
+          [
+            "CG",
+            "exercicio-de-animacao-foguete"
+          ]
+        ],
+        "sub_primaria": [
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ]
+        ],
+        "unidade": [
+          [
+            "CG",
+            "animacao-v2"
+          ],
+          [
+            "CG",
+            "basico3d-py"
+          ],
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ],
+          [
+            "CG",
+            "exercicio-de-animacao-foguete"
+          ],
+          [
+            "CG",
+            "matematica"
+          ],
+          [
+            "CG",
+            "transformacoesgl"
+          ],
+          [
+            "MF",
+            "exemplos-zip"
+          ]
+        ]
+      },
+      "por_curso": {
+        "CG": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 35,
+          "sub_n": 82,
+          "sub_primaria": 24,
+          "unidade": 65,
+          "unidade_n": 93
+        },
+        "ES2": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_n": 28,
+          "sub_primaria": 7,
+          "unidade": 26,
+          "unidade_n": 28
+        },
+        "FR": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        },
+        "IA": {
+          "bloco": 39,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 39,
+          "unidade_n": 42
+        },
+        "MF": {
+          "bloco": 56,
+          "bloco_n": 66,
+          "sub_aceita": 29,
+          "sub_n": 58,
+          "sub_primaria": 25,
+          "unidade": 60,
+          "unidade_n": 66
+        },
+        "SO": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_n": 15,
+          "sub_primaria": 7,
+          "unidade": 30,
+          "unidade_n": 37
+        },
+        "TCC": {
+          "bloco": 26,
+          "bloco_n": 27,
+          "sub_aceita": 9,
+          "sub_n": 11,
+          "sub_primaria": 7,
+          "unidade": 17,
+          "unidade_n": 18
+        }
+      },
+      "total": {
+        "bloco": 217,
+        "bloco_n": 237,
+        "sub_aceita": 101,
+        "sub_n": 251,
+        "sub_primaria": 80,
+        "unidade": 237,
+        "unidade_n": 284
+      }
+    },
+    "R2": {
+      "cursos_que_regridem": [
+        "MF",
+        "SO",
+        "ES2",
+        "CG"
+      ],
+      "ganhos": {
+        "sub_aceita": [],
+        "sub_primaria": [],
+        "unidade": [
+          [
+            "CG",
+            "exercicios-sobre-curvas-html"
+          ],
+          [
+            "ES2",
+            "microsservicos7"
+          ],
+          [
+            "IA",
+            "visao-geral-introducao-e-historico"
+          ],
+          [
+            "SO",
+            "3103-threads"
+          ],
+          [
+            "SO",
+            "biblioteca-em-c-pthread"
+          ],
+          [
+            "TCC",
+            "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf"
+          ]
+        ]
+      },
+      "ids_subunidade_tocados": [
+        [
+          "CG",
+          "animacao-v2"
+        ],
+        [
+          "CG",
+          "basico3d-cpp"
+        ],
+        [
+          "CG",
+          "basico3d-py"
+        ],
+        [
+          "CG",
+          "basico3d-py-zip"
+        ],
+        [
+          "CG",
+          "bezier-animacao"
+        ],
+        [
+          "CG",
+          "bezier-cpp"
+        ],
+        [
+          "CG",
+          "bezier-py"
+        ],
+        [
+          "CG",
+          "bezier-python"
+        ],
+        [
+          "CG",
+          "colisao"
+        ],
+        [
+          "CG",
+          "exercicio-de-animacao-foguete"
+        ],
+        [
+          "CG",
+          "exercicios-sobre-curvas-html"
+        ],
+        [
+          "CG",
+          "matematica"
+        ],
+        [
+          "CG",
+          "opengl3d"
+        ],
+        [
+          "CG",
+          "opengl3dcpp"
+        ],
+        [
+          "CG",
+          "opengl3dcpp-vdi"
+        ],
+        [
+          "CG",
+          "programabasico3d"
+        ],
+        [
+          "CG",
+          "transformacoesgeometricas"
+        ],
+        [
+          "CG",
+          "transformacoesgl"
+        ],
+        [
+          "ES2",
+          "microsservicos7"
+        ],
+        [
+          "ES2",
+          "roteiro1"
+        ],
+        [
+          "ES2",
+          "roteiro2"
+        ],
+        [
+          "ES2",
+          "roteiro3"
+        ],
+        [
+          "ES2",
+          "roteiro4"
+        ],
+        [
+          "ES2",
+          "roteiro5"
+        ],
+        [
+          "ES2",
+          "roteiro6"
+        ],
+        [
+          "ES2",
+          "roteiro6-conteiners-composicao"
+        ],
+        [
+          "ES2",
+          "roteiro7"
+        ],
+        [
+          "ES2",
+          "roteiro7-history-service"
+        ],
+        [
+          "ES2",
+          "roteiro8-autenticacao-autorizacao"
+        ],
+        [
+          "IA",
+          "visao-geral-introducao-e-historico"
+        ],
+        [
+          "MF",
+          "colecoes-sequences"
+        ],
+        [
+          "MF",
+          "exemplos"
+        ],
+        [
+          "MF",
+          "exercicios-conjuntos"
+        ],
+        [
+          "MF",
+          "exercicioscorrecaoinducaomatematica"
+        ],
+        [
+          "MF",
+          "exerciciosdafny3"
+        ],
+        [
+          "MF",
+          "exerciciosespecificacao"
+        ],
+        [
+          "MF",
+          "exerciciosespecificacao-respostas"
+        ],
+        [
+          "MF",
+          "exerciciosformalizacaoalgoritmosinvariantes"
+        ],
+        [
+          "MF",
+          "exerciciosisabelle2"
+        ],
+        [
+          "MF",
+          "formalizacaoalgoritmos-recursao"
+        ],
+        [
+          "MF",
+          "introducao-zip"
+        ],
+        [
+          "MF",
+          "logicadehoare"
+        ],
+        [
+          "MF",
+          "logicaproposicional-sintaxe"
+        ],
+        [
+          "MF",
+          "mcs"
+        ],
+        [
+          "MF",
+          "provasindutivas-especificacoesrecursivas"
+        ],
+        [
+          "MF",
+          "provasindutivas-especificacoesrecursivas-arvores"
+        ],
+        [
+          "MF",
+          "t2-2026-1"
+        ],
+        [
+          "SO",
+          "0206-laminas-mecanismos-de-interrupcao"
+        ],
+        [
+          "SO",
+          "2306-laminas-laminas-armazenamento-em-massa"
+        ],
+        [
+          "SO",
+          "3103-threads"
+        ],
+        [
+          "SO",
+          "biblioteca-em-c-pthread"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-filho"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste01"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste02"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste03"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo1"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo2"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo3"
+        ],
+        [
+          "SO",
+          "exercicios-p2"
+        ],
+        [
+          "SO",
+          "laminas-sockets-material-alternativo-em-pt"
+        ],
+        [
+          "SO",
+          "lista-exercicios-p1"
+        ],
+        [
+          "TCC",
+          "aula-11-o-problema-da-parada-halting-problem-halteproblem"
+        ]
+      ],
+      "ids_unidade_tocados": [
+        [
+          "CG",
+          "animacao-v2"
+        ],
+        [
+          "CG",
+          "basico3d-cpp"
+        ],
+        [
+          "CG",
+          "basico3d-py"
+        ],
+        [
+          "CG",
+          "basico3d-py-zip"
+        ],
+        [
+          "CG",
+          "bezier-animacao"
+        ],
+        [
+          "CG",
+          "bezier-cpp"
+        ],
+        [
+          "CG",
+          "bezier-py"
+        ],
+        [
+          "CG",
+          "bezier-python"
+        ],
+        [
+          "CG",
+          "colisao"
+        ],
+        [
+          "CG",
+          "exercicio-de-animacao-foguete"
+        ],
+        [
+          "CG",
+          "exercicios-sobre-curvas-html"
+        ],
+        [
+          "CG",
+          "matematica"
+        ],
+        [
+          "CG",
+          "opengl3d"
+        ],
+        [
+          "CG",
+          "opengl3dcpp"
+        ],
+        [
+          "CG",
+          "opengl3dcpp-vdi"
+        ],
+        [
+          "CG",
+          "programabasico3d"
+        ],
+        [
+          "CG",
+          "transformacoesgeometricas"
+        ],
+        [
+          "CG",
+          "transformacoesgl"
+        ],
+        [
+          "ES2",
+          "microsservicos7"
+        ],
+        [
+          "ES2",
+          "revisao-p2"
+        ],
+        [
+          "ES2",
+          "revisao-p2-respostas"
+        ],
+        [
+          "ES2",
+          "roteiro1"
+        ],
+        [
+          "ES2",
+          "roteiro2"
+        ],
+        [
+          "ES2",
+          "roteiro3"
+        ],
+        [
+          "ES2",
+          "roteiro4"
+        ],
+        [
+          "ES2",
+          "roteiro5"
+        ],
+        [
+          "ES2",
+          "roteiro6"
+        ],
+        [
+          "ES2",
+          "roteiro6-conteiners-composicao"
+        ],
+        [
+          "ES2",
+          "roteiro7"
+        ],
+        [
+          "ES2",
+          "roteiro7-history-service"
+        ],
+        [
+          "ES2",
+          "roteiro8-autenticacao-autorizacao"
+        ],
+        [
+          "IA",
+          "visao-geral-introducao-e-historico"
+        ],
+        [
+          "MF",
+          "colecoes-conjuntos"
+        ],
+        [
+          "MF",
+          "exemplos"
+        ],
+        [
+          "MF",
+          "exercicioscorrecaoinducaomatematica"
+        ],
+        [
+          "MF",
+          "exerciciosespecificacao"
+        ],
+        [
+          "MF",
+          "exerciciosespecificacao-respostas"
+        ],
+        [
+          "MF",
+          "formalizacaoalgoritmos-recursao"
+        ],
+        [
+          "MF",
+          "logicaproposicional-sintaxe"
+        ],
+        [
+          "MF",
+          "mcs"
+        ],
+        [
+          "SO",
+          "0206-laminas-mecanismos-de-interrupcao"
+        ],
+        [
+          "SO",
+          "2306-laminas-laminas-armazenamento-em-massa"
+        ],
+        [
+          "SO",
+          "3103-threads"
+        ],
+        [
+          "SO",
+          "biblioteca-em-c-pthread"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-filho"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste01"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste02"
+        ],
+        [
+          "SO",
+          "exemplo-criacao-de-processos-no-unix-linux-teste03"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo1"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo2"
+        ],
+        [
+          "SO",
+          "exemplo-threads-em-c-exemplo3"
+        ],
+        [
+          "SO",
+          "exercicios-p2"
+        ],
+        [
+          "SO",
+          "lista-exercicios-p1"
+        ],
+        [
+          "TCC",
+          "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos"
+        ],
+        [
+          "TCC",
+          "aula-11-o-problema-da-parada-halting-problem-halteproblem"
+        ]
+      ],
+      "perdas": {
+        "sub_aceita": [
+          [
+            "CG",
+            "basico3d-py"
+          ],
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ],
+          [
+            "CG",
+            "colisao"
+          ],
+          [
+            "CG",
+            "exercicio-de-animacao-foguete"
+          ],
+          [
+            "CG",
+            "programabasico3d"
+          ],
+          [
+            "ES2",
+            "roteiro5"
+          ],
+          [
+            "ES2",
+            "roteiro6"
+          ],
+          [
+            "ES2",
+            "roteiro7"
+          ],
+          [
+            "ES2",
+            "roteiro7-history-service"
+          ],
+          [
+            "MF",
+            "exercicioscorrecaoinducaomatematica"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao-respostas"
+          ],
+          [
+            "MF",
+            "exerciciosformalizacaoalgoritmosinvariantes"
+          ],
+          [
+            "MF",
+            "exerciciosisabelle2"
+          ],
+          [
+            "MF",
+            "formalizacaoalgoritmos-recursao"
+          ],
+          [
+            "MF",
+            "provasindutivas-especificacoesrecursivas"
+          ],
+          [
+            "MF",
+            "provasindutivas-especificacoesrecursivas-arvores"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste01"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste02"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste03"
+          ]
+        ],
+        "sub_primaria": [
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ],
+          [
+            "CG",
+            "colisao"
+          ],
+          [
+            "CG",
+            "programabasico3d"
+          ],
+          [
+            "ES2",
+            "roteiro5"
+          ],
+          [
+            "ES2",
+            "roteiro6"
+          ],
+          [
+            "ES2",
+            "roteiro7"
+          ],
+          [
+            "ES2",
+            "roteiro7-history-service"
+          ],
+          [
+            "MF",
+            "exercicioscorrecaoinducaomatematica"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao-respostas"
+          ],
+          [
+            "MF",
+            "exerciciosformalizacaoalgoritmosinvariantes"
+          ],
+          [
+            "MF",
+            "formalizacaoalgoritmos-recursao"
+          ],
+          [
+            "MF",
+            "logicadehoare"
+          ],
+          [
+            "MF",
+            "provasindutivas-especificacoesrecursivas"
+          ],
+          [
+            "MF",
+            "provasindutivas-especificacoesrecursivas-arvores"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste01"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste02"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste03"
+          ]
+        ],
+        "unidade": [
+          [
+            "CG",
+            "animacao-v2"
+          ],
+          [
+            "CG",
+            "basico3d-py"
+          ],
+          [
+            "CG",
+            "bezier-animacao"
+          ],
+          [
+            "CG",
+            "bezier-cpp"
+          ],
+          [
+            "CG",
+            "bezier-py"
+          ],
+          [
+            "CG",
+            "bezier-python"
+          ],
+          [
+            "CG",
+            "colisao"
+          ],
+          [
+            "CG",
+            "exercicio-de-animacao-foguete"
+          ],
+          [
+            "CG",
+            "matematica"
+          ],
+          [
+            "CG",
+            "opengl3d"
+          ],
+          [
+            "CG",
+            "opengl3dcpp"
+          ],
+          [
+            "CG",
+            "opengl3dcpp-vdi"
+          ],
+          [
+            "CG",
+            "programabasico3d"
+          ],
+          [
+            "CG",
+            "transformacoesgeometricas"
+          ],
+          [
+            "CG",
+            "transformacoesgl"
+          ],
+          [
+            "ES2",
+            "roteiro1"
+          ],
+          [
+            "ES2",
+            "roteiro2"
+          ],
+          [
+            "ES2",
+            "roteiro3"
+          ],
+          [
+            "ES2",
+            "roteiro4"
+          ],
+          [
+            "ES2",
+            "roteiro5"
+          ],
+          [
+            "ES2",
+            "roteiro7"
+          ],
+          [
+            "ES2",
+            "roteiro7-history-service"
+          ],
+          [
+            "MF",
+            "colecoes-conjuntos"
+          ],
+          [
+            "MF",
+            "exemplos-zip"
+          ],
+          [
+            "MF",
+            "exercicioscorrecaoinducaomatematica"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao"
+          ],
+          [
+            "MF",
+            "exerciciosespecificacao-respostas"
+          ],
+          [
+            "MF",
+            "formalizacaoalgoritmos-recursao"
+          ],
+          [
+            "MF",
+            "logicaproposicional-sintaxe"
+          ],
+          [
+            "SO",
+            "0206-laminas-mecanismos-de-interrupcao"
+          ],
+          [
+            "SO",
+            "2306-laminas-laminas-armazenamento-em-massa"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-filho"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste01"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste02"
+          ],
+          [
+            "SO",
+            "exemplo-criacao-de-processos-no-unix-linux-teste03"
+          ],
+          [
+            "SO",
+            "exercicios-p2"
+          ],
+          [
+            "SO",
+            "lista-exercicios-p1"
+          ]
+        ]
+      },
+      "por_curso": {
+        "CG": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 33,
+          "sub_n": 82,
+          "sub_primaria": 22,
+          "unidade": 60,
+          "unidade_n": 93
+        },
+        "ES2": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 4,
+          "sub_n": 28,
+          "sub_primaria": 3,
+          "unidade": 19,
+          "unidade_n": 28
+        },
+        "FR": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        },
+        "IA": {
+          "bloco": 39,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 40,
+          "unidade_n": 42
+        },
+        "MF": {
+          "bloco": 56,
+          "bloco_n": 66,
+          "sub_aceita": 21,
+          "sub_n": 58,
+          "sub_primaria": 17,
+          "unidade": 54,
+          "unidade_n": 66
+        },
+        "SO": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 5,
+          "sub_n": 15,
+          "sub_primaria": 4,
+          "unidade": 24,
+          "unidade_n": 37
+        },
+        "TCC": {
+          "bloco": 26,
+          "bloco_n": 27,
+          "sub_aceita": 9,
+          "sub_n": 11,
+          "sub_primaria": 7,
+          "unidade": 18,
+          "unidade_n": 18
+        }
+      },
+      "total": {
+        "bloco": 217,
+        "bloco_n": 237,
+        "sub_aceita": 84,
+        "sub_n": 251,
+        "sub_primaria": 63,
+        "unidade": 215,
+        "unidade_n": 284
+      }
+    }
+  },
+  "resultados_todos_os_taus": {
+    "R1_tau0.50": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 84,
+      "sub_n": 251,
+      "sub_primaria": 63,
+      "unidade": 215,
+      "unidade_n": 284
+    },
+    "R1_tau0.60": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 85,
+      "sub_n": 251,
+      "sub_primaria": 64,
+      "unidade": 219,
+      "unidade_n": 284
+    },
+    "R1_tau0.70": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 92,
+      "sub_n": 251,
+      "sub_primaria": 72,
+      "unidade": 228,
+      "unidade_n": 284
+    },
+    "R1_tau0.80": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 97,
+      "sub_n": 251,
+      "sub_primaria": 77,
+      "unidade": 236,
+      "unidade_n": 284
+    },
+    "R1_tau0.90": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 101,
+      "sub_n": 251,
+      "sub_primaria": 80,
+      "unidade": 237,
+      "unidade_n": 284
+    },
+    "R2": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 84,
+      "sub_n": 251,
+      "sub_primaria": 63,
+      "unidade": 215,
+      "unidade_n": 284
+    },
+    "base": {
+      "bloco": 217,
+      "bloco_n": 237,
+      "sub_aceita": 107,
+      "sub_n": 251,
+      "sub_primaria": 84,
+      "unidade": 246,
+      "unidade_n": 284
+    }
+  },
+  "risco_clausula": {
+    "CG": 18,
+    "CG_acerto": 15,
+    "ES2": 9,
+    "ES2_acerto": 8,
+    "IA": 1,
+    "MF": 7,
+    "MF_acerto": 7,
+    "SO": 13,
+    "SO_acerto": 8,
+    "TCC": 1,
+    "total": 49,
+    "total_acerto": 38
+  },
+  "sha256_congelamento_decisoes": "93fac811a6e589584a378ce30d8d7935584f14abc8c8d73b47228beb4e75bd19",
+  "sha256_declaracao": "278ba0eec23432858d0102463bbc469632716426cc2e85457414d3fe7d076f0d",
+  "tau_final_por_loco": "R1_tau0.90"
+}

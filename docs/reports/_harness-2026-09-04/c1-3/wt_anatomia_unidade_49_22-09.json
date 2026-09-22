@@ -1,0 +1,1425 @@
+{
+  "bloqueios_por_curso": {
+    "CG": 7,
+    "ES2": 3
+  },
+  "bloqueios_subunidade": [
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro4-circuitbreaker",
+      "gold_id": "roteiro4-circuitbreaker",
+      "gold_primario": [
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "estilos-e-padroes-arquiteturais",
+      "unidade_vigente": "unidade-01-arquitetura-de-software",
+      "unidades_do_gold": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "microsservicos4",
+      "gold_id": "microsservicos4",
+      "gold_primario": [
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "estilos-e-padroes-arquiteturais",
+      "unidade_vigente": "unidade-01-arquitetura-de-software",
+      "unidades_do_gold": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      ]
+    },
+    {
+      "curso": "ES2",
+      "entry_id": "roteiro4",
+      "gold_id": "roteiro4",
+      "gold_primario": [
+        "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "",
+      "unidade_vigente": "unidade-01-arquitetura-de-software",
+      "unidades_do_gold": [
+        "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "morfologiamatematicapptx",
+      "gold_id": "morfologiamatematicapptx",
+      "gold_primario": [
+        "segmentacao"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "a-matematica-das-projecoes-planares",
+      "unidade_vigente": "unidade-06-processo-de-visualizacao-3d",
+      "unidades_do_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-cpp",
+      "gold_id": "basico3d-cpp",
+      "gold_primario": [
+        "tecnicas-de-modelagem-3d"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "algoritmos-de-poligonos",
+      "unidade_vigente": "unidade-02-fundamentos-matematicos",
+      "unidades_do_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "basico3d-py-zip",
+      "gold_id": "basico3d-py-zip",
+      "gold_primario": [
+        "tecnicas-de-modelagem-3d"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "operacoes-com-vetores",
+      "unidade_vigente": "unidade-02-fundamentos-matematicos",
+      "unidades_do_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios",
+      "gold_id": "exercicios",
+      "gold_primario": [
+        "aplicacoes"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "",
+      "unidade_vigente": "unidade-02-fundamentos-matematicos",
+      "unidades_do_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "openglbasico",
+      "gold_id": "openglbasico",
+      "gold_primario": [
+        "aplicacoes"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "introducao-e-exemplos-de-aplicacoes",
+      "unidade_vigente": "unidade-03-processamento-de-imagens-e-visao-computacional",
+      "unidades_do_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "exercicios-sobre-curvas-html",
+      "gold_id": "exercicios-sobre-curvas-html",
+      "gold_primario": [
+        "catmull-rom"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "",
+      "unidade_vigente": "unidade-02-fundamentos-matematicos",
+      "unidades_do_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ]
+    },
+    {
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "gold_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "gold_primario": [
+        "segmentacao"
+      ],
+      "slug_duplicado": [],
+      "slug_fora_da_taxonomia": [],
+      "sub_predita": "a-matematica-das-projecoes-planares",
+      "unidade_vigente": "unidade-06-processo-de-visualizacao-3d",
+      "unidades_do_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ]
+    }
+  ],
+  "checks": {
+    "bloco_217_de_237": true,
+    "erros_de_unidade_sao_38": true,
+    "sub_primaria_84_aceita_107_de_251": true,
+    "unidade_246_de_284": true
+  },
+  "classes": {
+    "ausente": 13,
+    "herdada_do_bloco_certo_mas_gold_diverge": 12,
+    "herdada_do_bloco_errado": 9,
+    "texto_vence_errado": 4
+  },
+  "classes_por_curso": {
+    "CG": {
+      "ausente": 7,
+      "herdada_do_bloco_certo_mas_gold_diverge": 1,
+      "herdada_do_bloco_errado": 7,
+      "texto_vence_errado": 4
+    },
+    "ES2": {
+      "herdada_do_bloco_certo_mas_gold_diverge": 2,
+      "herdada_do_bloco_errado": 1
+    },
+    "FR": {},
+    "IA": {
+      "ausente": 2,
+      "herdada_do_bloco_certo_mas_gold_diverge": 1
+    },
+    "MF": {
+      "ausente": 4,
+      "herdada_do_bloco_certo_mas_gold_diverge": 1
+    },
+    "SO": {
+      "herdada_do_bloco_certo_mas_gold_diverge": 6,
+      "herdada_do_bloco_errado": 1
+    },
+    "TCC": {
+      "herdada_do_bloco_certo_mas_gold_diverge": 1
+    }
+  },
+  "cursos": {
+    "CG": {
+      "bloco": 33,
+      "bloco_n": 35,
+      "bloq_n": 77,
+      "cls_ausente": 7,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 1,
+      "cls_herdada_do_bloco_errado": 7,
+      "cls_texto_vence_errado": 4,
+      "sub_aceita": 41,
+      "sub_n": 82,
+      "sub_primaria": 28,
+      "unidade": 74,
+      "unidade_n": 93
+    },
+    "ES2": {
+      "bloco": 27,
+      "bloco_n": 28,
+      "bloq_n": 28,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 2,
+      "cls_herdada_do_bloco_errado": 1,
+      "sub_aceita": 8,
+      "sub_n": 28,
+      "sub_primaria": 7,
+      "unidade": 25,
+      "unidade_n": 28
+    },
+    "FR": {
+      "bloq_n": 18,
+      "sub_aceita": 7,
+      "sub_n": 18,
+      "sub_primaria": 6
+    },
+    "IA": {
+      "bloco": 39,
+      "bloco_n": 42,
+      "bloq_n": 39,
+      "cls_ausente": 2,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 1,
+      "sub_aceita": 5,
+      "sub_n": 39,
+      "sub_primaria": 4,
+      "unidade": 39,
+      "unidade_n": 42
+    },
+    "MF": {
+      "bloco": 56,
+      "bloco_n": 66,
+      "bloq_n": 58,
+      "cls_ausente": 4,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 1,
+      "sub_aceita": 29,
+      "sub_n": 58,
+      "sub_primaria": 25,
+      "unidade": 61,
+      "unidade_n": 66
+    },
+    "SO": {
+      "bloco": 36,
+      "bloco_n": 39,
+      "bloq_n": 15,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 6,
+      "cls_herdada_do_bloco_errado": 1,
+      "sub_aceita": 8,
+      "sub_n": 15,
+      "sub_primaria": 7,
+      "unidade": 30,
+      "unidade_n": 37
+    },
+    "TCC": {
+      "bloco": 26,
+      "bloco_n": 27,
+      "bloq_n": 10,
+      "cls_herdada_do_bloco_certo_mas_gold_diverge": 1,
+      "sub_aceita": 9,
+      "sub_n": 11,
+      "sub_primaria": 7,
+      "unidade": 17,
+      "unidade_n": 18
+    }
+  },
+  "erros": [
+    {
+      "bloco_gold": "bloco-01",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "MF",
+      "entry_id": null,
+      "gold_id": "eth2",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-02-verificacao-de-programas"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-01",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "MF",
+      "entry_id": null,
+      "gold_id": "aws-encryption-sdk",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-02-verificacao-de-programas"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-01",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "MF",
+      "entry_id": null,
+      "gold_id": "archive-of-formal-proofs-355fb8",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-01-metodos-formais"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-11",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "MF",
+      "entry_id": null,
+      "gold_id": "t1-2026-1",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-01-metodos-formais"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-11",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-11",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {},
+      "curso": "MF",
+      "entry_id": "t1-2026-1-thy",
+      "gold_id": "t1-2026-1-thy",
+      "reasons": [
+        "winner_score=2.81",
+        "topic_score=0.02",
+        "herdada_do_vizinho=bloco-10"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-02-verificacao-de-programas",
+      "scorer_conf": 0.969598487544484,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\TDE Trabalho Discente Efetivo\\T1_2026_1.thy",
+      "titulo": "T1_2026_1",
+      "unidade_gold": [
+        "unidade-01-metodos-formais"
+      ],
+      "unidade_pred": "unidade-02-verificacao-de-programas"
+    },
+    {
+      "bloco_gold": "bloco-09",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-06",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "SO",
+      "entry_id": "laminas-sockets-material-alternativo-em-pt",
+      "gold_id": "laminas-sockets-material-alternativo-em-pt",
+      "reasons": [
+        "winner_score=6.87",
+        "topic_score=2.00",
+        "ambiguous",
+        "herdada_do_bloco=bloco-06"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-03-programacao-concorrente",
+      "scorer_conf": 0.007916527205786082,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Sincronização e Comunicação de Processos\\Lâminas Sockets (material alternativo em PT).pdf",
+      "titulo": "Lâminas Sockets (material alternativo em PT)",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-06",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-06",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {},
+      "curso": "SO",
+      "entry_id": "0704-exemplo-threads-em-java",
+      "gold_id": "0704-exemplo-threads-em-java",
+      "reasons": [
+        "winner_score=0.23",
+        "topic_score=0.11",
+        "ambiguous",
+        "herdada_do_bloco=bloco-06"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-02-gerencia-do-processador",
+      "scorer_conf": 0.0,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\07.04 Exemplo threads em Java.zip",
+      "titulo": "07.04 Exemplo threads em Java",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-04",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-04",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-04",
+        "block_unit": "unidade-02-gerencia-do-processador",
+        "unit": "unidade-03-programacao-concorrente"
+      },
+      "curso": "SO",
+      "entry_id": "3103-threads",
+      "gold_id": "3103-threads",
+      "reasons": [
+        "winner_score=16.03",
+        "topic_score=15.36",
+        "reconciliada_do_bloco=bloco-04"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-03-programacao-concorrente",
+      "scorer_conf": 0.5832247981245116,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\31.03 Threads.pdf",
+      "titulo": "31.03 Threads",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-04",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-04",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-04",
+        "block_unit": "unidade-02-gerencia-do-processador",
+        "unit": "unidade-03-programacao-concorrente"
+      },
+      "curso": "SO",
+      "entry_id": "biblioteca-em-c-pthread",
+      "gold_id": "biblioteca-em-c-pthread",
+      "reasons": [
+        "winner_score=19.12",
+        "topic_score=15.11",
+        "reconciliada_do_bloco=bloco-04"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-03-programacao-concorrente",
+      "scorer_conf": 0.6822454653779955,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\Biblioteca em C - pthread.pdf",
+      "titulo": "Biblioteca em C - pthread",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-04",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-04",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-04",
+        "block_unit": "unidade-02-gerencia-do-processador",
+        "unit": "unidade-07-gerencia-de-entrada-e-saida"
+      },
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo1",
+      "gold_id": "exemplo-threads-em-c-exemplo1",
+      "reasons": [
+        "winner_score=0.58",
+        "topic_score=0.11",
+        "reconciliada_do_bloco=bloco-04"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-07-gerencia-de-entrada-e-saida",
+      "scorer_conf": 0.630323263888889,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\Exemplo threads em C - exemplo1.c",
+      "titulo": "Exemplo threads em C - exemplo1",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-04",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-04",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-04",
+        "block_unit": "unidade-02-gerencia-do-processador",
+        "unit": "unidade-07-gerencia-de-entrada-e-saida"
+      },
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo2",
+      "gold_id": "exemplo-threads-em-c-exemplo2",
+      "reasons": [
+        "winner_score=0.58",
+        "topic_score=0.11",
+        "reconciliada_do_bloco=bloco-04"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-07-gerencia-de-entrada-e-saida",
+      "scorer_conf": 0.630323263888889,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\Exemplo threads em C - exemplo2.c",
+      "titulo": "Exemplo threads em C - exemplo2",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-04",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-04",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-04",
+        "block_unit": "unidade-02-gerencia-do-processador",
+        "unit": "unidade-07-gerencia-de-entrada-e-saida"
+      },
+      "curso": "SO",
+      "entry_id": "exemplo-threads-em-c-exemplo3",
+      "gold_id": "exemplo-threads-em-c-exemplo3",
+      "reasons": [
+        "winner_score=5.57",
+        "topic_score=0.91",
+        "reconciliada_do_bloco=bloco-04"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-07-gerencia-de-entrada-e-saida",
+      "scorer_conf": 0.9990117014547756,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\sistemas-operacionais\\Threads\\Exemplo threads em C - exemplo3.c",
+      "titulo": "Exemplo threads em C - exemplo3",
+      "unidade_gold": [
+        "unidade-03-programacao-concorrente"
+      ],
+      "unidade_pred": "unidade-02-gerencia-do-processador"
+    },
+    {
+      "bloco_gold": "bloco-01",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "IA",
+      "entry_id": null,
+      "gold_id": "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-de-aprendizagem-01-visao-geral"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-01",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "IA",
+      "entry_id": null,
+      "gold_id": "ia-responsável-7c4626",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-de-aprendizagem-01-visao-geral"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "bloco-02",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-02",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-02",
+        "block_unit": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        "unit": "unidade-de-aprendizagem-01-visao-geral"
+      },
+      "curso": "IA",
+      "entry_id": "visao-geral-introducao-e-historico",
+      "gold_id": "visao-geral-introducao-e-historico",
+      "reasons": [
+        "winner_score=47.27",
+        "topic_score=11.92",
+        "reconciliada_do_bloco=bloco-02"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-de-aprendizagem-01-visao-geral",
+      "scorer_conf": 0.7869127516778524,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\inteligencia-artificial\\Semana 1 - 02.03 a 06.03 - Plano de Ensino e Introdução a IA\\Visão Geral - Introdução e Histórico.pdf",
+      "titulo": "Visão Geral - Introdução e Histórico",
+      "unidade_gold": [
+        "unidade-de-aprendizagem-01-visao-geral"
+      ],
+      "unidade_pred": "unidade-de-aprendizagem-05-aprendizado-de-maquina"
+    },
+    {
+      "bloco_gold": "bloco-08",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-08",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {},
+      "curso": "ES2",
+      "entry_id": "microsservicos5",
+      "gold_id": "microsservicos5",
+      "reasons": [
+        "winner_score=14.52",
+        "topic_score=2.29",
+        "ambiguous",
+        "herdada_do_bloco=bloco-08"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-01-arquitetura-de-software",
+      "scorer_conf": 0.11965264578684962,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\Microsserviços\\microsservicos5.pdf",
+      "titulo": "microsservicos5",
+      "unidade_gold": [
+        "unidade-01-arquitetura-de-software"
+      ],
+      "unidade_pred": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+    },
+    {
+      "bloco_gold": "bloco-09",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-09",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-09",
+        "block_unit": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+        "unit": "unidade-01-arquitetura-de-software"
+      },
+      "curso": "ES2",
+      "entry_id": "microsservicos7",
+      "gold_id": "microsservicos7",
+      "reasons": [
+        "winner_score=24.67",
+        "topic_score=9.16",
+        "reconciliada_do_bloco=bloco-09"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-01-arquitetura-de-software",
+      "scorer_conf": 0.95,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\Microsserviços\\microsservicos7.pdf",
+      "titulo": "microsservicos7",
+      "unidade_gold": [
+        "unidade-01-arquitetura-de-software"
+      ],
+      "unidade_pred": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+    },
+    {
+      "bloco_gold": "bloco-09",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-08",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "ES2",
+      "entry_id": "azure",
+      "gold_id": "azure",
+      "reasons": [
+        "winner_score=0.57",
+        "topic_score=0.14",
+        "ambiguous",
+        "herdada_do_bloco=bloco-08"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-01-arquitetura-de-software",
+      "scorer_conf": 0.0,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\engenharia-de-software-ii\\Microsserviços\\Azure.pdf",
+      "titulo": "Azure",
+      "unidade_gold": [
+        "unidade-01-arquitetura-de-software"
+      ],
+      "unidade_pred": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+    },
+    {
+      "bloco_gold": "bloco-10",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-10",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {
+        "block_id": "bloco-10",
+        "block_unit": "unidade-02-turing-computabilidade",
+        "unit": "unidade-03-problemas-indecidiveis"
+      },
+      "curso": "TCC",
+      "entry_id": "aula-11-o-problema-da-parada-halting-problem-halteproblem",
+      "gold_id": "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf",
+      "reasons": [
+        "winner_score=33.47",
+        "topic_score=12.29",
+        "reconciliada_do_bloco=bloco-10"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-03-problemas-indecidiveis",
+      "scorer_conf": 0.6010159109583924,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\teoria-da-computabilidade-e-complexidade\\Semana 7- Halteproblem und Entscheidungsproblem\\Aula 11 - O Problema da Parada (Halting Problem, Halteproblem).pdf",
+      "titulo": "Aula 11 - O Problema da Parada (Halting Problem, Halteproblem)",
+      "unidade_gold": [
+        "unidade-03-problemas-indecidiveis"
+      ],
+      "unidade_pred": "unidade-02-turing-computabilidade"
+    },
+    {
+      "bloco_gold": "bloco-08",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-08",
+      "bruto_acertaria": false,
+      "classe": "texto_vence_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "morfologiamatematicapptx",
+      "gold_id": "morfologiamatematicapptx",
+      "reasons": [
+        "winner_score=10.16",
+        "topic_score=10.39"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-06-processo-de-visualizacao-3d",
+      "scorer_conf": 0.9994587168242621,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\11 - Morfologia Matemática\\MorfologiaMatematica.pptx.pdf",
+      "titulo": "MorfologiaMatematica.pptx",
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": "unidade-06-processo-de-visualizacao-3d"
+    },
+    {
+      "bloco_gold": "bloco-15",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-05",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {
+        "block_id": "bloco-05",
+        "block_unit": "unidade-02-fundamentos-matematicos",
+        "unit": "unidade-04-processo-de-visualizacao-2d"
+      },
+      "curso": "CG",
+      "entry_id": "basico3d-cpp",
+      "gold_id": "basico3d-cpp",
+      "reasons": [
+        "winner_score=23.23",
+        "topic_score=16.99",
+        "reconciliada_do_bloco=bloco-05"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-04-processo-de-visualizacao-2d",
+      "scorer_conf": 0.7174143412221828,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\14 - Exercícios sobre Modelagem Geométrica\\Basico3D-CPP.zip",
+      "titulo": "Basico3D-CPP",
+      "unidade_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ],
+      "unidade_pred": "unidade-02-fundamentos-matematicos"
+    },
+    {
+      "bloco_gold": "bloco-15",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-05",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {
+        "block_id": "bloco-05",
+        "block_unit": "unidade-02-fundamentos-matematicos",
+        "unit": "unidade-01-introducao-ao-processamento-grafico"
+      },
+      "curso": "CG",
+      "entry_id": "basico3d-py-zip",
+      "gold_id": "basico3d-py-zip",
+      "reasons": [
+        "winner_score=10.20",
+        "topic_score=4.80",
+        "reconciliada_do_bloco=bloco-05"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-01-introducao-ao-processamento-grafico",
+      "scorer_conf": 0.8109999999999999,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\14 - Exercícios sobre Modelagem Geométrica\\Basico3D-PY.zip",
+      "titulo": "Basico3D-PY",
+      "unidade_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ],
+      "unidade_pred": "unidade-02-fundamentos-matematicos"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-02",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "exercicios",
+      "gold_id": "exercicios",
+      "reasons": [
+        "winner_score=0.48",
+        "topic_score=0.14",
+        "ambiguous",
+        "herdada_do_bloco=bloco-02",
+        "herdada_do_vizinho=bloco-03"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-03-processamento-de-imagens-e-visao-computacional",
+      "scorer_conf": 0.4,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\2 - Biblioteca OpenGL\\exercicios.html",
+      "titulo": "exercicios",
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ],
+      "unidade_pred": "unidade-02-fundamentos-matematicos"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-02",
+      "bruto_acertaria": false,
+      "classe": "texto_vence_errado",
+      "conflict": {
+        "block_id": "bloco-02",
+        "block_unit": "unidade-02-fundamentos-matematicos",
+        "unit": "unidade-03-processamento-de-imagens-e-visao-computacional"
+      },
+      "curso": "CG",
+      "entry_id": "openglbasico",
+      "gold_id": "openglbasico",
+      "reasons": [
+        "winner_score=13.05",
+        "topic_score=9.16",
+        "texto-vence-vizinho=bloco-03"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-03-processamento-de-imagens-e-visao-computacional",
+      "scorer_conf": 0.5761083205940162,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\2 - Biblioteca OpenGL\\OpenGLBasico.pdf",
+      "titulo": "OpenGLBasico",
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ],
+      "unidade_pred": "unidade-03-processamento-de-imagens-e-visao-computacional"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-02",
+      "bruto_acertaria": false,
+      "classe": "texto_vence_errado",
+      "conflict": {
+        "block_id": "bloco-02",
+        "block_unit": "unidade-02-fundamentos-matematicos",
+        "unit": "unidade-01-introducao-ao-processamento-grafico"
+      },
+      "curso": "CG",
+      "entry_id": "texturas-v3",
+      "gold_id": "texturas-v3",
+      "reasons": [
+        "winner_score=10.20",
+        "topic_score=4.80",
+        "texto-vence-vizinho=bloco-03"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-01-introducao-ao-processamento-grafico",
+      "scorer_conf": 0.8109999999999999,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\2 - Biblioteca OpenGL\\Texturas_v3.zip",
+      "titulo": "Texturas_v3",
+      "unidade_gold": [
+        "unidade-08-sintese-de-imagens-realisticas"
+      ],
+      "unidade_pred": "unidade-01-introducao-ao-processamento-grafico"
+    },
+    {
+      "bloco_gold": "bloco-03",
+      "bloco_ok": true,
+      "bloco_pred": "bloco-03",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_certo_mas_gold_diverge",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "exemplodemanipulacaodeimagens",
+      "gold_id": "exemplodemanipulacaodeimagens",
+      "reasons": [
+        "winner_score=2.53",
+        "topic_score=0.91",
+        "ambiguous",
+        "herdada_do_bloco=bloco-03"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-05-transformacoes-geometricas",
+      "scorer_conf": 0.11891865942395158,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\3 - Fundamentos Matemáticos para Computação Gráfica\\ExemploDeManipulacaoDeImagens.cpp",
+      "titulo": "ExemploDeManipulacaoDeImagens",
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": "unidade-02-fundamentos-matematicos"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": true,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {
+        "block_id": "bloco-03",
+        "block_unit": "unidade-02-fundamentos-matematicos",
+        "unit": "unidade-07-representacao-e-modelagem-de-objetos"
+      },
+      "curso": "CG",
+      "entry_id": "exercicios-sobre-curvas-html",
+      "gold_id": "exercicios-sobre-curvas-html",
+      "reasons": [
+        "winner_score=22.38",
+        "topic_score=4.92",
+        "reconciliada_do_bloco=bloco-03"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-07-representacao-e-modelagem-de-objetos",
+      "scorer_conf": 0.8039024390243903,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\Exercícios 2D\\exercicios-sobre-curvas.html",
+      "titulo": "exercicios-sobre-curvas",
+      "unidade_gold": [
+        "unidade-07-representacao-e-modelagem-de-objetos"
+      ],
+      "unidade_pred": "unidade-02-fundamentos-matematicos"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-2d",
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-2d",
+      "reasons": [
+        "winner_score=0.01",
+        "topic_score=0.00",
+        "ambiguous",
+        "herdada_do_bloco=bloco-01"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-01-introducao-ao-processamento-grafico",
+      "scorer_conf": 0.0,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\Exercícios 2D\\resolucao-de-prova-de-computacao-grafica-2d.html",
+      "titulo": "resolucao-de-prova-de-computacao-grafica-2d",
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ],
+      "unidade_pred": "unidade-01-introducao-ao-processamento-grafico"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-2d-html",
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-2d-html",
+      "reasons": [
+        "winner_score=0.01",
+        "topic_score=0.00",
+        "ambiguous",
+        "herdada_do_bloco=bloco-01"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-01-introducao-ao-processamento-grafico",
+      "scorer_conf": 0.0,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\Provas Resolvidas\\resolucao-de-prova-de-computacao-grafica-2d.html",
+      "titulo": "resolucao-de-prova-de-computacao-grafica-2d",
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ],
+      "unidade_pred": "unidade-01-introducao-ao-processamento-grafico"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "herdada_do_bloco_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "reasons": [
+        "winner_score=0.01",
+        "topic_score=0.00",
+        "ambiguous",
+        "herdada_do_bloco=bloco-01"
+      ],
+      "regua_ambigua": true,
+      "scorer_ambiguo": true,
+      "scorer_bruto": "unidade-01-introducao-ao-processamento-grafico",
+      "scorer_conf": 0.0,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\Provas Resolvidas\\resolucao-de-prova-de-computacao-grafica-3d.html",
+      "titulo": "resolucao-de-prova-de-computacao-grafica-3d",
+      "unidade_gold": [
+        "unidade-06-processo-de-visualizacao-3d",
+        "unidade-07-representacao-e-modelagem-de-objetos",
+        "unidade-08-sintese-de-imagens-realisticas"
+      ],
+      "unidade_pred": "unidade-01-introducao-ao-processamento-grafico"
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-sobre-origens-da-computacao-grafica-806e66",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-sobre-mapeamento-em-opengl-1dad3c",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "aula-gravada-975b85",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-sobre-prechimento-de-areas-duracao-330-defae7",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "",
+      "bruto_acertaria": false,
+      "classe": "ausente",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": null,
+      "gold_id": "video-sobre-prechimento-de-areas-duracao-1300-d87e5f",
+      "reasons": [],
+      "regua_ambigua": false,
+      "scorer_ambiguo": null,
+      "scorer_bruto": null,
+      "scorer_conf": null,
+      "source_path": null,
+      "titulo": null,
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": ""
+    },
+    {
+      "bloco_gold": "",
+      "bloco_ok": false,
+      "bloco_pred": "bloco-08",
+      "bruto_acertaria": false,
+      "classe": "texto_vence_errado",
+      "conflict": {},
+      "curso": "CG",
+      "entry_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "gold_id": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "reasons": [
+        "winner_score=10.72",
+        "topic_score=10.95"
+      ],
+      "regua_ambigua": false,
+      "scorer_ambiguo": false,
+      "scorer_bruto": "unidade-06-processo-de-visualizacao-3d",
+      "scorer_conf": 0.95,
+      "source_path": "C:\\Users\\Humberto\\Desktop\\Moodle\\computacao-grafica\\stash\\11 - Morfologia Matemática\\pagina-com-videos-sobre-morfologia-matematica-06265a.html",
+      "titulo": "pagina-com-videos-sobre-morfologia-matematica-06265a",
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ],
+      "unidade_pred": "unidade-06-processo-de-visualizacao-3d"
+    }
+  ],
+  "escopo": "W-T (CRU-03 unidade): anatomia dos 38 erros de unidade no estado #49 + bloqueios de subunidade.\n\nCadeia REAL bloco -> unidade (molde de `aceite_v1_49_22-09.py` linhas 55-110): `replay_bloco_21-09.replay`\nalimenta `replay_unidade_21-09.replay` via patch de `ru.read` do manifest. Avaliacao pela regua\n`compara_herancas_15-09` (`mede.golds`). Gold SO na avaliacao, carregado DEPOIS do congelamento por hash\ndas decisoes. Sem build, rede, LLM (voter=None), sem tocar src/ nem tests/.\n\nCLASSES DE ERRO DE UNIDADE (pre-declaradas, ordem de desempate = a ordem abaixo):\n  ausente                                entrada nao esta no pacote (origem nao casa) -> nenhuma predicao\n  abstencao                              unidade final vazia\n  herdada_do_bloco_errado                razao veio do bloco (herdada_do_bloco=/reconciliada_do_bloco=/\n                                         unidade_do_bloco_manual/herdada_do_vizinho=) E o bloco predito != gold de bloco\n  herdada_do_bloco_certo_mas_gold_diverge  idem, mas o bloco predito == gold de bloco (regua ou bloco multiunidade)\n  texto_vence_errado                     razao de texto/secao/vizinho (secao-vence-bloco=, explicita-vence-bloco=,\n                                         texto-vence-vizinho=) ou nenhuma razao de bloco (o scorer manteve) e unidade != gold\n  regua_ambigua                          FLAG paralela: gold com > 1 unidade aceita e predicao fora (reportada por fora,\n                                         sem tirar o erro da classe mecanica)\n\nBLOQUEIO DE SUBUNIDADE = a unidade vigente no estado #49 nao contem NENHUM slug do gold primario, casando\npor (unidade, slug) na taxonomia `<root>/course/.content_taxonomy.json`. Slug duplicado em mais de uma\nunidade e reportado em separado.\n",
+  "limitacoes": [
+    "scorer_bruto = saida de auto_map_entry_unit (pre-reconciliacao, pos-scorer); o ranking completo pre-gate nao e persistido.",
+    "Ausentes permanecem no denominador. Gold carregado depois do congelamento por hash."
+  ],
+  "reconciliacao": {
+    "dependem_de_slug_duplicado": [],
+    "no_wp1_fora_do_wt": [],
+    "no_ws_fora_do_wt": [
+      [
+        "CG",
+        "opengl-cpp"
+      ],
+      [
+        "CG",
+        "opengl-py"
+      ],
+      [
+        "SO",
+        "1903-estruturas-de-controle"
+      ],
+      [
+        "SO",
+        "3103-threads"
+      ],
+      [
+        "SO",
+        "exemplo-threads-em-c-exemplo1"
+      ],
+      [
+        "SO",
+        "exemplo-threads-em-c-exemplo2"
+      ],
+      [
+        "SO",
+        "exemplo-threads-em-c-exemplo3"
+      ]
+    ],
+    "so_no_wt": [],
+    "wp1_total": 10,
+    "ws_total": 17,
+    "wt_e_wp1_e_ws": [
+      [
+        "CG",
+        "basico3d-cpp"
+      ],
+      [
+        "CG",
+        "basico3d-py-zip"
+      ],
+      [
+        "CG",
+        "exercicios"
+      ],
+      [
+        "CG",
+        "exercicios-sobre-curvas-html"
+      ],
+      [
+        "CG",
+        "morfologiamatematicapptx"
+      ],
+      [
+        "CG",
+        "openglbasico"
+      ],
+      [
+        "CG",
+        "pagina-com-videos-sobre-morfologia-matematica-06265a"
+      ],
+      [
+        "ES2",
+        "microsservicos4"
+      ],
+      [
+        "ES2",
+        "roteiro4"
+      ],
+      [
+        "ES2",
+        "roteiro4-circuitbreaker"
+      ]
+    ],
+    "wt_e_wp1_sem_ws": [],
+    "wt_e_ws_sem_wp1": [],
+    "wt_total": 10
+  },
+  "recuperaveis_sem_tocar_bloco": [
+    [
+      "CG",
+      "exercicios-sobre-curvas-html"
+    ],
+    [
+      "ES2",
+      "azure"
+    ],
+    [
+      "ES2",
+      "microsservicos5"
+    ],
+    [
+      "ES2",
+      "microsservicos7"
+    ],
+    [
+      "IA",
+      "visao-geral-introducao-e-historico"
+    ],
+    [
+      "SO",
+      "3103-threads"
+    ],
+    [
+      "SO",
+      "biblioteca-em-c-pthread"
+    ],
+    [
+      "SO",
+      "laminas-sockets-material-alternativo-em-pt"
+    ],
+    [
+      "TCC",
+      "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf"
+    ]
+  ],
+  "regua_ambigua_flag": [
+    [
+      "CG",
+      "resolucao-de-prova-de-computacao-grafica-3d"
+    ]
+  ],
+  "sha256_congelamento_decisoes": "1b56f1dda165335a51d622b7e80eabaa65eceb2d45356e18098132e2f960c18e",
+  "totais": {
+    "bloco": 217,
+    "bloco_n": 237,
+    "bloq_n": 245,
+    "cls_ausente": 13,
+    "cls_herdada_do_bloco_certo_mas_gold_diverge": 12,
+    "cls_herdada_do_bloco_errado": 9,
+    "cls_texto_vence_errado": 4,
+    "sub_aceita": 107,
+    "sub_n": 251,
+    "sub_primaria": 84,
+    "unidade": 246,
+    "unidade_n": 284
+  }
+}

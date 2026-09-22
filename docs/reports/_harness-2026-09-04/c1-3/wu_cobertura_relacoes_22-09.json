@@ -1,0 +1,1778 @@
+{
+ "cobertura": {
+  "certos_84": {
+   "B_ids": [
+    {
+     "classes_wp1": [],
+     "curso": "CG",
+     "entry_id": "exemplozbuffer",
+     "gold": [
+      "algoritmo-z-buffer"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "CG",
+     "entry_id": "programabasico3d",
+     "gold": [
+      "modelos-de-reflexao-ambiente-difusa-especular"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "ES2",
+     "entry_id": "roteiro5",
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "ES2",
+     "entry_id": "roteiro6",
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "ES2",
+     "entry_id": "roteiro7",
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "ES2",
+     "entry_id": "roteiro7-history-service",
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "FR",
+     "entry_id": "02-modelos-de-referencia",
+     "gold": [
+      "modelos-osi-e-tcpip"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "exerciciosespecificacao",
+     "gold": [
+      "linguagens-de-especificacao-e-logicas"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "exerciciosespecificacao-respostas",
+     "gold": [
+      "linguagens-de-especificacao-e-logicas"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "logicadehoare-exercicios-respostas",
+     "gold": [
+      "logica-de-hoare"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "MF",
+     "entry_id": "provasindutivas-especificacoesrecursivas-listas",
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ]
+    },
+    {
+     "classes_wp1": [],
+     "curso": "TCC",
+     "entry_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+     "gold": []
+    }
+   ],
+   "B_sobreposicao_residual_wp1": {
+    "B_puro": 14
+   },
+   "classes": {
+    "A-conflitante": 70,
+    "B": 14
+   },
+   "materiais_por_padrao_com_hit_no_gold": {
+    "P1": 12,
+    "P2": 69,
+    "P3": 18,
+    "P4": 38
+   },
+   "n": 84,
+   "por_curso": {
+    "CG": {
+     "A-conflitante": 26,
+     "B": 2
+    },
+    "ES2": {
+     "A-conflitante": 3,
+     "B": 4
+    },
+    "FR": {
+     "A-conflitante": 5,
+     "B": 1
+    },
+    "IA": {
+     "A-conflitante": 4
+    },
+    "MF": {
+     "A-conflitante": 19,
+     "B": 6
+    },
+    "SO": {
+     "A-conflitante": 7
+    },
+    "TCC": {
+     "A-conflitante": 6,
+     "B": 1
+    }
+   },
+   "topicos_conflitantes_por_material": {
+    "1-4": 2,
+    "5-19": 47,
+    ">=20": 21
+   }
+  },
+  "falha_selecao_53": {
+   "B_ids": [],
+   "B_sobreposicao_residual_wp1": {},
+   "classes": {
+    "A": 1,
+    "A-conflitante": 52
+   },
+   "materiais_por_padrao_com_hit_no_gold": {
+    "P1": 11,
+    "P2": 53,
+    "P3": 14,
+    "P4": 27
+   },
+   "n": 53,
+   "por_curso": {
+    "CG": {
+     "A-conflitante": 10
+    },
+    "ES2": {
+     "A-conflitante": 15
+    },
+    "FR": {
+     "A-conflitante": 9
+    },
+    "IA": {
+     "A-conflitante": 8
+    },
+    "MF": {
+     "A": 1,
+     "A-conflitante": 5
+    },
+    "SO": {
+     "A-conflitante": 1
+    },
+    "TCC": {
+     "A-conflitante": 4
+    }
+   },
+   "topicos_conflitantes_por_material": {
+    "0": 1,
+    "1-4": 3,
+    "5-19": 34,
+    ">=20": 15
+   }
+  },
+  "relacao_ausente_106": {
+   "B_ids": [
+    {
+     "classes_wp1": [
+      "gold_fora_da_taxonomia",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "animacao-v2",
+     "gold": []
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "atividade",
+     "gold": [
+      "conceito-de-camera-sintetica"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "bloqueio_unidade",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "basico3d-cpp",
+     "gold": [
+      "tecnicas-de-modelagem-3d"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "basico3d-py",
+     "gold": [
+      "conceito-de-camera-sintetica"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "bloqueio_unidade",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "basico3d-py-zip",
+     "gold": [
+      "tecnicas-de-modelagem-3d"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "exercicio-com-animacao",
+     "gold": [
+      "operacoes-com-vetores"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "exercicio-de-animacao-foguete",
+     "gold": [
+      "operacoes-com-vetores"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "bloqueio_unidade",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "exercicios",
+     "gold": [
+      "aplicacoes"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "gold_fora_da_taxonomia",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "instanciamento",
+     "gold": []
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "opengl-cpp",
+     "gold": [
+      "aplicacoes"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "opengl-py",
+     "gold": [
+      "aplicacoes"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "opengl3dcpp",
+     "gold": [
+      "conceito-de-camera-sintetica"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "opengl3dcpp-vdi",
+     "gold": [
+      "conceito-de-camera-sintetica"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "bloqueio_unidade",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "openglbasico",
+     "gold": [
+      "aplicacoes"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "gold_fora_da_taxonomia",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "pagina-com-videos-sobre-instanciamento",
+     "gold": []
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156",
+     "gold": [
+      "introducao-e-exemplos-de-aplicacoes"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "pagina-com-videos-sobre-mapeamento-9f410e",
+     "gold": [
+      "sistema-de-coordenadas-cartesianas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+     "gold": [
+      "modelos-de-iluminacao-luz-pontual-direcional-spot"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "gold_fora_da_taxonomia",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "transformacoesgeometricas",
+     "gold": []
+    },
+    {
+     "classes_wp1": [
+      "gold_fora_da_taxonomia",
+      "relacao_ausente"
+     ],
+     "curso": "CG",
+     "entry_id": "transformacoesgl",
+     "gold": []
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "ES2",
+     "entry_id": "kubernetes",
+     "gold": [
+      "plataformas-de-devops"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "ES2",
+     "entry_id": "roteiro1",
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "ES2",
+     "entry_id": "roteiro2",
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "ES2",
+     "entry_id": "roteiro3",
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "bloqueio_unidade",
+      "relacao_ausente"
+     ],
+     "curso": "ES2",
+     "entry_id": "roteiro4",
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "FR",
+     "entry_id": "lista-de-exercicios-1-camada-de-aplicacao",
+     "gold": [
+      "funcoes-e-caracteristicas-do-nivel-de-aplicacao"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "FR",
+     "entry_id": "unidade1-exercicios",
+     "gold": [
+      "modelos-osi-e-tcpip"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "classes-parte2",
+     "gold": [
+      "verificacao-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "colecoes-arrays",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "colecoes-conjuntos",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "colecoes-sequences",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exemplos",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-modelos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exercicios-arrays",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exercicios-conjuntos",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosdafny1",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosdafny2",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosdafny3",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosdafny4",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosdafny5",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "exerciciosnusmv",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-modelos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "intro",
+     "gold": [
+      "provadores-de-teoremas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "introducao-zip",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "logicaproposicional-semantica",
+     "gold": [
+      "linguagens-de-especificacao-e-logicas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "logicaproposicional-sintaxe",
+     "gold": [
+      "linguagens-de-especificacao-e-logicas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "revisao",
+     "gold": [
+      "sistemas-formais"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "MF",
+     "entry_id": "tiposindutivos",
+     "gold": [
+      "softwares-de-suporte-a-verificacao-formal-de-programas"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "SO",
+     "entry_id": "exemplo-threads-em-c-exemplo1",
+     "gold": [
+      "conceitos-basicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "SO",
+     "entry_id": "exemplo-threads-em-c-exemplo2",
+     "gold": [
+      "conceitos-basicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "SO",
+     "entry_id": "exemplo-threads-em-c-exemplo3",
+     "gold": [
+      "conceitos-basicos"
+     ]
+    },
+    {
+     "classes_wp1": [
+      "relacao_ausente"
+     ],
+     "curso": "SO",
+     "entry_id": "exercicios",
+     "gold": [
+      "algoritmos-de-escalonamento"
+     ]
+    }
+   ],
+   "B_sobreposicao_residual_wp1": {
+    "B_puro": 40,
+    "bloqueio_unidade": 5,
+    "gold_fora_da_taxonomia": 5
+   },
+   "classes": {
+    "A": 1,
+    "A-conflitante": 55,
+    "B": 50
+   },
+   "materiais_por_padrao_com_hit_no_gold": {
+    "P1": 29,
+    "P2": 35,
+    "P3": 17,
+    "P4": 46
+   },
+   "n": 106,
+   "por_curso": {
+    "CG": {
+     "A-conflitante": 17,
+     "B": 20
+    },
+    "ES2": {
+     "A-conflitante": 1,
+     "B": 5
+    },
+    "FR": {
+     "A-conflitante": 1,
+     "B": 2
+    },
+    "IA": {
+     "A": 1,
+     "A-conflitante": 26
+    },
+    "MF": {
+     "A-conflitante": 7,
+     "B": 19
+    },
+    "SO": {
+     "A-conflitante": 3,
+     "B": 4
+    }
+   },
+   "topicos_conflitantes_por_material": {
+    "0": 1,
+    "1-4": 5,
+    "5-19": 39,
+    ">=20": 11
+   }
+  }
+ },
+ "congelamento_sha256": "c17786ef89c2e59ab0ee3e786bb03e8d8713e27c8affc9289e39a609aafb3d0e",
+ "definicoes": {
+  "E": "chave stem6 do W-P1",
+  "P1": "E em heading/lista de outro material sob heading ancestral que menciona T",
+  "P2": "E e mencao a T na mesma linha de heading/lista/tabela",
+  "P3": "E no texto de bloco/sessao do plano cujo texto menciona T",
+  "P4": "E sob heading que menciona T em syllabus/glossario/cronograma/plano de ensino",
+  "T": "(unit_slug, slug) da taxonomia",
+  "ngram_max": 3,
+  "stem": 6,
+  "trecho_max": 160
+ },
+ "documentos": {
+  "CG": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [
+    {
+     "doc": "course/.lessons_index.json",
+     "motivo": "inexistente"
+    }
+   ],
+   "topicos_taxonomia": 59,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 72,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "ES2": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [],
+   "topicos_taxonomia": 21,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 27,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    },
+    {
+     "doc": "course/.lessons_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "FR": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [
+    {
+     "doc": "course/.lessons_index.json",
+     "motivo": "inexistente"
+    }
+   ],
+   "topicos_taxonomia": 32,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 15,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "IA": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [],
+   "topicos_taxonomia": 20,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 57,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    },
+    {
+     "doc": "course/.lessons_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "MF": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [],
+   "topicos_taxonomia": 23,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 54,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    },
+    {
+     "doc": "course/.lessons_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "SO": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [
+    {
+     "doc": "course/.lessons_index.json",
+     "motivo": "inexistente"
+    }
+   ],
+   "topicos_taxonomia": 36,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 41,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  "TCC": {
+   "excluidos_por_proveniencia": {
+    "BUILD_REPORT.md": "relatorio do build",
+    "README.md": "boilerplate do pacote",
+    "course/.assessment_context.json": "contexto computado no build",
+    "course/.block_identity.json": "identidade de bloco computada no build",
+    "course/.card_block_map.json": "mapa card->bloco computado no build",
+    "course/.semantic_profile.generated.json": "perfil gerado pelo build",
+    "course/.tag_catalog.json": "tags auto computadas",
+    "course/CODE_HEALTH.md": "relatorio derivado do build",
+    "course/COURSE_MAP.md": "deriva do file map",
+    "course/CRONOGRAMA_HEALTH.md": "relatorio derivado do build",
+    "course/FILE_MAP.md": "saida do file map (classificacao do motor)",
+    "course/FILE_MAP_TRACE.md": "trace da classificacao do motor",
+    "manifest.json (computed_*)": "campos computados pelo motor"
+   },
+   "ignorados": [
+    {
+     "doc": "course/.lessons_index.json",
+     "motivo": "inexistente"
+    }
+   ],
+   "topicos_taxonomia": 26,
+   "usados": [
+    {
+     "doc": "markdown dos materiais",
+     "n": 27,
+     "padroes": [
+      "P1",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SYLLABUS.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/CRONOGRAMA_DETALHADO.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/GLOSSARY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/COURSE_IDENTITY.md",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/SOURCE_REGISTRY.yaml",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:teaching_plan",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "_inputs_15-09.json:syllabus",
+     "n": 1,
+     "padroes": [
+      "P4",
+      "P2"
+     ]
+    },
+    {
+     "doc": "course/.timeline_index.json",
+     "n": 1,
+     "padroes": [
+      "P3"
+     ]
+    }
+   ]
+  }
+ },
+ "escopo": "W-U (CRU-02): cobertura de relacoes explicitas recuperaveis de OUTRO documento do pacote.",
+ "estado": {
+  "branch": "feat/motor-atribuicao",
+  "gold": "so avalia",
+  "head": "410592d"
+ },
+ "exemplos_conflito_106": [
+  {
+   "curso": "CG",
+   "entry_id": "exerciciodemodelagem",
+   "exemplo_hit": {
+    "doc": "material:modelagem3d",
+    "expressao": "objeto",
+    "padrao": "P2",
+    "topico": "varredura",
+    "trecho": "**Figura 6 - Criação de objetos por varredura translacional**",
+    "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos"
+   },
+   "gold": [
+    "varredura"
+   ],
+   "n_outros_topicos": 27,
+   "outros_topicos": [
+    "2d-3d-mao-direita-e-mao-esquerda",
+    "a-matematica-das-projecoes-planares",
+    "algoritmo-do-pintor",
+    "algoritmo-z-buffer",
+    "arvores-bsp",
+    "b-spline",
+    "bezier-e-algoritmo-de-casteljau",
+    "catmull-rom",
+    "composicao-de-transformacoes-2d",
+    "composicao-de-transformacoes-3d"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicioduascores",
+   "exemplo_hit": {
+    "doc": "course/GLOSSARY.md",
+    "expressao": "imagen",
+    "padrao": "P4",
+    "topico": "algoritmos-de-quantizacao-e-amostragem",
+    "trecho": "**Aparece em:** Unidade 03 — Processamento de Imagens e Visão Computacional",
+    "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional"
+   },
+   "gold": [
+    "algoritmos-de-quantizacao-e-amostragem"
+   ],
+   "n_outros_topicos": 13,
+   "outros_topicos": [
+    "a-matematica-das-projecoes-planares",
+    "composicao-de-transformacoes-2d",
+    "composicao-de-transformacoes-3d",
+    "conceitos",
+    "cores-e-tipos-de-imagens",
+    "digitalizacao",
+    "filtros",
+    "mapeamento-de-textura",
+    "origens",
+    "projecoes"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios-de-processamento-de-imagens",
+   "exemplo_hit": {
+    "doc": "course/GLOSSARY.md",
+    "expressao": "proces",
+    "padrao": "P4",
+    "topico": "algoritmos-de-quantizacao-e-amostragem",
+    "trecho": "**Aparece em:** Unidade 03 — Processamento de Imagens e Visão Computacional",
+    "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional"
+   },
+   "gold": [
+    "algoritmos-de-quantizacao-e-amostragem"
+   ],
+   "n_outros_topicos": 35,
+   "outros_topicos": [
+    "2d-3d-mao-direita-e-mao-esquerda",
+    "a-matematica-das-projecoes-planares",
+    "algoritmo-do-pintor",
+    "algoritmo-z-buffer",
+    "algoritmos-de-rasterizacao",
+    "algoritmos-de-remocao-de-elementos-ocultos",
+    "areas-relacionadas",
+    "arvores-bsp",
+    "b-spline",
+    "catmull-rom"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios-sobre-curvas",
+   "exemplo_hit": {
+    "doc": "material:curvasparametricas",
+    "expressao": "curvas",
+    "padrao": "P1",
+    "topico": "catmull-rom",
+    "trecho": "- Montada a partir de uma sequência de curvas Hermite",
+    "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos"
+   },
+   "gold": [
+    "catmull-rom"
+   ],
+   "n_outros_topicos": 10,
+   "outros_topicos": [
+    "a-matematica-das-projecoes-planares",
+    "b-spline",
+    "composicao-de-transformacoes-2d",
+    "composicao-de-transformacoes-3d",
+    "formas-de-representacao",
+    "hermite",
+    "mapeamento-de-textura",
+    "recorte",
+    "representacao-de-curvas-parametricas",
+    "segmentacao"
+   ]
+  },
+  {
+   "curso": "CG",
+   "entry_id": "exercicios-sobre-curvas-html",
+   "exemplo_hit": {
+    "doc": "material:curvasparametricas",
+    "expressao": "curvas",
+    "padrao": "P1",
+    "topico": "catmull-rom",
+    "trecho": "- Montada a partir de uma sequência de curvas Hermite",
+    "unit_slug": "unidade-07-representacao-e-modelagem-de-objetos"
+   },
+   "gold": [
+    "catmull-rom"
+   ],
+   "n_outros_topicos": 10,
+   "outros_topicos": [
+    "a-matematica-das-projecoes-planares",
+    "b-spline",
+    "composicao-de-transformacoes-2d",
+    "composicao-de-transformacoes-3d",
+    "formas-de-representacao",
+    "hermite",
+    "mapeamento-de-textura",
+    "recorte",
+    "representacao-de-curvas-parametricas",
+    "segmentacao"
+   ]
+  }
+ ],
+ "exemplos_recuperados_106": [
+  {
+   "curso": "CG",
+   "doc": "material:modelagem3d",
+   "entry_id": "exerciciodemodelagem",
+   "expressao": "objeto",
+   "gold": [
+    "varredura"
+   ],
+   "padrao": "P2",
+   "topico": "varredura",
+   "trecho": "**Figura 6 - Criação de objetos por varredura translacional**"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "exercicioduascores",
+   "expressao": "imagen",
+   "gold": [
+    "algoritmos-de-quantizacao-e-amostragem"
+   ],
+   "padrao": "P4",
+   "topico": "algoritmos-de-quantizacao-e-amostragem",
+   "trecho": "**Aparece em:** Unidade 03 — Processamento de Imagens e Visão Computacional"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "exercicios-de-processamento-de-imagens",
+   "expressao": "proces",
+   "gold": [
+    "algoritmos-de-quantizacao-e-amostragem"
+   ],
+   "padrao": "P4",
+   "topico": "algoritmos-de-quantizacao-e-amostragem",
+   "trecho": "**Aparece em:** Unidade 03 — Processamento de Imagens e Visão Computacional"
+  },
+  {
+   "curso": "CG",
+   "doc": "material:curvasparametricas",
+   "entry_id": "exercicios-sobre-curvas",
+   "expressao": "curvas",
+   "gold": [
+    "catmull-rom"
+   ],
+   "padrao": "P1",
+   "topico": "catmull-rom",
+   "trecho": "- Montada a partir de uma sequência de curvas Hermite"
+  },
+  {
+   "curso": "CG",
+   "doc": "material:curvasparametricas",
+   "entry_id": "exercicios-sobre-curvas-html",
+   "expressao": "curvas",
+   "gold": [
+    "catmull-rom"
+   ],
+   "padrao": "P1",
+   "topico": "catmull-rom",
+   "trecho": "- Montada a partir de uma sequência de curvas Hermite"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+   "expressao": "proces",
+   "gold": [
+    "sistema-de-coordenadas-cartesianas"
+   ],
+   "padrao": "P4",
+   "topico": "sistema-de-coordenadas-cartesianas",
+   "trecho": "**Aparece em:** Unidade 04 — Processo de Visualização 2D"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html",
+   "expressao": "proces",
+   "gold": [
+    "sistema-de-coordenadas-cartesianas"
+   ],
+   "padrao": "P4",
+   "topico": "sistema-de-coordenadas-cartesianas",
+   "trecho": "**Aparece em:** Unidade 04 — Processo de Visualização 2D"
+  },
+  {
+   "curso": "CG",
+   "doc": "material:pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+   "entry_id": "floodfill",
+   "expressao": "extrai",
+   "gold": [
+    "segmentacao"
+   ],
+   "padrao": "P1",
+   "topico": "segmentacao",
+   "trecho": "Conteúdo Extraído"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "fundamentosmatematicos",
+   "expressao": "matema",
+   "gold": [
+    "entidades-geometricas"
+   ],
+   "padrao": "P4",
+   "topico": "entidades-geometricas",
+   "trecho": "**Aparece em:** Unidade 02 — Fundamentos Matemáticos"
+  },
+  {
+   "curso": "CG",
+   "doc": "course/GLOSSARY.md",
+   "entry_id": "mapeamento",
+   "expressao": "proces",
+   "gold": [
+    "sistema-de-coordenadas-cartesianas"
+   ],
+   "padrao": "P4",
+   "topico": "sistema-de-coordenadas-cartesianas",
+   "trecho": "**Aparece em:** Unidade 04 — Processo de Visualização 2D"
+  }
+ ],
+ "indice": {
+  "distribuicao_T_por_E": {
+   "1": 922,
+   "2-4": 615,
+   ">=5": 434
+  },
+  "expressoes_com_relacao": 1971,
+  "expressoes_com_relacao_nao_ja_conhecidas": 1726,
+  "expressoes_no_universo": {
+   "CG": 1028,
+   "ES2": 803,
+   "FR": 608,
+   "IA": 1632,
+   "MF": 410,
+   "SO": 196,
+   "TCC": 840
+  },
+  "por_curso": {
+   "CG": 1909,
+   "ES2": 732,
+   "FR": 4188,
+   "IA": 2337,
+   "MF": 648,
+   "SO": 663,
+   "TCC": 1186
+  },
+  "por_padrao": {
+   "P1": 2681,
+   "P2": 7258,
+   "P3": 254,
+   "P4": 1470
+  },
+  "relacoes": 11663,
+  "topicos_distintos_alcancados": 199
+ },
+ "limitacoes": [
+  "Documentos excluidos por proveniencia de saida do motor listados em documentos[*].excluidos_por_proveniencia.",
+  "P3 usa apenas o TEXTO do bloco/sessao (topic_text/topics/labels); primary_topic_slug e topic_candidates sao escores do proprio motor sobre a taxonomia e foram excluidos.",
+  "Mencao a T exige label/alias contiguo em stem6; topicos cujo label so aparece parafraseado nao sao detectados.",
+  "Relacao = existencia, nao 'assunto principal'."
+ ],
+ "ruido_do_indice_nos_certos": {
+  "com_gold_e_tambem_outros": 70,
+  "com_relacao_para_o_gold": 70,
+  "sem_relacao_para_o_gold": 14
+ }
+}
