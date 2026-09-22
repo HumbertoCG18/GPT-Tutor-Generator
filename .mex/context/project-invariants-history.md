@@ -28,7 +28,7 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - No obvious comments; only non-obvious WHY comments.
 - No multi-paragraph docstrings.
 - Skip files over 100KB unless strictly required.
-- Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
+- Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: listed in `scripts/hooks/gemini-antipattern-guard.js`.
 - The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
 - **Arquivamento de concluídos (NÃO-NEGOCIÁVEL):** quando um plano termina de executar e passa 100%
   (gate verde — golden/eval/pytest verdes, sem drift), MOVER os arquivos Markdown concluídos (plano + spec + report associados)

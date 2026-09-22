@@ -1,7 +1,7 @@
 {
-  "date": "2026-09-17",
-  "generatedUtc": "2026-09-18T03:24:28.417670+00:00",
-  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/15",
+  "date": "2026-09-19",
+  "generatedUtc": "2026-09-19T05:25:16.701414+00:00",
+  "issue": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/37",
   "layers": [
     {
       "id": "governanca",
@@ -40,7 +40,7 @@
       "number": "05",
       "name": "Planejamento e delegação",
       "baseline": "ECC orch-* · Fable executor · Astra read-only",
-      "coverage": "Contrato definido; execução noturna pendente",
+      "coverage": "Contrato definido; execução noturna é a última entrega",
       "gap": "Supervisor externo, timeout real, teto de tentativas e sessão nova."
     },
     {
@@ -55,9 +55,9 @@
       "id": "qualidade",
       "number": "07",
       "name": "Qualidade e revisão",
-      "baseline": "pytest · Ruff no contrato · revisão delimitada",
-      "coverage": "CI localizada no timeline",
-      "gap": "Checks amplos e baseline de cobertura ainda são tarefas #13/#14."
+      "baseline": "pytest · Ruff · arquitetura · cobertura · revisão delimitada",
+      "coverage": "Gate Python `core` imposto na main",
+      "gap": "Web #14 aguarda stack C6; E2E desktop continua sem matriz completa."
     },
     {
       "id": "seguranca",
@@ -88,8 +88,8 @@
       "number": "11",
       "name": "Entrega e observabilidade",
       "baseline": "issue → PR → release · templates · #10/#12",
-      "coverage": "Documentação pronta; Gate 2 anterior pendente",
-      "gap": "CI, proteção de branch, release e telemetria não comprovados como impostos."
+      "coverage": "Templates e proteção `core` entregues",
+      "gap": "Release/deploy e telemetria de produto continuam sem implementação comprovada."
     }
   ],
   "candidates": [
@@ -101,10 +101,10 @@
       "decision": "Adotado parcialmente",
       "fit": "Três deltas incorporados na issue #17: baseline/ratchet e piso de qualidade, checkpoint de contexto e observabilidade orientada a perguntas.",
       "overlap": "ECC orch-*, contrato de delegação e engenharia já definem o ciclo; incorporar apenas deltas úteis.",
-      "risk": "A adaptação é documental: ainda não impõe checks. O floor-guard regex upstream não foi ativado antes do baseline de #13.",
-      "cost": "Um pattern local curto; nenhum plugin, hook ou dependência instalado. Efeito em qualidade/contexto ainda não medido.",
+      "risk": "A adaptação permanece documental; o gate Python da #13 implementa o bloco de qualidade por mecanismo próprio. O floor-guard regex upstream não foi adotado.",
+      "cost": "Um pattern local curto; nenhum plugin, hook ou dependência instalado. O gate `core` reutiliza pytest/Ruff e o verificador do projeto.",
       "platform": "MIT; pacote local vale nas três CLIs via MEX. Fable/Astra, Graphify e Gates 1/2 permanecem donos.",
-      "check": "Adoção documental concluída. #12/#13 devem medir baseline e validar falha, falso positivo, custo e rollback antes de ativar checks.",
+      "check": "Qualidade ativada pela #13 com baseline/ratchet próprio; contexto e observabilidade continuam condicionados às suas medições.",
       "identity": "confirmada pela URL fornecida pelo usuário",
       "alternatives": [],
       "license": "MIT",
@@ -140,11 +140,11 @@
           "observability-questions"
         ],
         "pattern": ".mex/patterns/agent-skills-adapted.md",
-        "lines": 74,
-        "bytes": 4754,
+        "lines": 76,
+        "bytes": 4981,
         "installed": false,
         "owners_preserved": true,
-        "checks_activated": false
+        "checks_activated": true
       }
     },
     {
@@ -632,13 +632,13 @@
       "repo": "mksglu/context-mode",
       "layer": "contexto",
       "kind": "MCP + armazenamento + hooks",
-      "decision": "MCP aprovado; hooks pendentes",
-      "fit": "Gate MCP isolado da issue #18 passou 10/10 checks: erro, Unicode, JSON, segredo sintético, truncamento, recuperação exata, exit codes e isolamento.",
+      "decision": "Não adotado; removido das três CLIs",
+      "fit": "MCP isolado passou na #18; hooks foram rejeitados na #19. Na #22, 12 execuções reais produziram 10/12 respostas corretas e 9/12 conformes ao schema.",
       "overlap": "Complementa contrato de leitura e RTK limitado ao pytest; sobrepõe parte da memória/continuidade.",
-      "risk": "Recuperação exata exigiu marcadores pesquisáveis e seis buscas; não prova recall de qualquer blob. Hooks ainda podem duplicar eventos, guardar dados ou aumentar latência.",
-      "cost": "14.280 bytes viraram resposta inicial de 1.705; 120/120 linhas foram recompostas. Tokens/quota não medidos.",
-      "platform": "Windows + Node 24 medidos via bundle direto. Nenhum MCP/hook registrado em Claude, Codex ou AGY; paridade entre CLIs segue não comprovada.",
-      "check": "Issue #19: avaliar hooks por CLI em homes isolados, com duplicidade, latência, segredo, rollback e Gate 1 próprio.",
+      "risk": "Hooks persistiram segredo sintético e emitiram stderr; o launcher `start.mjs` também criou hook global. Codex bloqueou ferramentas sob approval=never; AGY ficou mais lento e verboso.",
+      "cost": "Claude melhorou no corpus grande, mas encareceu a tarefa UI. Codex aumentou fortemente tempo/tokens; AGY foi inconsistente. Bytes não equivalem a quota.",
+      "platform": "Windows + Node 24: registros e dados ativos removidos de Claude, Codex e AGY; backup recuperável preservado.",
+      "check": "Não repetir. Nova avaliação exige correção upstream, mesma fixture e issue nova.",
       "identity": "correspondência provável",
       "alternatives": [],
       "license": "Elastic License 2.0 (arquivo LICENSE lido)",
@@ -675,10 +675,18 @@
         {
           "label": "Issue #19 — avaliação de hooks",
           "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/19"
+        },
+        {
+          "label": "Issue #22 — medição real",
+          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/22"
+        },
+        {
+          "label": "PR #32 — relatório comparativo",
+          "url": "https://github.com/HumbertoCG18/GPT-Tutor-Generator/pull/32"
         }
       ],
       "adoption": {
-        "issue": 18,
+        "issue": 22,
         "hooks_issue": 19,
         "pull_request": 20,
         "commit": "7652c7e",
@@ -695,9 +703,19 @@
         "server_exit_code": 0,
         "secret_leaks": 0,
         "global_configs_unchanged": 4,
-        "hooks_evaluated": false,
+        "hooks_evaluated": true,
         "hooks_activated": false,
-        "mcp_registered": false
+        "mcp_registered": false,
+        "real_runs": 12,
+        "content_correct": 10,
+        "schema_conformant": 9,
+        "enabled_clis": [],
+        "removed_clis": [
+          "Claude Code",
+          "Codex",
+          "AGY"
+        ],
+        "backup": "agent-workflow-lab/private/backups/context-mode-removal-20260919-014312"
       }
     },
     {
@@ -12768,11 +12786,11 @@
     {
       "stage": "05 · Verificação",
       "owner": "executor / CI",
-      "state": "Parcial no CI",
-      "mechanism": "Workflow timeline roda schema e três arquivos de testes, com filtro por paths.",
-      "gap": "O único YAML encontrado em .github/workflows não cobre a suite/lint/E2E geral. Branch protection não auditada.",
-      "proof": ".github/workflows/validate-timeline.yml",
-      "next": "Tratar baseline e checks Python em #13; web em #14."
+      "state": "Gate Python imposto",
+      "mechanism": "Workflow `core`: suíte pytest, cobertura por plataforma, Ruff e contrato arquitetural.",
+      "gap": "Tkinter não tem matriz E2E completa; gates web permanecem bloqueados até existir stack C6.",
+      "proof": ".github/workflows/python-quality.yml; .github/python-quality-baseline.json",
+      "next": "Preservar o ratchet Python; ativar #14 somente com a stack web."
     },
     {
       "stage": "06 · Revisão",
@@ -12786,57 +12804,36 @@
     {
       "stage": "07 · Entrega",
       "owner": "humano + GitHub",
-      "state": "Gate 2 pendente",
-      "mechanism": "Commit autorizado → PR com Closes/Refs → checks → release rastreável.",
-      "gap": "PR de documentação #10 preparado, ainda sem commit/abertura. Templates não impõem deploy seguro.",
-      "proof": ".github/pull_request_template.md; .mex/patterns/engenharia-produto.md",
-      "next": "Após aceite, abrir PR draft; definir checks e rollback por alvo."
+      "state": "Contrato entregue",
+      "mechanism": "Issue → Gate 1 → branch/PR → `core` → Gate 2 → merge rastreável.",
+      "gap": "Templates e branch protection existem; release/deploy ainda dependem do alvo e de autorização própria.",
+      "proof": ".github/pull_request_template.md; .mex/patterns/engenharia-produto.md; PR #31",
+      "next": "Aplicar o contrato nas próximas mudanças e definir rollback por release."
     },
     {
       "stage": "08 · Continuidade",
       "owner": "coordenador / futuro loop",
-      "state": "Loop ainda planejado",
+      "state": "Última entrega planejada",
       "mechanism": "active-task + tracker/handoff; quota salva estado, sem mudar provider.",
-      "gap": "Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção.",
+      "gap": "Não há daemon/supervisor nesta política. Compact não é checkpoint nem contenção. O loop só avança após o fechamento dos gaps anteriores.",
       "proof": ".workflow/PENDING.md; .workflow/workflow.md: Retomada e limites",
-      "next": "Job isolado com budget, kill switch, ledger e rotação antes de 100k; Opus na infraestrutura."
+      "next": "Por último: job isolado com budget, kill switch, ledger e rotação antes de 100k; Opus na infraestrutura."
     }
   ],
   "gaps": [
     {
-      "priority": "P0",
-      "title": "Contenção do loop noturno",
-      "detail": "Faltam provas de controle externo de paths, rede, segredos, tempo, tentativas, diff e kill switch. Agent-pd observa; skills não substituem barreiras.",
-      "action": "Especificar e testar o controlador em agent-workflow-lab, com fixture de tentativa proibida.",
-      "layer": "seguranca"
-    },
-    {
-      "priority": "P1",
-      "title": "Paridade de descoberta e aplicação",
-      "detail": "Codex: 77 entradas/26 habilitadas/24 nomes habilitados únicos. Claude: política de catálogo distinta; AGY: presença/configuração, sem skills/list nesta auditoria.",
-      "action": "Smoke em sessão nova nas três CLIs; registrar qual skill foi descoberta, lida e aplicada.",
-      "layer": "governanca"
-    },
-    {
-      "priority": "P1",
-      "title": "Contexto e evidência de consumo",
-      "detail": "Seleção por tarefa já está no contrato. Não há medição local nesta auditoria de economia de quota dos candidatos.",
-      "action": "Comparar baseline e context-mode com mesma tarefa e evidência íntegra; raw recall obrigatório.",
-      "layer": "contexto"
-    },
-    {
-      "priority": "P1",
-      "title": "Qualidade e release impostos",
-      "detail": "CI versionada observada: timeline. Política de issues/PR foi escrita, mas proteção de branch e pipeline geral não foram verificados.",
-      "action": "Seguir #10/#13/#14: baseline → checks proporcionais → release verificável.",
-      "layer": "entrega"
-    },
-    {
       "priority": "P2",
-      "title": "UI por jornada, não por quantidade de skills",
-      "detail": "Há várias fontes de motion/design no ECC, mas isso não demonstra skeleton, progresso, teclado ou cancelamento no produto.",
-      "action": "Issue #11: auditar a interface; escolher um guia e comparar Impeccable quando houver tela web.",
+      "title": "Separar roadmap do produto do fechamento do workflow",
+      "detail": "#11, #12 e #14 continuam válidas, porém tratam UI, observabilidade e stack web. Não bloqueiam a conclusão desta rodada de governança.",
+      "action": "Manter #11 reativa no Tkinter, executar #12 local-first em fatia própria e ativar #14 somente quando existir stack C6.",
       "layer": "design"
+    },
+    {
+      "priority": "P0",
+      "title": "Contenção do loop noturno — última entrega",
+      "detail": "Risco continua alto: faltam provas de controle externo de paths, rede, segredos, tempo, tentativas, diff, orçamento e kill switch. Sequência deliberada: construir somente após os quatro gaps anteriores.",
+      "action": "Criar issue e piloto isolado no agent-workflow-lab; testar tentativa proibida, checkpoint/rotação antes de 100k e encerramento seguro antes de integrar às três CLIs.",
+      "layer": "seguranca"
     }
   ],
   "architecture": [
@@ -12908,11 +12905,11 @@
     },
     {
       "path": ".workflow/workflow.md",
-      "sha256": "e481e496b51f9c3bf5c5f3884e0243e5f9aa1479c35fc7349b2d575a9d42a151"
+      "sha256": "c81409ac2b770ce777c4ee1b04a7777afde330ca13058ece13cd6612feb2b6a1"
     },
     {
       "path": ".workflow/PENDING.md",
-      "sha256": "46dc5dece32a892566a6305b9266e7647976bcd952dcec2060a0abc2df91ded6"
+      "sha256": "e7669266a344f5873e1087c460e6d7aa3b2dbedbed975f17e949668142bc230e"
     },
     {
       "path": ".workflow/agents/README.md",
@@ -12920,15 +12917,27 @@
     },
     {
       "path": ".mex/ROUTER.md",
-      "sha256": "8d8db7999004f416b1b8b1b4a29b9fd06c68a6b25744dd78fc16378afb7b4ef1"
+      "sha256": "0942ffd00c16d51b2cbb9f6aceb13afa4c4672b1fef33b4dfb3843a7789c71a9"
     },
     {
       "path": ".mex/patterns/engenharia-produto.md",
-      "sha256": "7a5c170a5d27af458ba198b97278be6636e5649c74ae58a6c1da932c9978a8d1"
+      "sha256": "ab2f05f75115e2f900c4e1f02b8658aba437c0a7ad17a73a5113e3a47fc2cfca"
     },
     {
       "path": ".github/workflows/validate-timeline.yml",
-      "sha256": "8aca54991795d3ebe04a5013292eca11c71ebef17c71adf59ab2d1bf540ad19d"
+      "sha256": "f075ca6f7d6b17e32711d54c05a9319609b2c993d7986db4542862981bdd96f4"
+    },
+    {
+      "path": ".github/workflows/python-quality.yml",
+      "sha256": "23f9fba2b9ec64beeb75a6b2b4cd144b055a409aed098e72a531392970d3b353"
+    },
+    {
+      "path": "docs/reports/2026-09-18-context-mode-real-measurement.md",
+      "sha256": "9726b62d6f44d431678b7b256c8fb4af0343b551ae6330132bdb288a36f09184"
+    },
+    {
+      "path": "docs/reports/2026-09-19-handoff-workflow.md",
+      "sha256": "a25e2857fc10a0be84664440939ac3a625605bf8a57a40e0f943ca11a84f98c6"
     }
   ],
   "sources": [
@@ -15670,9 +15679,9 @@
   ],
   "measurements": {
     "verify": "ok=true; 75 arquivos gerenciados; errors=[]",
-    "codexCatalog": "catalog.py e catalog_appserver.py: 77 entradas, 26 habilitadas, 51 desabilitadas",
-    "models": "Nenhum subagente/CLI de inferência adicional disparado nesta auditoria. O próprio assistente realizou a pesquisa.",
-    "scope": "Inventário dos diretórios skills selecionados e catálogo novo do Codex; não é enumeração de todo arquivo SKILL.md no disco. Cópias de docs/traduções/fixtures excluídas dos totais de instalação.",
-    "limits": "Runtime Claude/AGY e execução dos candidatos não testados. Classificação local por nome é heurística; capacidades relevantes foram comparadas documentalmente. Não é auditoria integral de segurança nem medição de economia."
+    "codexCatalog": "snapshot de 17/09: 77 entradas, 26 habilitadas, 51 desabilitadas",
+    "models": "Medição #22: 12 sessões novas; 10/12 respostas corretas; 9/12 conformes ao schema. Revisão Astra aplicada aos diffs de #31/#32.",
+    "scope": "Inventário permanece o snapshot de 17/09. Atualização de 19/09 incorpora resultados versionados de #10/#13/#16/#17/#19/#22/#33/#35, a prova de retomada e a decisão de preservar os plugins sincronizados, sem nova enumeração do catálogo.",
+    "limits": "Duas tarefas não provam benefício geral do Context Mode. Classificação por nome continua heurística; não é auditoria integral de segurança nem medição geral de economia."
   }
 }

@@ -12,7 +12,7 @@ Navegação: [ROUTER.md](ROUTER.md). Engenharia: [patterns/engenharia-produto.md
 
 - Ler fontes antes de editar; validar APIs/flags/versões, sem adivinhar. Pular arquivos >100 KB salvo necessidade concreta.
 - engine.py é fachada: lógica nova em subpacotes; imports vêm do módulo especializado.
-- Gemini: google-genai, imports lazy; nunca google.generativeai ou genai.GenerativeModel.
+- Gemini: google-genai, imports lazy; nunca o SDK legado google-generativeai nem a classe GenerativeModel (padrões em scripts/hooks/gemini-antipattern-guard.js).
 - code_curation.json gerado é cache: podar obsoletos antes de ler, escrever atomicamente.
 - Fixtures reproduzem contrato real com proveniência: [convenções](context/conventions.md) e [contratos](context/institutional.md). Ler antes de código/testes.
 - Estado vivo apenas em docs/reports/pendencias.md; resultado concluído sai da fila viva e entra em Concluído. Atualizar só o escopo da tarefa.
