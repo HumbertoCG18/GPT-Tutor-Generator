@@ -55,6 +55,19 @@ Codex CLI:
 
 ## Gotchas
 
+- Desde 17/09, as configs global e deste projeto também usam seletores nativos
+  `[[skills.config]] name = "ecc:<nome>"`, `enabled = false`, derivados de
+  `skillOverrides`. Incluem aliases `ecc:source-command-<nome>` dos comandos.
+  Esses seletores sobrevivem à troca do caminho versionado do plugin e filtram
+  antes da poda SessionStart. Não aumentar orçamento para carregar o ECC inteiro.
+  Rodar `python verify.py` no agent-workflow-lab: compara a seleção por nome com
+  Claude e preserva exceções explícitas do projeto. Mudou a seleção, sincronizar
+  as configs global/projeto; arrays de projeto substituem os globais.
+  Outros worktrees/projetos com config própria precisam da mesma sincronização.
+- Sessão retomada pode conservar catálogo anterior: a sessão importada examinada
+  em 17/09 tinha 314 entradas sem descrições, enquanto CLI/app-server novos
+  listavam 26 habilitadas. Não editar o JSONL ativo. Para eliminar a lista já
+  injetada, iniciar sessão nova com handoff; retomar a antiga não prova recarga.
 - Update do ECC recopia tudo e desfaz a poda. `scripts/hooks/repor-podas.py` com --aplicar refaz
   a partir do skillOverrides do Claude; roda no SessionStart do Claude e do Codex (no Codex, so
   depois de aprovado em /hooks).

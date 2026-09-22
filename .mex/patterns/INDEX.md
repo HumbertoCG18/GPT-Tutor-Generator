@@ -1,11 +1,14 @@
 # Pattern Index
 
-last_updated: 2026-09-13
+last_updated: 2026-09-17
 
 Lookup table for all pattern files in this directory. Check here before starting any task — if a pattern exists, follow it.
 
 | Pattern | Use when |
 |---------|----------|
+| [engenharia-produto.md](engenharia-produto.md) | Toda mudança: issues/PRs/releases, estados da UI, observabilidade e qualidade por stack (desktop e C6 web) |
+| [engenharia-produto-details.md](engenharia-produto-details.md) | Detalhe sob demanda do padrão de engenharia: seção pertinente ao tipo de mudança (entrega, UI, ferramentas, observabilidade, fila) |
+| [agent-skills-adapted.md](agent-skills-adapted.md) | Aplicar baseline/ratchet, checkpoint de contexto ou observabilidade orientada a perguntas sem instalar a coleção Agent Skills |
 | [workflow-tres-clis.md](workflow-tres-clis.md) | Alterar skills, MCPs e hooks em Claude Code, Codex e AGY, com validação de descoberta e drift |
 | [benchmark-codegraph.md](benchmark-codegraph.md) | Comparar índices de código com corpus congelado, gabarito independente e custos medidos |
 | [codegraph-fallback.md](codegraph-fallback.md) | Consultar Graphify primeiro e CBM como fallback, sem sincronização entre índices |
