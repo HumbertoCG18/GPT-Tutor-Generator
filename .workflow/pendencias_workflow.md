@@ -35,3 +35,11 @@ Critério: `.workflow/references/capabilities.md` (lacuna concreta antes de adot
 - ai-memory (akitaonrails, MIT, v2.4.0): memória de longo prazo e handoff tipado entre CLIs (Claude, Codex e AGY suportados), fonte em markdown versionado, captura por hooks sem LLM. Sobrepõe claude-mem, `.workflow/local/active-task.md` e os handoffs; Windows nativo é experimental; AGY sem SessionEnd automático; mais uma camada de hooks nas três CLIs junto de claude-mem, Alethe e guardas. Gatilho: substituir o claude-mem (não somar), ou handoff entre CLIs falhar de forma medida (#45). Piloto em WSL2 isolado.
 - repowise: terceiro índice de código ao lado de Graphify e CBM; ganhos publicados medidos fora deste projeto; `init` reescreve config do Claude. Gatilho: substituir Graphify ou CBM após comparação com perguntas reais do motor.
 - tron-claude-config: sem licença, foco frontend; aproveitada só a ideia do pre-commit com gitleaks (#54), reimplementada.
+
+## Próxima frente depois do agente noturno (#42)
+
+- Retomar a auditoria-enxame como skill do Codex. Plano e spec de 03/09 arquivados em
+  `docs/reports/_archive/2026-09-03-auditoria-enxame-codex-skill*.md`; branch
+  `feat/auditoria-enxame-codex-skill` e worktree `.worktrees/auditoria-enxame-codex-skill`
+  preservadas (parada em 16/09, 1 de 25 itens). A versão Claude (`.claude/workflows/auditoria-enxame.js`)
+  segue em uso. Decisão do usuário em 23/09: terminar depois do #42.

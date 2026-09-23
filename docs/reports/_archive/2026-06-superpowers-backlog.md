@@ -92,7 +92,7 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 **🟡 Duplicação — PARCIALMENTE ENTREGUE** (spec/plano `2026-06-05-duplicacoes-mds-tutor*`; commits `ba15aec`..`83d15bc`; 906 testes verdes):
 - ✅ escopo de prova P1/P2/P3 (pesos 70/30/20/10): fonte única `_exam_scope_rule_lines()`; `pedagogy_md` + `modes_md` derivam dela (some o hardcode 2x).
 - ✅ sequência pedagógica (3 ordens divergentes): fonte única `PEDAGOGICAL_SEQUENCE` (ordem canônica **Intuição antes de Definição**, rótulos padronizados); `pedagogy_md` (full), `modes_md` (compact), `output_templates_md` (template) derivam dela. Guard DRY `TestPedagogySingleSource`.
-- ABERTO: `prompts.py` 5 modos redefinidos inline nas 3 variantes (Claude/GPT/Gemini) + `deeptutor.py` _soul_md + MODES.md — extrair lista canônica de modos (rodada própria).
+- ABERTO: `prompts.py` 5 modos redefinidos inline nas 3 variantes (Claude/GPT/Gemini) — extrair lista canônica de modos (rodada própria). `deeptutor.py` (`_soul_md`) removido em 17/09, DeepTutor é implementação futura, depois do ambiente web próprio; `system/MODES.md` segue gerado por `pedagogy.py`.
 - NÃO-REDUNDÂNCIA (decidido, não mexer): `pedagogy.py` postura code_review (modes_md=postura vs output_templates_md=template, propósitos distintos, já usam `_code_review_profile`); CRONOGRAMA_DETALHADO vs CODE_INDEX (tabela densa vs narrativa aula-a-aula) e cronograma_health vs CODE_HEALTH (todos-materiais+bandas vs code-only+glossário) — views complementares, 4 geradores ativos.
 
 **🟢 Ambiguidade / labels — MAJORITARIAMENTE ENTREGUE** (spec `2026-06-05-ambiguidade-barata-mds-tutor-design.md`, plano homônimo; commits `3d77bf3`..`e022837`; 893 testes verdes):
