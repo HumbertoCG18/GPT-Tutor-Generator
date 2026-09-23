@@ -1,0 +1,315 @@
+{
+  "aplicado": true,
+  "congelado_regua_vigente_sha256": {
+    "material_gt_CG.csv": "76fbc1fb08842a53d7b6cbf7927d6d2eec5439d308b22ca3089dcbc6d5170afd",
+    "material_gt_ES2.csv": "54102db7db51618e094cabb1c76cfd32c3bbb971eb6348528362d1e801f690b6",
+    "subunit_gt_SO.csv": "e5a05ee71507ca08aa16678559eab50b40c31fefb3245310bcf8678ef326022c"
+  },
+  "cursos_v2_final": {
+    "CG": {
+      "bloco": 33,
+      "bloco_n": 35,
+      "sub_aceita": 41,
+      "sub_aceita_n": 82,
+      "sub_primaria": 28,
+      "sub_primaria_n": 82,
+      "unidade": 69,
+      "unidade_n": 93
+    },
+    "ES2": {
+      "bloco": 27,
+      "bloco_n": 28,
+      "sub_aceita": 8,
+      "sub_aceita_n": 28,
+      "sub_primaria": 7,
+      "sub_primaria_n": 28,
+      "unidade": 26,
+      "unidade_n": 28
+    },
+    "FR": {
+      "sub_aceita": 7,
+      "sub_aceita_n": 18,
+      "sub_primaria": 6,
+      "sub_primaria_n": 18
+    },
+    "IA": {
+      "bloco": 39,
+      "bloco_n": 42,
+      "sub_aceita": 5,
+      "sub_aceita_n": 39,
+      "sub_primaria": 4,
+      "sub_primaria_n": 39,
+      "unidade": 39,
+      "unidade_n": 42
+    },
+    "MF": {
+      "bloco": 56,
+      "bloco_n": 66,
+      "sub_aceita": 29,
+      "sub_aceita_n": 58,
+      "sub_primaria": 25,
+      "sub_primaria_n": 58,
+      "unidade": 61,
+      "unidade_n": 66
+    },
+    "SO": {
+      "bloco": 36,
+      "bloco_n": 39,
+      "sub_aceita": 8,
+      "sub_aceita_n": 15,
+      "sub_primaria": 7,
+      "sub_primaria_n": 15,
+      "unidade": 30,
+      "unidade_n": 37
+    },
+    "TCC": {
+      "bloco": 26,
+      "bloco_n": 27,
+      "sub_aceita": 9,
+      "sub_aceita_n": 11,
+      "sub_primaria": 7,
+      "sub_primaria_n": 11,
+      "unidade": 17,
+      "unidade_n": 18
+    }
+  },
+  "cursos_vigente": {
+    "CG": {
+      "bloco": 33,
+      "bloco_n": 35,
+      "sub_aceita": 41,
+      "sub_aceita_n": 82,
+      "sub_primaria": 28,
+      "sub_primaria_n": 82,
+      "unidade": 74,
+      "unidade_n": 93
+    },
+    "ES2": {
+      "bloco": 27,
+      "bloco_n": 28,
+      "sub_aceita": 8,
+      "sub_aceita_n": 28,
+      "sub_primaria": 7,
+      "sub_primaria_n": 28,
+      "unidade": 25,
+      "unidade_n": 28
+    },
+    "FR": {
+      "sub_aceita": 7,
+      "sub_aceita_n": 18,
+      "sub_primaria": 6,
+      "sub_primaria_n": 18
+    },
+    "IA": {
+      "bloco": 39,
+      "bloco_n": 42,
+      "sub_aceita": 5,
+      "sub_aceita_n": 39,
+      "sub_primaria": 4,
+      "sub_primaria_n": 39,
+      "unidade": 39,
+      "unidade_n": 42
+    },
+    "MF": {
+      "bloco": 56,
+      "bloco_n": 66,
+      "sub_aceita": 29,
+      "sub_aceita_n": 58,
+      "sub_primaria": 25,
+      "sub_primaria_n": 58,
+      "unidade": 61,
+      "unidade_n": 66
+    },
+    "SO": {
+      "bloco": 36,
+      "bloco_n": 39,
+      "sub_aceita": 8,
+      "sub_aceita_n": 15,
+      "sub_primaria": 7,
+      "sub_primaria_n": 15,
+      "unidade": 30,
+      "unidade_n": 37
+    },
+    "TCC": {
+      "bloco": 26,
+      "bloco_n": 27,
+      "sub_aceita": 9,
+      "sub_aceita_n": 11,
+      "sub_primaria": 7,
+      "sub_primaria_n": 11,
+      "unidade": 17,
+      "unidade_n": 18
+    }
+  },
+  "decisoes_usuario": [
+    "adota a v2",
+    "ES2 microsservicos4/7 -> u02",
+    "CG 5 vazios (unidade) -> u05"
+  ],
+  "delta_por_id": [
+    {
+      "curso": "CG",
+      "eixo": "unidade",
+      "id": "animacao-v2",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "CG",
+      "eixo": "unidade",
+      "id": "instanciamento",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "CG",
+      "eixo": "unidade",
+      "id": "pagina-com-videos-sobre-instanciamento",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "CG",
+      "eixo": "unidade",
+      "id": "transformacoesgeometricas",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "CG",
+      "eixo": "unidade",
+      "id": "transformacoesgl",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "ES2",
+      "eixo": "unidade",
+      "id": "microsservicos4",
+      "v2_final": false,
+      "vigente": true
+    },
+    {
+      "curso": "ES2",
+      "eixo": "unidade",
+      "id": "microsservicos5",
+      "v2_final": true,
+      "vigente": false
+    },
+    {
+      "curso": "ES2",
+      "eixo": "unidade",
+      "id": "microsservicos7",
+      "v2_final": true,
+      "vigente": false
+    }
+  ],
+  "linhas_que_mudam": {
+    "material_gt_CG.csv": 5,
+    "material_gt_ES2.csv": 3,
+    "subunit_gt_SO.csv": 4
+  },
+  "mudancas": {
+    "material_gt_CG.csv": [
+      {
+        "de": "unidade-04-processo-de-visualizacao-2d",
+        "id": "animacao-v2",
+        "para": "unidade-05-transformacoes-geometricas"
+      },
+      {
+        "de": "unidade-04-processo-de-visualizacao-2d",
+        "id": "instanciamento",
+        "para": "unidade-05-transformacoes-geometricas"
+      },
+      {
+        "de": "unidade-04-processo-de-visualizacao-2d",
+        "id": "pagina-com-videos-sobre-instanciamento",
+        "para": "unidade-05-transformacoes-geometricas"
+      },
+      {
+        "de": "unidade-04-processo-de-visualizacao-2d",
+        "id": "transformacoesgeometricas",
+        "para": "unidade-05-transformacoes-geometricas"
+      },
+      {
+        "de": "unidade-04-processo-de-visualizacao-2d",
+        "id": "transformacoesgl",
+        "para": "unidade-05-transformacoes-geometricas"
+      }
+    ],
+    "material_gt_ES2.csv": [
+      {
+        "de": "unidade-01-arquitetura-de-software",
+        "id": "microsservicos7",
+        "para": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      },
+      {
+        "de": "unidade-01-arquitetura-de-software",
+        "id": "microsservicos4",
+        "para": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      }
+    ],
+    "subunit_gt_SO.csv": [
+      {
+        "linha": "-3103-threads,31.03 Threads,material-de-aula,2026-03-10,unidade-02-gerencia-do-processador,Threads,Sumário · Threads · Definição (1) · Exemplo de Programa Multithread (1) · Exemplo de Programa Multithread (2) · - Servidor Web · Definição (2) · Definição (3) · Definição (4) · Definição (5),,conceitos-basicos,,conteudo,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; bloco-04 -> u02 (gold OK). Definicao(1..5), Threads vs Processos, exemplo servidor web. u02 NAO tem topico de threads; conceitos-basicos e o encaixe menos ruim. Motor hoje prediz 'escalonamento'. Ver item aberto da lacuna 'threads' na taxonomia\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "+3103-threads,31.03 Threads,material-de-aula,2026-03-10,unidade-03-programacao-concorrente,Threads,Sumário · Threads · Definição (1) · Exemplo de Programa Multithread (1) · Exemplo de Programa Multithread (2) · - Servidor Web · Definição (2) · Definição (3) · Definição (4) · Definição (5),,programas-multithreads,,conteudo,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; bloco-04 -> u02 (gold OK). Definicao(1..5), Threads vs Processos, exemplo servidor web. u02 NAO tem topico de threads; conceitos-basicos e o encaixe menos ruim. Motor hoje prediz 'escalonamento'. Ver item aberto da lacuna 'threads' na taxonomia | W-X 22/09 (proposta v2, nao adotada): gold_subunit conceitos-basicos -> programas-multithreads, unit_slug unidade-02-gerencia-do-processador -> unidade-03-programacao-concorrente\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "-exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1,codigo-professor,2026-03-10,unidade-02-gerencia-do-processador,Threads,Exemplo threads em C - exemplo1,,conceitos-basicos,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "-exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2,codigo-professor,2026-03-10,unidade-02-gerencia-do-processador,Threads,Exemplo threads em C - exemplo2,,conceitos-basicos,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "-exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3,codigo-professor,2026-03-10,unidade-02-gerencia-do-processador,Threads,Exemplo threads em C - exemplo3,,conceitos-basicos,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "+exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1,codigo-professor,2026-03-10,unidade-03-programacao-concorrente,Threads,Exemplo threads em C - exemplo1,,programas-multithreads,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads | W-X 22/09 (proposta v2, nao adotada): gold_subunit conceitos-basicos -> programas-multithreads, unit_slug unidade-02-gerencia-do-processador -> unidade-03-programacao-concorrente\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "+exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2,codigo-professor,2026-03-10,unidade-03-programacao-concorrente,Threads,Exemplo threads em C - exemplo2,,programas-multithreads,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads | W-X 22/09 (proposta v2, nao adotada): gold_subunit conceitos-basicos -> programas-multithreads, unit_slug unidade-02-gerencia-do-processador -> unidade-03-programacao-concorrente\"",
+        "origem": "W-X v2"
+      },
+      {
+        "linha": "+exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3,codigo-professor,2026-03-10,unidade-03-programacao-concorrente,Threads,Exemplo threads em C - exemplo3,,programas-multithreads,,card,yes,\"provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER (Fase 1): gold de bloco 06->04 (aula de threads), logo unidade u02 e a entry volta a ser rotulavel. Apoio (codigo C) rotula pelo card 'Threads'; u02 nao tem topico de threads -> conceitos-basicos, o mesmo do 3103-threads | W-X 22/09 (proposta v2, nao adotada): gold_subunit conceitos-basicos -> programas-multithreads, unit_slug unidade-02-gerencia-do-processador -> unidade-03-programacao-concorrente\"",
+        "origem": "W-X v2"
+      }
+    ]
+  },
+  "placar_v2_final": {
+    "bloco": 217,
+    "bloco_n": 237,
+    "sub_aceita": 107,
+    "sub_aceita_n": 251,
+    "sub_primaria": 84,
+    "sub_primaria_n": 251,
+    "unidade": 242,
+    "unidade_n": 284
+  },
+  "placar_vigente": {
+    "bloco": 217,
+    "bloco_n": 237,
+    "sub_aceita": 107,
+    "sub_aceita_n": 251,
+    "sub_primaria": 84,
+    "sub_primaria_n": 251,
+    "unidade": 246,
+    "unidade_n": 284
+  },
+  "segundos": 109.9,
+  "sha256_congelamento_decisoes": "94e4b83943a3ed45ebc6c1128e7b06d99061308b0d353fcd452db157d324f955",
+  "tarefa": "W-X adocao da regua v2 (decisao do usuario 22/09)",
+  "v2_final_sha256": {
+    "material_gt_CG.csv": "5255389bd301326039e72b633a4bc577f2e5e0aa6b217be0fccc6716375207d1",
+    "material_gt_ES2.csv": "7bdd84c539570d86d7a31509b38996e24e9dff6b25aa70e85bdaeb1f8ecdda8e",
+    "subunit_gt_SO.csv": "170f098dd6143c6e124ffb17694e6a43736e3a5156afb869ee8867bf7ebb536c"
+  }
+}

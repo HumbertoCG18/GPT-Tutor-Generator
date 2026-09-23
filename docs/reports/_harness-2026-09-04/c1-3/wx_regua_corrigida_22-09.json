@@ -1,0 +1,1998 @@
+{
+  "arquivos_v2": {
+    "material_gt_ES2.csv": {
+      "linhas_alteradas": [
+        "microsservicos5"
+      ],
+      "sha256_historico": "54102db7db51618e094cabb1c76cfd32c3bbb971eb6348528362d1e801f690b6",
+      "sha256_v2": "c27b30d71d827853ec01da6b73fcd99defceb88fb3ff70c3003fedb9c608c99e"
+    },
+    "subunit_gt_SO.csv": {
+      "linhas_alteradas": [
+        "3103-threads",
+        "exemplo-threads-em-c-exemplo1",
+        "exemplo-threads-em-c-exemplo2",
+        "exemplo-threads-em-c-exemplo3"
+      ],
+      "sha256_historico": "e5a05ee71507ca08aa16678559eab50b40c31fefb3245310bcf8678ef326022c",
+      "sha256_v2": "170f098dd6143c6e124ffb17694e6a43736e3a5156afb869ee8867bf7ebb536c"
+    }
+  },
+  "checks": {
+    "correcoes_so_com_evidencia_material_e_taxonomia": true,
+    "denominadores_iguais_237_284_251": true,
+    "historica_reproduz_49_217_246_84_107": true,
+    "toda_inconsistencia_tem_decisao": true
+  },
+  "conflito_de_interesse": "as colunas pred_subunit/pred_unit e algumas notas dos CSV historicos citam predicoes antigas do motor; foram vistas na leitura, mas nenhuma decisao as usa. Decisoes: material do build + taxonomia + rulings registradas. A predicao do estado #49 so entra na fase D, depois das decisoes.",
+  "decisoes": [
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aguarda aprovacao do user); UNIDADE: gold u02 (ruling 31/08), computada u01; subtopico seria softwares-de-suporte (Dafny)",
+        "unit_slug": "unidade-01-metodos-formais"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "eth2",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aguarda aprovacao do user); UNIDADE: gold u02 (ruling 31/08), computada u01; subtopico seria softwares-de-suporte (Dafny)",
+        "unit_slug": "unidade-01-metodos-formais"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "aws-encryption-sdk",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-01-metodos-formais"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aguarda aprovacao do user); UNIDADE ERRADA: computada u02, gold u01 (material_gt); subtopico seria especificacao-de-funco",
+        "unit_slug": "unidade-02-verificacao-de-programas"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "t1-2026-1",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-01-metodos-formais"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aguarda aprovacao do user); UNIDADE ERRADA: computada u02, gold u01; subtopico seria provadores-de-teoremas",
+        "unit_slug": "unidade-02-verificacao-de-programas"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "t1-2026-1-thy",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-02-verificacao-de-programas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aguarda aprovacao do user); UNIDADE ERRADA: computada u03, gold u02 (material_gt: cita dafny e invariante); subtopico ser",
+        "unit_slug": "unidade-03-verificacao-de-modelos"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "t2-2026-1",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "archive-of-formal-proofs-355fb8",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "aws-encryption-sdk",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "eth2",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "MF",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "t1-2026-1",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "SO",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-03-programacao-concorrente"
+        ],
+        "notas": "2026-08-26 ruling bloco-04 (card Threads) -> u02; biblioteca de apoio, u02 nao tem topico de threads (programas-multithreads e u03): fora da regua de subunidade",
+        "unit_slug": "unidade-02-gerencia-do-processador"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "biblioteca-em-c-pthread",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "subunit_gt_SO.csv",
+      "correcao": {
+        "gold_subunit": {
+          "de": "conceitos-basicos",
+          "para": "programas-multithreads"
+        },
+        "unit_slug": {
+          "de": "unidade-02-gerencia-do-processador",
+          "para": "unidade-03-programacao-concorrente"
+        }
+      },
+      "curso": "SO",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "conceitos-basicos",
+        "slug_existe_em": [
+          "unidade-02-gerencia-do-processador",
+          "unidade-04-deadlock"
+        ],
+        "unidades_gold": [
+          "unidade-03-programacao-concorrente"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md",
+          "linha": 8,
+          "texto": "## Threads"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md",
+          "linha": 42,
+          "texto": "## Exemplo de Programa Multithread (1)"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md",
+          "linha": 158,
+          "texto": "## Threads vs Processos (1)"
+        },
+        {
+          "arquivo": "docs/reports/material_gt_SO.csv",
+          "linha": 15,
+          "texto": "3103-threads,31.03 Threads,material-de-aula,Threads,2026-03-10,9383,Threads · Definição (1) · Exemplo de Programa Multithread (1) · Exemplo de Programa Multithread (2) · - Servidor Web · Definição (2)"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.1 Programas multithreads",
+          "topico": "programas-multithreads",
+          "unidade": "unidade-03-programacao-concorrente"
+        },
+        {
+          "rotulo": "3.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-02-gerencia-do-processador"
+        },
+        {
+          "rotulo": "5.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-04-deadlock"
+        }
+      ],
+      "id": "3103-threads",
+      "motivo": "material trata de threads/programa multithread; a taxonomia so tem topico de threads em u03 (4.1 Programas multithreads), a mesma unidade do gold de unidade (material_gt: 'plano-de-ensino: topico 4.1 Programas multithreads na u03'). conceitos-basicos existe so em u02 (3.1) e u04 (5.1); a anotacao de 25/08 foi feita sob u02 ('u02 nao tem topico de threads; encaixe menos ruim'), premissa desfeita pela adjudicacao curricular u03. unit_slug (coluna nao pontuada) acompanha.",
+      "tipo": "i"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "subunit_gt_SO.csv",
+      "correcao": {
+        "gold_subunit": {
+          "de": "conceitos-basicos",
+          "para": "programas-multithreads"
+        },
+        "unit_slug": {
+          "de": "unidade-02-gerencia-do-processador",
+          "para": "unidade-03-programacao-concorrente"
+        }
+      },
+      "curso": "SO",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "conceitos-basicos",
+        "slug_existe_em": [
+          "unidade-02-gerencia-do-processador",
+          "unidade-04-deadlock"
+        ],
+        "unidades_gold": [
+          "unidade-03-programacao-concorrente"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md",
+          "linha": 17,
+          "texto": "#include <pthread.h>"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md",
+          "linha": 45,
+          "texto": "if ( pthread_create(&tid1, NULL, thread_1, NULL) != 0 ) {"
+        },
+        {
+          "arquivo": "docs/reports/material_gt_SO.csv",
+          "linha": 17,
+          "texto": "exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1,codigo-professor,Threads,2026-03-10,1245,Exemplo threads em C - exemplo1,unidade-03-programacao-concorrente,unidade-04-deadlock,unidade-03"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.1 Programas multithreads",
+          "topico": "programas-multithreads",
+          "unidade": "unidade-03-programacao-concorrente"
+        },
+        {
+          "rotulo": "3.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-02-gerencia-do-processador"
+        },
+        {
+          "rotulo": "5.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-04-deadlock"
+        }
+      ],
+      "id": "exemplo-threads-em-c-exemplo1",
+      "motivo": "material trata de threads/programa multithread; a taxonomia so tem topico de threads em u03 (4.1 Programas multithreads), a mesma unidade do gold de unidade (material_gt: 'plano-de-ensino: topico 4.1 Programas multithreads na u03'). conceitos-basicos existe so em u02 (3.1) e u04 (5.1); a anotacao de 25/08 foi feita sob u02 ('u02 nao tem topico de threads; encaixe menos ruim'), premissa desfeita pela adjudicacao curricular u03. unit_slug (coluna nao pontuada) acompanha.",
+      "tipo": "i"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "subunit_gt_SO.csv",
+      "correcao": {
+        "gold_subunit": {
+          "de": "conceitos-basicos",
+          "para": "programas-multithreads"
+        },
+        "unit_slug": {
+          "de": "unidade-02-gerencia-do-processador",
+          "para": "unidade-03-programacao-concorrente"
+        }
+      },
+      "curso": "SO",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "conceitos-basicos",
+        "slug_existe_em": [
+          "unidade-02-gerencia-do-processador",
+          "unidade-04-deadlock"
+        ],
+        "unidades_gold": [
+          "unidade-03-programacao-concorrente"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md",
+          "linha": 17,
+          "texto": "#include <pthread.h>"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md",
+          "linha": 43,
+          "texto": "if ( pthread_create(&tid[i], NULL, thread, (void *)&param[i] ) != 0 ) {"
+        },
+        {
+          "arquivo": "docs/reports/material_gt_SO.csv",
+          "linha": 18,
+          "texto": "exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2,codigo-professor,Threads,2026-03-10,1138,Exemplo threads em C - exemplo2,unidade-03-programacao-concorrente,unidade-04-deadlock,unidade-03"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.1 Programas multithreads",
+          "topico": "programas-multithreads",
+          "unidade": "unidade-03-programacao-concorrente"
+        },
+        {
+          "rotulo": "3.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-02-gerencia-do-processador"
+        },
+        {
+          "rotulo": "5.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-04-deadlock"
+        }
+      ],
+      "id": "exemplo-threads-em-c-exemplo2",
+      "motivo": "material trata de threads/programa multithread; a taxonomia so tem topico de threads em u03 (4.1 Programas multithreads), a mesma unidade do gold de unidade (material_gt: 'plano-de-ensino: topico 4.1 Programas multithreads na u03'). conceitos-basicos existe so em u02 (3.1) e u04 (5.1); a anotacao de 25/08 foi feita sob u02 ('u02 nao tem topico de threads; encaixe menos ruim'), premissa desfeita pela adjudicacao curricular u03. unit_slug (coluna nao pontuada) acompanha.",
+      "tipo": "i"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "subunit_gt_SO.csv",
+      "correcao": {
+        "gold_subunit": {
+          "de": "conceitos-basicos",
+          "para": "programas-multithreads"
+        },
+        "unit_slug": {
+          "de": "unidade-02-gerencia-do-processador",
+          "para": "unidade-03-programacao-concorrente"
+        }
+      },
+      "curso": "SO",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "conceitos-basicos",
+        "slug_existe_em": [
+          "unidade-02-gerencia-do-processador",
+          "unidade-04-deadlock"
+        ],
+        "unidades_gold": [
+          "unidade-03-programacao-concorrente"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md",
+          "linha": 17,
+          "texto": "#include <pthread.h>"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md",
+          "linha": 58,
+          "texto": "if ( pthread_create(&tid[i], NULL, thread, (void *)&param[i] ) != 0 ) {"
+        },
+        {
+          "arquivo": "docs/reports/material_gt_SO.csv",
+          "linha": 19,
+          "texto": "exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3,codigo-professor,Threads,2026-03-10,1526,Exemplo threads em C - exemplo3,unidade-03-programacao-concorrente,unidade-04-deadlock,unidade-03"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.1 Programas multithreads",
+          "topico": "programas-multithreads",
+          "unidade": "unidade-03-programacao-concorrente"
+        },
+        {
+          "rotulo": "3.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-02-gerencia-do-processador"
+        },
+        {
+          "rotulo": "5.1 Conceitos básicos",
+          "topico": "conceitos-basicos",
+          "unidade": "unidade-04-deadlock"
+        }
+      ],
+      "id": "exemplo-threads-em-c-exemplo3",
+      "motivo": "material trata de threads/programa multithread; a taxonomia so tem topico de threads em u03 (4.1 Programas multithreads), a mesma unidade do gold de unidade (material_gt: 'plano-de-ensino: topico 4.1 Programas multithreads na u03'). conceitos-basicos existe so em u02 (3.1) e u04 (5.1); a anotacao de 25/08 foi feita sob u02 ('u02 nao tem topico de threads; encaixe menos ruim'), premissa desfeita pela adjudicacao curricular u03. unit_slug (coluna nao pontuada) acompanha.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "SO",
+      "detalhe": {
+        "golds_que_usam": [
+          "1903-estruturas-de-controle",
+          "3103-threads",
+          "exemplo-threads-em-c-exemplo1",
+          "exemplo-threads-em-c-exemplo2",
+          "exemplo-threads-em-c-exemplo3"
+        ],
+        "unidades": [
+          "unidade-02-gerencia-do-processador",
+          "unidade-04-deadlock"
+        ]
+      },
+      "eixo": "taxonomia",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "conceitos-basicos",
+      "motivo": "fato da taxonomia, nao do gold: o gold usa o slug sob a unidade certa; a ambiguidade e do METODO (regua compara so o slug), cuja troca seria mudanca de pontuacao, nao de anotacao",
+      "tipo": "v"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "SO",
+      "detalhe": {
+        "golds_que_usam": [],
+        "unidades": [
+          "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+          "unidade-02-gerencia-do-processador",
+          "unidade-05-gerencia-de-memoria",
+          "unidade-06-gerencia-de-arquivos",
+          "unidade-07-gerencia-de-entrada-e-saida"
+        ]
+      },
+      "eixo": "taxonomia",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "estudo-de-casos",
+      "motivo": "fato da taxonomia, nao do gold: o gold usa o slug sob a unidade certa; a ambiguidade e do METODO (regua compara so o slug), cuja troca seria mudanca de pontuacao, nao de anotacao",
+      "tipo": "v"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "IA",
+      "detalhe": {
+        "scorable": {
+          "no": 17
+        }
+      },
+      "eixo": "ground_truth_IA.csv",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "<17 linhas sem id>",
+      "motivo": "linha scorable=no sem id (material sem entrada, ex.: prova antiga): ja fora da regua",
+      "tipo": "iv_id"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "IA",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "ia-responsável-7c4626",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "IA",
+      "detalhe": {
+        "eixos": [
+          "bloco",
+          "unidade"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "material_gt_ES2.csv",
+      "correcao": {
+        "gold_units": {
+          "de": "unidade-01-arquitetura-de-software",
+          "para": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        }
+      },
+      "curso": "ES2",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "plataformas-de-devops",
+        "slug_existe_em": [
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        ],
+        "unidades_gold": [
+          "unidade-01-arquitetura-de-software"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "unidade",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 88,
+          "texto": "## Serviço em contêiner"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 226,
+          "texto": "## Arquitetura do Docker"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 406,
+          "texto": "## Importância do Ambiente de Implantação em Nuvem"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/course/.lessons_index.json",
+          "linha": 15,
+          "texto": "\"2026-05-22\": \"implantação de microsserviços em conteiners\","
+        },
+        {
+          "arquivo": "tests/fixtures/eval/gold_units_ES2.csv",
+          "linha": 9,
+          "texto": "a803a9f7-5aa5-4629-8b93-4531b56119bc,bloco-08,2026-05-22,2026-05-29,class,implantacao microservicos conteineres,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,unidade-02-integracao-de-dese"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.7 Estudo de Caso: integração e implantação de microsserviços",
+          "topico": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        },
+        {
+          "rotulo": "2.6 Plataformas de DevOps",
+          "topico": "plataformas-de-devops",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        },
+        {
+          "rotulo": "1.3.4 Orientada a Microsserviços",
+          "topico": "orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        }
+      ],
+      "id": "microsservicos5",
+      "motivo": "o material e implantacao de microsservicos em conteiner (Docker, VM x conteiner, ambientes de implantacao em nuvem) = taxonomia u02 2.7 'integracao e IMPLANTACAO de microsservicos' e 2.6 'Plataformas de DevOps'; u01 nao tem topico de implantacao/conteiner. A aula do cronograma leva o nome literal do topico 2.7. O gold u01 vem de ruling em serie (19/08: 'a serie de microsservicos cobre a unidade que fala de microsservicos'), que nao distingue 1.3.4/1.5 de 2.7; o gold de subunidade (ruling 26/08) e o gold de bloco (gold_units bloco-08 -> u02) ja apontam u02.",
+      "tipo": "i"
+    },
+    {
+      "acao": "corrigir",
+      "arquivo_corrigido": "material_gt_ES2.csv",
+      "correcao": {
+        "gold_units": {
+          "de": "unidade-01-arquitetura-de-software",
+          "para": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        }
+      },
+      "curso": "ES2",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+        "slug_existe_em": [
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        ],
+        "unidades_gold": [
+          "unidade-01-arquitetura-de-software"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "unidade",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 88,
+          "texto": "## Serviço em contêiner"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 226,
+          "texto": "## Arquitetura do Docker"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md",
+          "linha": 406,
+          "texto": "## Importância do Ambiente de Implantação em Nuvem"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/course/.lessons_index.json",
+          "linha": 15,
+          "texto": "\"2026-05-22\": \"implantação de microsserviços em conteiners\","
+        },
+        {
+          "arquivo": "tests/fixtures/eval/gold_units_ES2.csv",
+          "linha": 9,
+          "texto": "a803a9f7-5aa5-4629-8b93-4531b56119bc,bloco-08,2026-05-22,2026-05-29,class,implantacao microservicos conteineres,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,unidade-02-integracao-de-dese"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.7 Estudo de Caso: integração e implantação de microsserviços",
+          "topico": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        },
+        {
+          "rotulo": "2.6 Plataformas de DevOps",
+          "topico": "plataformas-de-devops",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        },
+        {
+          "rotulo": "1.3.4 Orientada a Microsserviços",
+          "topico": "orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        }
+      ],
+      "id": "microsservicos5",
+      "motivo": "o material e implantacao de microsservicos em conteiner (Docker, VM x conteiner, ambientes de implantacao em nuvem) = taxonomia u02 2.7 'integracao e IMPLANTACAO de microsservicos' e 2.6 'Plataformas de DevOps'; u01 nao tem topico de implantacao/conteiner. A aula do cronograma leva o nome literal do topico 2.7. O gold u01 vem de ruling em serie (19/08: 'a serie de microsservicos cobre a unidade que fala de microsservicos'), que nao distingue 1.3.4/1.5 de 2.7; o gold de subunidade (ruling 26/08) e o gold de bloco (gold_units bloco-08 -> u02) ja apontam u02.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-01-arquitetura-de-software"
+        ],
+        "unit_slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      },
+      "eixo": "subunidade (coluna unit_slug)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "microsservicos2",
+      "motivo": "coluna unit_slug do subunit_gt (nao pontuada) defasada em relacao ao gold de unidade; o slug gold esta sob a unidade gold, sem exigencia incompativel",
+      "tipo": "i_info"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-01-arquitetura-de-software"
+        ],
+        "unit_slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      },
+      "eixo": "subunidade (coluna unit_slug)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "microsservicos3",
+      "motivo": "coluna unit_slug do subunit_gt (nao pontuada) defasada em relacao ao gold de unidade; o slug gold esta sob a unidade gold, sem exigencia incompativel",
+      "tipo": "i_info"
+    },
+    {
+      "acao": "indecidivel",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+        "slug_existe_em": [
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        ],
+        "unidades_gold": [
+          "unidade-01-arquitetura-de-software"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "unidade x subunidade",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos4.md",
+          "linha": 82,
+          "texto": "## Resiliência"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos4.md",
+          "linha": 122,
+          "texto": "## Circuit Breaker"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/course/.lessons_index.json",
+          "linha": 14,
+          "texto": "\"2026-05-15\": \"microsserviços com Spring, circuit-breaker\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "1.3.4 Orientada a Microsserviços",
+          "topico": "orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        },
+        {
+          "rotulo": "1.5 Estudo de caso: arquitetura orientada a microsserviços",
+          "topico": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        },
+        {
+          "rotulo": "2.7 Estudo de Caso: integração e implantação de microsserviços",
+          "topico": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        }
+      ],
+      "id": "microsservicos4",
+      "motivo": "o material e um padrao de microsservicos (resiliencia/circuit breaker) que cabe tanto em u01 (1.3.4 Orientada a Microsservicos / 1.5 Estudo de caso: arquitetura orientada a microsservicos) quanto em u02 (2.7 Estudo de caso: INTEGRACAO e implantacao de microsservicos). Duas rulings do usuario conflitam (19/08 serie -> u01; 26/08 subunidade -> 2.7, apoiada na data pos-P1, criterio que a regua de unidade rejeita: 'unidade = onde o plano poe o assunto'). O pacote (SYLLABUS/cronograma) nao detalha em que topico o plano poe resiliencia/circuit breaker. Faltaria: adjudicacao se 2.7 'integracao' inclui resiliencia/circuit breaker, ou plano de ensino detalhado por aula. Linha mantida como na historica.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-01-arquitetura-de-software"
+        ],
+        "notas": "provenance=proposto-claude+aprovado-user-2026-08-25; RULING USER 2026-08-26. lista de revisao (conteudo de u01); avaliacao transversal",
+        "unit_slug": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "revisao-p1",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "indecidivel",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+        "slug_existe_em": [
+          "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        ],
+        "unidades_gold": [
+          "unidade-01-arquitetura-de-software"
+        ]
+      },
+      "eixo": "subunidade (primario)",
+      "eixo_decisao": "unidade x subunidade",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos7.md",
+          "linha": 122,
+          "texto": "## Comunicação entre Microsserviços"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos7.md",
+          "linha": 360,
+          "texto": "## Arquitetura Publish/Subscribe"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos7.md",
+          "linha": 430,
+          "texto": "## RabbitMQ"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "1.3.4 Orientada a Microsserviços",
+          "topico": "orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        },
+        {
+          "rotulo": "1.5 Estudo de caso: arquitetura orientada a microsserviços",
+          "topico": "estudo-de-caso-arquitetura-orientada-a-microsservicos",
+          "unidade": "unidade-01-arquitetura-de-software"
+        },
+        {
+          "rotulo": "2.7 Estudo de Caso: integração e implantação de microsserviços",
+          "topico": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+          "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+        }
+      ],
+      "id": "microsservicos7",
+      "motivo": "o material e um padrao de microsservicos (comunicacao assincrona/publish-subscribe) que cabe tanto em u01 (1.3.4 Orientada a Microsservicos / 1.5 Estudo de caso: arquitetura orientada a microsservicos) quanto em u02 (2.7 Estudo de caso: INTEGRACAO e implantacao de microsservicos). Duas rulings do usuario conflitam (19/08 serie -> u01; 26/08 subunidade -> 2.7, apoiada na data pos-P1, criterio que a regua de unidade rejeita: 'unidade = onde o plano poe o assunto'). O pacote (SYLLABUS/cronograma) nao detalha em que topico o plano poe comunicacao assincrona/publish-subscribe. Faltaria: adjudicacao se 2.7 'integracao' inclui comunicacao assincrona/publish-subscribe, ou plano de ensino detalhado por aula. Linha mantida como na historica.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "ES2",
+      "detalhe": {
+        "scorable": {
+          "no": 1
+        }
+      },
+      "eixo": "ground_truth_ES2.csv",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "<1 linhas sem id>",
+      "motivo": "linha scorable=no sem id (material sem entrada, ex.: prova antiga): ja fora da regua",
+      "tipo": "iv_id"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "TCC",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/TCC-Tutor/staging/markdown-auto/pymupdf4llm/aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos.md",
+          "linha": 100,
+          "texto": "M´aquinas de Turing operam sobre **cadeias** de s´ımbolos e s˜ao uma “continuac¸˜ao” do conte´udo estudado na disciplina de Linguagens Formais e Autˆomatos. Em alguns contextos, essa disciplina ´e cha"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/TCC-Tutor/staging/markdown-auto/pymupdf4llm/aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos.md",
+          "linha": 946,
+          "texto": "## A Hierarquia de Chomsky"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/TCC-Tutor/staging/markdown-auto/pymupdf4llm/aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos.md",
+          "linha": 1182,
+          "texto": "## Linguagens Decid´ıveis vs. Reconhec´ıveis"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "1.1 Conjuntos Enumeráveis",
+          "topico": "conjuntos-enumeraveis",
+          "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas"
+        },
+        {
+          "rotulo": "2.2 Linguagens Reconhecíveis e Decidíveis",
+          "topico": "linguagens-reconheciveis-e-decidiveis",
+          "unidade": "unidade-02-turing-computabilidade"
+        }
+      ],
+      "id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+      "motivo": "vazio deliberado (ruling 25/08: 'revisao de pre-requisito; predizer qualquer subunidade e ERRO'). O material se declara continuacao de Linguagens Formais e Automatos (outra disciplina) e revisa alfabeto/cadeia/automatos/Chomsky, que nao sao topicos de u01 (anotada). Exige abstencao, que e compativel com qualquer unidade (nao ha gold de unidade para este id). Risco registrado: a secao 'Linguagens Decidiveis vs. Reconheciveis' casa com u02 2.2; incluir como extra mudaria a ruling e fica para o usuario.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "TCC",
+      "detalhe": {
+        "scorable": {
+          "no": 6
+        }
+      },
+      "eixo": "ground_truth_TCC.csv",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "<6 linhas sem id>",
+      "motivo": "linha scorable=no sem id (material sem entrada, ex.: prova antiga): ja fora da regua",
+      "tipo": "iv_id"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "fonte_unidade": "regua de unidade",
+        "slug": "projecoes",
+        "slug_existe_em": [
+          "unidade-06-processo-de-visualizacao-3d"
+        ],
+        "unidades_gold": [
+          "unidade-08-sintese-de-imagens-realisticas"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/code/professor/programabasico3d.md",
+          "linha": 166,
+          "texto": "gluPerspective(90,AspectRatio,0.01,200);"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/code/professor/programabasico3d.md",
+          "linha": 115,
+          "texto": "glLightfv(GL_LIGHT0, GL_DIFFUSE, LuzDifusa  );"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "6.3 Projeções",
+          "topico": "projecoes",
+          "unidade": "unidade-06-processo-de-visualizacao-3d"
+        },
+        {
+          "rotulo": "8.2 Modelos de Reflexão: ambiente, difusa, especular",
+          "topico": "modelos-de-reflexao-ambiente-difusa-especular",
+          "unidade": "unidade-08-sintese-de-imagens-realisticas"
+        }
+      ],
+      "id": "programabasico3d",
+      "motivo": "extra 'projecoes' (u06 6.3) fora da unidade gold u08, mas o primario (8.2 reflexao) esta em u08 e o codigo de fato define projecao perspectiva; extra so ACEITA, nao exige resposta incompativel com a unidade. Remove-lo seria endurecer a regua sem evidencia contra o conteudo.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-08-sintese-de-imagens-realisticas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aprovado pelo user 06/09); BLOCO ERRADO: bloco-06 por colisao do token 'mapeamento' com a sessao 'processo de visualizaca",
+        "unit_slug": "unidade-04-processo-de-visualizacao-2d"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "maptextures",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-08-sintese-de-imagens-realisticas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aprovado pelo user 06/09); UNIDADE ERRADA: computada u01 (card 2 OpenGL, sem bloco); conteudo texturas+iluminacao = u08; ",
+        "unit_slug": "unidade-01-introducao-ao-processamento-grafico"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "texturas-v3",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-03-processamento-de-imagens-e-visao-computacional"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aprovado pelo user 06/09); CONFLITO: label do Moodle 'Classe Vetor' (u02) x conteudo do .cpp = processamento de imagens (",
+        "unit_slug": "unidade-02-fundamentos-matematicos"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "exemplodemanipulacaodeimagens",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/manifest.json",
+          "linha": 5763,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\computacao-grafica\\\\stash\\\\6 - Processo de Visualização 2D\\\\Animacao-v2.zip\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.2 Algoritmos de Rasterização",
+          "topico": "algoritmos-de-rasterizacao",
+          "unidade": "unidade-04-processo-de-visualizacao-2d"
+        },
+        {
+          "rotulo": "5.1 Transformações Geométricas e coordenadas homogêneas 2D",
+          "topico": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "unidade": "unidade-05-transformacoes-geometricas"
+        }
+      ],
+      "id": "animacao-v2",
+      "motivo": "vazio deliberado e consistente: gold de unidade u04 (oraculo Moodle/SARC 'Processo de Visualizacao 2D', ruling 06/09) e u04 nao tem topico de transformacoes/animacao/instanciamento (so coordenadas, rasterizacao, recorte) -> exige abstencao. A questao de fundo e a UNIDADE (conteudo = u05 5.1 Transformacoes geometricas; titulo/secao = visualizacao 2D): indecidivel pelo pacote, fica como esta; faltaria adjudicar se 'instanciamento' pertence a u04 ou u05.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/staging/markdown-auto/pymupdf4llm/instanciamento.md",
+          "linha": 10,
+          "texto": "## **Processo de Visualização Bidimensional INSTANCIAMENTO**"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/staging/markdown-auto/pymupdf4llm/instanciamento.md",
+          "linha": 76,
+          "texto": "## **3 TRANSFORMAÇÕES GEOMÉTRICAS**"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.2 Algoritmos de Rasterização",
+          "topico": "algoritmos-de-rasterizacao",
+          "unidade": "unidade-04-processo-de-visualizacao-2d"
+        },
+        {
+          "rotulo": "5.1 Transformações Geométricas e coordenadas homogêneas 2D",
+          "topico": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "unidade": "unidade-05-transformacoes-geometricas"
+        }
+      ],
+      "id": "instanciamento",
+      "motivo": "vazio deliberado e consistente: gold de unidade u04 (oraculo Moodle/SARC 'Processo de Visualizacao 2D', ruling 06/09) e u04 nao tem topico de transformacoes/animacao/instanciamento (so coordenadas, rasterizacao, recorte) -> exige abstencao. A questao de fundo e a UNIDADE (conteudo = u05 5.1 Transformacoes geometricas; titulo/secao = visualizacao 2D): indecidivel pelo pacote, fica como esta; faltaria adjudicar se 'instanciamento' pertence a u04 ou u05.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/manifest.json",
+          "linha": 6032,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\computacao-grafica\\\\stash\\\\6 - Processo de Visualização 2D\\\\Instanciamento.pdf\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.2 Algoritmos de Rasterização",
+          "topico": "algoritmos-de-rasterizacao",
+          "unidade": "unidade-04-processo-de-visualizacao-2d"
+        },
+        {
+          "rotulo": "5.1 Transformações Geométricas e coordenadas homogêneas 2D",
+          "topico": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "unidade": "unidade-05-transformacoes-geometricas"
+        }
+      ],
+      "id": "pagina-com-videos-sobre-instanciamento",
+      "motivo": "vazio deliberado e consistente: gold de unidade u04 (oraculo Moodle/SARC 'Processo de Visualizacao 2D', ruling 06/09) e u04 nao tem topico de transformacoes/animacao/instanciamento (so coordenadas, rasterizacao, recorte) -> exige abstencao. A questao de fundo e a UNIDADE (conteudo = u05 5.1 Transformacoes geometricas; titulo/secao = visualizacao 2D): indecidivel pelo pacote, fica como esta; faltaria adjudicar se 'instanciamento' pertence a u04 ou u05.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/manifest.json",
+          "linha": 6623,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\computacao-grafica\\\\stash\\\\6 - Processo de Visualização 2D\\\\TransformacoesGeometricas.zip\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.2 Algoritmos de Rasterização",
+          "topico": "algoritmos-de-rasterizacao",
+          "unidade": "unidade-04-processo-de-visualizacao-2d"
+        },
+        {
+          "rotulo": "5.1 Transformações Geométricas e coordenadas homogêneas 2D",
+          "topico": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "unidade": "unidade-05-transformacoes-geometricas"
+        }
+      ],
+      "id": "transformacoesgeometricas",
+      "motivo": "vazio deliberado e consistente: gold de unidade u04 (oraculo Moodle/SARC 'Processo de Visualizacao 2D', ruling 06/09) e u04 nao tem topico de transformacoes/animacao/instanciamento (so coordenadas, rasterizacao, recorte) -> exige abstencao. A questao de fundo e a UNIDADE (conteudo = u05 5.1 Transformacoes geometricas; titulo/secao = visualizacao 2D): indecidivel pelo pacote, fica como esta; faltaria adjudicar se 'instanciamento' pertence a u04 ou u05.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "extras": "",
+        "gold": "",
+        "no_denominador": true
+      },
+      "eixo": "subunidade primaria",
+      "eixo_decisao": "subunidade primaria",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/staging/markdown-auto/html/transformacoesgl.md",
+          "linha": 4,
+          "texto": "**Computação Gráfica**[Prof. Márcio Sarroglia Pinho](https://www.inf.pucrs.br/%7Epinho) **Transformações Geométricas em OpenGL**"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/staging/markdown-auto/html/transformacoesgl.md",
+          "linha": 14,
+          "texto": "Para efetuar uma translação há o comando **glTranslatef(tx, ty, tz)** que move todas as coordenadas dos objetos ao longo dos eixos coordenados."
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "4.2 Algoritmos de Rasterização",
+          "topico": "algoritmos-de-rasterizacao",
+          "unidade": "unidade-04-processo-de-visualizacao-2d"
+        },
+        {
+          "rotulo": "5.1 Transformações Geométricas e coordenadas homogêneas 2D",
+          "topico": "transformacoes-geometricas-e-coordenadas-homogeneas-2d",
+          "unidade": "unidade-05-transformacoes-geometricas"
+        }
+      ],
+      "id": "transformacoesgl",
+      "motivo": "vazio deliberado e consistente: gold de unidade u04 (oraculo Moodle/SARC 'Processo de Visualizacao 2D', ruling 06/09) e u04 nao tem topico de transformacoes/animacao/instanciamento (so coordenadas, rasterizacao, recorte) -> exige abstencao. A questao de fundo e a UNIDADE (conteudo = u05 5.1 Transformacoes geometricas; titulo/secao = visualizacao 2D): indecidivel pelo pacote, fica como esta; faltaria adjudicar se 'instanciamento' pertence a u04 ou u05.",
+      "tipo": "iv"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-08-sintese-de-imagens-realisticas"
+        ],
+        "notas": "provenance=proposto-claude 2026-09-05 (aprovado pelo user 06/09); BLOCO ERRADO (idem maptextures): verdade u08/mapeamento-de-textura",
+        "unit_slug": "unidade-04-processo-de-visualizacao-2d"
+      },
+      "eixo": "subunidade (scorable=no)",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "motivo": "scorable=no motivado por unidade antiga/computada (coluna unit_slug != gold de unidade atual); virar scorable=yes muda o DENOMINADOR, que o parecer do Astra manda congelar: fila para uma v3 com decisao do usuario",
+      "tipo": "vii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "aula-gravada-975b85",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-sobre-mapeamento-em-opengl-1dad3c",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-sobre-origens-da-computacao-grafica-806e66",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-sobre-prechimento-de-areas-duracao-1300-d87e5f",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "listar",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "eixos": [
+          "unidade",
+          "sub"
+        ],
+        "motivo": "new_id_fora_do_pacote_15-09"
+      },
+      "eixo": "todos",
+      "evidencia_material": [],
+      "evidencia_taxonomia": [],
+      "id": "video-sobre-prechimento-de-areas-duracao-330-defae7",
+      "motivo": "assunto do W-V (#51, importacao offline); o gold nao muda: denominador congelado",
+      "tipo": "iii"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "FR",
+      "detalhe": {
+        "fonte_unidade": "coluna unit_slug",
+        "slug": "classificacao-e-topologias-de-redes-de-computadores",
+        "slug_existe_em": [
+          "unidade-06-nivel-fisico"
+        ],
+        "unidades_gold": [
+          "unidade-01-introducao-a-redes-de-computadores"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/staging/markdown-auto/pymupdf4llm/03-tipos-de-redes.md",
+          "linha": 90,
+          "texto": "## Redes Pessoais (PAN)"
+        },
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/staging/markdown-auto/pymupdf4llm/03-tipos-de-redes.md",
+          "linha": 118,
+          "texto": "## Redes Locais (LAN)"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "6.1 Classificação e topologias de redes de computadores",
+          "topico": "classificacao-e-topologias-de-redes-de-computadores",
+          "unidade": "unidade-06-nivel-fisico"
+        },
+        {
+          "rotulo": "1.3 Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância",
+          "topico": "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia",
+          "unidade": "unidade-01-introducao-a-redes-de-computadores"
+        }
+      ],
+      "id": "03-tipos-de-redes",
+      "motivo": "extra 'classificacao-e-topologias-de-redes-de-computadores' fora da unidade anotada (u01); FR nao tem regua de unidade, o primario e compativel e o extra so aceita conteudo que o material contem (classificacao PAN/LAN/WAN = 6.1). Nao ha exigencia incompativel.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "FR",
+      "detalhe": {
+        "fonte_unidade": "coluna unit_slug",
+        "slug": "protocolo-udp",
+        "slug_existe_em": [
+          "unidade-03-nivel-de-transporte"
+        ],
+        "unidades_gold": [
+          "unidade-02-nivel-de-aplicacao"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/manifest.json",
+          "linha": 1703,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\fundamentos-de-redes-de-computadores\\\\stash\\\\U2 - Camada de Aplicação\\\\udp_example_c.tar.gz\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.2.1 Implementação de sockets",
+          "topico": "implementacao-de-sockets",
+          "unidade": "unidade-02-nivel-de-aplicacao"
+        },
+        {
+          "rotulo": "3.3 Protocolo UDP",
+          "topico": "protocolo-udp",
+          "unidade": "unidade-03-nivel-de-transporte"
+        }
+      ],
+      "id": "udp-example-c",
+      "motivo": "extra 'protocolo-udp' fora da unidade anotada (u02); FR nao tem regua de unidade, o primario e compativel e o extra so aceita conteudo que o material contem (exemplo de socket UDP (sem markdown no pacote: zip; titulo e secao)). Nao ha exigencia incompativel.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "FR",
+      "detalhe": {
+        "fonte_unidade": "coluna unit_slug",
+        "slug": "protocolo-udp",
+        "slug_existe_em": [
+          "unidade-03-nivel-de-transporte"
+        ],
+        "unidades_gold": [
+          "unidade-02-nivel-de-aplicacao"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/manifest.json",
+          "linha": 1792,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\fundamentos-de-redes-de-computadores\\\\stash\\\\U2 - Camada de Aplicação\\\\udp_example_java.tar.gz\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.2.1 Implementação de sockets",
+          "topico": "implementacao-de-sockets",
+          "unidade": "unidade-02-nivel-de-aplicacao"
+        },
+        {
+          "rotulo": "3.3 Protocolo UDP",
+          "topico": "protocolo-udp",
+          "unidade": "unidade-03-nivel-de-transporte"
+        }
+      ],
+      "id": "udp-example-java",
+      "motivo": "extra 'protocolo-udp' fora da unidade anotada (u02); FR nao tem regua de unidade, o primario e compativel e o extra so aceita conteudo que o material contem (exemplo de socket UDP (sem markdown no pacote: zip; titulo e secao)). Nao ha exigencia incompativel.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "FR",
+      "detalhe": {
+        "fonte_unidade": "coluna unit_slug",
+        "slug": "protocolo-tcp",
+        "slug_existe_em": [
+          "unidade-03-nivel-de-transporte"
+        ],
+        "unidades_gold": [
+          "unidade-02-nivel-de-aplicacao"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/manifest.json",
+          "linha": 1525,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\fundamentos-de-redes-de-computadores\\\\stash\\\\U2 - Camada de Aplicação\\\\tcp_chat_c.tar.gz\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.2.1 Implementação de sockets",
+          "topico": "implementacao-de-sockets",
+          "unidade": "unidade-02-nivel-de-aplicacao"
+        },
+        {
+          "rotulo": "3.2 Protocolo TCP",
+          "topico": "protocolo-tcp",
+          "unidade": "unidade-03-nivel-de-transporte"
+        }
+      ],
+      "id": "tcp-chat-c",
+      "motivo": "extra 'protocolo-tcp' fora da unidade anotada (u02); FR nao tem regua de unidade, o primario e compativel e o extra so aceita conteudo que o material contem (exemplo de socket TCP (sem markdown no pacote: zip; titulo e secao)). Nao ha exigencia incompativel.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "FR",
+      "detalhe": {
+        "fonte_unidade": "coluna unit_slug",
+        "slug": "protocolo-tcp",
+        "slug_existe_em": [
+          "unidade-03-nivel-de-transporte"
+        ],
+        "unidades_gold": [
+          "unidade-02-nivel-de-aplicacao"
+        ]
+      },
+      "eixo": "subunidade (extra)",
+      "eixo_decisao": "subunidade aceita (extra)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/manifest.json",
+          "linha": 1614,
+          "texto": "\"source_path\": \"C:\\\\Users\\\\Humberto\\\\Desktop\\\\Moodle\\\\fundamentos-de-redes-de-computadores\\\\stash\\\\U2 - Camada de Aplicação\\\\tcp_example.tar.gz\","
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "2.2.1 Implementação de sockets",
+          "topico": "implementacao-de-sockets",
+          "unidade": "unidade-02-nivel-de-aplicacao"
+        },
+        {
+          "rotulo": "3.2 Protocolo TCP",
+          "topico": "protocolo-tcp",
+          "unidade": "unidade-03-nivel-de-transporte"
+        }
+      ],
+      "id": "tcp-example",
+      "motivo": "extra 'protocolo-tcp' fora da unidade anotada (u02); FR nao tem regua de unidade, o primario e compativel e o extra so aceita conteudo que o material contem (exemplo de socket TCP (sem markdown no pacote: zip; titulo e secao)). Nao ha exigencia incompativel.",
+      "tipo": "i"
+    },
+    {
+      "acao": "manter",
+      "arquivo_corrigido": null,
+      "correcao": {},
+      "curso": "CG",
+      "detalhe": {
+        "gold_unidade": [
+          "unidade-06-processo-de-visualizacao-3d",
+          "unidade-07-representacao-e-modelagem-de-objetos",
+          "unidade-08-sintese-de-imagens-realisticas"
+        ]
+      },
+      "eixo": "unidade",
+      "eixo_decisao": "unidade (conjunto aceito)",
+      "evidencia_material": [
+        {
+          "arquivo": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/staging/markdown-auto/html/resolucao-de-prova-de-computacao-grafica-3d.md",
+          "linha": 3,
+          "texto": "## Conteúdo Extraído"
+        },
+        {
+          "arquivo": "docs/reports/material_gt_CG.csv",
+          "linha": 94,
+          "texto": "resolucao-de-prova-de-computacao-grafica-3d,resolucao-de-prova-de-computacao-grafica-3d,provas,Provas Resolvidas,,6254,resolucao-de-prova-de-computacao-grafica-3d · Conteúdo Extraído,unidade-08-sintes"
+        }
+      ],
+      "evidencia_taxonomia": [
+        {
+          "rotulo": "6.3 Projeções",
+          "topico": "projecoes",
+          "unidade": "unidade-06-processo-de-visualizacao-3d"
+        },
+        {
+          "rotulo": "8.4 Mapeamento de Textura",
+          "topico": "mapeamento-de-textura",
+          "unidade": "unidade-08-sintese-de-imagens-realisticas"
+        }
+      ],
+      "id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "motivo": "prova resolvida cobre varias unidades; o conjunto u06|u07|u08 e desenho da regua ('qualquer uma vale', 12/09), nao incoerencia; subunidade ja esta fora (scorable=no). O markdown do pacote so tem o cabecalho ('Conteudo Extraido', 42 linhas): o pacote nao sustenta estreitar o conjunto.",
+      "tipo": "wt_regua_ambigua"
+    }
+  ],
+  "delta_anotacao": {
+    "por_curso": {
+      "ES2": {
+        "unidade": 1
+      }
+    },
+    "por_eixo": {
+      "bloco": 0,
+      "sub_aceita": 0,
+      "sub_primaria": 0,
+      "unidade": 1
+    },
+    "por_id": [
+      {
+        "curso": "ES2",
+        "eixo": "unidade",
+        "historica": false,
+        "id": "microsservicos5",
+        "rotulo": "anotacao",
+        "v2": true
+      }
+    ]
+  },
+  "diff_regua_v2": [
+    {
+      "arquivo": "material_gt_ES2.csv",
+      "campo": "gold_units",
+      "curso": "ES2",
+      "de": "unidade-01-arquitetura-de-software",
+      "eixo": "unidade",
+      "evidencia": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md:88; .frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md:226; .frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/staging/markdown-auto/pymupdf4llm/microsservicos5.md:406; .frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/course/.lessons_index.json:15; tests/fixtures/eval/gold_units_ES2.csv:9",
+      "id": "microsservicos5",
+      "para": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "gold_subunit",
+      "curso": "SO",
+      "de": "conceitos-basicos",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:8; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:42; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:158; docs/reports/material_gt_SO.csv:15",
+      "id": "3103-threads",
+      "para": "programas-multithreads"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "unit_slug",
+      "curso": "SO",
+      "de": "unidade-02-gerencia-do-processador",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:8; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:42; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/staging/markdown-auto/pymupdf4llm/3103-threads.md:158; docs/reports/material_gt_SO.csv:15",
+      "id": "3103-threads",
+      "para": "unidade-03-programacao-concorrente"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "gold_subunit",
+      "curso": "SO",
+      "de": "conceitos-basicos",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md:45; docs/reports/material_gt_SO.csv:17",
+      "id": "exemplo-threads-em-c-exemplo1",
+      "para": "programas-multithreads"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "unit_slug",
+      "curso": "SO",
+      "de": "unidade-02-gerencia-do-processador",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo1.md:45; docs/reports/material_gt_SO.csv:17",
+      "id": "exemplo-threads-em-c-exemplo1",
+      "para": "unidade-03-programacao-concorrente"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "gold_subunit",
+      "curso": "SO",
+      "de": "conceitos-basicos",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md:43; docs/reports/material_gt_SO.csv:18",
+      "id": "exemplo-threads-em-c-exemplo2",
+      "para": "programas-multithreads"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "unit_slug",
+      "curso": "SO",
+      "de": "unidade-02-gerencia-do-processador",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo2.md:43; docs/reports/material_gt_SO.csv:18",
+      "id": "exemplo-threads-em-c-exemplo2",
+      "para": "unidade-03-programacao-concorrente"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "gold_subunit",
+      "curso": "SO",
+      "de": "conceitos-basicos",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md:58; docs/reports/material_gt_SO.csv:19",
+      "id": "exemplo-threads-em-c-exemplo3",
+      "para": "programas-multithreads"
+    },
+    {
+      "arquivo": "subunit_gt_SO.csv",
+      "campo": "unit_slug",
+      "curso": "SO",
+      "de": "unidade-02-gerencia-do-processador",
+      "eixo": "subunidade primaria",
+      "evidencia": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md:17; .frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/code/professor/exemplo-threads-em-c-exemplo3.md:58; docs/reports/material_gt_SO.csv:19",
+      "id": "exemplo-threads-em-c-exemplo3",
+      "para": "unidade-03-programacao-concorrente"
+    }
+  ],
+  "head": "493119e (inclui #50)",
+  "inconsistencias_por_curso_tipo": {
+    "CG": {
+      "i": 1,
+      "iii": 7,
+      "iv": 5,
+      "vii": 4,
+      "wt_regua_ambigua": 1
+    },
+    "ES2": {
+      "i": 4,
+      "i_info": 2,
+      "iv_id": 1,
+      "vii": 1
+    },
+    "FR": {
+      "i": 5
+    },
+    "IA": {
+      "iii": 2,
+      "iv_id": 1
+    },
+    "MF": {
+      "iii": 4,
+      "vii": 5
+    },
+    "SO": {
+      "i": 4,
+      "v": 2,
+      "vii": 1
+    },
+    "TCC": {
+      "iv": 1,
+      "iv_id": 1
+    }
+  },
+  "limitacoes": [
+    "evidencia de material de zips (CG animacao-v2/transformacoesgeometricas, FR sockets) e so titulo/secao via manifest: o pacote nao tem markdown deles",
+    "ES2 microsservicos4/7 e a unidade dos 5 vazios de CG ficam indecidiveis pelo pacote (sem plano detalhado por aula)",
+    "scorable=no motivados por unidade antiga nao foram reabertos: denominador congelado (fila para v3)"
+  ],
+  "placar": {
+    "historica": {
+      "cursos": {
+        "CG": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 41,
+          "sub_aceita_n": 82,
+          "sub_primaria": 28,
+          "sub_primaria_n": 82,
+          "unidade": 74,
+          "unidade_n": 93
+        },
+        "ES2": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_aceita_n": 28,
+          "sub_primaria": 7,
+          "sub_primaria_n": 28,
+          "unidade": 25,
+          "unidade_n": 28
+        },
+        "FR": {
+          "sub_aceita": 7,
+          "sub_aceita_n": 18,
+          "sub_primaria": 6,
+          "sub_primaria_n": 18
+        },
+        "IA": {
+          "bloco": 39,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_aceita_n": 39,
+          "sub_primaria": 4,
+          "sub_primaria_n": 39,
+          "unidade": 39,
+          "unidade_n": 42
+        },
+        "MF": {
+          "bloco": 56,
+          "bloco_n": 66,
+          "sub_aceita": 29,
+          "sub_aceita_n": 58,
+          "sub_primaria": 25,
+          "sub_primaria_n": 58,
+          "unidade": 61,
+          "unidade_n": 66
+        },
+        "SO": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_aceita_n": 15,
+          "sub_primaria": 7,
+          "sub_primaria_n": 15,
+          "unidade": 30,
+          "unidade_n": 37
+        },
+        "TCC": {
+          "bloco": 26,
+          "bloco_n": 27,
+          "sub_aceita": 9,
+          "sub_aceita_n": 11,
+          "sub_primaria": 7,
+          "sub_primaria_n": 11,
+          "unidade": 17,
+          "unidade_n": 18
+        }
+      },
+      "totais": {
+        "bloco": 217,
+        "bloco_n": 237,
+        "sub_aceita": 107,
+        "sub_aceita_n": 251,
+        "sub_primaria": 84,
+        "sub_primaria_n": 251,
+        "unidade": 246,
+        "unidade_n": 284
+      }
+    },
+    "v2": {
+      "cursos": {
+        "CG": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 41,
+          "sub_aceita_n": 82,
+          "sub_primaria": 28,
+          "sub_primaria_n": 82,
+          "unidade": 74,
+          "unidade_n": 93
+        },
+        "ES2": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_aceita_n": 28,
+          "sub_primaria": 7,
+          "sub_primaria_n": 28,
+          "unidade": 26,
+          "unidade_n": 28
+        },
+        "FR": {
+          "sub_aceita": 7,
+          "sub_aceita_n": 18,
+          "sub_primaria": 6,
+          "sub_primaria_n": 18
+        },
+        "IA": {
+          "bloco": 39,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_aceita_n": 39,
+          "sub_primaria": 4,
+          "sub_primaria_n": 39,
+          "unidade": 39,
+          "unidade_n": 42
+        },
+        "MF": {
+          "bloco": 56,
+          "bloco_n": 66,
+          "sub_aceita": 29,
+          "sub_aceita_n": 58,
+          "sub_primaria": 25,
+          "sub_primaria_n": 58,
+          "unidade": 61,
+          "unidade_n": 66
+        },
+        "SO": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_aceita_n": 15,
+          "sub_primaria": 7,
+          "sub_primaria_n": 15,
+          "unidade": 30,
+          "unidade_n": 37
+        },
+        "TCC": {
+          "bloco": 26,
+          "bloco_n": 27,
+          "sub_aceita": 9,
+          "sub_aceita_n": 11,
+          "sub_primaria": 7,
+          "sub_primaria_n": 11,
+          "unidade": 17,
+          "unidade_n": 18
+        }
+      },
+      "totais": {
+        "bloco": 217,
+        "bloco_n": 237,
+        "sub_aceita": 107,
+        "sub_aceita_n": 251,
+        "sub_primaria": 84,
+        "sub_primaria_n": 251,
+        "unidade": 247,
+        "unidade_n": 284
+      }
+    }
+  },
+  "sha256_congelamento": "94e4b83943a3ed45ebc6c1128e7b06d99061308b0d353fcd452db157d324f955",
+  "slug_duplicado_golds_afetados": [
+    {
+      "acertos_por_slug_com_unidade_predita_fora_do_gold": [],
+      "curso": "SO",
+      "golds_que_usam": [
+        "1903-estruturas-de-controle",
+        "3103-threads",
+        "exemplo-threads-em-c-exemplo1",
+        "exemplo-threads-em-c-exemplo2",
+        "exemplo-threads-em-c-exemplo3"
+      ],
+      "slug": "conceitos-basicos"
+    },
+    {
+      "acertos_por_slug_com_unidade_predita_fora_do_gold": [],
+      "curso": "SO",
+      "golds_que_usam": [],
+      "slug": "estudo-de-casos"
+    }
+  ],
+  "tarefa": "W-X regua corrigida (v2) + remedicao #49"
+}
