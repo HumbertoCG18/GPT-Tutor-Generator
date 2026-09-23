@@ -1,5 +1,41 @@
 # Pendências — tracker vivo
 
+## Agente noturno #42
+
+- [CODE] Atualização operacional 20/09: baseline versionado no laboratório (`6657622`);
+  integração `operational-v4` com **333 testes Linux / 62 de política Windows verdes** e
+  Ruff crítico verde. Revisão Astra única: quatro achados corrigidos pelo Fable.
+  Smoke real: uma tentativa, bloqueada por `unexpected_model` em 1,486s; parada confirmada,
+  diff vazio, nenhuma edição. Causa ainda indeterminada; não confundir com OAuth expirado.
+  Novo diff aguarda Gate 2; campanha permanece aberta. Não repetir/resetar o smoke sem
+  autorização específica. Pacote/limites no [contrato](../../.mex/patterns/agente-noturno.md).
+- [USER] [#42](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/42):
+  [catálogo de goals](goals-noturnos.md) e [contrato](../../.mex/patterns/agente-noturno.md)
+  preparados em `feat/42-night-goals`, base `ce02a8f`; não integrados à branch motor.
+  Evidências e limites: [verificação do piloto](2026-09-20-piloto-noturno.md).
+- [CODE] Status operacional: **BLOQUEADO para noite real**. Piloto local no laboratório;
+  snapshot `delivery-v4` preservado. Em 20/09, coordenador reproduziu 110 testes Linux e
+  47 Windows verdes; cobertura de linhas 95,9% entrega / 89,7% política. Corrigidos contrato
+  de sucesso ZeroShot, parada não confirmada e três achados da revisão da política.
+- [CODE] Faltam integração operacional de quota/contexto, executor/fallback/revisor,
+  montagem validada do corpus/gold no preflight, limites de recursos e suspensão Windows.
+  Política simulada ou módulo de entrega isolado não liberam o runner.
+  Codex 0.155.1 instalado na sandbox; login ChatGPT confirmado, sem copiar tokens.
+  Adaptador de quota corrigido no snapshot `quota-v2`: 159 testes aprovados + 2 skips
+  reproduzidos pelo coordenador, compilação/lint crítico verdes. Integração operacional
+  segue bloqueada, apesar dos componentes de quota/supervisão/isolamento testados.
+- [CODE] Supervisor + isolamento: snapshot `isolation-v2`, coordenador reproduziu
+  **218 testes aprovados +2 skips**, 20,889s, zero ResourceWarnings, compile/lint verdes.
+  Revisões Astra consumidas: supervisor1, isolamento1. Achados corrigidos com regressões:
+  identidade/reap, escrita em checkpoints, ambiente antes do isolamento e aliases de mount.
+  Runtime RO, workspace RW, evidências fora do worker; bwrap0.11.1 já instalado.
+  Limites: workspace só no mount da raiz `/`, rede do worker desligada, sem cgroupCPU/RAM;
+  cobertura total dos subprocessos não medida. Não promover testes a autorização de noite.
+- [DECISION] Base/corpus/comandos e meta do primeiro goal serão congelados após inventário;
+  CRU-01 bloqueado até preflight validado. Sem novos gastos Datalab ou alteração do motor.
+- [CODE] Gate2 pendente. Não publicar PR como concluído, commitar, integrar ou suspender
+  automaticamente. Resultados do piloto e verificação final serão referenciados aqui.
+
 ## Concluído: prova matemática não é avaliação (17/09)
 
 - `orch-fix-defect` em `src/utils/helpers.py:682` (`auto_detect_category`): a cue `prova` casava

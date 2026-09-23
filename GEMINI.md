@@ -1,3 +1,6 @@
+Para goals ou agente noturno, ler `.mex/patterns/agente-noturno.md` e
+`docs/reports/goals-noturnos.md`; conferir bloqueios no tracker antes de iniciar.
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 

@@ -6,6 +6,7 @@ Lookup table for all pattern files in this directory. Check here before starting
 
 | Pattern | Use when |
 |---------|----------|
+| [agente-noturno.md](agente-noturno.md) | Selecionar goals, conferir preflight, quota, isolamento, retomada e suspensão opcional |
 | [workflow-tres-clis.md](workflow-tres-clis.md) | Alterar skills, MCPs e hooks em Claude Code, Codex e AGY, com validação de descoberta e drift |
 | [benchmark-codegraph.md](benchmark-codegraph.md) | Comparar índices de código com corpus congelado, gabarito independente e custos medidos |
 | [codegraph-fallback.md](codegraph-fallback.md) | Consultar Graphify primeiro e CBM como fallback, sem sincronização entre índices |
