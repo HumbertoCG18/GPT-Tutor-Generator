@@ -291,3 +291,7 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 /.workflow/local/
 # Legado: estado de worktrees ainda nao migradas.
 /.workflow-local/
+
+# worktrees do Alethe e pasta criada por processo sem a variavel SystemDrive (lixo de ambiente)
+/.alethe/
+/%SystemDrive%/
