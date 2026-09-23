@@ -803,7 +803,7 @@ class App(tk.Tk):
             requested_mode=requested_mode,
             repo_root=str(self._repo_dir() or ""),
             course_meta=self._course_meta() or {},
-            options=self._build_options(),
+            options=self._build_options(self._resolve_subject_profile(self._repo_dir())),
             active_subject=self._var_active_subject.get(),
             selected_entry_source=selected_entry_source,
             shutdown_after_build=self._shutdown_after_build.get(),
@@ -911,7 +911,7 @@ class App(tk.Tk):
             root_dir=repo_dir,
             course_meta=meta,
             entries=[],
-            options=self._build_options(),
+            options=self._build_options(active_subj),
             student_profile=self.student_store.profile,
             subject_profile=active_subj,
         )
@@ -1185,7 +1185,7 @@ class App(tk.Tk):
             root_dir=repo_dir,
             course_meta=meta,
             entries=entries,
-            options=self._build_options(),
+            options=self._build_options(subject),
             student_profile=student_profile,
             subject_profile=subject,
             progress_callback=on_progress,
@@ -1832,16 +1832,16 @@ class App(tk.Tk):
             "institution": self.var_institution.get().strip() or "PUCRS",
         }
 
-    def _build_options(self) -> Dict[str, object]:
-        """Monta o dict de opções para o RepoBuilder."""
-        name = self._var_active_subject.get()
-        subject = self.subject_store.get(name) if name and name != "(nenhuma)" else None
-        return _build_options_from_config(
-            self.var_default_mode.get(),
-            self.var_default_ocr_language.get(),
-            self.config_obj,
-            subject=subject,
-        )
+    def _build_options(self, subject: Optional[SubjectProfile]) -> Dict[str, object]:
+        """Monta o dict de opções para o RepoBuilder. `subject` é o MESMO perfil passado ao
+        builder (#64): flags sempre desse perfil. Modo/OCR vêm dos controles da tela quando
+        `subject` é a matéria ativa (a ativação os preenche com os defaults dela; edição manual
+        vale para a operação) e dos defaults do próprio perfil quando o repo é de outra matéria.
+        Mesma derivação do scripts/reprocess_assignments.py."""
+        mode, ocr = self.var_default_mode.get(), self.var_default_ocr_language.get()
+        if subject is not None and subject.name != self._var_active_subject.get():
+            mode, ocr = subject.default_mode, subject.default_ocr_lang
+        return _build_options_from_config(mode, ocr, self.config_obj, subject=subject)
 
     def _repo_dir(self) -> Optional[Path]:
         """Retorna o caminho completo do repositório a partir de var_repo_root.
@@ -2021,7 +2021,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),  # cópia da lista para thread safety
-                    options=self._build_options(),
+                    options=self._build_options(active_subj),
                     student_profile=student_p,
                     subject_profile=active_subj,
                     progress_callback=on_progress,
@@ -2151,7 +2151,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),
-                    options=self._build_options(),
+                    options=self._build_options(active_subj),
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj,
                     progress_callback=on_progress,
@@ -2203,7 +2203,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),
-                    options=self._build_options(),
+                    options=self._build_options(active_subj),
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj,
                     progress_callback=on_progress,
@@ -2302,7 +2302,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),
-                    options=op.options or self._build_options(),
+                    options=op.options or self._build_options(active_subj),
                     student_profile=student_p,
                     subject_profile=active_subj,
                     progress_callback=on_progress,
@@ -2442,7 +2442,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=[],
-                    options=self._build_options(),
+                    options=self._build_options(active_subj),
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj,
                 )

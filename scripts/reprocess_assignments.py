@@ -10,6 +10,12 @@ apply_unit_subunit -> indices), lendo o markdown ja gerado no repo.
 Uso:
     python scripts/reprocess_assignments.py "C:/.../X-Tutor"  ["C:/.../*-Tutor"] ...
     python scripts/reprocess_assignments.py --flags recompile_vocab "C:/.../X-Tutor"   # Fase 1b, decisao D
+    python scripts/reprocess_assignments.py --options-do-manifest "C:/.../X-Tutor"    # reproducao historica
+
+Options (#64): mesma derivacao da UI (_build_options_from_config: AppConfig + feature_flags do perfil
+casado por repo_root); --flags da CLI por ultimo, sempre vence. `manifest["options"]` so e a base com
+--options-do-manifest (reproduz execucoes antigas: manifest -> perfil -> --flags, a ordem de antes).
+Cada execucao fica registrada em manifest["assignment_run"].
 
 Faz backup de manifest.json (.bak) antes e imprime cobertura antes/depois.
 Deterministico: o residuo Gemini (enable_material_residual) NAO e ligado aqui.
@@ -85,7 +91,25 @@ def _coverage(manifest_path: Path) -> tuple[int, int]:
     return with_block, total
 
 
-def reprocess(repo: Path, flags: list, store=None) -> None:
+def _derive_options(manifest: dict, profile, flags: list, *, from_manifest: bool = False) -> dict:
+    if from_manifest:
+        options = dict(manifest.get("options") or {})
+    else:
+        from src.ui.app import _build_options_from_config
+        from src.ui.theme import AppConfig
+        from src.utils.helpers import DEFAULT_OCR_LANGUAGE
+        options = _build_options_from_config(
+            getattr(profile, "default_mode", None) or "auto",
+            getattr(profile, "default_ocr_lang", None) or DEFAULT_OCR_LANGUAGE,
+            AppConfig(),
+        )
+    if profile is not None:
+        _merge_profile_flags(options, profile)  # mesma injecao da UI; ponto de patch do motor_puro
+    _apply_flags(options, flags)  # CLI --flags aplicado por ultimo: sempre vence
+    return options
+
+
+def reprocess(repo: Path, flags: list, store=None, *, from_manifest: bool = False) -> None:
     manifest_path = repo / "manifest.json"
     if not manifest_path.exists():
         print(f"[skip] {repo.name}: sem manifest.json")
@@ -93,16 +117,14 @@ def reprocess(repo: Path, flags: list, store=None) -> None:
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     course_meta = manifest.get("course", {}) or {}
-    options = manifest.get("options", {}) or {}
 
     if store is None:
         store = SubjectStore()
     profile = _find_subject_profile(repo, store)
+    options = _derive_options(manifest, profile, flags, from_manifest=from_manifest)
+    print(f"[options] {repo.name}: base {'manifest (historica, explicita)' if from_manifest else 'UI (AppConfig)'}")
     if profile is not None:
-        _merge_profile_flags(options, profile)
         print(f"[profile] {repo.name}: perfil '{profile.name}' aplicado (feature_flags={profile.feature_flags})")
-
-    _apply_flags(options, flags)  # CLI --flags aplicado por ultimo: sempre vence
     if flags:
         print(f"[flags] {repo.name}: {', '.join(flags)}")
 
@@ -122,7 +144,8 @@ def reprocess(repo: Path, flags: list, store=None) -> None:
 
 
 def main(argv: list) -> int:
-    flags, argv = _parse_argv(argv)
+    from_manifest = "--options-do-manifest" in argv
+    flags, argv = _parse_argv([a for a in argv if a != "--options-do-manifest"])
     if not argv:
         print(__doc__)
         return 2
@@ -134,7 +157,7 @@ def main(argv: list) -> int:
         print("nenhum repo encontrado")
         return 1
     for repo in repos:
-        reprocess(repo, flags)
+        reprocess(repo, flags, from_manifest=from_manifest)
     return 0
 
 

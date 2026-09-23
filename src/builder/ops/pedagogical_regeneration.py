@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from src.builder.artifacts import student_state as student_state_v2
+from src.builder.ops.assignment_run import finish_run, mark, new_run, note
 from src.builder.ops.state_ops import (
     derive_active_unit_slug_from_state,
     ensure_unit_battery_directories,
@@ -93,7 +94,7 @@ def _run_moodle_structure_backfill(builder, live_manifest_entries) -> None:
         logger.warning("estrutura moodle: backfill pulado (%s: %s)", type(exc).__name__, exc, exc_info=True)
 
 
-def _run_vocabulary_compile_layer(builder, live_manifest_entries) -> None:
+def _run_vocabulary_compile_layer(builder, live_manifest_entries, run=None) -> None:
     """Fase 1b (02/09): vocabulario por curso compilado por LLM, 1x por curso (cache =
     `course/.glossary_curation.llm.json`). OPT-IN por flag de curso `compile_vocabulary`
     (mesmo padrao do voter: roda na task queue, ~1 chamada por unidade). `recompile_vocab`
@@ -101,24 +102,35 @@ def _run_vocabulary_compile_layer(builder, live_manifest_entries) -> None:
     mede SEM vocabulario por definicao). Roda ANTES da taxonomia: `glossary_md` le o sidecar
     fresco e os termos viram alias do topico neste mesmo passe. Falha nunca derruba a build."""
     options = getattr(builder, "options", {}) or {}
-    if not bool(options.get("compile_vocabulary", False)) or os.environ.get("TUTOR_NO_VOCAB_COMPILE"):
+    if not bool(options.get("compile_vocabulary", False)):
+        return
+    if os.environ.get("TUTOR_NO_VOCAB_COMPILE"):
+        mark(run, "compile_vocabulary", "kill_switch_env")
         return
     try:
         client = _resolve_gemini_client(builder)
         if client is None:
+            mark(run, "compile_vocabulary", "no_gemini_client")
             return
         from src.builder.core import vocabulary_compile
         from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
-        vocabulary_compile.compile_course_vocabulary(
+        vocab = vocabulary_compile.compile_course_vocabulary(
             builder.root_dir, live_manifest_entries, load_internal_content_taxonomy(builder.root_dir), client,
             recompile=bool(options.get("recompile_vocab", False)),
             refilter=bool(options.get("refilter_vocab", False)),
         )
+        if vocab is None:
+            mark(run, "compile_vocabulary", "not_compiled")
+        else:
+            erros = list(vocab.get("_unidades_com_erro") or [])
+            note(run, "compile_vocabulary", {"units_with_error": len(erros)}, partial=bool(erros))
+            mark(run, "compile_vocabulary")
     except Exception as exc:
+        mark(run, "compile_vocabulary", f"error:{type(exc).__name__}")
         logger.warning("vocab: compilacao pulada nesta regeneracao (%s: %s)", type(exc).__name__, exc, exc_info=True)
 
 
-def _run_anchor_engine_layer(builder, live_manifest_entries):
+def _run_anchor_engine_layer(builder, live_manifest_entries, run=None):
     """Camada temporal do motor (D9). Falha aqui NUNCA derruba a regeneração:
     camada é opcional — loga e devolve as entries como estão (funil intacto)."""
     try:
@@ -127,6 +139,8 @@ def _run_anchor_engine_layer(builder, live_manifest_entries):
         from src.builder.routing.motor.llm_vote import content_key
 
         voter = _build_motor_voter(builder)
+        if voter is None:
+            mark(run, "use_llm_voter", "voter_unavailable")
         if voter is not None:
             live_keys = {content_key(e, builder.root_dir) for e in live_manifest_entries}
             pruned = voter.prune(live_keys)
@@ -140,9 +154,15 @@ def _run_anchor_engine_layer(builder, live_manifest_entries):
             voter=voter,
             markdown_fn=lambda e: _entry_markdown_text_for_file_map(builder.root_dir, e) or "",
         )
+        mark(run, "use_anchor_engine")
         if voter is not None:
-            logger.info("motor/voter round_summary: %s", voter.round_summary())
+            summary = voter.round_summary()
+            note(run, "use_llm_voter", summary,
+                 partial=bool(summary.get("errors") or summary.get("skipped_cap") or summary.get("no_key")))
+            mark(run, "use_llm_voter")
+            logger.info("motor/voter round_summary: %s", summary)
     except Exception as exc:
+        mark(run, "use_anchor_engine", f"error:{type(exc).__name__}")
         # review F4 T7d: exc_info=True p/ stacktrace completo no log (camada
         # isolada não derruba a build, mas o traceback é essencial p/ diagnosticar).
         logger.warning("motor D9: camada temporal pulada nesta regeneração (%s: %s)",
@@ -150,7 +170,7 @@ def _run_anchor_engine_layer(builder, live_manifest_entries):
     return live_manifest_entries
 
 
-def run_material_residual(builder, live_manifest_entries):
+def run_material_residual(builder, live_manifest_entries, run=None):
     """Camada 2: residuo Gemini p/ materiais sem bloco. OPT-IN EXPLICITO.
 
     So roda quando `builder.options['enable_material_residual']` for True E houver
@@ -168,6 +188,7 @@ def run_material_residual(builder, live_manifest_entries):
 
     gemini_client = _resolve_gemini_client(builder)
     if gemini_client is None:
+        mark(run, "enable_material_residual", "no_gemini_client")
         return live_manifest_entries
 
     from src.builder.artifacts.cronograma_health import _entry_block_id
@@ -181,6 +202,8 @@ def run_material_residual(builder, live_manifest_entries):
             default_factory=list,
             description="3-8 palavras-chave tecnicas do material.",
         )
+
+    residual_errors = [0]
 
     def _extract_concepts(text: str) -> list:
         # Adapter sobre GeminiClient.summarize_bundle. summarize_bundle exige
@@ -198,6 +221,7 @@ def run_material_residual(builder, live_manifest_entries):
             kws = getattr(res, "keywords", None) or []
             return [str(w).strip() for w in kws if str(w).strip()]
         except Exception:
+            residual_errors[0] += 1
             return []
 
     _blocks = builder._load_timeline_blocks()
@@ -219,6 +243,12 @@ def run_material_residual(builder, live_manifest_entries):
                 tags = [t for t in (by_id[eid].get("auto_tags") or []) if not str(t).startswith("bloco:")]
                 tags.append(f"bloco:{bid}")
                 by_id[eid]["auto_tags"] = tags
+    if not _blocks:
+        mark(run, "enable_material_residual", "no_timeline_blocks")
+    else:
+        note(run, "enable_material_residual", {"orphans": len(orphans), "errors": residual_errors[0]},
+             partial=bool(residual_errors[0]))
+        mark(run, "enable_material_residual")
     return live_manifest_entries
 
 
@@ -450,8 +480,9 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
     runtime_course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
 
+    run = new_run(builder.options)
     _run_moodle_structure_backfill(builder, live_manifest_entries)
-    _run_vocabulary_compile_layer(builder, live_manifest_entries)
+    _run_vocabulary_compile_layer(builder, live_manifest_entries, run)
     content_taxonomy = build_rich_content_taxonomy_fn(
         builder.root_dir,
         runtime_course_meta,
@@ -566,13 +597,13 @@ def regenerate_pedagogical_files(
     # apply_unit_subunit_fn abaixo), incluindo semeadura de entries novos.
 
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
-    live_manifest_entries = run_material_residual(builder, live_manifest_entries)
+    live_manifest_entries = run_material_residual(builder, live_manifest_entries, run)
 
     _code_curation = builder._load_code_curation()
     live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation, blocks=enriched_timeline_index.get("blocks") or [])
     # Cutover passo 3 (2026-08-17): default ON — opt-out explicito por curso via
     # feature_flags {"use_concept_resolver": false} no subjects.json.
-    if bool(builder.options.get("use_concept_resolver", True)):
+    if run["effective"]["use_concept_resolver"]:
         from src.builder.routing.resolver_apply import apply_concept_resolver
         live_manifest_entries = apply_concept_resolver(
             live_manifest_entries,
@@ -581,13 +612,14 @@ def regenerate_pedagogical_files(
             _code_curation,
             builder.root_dir,
         )
+        mark(run, "use_concept_resolver")
 
     # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
     # temporal_* sem tocar computed_block_id (KB). Motor D9 (use_anchor_engine,
     # FASE 4); o legado use_anchor_placement foi removido em 07/09/2026
     # (nunca ligado em produto; flag desconhecida e ignorada).
-    if bool(builder.options.get("use_anchor_engine", False)):
-        live_manifest_entries = _run_anchor_engine_layer(builder, live_manifest_entries)
+    if run["effective"]["use_anchor_engine"]:
+        live_manifest_entries = _run_anchor_engine_layer(builder, live_manifest_entries, run)
 
     # F4: unit/subunit do motor, reconciliados contra o bloco TEMPORAL.
     # 2026-08-21: esta fase rodava ANTES da camada temporal e reconciliava
@@ -595,7 +627,7 @@ def regenerate_pedagogical_files(
     # nunca via a decisao da ancora (a que a regua mede). Movida para depois:
     # unidade = unidade do bloco temporal (+ heranca do vizinho de conteudo),
     # medido 130/188 -> 178/188.
-    if bool(builder.options.get("use_concept_resolver", True)):
+    if run["effective"]["use_concept_resolver"]:
         live_manifest_entries = apply_unit_subunit_fn(
             live_manifest_entries,
             enriched_timeline_index.get("blocks") or [],
@@ -606,6 +638,7 @@ def regenerate_pedagogical_files(
         )
 
     manifest["entries"] = live_manifest_entries
+    manifest["assignment_run"] = finish_run(run, live_manifest_entries, enriched_timeline_index.get("blocks") or [])
 
     try:
         # Duplicatas confirmadas (duplicate_of) ficam FORA dos indices

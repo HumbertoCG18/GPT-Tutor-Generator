@@ -357,7 +357,7 @@
   <div class="stage s-purple">
     <h4>⑤ ROTEAMENTO PEDAGÓGICO (unit / bloco)</h4>
     <div class="io">Precedência: <b>manual</b> (<code>manual_unit_slug</code>, <code>manual_timeline_block_id</code>) → <b>card Moodle</b> (<code>source_section</code>) → <b>léxico</b> (filename/tags) → <b>conteúdo</b> (<code>routing/file_map.py</code> scoring O(E×B))<br>
-    Resultado no <code>manifest.json</code>: <code>computed_unit_slug</code>, <code>computed_block_id</code>, confiança, banda, razões</div>
+    Resultado no <code>manifest.json</code>: <code>computed_unit_slug</code>, <code>computed_block_id</code>, confiança, banda, razões. Cada regeneração grava <code>assignment_run</code> (flags pedidas, efetivas, camadas executadas, fallback e origem do bloco temporal); <code>options</code> fica como registro da criação (#64)</div>
   </div>
   <div class="arrow">↓</div>
   <div class="stage s-warn">
