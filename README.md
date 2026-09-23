@@ -353,7 +353,7 @@ Roadmap completo em [`ROADMAP.md`](ROADMAP.md). Próximos focos:
 
 | Tema | Descrição |
 |---|---|
-| **Cronograma editável** | Tabela com edição inline de tipo/unidade e escopo manual de avaliações (spec em `docs/superpowers/specs/`) |
+| **Cronograma editável** | Tabela com edição inline de tipo/unidade e escopo manual de avaliações (spec em `docs/specs/Feitos/`) |
 | **Tutor proativo** | Contexto de "semana atual" nas instruções, prontidão pré-prova (escopo × progresso do aluno) |
 | **Desempenho** | Paralelização de chunks do Datalab, retry com backoff nas integrações |
 | **Novos destinos** | Export NotebookLM além de Claude/GPT/Gemini |

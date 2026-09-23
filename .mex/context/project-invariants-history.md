@@ -32,8 +32,8 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
 - **Arquivamento de concluídos (NÃO-NEGOCIÁVEL):** quando um plano termina de executar e passa 100%
   (gate verde — golden/eval/pytest verdes, sem drift), MOVER os arquivos Markdown concluídos (plano + spec + report associados)
-  para a subpasta de concluídos do diretório de origem: `docs/superpowers/plans/Feitos/`,
-  `docs/superpowers/specs/Feitos/`, `docs/reports/Feitos/`, `.git/sdd/Feitos/`. Usar `git mv` quando
+  para a subpasta de concluídos do diretório de origem: `docs/plans/Feitos/`,
+  `docs/specs/Feitos/`, `docs/reports/Feitos/`, `.git/sdd/Feitos/`. Usar `git mv` quando
   trackeado (preserva histórico). A RAIZ desses diretórios só contém trabalho em andamento ou a-fazer.
 - **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/pendencias.md` SEMPRE
   atualizado: ao concluir um item, removê-lo da lista viva e registrá-lo na seção "Concluído"; ao
