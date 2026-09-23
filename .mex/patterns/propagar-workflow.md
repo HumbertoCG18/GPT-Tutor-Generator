@@ -15,7 +15,7 @@ branch integrada para as demais. Procedimento de 22/09 (#44, PRs #53 e #55).
    - `git merge-file` limpo: resultado do merge;
    - snapshots de `.workflow/` com hash no manifest: sempre a fonte canônica;
    - conflito em conteúdo de governança que a versão final evolui: versão final, somando
-     fatos que só o destino registrava (ex.: linhas do `.workflow/PENDING.md`);
+     fatos que só o destino registrava (ex.: linhas do `.workflow/pendencias_workflow.md`);
    - destino com versão MAIS NOVA (conferir datas e commits): manter a do destino e
      levá-la de volta à origem depois.
 4. `main` só por PR. Antes de qualquer push, `git log origin/<base>..HEAD`: nenhum commit
