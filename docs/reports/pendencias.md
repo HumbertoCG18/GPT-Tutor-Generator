@@ -2,7 +2,7 @@
 
 ## [USER] Workflow de entrega e engenharia do produto (17/09)
 
-- [#14](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): contrato documental preparado em `2026-09-19-contrato-qualidade-c6.md`; Gate 2 pendente. Não implementa os checks web.
+- [#14](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): contrato documental preparado em `2026-09-19-contrato-qualidade-c6.md`; PR para a main aberto em 23/09, merge aguarda autorização. Não implementa os checks web.
 - [#41](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/41): ativar os gates na primeira fatia vertical C6; stack, baseline de desempenho, schema e CI ainda pendentes. Gate 1 próprio antes de implementar.
 
 ## Concluído

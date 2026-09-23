@@ -5,8 +5,8 @@ Data: 2026-09-19. `main` em `9b33f8b`. Reconciliação concluída no
 
 ## Objetivo da próxima sessão
 
-Rodada de reconciliação encerrada. #11 entregue na PR #40 e #12 na PR #39, ambos com
-check core verde e merge ainda não autorizado. #14 tem contrato documental preparado;
+Rodada de reconciliação encerrada. #11 entregue na PR #40 e #12 na PR #39, ambos
+mergeados na main em 23/09. #14 tem contrato documental em PR para a main;
 ativação web segue na #41. Após Gate 2 documental, preparar Gate 1 do loop noturno.
 
 ## Estado verificado
@@ -32,7 +32,7 @@ ativação web segue na #41. Após Gate 2 documental, preparar Gate 1 do loop no
 
 ## Gaps na ordem de execução
 
-1. **Fechar entregas de produto:** #11/#12 aguardam merge autorizado; #14 aguarda Gate 2
+1. **Fechar entregas de produto:** #11/#12 concluídas; #14 aguarda merge do PR
    do contrato `2026-09-19-contrato-qualidade-c6.md`. #41 preserva ativação futura; não
    instalar ferramentas web antes da stack. Estado e evidências no tracker.
 2. **Construir o loop noturno por último:** abrir issue e piloto isolado no
