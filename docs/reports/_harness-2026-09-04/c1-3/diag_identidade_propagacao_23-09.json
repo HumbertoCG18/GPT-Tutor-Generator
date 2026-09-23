@@ -1,0 +1,5864 @@
+{
+ "teste_minimo": {
+  "slug_repetido_em_u1_e_u2": "bezier",
+  "controle_slug_unico": "",
+  "confirmado": true
+ },
+ "fidelidade": "igual",
+ "placar": {
+  "bloco": 223,
+  "bloco_n": 237,
+  "unidade": 248,
+  "unidade_n": 284,
+  "sub_primaria": 86,
+  "sub_n": 251
+ },
+ "placar_por_curso": {
+  "MF": {
+   "bloco_n": 66,
+   "bloco": 60,
+   "unidade_n": 66,
+   "unidade": 63,
+   "sub_n": 58,
+   "sub_primaria": 25,
+   "sub_aceita": 29
+  },
+  "SO": {
+   "bloco_n": 39,
+   "bloco": 36,
+   "unidade_n": 37,
+   "unidade": 30,
+   "sub_n": 15,
+   "sub_primaria": 7,
+   "sub_aceita": 8
+  },
+  "IA": {
+   "bloco_n": 42,
+   "bloco": 41,
+   "unidade_n": 42,
+   "unidade": 39,
+   "sub_n": 39,
+   "sub_primaria": 4,
+   "sub_aceita": 5
+  },
+  "ES2": {
+   "bloco_n": 28,
+   "bloco": 27,
+   "unidade_n": 28,
+   "unidade": 26,
+   "sub_n": 28,
+   "sub_primaria": 7,
+   "sub_aceita": 8
+  },
+  "TCC": {
+   "bloco_n": 27,
+   "bloco": 26,
+   "unidade_n": 18,
+   "unidade": 17,
+   "sub_n": 11,
+   "sub_primaria": 7,
+   "sub_aceita": 9
+  },
+  "CG": {
+   "bloco_n": 35,
+   "bloco": 33,
+   "unidade_n": 93,
+   "unidade": 73,
+   "sub_n": 82,
+   "sub_primaria": 30,
+   "sub_aceita": 43
+  },
+  "FR": {
+   "sub_n": 18,
+   "sub_primaria": 6,
+   "sub_aceita": 7
+  }
+ },
+ "sha256_registro_pre_gold": "7f06d96ebb941db50954d86d111145aeec217ce6c4f79995b896f6aaca597e4d",
+ "identidade": {
+  "chamadas_regra_titulo": 170,
+  "vencedor_com_slug_repetido": 1,
+  "frases_diferentes_do_par": 1,
+  "resultado_muda_com_par": [],
+  "slugs_repetidos_por_curso": {
+   "MF": {},
+   "SO": {
+    "estudo-de-casos": 5,
+    "conceitos-basicos": 2
+   },
+   "IA": {},
+   "ES2": {},
+   "TCC": {},
+   "CG": {},
+   "FR": {}
+  }
+ },
+ "propagacao_por_curso": {
+  "MF": {
+   "mudou": 15,
+   "termos": {
+    "unidade-01-metodos-formais|linguagens-de-especificacao-e-logicas|Linguagens de Especificação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-metodos-formais|fundamentos-de-logica-de-primeira-ordem|Lógica de Primeira Ordem": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-metodos-formais|especificacao-de-conjuntos-indutivos|Conjuntos Indutivos": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-metodos-formais|especificacao-de-funcoes-recursivas|Funções Recursivas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-metodos-formais|especificacao-de-funcoes-recursivas|equacionais": {
+     "origem": "propagado",
+     "doadores": [
+      "exercicioscorrecaoinducaomatematica",
+      "formalizacaoalgoritmos-recursao"
+     ]
+    },
+    "unidade-01-metodos-formais|especificacao-de-funcoes-recursivas|especificacoes": {
+     "origem": "propagado",
+     "doadores": [
+      "exercicioscorrecaoinducaomatematica",
+      "formalizacaoalgoritmos-recursao"
+     ]
+    },
+    "unidade-01-metodos-formais|especificacao-de-funcoes-recursivas|recursao": {
+     "origem": "propagado",
+     "doadores": [
+      "exerciciosformalizacaoalgoritmosrecursao",
+      "formalizacaoalgoritmos-recursao",
+      "formalizacaoalgoritmos-recursao2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|code": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|dafny": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|extraido": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|generating": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "mcs"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|github": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|install": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-01-metodos-formais|abordagens-para-verificacao-formal|verify": {
+     "origem": "propagado",
+     "doadores": [
+      "aws-encryption-sdk",
+      "eth2"
+     ]
+    },
+    "unidade-02-verificacao-de-programas|logica-de-hoare|pagina": {
+     "origem": "propagado",
+     "doadores": [
+      "logicadehoare-exercicios-respostas",
+      "logicadehoare1-exercicios-respostas"
+     ]
+    },
+    "unidade-02-verificacao-de-programas|pre-e-pos-condicoes|Pós Condições": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-verificacao-de-programas|correcao-parcial-e-total|Correção Parcial": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-verificacao-de-programas|correcao-parcial-e-total|Total": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-verificacao-de-programas|invariante-e-variante-de-laco|Invariante": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-verificacao-de-programas|invariante-e-variante-de-laco|Variante de Laço": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-verificacao-de-programas|softwares-de-suporte-a-verificacao-formal-de-programas|Suporte à Verificação Formal de Programas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|fundamentos-de-logicas-temporais|Lógicas Temporais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes|Concorrentes": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes|Especificação de Propriedades para Sistemas Sequenciais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes|Propriedades para Sistemas Sequenciais e Concorrentes": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|softwares-de-suporte-a-verificacao-formal-de-modelos|Suporte à Verificação Formal de Modelos": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|verificacao-de-modelos-model-checking|Model Checking": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-verificacao-de-modelos|verificacao-de-modelos-model-checking|Modelos (Model Checking)": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "conjuntosindutivos",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "exemplos-de-aplicacoes",
+     "sub_2a": "especificacao-de-conjuntos-indutivos",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Conjuntos Indutivos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "especificacao-de-conjuntos-indutivos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosformalizacaoalgoritmosrecursao2",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "recursao",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosformalizacaoalgoritmosrecursao",
+        "formalizacaoalgoritmos-recursao",
+        "formalizacaoalgoritmos-recursao2"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 3
+      }
+     ],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosformalizacaoalgoritmosrecursao3",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "formalizacaoalgoritmos-recursao3",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "exemplos-de-aplicacoes",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Funções Recursivas",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "recursao",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosformalizacaoalgoritmosrecursao",
+        "formalizacaoalgoritmos-recursao",
+        "formalizacaoalgoritmos-recursao2"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 3
+      }
+     ],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosisabelle2",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "especificacoes",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": [
+      "provadores-de-teoremas"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "provasindutivas-especificacoesrecursivas",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "exemplos-de-aplicacoes",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "especificacoes",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "recursao",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosformalizacaoalgoritmosrecursao",
+        "formalizacaoalgoritmos-recursao",
+        "formalizacaoalgoritmos-recursao2"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 3
+      }
+     ],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "provasindutivas-especificacoesrecursivas-arvores",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "especificacoes",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "provasindutivas-especificacoesrecursivas-listas",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "especificacoes",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "recursao",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosformalizacaoalgoritmosrecursao",
+        "formalizacaoalgoritmos-recursao",
+        "formalizacaoalgoritmos-recursao2"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 3
+      }
+     ],
+     "gold": [
+      "especificacao-de-funcoes-recursivas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "t1-2026-1",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "especificacao-de-funcoes-recursivas",
+     "sub_2a": "especificacao-de-funcoes-recursivas",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Funções Recursivas",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "equacionais",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "especificacoes",
+       "origem": "propagado",
+       "doadores": [
+        "exercicioscorrecaoinducaomatematica",
+        "formalizacaoalgoritmos-recursao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "correcaoterminacao",
+     "unidade": "unidade-02-verificacao-de-programas",
+     "sub_1a": "logica-de-hoare",
+     "sub_2a": "correcao-parcial-e-total",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Correção Parcial",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "Total",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "correcao-parcial-e-total"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exerciciosformalizacaoalgoritmosinvariantes",
+     "unidade": "unidade-02-verificacao-de-programas",
+     "sub_1a": "invariante-e-variante-de-laco",
+     "sub_2a": "invariante-e-variante-de-laco",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Invariante",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "invariante-e-variante-de-laco"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "logicadehoare2",
+     "unidade": "unidade-02-verificacao-de-programas",
+     "sub_1a": "invariante-e-variante-de-laco",
+     "sub_2a": "invariante-e-variante-de-laco",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Invariante",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "logica-de-hoare"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "archive-of-formal-proofs-355fb8",
+     "unidade": "unidade-01-metodos-formais",
+     "sub_1a": "sistemas-formais",
+     "sub_2a": "abordagens-para-verificacao-formal",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "extraido",
+       "origem": "propagado",
+       "doadores": [
+        "aws-encryption-sdk",
+        "eth2"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "provadores-de-teoremas"
+     ],
+     "efeito": "erro_mantido"
+    }
+   ],
+   "slugs_repetidos": {}
+  },
+  "SO": {
+   "mudou": 9,
+   "termos": {
+    "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|estados": {
+     "origem": "propagado",
+     "doadores": [
+      "1203-processos",
+      "lista1-gab"
+     ]
+    },
+    "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|fork": {
+     "origem": "propagado",
+     "doadores": [
+      "1703-chamada-de-sistema",
+      "lista1-gab"
+     ]
+    },
+    "unidade-01-introducao-ao-estudo-de-sistemas-operacionais|chamadas-de-sistema|processo": {
+     "origem": "propagado",
+     "doadores": [
+      "1203-processos",
+      "lista1-gab"
+     ]
+    },
+    "unidade-02-gerencia-do-processador|escalonamento|defini": {
+     "origem": "propagado",
+     "doadores": [
+      "2403-escalonamento-de-processos",
+      "3103-threads"
+     ]
+    },
+    "unidade-02-gerencia-do-processador|escalonamento|programa": {
+     "origem": "propagado",
+     "doadores": [
+      "3103-threads",
+      "biblioteca-em-c-pthread"
+     ]
+    },
+    "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|Comunicação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|sincronização de processos": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-programacao-concorrente|comunicacao-e-sincronizacao-de-processos|vantagens": {
+     "origem": "propagado",
+     "doadores": [
+      "0704-laminas-comunicacao-e-sincronizacao",
+      "1404-laminas-ipc"
+     ]
+    },
+    "unidade-04-deadlock|deteccao-e-recuperacao|Detecção": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-deadlock|deteccao-e-recuperacao|recuperação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-07-gerencia-de-entrada-e-saida|dispositivos-de-entrada-e-saida|Dispositivos de entrada": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "2603-algoritmos-de-escalonamento",
+     "unidade": "unidade-02-gerencia-do-processador",
+     "sub_1a": "algoritmos-de-escalonamento",
+     "sub_2a": "algoritmos-de-escalonamento",
+     "razao": "propagado-headings",
+     "termos_presentes": [],
+     "gold": [
+      "algoritmos-de-escalonamento"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+     "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+     "sub_1a": "",
+     "sub_2a": "chamadas-de-sistema",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "fork",
+       "origem": "propagado",
+       "doadores": [
+        "1703-chamada-de-sistema",
+        "lista1-gab"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "chamadas-de-sistema"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+     "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+     "sub_1a": "",
+     "sub_2a": "chamadas-de-sistema",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "fork",
+       "origem": "propagado",
+       "doadores": [
+        "1703-chamada-de-sistema",
+        "lista1-gab"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "chamadas-de-sistema"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+     "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+     "sub_1a": "",
+     "sub_2a": "chamadas-de-sistema",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "fork",
+       "origem": "propagado",
+       "doadores": [
+        "1703-chamada-de-sistema",
+        "lista1-gab"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "chamadas-de-sistema"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "0904-laminas-semaforos",
+     "unidade": "unidade-03-programacao-concorrente",
+     "sub_1a": "",
+     "sub_2a": "comunicacao-e-sincronizacao-de-processos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "14-04-troca-de-mensagens",
+     "unidade": "unidade-03-programacao-concorrente",
+     "sub_1a": "",
+     "sub_2a": "comunicacao-e-sincronizacao-de-processos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "1404-troca-de-mensagens",
+     "unidade": "unidade-03-programacao-concorrente",
+     "sub_1a": "",
+     "sub_2a": "comunicacao-e-sincronizacao-de-processos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "laminas-cs-4244-internet-programming-sockets-programming",
+     "unidade": "unidade-03-programacao-concorrente",
+     "sub_1a": "",
+     "sub_2a": "comunicacao-e-sincronizacao-de-processos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "laminas-sockets-material-alternativo-em-pt",
+     "unidade": "unidade-02-gerencia-do-processador",
+     "sub_1a": "",
+     "sub_2a": "escalonamento",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "programa",
+       "origem": "propagado",
+       "doadores": [
+        "3103-threads",
+        "biblioteca-em-c-pthread"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    }
+   ],
+   "slugs_repetidos": {
+    "estudo-de-casos": 5,
+    "conceitos-basicos": 2
+   }
+  },
+  "IA": {
+   "mudou": 21,
+   "termos": {
+    "unidade-de-aprendizagem-01-visao-geral|subareas-e-disciplinas-afins|Subáreas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-01-visao-geral|subareas-e-disciplinas-afins|disciplinas afins": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-02-solucao-de-problemas|busca-informada-heuristica|Busca informada": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-02-solucao-de-problemas|busca-informada-heuristica|heurística": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-02-solucao-de-problemas|algoritmos-de-busca-com-informacao|source": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-dijkstra",
+      "future-of-jobs-report-2025"
+     ]
+    },
+    "unidade-de-aprendizagem-04-raciocinio-sob-incerteza|independencia-e-permutabilidade|Independência": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-04-raciocinio-sob-incerteza|independencia-e-permutabilidade|Permutabilidade": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|2024": {
+     "origem": "propagado",
+     "doadores": [
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|acesso": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|algoritmo": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "aula-sobre-agrupamento-parte-1-particional"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|analise": {
+     "origem": "propagado",
+     "doadores": [
+      "analise-exploratoria-de-dados-exemplo-1",
+      "analise-exploratoria-dos-dados-exemplo-2"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|anotado": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|antes": {
+     "origem": "propagado",
+     "doadores": [
+      "caracteristicas-dos-dados",
+      "visao-geral-introducao-e-historico"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|arsenal": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|artificial": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao",
+      "aula-sobre-agrupamento-parte-1-particional",
+      "aula-sobre-agrupamento-parte-2-hierarquico",
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|atualizado": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-iris-atualizado",
+      "rede-perceptron-exemplo-atualizado"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|basicos": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|cada": {
+     "origem": "propagado",
+     "doadores": [
+      "arvores-de-decisao",
+      "caracteristicas-dos-dados",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|caracteristicas": {
+     "origem": "propagado",
+     "doadores": [
+      "arvores-de-decisao",
+      "caracteristicas-dos-dados"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|cardio": {
+     "origem": "propagado",
+     "doadores": [
+      "k-nn-para-classificacao-exemplo-cardio",
+      "mlp-regressao-cardio"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|carga": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|chamado": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|conjunto": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|dados": {
+     "origem": "propagado",
+     "doadores": [
+      "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "algoritmo-de-classificacao-k-nn",
+      "analise-exploratoria-de-dados-exemplo-1",
+      "analise-exploratoria-dos-dados-exemplo-2",
+      "arvores-de-decisao",
+      "caracteristicas-dos-dados",
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "mlp-regressao-cardio"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|datasets": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|divisao": {
+     "origem": "propagado",
+     "doadores": [
+      "aula-sobre-agrupamento-parte-2-hierarquico",
+      "rede-perceptron-exemplo-atualizado"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|duncan": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|entender": {
+     "origem": "propagado",
+     "doadores": [
+      "caracteristicas-dos-dados",
+      "visao-geral-introducao-e-historico"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|escalando": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|escrito": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|exploratoria": {
+     "origem": "propagado",
+     "doadores": [
+      "analise-exploratoria-de-dados-exemplo-1",
+      "analise-exploratoria-dos-dados-exemplo-2"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|features": {
+     "origem": "propagado",
+     "doadores": [
+      "arvores-de-decisao",
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|grid": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "survey-on-clustering"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|inducao": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|inteligencia": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao",
+      "aula-sobre-agrupamento-parte-1-particional",
+      "aula-sobre-agrupamento-parte-2-hierarquico",
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|ipynb": {
+     "origem": "propagado",
+     "doadores": [
+      "agrupamento-usando-k-means-exemplo-1-ipynb",
+      "agrupamento-usando-k-means-exemplo-2-ipynb",
+      "mlp-xoripynb"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|mais": {
+     "origem": "propagado",
+     "doadores": [
+      "agrupamento-hierarquico-exemplo-1",
+      "exemplo-2-k-nn-com-iriscsv-mais-completo",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|modelagem": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|multilayer": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "mlp-classificacao-iris-atualizado",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|neurais": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "mlp-classificacao-iris-atualizado"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|neuronio": {
+     "origem": "propagado",
+     "doadores": [
+      "rede-perceptron",
+      "rede-perceptron-e-equacao-de-reta"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|nome": {
+     "origem": "propagado",
+     "doadores": [
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|pacote": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|pacotes": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|perceptron": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "mlp-classificacao-iris-atualizado",
+      "rede-perceptron",
+      "rede-perceptron-classificacao-planta-iris",
+      "rede-perceptron-e-equacao-de-reta",
+      "rede-perceptron-exemplo-atualizado"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|pipeline": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|planta": {
+     "origem": "propagado",
+     "doadores": [
+      "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+      "analise-exploratoria-de-dados-exemplo-1",
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "rede-perceptron-classificacao-planta-iris"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|pontos": {
+     "origem": "propagado",
+     "doadores": [
+      "agrupamento-hierarquico-exemplo-1",
+      "agrupamento-usando-k-means-exemplo-1-ipynb"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|preparacao": {
+     "origem": "propagado",
+     "doadores": [
+      "analise-exploratoria-dos-dados-exemplo-2",
+      "caracteristicas-dos-dados",
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|prof": {
+     "origem": "propagado",
+     "doadores": [
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|prova": {
+     "origem": "propagado",
+     "doadores": [
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|rede": {
+     "origem": "propagado",
+     "doadores": [
+      "rede-perceptron",
+      "rede-perceptron-classificacao-planta-iris",
+      "rede-perceptron-e-equacao-de-reta",
+      "rede-perceptron-exemplo-atualizado"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|redes": {
+     "origem": "propagado",
+     "doadores": [
+      "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+      "mlp-classificacao-iris-atualizado",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|regressao": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes",
+      "k-nn-para-regressao-exemplo-imc",
+      "mlp-regressao-cardio",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|roteiro": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao",
+      "rede-perceptron",
+      "visao-geral-introducao-e-historico"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|rotulado": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|ruiz": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|score": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|separacao": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|silvia": {
+     "origem": "propagado",
+     "doadores": [
+      "arvores-de-decisao",
+      "prova-1-2024-02",
+      "prova-1-202402"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|sklearn": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|subareas": {
+     "origem": "propagado",
+     "doadores": [
+      "algoritmo-de-classificacao-k-nn",
+      "arvores-de-decisao",
+      "aula-sobre-agrupamento-parte-1-particional",
+      "aula-sobre-agrupamento-parte-2-hierarquico"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|tambem": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|target": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|tipo": {
+     "origem": "propagado",
+     "doadores": [
+      "caracteristicas-dos-dados",
+      "rede-perceptron"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|unitaria": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|vamos": {
+     "origem": "propagado",
+     "doadores": [
+      "caracteristicas-dos-dados",
+      "visao-geral-introducao-e-historico"
+     ]
+    },
+    "unidade-de-aprendizagem-05-aprendizado-de-maquina|introducao-ao-aprendizado-de-maquina|variancia": {
+     "origem": "propagado",
+     "doadores": [
+      "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+      "exemplo-2-arvores-de-decisao-regressao-diabetes"
+     ]
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "cap-sobre-algoritmos-geneticos-lacerda-e-outros",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "outros-operadores",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "programa-exemplo-ag",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "ag-feito-em-aula-pelo-luca",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "",
+     "sub_2a": "busca-informada-heuristica",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "heurística",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "minimax-teoria",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "algoritmos-de-busca-com-informacao",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "minimax",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "algoritmos-de-busca-com-informacao",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "respostas-da-lista-i-feito-pela-aluna-chiara",
+     "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+     "sub_1a": "algoritmos-de-busca-com-informacao",
+     "sub_2a": "algoritmos-de-busca-com-informacao",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "source",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-dijkstra",
+        "future-of-jobs-report-2025"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "introducao-a-ml",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "introducao-ao-aprendizado-de-maquina",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "anotado",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "caracteristicas",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "divisao",
+       "origem": "propagado",
+       "doadores": [
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "features",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inducao",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neurais",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "redes",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "regressao",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "k-nn-para-regressao-exemplo-imc",
+        "mlp-regressao-cardio",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rotulado",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "subareas",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipo",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "introducao-ao-aprendizado-de-maquina"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "artigo-usando-k-nn-em-texto",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "introducao-ao-aprendizado-de-maquina",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "analise",
+       "origem": "propagado",
+       "doadores": [
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "caracteristicas",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "nome",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pontos",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "agrupamento-usando-k-means-exemplo-1-ipynb"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "preparacao",
+       "origem": "propagado",
+       "doadores": [
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "regressao",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "k-nn-para-regressao-exemplo-imc",
+        "mlp-regressao-cardio",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tambem",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipo",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "exercicio-2-solucao-com-rede-perceptron-atualizado",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "atualizado",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "divisao",
+       "origem": "propagado",
+       "doadores": [
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "grid",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "survey-on-clustering"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "ipynb",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "agrupamento-usando-k-means-exemplo-2-ipynb",
+        "mlp-xoripynb"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "introducao-a-redes-neurais",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "chamado",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neurais",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neuronio",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-e-equacao-de-reta"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "redes",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "regressao",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "k-nn-para-regressao-exemplo-imc",
+        "mlp-regressao-cardio",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "roteiro",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "rede-perceptron",
+        "visao-geral-introducao-e-historico"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "rede-perceptron-classificacao-de-cliente",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "ipynb",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "agrupamento-usando-k-means-exemplo-2-ipynb",
+        "mlp-xoripynb"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "rede-perceptron-or-em-python",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "ipynb",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "agrupamento-usando-k-means-exemplo-2-ipynb",
+        "mlp-xoripynb"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "rede-perceptron-reconhecendo-letras",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "ipynb",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "agrupamento-usando-k-means-exemplo-2-ipynb",
+        "mlp-xoripynb"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neuronio",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-e-equacao-de-reta"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "planta",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "rede-perceptron-classificacao-planta-iris"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "mlp",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "introducao-ao-aprendizado-de-maquina",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "entender",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "visao-geral-introducao-e-historico"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "features",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "grid",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "survey-on-clustering"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "multilayer",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neurais",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neuronio",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-e-equacao-de-reta"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "planta",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "rede-perceptron-classificacao-planta-iris"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "redes",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "regressao",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "k-nn-para-regressao-exemplo-imc",
+        "mlp-regressao-cardio",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tambem",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipo",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "xor-backpropagation-em-python",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "grid",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "survey-on-clustering"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "ipynb",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "agrupamento-usando-k-means-exemplo-2-ipynb",
+        "mlp-xoripynb"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neuronio",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-e-equacao-de-reta"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pontos",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "agrupamento-usando-k-means-exemplo-1-ipynb"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-preditivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "como-analisar-resultados-acc-pr-re-e-f1",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "introducao-ao-aprendizado-de-maquina",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "entender",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "visao-geral-introducao-e-historico"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variancia",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "metricas-de-avaliacao"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "artigo-usando-agrupamento",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "introducao-ao-aprendizado-de-maquina",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "analise",
+       "origem": "propagado",
+       "doadores": [
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "caracteristicas",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pacote",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "prova",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tambem",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipo",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "modelos-descritivos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "p2-202401",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "2024",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "analise",
+       "origem": "propagado",
+       "doadores": [
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "cada",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 1
+      },
+      {
+       "termo": "conjunto",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dados",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-usando-k-means-exemplo-1-ipynb",
+        "algoritmo-de-classificacao-k-nn",
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2",
+        "arvores-de-decisao",
+        "caracteristicas-dos-dados",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes",
+        "mlp-regressao-cardio"
+       ],
+       "doadores_com_gold": 9,
+       "doadores_certos_1a": 3
+      },
+      {
+       "termo": "features",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "nome",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "perceptron",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 6,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "p2-202402",
+     "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+     "sub_1a": "",
+     "sub_2a": "introducao-ao-aprendizado-de-maquina",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "2024",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "algoritmo",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "aula-sobre-agrupamento-parte-1-particional"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "analise",
+       "origem": "propagado",
+       "doadores": [
+        "analise-exploratoria-de-dados-exemplo-1",
+        "analise-exploratoria-dos-dados-exemplo-2"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      },
+      {
+       "termo": "artificial",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "inteligencia",
+       "origem": "propagado",
+       "doadores": [
+        "algoritmo-de-classificacao-k-nn",
+        "arvores-de-decisao",
+        "aula-sobre-agrupamento-parte-1-particional",
+        "aula-sobre-agrupamento-parte-2-hierarquico",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "mais",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "exemplo-2-k-nn-com-iriscsv-mais-completo",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "neurais",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "nome",
+       "origem": "propagado",
+       "doadores": [
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "pontos",
+       "origem": "propagado",
+       "doadores": [
+        "agrupamento-hierarquico-exemplo-1",
+        "agrupamento-usando-k-means-exemplo-1-ipynb"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "rede",
+       "origem": "propagado",
+       "doadores": [
+        "rede-perceptron",
+        "rede-perceptron-classificacao-planta-iris",
+        "rede-perceptron-e-equacao-de-reta",
+        "rede-perceptron-exemplo-atualizado"
+       ],
+       "doadores_com_gold": 4,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "redes",
+       "origem": "propagado",
+       "doadores": [
+        "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+        "mlp-classificacao-iris-atualizado",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 3,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "silvia",
+       "origem": "propagado",
+       "doadores": [
+        "arvores-de-decisao",
+        "prova-1-2024-02",
+        "prova-1-202402"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tambem",
+       "origem": "propagado",
+       "doadores": [
+        "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+        "exemplo-2-arvores-de-decisao-regressao-diabetes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipo",
+       "origem": "propagado",
+       "doadores": [
+        "caracteristicas-dos-dados",
+        "rede-perceptron"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    }
+   ],
+   "slugs_repetidos": {}
+  },
+  "ES2": {
+   "mudou": 14,
+   "termos": {
+    "unidade-01-arquitetura-de-software|visoes-arquiteturais-estrutural-e-dinamica|Visões arquiteturais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|visoes-arquiteturais-estrutural-e-dinamica|dinâmica": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|visoes-arquiteturais-estrutural-e-dinamica|estrutural": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|estilos-e-padroes-arquiteturais|Estilos": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|estilos-e-padroes-arquiteturais|decisoes": {
+     "origem": "propagado",
+     "doadores": [
+      "microsservicos3",
+      "microsservicos4"
+     ]
+    },
+    "unidade-01-arquitetura-de-software|estilos-e-padroes-arquiteturais|padrões arquiteturais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|estilos-e-padroes-arquiteturais|projeto": {
+     "origem": "propagado",
+     "doadores": [
+      "microsservicos3",
+      "microsservicos4"
+     ]
+    },
+    "unidade-01-arquitetura-de-software|estudo-de-caso-arquitetura-orientada-a-microsservicos|arquitetura orientada a microsserviços": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-arquitetura-de-software|estudo-de-caso-arquitetura-orientada-a-microsservicos|caso: arquitetura orientada a microsserviços": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|gerenciamento-da-configuracao|autenticacao": {
+     "origem": "propagado",
+     "doadores": [
+      "microsservicos6",
+      "roteiro8-autenticacao-autorizacao"
+     ]
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|gerenciamento-da-configuracao|autorizacao": {
+     "origem": "propagado",
+     "doadores": [
+      "microsservicos6",
+      "roteiro8-autenticacao-autorizacao"
+     ]
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|gerenciamento-da-configuracao|yaml": {
+     "origem": "propagado",
+     "doadores": [
+      "roteiro6-conteiners-composicao",
+      "roteiro7-filas"
+     ]
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|integracao-continua-ci|Integração contínua": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|entrega-continua-cd|Entrega contínua": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|estudo-de-caso-integracao-e-implantacao-de-microsservicos|Caso: integração e implantação de microsserviços": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-integracao-de-desenvolvimento-e-operacao-devops|estudo-de-caso-integracao-e-implantacao-de-microsservicos|implantação de microsserviços": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-testes-de-software|conceitos-e-o-processo-de-testes-de-software|o Processo de Testes de Software": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "revisao-p1",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Estilos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "padrões arquiteturais",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "revisao-p1-respostas",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Estilos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "padrões arquiteturais",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "azure",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "",
+     "sub_2a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "microsservicos",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "estilos-e-padroes-arquiteturais",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Estilos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "decisoes",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "orientada-a-microsservicos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "microsservicos2",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "cliente-servidor",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "decisoes",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "microsservicos5",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "gerenciamento-da-configuracao",
+     "sub_2a": "entrega-continua-cd",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Entrega contínua",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "plataformas-de-devops"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "roteiro1-introducao",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "cliente-servidor",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "roteiro2-nameserver",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "cliente-servidor",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "roteiro4-circuitbreaker",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "conceito-de-arquitetura-de-software",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "roteiro5",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "",
+     "sub_2a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "roteiro6",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "",
+     "sub_2a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "roteiro7",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "",
+     "sub_2a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "roteiro7-history-service",
+     "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+     "sub_1a": "",
+     "sub_2a": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": [
+      "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "revisaoarquiteturapadroes",
+     "unidade": "unidade-01-arquitetura-de-software",
+     "sub_1a": "",
+     "sub_2a": "estilos-e-padroes-arquiteturais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Estilos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "decisoes",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "padrões arquiteturais",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "projeto",
+       "origem": "propagado",
+       "doadores": [
+        "microsservicos3",
+        "microsservicos4"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "conceito-de-arquitetura-de-software"
+     ],
+     "efeito": "erro_mantido"
+    }
+   ],
+   "slugs_repetidos": {}
+  },
+  "TCC": {
+   "mudou": 13,
+   "termos": {
+    "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas|argumento-diagonal-de-cantor-e-conjuntos-incontaveis|Argumento Diagonal de Cantor": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas|argumento-diagonal-de-cantor-e-conjuntos-incontaveis|Conjuntos Incontáveis": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas|funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais|Funções Recursivas Parciais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas|funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais|Funções Recursivas Primitivas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-turing-computabilidade|maquinas-de-turing|aveis": {
+     "origem": "propagado",
+     "doadores": [
+      "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+      "aula-08-maquinas-de-turing-como-processadoras-de-funcoes"
+     ]
+    },
+    "unidade-02-turing-computabilidade|linguagens-reconheciveis-e-decidiveis|Decidíveis": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-turing-computabilidade|linguagens-reconheciveis-e-decidiveis|Linguagens Reconhecíveis": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-turing-computabilidade|maquinas-de-turing-universais|Turing Universais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-problemas-indecidiveis|prova-da-indecidibilidade-do-problema-da-parada|alise": {
+     "origem": "propagado",
+     "doadores": [
+      "aula-13-teorema-de-rice",
+      "aula-14-problema-da-correspondencia-de-post"
+     ]
+    },
+    "unidade-03-problemas-indecidiveis|entscheidungsproblem-e-introducao-a-reducibilidade-de-problemas|Introdução à Reducibilidade de Problemas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|complexidade-de-tempo-e-de-espaco|Complexidade de Tempo": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|complexidade-de-tempo-e-de-espaco|de Espaço": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|classe-p-e-exemplos-de-problemas-em-p|Classe P": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|classe-p-e-exemplos-de-problemas-em-p|exemplos de Problemas em P": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais|Exemplos de Problemas Importantes em NP": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais|Problemas Importantes em NP e suas aplicações industriais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|exemplos-de-problemas-importantes-em-np-e-suas-aplicacoes-industriais|suas aplicações industriais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|analogia": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|atribuicao": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|chave": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|clausula": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|clausulas": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|coletar": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|conclusao": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|construimos": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|correcao": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|dada": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|dimensional": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|extrair": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|formula": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|gadgets": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|instancia": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|langle": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|limpeza": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|matching": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|propriedade": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|rangle": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|referencias": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|rightarrow": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|satisfativel": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|sobras": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|variaveis": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|variavel": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|verificar": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|volta": {
+     "origem": "propagado",
+     "doadores": [
+      "3d-matching",
+      "3dm-caetano-gabriel-e-gustavo"
+     ]
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|exemplos-de-problemas-em-pspace|Problemas em PSPACE": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|provas-de-pspace-completude|PSPACE-Completude": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "aula-16-exemplo-de-prova-para-revisao",
+     "unidade": "unidade-03-problemas-indecidiveis",
+     "sub_1a": "",
+     "sub_2a": "prova-da-indecidibilidade-do-problema-da-parada",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "aula-16-classes-de-problemas-e-complexidade",
+     "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+     "sub_1a": "classe-np",
+     "sub_2a": "hierarquia-de-classes-de-complexidade-de-problemas",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "aula-17-complexidade-de-tempo-classes-p-e-np",
+     "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+     "sub_1a": "classe-np",
+     "sub_2a": "complexidade-de-tempo-e-de-espaco",
+     "razao": "titulo-nomeia-subtopico",
+     "termos_presentes": [
+      {
+       "termo": "Complexidade de Tempo",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "trabalho-t2-enunciado",
+     "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+     "sub_1a": "provas-de-np-completude",
+     "sub_2a": "reducao-polinomial-de-problemas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "atribuicao",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "clausula",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "correcao",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dada",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "dimensional",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "formula",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "gadgets",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "instancia",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "matching",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "referencias",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "satisfativel",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variaveis",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variavel",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "integer-programming-0001",
+     "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+     "sub_1a": "reducao-polinomial-de-problemas",
+     "sub_2a": "reducao-polinomial-de-problemas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "clausula",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "clausulas",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "instancia",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variaveis",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variavel",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "programacao-inteira-01-20260617-154423-0000",
+     "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+     "sub_1a": "reducao-polinomial-de-problemas",
+     "sub_2a": "reducao-polinomial-de-problemas",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "clausula",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "clausulas",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "instancia",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variaveis",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "variavel",
+       "origem": "propagado",
+       "doadores": [
+        "3d-matching",
+        "3dm-caetano-gabriel-e-gustavo"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes",
+     "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+     "sub_1a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "sub_2a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Funções Recursivas Primitivas",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "aula-04-funcoes-computaveis-funcoes-recursivas-parciais",
+     "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+     "sub_1a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "sub_2a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Funções Recursivas Parciais",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "t1-enunciado",
+     "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+     "sub_1a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "sub_2a": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Funções Recursivas Primitivas",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "aula-09-variacoes-de-maquinas-de-turing",
+     "unidade": "unidade-02-turing-computabilidade",
+     "sub_1a": "variacoes-de-maquinas-de-turing",
+     "sub_2a": "maquinas-de-turing",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "aveis",
+       "origem": "propagado",
+       "doadores": [
+        "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+        "aula-08-maquinas-de-turing-como-processadoras-de-funcoes"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      "variacoes-de-maquinas-de-turing"
+     ],
+     "efeito": "perda"
+    },
+    {
+     "eid": "aula-10-linguagens-reconheciveis-e-linguagens-decidiveis",
+     "unidade": "unidade-02-turing-computabilidade",
+     "sub_1a": "linguagens-reconheciveis-e-decidiveis",
+     "sub_2a": "linguagens-reconheciveis-e-decidiveis",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Decidíveis",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "Linguagens Reconhecíveis",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "linguagens-reconheciveis-e-decidiveis"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "aula-15-teoremas-de-incompletude-de-godel",
+     "unidade": "unidade-03-problemas-indecidiveis",
+     "sub_1a": "prova-da-indecidibilidade-do-problema-da-parada",
+     "sub_2a": "prova-da-indecidibilidade-do-problema-da-parada",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "alise",
+       "origem": "propagado",
+       "doadores": [
+        "aula-13-teorema-de-rice",
+        "aula-14-problema-da-correspondencia-de-post"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    }
+   ],
+   "slugs_repetidos": {}
+  },
+  "CG": {
+   "mudou": 22,
+   "termos": {
+    "unidade-01-introducao-ao-processamento-grafico|origens|grafica": {
+     "origem": "propagado",
+     "doadores": [
+      "origensdacomputacaografica",
+      "video-sobre-origens-da-computacao-grafica-806e66"
+     ]
+    },
+    "unidade-01-introducao-ao-processamento-grafico|conceitos|cores": {
+     "origem": "propagado",
+     "doadores": [
+      "opengl-py",
+      "texturas-v3"
+     ]
+    },
+    "unidade-01-introducao-ao-processamento-grafico|conceitos|open": {
+     "origem": "propagado",
+     "doadores": [
+      "opengl-py",
+      "texturas-v3"
+     ]
+    },
+    "unidade-01-introducao-ao-processamento-grafico|conceitos|ponto": {
+     "origem": "propagado",
+     "doadores": [
+      "opengl-py",
+      "texturas-v3"
+     ]
+    },
+    "unidade-01-introducao-ao-processamento-grafico|conceitos|python": {
+     "origem": "propagado",
+     "doadores": [
+      "opengl-py",
+      "texturas-v3"
+     ]
+    },
+    "unidade-02-fundamentos-matematicos|operacoes-com-vetores|ponto": {
+     "origem": "propagado",
+     "doadores": [
+      "exerciciosfundamentosmatematicos",
+      "fundamentosmatematicos"
+     ]
+    },
+    "unidade-02-fundamentos-matematicos|algoritmos-de-deteccao-e-calculo-de-interseccao|Algoritmos de detecção": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-fundamentos-matematicos|algoritmos-de-deteccao-e-calculo-de-interseccao|cálculo de intersecção": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-fundamentos-matematicos|algoritmos-de-deteccao-e-calculo-de-interseccao|detecção e cálculo de intersecção": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-fundamentos-matematicos|algoritmos-de-geometria-computacional|Geometria Computacional": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|introducao-e-exemplos-de-aplicacoes|Exemplos de Aplicações": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|cores-e-tipos-de-imagens|Cores": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|cores-e-tipos-de-imagens|atividades": {
+     "origem": "propagado",
+     "doadores": [
+      "floodfill",
+      "remocaoderuido"
+     ]
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|cores-e-tipos-de-imagens|ferramentas": {
+     "origem": "propagado",
+     "doadores": [
+      "floodfill",
+      "remocaoderuido"
+     ]
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|cores-e-tipos-de-imagens|tipos de imagens": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|algoritmos-de-quantizacao-e-amostragem|Algoritmos de Quantização": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|algoritmos-de-quantizacao-e-amostragem|Amostragem": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|algoritmos-de-quantizacao-e-amostragem|Quantização e Amostragem": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|segmentacao|pptx": {
+     "origem": "propagado",
+     "doadores": [
+      "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+      "segmentacaopptx"
+     ]
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|segmentacao|texturas": {
+     "origem": "propagado",
+     "doadores": [
+      "pagina-com-videos-sobre-segmentacao-por-texturas-e03566",
+      "segmentacaodetexturas",
+      "segmentacaopptx"
+     ]
+    },
+    "unidade-03-processamento-de-imagens-e-visao-computacional|visao-computacional-e-conceito-de-reconhecimento-de-padroes|conceito de reconhecimento de padrões": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-processo-de-visualizacao-2d|sistema-de-coordenadas-cartesianas|transformacoes": {
+     "origem": "propagado",
+     "doadores": [
+      "instanciamento",
+      "transformacoesgl"
+     ]
+    },
+    "unidade-04-processo-de-visualizacao-2d|2d-3d-mao-direita-e-mao-esquerda|mão direita": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-processo-de-visualizacao-2d|2d-3d-mao-direita-e-mao-esquerda|mão esquerda": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-processo-de-visualizacao-2d|algoritmos-de-rasterizacao|Rasterização": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-processo-de-visualizacao-2d|desenho-de-linhas|teoricos": {
+     "origem": "propagado",
+     "doadores": [
+      "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+      "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html"
+     ]
+    },
+    "unidade-04-processo-de-visualizacao-2d|recorte|algoritmo": {
+     "origem": "propagado",
+     "doadores": [
+      "recorte",
+      "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e"
+     ]
+    },
+    "unidade-04-processo-de-visualizacao-2d|recorte|janela": {
+     "origem": "propagado",
+     "doadores": [
+      "mapeamento",
+      "recorte"
+     ]
+    },
+    "unidade-04-processo-de-visualizacao-2d|recorte|mapeamento": {
+     "origem": "propagado",
+     "doadores": [
+      "mapeamento",
+      "vis2d"
+     ]
+    },
+    "unidade-04-processo-de-visualizacao-2d|recorte|selecao": {
+     "origem": "propagado",
+     "doadores": [
+      "mapeamento",
+      "recorte"
+     ]
+    },
+    "unidade-05-transformacoes-geometricas|transformacoes-geometricas-e-coordenadas-homogeneas-2d|coordenadas homogêneas 2D": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-transformacoes-geometricas|mapeamento-window-e-viewport|Mapeamento Window": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-transformacoes-geometricas|mapeamento-window-e-viewport|Viewport": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-transformacoes-geometricas|composicao-de-transformacoes-2d|transformações 2D": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-06-processo-de-visualizacao-3d|a-matematica-das-projecoes-planares|morfologia": {
+     "origem": "propagado",
+     "doadores": [
+      "morfologiamatematicapptx",
+      "pagina-com-videos-sobre-morfologia-matematica-06265a"
+     ]
+    },
+    "unidade-06-processo-de-visualizacao-3d|algoritmos-de-remocao-de-elementos-ocultos|Remoção de Elementos Ocultos": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-07-representacao-e-modelagem-de-objetos|bezier-e-algoritmo-de-casteljau|Algoritmo de Casteljau": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-07-representacao-e-modelagem-de-objetos|bezier-e-algoritmo-de-casteljau|Bézier": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-07-representacao-e-modelagem-de-objetos|vetorial-ou-matricial|Vetorial": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-07-representacao-e-modelagem-de-objetos|geometria-solida-construtiva-csg|Geometria Sólida Construtiva": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-iluminacao-luz-pontual-direcional-spot|Iluminação: luz pontual, direcional, spot": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-iluminacao-luz-pontual-direcional-spot|Modelos de Iluminação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-iluminacao-luz-pontual-direcional-spot|direcional": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-iluminacao-luz-pontual-direcional-spot|luz pontual": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-iluminacao-luz-pontual-direcional-spot|spot": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-reflexao-ambiente-difusa-especular|Modelos de Reflexão": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-reflexao-ambiente-difusa-especular|Reflexão: ambiente, difusa, especular": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-reflexao-ambiente-difusa-especular|ambiente": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-reflexao-ambiente-difusa-especular|difusa": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|modelos-de-reflexao-ambiente-difusa-especular|especular": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|metodos-de-sombreamento-flat-gouraud-phong|Flat": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|metodos-de-sombreamento-flat-gouraud-phong|Gouraud": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|metodos-de-sombreamento-flat-gouraud-phong|Métodos de sombreamento": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|metodos-de-sombreamento-flat-gouraud-phong|Phong": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|mapeamento-de-textura|texturas": {
+     "origem": "propagado",
+     "doadores": [
+      "maptextures",
+      "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "videoscg-v2"
+     ]
+    },
+    "unidade-08-sintese-de-imagens-realisticas|mapeamento-de-textura|videos": {
+     "origem": "propagado",
+     "doadores": [
+      "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+      "videoscg-v2"
+     ]
+    },
+    "unidade-08-sintese-de-imagens-realisticas|conceitos-basicos-de-ray-tracing-e-radiosidade|Conceitos Básicos de Ray Tracing": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-08-sintese-de-imagens-realisticas|conceitos-basicos-de-ray-tracing-e-radiosidade|Radiosidade": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-09-topicos-especiais-em-pesquisa-em-cg|temas-atuais-e-avancados-de-computacao-grafica|Temas atuais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-09-topicos-especiais-em-pesquisa-em-cg|temas-atuais-e-avancados-de-computacao-grafica|avançados de Computação Gráfica": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "intro",
+     "unidade": "unidade-01-introducao-ao-processamento-grafico",
+     "sub_1a": "",
+     "sub_2a": "origens",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "grafica",
+       "origem": "propagado",
+       "doadores": [
+        "origensdacomputacaografica",
+        "video-sobre-origens-da-computacao-grafica-806e66"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": [
+      "origens"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "paginas-com-videos-sobre-modelagem-geometrica-f2614a",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "instanciamento-de-primitivas",
+     "sub_2a": "geometria-solida-construtiva-csg",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Geometria Sólida Construtiva",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "tecnicas-de-modelagem-3d"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "basico3d-py-zip",
+     "unidade": "unidade-02-fundamentos-matematicos",
+     "sub_1a": "",
+     "sub_2a": "operacoes-com-vetores",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "ponto",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosfundamentosmatematicos",
+        "fundamentosmatematicos"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "tecnicas-de-modelagem-3d"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a",
+     "unidade": "unidade-06-processo-de-visualizacao-3d",
+     "sub_1a": "algoritmo-do-pintor",
+     "sub_2a": "algoritmos-de-remocao-de-elementos-ocultos",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Remoção de Elementos Ocultos",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "algoritmos-de-remocao-de-elementos-ocultos"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "iluminacao",
+     "unidade": "unidade-08-sintese-de-imagens-realisticas",
+     "sub_1a": "modelos-de-reflexao-ambiente-difusa-especular",
+     "sub_2a": "modelos-de-reflexao-ambiente-difusa-especular",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Modelos de Reflexão",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "ambiente",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "difusa",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "especular",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-de-iluminacao-luz-pontual-direcional-spot"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+     "unidade": "unidade-08-sintese-de-imagens-realisticas",
+     "sub_1a": "modelos-de-reflexao-ambiente-difusa-especular",
+     "sub_2a": "mapeamento-de-textura",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "texturas",
+       "origem": "propagado",
+       "doadores": [
+        "maptextures",
+        "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+        "videoscg-v2"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "videos",
+       "origem": "propagado",
+       "doadores": [
+        "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3",
+        "videoscg-v2"
+       ],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "modelos-de-iluminacao-luz-pontual-direcional-spot"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "opengl-cpp",
+     "unidade": "unidade-01-introducao-ao-processamento-grafico",
+     "sub_1a": "",
+     "sub_2a": "conceitos",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "ponto",
+       "origem": "propagado",
+       "doadores": [
+        "opengl-py",
+        "texturas-v3"
+       ],
+       "doadores_com_gold": 1,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "aplicacoes"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "exemplodemanipulacaodeimagens",
+     "unidade": "unidade-02-fundamentos-matematicos",
+     "sub_1a": "",
+     "sub_2a": "operacoes-com-vetores",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "ponto",
+       "origem": "propagado",
+       "doadores": [
+        "exerciciosfundamentosmatematicos",
+        "fundamentosmatematicos"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "pagina-com-videos-sobre-mapeamento-9f410e",
+     "unidade": "unidade-04-processo-de-visualizacao-2d",
+     "sub_1a": "",
+     "sub_2a": "recorte",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "mapeamento",
+       "origem": "propagado",
+       "doadores": [
+        "mapeamento",
+        "vis2d"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "sistema-de-coordenadas-cartesianas"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "transformacoesgeometricas",
+     "unidade": "unidade-04-processo-de-visualizacao-2d",
+     "sub_1a": "",
+     "sub_2a": "recorte",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "janela",
+       "origem": "propagado",
+       "doadores": [
+        "mapeamento",
+        "recorte"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 1
+      }
+     ],
+     "gold": [
+      ""
+     ],
+     "efeito": "perda"
+    },
+    {
+     "eid": "bezier-animacao",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "",
+     "sub_2a": "bezier-e-algoritmo-de-casteljau",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Bézier",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "bezier-e-algoritmo-de-casteljau"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "bezier-cpp",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "",
+     "sub_2a": "bezier-e-algoritmo-de-casteljau",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Bézier",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "bezier-e-algoritmo-de-casteljau"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "bezier-py",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "",
+     "sub_2a": "bezier-e-algoritmo-de-casteljau",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Bézier",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "bezier-e-algoritmo-de-casteljau"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "bezier-python",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "",
+     "sub_2a": "bezier-e-algoritmo-de-casteljau",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Bézier",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "bezier-e-algoritmo-de-casteljau"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "curvasparametricas",
+     "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+     "sub_1a": "",
+     "sub_2a": "representacao-de-curvas-parametricas",
+     "razao": "secao-nomeia-subtopico",
+     "termos_presentes": [],
+     "gold": [
+      "representacao-de-curvas-parametricas"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "img",
+     "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+     "sub_1a": "filtros",
+     "sub_2a": "cores-e-tipos-de-imagens",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "Cores",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "tipos de imagens",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "cores-e-tipos-de-imagens"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "resolucao-de-prova-de-computacao-grafica-2d",
+     "unidade": "unidade-01-introducao-ao-processamento-grafico",
+     "sub_1a": "",
+     "sub_2a": "origens",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "grafica",
+       "origem": "propagado",
+       "doadores": [
+        "origensdacomputacaografica",
+        "video-sobre-origens-da-computacao-grafica-806e66"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "listadeexercicios2026-1",
+     "unidade": "unidade-08-sintese-de-imagens-realisticas",
+     "sub_1a": "",
+     "sub_2a": "modelos-de-reflexao-ambiente-difusa-especular",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "difusa",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "especular",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "resolucao-de-prova-de-computacao-grafica-2d-html",
+     "unidade": "unidade-01-introducao-ao-processamento-grafico",
+     "sub_1a": "",
+     "sub_2a": "origens",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "grafica",
+       "origem": "propagado",
+       "doadores": [
+        "origensdacomputacaografica",
+        "video-sobre-origens-da-computacao-grafica-806e66"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "resolucao-de-prova-de-computacao-grafica-3d",
+     "unidade": "unidade-01-introducao-ao-processamento-grafico",
+     "sub_1a": "",
+     "sub_2a": "origens",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "grafica",
+       "origem": "propagado",
+       "doadores": [
+        "origensdacomputacaografica",
+        "video-sobre-origens-da-computacao-grafica-806e66"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 2
+      }
+     ],
+     "gold": null,
+     "efeito": "sem_gold"
+    },
+    {
+     "eid": "video-sobre-mapeamento-em-opengl-1dad3c",
+     "unidade": "unidade-04-processo-de-visualizacao-2d",
+     "sub_1a": "",
+     "sub_2a": "recorte",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "mapeamento",
+       "origem": "propagado",
+       "doadores": [
+        "mapeamento",
+        "vis2d"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "sistema-de-coordenadas-cartesianas"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "aula-gravada-975b85",
+     "unidade": "unidade-06-processo-de-visualizacao-3d",
+     "sub_1a": "",
+     "sub_2a": "a-matematica-das-projecoes-planares",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "morfologia",
+       "origem": "propagado",
+       "doadores": [
+        "morfologiamatematicapptx",
+        "pagina-com-videos-sobre-morfologia-matematica-06265a"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "segmentacao"
+     ],
+     "efeito": "erro_mantido"
+    }
+   ],
+   "slugs_repetidos": {}
+  },
+  "FR": {
+   "mudou": 8,
+   "termos": {
+    "unidade-01-introducao-a-redes-de-computadores|conceitos-de-redes-de-computadores-e-internet|Conceitos de redes de computadores": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-introducao-a-redes-de-computadores|modelos-osi-e-tcpip|Modelos OSI": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-introducao-a-redes-de-computadores|conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia|Conceito de protocolo de redes pessoais": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-introducao-a-redes-de-computadores|conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia|de longa distância": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-01-introducao-a-redes-de-computadores|conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia|metropolitanas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|funcoes-e-caracteristicas-do-nivel-de-aplicacao|características do nível de aplicação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|paradigmas-clienteservidor-e-p2p|Paradigmas cliente": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|paradigmas-clienteservidor-e-p2p|client": {
+     "origem": "propagado",
+     "doadores": [
+      "tcp-chat-c",
+      "udp-example-c"
+     ]
+    },
+    "unidade-02-nivel-de-aplicacao|paradigmas-clienteservidor-e-p2p|example": {
+     "origem": "propagado",
+     "doadores": [
+      "tcp-example",
+      "udp-example-c",
+      "udp-example-java"
+     ]
+    },
+    "unidade-02-nivel-de-aplicacao|paradigmas-clienteservidor-e-p2p|java": {
+     "origem": "propagado",
+     "doadores": [
+      "tcp-example",
+      "udp-example-java"
+     ]
+    },
+    "unidade-02-nivel-de-aplicacao|paradigmas-clienteservidor-e-p2p|server": {
+     "origem": "propagado",
+     "doadores": [
+      "tcp-chat-c",
+      "udp-example-c"
+     ]
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat|DHCP": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat|Protocolos de aplicação para infraestrutura": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat|SNMP": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat|aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap|IMAP": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap|POP3": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap|Protocolos de aplicação para o usuário": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap|SMTP": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-02-nivel-de-aplicacao|protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap|aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-03-nivel-de-transporte|funcoes-e-caracteristicas-do-nivel-de-transporte|características do nível de transporte": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-nivel-de-rede|roteamento-estatico-e-dinamico|Roteamento estático": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-04-nivel-de-rede|roteamento-estatico-e-dinamico|dinâmico": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|funcoes-e-caracteristicas-do-nivel-de-enlace|características do nível de enlace": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-cabeadas-ethernet|Ethernet": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-cabeadas-ethernet|Protocolos de enlace para redes locais cabeadas": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-cabeadas-ethernet|enlace para redes locais cabeadas (Ethernet)": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth|Bluetooth": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth|IEEE 802.11": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth|Protocolos de enlace para redes locais sem fio": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-05-nivel-de-enlace|protocolos-de-enlace-para-redes-locais-sem-fio-ieee-80211-e-bluetooth|enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-06-nivel-fisico|classificacao-e-topologias-de-redes-de-computadores|Classificação": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    },
+    "unidade-06-nivel-fisico|classificacao-e-topologias-de-redes-de-computadores|topologias de redes de computadores": {
+     "origem": "parte_de_rotulo",
+     "doadores": []
+    }
+   },
+   "mudancas": [
+    {
+     "eid": "04-camada-de-aplicacao",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "sub_2a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "IMAP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "POP3",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "SMTP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "funcoes-e-caracteristicas-do-nivel-de-aplicacao"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "04-protocolo-http",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "sub_2a": "paradigmas-clienteservidor-e-p2p",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "server",
+       "origem": "propagado",
+       "doadores": [
+        "tcp-chat-c",
+        "udp-example-c"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+     ],
+     "efeito": "perda"
+    },
+    {
+     "eid": "05-protocolo-dns",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "sub_2a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "IMAP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "06-protocolo-dhcp",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+     "sub_2a": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "DHCP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "07-protocolos-de-e-mail",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "sub_2a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "IMAP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "POP3",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      },
+      {
+       "termo": "SMTP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+     ],
+     "efeito": "certo_mantido"
+    },
+    {
+     "eid": "lista-de-exercicios-1-camada-de-aplicacao",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "",
+     "sub_2a": "paradigmas-clienteservidor-e-p2p",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "server",
+       "origem": "propagado",
+       "doadores": [
+        "tcp-chat-c",
+        "udp-example-c"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "funcoes-e-caracteristicas-do-nivel-de-aplicacao"
+     ],
+     "efeito": "erro_mantido"
+    },
+    {
+     "eid": "unidade2-exercicios-dhcp",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "",
+     "sub_2a": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+     "razao": "rotulo-decomposto",
+     "termos_presentes": [
+      {
+       "termo": "DHCP",
+       "origem": "parte_de_rotulo",
+       "doadores": [],
+       "doadores_com_gold": 0,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+     ],
+     "efeito": "ganho"
+    },
+    {
+     "eid": "unidade2-exercicios-http",
+     "unidade": "unidade-02-nivel-de-aplicacao",
+     "sub_1a": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap",
+     "sub_2a": "paradigmas-clienteservidor-e-p2p",
+     "razao": "propagado-headings",
+     "termos_presentes": [
+      {
+       "termo": "server",
+       "origem": "propagado",
+       "doadores": [
+        "tcp-chat-c",
+        "udp-example-c"
+       ],
+       "doadores_com_gold": 2,
+       "doadores_certos_1a": 0
+      }
+     ],
+     "gold": [
+      "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+     ],
+     "efeito": "perda"
+    }
+   ],
+   "slugs_repetidos": {}
+  }
+ },
+ "efeitos_razao_origem": [
+  [
+   "propagado-headings",
+   "nenhum_termo_acrescentado",
+   "certo_mantido",
+   1
+  ],
+  [
+   "propagado-headings",
+   "nenhum_termo_acrescentado",
+   "ganho",
+   3
+  ],
+  [
+   "propagado-headings",
+   "propagado",
+   "certo_mantido",
+   1
+  ],
+  [
+   "propagado-headings",
+   "propagado",
+   "erro_mantido",
+   23
+  ],
+  [
+   "propagado-headings",
+   "propagado",
+   "ganho",
+   8
+  ],
+  [
+   "propagado-headings",
+   "propagado",
+   "perda",
+   4
+  ],
+  [
+   "propagado-headings",
+   "propagado",
+   "sem_gold",
+   17
+  ],
+  [
+   "rotulo-decomposto",
+   "parte_de_rotulo",
+   "certo_mantido",
+   7
+  ],
+  [
+   "rotulo-decomposto",
+   "parte_de_rotulo",
+   "erro_mantido",
+   8
+  ],
+  [
+   "rotulo-decomposto",
+   "parte_de_rotulo",
+   "ganho",
+   10
+  ],
+  [
+   "rotulo-decomposto",
+   "parte_de_rotulo",
+   "sem_gold",
+   5
+  ],
+  [
+   "rotulo-decomposto",
+   "propagado",
+   "erro_mantido",
+   2
+  ],
+  [
+   "rotulo-decomposto",
+   "propagado",
+   "ganho",
+   1
+  ],
+  [
+   "rotulo-decomposto",
+   "propagado",
+   "sem_gold",
+   3
+  ],
+  [
+   "secao-nomeia-subtopico",
+   "nenhum_termo_acrescentado",
+   "ganho",
+   5
+  ],
+  [
+   "secao-nomeia-subtopico",
+   "nenhum_termo_acrescentado",
+   "sem_gold",
+   8
+  ],
+  [
+   "titulo-nomeia-subtopico",
+   "parte_de_rotulo",
+   "sem_gold",
+   1
+  ]
+ ],
+ "segundos": 309
+}

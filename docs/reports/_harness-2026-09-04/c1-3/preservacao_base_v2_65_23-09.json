@@ -1,0 +1,59 @@
+{
+ "head": "263202157ca80816cc8d06cb0db826d73e37ac34",
+ "sha256_git_diff_worktree_src_tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "sha256_captura_nova": "f941ac331a5e676dc897135ce42d0c537ff5470730074ca1863d9f71416037ef",
+ "sha256_captura_congelada": "f941ac331a5e676dc897135ce42d0c537ff5470730074ca1863d9f71416037ef",
+ "captura_identica": true,
+ "por_curso": {
+  "MF": {
+   "materiais_com_final": 70,
+   "divergem_w2": 0,
+   "ids_wz": 70,
+   "divergem_wz": 0
+  },
+  "SO": {
+   "materiais_com_final": 42,
+   "divergem_w2": 0,
+   "ids_wz": 42,
+   "divergem_wz": 0
+  },
+  "IA": {
+   "materiais_com_final": 63,
+   "divergem_w2": 0,
+   "ids_wz": 63,
+   "divergem_wz": 0
+  },
+  "ES2": {
+   "materiais_com_final": 35,
+   "divergem_w2": 0,
+   "ids_wz": 35,
+   "divergem_wz": 0
+  },
+  "TCC": {
+   "materiais_com_final": 27,
+   "divergem_w2": 0,
+   "ids_wz": 27,
+   "divergem_wz": 0
+  },
+  "CG": {
+   "materiais_com_final": 93,
+   "divergem_w2": 0,
+   "ids_wz": 93,
+   "divergem_wz": 0
+  },
+  "FR": {
+   "materiais_com_final": 20,
+   "divergem_w2": 0,
+   "ids_wz": 20,
+   "divergem_wz": 0
+  }
+ },
+ "divergencias_w2": [],
+ "divergencias_wz": [],
+ "segundos": 1375,
+ "nota_sha256_git_diff": "o campo sha256_git_diff_worktree_src_tests (e3b0c442...) é o hash de um diff VAZIO: o script rodou git com cwd em c1-3 e pathspec relativo; corrigido no script. Valor certo, calculado da raiz logo após o replay, com src/tests inalterados desde o início dele (edições da #65 feitas antes do lançamento):",
+ "sha256_git_diff_worktree_src_tests_corrigido": "453ffe490c174b0c96fe51b46a82dec62a1e07ba5fadfda9ce3ee16f851e84a5",
+ "arquivos_novos_nao_rastreados_src_tests": [
+  "tests/test_new_subject_d9_default.py"
+ ]
+}

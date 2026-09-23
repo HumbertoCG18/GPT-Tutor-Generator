@@ -1,8 +1,9 @@
-# Proposta #65 — D9 cru como padrão de matéria nova (23/09/2026, não implementada)
+# Proposta #65 — D9 cru como padrão de matéria nova (23/09/2026; implementada em 844c61b7)
 
-**Status: proposta.** Este documento e o commit que o versiona não aprovam implementação, mudança de default nem
-migração de perfis. O D9 fica separado dos recursos opcionais (votador, vocabulário, LLM, rede): ligar um não liga os
-outros.
+**Status: implementada.** Gate 1 do usuário em 23/09 e implementação no commit `844c61b7`
+(`feat(config): ativar D9 cru para matérias novas (#65)`), só para matéria nova. Continuam valendo: nenhuma migração de
+perfis existentes, default de código inalterado, e o D9 separado dos recursos opcionais (votador, vocabulário, LLM, rede):
+ligar um não liga os outros. Pendente para fechar a issue: registrar a decisão nela.
 
 Pedido do usuário (23/09): matérias novas usam o D9 no regime cru, sem votador, vocabulário externo, LLM ou rede;
 preservar as escolhas explícitas dos perfis existentes e o comportamento dos pinos e fallbacks. Autorização: só elaborar
@@ -46,6 +47,16 @@ explícitos. Alinhar exige decisão própria, porque é o contrato de uma ferram
 - Suíte completa antes e depois.
 - Replay integral dos 3 eixos: os 8 cursos medidos têm flags explícitas e não mudam, e o harness já mede o D9. O
   critério da #65 ("replay se o padrão de execução mudar") pede decisão do usuário: dispensar ou rodar como conferência.
+
+## Resultado medido (23/09, commit 844c61b7)
+
+- Testes: 7 novos (diálogo, importador, configuração efetiva, ausência de rede), vermelhos antes da constante; suíte
+  2443 passed / 4 skipped / 1 falha preexistente (golden do FR que lê o repositório real). Árvore isolada HEAD + #65 sem
+  o fix da #50: 104 testes afetados verdes. O teste de rede não exercita a decisão do D9 (sem cronograma o D9 não decide).
+- Reprodutor, caso 1: matéria criada pelo diálogo tem `{"use_anchor_engine": true}`, D9 com 1 chamada e 26/27 materiais
+  com bloco temporal, com rede bloqueada. É **cobertura de bloco no reprodutor, não acurácia**.
+- Replay integral de preservação da base v2 (o usuário pediu; `c1-3/preservacao_base_v2_65_23-09.{py,json}`): captura
+  idêntica à congelada (`f941ac33…`), 350 materiais, zero divergências por ID. Não conta como ganho nos placares.
 
 ## Riscos
 
