@@ -1,23 +1,14 @@
 # Workflow compartilhado
 
-Ler [workflow.md](workflow.md) antes de executar ou continuar uma tarefa. Essa política
-substitui as regras antigas que exigiam pedido explícito para toda chamada Astra ou
-autorizavam Astra a assumir a implementação automaticamente. Restrições explícitas do usuário prevalecem.
+Ler o núcleo canônico: C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/workflow.md.
+Se indisponível, usar [workflow.md](workflow.md) e suas referências locais; registrar fallback.
+Ler uma vez por sessão e referências somente na ação correspondente. Não carregar ambos.
 
-Snapshot da fonte agent-workflow-lab, base aprovada em 16/09/2026; contrato de delegação
-atualizado nesta branch em 17/09/2026. Hashes em manifest.json. Atualização manual
-revisada; propagar às demais branches separadamente. Não editar snapshots isoladamente.
-Os contratos de agents/ são inline; não pressupõem um subagente nativo instalado.
+Papéis: Claude Code = terminal/execução; Codex = orquestração/revisão; AGY = auditoria/pesquisa/achados.
+Uma tarefa, um coordenador. Configuração e execução devem ser verificadas separadamente.
 
-Copiar task-state.template.md para .workflow-local/active-task.md ao iniciar trabalho
-multietapa. A pasta local é ignorada pelo Git; não transportar tarefa ativa entre branches
-sem conferir HEAD/diff. O coordenador registra estado antes de delegar e em cada etapa.
-
-Configurações pessoais e Context7 são locais à máquina e já valem entre branches.
-Credenciais, backups e permissões pessoais não fazem parte deste pacote. Hooks existentes
-não lançam LLM; a revisão autorizada é executada pelo agente ativo. Não há bloqueio técnico
-de quota/contagem nem execução quando a sessão está encerrada.
-
-Aceites ainda abertos: [PENDING.md](PENDING.md).
-
-Próxima sessão no Claude Code: [HANDOFF.md](HANDOFF.md).
+Estado por worktree: .workflow/local/active-task.md (legado: .workflow-local/), usando [template](task-state.template.md).
+[HANDOFF.md](HANDOFF.md) aponta continuidade desta frente; não carregar handoff do motor para configurar CLIs.
+Não transportar estado entre branches sem conferir HEAD/diff nem reiniciar contadores.
+Snapshots são distribuição manual revisada; hashes em [manifest.json](manifest.json).
+Novas regras nascem na fonte canônica, depois são distribuídas.
