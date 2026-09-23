@@ -6,7 +6,7 @@ description: Mapa de fontes do GPT Tutor. Carregar apenas a rota pertinente.
 # Mapa do projeto
 
 Aplicativo desktop Python/Tkinter: materiais acadêmicos para repositórios-tutor Markdown.
-Identidade e invariantes: [.mex/AGENTS.md](AGENTS.md).
+Identidade e invariantes: [AGENTS.md](../AGENTS.md).
 Workflow compartilhado: [.workflow/README.md](../.workflow/README.md).
 Engenharia: [patterns/engenharia-produto.md](patterns/engenharia-produto.md).
 

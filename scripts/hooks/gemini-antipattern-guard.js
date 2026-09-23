@@ -44,7 +44,7 @@ process.stdin.on('end', () => {
   if (achados.size) {
     console.error('[guarda] BLOQUEADO: anti-padrao Gemini no staged:');
     for (const a of achados) console.error('  ' + a);
-    console.error('.mex/AGENTS.md: usar google-genai, "from google import genai",');
+    console.error('AGENTS.md: usar google-genai, "from google import genai",');
     console.error('com o import lazy dentro do corpo do metodo.');
     process.exit(2);
   }

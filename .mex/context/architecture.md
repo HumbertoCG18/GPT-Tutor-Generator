@@ -14,7 +14,7 @@ pelo grafo de código).
   "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<conceito>"`; visão ampla
   em `graphify-out/GRAPH_REPORT.md`.
 - **Invariantes e porquês** de arquitetura: `.mex/context/decisions.md` + non-negotiables em
-  `.mex/AGENTS.md` (ex.: `engine.py` é façade — lógica nova vai no subpacote correto).
+  `AGENTS.md` (ex.: `engine.py` é façade — lógica nova vai no subpacote correto).
 - **Fluxo do produto** (import→process→curadoria→build): `README.md` do projeto.
 
 ## De onde a taxonomia vem (medido em 07/09)
