@@ -1525,6 +1525,8 @@ class SubjectManagerDialog(tk.Toplevel):
             moodle_course_id=(existing.moodle_course_id if existing else ""),
             m365_filter=(existing.m365_filter if existing else ""),
             turma=(existing.turma if existing else ""),
+            # #63: sem campo no dialog; sem isto todo save zerava as flags (D9/voter/vocab).
+            feature_flags=(dict(existing.feature_flags) if existing else {}),
             queue=existing_queue,
         )
         self._store.add(sp)
