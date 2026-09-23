@@ -885,7 +885,7 @@ Itens planejados em ordem de prioridade:
   - [src/ui/timeline_dashboard.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/timeline_dashboard.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
   - [src/models/tag_profile.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/models/tag_profile.py)
-- Documentos em `docs/superpowers/` podem descrever versões históricas da implementação
+- Documentos em `docs/plans/` e `docs/specs/` podem descrever versões históricas da implementação
 
 ## Licença
 

@@ -32,7 +32,7 @@ Motor segue headless e intocado; a web troca a vitrine. Contrato de qualidade na
 - **Question Banks** por unidade/subunidade; **Living Books**; **memória em camadas com proveniência**; **workspaces por disciplina** com instruções persistentes.
 - **Modo Projects por provedor** (repo-tutor como KB) e **coleta Moodle assistida** (read-only, sessão logada).
 - **Agenda:** sync com Google Agenda além do `.ics`.
-- **Modo Exercícios / Practice:** feedback de código do aluno ([plano](plans/exercises-mode-code-correction.md)); depende do refactor material-agnostic.
+- **Modo Exercícios / Practice:** feedback de código do aluno ([plano](docs/plans/exercises-mode-code-correction.md)); depende do refactor material-agnostic.
 
 ## Distribuição
 
@@ -53,7 +53,7 @@ Multi-usuário/auth, canais de IM, marketplace de skills/personas, loja de MCP: 
 
 ## Concluído
 
-- **Cronograma visual / dashboard da timeline** — 12/05/2026 (`docs/superpowers/plans/Feitos/2026-05-12-timeline-dashboard-plan.md`).
+- **Cronograma visual / dashboard da timeline** — 12/05/2026 (`docs/plans/Feitos/2026-05-12-timeline-dashboard-plan.md`).
 - **Student State v2** — 16/04/2026, com import manual em 22/04.
 - **Sinal de data no nome do arquivo (`DD.MM`)** — no motor (`src/builder/routing/dates.py`).
 - **Code Summarization via Gemini** — 02/06/2026; pattern `.mex/patterns/gemini-code-summarization.md`.

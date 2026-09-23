@@ -139,12 +139,12 @@ atribuição (arquivo→bloco→unidade/subunidade).
   `backfill_posting_date_from_api`) casava por basename do filename ORIGINAL → colidia em `main.pdf`/
   `slides.pdf` e o label não colava (TCC pegou só 1/24). O conserto casa pelo **savename sanitizado**
   (instancename, com `/`→`.` nas datas), nos dois lados. Spec
-  `docs/superpowers/specs/Feitos/2026-06-18-moodle-label-instancename-automatico-design.md`.
+  `docs/specs/Feitos/2026-06-18-moodle-label-instancename-automatico-design.md`.
 - **Resumo-da-semana = módulo `label` do Moodle com mapa data→tópico.** Muitos profs postam um Label
   ("Semana DD/MM a DD/MM: (DD/MM): tópico; ..."). `moodle_labels.py` JÁ parseia isso (`lessons=[{date,text}]`,
   formatos A-D), mas `derive_card_block_map` usa só as `dates` e DROPA o `text`. É o mapa data→tópico
   do próprio professor — sinal autoritativo de bloco por sessão, sub-aproveitado. Nem todo prof faz →
-  extrator opcional com degradação honesta (cf. `docs/superpowers/specs/2026-06-17-signal-registry-design.md`).
+  extrator opcional com degradação honesta (cf. `docs/reports/_archive/2026-06-17-signal-registry-design.md`).
 - **Estrutura do Moodle no manifest (Fase 3a, 2026-09-03):** `moodle_section_index` (= `section` da API,
   ordinal da seção; **0 = área geral do curso** por definição do Moodle — SO "Informações Gerais"; MF/IA/ES2/TCC
   deixam a 0 vazia e usam seções 1+ para plano/avisos), `moodle_module_index` (posição do módulo na lista `modules` da seção; labels contam) e

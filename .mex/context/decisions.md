@@ -40,7 +40,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 #### Bibliografia é caso à parte, fora do motor temporal
 **Date:** 2026-07-22 (brainstorm F5) · **Status:** Active
 **Decision:** Bibliografia/references/cronograma ficam fora do provider de janela-de-prazo e do motor de bloco. O tutor deve passar a CONSUMIR bibliografias sem estourar o limite do Project, com brainstorm/spec próprios.
-**Reasoning:** Referência não tem "quando"; forçar bloco gera o residual conhecido (MF eth2 → bloco-12, aws → bloco-01). Ver spec `docs/superpowers/specs/2026-07-22-janela-de-prazo-tier2-design.md` §7.
+**Reasoning:** Referência não tem "quando"; forçar bloco gera o residual conhecido (MF eth2 → bloco-12, aws → bloco-01). Ver spec `docs/specs/Feitos/2026-07-22-janela-de-prazo-tier2-design.md` §7.
 **Consequences:** Régua de cobertura das referências é separada (campanha própria); eth2/aws são exceção documentada, não bug do motor.
 
 #### `covered_units` é LISTA por avaliação/entrega, regra do plano de cada curso
