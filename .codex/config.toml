@@ -1,0 +1,39 @@
+# graphify como MCP no Codex.
+#
+# NAO usar `graphify <repo> --mcp`: essa forma entra em extracao antes de servir,
+# polui o stdout e derruba o handshake. Medido em 09/09/2026 — sem resposta ao
+# initialize em 20s. A forma abaixo responde: serverInfo graphify 0.9.42.
+#
+# O interpretador e o fixado em graphify-out/.graphify_python; um lookup por PATH
+# pode escolher outra instalacao. Detalhes em .mex/patterns/debug-graphify-mcp.md.
+#
+# Se esta secao voltar a `graphify <cwd> --mcp`, foi o Alethe ao lancar o Codex; ele
+# ignora os toggles. O interruptor real e `enabled = false` no ~/.codex/config.toml
+# global. Medido em 10/09/2026.
+[mcp_servers.graphify]
+command = "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
+args = [
+    "-m",
+    "graphify.serve",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\graphify-out\\graph.json",
+]
+
+# Guardas do projeto (antes em .codex/hooks.json): uma representacao de hooks por camada.
+# Fora dos blocos gerenciados pelo Alethe, que a regeneracao preserva.
+[[hooks.PreToolUse]]
+matcher = "Edit|Write"
+description = "engine.py e fachada (.mex/AGENTS.md). Caminho relativo: o hook roda com cwd no projeto."
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "node scripts/hooks/engine-facade-guard.js"
+commandWindows = "node scripts/hooks/engine-facade-guard.js"
+timeout = 10
+
+[[hooks.PreToolUse]]
+matcher = "Bash|PowerShell"
+description = "anti-padroes Gemini no staged (.mex/AGENTS.md)"
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "node scripts/hooks/gemini-antipattern-guard.js"
+commandWindows = "node scripts/hooks/gemini-antipattern-guard.js"
+timeout = 15

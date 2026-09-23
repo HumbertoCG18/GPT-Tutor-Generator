@@ -1,53 +1,32 @@
 ---
 name: agents
-description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-06-08
+description: Identidade, invariantes e comandos do GPT Tutor
 ---
 
 # GPT-Tutor-Generator
 
-Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-03.
+Desktop Python/Tkinter que converte materiais acadêmicos em repositórios-tutor Markdown.
+Navegação: [ROUTER.md](ROUTER.md). Engenharia: [patterns/engenharia-produto.md](patterns/engenharia-produto.md).
 
-## What This Is
+## Invariantes
 
-A desktop tool (Python/tkinter) that converts academic PDFs into structured GitHub repositories formatted as Claude Projects knowledge bases, acting as a persistent AI tutor per subject.
+- Ler fontes antes de editar; validar APIs/flags/versões, sem adivinhar. Pular arquivos >100 KB salvo necessidade concreta.
+- engine.py é fachada: lógica nova em subpacotes; imports vêm do módulo especializado.
+- Gemini: google-genai, imports lazy; nunca o SDK legado google-generativeai nem a classe GenerativeModel (padrões em scripts/hooks/gemini-antipattern-guard.js).
+- code_curation.json gerado é cache: podar obsoletos antes de ler, escrever atomicamente.
+- Fixtures reproduzem contrato real com proveniência: [convenções](context/conventions.md) e [contratos](context/institutional.md). Ler antes de código/testes.
+- Estado vivo apenas em docs/reports/pendencias.md; resultado concluído sai da fila viva e entra em Concluído. Atualizar só o escopo da tarefa.
+- Plano/spec/report concluídos com todos os aceites verdes vão para Feitos/ do próprio diretório; git mv quando trackeados. Não arquivar trabalho incompleto.
+- MEX guarda intenção/convenções/contratos; Graphify estrutura. Sem duplicar estado no mapa/contexto.
+- Ao mudar código, atualizar o grafo; ao mudar arquitetura/pipeline/atribuição, atualizar docs/Overview-Sistema.html.
+- Ao fechar tarefa, corrigir contexto obsoleto e padrão desviado; padrão novo só se necessário, com entrada em patterns/INDEX.md.
+- Sem comentários óbvios nem docstrings de múltiplos parágrafos. Sem floreio/sicofantia.
 
-## Non-Negotiables
+## Comandos
 
-- All models/CLIs follow `patterns/engenharia-produto.md`: issue before a change, PR mentioning the issue, traceable release, and UI/observability/quality criteria appropriate to desktop or web. Preserve Gates 1/2; documenting a requirement does not mean it is implemented.
-- Read existing files before writing. Do not re-read unless the file changed.
-- Do not guess APIs, versions, flags, commit SHAs, or package names. Verify by reading code or docs before asserting.
-- New logic goes into the correct subpackage — never into `engine.py`. `engine.py` is a facade only.
-- Imports must come from focused submodules, not from `engine.py`.
-- No sycophantic openers, closing fluff, emojis, or em-dashes in output.
-- No obvious comments; only non-obvious WHY comments.
-- No multi-paragraph docstrings.
-- Skip files over 100KB unless strictly required.
-- Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
-- Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
-- The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
+- Suíte: python -m pytest tests -q
+- Teste focado: python -m pytest tests/<arquivo>.py -q
+- Aplicativo: python app.py
 
-## Commands
-
-```powershell
-# Run all tests
-python -m pytest tests -q
-
-# Run a specific test file
-python -m pytest tests/test_datalab_image_extraction.py -q
-
-# Run the app
-python app.py
-```
-
-## Scaffold Growth
-
-After every task:
-- If no pattern exists for this task type, create one and add it to `patterns/INDEX.md`.
-- If a pattern was deviated from or a new gotcha was found, update it.
-- If any context file is now outdated, update it surgically.
-- Update "Current Project State" in `ROUTER.md` if the work was significant.
-
-## Navigation
-
-Read `.mex/ROUTER.md` before starting any task.
+Issue/PR/release, Gates, delegação e comunicação seguem os núcleos pessoais/workflow;
+este arquivo não os duplica. Referência histórica detalhada: [project-invariants-history.md](context/project-invariants-history.md).
