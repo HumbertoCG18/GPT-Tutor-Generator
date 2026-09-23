@@ -51,6 +51,7 @@ def test_operation_scope_correlates_complete_operation_without_sensitive_data(tm
         "timestamp",
         "run_id",
         "operation",
+        "entry_point",
         "status",
         "duration_ms",
         "version",
@@ -156,3 +157,30 @@ def test_startup_continues_when_local_log_is_unavailable(monkeypatch):
     main_module.main()
 
     assert calls == ["mainloop"]
+
+
+def test_nested_fallback_keeps_outer_entry_point(tmp_path):
+    log_path = configure_local_observability(tmp_path, version="test")
+
+    with operation_scope("incremental_build"):
+        with operation_scope("build"):
+            pass
+
+    events = _events(log_path)
+    assert [event["operation"] for event in events] == [
+        "incremental_build", "build", "build", "incremental_build",
+    ]
+    assert {event["entry_point"] for event in events} == {"incremental_build"}
+    assert len({event["run_id"] for event in events}) == 1
+
+
+def test_handled_entry_failures_report_partial_instead_of_success(tmp_path):
+    log_path = configure_local_observability(tmp_path, version="test")
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder._sleep_guard = lambda _reason: nullcontext()
+    builder.failed_entries = [{"title": "falha anterior"}]
+    builder._build_impl = lambda: builder.failed_entries.append({"title": "fonte ausente"})
+
+    builder.build()
+
+    assert [event["status"] for event in _events(log_path)] == ["started", "partial"]

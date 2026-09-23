@@ -1815,8 +1815,14 @@ class RepoBuilder:
             reason=reason,
         )
 
+    def _operation_scope(self, operation: str):
+        # failed_entries so cresce: entradas tratadas como falha tornam a operacao parcial.
+        return operation_scope(
+            operation, failure_count=lambda: len(getattr(self, "failed_entries", ()))
+        )
+
     def build(self) -> None:
-        with operation_scope("build"):
+        with self._operation_scope("build"):
             with self._sleep_guard("build do repositorio"):
                 self._build_impl()
 
@@ -2158,7 +2164,7 @@ class RepoBuilder:
         )
 
     def incremental_build(self) -> None:
-        with operation_scope("incremental_build"):
+        with self._operation_scope("incremental_build"):
             with self._sleep_guard("build incremental do repositorio"):
                 self._incremental_build_impl()
 
@@ -2238,7 +2244,7 @@ class RepoBuilder:
         )
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
-        with operation_scope("process_single"):
+        with self._operation_scope("process_single"):
             with self._sleep_guard(f"processamento de {entry.title}"):
                 return self._process_single_impl(entry, force=force)
 

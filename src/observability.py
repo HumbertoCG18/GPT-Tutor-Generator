@@ -12,13 +12,15 @@ from datetime import datetime, timezone
 from importlib import metadata
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Callable, Iterator, Optional
 
 
 LOGGER_NAME = "gpt_tutor.observability"
 _ALLOWED_OPERATIONS = {"build", "incremental_build", "process_single"}
 _SAFE_IDENTIFIER = re.compile(r"[^a-zA-Z0-9_.-]")
 _current_run_id: ContextVar[Optional[str]] = ContextVar("observability_run_id", default=None)
+# Operacao publica que o usuario pediu; um build aninhado no fallback do incremental nao conta como build direto.
+_current_entry_point: ContextVar[Optional[str]] = ContextVar("observability_entry_point", default=None)
 
 
 class _JsonEventFormatter(logging.Formatter):
@@ -31,6 +33,7 @@ class _JsonEventFormatter(logging.Formatter):
             "timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
             "run_id": record.run_id,
             "operation": record.operation,
+            "entry_point": record.entry_point,
             "status": record.status,
             "duration_ms": record.duration_ms,
             "version": self.version,
@@ -93,6 +96,7 @@ def _emit(operation: str, run_id: str, status: str, duration_ms: int, error_type
         extra={
             "run_id": run_id,
             "operation": operation,
+            "entry_point": _current_entry_point.get() or operation,
             "status": status,
             "duration_ms": duration_ms,
             "error_type": error_type,
@@ -101,11 +105,15 @@ def _emit(operation: str, run_id: str, status: str, duration_ms: int, error_type
 
 
 @contextmanager
-def operation_scope(operation: str) -> Iterator[str]:
+def operation_scope(
+    operation: str, failure_count: Optional[Callable[[], int]] = None
+) -> Iterator[str]:
     if operation not in _ALLOWED_OPERATIONS:
         raise ValueError("unsupported observable operation")
     run_id = _current_run_id.get() or str(uuid.uuid4())
     token = _current_run_id.set(run_id)
+    entry_token = _current_entry_point.set(_current_entry_point.get() or operation)
+    failures_before = failure_count() if failure_count else 0
     started = time.perf_counter()
     _emit(operation, run_id, "started", 0)
     try:
@@ -129,6 +137,13 @@ def operation_scope(operation: str) -> Iterator[str]:
         )
         raise
     else:
-        _emit(operation, run_id, "success", round((time.perf_counter() - started) * 1000))
+        partial = failure_count is not None and failure_count() > failures_before
+        _emit(
+            operation,
+            run_id,
+            "partial" if partial else "success",
+            round((time.perf_counter() - started) * 1000),
+        )
     finally:
+        _current_entry_point.reset(entry_token)
         _current_run_id.reset(token)

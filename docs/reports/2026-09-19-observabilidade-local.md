@@ -7,13 +7,15 @@ SDK ou exportação externa.
 
 `src/observability.py` grava `operations.jsonl` no diretório local da aplicação. Cada
 operação emite início e término com estes campos permitidos: `timestamp`, `run_id` UUID,
-`operation`, `status`, `duration_ms`, `version` e, em falha, `error_type`. Mensagem da
+`operation`, `entry_point`, `status`, `duration_ms`, `version` e, em falha, `error_type`. Mensagem da
 exceção, traceback, caminho, URL, credencial, prompt e conteúdo acadêmico não entram nesse
 arquivo.
 
 Fronteiras instrumentadas: `RepoBuilder.build`, `incremental_build` e `process_single`.
 `InterruptedError` vira `cancelled`; demais exceções viram `error`; a exceção original é
-relançada. O logging diagnóstico preexistente continua responsável pelo traceback local.
+relançada. Entrada tratada como falha (`failed_entries` cresceu) termina em `partial`, não
+`success`. `entry_point` guarda a operação pedida: o `build` do fallback de um
+`incremental_build` sem manifest sai com `entry_point=incremental_build`. O logging diagnóstico preexistente continua responsável pelo traceback local.
 
 As perguntas operacionais respondidas são:
 
@@ -35,7 +37,7 @@ As perguntas operacionais respondidas são:
   tipo de erro por versão e aumento sustentado da taxa de erro; limiar não será inventado antes
   da medição.
 
-Contagens por `status` e distribuição de `duration_ms` fornecem o baseline de métricas. Os pares
+Contagens por `status` (filtrando `operation == entry_point` para pedidos diretos) e distribuição de `duration_ms` fornecem o baseline de métricas. Os pares
 `started`/terminal com o mesmo `run_id` formam o trace local mínimo. OpenTelemetry fica adiado:
 não existe coletor nem consumidor que justifique SDK, custo de operação ou telemetria duplicada.
 
