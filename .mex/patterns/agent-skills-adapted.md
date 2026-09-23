@@ -12,11 +12,9 @@ Astra revisa uma vez, somente leitura; Gates 1/2 controlam plano e commit.
 
 ## Qualidade: baseline, ratchet e piso
 
-Aplicado pela #13 em `.github/workflows/python-quality.yml`,
-`.github/python-quality-baseline.json` e `scripts/verify_python_quality.py`. Cada regra precisa
-declarar comando exato, escopo e momento de execução. Separar regra declarada de check
-realmente imposto. Medir o baseline antes de fixar números; o ratchet impede regressão sem
-exigir limpar dívida histórica na mesma tarefa.
+Aplicar com #13. Cada regra precisa declarar comando exato, escopo e momento de execução.
+Separar regra declarada de check realmente imposto. Medir o baseline antes de fixar números;
+o ratchet impede regressão sem exigir limpar dívida histórica na mesma tarefa.
 
 - Fast: diff/arquivo alterado durante a edição. Task: testes e contratos do escopo.
   Full: suíte ampla em PR/release. Custo medido define a posição.
@@ -26,10 +24,9 @@ exigir limpar dívida histórica na mesma tarefa.
   no mesmo diff apenas para obter verde.
 - Saída inconclusiva do guard é falha de infraestrutura, não aprovação.
 
-O `floor-guard` regex do upstream não foi adotado: o verificador Python já cobre o baseline
-versionado sem outra camada. Novos checks devem incluir arquivos rastreados, staged e
-untracked; reportar regra + localização, sem imprimir valor sensível; testar falso positivo e
-os códigos limpo/violação/inconclusivo.
+O `floor-guard` upstream é uma referência regex e não entra ativo antes do baseline de #13.
+Ao automatizar, incluir arquivos rastreados, staged e untracked; reportar regra + localização,
+sem imprimir valor sensível; testar falso positivo e os códigos limpo/violação/inconclusivo.
 
 ## Contexto: selecionar, proteger, checkpoint
 
@@ -40,7 +37,7 @@ Aplicar ao contrato de delegação e retomada em `.workflow/workflow.md`.
 - Ler `ROUTER.md`, estado e handoff antes de reabrir fontes. Recuperar detalhe sob demanda;
   não repetir saída já preservada.
 - Antes de compactação automática ou quando a sessão se aproximar de 75% da janela, atualizar
-  `.workflow-local/active-task.md` e o handoff aplicável. Iniciar sessão nova quando o estado
+  `.workflow/local/active-task.md` (legado: `.workflow-local/`) e o handoff aplicável. Iniciar sessão nova quando o estado
   autocontido for menor e mais confiável que continuar acumulando contexto.
 - Conflito entre instruções, estado e código deve ser registrado e resolvido pela precedência
   existente; não preencher lacuna material com suposição silenciosa.
@@ -74,3 +71,4 @@ log estruturado explica.
 - Somente esta referência curta foi empacotada; os SKILL.md integrais permanecem upstream.
 - Antes de ativar qualquer check: baseline reproduzível, comando documentado, caso de falha,
   falso positivo, custo e rollback aprovados no Gate 1; diff e resultados confirmados no Gate 2.
+

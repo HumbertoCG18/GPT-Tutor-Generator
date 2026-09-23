@@ -1,34 +1,27 @@
 {
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "github@claude-plugins-official": false,
-    "code-review@claude-plugins-official": true
-  },
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" update --skip-flows >/dev/null 2>&1 || true",
-            "timeout": 30
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/engine-facade-guard.js\"",
+            "timeout": 10
           }
         ]
-      }
-    ],
-    "SessionStart": [
+      },
       {
-        "matcher": "",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" status 2>/dev/null || true",
-            "timeout": 10
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/gemini-antipattern-guard.js\"",
+            "timeout": 15
           }
         ]
       }
     ]
-  }
+  },
+  "enabledPlugins": {}
 }

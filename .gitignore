@@ -57,6 +57,10 @@ cover/
 
 # Django stuff:
 *.log
+# Logs de harness sao a derivacao dos numeros publicados: versionar.
+# A convencao esta em .mex/patterns/medir-alavanca-ablacao.md:24; a regra
+# generica acima a derrotava em silencio (203 logs em disco, 0 no git, 09/09).
+!docs/reports/_harness-*/**/*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -219,6 +223,8 @@ __marimo__/
 *.pdf
 
 # LLM context dirs (ferramentas internas, não commitadas)
+graphify-out/
+.codebase-memory/
 .LLM_Context/
 .agents/
 .claude/
@@ -249,3 +255,39 @@ staging/
 !moddle/.env.example
 moddle/.m365_token.json
 .superpowers/
+.worktrees/
+.ablacao/
+docs/reports/_archive/scripts-2026-09-04/artefato_razao/dados.json
+docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
+.zerodiff/
+# Hooks do agy (Antigravity CLI): os guardas de scripts/hooks/ registrados para o
+# terceiro CLI. A regra .agents/ acima e de template e esconderia isto de git status.
+!.agents/
+.agents/*
+!.agents/hooks.json
+
+# nunca versionar (lei do handoff 11/09): config local do Claude Code e cache do token-savior
+.claude/settings.local.json
+.token-savior-cache.json
+
+# Copias de trabalho do harness dos 3 eixos (12/09): 3 GB por configuracao, regeradas por sync do produto
+.motor3eixos/
+.frzero/
+
+# Configuracao compartilhada das CLIs: excecoes aos ignores genericos acima.
+# Estado local (.workflow/local/), workflows legados e worktrees continuam ignorados.
+!/.claude/
+/.claude/*
+!/.claude/settings.json
+!/.claude/CLAUDE.md
+!/.claude/skills/
+!/.claude/rules/
+!/.claude/agents/
+!/.agents/skills/
+!/.agents/rules/
+/.claude/settings.local.json
+/.claude/**/*.bak*
+/.agents/**/*.bak*
+/.workflow/local/
+# Legado: estado de worktrees ainda nao migradas.
+/.workflow-local/
