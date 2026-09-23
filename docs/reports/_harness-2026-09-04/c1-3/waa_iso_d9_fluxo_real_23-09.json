@@ -1,0 +1,50 @@
+{
+ "1_criada_pela_ui": {
+  "feature_flags_do_perfil": {},
+  "use_anchor_engine_nas_opcoes": "(ausente → False no código)",
+  "use_concept_resolver_nas_opcoes": "(ausente → True no código)",
+  "chamadas": {
+   "apply_anchor_engine": 0,
+   "apply_concept_resolver": 1
+  },
+  "materiais": 27,
+  "temporal_block_id_antes": 0,
+  "temporal_block_id_depois": 0,
+  "computed_block_id_depois": 26,
+  "razoes_de_unidade_por_bloco": 11,
+  "opcoes_gravadas_no_manifest": {
+   "use_anchor_engine": true,
+   "use_llm_voter": false,
+   "compile_vocabulary": false
+  },
+  "segundos": 26.9
+ },
+ "2_com_flag_do_build_course": {
+  "feature_flags_do_perfil": {
+   "use_anchor_engine": true
+  },
+  "use_anchor_engine_nas_opcoes": true,
+  "use_concept_resolver_nas_opcoes": "(ausente → True no código)",
+  "chamadas": {
+   "apply_anchor_engine": 1,
+   "apply_concept_resolver": 1
+  },
+  "materiais": 27,
+  "temporal_block_id_antes": 0,
+  "temporal_block_id_depois": 26,
+  "computed_block_id_depois": 26,
+  "razoes_de_unidade_por_bloco": 15,
+  "opcoes_gravadas_no_manifest": {
+   "use_anchor_engine": true,
+   "use_llm_voter": false,
+   "compile_vocabulary": false
+  },
+  "segundos": 18.0
+ },
+ "3_flags_depois_de_salvar_no_dialogo": {},
+ "popups_registrados": [
+  "Matéria 'ISO TCC criada pela UI' salva com sucesso!",
+  "Matéria 'ISO TCC com flag' salva com sucesso!",
+  "Matéria 'ISO TCC com flag' salva com sucesso!"
+ ]
+}

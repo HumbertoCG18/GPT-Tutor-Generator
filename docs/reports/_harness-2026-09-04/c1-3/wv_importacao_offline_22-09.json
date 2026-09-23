@@ -1,0 +1,2553 @@
+{
+  "baseline_confere": {
+    "bloco": true,
+    "sub_aceita": true,
+    "sub_primaria": true,
+    "unidade": true
+  },
+  "baseline_esperado": {
+    "bloco": [
+      217,
+      237
+    ],
+    "sub_aceita": [
+      107,
+      251
+    ],
+    "sub_primaria": [
+      84,
+      251
+    ],
+    "unidade": [
+      246,
+      284
+    ]
+  },
+  "campos": {
+    "default_entrada_nova": {
+      "manual_tags": [],
+      "manual_timeline_block_id": "",
+      "manual_unit_slug": ""
+    },
+    "descartado_campo": {
+      "revisar": "fila de revisao derivada das bandas/flags",
+      "unit_slug": "decisao de unidade"
+    },
+    "descartado_por_prefixo": {
+      "auto_": "tags automaticas derivadas de decisoes",
+      "computed_": "decisao do motor (bloco/unidade/subunidade computados)",
+      "coverage_": "cobertura derivada da unidade",
+      "manual_": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+      "subunit_": "evidencia da decisao de subunidade",
+      "temporal_block_": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+      "unit_": "evidencia/conflito da decisao de unidade"
+    },
+    "mantidos": {
+      "advanced_backend": "proveniencia de extracao",
+      "advanced_markdown": "texto",
+      "advanced_metadata_path": "proveniencia de extracao",
+      "approved_at": "data de origem da curadoria de TEXTO",
+      "approved_markdown": "texto curado",
+      "approved_source_markdown": "proveniencia do texto curado",
+      "base_backend": "proveniencia de extracao",
+      "base_markdown": "texto (snapshot local)",
+      "category": "origem (categoria de entrada)",
+      "clone_error": "proveniencia de extracao (clone falhou na origem)",
+      "curated_markdown": "texto curado",
+      "datalab_mode": "config de extracao",
+      "document_profile": "config de extracao",
+      "document_report": "proveniencia de extracao",
+      "effective_profile": "proveniencia de extracao",
+      "extract_images": "config de extracao",
+      "extract_tables": "config de extracao",
+      "extracted_files": "proveniencia de extracao",
+      "file_type": "origem",
+      "force_ocr": "config de extracao",
+      "formula_priority": "config de extracao",
+      "id": "identidade (== id do gold)",
+      "include_in_bundle": "entrada",
+      "moodle_label": "origem Moodle",
+      "moodle_module_index": "origem Moodle",
+      "moodle_section_index": "origem Moodle",
+      "moodle_week_label": "origem Moodle",
+      "notes": "entrada",
+      "ocr_language": "config de extracao",
+      "page_range": "config de extracao",
+      "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+      "posting_date": "data de origem",
+      "posting_date_created": "data de origem",
+      "preferred_backend": "config de extracao",
+      "preserve_pdf_images_in_markdown": "config de extracao",
+      "processing_mode": "config de extracao",
+      "professor_signal": "entrada",
+      "raw_target": "arquivo bruto",
+      "relevant_for_exam": "entrada",
+      "review_status": "estado da curadoria de TEXTO",
+      "source_path": "origem",
+      "source_section": "origem (card Moodle)",
+      "tags": "campo do usuario na entrada (vazio nos 12)",
+      "title": "identidade"
+    }
+  },
+  "checks": {
+    "baseline_217_246_84_107": true,
+    "builds_base_intocados": true,
+    "repos_reais_intocados": true,
+    "unidade_ge_256_de_284": false,
+    "zero_perda": true,
+    "zero_rede_llm": true
+  },
+  "decisoes_que_mudam_nos_cursos_copiados": {
+    "CG": {
+      "mudam_vs_antes": [
+        "resolucao-de-prova-de-computacao-grafica-2d",
+        "resolucao-de-prova-de-computacao-grafica-2d-html",
+        "resolucao-de-prova-de-computacao-grafica-3d"
+      ],
+      "mudam_vs_controle": [
+        "resolucao-de-prova-de-computacao-grafica-2d",
+        "resolucao-de-prova-de-computacao-grafica-2d-html",
+        "resolucao-de-prova-de-computacao-grafica-3d"
+      ],
+      "novas": [
+        "aula-gravada-975b85",
+        "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+        "video-sobre-mapeamento-em-opengl-1dad3c",
+        "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+        "video-sobre-origens-da-computacao-grafica-806e66",
+        "video-sobre-prechimento-de-areas-duracao-1300-d87e5f",
+        "video-sobre-prechimento-de-areas-duracao-330-defae7"
+      ]
+    },
+    "IA": {
+      "mudam_vs_antes": [],
+      "mudam_vs_controle": [],
+      "novas": [
+        "ia-responsável-7c4626",
+        "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f"
+      ]
+    },
+    "MF": {
+      "mudam_vs_antes": [
+        "arvores",
+        "intro",
+        "listas",
+        "mcs",
+        "provas"
+      ],
+      "mudam_vs_controle": [
+        "arvores",
+        "intro",
+        "listas",
+        "mcs",
+        "provas"
+      ],
+      "novas": [
+        "archive-of-formal-proofs-355fb8",
+        "aws-encryption-sdk",
+        "eth2"
+      ]
+    }
+  },
+  "hash_builds_base": {
+    "CG": {
+      "course/.content_taxonomy.json": "c880842cabef9c634ace282e4e5f82ad62240f1497e57b26c32b031c2b4813b6",
+      "course/.timeline_index.json": "9ef1ad4f37fb4dbfe502f04b6d38290ec4fb602c1e8baf63d817affc1d35724b",
+      "manifest.json": "9f54fb3ca699df7685b4225d155e30229abd3094c0faa26616e2c71943b71326"
+    },
+    "ES2": {
+      "course/.content_taxonomy.json": "75767a64f73631c412350b4d42112d485871b43eb9990c22980a40734562f43a",
+      "course/.timeline_index.json": "c38c33b4cfdc0eb87900bd355a8de6f8c9290e6cf3e0b84c4f552bd4427a9a75",
+      "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "FR": {
+      "course/.content_taxonomy.json": "cce44b76a9c8ec9bf506cd3235ef198fb6f693f61016d594d15db5512a600d25",
+      "course/.timeline_index.json": "d82c9f36be9b4f3b41f8e334cedba3e91d55251c51edbac79f58871b7ba49792",
+      "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "IA": {
+      "course/.content_taxonomy.json": "de0c0e27888aafdd6efc969eb7b5502652982435679298964183d3f3d653dd69",
+      "course/.timeline_index.json": "70410dfe101007b370f96dac092b280e0059f378821ffc4b5236c06e2d5b6621",
+      "manifest.json": "b6f1fa10b0ca73d8a3e07e4c645b1c16bd65f98ad86a9d97f4f716f87131497a"
+    },
+    "MF": {
+      "course/.content_taxonomy.json": "60d9a0a67266057e8053335cba56c3322bfcc300a253e2beb58127cbae0c9bf4",
+      "course/.timeline_index.json": "6bc13a5d01ca6ba58aadbe0550f510603b9f407b8804cfe5f540f55eb6c1f148",
+      "manifest.json": "3e8c14c821adf8d334686a81aa911194c34de3fdfbc6ddc6ad643123f92b732b"
+    },
+    "SO": {
+      "course/.content_taxonomy.json": "81a0865216b0302983ae07b0b60f1450f44d6eeafa6a3c69dabdde400f5aba00",
+      "course/.timeline_index.json": "8171869e46e1df63acb526789bc601a7248d2aef192e42b820f68660e8eb18f7",
+      "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "TCC": {
+      "course/.content_taxonomy.json": "6b906f01967b04951d7bb81519273ff03b7777ed2b105a4dadd6927639e57294",
+      "course/.timeline_index.json": "9d625a1759053733343821182953225492a64d0702c2e3d2dcb98d46c25e7d21",
+      "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    }
+  },
+  "head": "493119e",
+  "importacao": {
+    "CG": {
+      "aula-gravada-975b85": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 368,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/aula-gravada-975b85.md",
+            "sha256": "cd55ef9873da0eb93d19a70731e7752f0ea50a7a2257b62a823211fc59ece599"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 438,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758.md",
+            "sha256": "eabcde01b7f517d6642e22277d6dcecf8374d26de8aae193005992b726f6f533"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-sobre-mapeamento-em-opengl-1dad3c": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 420,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-sobre-mapeamento-em-opengl-1dad3c.md",
+            "sha256": "cd8b85644b01d0a759ab92fd725c92b0714d3f6b962abee9aa9259f6acb1f425"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 449,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e.md",
+            "sha256": "b93519cd06dd36e3e5820f7e6e6de87b1a155edb1aa107facd95ebd7283a4af8"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-sobre-origens-da-computacao-grafica-806e66": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 435,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-sobre-origens-da-computacao-grafica-806e66.md",
+            "sha256": "d4762353b537a2bf107ba637b8f2a140148b8caf4f3d5bb7e12532d8a42d3385"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-sobre-prechimento-de-areas-duracao-1300-d87e5f": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 391,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-sobre-prechimento-de-areas-duracao-1300-d87e5f.md",
+            "sha256": "733a96493b14b500c889e2bcbf29e75d4de8dba06f8518031ff488b21d6e32c4"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "video-sobre-prechimento-de-areas-duracao-330-defae7": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 435,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/video-sobre-prechimento-de-areas-duracao-330-defae7.md",
+            "sha256": "4f460645f69ad597ffaa2d0d8112d1fb8d21c68323051ab48da82f9495552a72"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_timeline_block_id": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_unit_slug": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "datalab_mode": "config de extracao",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "extract_images": "config de extracao",
+          "extract_tables": "config de extracao",
+          "file_type": "origem",
+          "force_ocr": "config de extracao",
+          "formula_priority": "config de extracao",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "ocr_language": "config de extracao",
+          "page_range": "config de extracao",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "preserve_pdf_images_in_markdown": "config de extracao",
+          "processing_mode": "config de extracao",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "source_section": "origem (card Moodle)",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      }
+    },
+    "IA": {
+      "ia-responsável-7c4626": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 258,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "content/curated/ia-responsável-7c4626.md",
+            "sha256": "477d1888945f00e6667e44bcb666d35bb08267bf8d7c6b4544545db1d10bfc77"
+          },
+          {
+            "bytes": 258,
+            "campo": "approved_markdown",
+            "copiado": true,
+            "path": "content/curated/ia-responsável-7c4626.md",
+            "sha256": "477d1888945f00e6667e44bcb666d35bb08267bf8d7c6b4544545db1d10bfc77"
+          },
+          {
+            "bytes": 258,
+            "campo": "curated_markdown",
+            "copiado": true,
+            "path": "content/curated/ia-responsável-7c4626.md",
+            "sha256": "477d1888945f00e6667e44bcb666d35bb08267bf8d7c6b4544545db1d10bfc77"
+          },
+          {
+            "campo": "approved_source_markdown",
+            "copiado": false,
+            "motivo": "inexistente no repo real",
+            "path": "staging/markdown-auto/url_fetcher/ia-responsável-7c4626.md"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "approved_at": "data de origem da curadoria de TEXTO",
+          "approved_markdown": "texto curado",
+          "approved_source_markdown": "proveniencia do texto curado",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "curated_markdown": "texto curado",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "file_type": "origem",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "processing_mode": "config de extracao",
+          "professor_signal": "entrada",
+          "relevant_for_exam": "entrada",
+          "review_status": "estado da curadoria de TEXTO",
+          "source_path": "origem",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 16957,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "content/curated/o-que-é-inteligência-artificial-ia-oracle-brasil-43437f.md",
+            "sha256": "7e98b17a99705753460cf0b53646c309a88be08f96138d0e69d202c5ba4c8198"
+          },
+          {
+            "bytes": 16957,
+            "campo": "approved_markdown",
+            "copiado": true,
+            "path": "content/curated/o-que-é-inteligência-artificial-ia-oracle-brasil-43437f.md",
+            "sha256": "7e98b17a99705753460cf0b53646c309a88be08f96138d0e69d202c5ba4c8198"
+          },
+          {
+            "bytes": 16957,
+            "campo": "curated_markdown",
+            "copiado": true,
+            "path": "content/curated/o-que-é-inteligência-artificial-ia-oracle-brasil-43437f.md",
+            "sha256": "7e98b17a99705753460cf0b53646c309a88be08f96138d0e69d202c5ba4c8198"
+          },
+          {
+            "campo": "approved_source_markdown",
+            "copiado": false,
+            "motivo": "inexistente no repo real",
+            "path": "staging/markdown-auto/url_fetcher/o-que-é-inteligência-artificial-ia-oracle-brasil-43437f.md"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "approved_at": "data de origem da curadoria de TEXTO",
+          "approved_markdown": "texto curado",
+          "approved_source_markdown": "proveniencia do texto curado",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "curated_markdown": "texto curado",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "file_type": "origem",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "processing_mode": "config de extracao",
+          "professor_signal": "entrada",
+          "relevant_for_exam": "entrada",
+          "review_status": "estado da curadoria de TEXTO",
+          "source_path": "origem",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      }
+    },
+    "MF": {
+      "archive-of-formal-proofs-355fb8": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 487,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "content/curated/archive-of-formal-proofs-355fb8.md",
+            "sha256": "1c7bd3b0de364192af2914fd9e47ab2dddfcec86ebe03cc1de103511d3164e97"
+          },
+          {
+            "bytes": 487,
+            "campo": "approved_markdown",
+            "copiado": true,
+            "path": "content/curated/archive-of-formal-proofs-355fb8.md",
+            "sha256": "1c7bd3b0de364192af2914fd9e47ab2dddfcec86ebe03cc1de103511d3164e97"
+          },
+          {
+            "bytes": 487,
+            "campo": "curated_markdown",
+            "copiado": true,
+            "path": "content/curated/archive-of-formal-proofs-355fb8.md",
+            "sha256": "1c7bd3b0de364192af2914fd9e47ab2dddfcec86ebe03cc1de103511d3164e97"
+          },
+          {
+            "campo": "approved_source_markdown",
+            "copiado": false,
+            "motivo": "inexistente no repo real",
+            "path": "staging/markdown-auto/url_fetcher/archive-of-formal-proofs-355fb8.md"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "advanced_backend": "proveniencia de extracao",
+          "advanced_markdown": "texto",
+          "approved_at": "data de origem da curadoria de TEXTO",
+          "approved_markdown": "texto curado",
+          "approved_source_markdown": "proveniencia do texto curado",
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "curated_markdown": "texto curado",
+          "document_profile": "config de extracao",
+          "document_report": "proveniencia de extracao",
+          "file_type": "origem",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "pipeline_decision": "proveniencia de extracao (backend, nao atribuicao)",
+          "preferred_backend": "config de extracao",
+          "processing_mode": "config de extracao",
+          "professor_signal": "entrada",
+          "relevant_for_exam": "entrada",
+          "review_status": "estado da curadoria de TEXTO",
+          "source_path": "origem",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "aws-encryption-sdk": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 5323,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/aws-encryption-sdk.md",
+            "sha256": "b435f272d445b36891fb7fbf3e24a77c853323ae161df11efdbe6b5dcea379b7"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "coverage_units": "cobertura derivada da unidade",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "clone_error": "proveniencia de extracao (clone falhou na origem)",
+          "document_profile": "config de extracao",
+          "effective_profile": "proveniencia de extracao",
+          "extracted_files": "proveniencia de extracao",
+          "file_type": "origem",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "preferred_backend": "config de extracao",
+          "processing_mode": "config de extracao",
+          "professor_signal": "entrada",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "eth2": {
+        "acao": "injetado",
+        "arquivos": [
+          {
+            "bytes": 12837,
+            "campo": "base_markdown",
+            "copiado": true,
+            "path": "staging/markdown-auto/url_fetcher/eth2.md",
+            "sha256": "b026a5aaf0535e5ecf4ea4fb8df4ea50e4dcfbef5b1ac37e5f135e2a983be5a9"
+          }
+        ],
+        "defaults_entrada_nova": [
+          "manual_tags",
+          "manual_timeline_block_id",
+          "manual_unit_slug"
+        ],
+        "descartados": {
+          "auto_tags": "tags automaticas derivadas de decisoes",
+          "computed_subunit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "computed_unit_slug": "decisao do motor (bloco/unidade/subunidade computados)",
+          "manual_review": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "manual_tags": "pino/curadoria manual (manual_tags/unit/block) ou artefato de revisao (manual_review)",
+          "revisar": "fila de revisao derivada das bandas/flags",
+          "subunit_match_confidence": "evidencia da decisao de subunidade",
+          "subunit_match_reasons": "evidencia da decisao de subunidade",
+          "temporal_block_band": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_flag": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_id": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_method": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_provider": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "temporal_block_window": "decisao de bloco do motor (id/metodo/banda/flag/provider/janela)",
+          "unit_block_conflict": "evidencia/conflito da decisao de unidade",
+          "unit_match_confidence": "evidencia/conflito da decisao de unidade",
+          "unit_match_reasons": "evidencia/conflito da decisao de unidade"
+        },
+        "mantidos": {
+          "base_backend": "proveniencia de extracao",
+          "base_markdown": "texto (snapshot local)",
+          "category": "origem (categoria de entrada)",
+          "clone_error": "proveniencia de extracao (clone falhou na origem)",
+          "document_profile": "config de extracao",
+          "effective_profile": "proveniencia de extracao",
+          "extracted_files": "proveniencia de extracao",
+          "file_type": "origem",
+          "id": "identidade (== id do gold)",
+          "include_in_bundle": "entrada",
+          "notes": "entrada",
+          "preferred_backend": "config de extracao",
+          "processing_mode": "config de extracao",
+          "professor_signal": "entrada",
+          "relevant_for_exam": "entrada",
+          "source_path": "origem",
+          "tags": "campo do usuario na entrada (vazio nos 12)",
+          "title": "identidade"
+        }
+      },
+      "t1-2026-1": {
+        "acao": "nao_injetado_ja_presente",
+        "raw_build": "raw/pdfs/outros/t1-2026-1.pdf",
+        "raw_real": "raw/pdfs/trabalhos/t1-2026-1.pdf",
+        "sha256_bytes_iguais": true,
+        "source_path_build": "C:\\Users\\Humberto\\Desktop\\Moodle\\metodos-formais-para-computacao\\TDE Trabalho Discente Efetivo\\t1_2026_1.pdf",
+        "source_path_real": "C:/Users/Humberto/Downloads/t1_2026_1.pdf"
+      }
+    }
+  },
+  "issue": 51,
+  "limitacoes": [
+    "Ponte gold->build: os 13 tem new_id nulo em herancas_<sig>_15-09.json; a regua oficial nao os liga. Depois da importacao, liga pelo id preservado (== gold_id), com origem unica asserida na importacao.",
+    "t1-2026-1 nao foi injetado: o build-base do MF ja tem a entrada com o mesmo id e bytes identicos do PDF (source_path do stash, nao de Downloads); injetar duplicaria o material. Ligado por id tambem em 'antes_ponte_estendida' para separar ganho de ponte de ganho de importacao.",
+    "Entradas injetadas vao ao fim da lista de entries (como uma entrada nova do produto).",
+    "Perfil do reprocess = SubjectStore do repo real + profile_input do build (_inputs_15-09.json), use_llm_voter/compile_vocabulary desligados e TUTOR_NO_VOCAB_COMPILE=1 (mesma politica do build-base).",
+    "Os 4 cursos sem copia (SO, ES2, TCC, FR) usam o baseline em controle e depois."
+  ],
+  "outros_ids_que_mudam": [
+    {
+      "antes": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "curso": "MF",
+      "depois": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "gold": {
+        "bloco": "bloco-05",
+        "sub_primaria": [
+          "provadores-de-teoremas"
+        ],
+        "unidade": [
+          "unidade-01-metodos-formais"
+        ]
+      },
+      "gold_id": "arvores",
+      "ok_antes": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      },
+      "ok_depois": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      }
+    },
+    {
+      "antes": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "curso": "MF",
+      "depois": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "gold": {
+        "bloco": "bloco-06",
+        "sub_primaria": [
+          "provadores-de-teoremas"
+        ],
+        "unidade": [
+          "unidade-01-metodos-formais"
+        ]
+      },
+      "gold_id": "intro",
+      "ok_antes": {
+        "bloco": false,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      },
+      "ok_depois": {
+        "bloco": false,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      }
+    },
+    {
+      "antes": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "curso": "MF",
+      "depois": [
+        "bloco-05",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "gold": {
+        "bloco": "bloco-05",
+        "sub_primaria": [
+          "provadores-de-teoremas"
+        ],
+        "unidade": [
+          "unidade-01-metodos-formais"
+        ]
+      },
+      "gold_id": "listas",
+      "ok_antes": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      },
+      "ok_depois": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      }
+    },
+    {
+      "antes": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        ""
+      ],
+      "curso": "MF",
+      "depois": [
+        "bloco-06",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "gold": {
+        "bloco": "bloco-06",
+        "sub_primaria": [
+          "provadores-de-teoremas"
+        ],
+        "unidade": [
+          "unidade-01-metodos-formais"
+        ]
+      },
+      "gold_id": "provas",
+      "ok_antes": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      },
+      "ok_depois": {
+        "bloco": true,
+        "sub_aceita": false,
+        "sub_primaria": false,
+        "unidade": true
+      }
+    },
+    {
+      "antes": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "curso": "CG",
+      "depois": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "gold": {
+        "bloco": null,
+        "sub_primaria": [],
+        "unidade": [
+          "unidade-04-processo-de-visualizacao-2d"
+        ]
+      },
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-2d",
+      "ok_antes": {
+        "unidade": false
+      },
+      "ok_depois": {
+        "unidade": false
+      }
+    },
+    {
+      "antes": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "curso": "CG",
+      "depois": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "gold": {
+        "bloco": null,
+        "sub_primaria": [],
+        "unidade": [
+          "unidade-04-processo-de-visualizacao-2d"
+        ]
+      },
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-2d-html",
+      "ok_antes": {
+        "unidade": false
+      },
+      "ok_depois": {
+        "unidade": false
+      }
+    },
+    {
+      "antes": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "causa": "importacao (controle nao muda)",
+      "controle": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        ""
+      ],
+      "curso": "CG",
+      "depois": [
+        "",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "gold": {
+        "bloco": null,
+        "sub_primaria": [],
+        "unidade": [
+          "unidade-06-processo-de-visualizacao-3d",
+          "unidade-07-representacao-e-modelagem-de-objetos",
+          "unidade-08-sintese-de-imagens-realisticas"
+        ]
+      },
+      "gold_id": "resolucao-de-prova-de-computacao-grafica-3d",
+      "ok_antes": {
+        "unidade": false
+      },
+      "ok_depois": {
+        "unidade": false
+      }
+    }
+  ],
+  "perdas": {
+    "bloco": [],
+    "sub_aceita": [],
+    "sub_primaria": [],
+    "unidade": []
+  },
+  "placar_direto_por_id": {
+    "antes": {
+      "CG": {
+        "cadeia": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 41,
+          "sub_n": 75,
+          "sub_primaria": 28,
+          "unidade": 74,
+          "unidade_n": 86
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 42,
+          "sub_n": 75,
+          "sub_primaria": 28,
+          "unidade": 70,
+          "unidade_n": 86
+        }
+      },
+      "ES2": {
+        "cadeia": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_n": 28,
+          "sub_primaria": 7,
+          "unidade": 25,
+          "unidade_n": 28
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_n": 28,
+          "sub_primaria": 7,
+          "unidade": 25,
+          "unidade_n": 28
+        }
+      },
+      "FR": {
+        "cadeia": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        }
+      },
+      "IA": {
+        "cadeia": {
+          "bloco": 39,
+          "bloco_n": 40,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 39,
+          "unidade_n": 40
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 38,
+          "bloco_n": 40,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 39,
+          "unidade_n": 40
+        }
+      },
+      "MF": {
+        "cadeia": {
+          "bloco": 55,
+          "bloco_n": 62,
+          "sub_aceita": 29,
+          "sub_n": 56,
+          "sub_primaria": 25,
+          "unidade": 60,
+          "unidade_n": 62
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 51,
+          "bloco_n": 62,
+          "sub_aceita": 29,
+          "sub_n": 56,
+          "sub_primaria": 25,
+          "unidade": 60,
+          "unidade_n": 62
+        }
+      },
+      "SO": {
+        "cadeia": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_n": 15,
+          "sub_primaria": 7,
+          "unidade": 30,
+          "unidade_n": 37
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_n": 15,
+          "sub_primaria": 7,
+          "unidade": 27,
+          "unidade_n": 37
+        }
+      },
+      "TCC": {
+        "cadeia": {
+          "bloco": 19,
+          "bloco_n": 20,
+          "sub_aceita": 7,
+          "sub_n": 9,
+          "sub_primaria": 5,
+          "unidade": 11,
+          "unidade_n": 11
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 19,
+          "bloco_n": 20,
+          "sub_aceita": 7,
+          "sub_n": 9,
+          "sub_primaria": 5,
+          "unidade": 11,
+          "unidade_n": 11
+        }
+      }
+    },
+    "depois": {
+      "CG": {
+        "cadeia": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 43,
+          "sub_n": 82,
+          "sub_primaria": 30,
+          "unidade": 78,
+          "unidade_n": 93
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 33,
+          "bloco_n": 35,
+          "sub_aceita": 43,
+          "sub_n": 82,
+          "sub_primaria": 30,
+          "unidade": 78,
+          "unidade_n": 93
+        }
+      },
+      "ES2": {
+        "cadeia": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_n": 28,
+          "sub_primaria": 7,
+          "unidade": 25,
+          "unidade_n": 28
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 27,
+          "bloco_n": 28,
+          "sub_aceita": 8,
+          "sub_n": 28,
+          "sub_primaria": 7,
+          "unidade": 25,
+          "unidade_n": 28
+        }
+      },
+      "FR": {
+        "cadeia": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "sub_aceita": 7,
+          "sub_n": 18,
+          "sub_primaria": 6
+        }
+      },
+      "IA": {
+        "cadeia": {
+          "bloco": 41,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 39,
+          "unidade_n": 42
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 41,
+          "bloco_n": 42,
+          "sub_aceita": 5,
+          "sub_n": 39,
+          "sub_primaria": 4,
+          "unidade": 39,
+          "unidade_n": 42
+        }
+      },
+      "MF": {
+        "cadeia": {
+          "bloco": 58,
+          "bloco_n": 65,
+          "sub_aceita": 29,
+          "sub_n": 57,
+          "sub_primaria": 25,
+          "unidade": 61,
+          "unidade_n": 65
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 58,
+          "bloco_n": 65,
+          "sub_aceita": 29,
+          "sub_n": 57,
+          "sub_primaria": 25,
+          "unidade": 61,
+          "unidade_n": 65
+        }
+      },
+      "SO": {
+        "cadeia": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_n": 15,
+          "sub_primaria": 7,
+          "unidade": 30,
+          "unidade_n": 37
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 36,
+          "bloco_n": 39,
+          "sub_aceita": 8,
+          "sub_n": 15,
+          "sub_primaria": 7,
+          "unidade": 27,
+          "unidade_n": 37
+        }
+      },
+      "TCC": {
+        "cadeia": {
+          "bloco": 19,
+          "bloco_n": 20,
+          "sub_aceita": 7,
+          "sub_n": 9,
+          "sub_primaria": 5,
+          "unidade": 11,
+          "unidade_n": 11
+        },
+        "gravado_pelo_reprocess_ou_build": {
+          "bloco": 19,
+          "bloco_n": 20,
+          "sub_aceita": 7,
+          "sub_n": 9,
+          "sub_primaria": 5,
+          "unidade": 11,
+          "unidade_n": 11
+        }
+      }
+    }
+  },
+  "por_curso": {
+    "antes": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_aceita_n": 82,
+        "sub_primaria": 28,
+        "sub_primaria_n": 82,
+        "unidade": 74,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_aceita_n": 28,
+        "sub_primaria": 7,
+        "sub_primaria_n": 28,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_aceita_n": 18,
+        "sub_primaria": 6,
+        "sub_primaria_n": 18
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_aceita_n": 39,
+        "sub_primaria": 4,
+        "sub_primaria_n": 39,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 56,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_aceita_n": 58,
+        "sub_primaria": 25,
+        "sub_primaria_n": 58,
+        "unidade": 61,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_aceita_n": 15,
+        "sub_primaria": 7,
+        "sub_primaria_n": 15,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_aceita_n": 11,
+        "sub_primaria": 7,
+        "sub_primaria_n": 11,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "antes_ponte_estendida": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_aceita_n": 82,
+        "sub_primaria": 28,
+        "sub_primaria_n": 82,
+        "unidade": 74,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_aceita_n": 28,
+        "sub_primaria": 7,
+        "sub_primaria_n": 28,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_aceita_n": 18,
+        "sub_primaria": 6,
+        "sub_primaria_n": 18
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_aceita_n": 39,
+        "sub_primaria": 4,
+        "sub_primaria_n": 39,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 57,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_aceita_n": 58,
+        "sub_primaria": 25,
+        "sub_primaria_n": 58,
+        "unidade": 62,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_aceita_n": 15,
+        "sub_primaria": 7,
+        "sub_primaria_n": 15,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_aceita_n": 11,
+        "sub_primaria": 7,
+        "sub_primaria_n": 11,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "controle": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 41,
+        "sub_aceita_n": 82,
+        "sub_primaria": 28,
+        "sub_primaria_n": 82,
+        "unidade": 74,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_aceita_n": 28,
+        "sub_primaria": 7,
+        "sub_primaria_n": 28,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_aceita_n": 18,
+        "sub_primaria": 6,
+        "sub_primaria_n": 18
+      },
+      "IA": {
+        "bloco": 39,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_aceita_n": 39,
+        "sub_primaria": 4,
+        "sub_primaria_n": 39,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 57,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_aceita_n": 58,
+        "sub_primaria": 25,
+        "sub_primaria_n": 58,
+        "unidade": 62,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_aceita_n": 15,
+        "sub_primaria": 7,
+        "sub_primaria_n": 15,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_aceita_n": 11,
+        "sub_primaria": 7,
+        "sub_primaria_n": 11,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    },
+    "depois": {
+      "CG": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "sub_aceita": 43,
+        "sub_aceita_n": 82,
+        "sub_primaria": 30,
+        "sub_primaria_n": 82,
+        "unidade": 78,
+        "unidade_n": 93
+      },
+      "ES2": {
+        "bloco": 27,
+        "bloco_n": 28,
+        "sub_aceita": 8,
+        "sub_aceita_n": 28,
+        "sub_primaria": 7,
+        "sub_primaria_n": 28,
+        "unidade": 25,
+        "unidade_n": 28
+      },
+      "FR": {
+        "sub_aceita": 7,
+        "sub_aceita_n": 18,
+        "sub_primaria": 6,
+        "sub_primaria_n": 18
+      },
+      "IA": {
+        "bloco": 41,
+        "bloco_n": 42,
+        "sub_aceita": 5,
+        "sub_aceita_n": 39,
+        "sub_primaria": 4,
+        "sub_primaria_n": 39,
+        "unidade": 39,
+        "unidade_n": 42
+      },
+      "MF": {
+        "bloco": 60,
+        "bloco_n": 66,
+        "sub_aceita": 29,
+        "sub_aceita_n": 58,
+        "sub_primaria": 25,
+        "sub_primaria_n": 58,
+        "unidade": 63,
+        "unidade_n": 66
+      },
+      "SO": {
+        "bloco": 36,
+        "bloco_n": 39,
+        "sub_aceita": 8,
+        "sub_aceita_n": 15,
+        "sub_primaria": 7,
+        "sub_primaria_n": 15,
+        "unidade": 30,
+        "unidade_n": 37
+      },
+      "TCC": {
+        "bloco": 26,
+        "bloco_n": 27,
+        "sub_aceita": 9,
+        "sub_aceita_n": 11,
+        "sub_primaria": 7,
+        "sub_primaria_n": 11,
+        "unidade": 17,
+        "unidade_n": 18
+      }
+    }
+  },
+  "sha256_congelamento": "8097eaa81141d8bb1e5daef8508a39eb5eafedab967db116ae43defb69656bcc",
+  "tabela_13": [
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": "bloco-01",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "MF",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-01-metodos-formais",
+          "abordagens-para-verificacao-formal"
+        ]
+      },
+      "gold_id": "eth2",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "sub_gold_primaria": [],
+      "unidade_gold": [
+        "unidade-02-verificacao-de-programas"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": "bloco-01",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "MF",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-01-metodos-formais",
+          "abordagens-para-verificacao-formal"
+        ]
+      },
+      "gold_id": "aws-encryption-sdk",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "sub_gold_primaria": [],
+      "unidade_gold": [
+        "unidade-02-verificacao-de-programas"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": false,
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": "bloco-01",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "MF",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-01-metodos-formais",
+          "abordagens-para-verificacao-formal"
+        ]
+      },
+      "gold_id": "archive-of-formal-proofs-355fb8",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-01-metodos-formais",
+        "abordagens-para-verificacao-formal"
+      ],
+      "sub_gold_primaria": [
+        "provadores-de-teoremas"
+      ],
+      "unidade_gold": [
+        "unidade-01-metodos-formais"
+      ]
+    },
+    {
+      "acao": "nao_injetado_ja_presente",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": true,
+          "unidade": true
+        },
+        "pred": [
+          "bloco-11",
+          "unidade-01-metodos-formais",
+          "especificacao-de-funcoes-recursivas"
+        ]
+      },
+      "bloco_gold": "bloco-11",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "MF",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-11",
+          "unidade-01-metodos-formais",
+          "especificacao-de-funcoes-recursivas"
+        ]
+      },
+      "gold_id": "t1-2026-1",
+      "reprocess_gravou": [
+        "bloco-11",
+        "unidade-01-metodos-formais",
+        "especificacao-de-funcoes-recursivas"
+      ],
+      "sub_gold_primaria": [],
+      "unidade_gold": [
+        "unidade-01-metodos-formais"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": "bloco-01",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "IA",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-de-aprendizagem-02-solucao-de-problemas",
+          "problemas-de-otimizacao"
+        ]
+      },
+      "gold_id": "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-de-aprendizagem-02-solucao-de-problemas",
+        "problemas-de-otimizacao"
+      ],
+      "sub_gold_primaria": [],
+      "unidade_gold": [
+        "unidade-de-aprendizagem-01-visao-geral"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "bloco": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": "bloco-01",
+      "cadeia_igual_ao_gravado": true,
+      "curso": "IA",
+      "depois": {
+        "ok": {
+          "bloco": true,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+          ""
+        ]
+      },
+      "gold_id": "ia-responsável-7c4626",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+        ""
+      ],
+      "sub_gold_primaria": [],
+      "unidade_gold": [
+        "unidade-de-aprendizagem-01-visao-geral"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": true,
+          "sub_primaria": true,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-01-introducao-ao-processamento-grafico",
+          "origens"
+        ]
+      },
+      "gold_id": "video-sobre-origens-da-computacao-grafica-806e66",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "origens"
+      ],
+      "sub_gold_primaria": [
+        "origens"
+      ],
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-02",
+          "unidade-02-fundamentos-matematicos",
+          ""
+        ]
+      },
+      "gold_id": "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+      "reprocess_gravou": [
+        "bloco-02",
+        "unidade-02-fundamentos-matematicos",
+        ""
+      ],
+      "sub_gold_primaria": [
+        "aplicacoes"
+      ],
+      "unidade_gold": [
+        "unidade-01-introducao-ao-processamento-grafico"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": true,
+          "sub_primaria": true,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-06",
+          "unidade-04-processo-de-visualizacao-2d",
+          "recorte"
+        ]
+      },
+      "gold_id": "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
+      "reprocess_gravou": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "sub_gold_primaria": [
+        "recorte"
+      ],
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-06",
+          "unidade-04-processo-de-visualizacao-2d",
+          "recorte"
+        ]
+      },
+      "gold_id": "video-sobre-mapeamento-em-opengl-1dad3c",
+      "reprocess_gravou": [
+        "bloco-06",
+        "unidade-04-processo-de-visualizacao-2d",
+        "recorte"
+      ],
+      "sub_gold_primaria": [
+        "sistema-de-coordenadas-cartesianas"
+      ],
+      "unidade_gold": [
+        "unidade-04-processo-de-visualizacao-2d"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-08",
+          "unidade-06-processo-de-visualizacao-3d",
+          "a-matematica-das-projecoes-planares"
+        ]
+      },
+      "gold_id": "aula-gravada-975b85",
+      "reprocess_gravou": [
+        "bloco-08",
+        "unidade-06-processo-de-visualizacao-3d",
+        "a-matematica-das-projecoes-planares"
+      ],
+      "sub_gold_primaria": [
+        "segmentacao"
+      ],
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-01",
+          "unidade-01-introducao-ao-processamento-grafico",
+          "areas-relacionadas"
+        ]
+      },
+      "gold_id": "video-sobre-prechimento-de-areas-duracao-330-defae7",
+      "reprocess_gravou": [
+        "bloco-01",
+        "unidade-01-introducao-ao-processamento-grafico",
+        "areas-relacionadas"
+      ],
+      "sub_gold_primaria": [
+        "segmentacao"
+      ],
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ]
+    },
+    {
+      "acao": "injetado",
+      "antes": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "ponte": null,
+        "pred": null
+      },
+      "antes_ponte_estendida": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": false
+        },
+        "pred": null
+      },
+      "bloco_gold": null,
+      "cadeia_igual_ao_gravado": true,
+      "curso": "CG",
+      "depois": {
+        "ok": {
+          "sub_aceita": false,
+          "sub_primaria": false,
+          "unidade": true
+        },
+        "ponte": "id_preservado",
+        "pred": [
+          "bloco-07",
+          "unidade-03-processamento-de-imagens-e-visao-computacional",
+          "cores-e-tipos-de-imagens"
+        ]
+      },
+      "gold_id": "video-sobre-prechimento-de-areas-duracao-1300-d87e5f",
+      "reprocess_gravou": [
+        "bloco-07",
+        "unidade-03-processamento-de-imagens-e-visao-computacional",
+        "cores-e-tipos-de-imagens"
+      ],
+      "sub_gold_primaria": [
+        "segmentacao"
+      ],
+      "unidade_gold": [
+        "unidade-03-processamento-de-imagens-e-visao-computacional"
+      ]
+    }
+  ],
+  "totais": {
+    "antes": {
+      "bloco": [
+        217,
+        237
+      ],
+      "sub_aceita": [
+        107,
+        251
+      ],
+      "sub_primaria": [
+        84,
+        251
+      ],
+      "unidade": [
+        246,
+        284
+      ]
+    },
+    "antes_ponte_estendida": {
+      "bloco": [
+        218,
+        237
+      ],
+      "sub_aceita": [
+        107,
+        251
+      ],
+      "sub_primaria": [
+        84,
+        251
+      ],
+      "unidade": [
+        247,
+        284
+      ]
+    },
+    "controle": {
+      "bloco": [
+        218,
+        237
+      ],
+      "sub_aceita": [
+        107,
+        251
+      ],
+      "sub_primaria": [
+        84,
+        251
+      ],
+      "unidade": [
+        247,
+        284
+      ]
+    },
+    "depois": {
+      "bloco": [
+        223,
+        237
+      ],
+      "sub_aceita": [
+        109,
+        251
+      ],
+      "sub_primaria": [
+        86,
+        251
+      ],
+      "unidade": [
+        252,
+        284
+      ]
+    }
+  },
+  "veredito_unidade_ge_256_sem_perda": false,
+  "worker": "W-V"
+}

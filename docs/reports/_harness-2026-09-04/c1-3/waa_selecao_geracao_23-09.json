@@ -1,0 +1,3671 @@
+{
+ "G_proveniencia": {
+  "contagens": {
+   "candidato_novo": 207,
+   "padrao_P1": 728,
+   "padrao_P4": 14,
+   "pares": 742,
+   "reforco": 535,
+   "unico_no_curso": 369,
+   "unico_so_pela_unidade": 373
+  },
+  "exemplos": [
+   {
+    "curso": "MF",
+    "doc": "material:exercicioslogicatemporal",
+    "expressao": "politi",
+    "forma": "politica",
+    "material": "verificacaomodelos",
+    "n_relacoes": 1,
+    "padrao": "P1",
+    "topico": "fundamentos-de-logicas-temporais",
+    "topicos_no_curso": 1,
+    "trecho": "2) Apresente um Modelo de Kripke para um buffer de duas posições. Sabe-se que cada posição do buffer pode estar cheia ou vazia. O buffer é criado inicialmente v"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "arvore",
+    "forma": "arvores",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 3,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 2,
+    "trecho": "- 2) Através de árvores de prova, mostrar que:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "arvore prova",
+    "forma": "arvores prova",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 1,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 1,
+    "trecho": "- 2) Através de árvores de prova, mostrar que:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "conjun",
+    "forma": "conjuntosindutivos",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 4,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 3,
+    "trecho": "- 1) Definir um conjunto de regras para construir os conjuntos que seguem:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "defini",
+    "forma": "definicao",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 3,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 3,
+    "trecho": "- 1) Definir um conjunto de regras para construir os conjuntos que seguem:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "numero",
+    "forma": "numero",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 2,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 2,
+    "trecho": "- a. Conjunto _Pares_ : conjunto dos números naturais pares tal que (0 $\\in$𝑃𝑎𝑟𝑒𝑠)"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "repres",
+    "forma": "representacao",
+    "material": "conjuntosindutivos",
+    "n_relacoes": 3,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 2,
+    "trecho": "- 4) Considere o exercício anterior e apresente uma regra para introduzir o operador unário de negação representado pelo símbolo $\\neg$ . Após, demonstre que:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:introducao",
+    "expressao": "estado",
+    "forma": "estados",
+    "material": "formalizacaoalgoritmos-recursao",
+    "n_relacoes": 6,
+    "padrao": "P1",
+    "topico": "abordagens-para-verificacao-formal",
+    "topicos_no_curso": 5,
+    "trecho": "- Consiste em uma exploração sistemática e exaustiva do modelo matemático (usualmente uma máquina de estados ou uma descrição do sistema em uma linguagem lógica"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:introducao",
+    "expressao": "maquin",
+    "forma": "maquina",
+    "material": "formalizacaoalgoritmos-recursao",
+    "n_relacoes": 1,
+    "padrao": "P1",
+    "topico": "abordagens-para-verificacao-formal",
+    "topicos_no_curso": 1,
+    "trecho": "- Consiste em uma exploração sistemática e exaustiva do modelo matemático (usualmente uma máquina de estados ou uma descrição do sistema em uma linguagem lógica"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:introducao",
+    "expressao": "maquin estado",
+    "forma": "maquina estados",
+    "material": "formalizacaoalgoritmos-recursao",
+    "n_relacoes": 1,
+    "padrao": "P1",
+    "topico": "abordagens-para-verificacao-formal",
+    "topicos_no_curso": 1,
+    "trecho": "- Consiste em uma exploração sistemática e exaustiva do modelo matemático (usualmente uma máquina de estados ou uma descrição do sistema em uma linguagem lógica"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "defini",
+    "forma": "definicao",
+    "material": "formalizacaoalgoritmos-recursao2",
+    "n_relacoes": 3,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 3,
+    "trecho": "- 1) Definir um conjunto de regras para construir os conjuntos que seguem:"
+   },
+   {
+    "curso": "MF",
+    "doc": "material:exerciciosconjuntosindutivos",
+    "expressao": "arvore",
+    "forma": "arvores",
+    "material": "formalizacaoalgoritmos-recursao3",
+    "n_relacoes": 3,
+    "padrao": "P1",
+    "topico": "especificacao-de-conjuntos-indutivos",
+    "topicos_no_curso": 2,
+    "trecho": "- 2) Através de árvores de prova, mostrar que:"
+   }
+  ]
+ },
+ "aceite": {
+  "A": {
+   "nenhum_curso_regride": false,
+   "outros_eixos_identicos": true,
+   "saldo_positivo": false,
+   "zero_perda": false
+  },
+  "B": {
+   "nenhum_curso_regride": false,
+   "outros_eixos_identicos": true,
+   "saldo_positivo": false,
+   "zero_perda": false
+  },
+  "Bp": {
+   "nenhum_curso_regride": false,
+   "outros_eixos_identicos": true,
+   "saldo_positivo": false,
+   "zero_perda": false
+  }
+ },
+ "base_wz2": "f941ac331a5e676dc897135ce42d0c537ff5470730074ca1863d9f71416037ef",
+ "d9_efetivo": {
+  "CG": {
+   "com_bloco_temporal": 85,
+   "materiais": 93
+  },
+  "ES2": {
+   "com_bloco_temporal": 35,
+   "materiais": 35
+  },
+  "FR": {
+   "com_bloco_temporal": 18,
+   "materiais": 20
+  },
+  "IA": {
+   "com_bloco_temporal": 62,
+   "materiais": 63
+  },
+  "MF": {
+   "com_bloco_temporal": 70,
+   "materiais": 70
+  },
+  "SO": {
+   "com_bloco_temporal": 41,
+   "materiais": 42
+  },
+  "TCC": {
+   "com_bloco_temporal": 26,
+   "materiais": 27
+  }
+ },
+ "escopo": "W-AA (23/09): selecao por funcao+extensao (S) e geracao local por subordinacao (G), fatorial 2x2 sobre a base\ncongelada do W-Z2. 0 mudanca em src/tests/regua/defaults/configuracao persistida.\n\nDesenho e definicoes: docs/reports/2026-09-23-waa-desenho.md, secoes 3 (mecanismo) e 7 (ajustes de interpretacao e\ndetalhes de implementacao, registrados antes da execucao). Autorizacao literal: c1-3/waa_pedido_execucao_23-09.md.\n\nBRACOS: base = congelamento W-Z2 (.frzero/wz2_captura_base_23-09.json); A = S; B' = G com selecao atual; B = G + S.\nCada braco e um replay real (replay_bloco_21-09 -> replay_unidade_21-09) com o seletor da subunidade (`auto_sub`, usado\nnas duas passadas) trocado em memoria e restaurado no finally. Bloco e unidade nao mudam por construcao; conferido por ID.\nDecisoes dos 3 bracos congeladas por sha256 ANTES de ler qualquer gold.\n\nS (funcao + extensao): secoes = headings markdown do texto que o seletor le (>= 2), senao itens numerados de 1o nivel\n(>= 2); secao 0 = titulo + preambulo. Papel pelo rotulo da secao (lexico fixo abaixo; termo que aparece em rotulo/alias de\ntopico do curso e ignorado naquele curso). Ocorrencia = casamento exato de frase do seletor (rotulo, aliases, slug).\nExtensao(T) = n de secoes de papel principal com ocorrencia de T. Primario = maior extensao; empate -> escore atual (exato);\nsem ocorrencia em secao principal -> decisao atual. Decisao de S que troca o topico mantem a confianca original e fica nao\nambigua.\n\nG (subordinacao local): expressoes fortes do material (W-P1); relacoes admissiveis P1 (heading/item de OUTRO material sob\nheading ancestral que menciona T) e P4 so no plano de ensino/ementa de _inputs; excluidos P2, P3, GLOSSARY/IDENTITY/REGISTRY,\no proprio material, campos computados, gold. Exclusividade: a expressao liga exatamente 1 topico da unidade prevista (a da\nbase). Uso: alias local so para aquele material (copia da taxonomia por chamada); nenhum alias global.\n\nSem build, rede, LLM, commit. Uso: python waa_selecao_geracao_23-09.py [--reavaliar]\n",
+ "explicacao_ganhos_perdas": {
+  "A": [
+   {
+    "aux": {},
+    "base": "",
+    "braco": "projecoes",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "a-matematica-das-projecoes-planares": 2,
+     "paralela": 1,
+     "perspectiva": 1,
+     "projecoes": 3
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "a-matematica-das-projecoes-planares",
+     "algoritmo-z-buffer",
+     "pipeline-de-visualizacao-3d"
+    ],
+    "gold": "projecoes",
+    "gold_id": "vis3d",
+    "n_secoes": 16,
+    "papeis": {
+     "principal": 16
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "empate-exato 2x score=9.46",
+     "waa-S:ext=3"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "cliente-servidor",
+    "braco": "camadas",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "camadas": 6,
+     "cliente-servidor": 3,
+     "orientada-a-servicos": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "camadas",
+     "orientada-a-servicos"
+    ],
+    "gold": "cliente-servidor",
+    "gold_id": "web",
+    "n_secoes": 21,
+    "papeis": {
+     "principal": 21
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.18",
+     "waa-S:ext=6"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-conjuntos-indutivos",
+    "braco": "exemplos-de-aplicacoes",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "exemplos-de-aplicacoes": 3
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-conjuntos-indutivos",
+    "gold_id": "conjuntosindutivos",
+    "n_secoes": 18,
+    "papeis": {
+     "principal": 17,
+     "revisao": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=11.98",
+     "waa-S:ext=3",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "logica-de-hoare",
+    "braco": "pre-e-pos-condicoes",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "pre-e-pos-condicoes": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "invariante-e-variante-de-laco",
+     "logica-de-hoare"
+    ],
+    "gold": "logica-de-hoare",
+    "gold_id": "logicadehoare",
+    "n_secoes": 23,
+    "papeis": {
+     "exemplo": 5,
+     "principal": 18
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=4.27",
+     "waa-S:ext=1"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "linguagens-reconheciveis-e-decidiveis",
+    "braco": "maquinas-de-turing-universais",
+    "curso": "TCC",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "linguagens-reconheciveis-e-decidiveis"
+    ],
+    "gold": "linguagens-reconheciveis-e-decidiveis",
+    "gold_id": "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf",
+    "n_secoes": 35,
+    "papeis": {
+     "exemplo": 1,
+     "principal": 34
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "winner_score=16.74",
+     "waa-S:ext=29",
+     "rotulo-decomposto"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   }
+  ],
+  "B": [
+   {
+    "aux": {},
+    "base": "hermite",
+    "braco": "representacao-de-curvas-parametricas",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "catmull-rom": 1,
+     "hermite": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "representacao-de-curvas-parametricas",
+    "gold_id": "curvas",
+    "n_secoes": 3,
+    "papeis": {
+     "principal": 3
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=5.52",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "filtros": 2,
+     "segmentacao": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "filtros",
+     "segmentacao"
+    ],
+    "gold": "segmentacao",
+    "gold_id": "floodfill",
+    "n_secoes": 6,
+    "papeis": {
+     "principal": 6
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=18.10",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "filtros",
+    "curso": "CG",
+    "dup_rotulos": 1,
+    "ext": {
+     "filtros": 4,
+     "segmentacao": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "filtros",
+     "segmentacao"
+    ],
+    "gold": "filtros",
+    "gold_id": "remocaoderuido",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=15.38"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-descritivos": 13,
+     "modelos-preditivos": 5
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-descritivos",
+    "gold_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+    "n_secoes": 28,
+    "papeis": {
+     "principal": 28
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=16.99"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "introducao-ao-aprendizado-de-maquina": 1
+    },
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 3,
+    "ext": {
+     "introducao-ao-aprendizado-de-maquina": 7,
+     "modelos-descritivos": 4,
+     "modelos-preditivos": 3,
+     "paradigmas-de-aprendizado": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "algoritmo-de-classificacao-k-nn",
+    "n_secoes": 35,
+    "papeis": {
+     "exemplo": 1,
+     "indice": 1,
+     "principal": 33
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=12.16",
+     "waa-S:ext=12",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "modelos-descritivos": 1
+    },
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-descritivos": 3
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos"
+    ],
+    "gold": "modelos-descritivos",
+    "gold_id": "artigo-usando-agrupamento",
+    "n_secoes": 16,
+    "papeis": {
+     "indice": 1,
+     "principal": 15
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=12.58"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "introducao-ao-aprendizado-de-maquina": 1,
+     "modelos-preditivos": 1
+    },
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 8,
+     "paradigmas-de-aprendizado": 8
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "artigo-usando-k-nn-em-texto",
+    "n_secoes": 10,
+    "papeis": {
+     "indice": 1,
+     "principal": 9
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=102.00"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "n_secoes": 12,
+    "papeis": {
+     "principal": 12
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-descritivos": 1,
+     "modelos-preditivos": 2
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "n_secoes": 15,
+    "papeis": {
+     "principal": 15
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.41",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "k-nn-para-classificacao-exemplo-cardio",
+    "n_secoes": 25,
+    "papeis": {
+     "principal": 25
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 1,
+    "ext": {
+     "modelos-descritivos": 3,
+     "modelos-preditivos": 3
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+    "n_secoes": 27,
+    "papeis": {
+     "principal": 27
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=14.26",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 5,
+    "ext": {
+     "modelos-descritivos": 2,
+     "modelos-preditivos": 16,
+     "paradigmas-de-aprendizado": 3
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron",
+    "n_secoes": 108,
+    "papeis": {
+     "exemplo": 1,
+     "principal": 107
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.05"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 2
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-classificacao-de-cliente",
+    "n_secoes": 7,
+    "papeis": {
+     "principal": 7
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=5.36"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-classificacao-planta-iris",
+    "n_secoes": 12,
+    "papeis": {
+     "principal": 12
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-descritivos": 1,
+     "modelos-preditivos": 2
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-exemplo-atualizado",
+    "n_secoes": 19,
+    "papeis": {
+     "principal": 19
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=8.02",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 2
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-or-em-python",
+    "n_secoes": 7,
+    "papeis": {
+     "principal": 7
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.66"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-preditivos": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-reconhecendo-letras",
+    "n_secoes": 8,
+    "papeis": {
+     "principal": 8
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "correcao-parcial-e-total",
+    "braco": "logica-de-hoare",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "logica-de-hoare",
+    "gold_id": "hoare",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "winner_score=4.46",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "sistema-de-prova",
+    "braco": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "invariante-e-variante-de-laco": 1
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "invariante-e-variante-de-laco"
+    ],
+    "gold": "invariante-e-variante-de-laco",
+    "gold_id": "invariantes",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.95"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {
+     "conjuntos-enumeraveis": 1
+    },
+    "base": "",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": 0,
+    "ext": {
+     "conjuntos-enumeraveis": 25
+    },
+    "g_liga_gold": true,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "conjuntos-enumeraveis",
+    "gold_id": "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",
+    "n_secoes": 29,
+    "papeis": {
+     "indice": 2,
+     "principal": 26,
+     "revisao": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=16.43"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "geometria-solida-construtiva-csg",
+    "braco": "representacao-de-curvas-parametricas",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "geometria-solida-construtiva-csg": 1,
+     "representacao-de-curvas-parametricas": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "representacao-de-curvas-parametricas"
+    ],
+    "gold": "geometria-solida-construtiva-csg",
+    "gold_id": "csg",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=21.72"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "filtros": 1,
+     "segmentacao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "segmentacao"
+    ],
+    "gold": "cores-e-tipos-de-imagens",
+    "gold_id": "img",
+    "n_secoes": 3,
+    "papeis": {
+     "principal": 3
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "segmentacao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "segmentacao"
+    ],
+    "gold": "cores-e-tipos-de-imagens",
+    "gold_id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+    "n_secoes": 3,
+    "papeis": {
+     "principal": 3
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "filtros": 1,
+     "segmentacao": 1
+    },
+    "base": "segmentacao",
+    "braco": "filtros",
+    "curso": "CG",
+    "dup_rotulos": 0,
+    "ext": {
+     "filtros": 8,
+     "segmentacao": 5
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "filtros"
+    ],
+    "gold": "segmentacao",
+    "gold_id": "segmentacaodetexturas",
+    "n_secoes": 22,
+    "papeis": {
+     "exemplo": 1,
+     "principal": 21
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=27.37",
+     "waa-S:ext=8",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "gerenciamento-da-configuracao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro5",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "entrega-continua-cd": 4,
+     "gerenciamento-da-configuracao": 7,
+     "integracao-continua-ci": 6
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "entrega-continua-cd",
+     "gerenciamento-da-configuracao",
+     "integracao-continua-ci"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro5-conteiners",
+    "n_secoes": 13,
+    "papeis": {
+     "principal": 13
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=13.53",
+     "waa-S:ext=7"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "gerenciamento-da-configuracao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro6",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "gerenciamento-da-configuracao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro7",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "gerenciamento-da-configuracao": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro7-history-service",
+    "n_secoes": 1,
+    "papeis": {
+     "principal": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.91"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "nenhum"
+   },
+   {
+    "aux": {},
+    "base": "orientada-a-servicos",
+    "braco": "camadas",
+    "curso": "ES2",
+    "dup_rotulos": 11,
+    "ext": {
+     "camadas": 24,
+     "cliente-servidor": 1,
+     "orientada-a-servicos": 7
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "camadas"
+    ],
+    "gold": "orientada-a-servicos",
+    "gold_id": "servicos",
+    "n_secoes": 44,
+    "papeis": {
+     "exemplo": 1,
+     "principal": 43
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=18.95"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "cliente-servidor",
+    "braco": "orientada-a-servicos",
+    "curso": "ES2",
+    "dup_rotulos": 0,
+    "ext": {
+     "camadas": 7,
+     "cliente-servidor": 3,
+     "orientada-a-servicos": 10
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "camadas",
+     "orientada-a-servicos"
+    ],
+    "gold": "cliente-servidor",
+    "gold_id": "web",
+    "n_secoes": 21,
+    "papeis": {
+     "principal": 21
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=47.49"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": 0,
+    "ext": {
+     "modelos-descritivos": 12
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-descritivos"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "analise-exploratoria-de-dados-exemplo-1",
+    "n_secoes": 36,
+    "papeis": {
+     "principal": 36
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=17.99"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 10,
+    "ext": {
+     "modelos-preditivos": 19,
+     "paradigmas-de-aprendizado": 10
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "caracteristicas-dos-dados",
+    "n_secoes": 44,
+    "papeis": {
+     "principal": 44
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=25.33"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": 14,
+    "ext": {
+     "introducao-ao-aprendizado-de-maquina": 26,
+     "modelos-preditivos": 35,
+     "paradigmas-de-aprendizado": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "introducao-a-ml",
+    "n_secoes": 45,
+    "papeis": {
+     "principal": 45
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=22.99",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "correcao-parcial-e-total",
+    "braco": "logica-de-hoare",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "invariante-e-variante-de-laco": 3,
+     "logica-de-hoare": 7,
+     "pre-e-pos-condicoes": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "invariante-e-variante-de-laco",
+     "logica-de-hoare"
+    ],
+    "gold": "correcao-parcial-e-total",
+    "gold_id": "correcaoterminacao",
+    "n_secoes": 12,
+    "papeis": {
+     "principal": 12
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=12.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exercicioscorrecaoinducaomatematica",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "linguagens-de-especificacao-e-logicas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "linguagens-de-especificacao-e-logicas",
+    "gold_id": "exerciciosespecificacao",
+    "n_secoes": 4,
+    "papeis": {
+     "principal": 4
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "linguagens-de-especificacao-e-logicas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "linguagens-de-especificacao-e-logicas",
+    "gold_id": "exerciciosespecificacao-respostas",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "empate-exato 4x score=0.02"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao2",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "winner_score=7.78",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao3",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "winner_score=14.53",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+    "n_secoes": 3,
+    "papeis": {
+     "principal": 3
+    },
+    "s_agiu": false,
+    "sub_reasons_final": [
+     "empate-exato 4x score=0.02"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 3
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao",
+    "n_secoes": 16,
+    "papeis": {
+     "principal": 16
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.28"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "especificacao-de-conjuntos-indutivos": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao2",
+    "n_secoes": 7,
+    "papeis": {
+     "principal": 7
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=7.10"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "especificacao-de-conjuntos-indutivos": 3,
+     "exemplos-de-aplicacoes": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao3",
+    "n_secoes": 5,
+    "papeis": {
+     "principal": 5
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=14.91"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "fundamentos-de-logica-de-primeira-ordem",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 6
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "fundamentos-de-logica-de-primeira-ordem",
+    "gold_id": "logicapredicados-sintaxe",
+    "n_secoes": 22,
+    "papeis": {
+     "exemplo": 4,
+     "principal": 18
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.17"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "abordagens-para-verificacao-formal": 1
+    },
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 4,
+     "exemplos-de-aplicacoes": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas",
+    "n_secoes": 11,
+    "papeis": {
+     "exemplo": 2,
+     "principal": 9
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=12.00"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 1,
+     "especificacao-de-conjuntos-indutivos": 2
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal",
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas-arvores",
+    "n_secoes": 4,
+    "papeis": {
+     "principal": 4
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=10.95"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": 0,
+    "ext": {
+     "abordagens-para-verificacao-formal": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas-listas",
+    "n_secoes": 4,
+    "papeis": {
+     "principal": 4
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=1.89"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "verificacao-de-modelos-model-checking",
+    "braco": "especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes",
+    "curso": "MF",
+    "dup_rotulos": 1,
+    "ext": {
+     "fundamentos-de-logicas-temporais": 4,
+     "verificacao-de-modelos-model-checking": 1
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "fundamentos-de-logicas-temporais"
+    ],
+    "gold": "verificacao-de-modelos-model-checking",
+    "gold_id": "verificacaomodelos",
+    "n_secoes": 58,
+    "papeis": {
+     "comparacao": 6,
+     "exemplo": 2,
+     "principal": 50
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=11.78",
+     "waa-S:ext=5",
+     "rotulo-decomposto"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {
+     "algoritmos-de-escalonamento": 1,
+     "escalonamento": 1
+    },
+    "base": "algoritmos-de-escalonamento",
+    "braco": "escalonamento",
+    "curso": "SO",
+    "dup_rotulos": 0,
+    "ext": {
+     "algoritmos-de-escalonamento": 12,
+     "escalonamento": 12
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "escalonamento"
+    ],
+    "gold": "algoritmos-de-escalonamento",
+    "gold_id": "2603-algoritmos-de-escalonamento",
+    "n_secoes": 13,
+    "papeis": {
+     "comparacao": 1,
+     "principal": 12
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=28.89"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": 0,
+    "ext": {
+     "conjuntos-enumeraveis": 16
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "",
+    "gold_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+    "n_secoes": 59,
+    "papeis": {
+     "comparacao": 2,
+     "exemplo": 5,
+     "principal": 51,
+     "revisao": 1
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=8.97"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   },
+   {
+    "aux": {},
+    "base": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": 0,
+    "ext": {
+     "conjuntos-enumeraveis": 3
+    },
+    "g_liga_gold": false,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "gold_id": "t1-enunciado",
+    "n_secoes": 6,
+    "papeis": {
+     "principal": 6
+    },
+    "s_agiu": true,
+    "sub_reasons_final": [
+     "winner_score=57.51"
+    ],
+    "tipo": "perda",
+    "tipo_secao": "heading"
+   }
+  ],
+  "Bp": [
+   {
+    "aux": null,
+    "base": "hermite",
+    "braco": "representacao-de-curvas-parametricas",
+    "curso": "CG",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "representacao-de-curvas-parametricas",
+    "gold_id": "curvas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=5.52",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "filtros",
+     "segmentacao"
+    ],
+    "gold": "segmentacao",
+    "gold_id": "floodfill",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=18.10",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-descritivos",
+    "gold_id": "agrupamento-usando-k-means-exemplo-1-ipynb",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=16.99"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos"
+    ],
+    "gold": "modelos-descritivos",
+    "gold_id": "artigo-usando-agrupamento",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=12.58"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "artigo-usando-k-nn-em-texto",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=102.00"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "arvores-de-decisao",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=38.85",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.41",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "k-nn-para-classificacao-exemplo-cardio",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=14.26",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.05"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-classificacao-de-cliente",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=5.36"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-classificacao-planta-iris",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-descritivos",
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-exemplo-atualizado",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=8.02",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-or-em-python",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.66"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "modelos-preditivos",
+    "gold_id": "rede-perceptron-reconhecendo-letras",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=1.15"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "correcao-parcial-e-total",
+    "braco": "logica-de-hoare",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "logica-de-hoare",
+    "gold_id": "hoare",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=4.46",
+     "propagado-headings"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "sistema-de-prova",
+    "braco": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "invariante-e-variante-de-laco"
+    ],
+    "gold": "invariante-e-variante-de-laco",
+    "gold_id": "invariantes",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.95"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": true,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "conjuntos-enumeraveis",
+    "gold_id": "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=16.43"
+    ],
+    "tipo": "ganho",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "geometria-solida-construtiva-csg",
+    "braco": "representacao-de-curvas-parametricas",
+    "curso": "CG",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "representacao-de-curvas-parametricas"
+    ],
+    "gold": "geometria-solida-construtiva-csg",
+    "gold_id": "csg",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=21.72"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "segmentacao"
+    ],
+    "gold": "cores-e-tipos-de-imagens",
+    "gold_id": "img",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "cores-e-tipos-de-imagens",
+    "braco": "segmentacao",
+    "curso": "CG",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "segmentacao"
+    ],
+    "gold": "cores-e-tipos-de-imagens",
+    "gold_id": "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro5",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro6",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro7",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.06"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "braco": "gerenciamento-da-configuracao",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "gerenciamento-da-configuracao"
+    ],
+    "gold": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "gold_id": "roteiro7-history-service",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.91"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "orientada-a-servicos",
+    "braco": "camadas",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "camadas"
+    ],
+    "gold": "orientada-a-servicos",
+    "gold_id": "servicos",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=18.95"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "cliente-servidor",
+    "braco": "orientada-a-servicos",
+    "curso": "ES2",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "camadas",
+     "orientada-a-servicos"
+    ],
+    "gold": "cliente-servidor",
+    "gold_id": "web",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=47.49"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-descritivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-descritivos"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "analise-exploratoria-de-dados-exemplo-1",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=17.99"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-preditivos",
+     "paradigmas-de-aprendizado"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "caracteristicas-dos-dados",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=25.33"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "introducao-ao-aprendizado-de-maquina",
+    "braco": "modelos-preditivos",
+    "curso": "IA",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "modelos-preditivos"
+    ],
+    "gold": "introducao-ao-aprendizado-de-maquina",
+    "gold_id": "introducao-a-ml",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=22.99",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exercicioscorrecaoinducaomatematica",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "linguagens-de-especificacao-e-logicas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "linguagens-de-especificacao-e-logicas",
+    "gold_id": "exerciciosespecificacao",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "linguagens-de-especificacao-e-logicas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "linguagens-de-especificacao-e-logicas",
+    "gold_id": "exerciciosespecificacao-respostas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.14"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "empate-exato 4x score=0.02"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao2",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.78",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao3",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=14.53",
+     "propagado-headings"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "empate-exato 4x score=0.02"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.28"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao2",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=7.10"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "formalizacaoalgoritmos-recursao3",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=14.91"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "fundamentos-de-logica-de-primeira-ordem",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "fundamentos-de-logica-de-primeira-ordem",
+    "gold_id": "logicapredicados-sintaxe",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.17"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=12.00"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "especificacao-de-conjuntos-indutivos",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal",
+     "especificacao-de-conjuntos-indutivos"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas-arvores",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=10.95"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "especificacao-de-funcoes-recursivas",
+    "braco": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "abordagens-para-verificacao-formal"
+    ],
+    "gold": "especificacao-de-funcoes-recursivas",
+    "gold_id": "provasindutivas-especificacoesrecursivas-listas",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=1.89"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "algoritmos-de-escalonamento",
+    "braco": "escalonamento",
+    "curso": "SO",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "escalonamento"
+    ],
+    "gold": "algoritmos-de-escalonamento",
+    "gold_id": "2603-algoritmos-de-escalonamento",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=28.89"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "",
+    "gold_id": "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=8.97"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   },
+   {
+    "aux": null,
+    "base": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "braco": "conjuntos-enumeraveis",
+    "curso": "TCC",
+    "dup_rotulos": null,
+    "ext": null,
+    "g_liga_gold": false,
+    "g_locais": [
+     "conjuntos-enumeraveis"
+    ],
+    "gold": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "gold_id": "t1-enunciado",
+    "n_secoes": null,
+    "papeis": null,
+    "s_agiu": null,
+    "sub_reasons_final": [
+     "winner_score=57.51"
+    ],
+    "tipo": "perda",
+    "tipo_secao": null
+   }
+  ]
+ },
+ "fatorial": {
+  "B_menos_base": -13,
+  "efeito_G": -10,
+  "efeito_S": -3,
+  "interacao": 0
+ },
+ "g_pares_locais_por_curso": {
+  "CG": 53,
+  "ES2": 29,
+  "FR": 12,
+  "IA": 45,
+  "MF": 42,
+  "SO": 16,
+  "TCC": 12
+ },
+ "lexicos_por_curso": {
+  "CG": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "ES2": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplos",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "FR": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplos",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "IA": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplos",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "MF": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "SO": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplos",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  },
+  "TCC": {
+   "comparacao": [
+    "comparacao",
+    "comparativo",
+    "versus",
+    "vs",
+    "diferencas"
+   ],
+   "exemplo": [
+    "exemplo",
+    "exemplificando"
+   ],
+   "indice": [
+    "sumario",
+    "agenda",
+    "objetivos",
+    "referencias",
+    "bibliografia",
+    "leituras",
+    "links",
+    "proxima aula"
+   ],
+   "prerequisito": [
+    "pre requisito",
+    "pre requisitos",
+    "prerequisito",
+    "prerequisitos",
+    "conhecimentos previos",
+    "fundamentos previos"
+   ],
+   "revisao": [
+    "revisao",
+    "relembrando",
+    "recapitulando",
+    "retomando"
+   ]
+  }
+ },
+ "materiais_sem_gold_alterados": {
+  "A": 4,
+  "B": 32,
+  "Bp": 32
+ },
+ "mudancas": {
+  "A": {
+   "abstencoes": {
+    "abstencao_para_certa": 1,
+    "abstencao_para_errada": 2
+   },
+   "alteradas_com_gold": 8,
+   "cursos_que_regridem": [
+    "MF",
+    "ES2",
+    "TCC"
+   ],
+   "direto_x_indireto": {
+    "direto_1a|ganho": 1,
+    "direto_1a|neutro": 2,
+    "direto_1a|perda": 2,
+    "indireto_2a|neutro": 1,
+    "indireto_2a|perda": 2
+   },
+   "ganhos": [
+    "CG|vis3d"
+   ],
+   "perdas": [
+    "ES2|web",
+    "MF|conjuntosindutivos",
+    "MF|logicadehoare",
+    "TCC|aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf"
+   ],
+   "precisao_alteradas": 0.125,
+   "saldo": -3
+  },
+  "B": {
+   "abstencoes": {
+    "abstencao_para_certa": 1,
+    "abstencao_para_errada": 21,
+    "decisao_para_abstencao_errada": 2
+   },
+   "alteradas_com_gold": 130,
+   "cursos_que_regridem": [
+    "MF",
+    "SO",
+    "ES2",
+    "TCC",
+    "CG"
+   ],
+   "direto_x_indireto": {
+    "direto_1a|ganho": 17,
+    "direto_1a|neutro": 69,
+    "direto_1a|perda": 28,
+    "indireto_2a|ganho": 3,
+    "indireto_2a|neutro": 8,
+    "indireto_2a|perda": 5
+   },
+   "ganhos": [
+    "CG|curvas",
+    "CG|floodfill",
+    "CG|remocaoderuido",
+    "IA|agrupamento-usando-k-means-exemplo-1-ipynb",
+    "IA|algoritmo-de-classificacao-k-nn",
+    "IA|artigo-usando-agrupamento",
+    "IA|artigo-usando-k-nn-em-texto",
+    "IA|exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "IA|exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "IA|k-nn-para-classificacao-exemplo-cardio",
+    "IA|mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+    "IA|rede-perceptron",
+    "IA|rede-perceptron-classificacao-de-cliente",
+    "IA|rede-perceptron-classificacao-planta-iris",
+    "IA|rede-perceptron-exemplo-atualizado",
+    "IA|rede-perceptron-or-em-python",
+    "IA|rede-perceptron-reconhecendo-letras",
+    "MF|hoare",
+    "MF|invariantes",
+    "TCC|aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade"
+   ],
+   "perdas": [
+    "CG|csg",
+    "CG|img",
+    "CG|pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+    "CG|segmentacaodetexturas",
+    "ES2|roteiro5",
+    "ES2|roteiro5-conteiners",
+    "ES2|roteiro6",
+    "ES2|roteiro7",
+    "ES2|roteiro7-history-service",
+    "ES2|servicos",
+    "ES2|web",
+    "IA|analise-exploratoria-de-dados-exemplo-1",
+    "IA|caracteristicas-dos-dados",
+    "IA|introducao-a-ml",
+    "MF|correcaoterminacao",
+    "MF|exercicioscorrecaoinducaomatematica",
+    "MF|exerciciosespecificacao",
+    "MF|exerciciosespecificacao-respostas",
+    "MF|exerciciosformalizacaoalgoritmosrecursao-respostas",
+    "MF|exerciciosformalizacaoalgoritmosrecursao2",
+    "MF|exerciciosformalizacaoalgoritmosrecursao3",
+    "MF|exerciciosformalizacaoalgoritmosrecursao3-respostas",
+    "MF|formalizacaoalgoritmos-recursao",
+    "MF|formalizacaoalgoritmos-recursao2",
+    "MF|formalizacaoalgoritmos-recursao3",
+    "MF|logicapredicados-sintaxe",
+    "MF|provasindutivas-especificacoesrecursivas",
+    "MF|provasindutivas-especificacoesrecursivas-arvores",
+    "MF|provasindutivas-especificacoesrecursivas-listas",
+    "MF|verificacaomodelos",
+    "SO|2603-algoritmos-de-escalonamento",
+    "TCC|aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+    "TCC|t1-enunciado"
+   ],
+   "precisao_alteradas": 0.154,
+   "saldo": -13
+  },
+  "Bp": {
+   "abstencoes": {
+    "abstencao_para_certa": 1,
+    "abstencao_para_errada": 21,
+    "decisao_para_abstencao_errada": 2
+   },
+   "alteradas_com_gold": 121,
+   "cursos_que_regridem": [
+    "MF",
+    "SO",
+    "ES2",
+    "TCC",
+    "CG"
+   ],
+   "direto_x_indireto": {
+    "direto_1a|ganho": 17,
+    "direto_1a|neutro": 66,
+    "direto_1a|perda": 25,
+    "indireto_2a|ganho": 2,
+    "indireto_2a|neutro": 7,
+    "indireto_2a|perda": 4
+   },
+   "ganhos": [
+    "CG|curvas",
+    "CG|floodfill",
+    "IA|agrupamento-usando-k-means-exemplo-1-ipynb",
+    "IA|artigo-usando-agrupamento",
+    "IA|artigo-usando-k-nn-em-texto",
+    "IA|arvores-de-decisao",
+    "IA|exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "IA|exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "IA|k-nn-para-classificacao-exemplo-cardio",
+    "IA|mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv",
+    "IA|rede-perceptron",
+    "IA|rede-perceptron-classificacao-de-cliente",
+    "IA|rede-perceptron-classificacao-planta-iris",
+    "IA|rede-perceptron-exemplo-atualizado",
+    "IA|rede-perceptron-or-em-python",
+    "IA|rede-perceptron-reconhecendo-letras",
+    "MF|hoare",
+    "MF|invariantes",
+    "TCC|aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade"
+   ],
+   "perdas": [
+    "CG|csg",
+    "CG|img",
+    "CG|pagina-com-videos-sobre-manipulacao-de-imagens-61ddde",
+    "ES2|roteiro5",
+    "ES2|roteiro6",
+    "ES2|roteiro7",
+    "ES2|roteiro7-history-service",
+    "ES2|servicos",
+    "ES2|web",
+    "IA|analise-exploratoria-de-dados-exemplo-1",
+    "IA|caracteristicas-dos-dados",
+    "IA|introducao-a-ml",
+    "MF|exercicioscorrecaoinducaomatematica",
+    "MF|exerciciosespecificacao",
+    "MF|exerciciosespecificacao-respostas",
+    "MF|exerciciosformalizacaoalgoritmosrecursao-respostas",
+    "MF|exerciciosformalizacaoalgoritmosrecursao2",
+    "MF|exerciciosformalizacaoalgoritmosrecursao3",
+    "MF|exerciciosformalizacaoalgoritmosrecursao3-respostas",
+    "MF|formalizacaoalgoritmos-recursao",
+    "MF|formalizacaoalgoritmos-recursao2",
+    "MF|formalizacaoalgoritmos-recursao3",
+    "MF|logicapredicados-sintaxe",
+    "MF|provasindutivas-especificacoesrecursivas",
+    "MF|provasindutivas-especificacoesrecursivas-arvores",
+    "MF|provasindutivas-especificacoesrecursivas-listas",
+    "SO|2603-algoritmos-de-escalonamento",
+    "TCC|aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+    "TCC|t1-enunciado"
+   ],
+   "precisao_alteradas": 0.157,
+   "saldo": -10
+  }
+ },
+ "outros_eixos_identicos": {
+  "A": {
+   "divergentes": [],
+   "identicos": true,
+   "unidade_divergente_na_chamada": 0
+  },
+  "B": {
+   "divergentes": [],
+   "identicos": true,
+   "unidade_divergente_na_chamada": 0
+  },
+  "Bp": {
+   "divergentes": [],
+   "identicos": true,
+   "unidade_divergente_na_chamada": 0
+  }
+ },
+ "placar": {
+  "A": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 44,
+    "sub_n": 82,
+    "sub_primaria": 31,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 6,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 28,
+    "sub_n": 58,
+    "sub_primaria": 23,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 6,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 83,
+    "unidade": 248,
+    "unidade_n": 284
+   }
+  },
+  "B": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 34,
+    "sub_n": 82,
+    "sub_primaria": 29,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 0,
+    "sub_n": 28,
+    "sub_primaria": 0,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 9,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 15,
+    "sub_n": 39,
+    "sub_primaria": 15,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 22,
+    "sub_n": 58,
+    "sub_primaria": 11,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 7,
+    "sub_n": 15,
+    "sub_primaria": 6,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 6,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 96,
+    "sub_n": 251,
+    "sub_primaria": 73,
+    "unidade": 248,
+    "unidade_n": 284
+   }
+  },
+  "Bp": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 34,
+    "sub_n": 82,
+    "sub_primaria": 29,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 1,
+    "sub_n": 28,
+    "sub_primaria": 1,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 9,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 15,
+    "sub_n": 39,
+    "sub_primaria": 15,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 23,
+    "sub_n": 58,
+    "sub_primaria": 13,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 7,
+    "sub_n": 15,
+    "sub_primaria": 6,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 6,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 98,
+    "sub_n": 251,
+    "sub_primaria": 76,
+    "unidade": 248,
+    "unidade_n": 284
+   }
+  },
+  "base": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 43,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 29,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "unidade": 248,
+    "unidade_n": 284
+   }
+  }
+ },
+ "segundos": 728.6,
+ "sha256_bracos": "b265091e0a9c6037ecd6cc384c0cac85e81469a1536fb8661c7a6e6904b1da7f",
+ "sha256_declaracao": "6d5dadd81ebe96f793d897a426260028f452052d49a7661443b1d5d90c1bb0e7",
+ "teste_de_sinal": {
+  "G_liga_ao_gold": 37,
+  "escolhido_com_rotulos_repetidos": 20,
+  "gold_1o_ordem_S": 61,
+  "gold_1o_ordem_atual": 64,
+  "s_agiu": 69
+ }
+}
