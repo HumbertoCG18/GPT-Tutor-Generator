@@ -7,7 +7,9 @@ from typing import Optional, List, Tuple, Dict
 import os
 from datetime import datetime
 from pathlib import Path
-from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
+from src.models.core import (
+    NEW_SUBJECT_FEATURE_FLAGS, FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore,
+)
 from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, DATALAB_MODES, OCR_LANGS, CODE_EXTENSIONS,
@@ -1526,7 +1528,7 @@ class SubjectManagerDialog(tk.Toplevel):
             m365_filter=(existing.m365_filter if existing else ""),
             turma=(existing.turma if existing else ""),
             # #63: sem campo no dialog; sem isto todo save zerava as flags (D9/voter/vocab).
-            feature_flags=(dict(existing.feature_flags) if existing else {}),
+            feature_flags=(dict(existing.feature_flags) if existing else dict(NEW_SUBJECT_FEATURE_FLAGS)),
             queue=existing_queue,
         )
         self._store.add(sp)

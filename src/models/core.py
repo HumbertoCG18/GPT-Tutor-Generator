@@ -245,6 +245,12 @@ class PipelineDecision:
     reasons: List[str] = field(default_factory=list)
 
 
+# #65: matéria NOVA (diálogo e importador do Moodle) nasce com o D9 ligado de forma explícita no perfil, regime cru.
+# Votador, vocabulário e resíduo ficam ausentes (= desligados). Perfis existentes nunca recebem isto; o default de
+# código de use_anchor_engine continua False (src/builder/ops/assignment_run.py:FLAG_DEFAULTS).
+NEW_SUBJECT_FEATURE_FLAGS: Dict[str, bool] = {"use_anchor_engine": True}
+
+
 @dataclass
 class SubjectProfile:
     """Perfil salvo de uma matéria — preenche automaticamente os campos da disciplina."""

@@ -674,7 +674,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
     download: se True, baixa os bytes via client.download_course (default False).
     """
     import json as _json
-    from src.models.core import SubjectProfile
+    from src.models.core import NEW_SUBJECT_FEATURE_FLAGS, SubjectProfile
     base = Path(base_folder)
     created = updated = linked = 0
     folders = expected_files = backfilled = downloaded = 0
@@ -707,6 +707,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
             sp = SubjectProfile(
                 name=info["name"], slug=info["slug"], professor=info["professor"],
                 semester=info["semester"], moodle_course_id=cid, stash_folder=stash,
+                feature_flags=dict(NEW_SUBJECT_FEATURE_FLAGS),   # #65: só matéria nova; existentes não mudam
             )
             store.add(sp)
             created += 1
