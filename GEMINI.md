@@ -1,11 +1,6 @@
 # GPT-Tutor-Generator
 
-Read `AGENTS.md`, `.mex/ROUTER.md` and `.mex/patterns/engenharia-produto.md` before work.
-Follow the current shared workflow for issues, PRs, release, UI, observability and quality.
-
-Campanhas: estado no bloco `fila-campanhas` de `docs/reports/pendencias.md`; política em
-`references/campaigns.md` da fonte compartilhada, fallback `.workflow/references/campaigns.md`.
-Ler só ao consultar, selecionar, reservar ou atualizar campanhas.
+Leia `AGENTS.md`: identidade, invariantes, comandos e onde procurar cada fonte.
 
 ## Navegação estrutural
 
