@@ -1,5 +1,6 @@
 import logging
 import sys
+from src.observability import configure_local_observability, default_log_dir
 from src.ui.app import App
 
 def main():
@@ -12,6 +13,10 @@ def main():
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
     logging.getLogger("google_genai").setLevel(logging.WARNING)
+    try:
+        configure_local_observability(default_log_dir())
+    except OSError:
+        logging.getLogger(__name__).warning("Observabilidade local indisponivel.")
     
     # Validação rápida de ambiente (opcional, pode ser expandida no futuro)
     if sys.version_info < (3, 8):
