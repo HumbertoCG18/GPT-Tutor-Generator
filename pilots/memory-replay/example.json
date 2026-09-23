@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "task": "Tarefa fictícia: ajustar o layout da tela de exemplo",
+  "project": "projeto-sintetico-a",
+  "candidates": [
+    {"id": "s1", "project": "projeto-sintetico-a", "text": "Preferência fictícia: respostas em tópicos curtos.", "protected": false},
+    {"id": "s2", "project": "projeto-sintetico-a", "text": "Decisão fictícia: o protótipo de exemplo usa SQLite.", "protected": false},
+    {"id": "s3", "project": "projeto-sintetico-a", "text": "Regra fictícia: nunca apagar a pasta exemplo/ sem confirmar.", "protected": true},
+    {"id": "s4", "project": "projeto-sintetico-a", "text": "Preferência fictícia: respostas em tópicos curtos.", "protected": false},
+    {"id": "s5", "project": "projeto-sintetico-a", "text": "Anotação fictícia com acentuação e emoji: ação, índice, café ☕.", "protected": false},
+    {"id": "s6", "project": "projeto-sintetico-a", "text": "Rascunho fictício obsoleto sobre o layout antigo.", "protected": false},
+    {"id": "s7", "project": "projeto-sintetico-a", "text": "Lembrete fictício que ficou sem decisão simulada.", "protected": false},
+    {"id": "s8", "project": "projeto-sintetico-a", "text": "Nota fictícia cuja avaliação simulada falhou.", "protected": false},
+    {"id": "o1", "project": "projeto-sintetico-b", "text": "Nota fictícia de outro projeto; não pode vazar.", "protected": false}
+  ],
+  "required_ids": ["s1", "s2", "s3"],
+  "simulated_decisions": [
+    {"id": "s1", "decision": "keep"},
+    {"id": "s2", "decision": "drop"},
+    {"id": "s3", "decision": "drop"},
+    {"id": "s5", "decision": "uncertain"},
+    {"id": "s6", "decision": "drop"},
+    {"id": "s8", "decision": "error"}
+  ]
+}
