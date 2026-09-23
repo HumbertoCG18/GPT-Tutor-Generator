@@ -1,4 +1,4 @@
-// engine.py e fachada por decisao registrada em .mex/AGENTS.md. Contar defs antes e
+// engine.py e fachada por decisao registrada em AGENTS.md. Contar defs antes e
 // depois evita o falso positivo de um Edit que so cita um def existente como contexto.
 const fs = require('fs');
 const BARRA = String.fromCharCode(92);
@@ -32,7 +32,7 @@ process.stdin.on('end', () => {
 
   if (depois > antes) {
     console.error('[guarda] BLOQUEADO: ' + (depois - antes) + ' def novo(s) em engine.py.');
-    console.error('.mex/AGENTS.md: engine.py e fachada. Logica nova vai no subpacote correto,');
+    console.error('AGENTS.md: engine.py e fachada. Logica nova vai no subpacote correto,');
     console.error('e o import vem do submodulo focado, nunca de engine.py.');
     process.exit(2);
   }
