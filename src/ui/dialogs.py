@@ -111,14 +111,32 @@ def add_tooltip(widget: tk.Widget, text: str, delay: int = 600) -> Tooltip:
 # GUI — Settings Dialog
 # ---------------------------------------------------------------------------
 
+def _reduce_motion_enabled(widget) -> bool:
+    config = getattr(widget._root(), "config_obj", None)
+    return bool(config.get("reduce_motion", False)) if config is not None else False
+
+
+def _start_busy_progress(progress_bar, reduce_motion: bool) -> None:
+    progress_bar.configure(mode="indeterminate", value=50 if reduce_motion else 0)
+    if not reduce_motion:
+        progress_bar.start(12)
+
+
+def _settings_rebuild_kwargs(dialog) -> dict:
+    # Valor ainda nao salvo sobrevive a reconstrucao feita pela previa de tema.
+    return {"reduce_motion": bool(dialog._var_reduce_motion.get())}
+
+
 class SettingsDialog(tk.Toplevel):
     """Modal settings window with Appearance and Processing tabs."""
 
-    def __init__(self, parent: tk.Tk, config: AppConfig, theme_mgr: ThemeManager):
+    def __init__(self, parent: tk.Tk, config: AppConfig, theme_mgr: ThemeManager,
+                 reduce_motion: Optional[bool] = None):
         super().__init__(parent)
         self.parent = parent
         self.config = config
         self.theme_mgr = theme_mgr
+        self._pending_reduce_motion = reduce_motion
         self.title("Configurações")
         self.resizable(False, False)
         self.transient(parent)
@@ -183,6 +201,7 @@ class SettingsDialog(tk.Toplevel):
 
         self._var_reduce_motion = tk.BooleanVar(
             value=bool(self.config.get("reduce_motion", False))
+            if self._pending_reduce_motion is None else self._pending_reduce_motion
         )
         ttk.Checkbutton(
             tab_app,
@@ -457,7 +476,8 @@ class SettingsDialog(tk.Toplevel):
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
         # Rebuild self visuals too
         self.destroy()
-        SettingsDialog(self.parent, self.config, self.theme_mgr)
+        SettingsDialog(self.parent, self.config, self.theme_mgr,
+                       **_settings_rebuild_kwargs(self))
 
     def _save(self):
         self.config.set("theme", self._var_theme.get())
@@ -1836,8 +1856,7 @@ class MoodleCourseSelectDialog(tk.Toplevel):
     def _busy(self, text):
         def go():
             self._status_var.set(text)
-            self._progress.configure(mode="indeterminate")
-            self._progress.start(12)
+            _start_busy_progress(self._progress, _reduce_motion_enabled(self))
         self._post(go)
 
     def _progress_to(self, done, total, text):

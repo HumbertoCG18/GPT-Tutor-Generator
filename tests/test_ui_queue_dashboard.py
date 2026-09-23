@@ -252,3 +252,36 @@ def test_settings_dialog_wires_reduce_motion_without_fake_after_loop():
     assert "self.parent._apply_reduce_motion_preference()" in dialog_source
     assert "def _tick_fake_indeterminate" not in app_source
     assert "self.after(40, self._tick_fake_indeterminate)" not in app_source
+
+
+def test_moodle_busy_progress_respects_reduce_motion():
+    from src.ui.dialogs import _start_busy_progress
+
+    animated = _FakeProgressbar()
+    _start_busy_progress(animated, reduce_motion=False)
+    assert animated["mode"] == "indeterminate"
+    assert ("start", 12) in animated.calls
+
+    static = _FakeProgressbar()
+    _start_busy_progress(static, reduce_motion=True)
+    assert static["mode"] == "indeterminate"
+    assert static["value"] == 50
+    assert not any(call == "start" for call, _value in static.calls)
+
+
+def test_reduce_motion_read_from_app_root_config():
+    from types import SimpleNamespace
+    from src.ui.dialogs import _reduce_motion_enabled
+
+    config = SimpleNamespace(get=lambda key, default=None: key == "reduce_motion")
+    widget = SimpleNamespace(_root=lambda: SimpleNamespace(config_obj=config))
+    assert _reduce_motion_enabled(widget) is True
+    assert _reduce_motion_enabled(SimpleNamespace(_root=lambda: object())) is False
+
+
+def test_theme_preview_keeps_unsaved_reduce_motion():
+    from types import SimpleNamespace
+    from src.ui.dialogs import _settings_rebuild_kwargs
+
+    dialog = SimpleNamespace(_var_reduce_motion=SimpleNamespace(get=lambda: True))
+    assert _settings_rebuild_kwargs(dialog) == {"reduce_motion": True}
