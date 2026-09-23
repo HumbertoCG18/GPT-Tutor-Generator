@@ -1,5 +1,4 @@
-// Le so as linhas adicionadas do staged: citar o anti-padrao em comentario ou
-// contexto nao bloqueia. Varre por arquivo para poder isentar este proprio guarda,
+// Le so as linhas adicionadas do staged, apenas em arquivos .py. Varre por arquivo para poder isentar este proprio guarda,
 // cuja lista de alvos e, ela mesma, uma ocorrencia dos padroes.
 const { execSync } = require('child_process');
 const NL = String.fromCharCode(10);
@@ -36,6 +35,8 @@ process.stdin.on('end', () => {
     }
     if (!linha.startsWith('+') || linha.startsWith('+++')) continue;
     if (ISENTOS.some((iso) => arquivo === iso)) continue;
+    // O anti-padrao e import em codigo Python; docs que so citam o padrao nao bloqueiam.
+    if (!arquivo.endsWith('.py')) continue;
     for (const p of ALVOS) {
       if (linha.indexOf(p) !== -1) achados.add(p + '  (' + arquivo + ')');
     }
