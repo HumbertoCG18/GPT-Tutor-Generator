@@ -5,8 +5,9 @@ Data: 2026-09-19. `main` em `9b33f8b`. Reconciliação concluída no
 
 ## Objetivo da próxima sessão
 
-Rodada de reconciliação encerrada. O loop noturno continua como última entrega planejada;
-#11, #12 e #14 permanecem roadmap separado do produto.
+Rodada de reconciliação encerrada. #11 entregue na PR #40 e #12 na PR #39, ambos com
+check core verde e merge ainda não autorizado. #14 tem contrato documental preparado;
+ativação web segue na #41. Após Gate 2 documental, preparar Gate 1 do loop noturno.
 
 ## Estado verificado
 
@@ -31,8 +32,9 @@ Rodada de reconciliação encerrada. O loop noturno continua como última entreg
 
 ## Gaps na ordem de execução
 
-1. **Manter produto separado:** #11, #12 e #14 seguem válidas, mas não bloqueiam o workflow.
-   Tkinter recebe só correção funcional; #12 começa local-first; #14 espera a stack C6.
+1. **Fechar entregas de produto:** #11/#12 aguardam merge autorizado; #14 aguarda Gate 2
+   do contrato `2026-09-19-contrato-qualidade-c6.md`. #41 preserva ativação futura; não
+   instalar ferramentas web antes da stack. Estado e evidências no tracker.
 2. **Construir o loop noturno por último:** abrir issue e piloto isolado no
    `agent-workflow-lab`; só depois integrar às três CLIs.
 

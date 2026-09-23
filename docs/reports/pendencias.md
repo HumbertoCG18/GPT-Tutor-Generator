@@ -2,9 +2,10 @@
 
 ## [USER] Workflow de entrega e engenharia do produto (17/09)
 
-- [#11](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/11): baseline medido em 11 arquivos UI/27 classes/17 threads; jornadas centrais têm progresso e cancelamento, fluxos auxiliares e testes de estado permanecem incompletos. Matriz em `2026-09-18-gaps-issues-abertas.md`.
-- [#12](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/12): 28 módulos importam logging; 224 chamadas usam `logger` e 2 usam `logging.error`; sem correlation/run/trace ID e sem backend. Plano local-first + Sentry opt-in registrado; nenhuma exportação configurada.
-- [#14](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): zero artefato web de produto; gates definidos, instalação continua bloqueada até a stack C6 existir.
+- [#11](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/11): PR #40 aberto, commit `a29fc94`, check core verde. Progresso nativo + movimento reduzido + auditoria das oito jornadas; 19 testes direcionados e 1126 passed/1 deselected na regressão. Merge aguarda autorização. Cancelamento de importadores/fluxos auxiliares permanece gap conhecido fora da entrega.
+- [#12](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/12): PR #39 aberto, HEAD `b5278dd`, check core verde. JSONL local com run_id, duração, status e rotação; teste corrigido para coexistência com handlers externos. Oito testes direcionados verdes. Exportação externa e instrumentação além de build/incremental/process_single continuam futuras; merge aguarda autorização.
+- [#14](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): contrato documental preparado em `2026-09-19-contrato-qualidade-c6.md`; Gate 2 pendente. Não implementa os checks web.
+- [#41](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/41): ativar os gates na primeira fatia vertical C6; stack, baseline de desempenho, schema e CI ainda pendentes. Gate 1 próprio antes de implementar.
 
 ## Concluído
 
