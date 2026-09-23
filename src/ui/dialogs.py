@@ -111,14 +111,32 @@ def add_tooltip(widget: tk.Widget, text: str, delay: int = 600) -> Tooltip:
 # GUI — Settings Dialog
 # ---------------------------------------------------------------------------
 
+def _reduce_motion_enabled(widget) -> bool:
+    config = getattr(widget._root(), "config_obj", None)
+    return bool(config.get("reduce_motion", False)) if config is not None else False
+
+
+def _start_busy_progress(progress_bar, reduce_motion: bool) -> None:
+    progress_bar.configure(mode="indeterminate", value=50 if reduce_motion else 0)
+    if not reduce_motion:
+        progress_bar.start(12)
+
+
+def _settings_rebuild_kwargs(dialog) -> dict:
+    # Valor ainda nao salvo sobrevive a reconstrucao feita pela previa de tema.
+    return {"reduce_motion": bool(dialog._var_reduce_motion.get())}
+
+
 class SettingsDialog(tk.Toplevel):
     """Modal settings window with Appearance and Processing tabs."""
 
-    def __init__(self, parent: tk.Tk, config: AppConfig, theme_mgr: ThemeManager):
+    def __init__(self, parent: tk.Tk, config: AppConfig, theme_mgr: ThemeManager,
+                 reduce_motion: Optional[bool] = None):
         super().__init__(parent)
         self.parent = parent
         self.config = config
         self.theme_mgr = theme_mgr
+        self._pending_reduce_motion = reduce_motion
         self.title("Configurações")
         self.resizable(False, False)
         self.transient(parent)
@@ -180,6 +198,16 @@ class SettingsDialog(tk.Toplevel):
             swatch.create_rectangle(1, 1, 26, 17, fill=sw_p["accent"], outline="")
             swatch.create_rectangle(27, 1, 52, 17, fill=sw_p["accent2"], outline="")
             swatch.create_rectangle(53, 1, 79, 17, fill=sw_p["input_bg"], outline="")
+
+        self._var_reduce_motion = tk.BooleanVar(
+            value=bool(self.config.get("reduce_motion", False))
+            if self._pending_reduce_motion is None else self._pending_reduce_motion
+        )
+        ttk.Checkbutton(
+            tab_app,
+            text="Reduzir movimento (barra indeterminada estática)",
+            variable=self._var_reduce_motion,
+        ).grid(row=len(theme_desc) + 1, column=0, columnspan=3, sticky="w", pady=(12, 0))
 
         # ── Processing tab (scrollable: content can exceed screen height) ──
         tab_proc_outer = ttk.Frame(nb)
@@ -448,10 +476,12 @@ class SettingsDialog(tk.Toplevel):
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
         # Rebuild self visuals too
         self.destroy()
-        SettingsDialog(self.parent, self.config, self.theme_mgr)
+        SettingsDialog(self.parent, self.config, self.theme_mgr,
+                       **_settings_rebuild_kwargs(self))
 
     def _save(self):
         self.config.set("theme", self._var_theme.get())
+        self.config.set("reduce_motion", bool(self._var_reduce_motion.get()))
         self.config.set("default_mode", self._var_mode.get())
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_backend", self._var_backend.get())
@@ -476,6 +506,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
+        self.parent._apply_reduce_motion_preference()  # type: ignore[attr-defined]
         self._saved = True
         self.destroy()
 
@@ -1825,8 +1856,7 @@ class MoodleCourseSelectDialog(tk.Toplevel):
     def _busy(self, text):
         def go():
             self._status_var.set(text)
-            self._progress.configure(mode="indeterminate")
-            self._progress.start(12)
+            _start_busy_progress(self._progress, _reduce_motion_enabled(self))
         self._post(go)
 
     def _progress_to(self, done, total, text):
