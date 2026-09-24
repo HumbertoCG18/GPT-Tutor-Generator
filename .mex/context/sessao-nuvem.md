@@ -39,8 +39,9 @@ Pare e escreva só um diagnóstico, sem código, se qualquer item abaixo for ver
 Primeira ação de toda sessão, antes do pedido: conferir o ambiente com
 `python3 -c "import pydantic, pytest"` e `ls "$(git rev-parse --git-common-dir)/hooks/pre-commit"`;
 ler `/tmp/setup-nuvem.log`, se existir. Se faltar dependência ou hook, rodar os comandos Linux de
-[setup.md](setup.md) e registrar no handoff. No piloto 2 de 24/09 o script do ambiente instalou as
-dependências pip, mas não o `tkinter` nem o hook.
+[setup.md](setup.md) e registrar no handoff. Medido no piloto 3 de 24/09: o script do ambiente roda
+como root em `/home/user`, fora do clone; instala as dependências pip; o `tkinter` fica ausente (PPA
+bloqueado) e o hook é sempre instalado pela sessão, com `chmod +x`.
 
 ## 2. O que a nuvem não tem
 

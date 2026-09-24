@@ -57,20 +57,24 @@ resolve (medido 2026-09-10).
 ```bash
 # dependências (o script do ambiente já instala; repetir só se faltarem)
 python3 -m pip install pydantic cffi "pymupdf4llm==1.27.2.3" "pytest>=7" "pytest-cov>=4.1" "ruff>=0.6"
-# hook do repositório (o script do ambiente não acha o clone; a sessão instala)
-cp scripts/hooks/pre-commit.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
+# hook do repositório (o script do ambiente roda fora do clone; a sessão instala).
+# Sem chmod o git ignora o hook em silêncio.
+H="$(git rev-parse --git-common-dir)/hooks/pre-commit"
+cp scripts/hooks/pre-commit.sh "$H" && chmod +x "$H"
 # suíte: não para na coleta; os erros de coleta continuam contados no resumo
 python3 -m pytest tests -q --continue-on-collection-errors \
   --deselect tests/test_core.py::TestCliResolution::test_marker_cli_prefers_project_venv
 ```
 
 Instalação editável não é necessária: o `pytest` roda da raiz com `pythonpath = ["."]`. O
-`tkinter` (`python3.11-tk`; o `python3-tk` do apt é do 3.12) exige root e não foi instalado pelo
-script; sem ele, só os testes de UI citados abaixo são afetados.
+`tkinter` fica ausente por decisão: o `python3.11-tk` só existe no PPA `deadsnakes`, bloqueado (403)
+pela rede Confiável, e o `python3-tk` do Ubuntu é do 3.12. Sem ele, só os testes de UI citados
+abaixo são afetados. O `gitleaks` também fica ausente; o hook só avisa.
 
 Medido nos pilotos de 24/09 na imagem da nuvem (Python 3.11.15), relatórios em
-`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md` e
-`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-2.md`:
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md`,
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-2.md` e
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-3.md` (este confirmou a base e o hook ativo):
 
 - `pydantic` vai à parte: é importado no topo de módulos puxados por `engine.py`, mas não está
   declarado no `pyproject.toml` desta branch (a `main` declara). Sem ele, 45 erros de coleta.

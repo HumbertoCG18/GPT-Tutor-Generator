@@ -3,6 +3,7 @@
 # commit, para qualquer CLI ou commit manual; os guardas PreToolUse das CLIs veem a
 # pasta da sessao e perdem commits feitos com `cd <outra pasta>`.
 # Instalar: cp scripts/hooks/pre-commit.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
+#   e, fora do Windows, chmod +x no destino: o git ignora hook sem execucao (medido na nuvem, 24/09).
 # .git/hooks e compartilhado por todas as worktrees; nao usar core.hooksPath (desligaria os hooks do Graphify).
 # Emergencia: git commit --no-verify (e registrar o motivo).
 
@@ -17,7 +18,7 @@ fi
 # 2. Segredos no stage.
 if ! command -v gitleaks >/dev/null 2>&1; then
   echo "[pre-commit] gitleaks nao instalado: o stage NAO foi verificado por segredos." >&2
-  echo "[pre-commit]   instalar: winget install Gitleaks.Gitleaks" >&2
+  echo "[pre-commit]   instalar: winget install Gitleaks.Gitleaks (Windows) ou binario de github.com/gitleaks/gitleaks/releases" >&2
   exit 0
 fi
 
