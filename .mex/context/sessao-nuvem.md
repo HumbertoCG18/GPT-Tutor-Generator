@@ -35,6 +35,11 @@ Pare e escreva só um diagnóstico, sem código, se qualquer item abaixo for ver
 - A tarefa exige algo da §2 que a nuvem não tem (tutores, gold como insumo, rede no produto).
 - A tarefa pertence a uma campanha marcada como bloqueada no tracker.
 
+Primeira ação de toda sessão, antes do pedido: conferir o ambiente com
+`python3 -c "import pydantic, tkinter, pytest"` e `ls "$(git rev-parse --git-common-dir)/hooks/pre-commit"`.
+Se algo faltar, rodar os comandos Linux de [setup.md](setup.md) e registrar no handoff. No piloto de
+24/09 o script do ambiente não tinha instalado nada.
+
 ## 2. O que a nuvem não tem
 
 | Ausente | Consequência | Conduta |
@@ -44,7 +49,7 @@ Pare e escreva só um diagnóstico, sem código, se qualquer item abaixo for ver
 | Repositórios-tutor irmãos (../*-Tutor), subjects.json do usuário, moddle/, PDFs (`*.pdf` é ignorado), `.env` | Replay, zero-diff, harness do motor e rebuild não rodam; testes de dados reais dão skip | Não recriar dados nem inventar fixture sem proveniência |
 | .workflow/local/active-task.md (ignorado) | Sem estado de tarefa em curso | Estado vai no handoff commitado (§9) |
 | Codex, AGY, Astra (revisor), Alethe, claude-mem | Sem delegação nem revisão Astra | A revisão é o PR em rascunho mais o Gate 2 humano |
-| Pre-commit do git (.git/hooks) e gitleaks | Commit sem guarda de segredo | O setup instala o hook; sem gitleaks ele só avisa. Nunca commitar segredo |
+| Pre-commit do git (.git/hooks) e gitleaks | Commit sem guarda de segredo | Instalar o hook na primeira ação (acima), se ausente; sem gitleaks ele só avisa. Nunca commitar segredo |
 | Commits locais sem push e trabalho não commitado | A nuvem só vê o GitHub | Não presumir que o clone é igual à máquina do usuário |
 
 ## 3. Branch — escolher antes de tudo
@@ -195,11 +200,13 @@ entra como proposta; rótulo não inicia trabalho.
 ## 12. Lacunas conhecidas (24/09; não corrigir sem issue)
 
 - `pydantic` é importado no topo de 5 módulos (`src/builder/engine.py` puxa um deles) e não está declarado no
-  `pyproject.toml` do motor; instalação limpa precisa dele à parte.
+  `pyproject.toml` do motor; instalação limpa precisa dele à parte (45 erros de coleta sem ele).
 - code_curation.json é gravado com `path.write_text` direto em `src/builder/core/code_summarization.py`,
   sem escrita atômica, contrariando o `AGENTS.md`.
 - `docs/Overview-Sistema.html` está parcialmente defasado (resumo de código ainda aparece como
   Gemini; é determinístico desde 11/09).
 - `tests/test_caracterizacao_blocos_atual.py` gera o baseline em `tests/_golden/` na primeira
   execução com tutores presentes; na nuvem não commitar baseline gerado ali.
-- A suíte do motor nunca rodou em CI Linux; compatibilidade não verificada.
+- Suíte no Linux (piloto de 24/09): um teste derruba o pytest (`os.name` global em
+  `tests/test_core.py`), 21 dependem de caminho Windows, `robocopy` ou barra invertida, e o mock de
+  `tkinter` vaza entre módulos. Base conhecida e comandos em [setup.md](setup.md).

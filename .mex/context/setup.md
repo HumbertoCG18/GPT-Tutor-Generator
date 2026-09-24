@@ -55,18 +55,30 @@ resolve (medido 2026-09-10).
 ### Linux (sessão na nuvem)
 
 ```bash
-python3 -m pip install -e ".[dev]" pydantic
-python3 -m pytest tests -q
+apt-get install -y python3.11-tk      # o python3-tk do apt é do 3.12 e não serve ao python3 (3.11)
+python3 -m pip install -e ".[dev]" pydantic cffi "pymupdf4llm==1.27.2.3"
+cp scripts/hooks/pre-commit.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
+python3 -m pytest tests -q --deselect tests/test_core.py::TestCliResolution::test_marker_cli_prefers_project_venv
 ```
 
+Medido no piloto de 24/09 na imagem da nuvem (Python 3.11.15), relatório em
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md`:
+
 - `pydantic` vai à parte: é importado no topo de módulos puxados por `engine.py`, mas não está
-  declarado no `pyproject.toml` desta branch (a `main` declara).
-- Módulos de teste que importam `src.ui.*` exigem que `tkinter` seja importável (pacote do sistema,
-  ex.: `python3-tk`); nenhum teste abre janela. Não verificado na imagem da nuvem.
+  declarado no `pyproject.toml` desta branch (a `main` declara). Sem ele, 45 erros de coleta.
+- `cffi` vai à parte: o `cryptography` do Debian, puxado por `pdfplumber`, não acha
+  `_cffi_backend` e derruba a coleta inteira.
+- `pymupdf4llm` fixado na versão da máquina do usuário: com 1.28.2, `test_fracao_empilhada_vira_divisao`
+  falha (a fração some da saída).
+- O teste deselecionado força `os.name = "nt"` no processo e derruba o pytest no Linux.
+- Sem `tkinter`, dois módulos de teste falham na coleta e um mock de `tkinter` vaza entre módulos
+  (`test_image_curation.py`, `test_datalab_captions.py`), mudando o resultado conforme a ordem.
+- Base Linux conhecida (piloto, com `tkinter` ausente): 26 failed, 2340 passed, 30 skipped. Das
+  falhas, 21 dependem de caminho `C:\...`, `robocopy` ou barra invertida — preexistentes, não
+  causadas por mudança da sessão. Comparar com essa lista antes de atribuir falha nova.
 - Testes que leem repositórios-tutor reais (`TUTOR_REPOS`, `TUTOR_COURSES_DIR`, glob `*-Tutor`)
   dão skip sem eles. Não criar dados para contornar o skip.
-- A suíte do motor nunca rodou em CI Linux; falha só no Linux é achado a registrar, não a mascarar.
-  Guia completo da nuvem: [sessao-nuvem.md](sessao-nuvem.md).
+- Guia completo da nuvem: [sessao-nuvem.md](sessao-nuvem.md).
 
 ## Run
 
