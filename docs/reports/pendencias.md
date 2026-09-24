@@ -1,5 +1,1322 @@
 # Pendências — tracker vivo
 
+<!-- fila-campanhas-start -->
+## Fila de campanhas (seção viva)
+
+Política: `references/campaigns.md` da fonte compartilhada (fallback `.workflow/references/campaigns.md`, distribuído). Este bloco guarda só o estado; o histórico abaixo permanece intocado. Reconciliado em 21/09 sobre o tracker atual (#44); conclusões técnicas são indicadas por tarefa e não equivalem a integração/Gate2. Nenhum estado/contador externo foi alterado por este bloco.
+
+Prioridade atual aprovada pelo usuário21/09: concluir diagnóstico autorizado #42 → campanhas do MOTOR/CRU → preparação web → migração. Workflow restante apenas quando bloquear esse caminho; não continuar otimização de ferramentas por antecipação. Diagnóstico não libera automaticamente noite/corpus. Primeiro piloto real passa a ser candidato CRU-01 (motor), após seus preflights e aprovação base/corpus; PREWEB-01 deixa de ser a preferência inicial. Se noite continuar bloqueada, preparar investigação assistida do motor, sem burlar bloqueio nem lançar goal noturno.
+
+Marco motor→web: usuário explicitou21/09 meta estritamente>90%em subunidade primária,unidade e bloco,separadamente. Não trocar acerto total por precisão só dos confiantes nem ocultar abstenções/ausentes; mostrar por curso e regime. Reconciliar estado vivo/PR9; fixar baseline reproduzível; medir ganhos/perdas; definir contrato independente da GUI e paridade antes de removê-la. Demais eixos de "etc" e limiar por curso ainda a delimitar. Meta não é resultado prometido. Remoção GUI/stack/migração exigem plano e Gate1 próprios; nenhuma exclusão autorizada agora.
+
+Handoff21/09 para Claude Code: docs/reports/2026-09-21-handoff-motor-90-claude.md. JSONs históricos15/17-09 conferidos/recalculados: bloco213/237(89,873%),unidade239/284(84,155%),subprimária84/251(33,466%),subaceita108/251(43,028%). Não houve rebuild nesta sessão. Buscar evidência existente antes de medir; dado ausente= não medido. Categoria concluída e review regime2 consumida preservadas.
+
+Retomada motor (estado .workflow-local/active-task.md e diagnóstico17/09): regime2 opcional por lacuna,script/formulários aguardam Gate1; review Astra já consumida,não repetir. Achados históricos:47/159erros com evidência discriminante presente são oportunidade de investigação, não ganho comprovado;95/159rótulos ausentes não provam necessidade universal de declaração. Reconciliar esses trabalhos dentro do escopo CRU-02 antes de propor código; categoria prova já concluída,não reabrir. Não sobrescrever estado ativo do motor com estado da noite.
+
+Inventário21/09: 26 tarefas abertas/pendentes de entrega em11campanhas; inclui bloqueadas/propostas e aceites técnicos ainda sem integração. WF-43=4,NIGHT-42=6,CRU=4,PREWEB=1,WF-44=4,MEM-45=1,TS-46=1,UI-11=1,OBS-12=1,WEB=2,MOTOR-9=1. Goals só referenciam tarefas, não somam de novo. Escopos amplos ainda não decompostos: a definir, nunca zero.
+
+Estados de tarefa: proposta · pronta · em execução · bloqueada · reservada · concluída.
+
+Rótulos definidos pelo investigador Codex/root em21/09 conforme routing.md; coordenador registra. [classe C1/C2/C3] é classificação, não os antigos IDs históricos C1/C6 do produto. Confiança alta nos limites workflow/noite, média nos pacotes de produto; CRU-02..04 provisórios até hipótese/allowlist. NIGHT T3 por isolamento/permissões/efeitos no host; CRU-01 T3 por corpus privado/gold; melhorias CRU T2 sob escopo delimitado (elevar se risco sistêmico); PREWEB T2 por cruzamento de fontes, sem escrita de produto. Docs/entrega WF-43 T1, sem presumir autorização de commit. Rótulo não inicia trabalho, não renova revisão e não amplia permissões.
+
+### WF-43 [classe C2] — fila permanente de campanhas (#43, reconciliada com #44) · origem USER · prioridade: suporte ao motor · janela: assistida · risco: baixo · estimativa: a definir (não medida)
+- WF-43-01 [T1] política — referência sob demanda `references/campaigns.md` + rota no workflow. aceite: rota resolvível, sem sequência de projeto na política. estado: em execução. evidência: rotas resolvidas e separação confirmada na auditoria AGY 638e86d0 (21/09). dep: —
+- WF-43-02 [T1] tracker — este bloco delimitado após o título, histórico intacto. aceite: delimitadores + IDs únicos + restante byte a byte. estado: em execução. evidência: 15 IDs únicos e histórico byte-idêntico ao baseline, conferidos pelo coordenador (21/09). dep: WF-43-01
+- WF-43-03 [T1] distribuição — ponte pessoal + project/{AGENTS,CLAUDE,GEMINI}.md + template de estado. aceite: pontes curtas e referências resolvíveis quando distribuídas. estado: em execução. evidência: manifesto 23/23, snapshots 3/3 e instruções pessoais 3/3 iguais à fonte (21/09). dep: WF-43-01
+- WF-43-04 [T1] validação — checks read-only locais, sem validador novo. aceite: checks registrados no resultado da reconciliação. estado: em execução. evidência: RESULT.md e AGY-AUDIT.md em agent-workflow-lab/private/campaign-43-reconcile-20260921; verify.py mantém falha preexistente Codex Companion. dep: WF-43-01, WF-43-02, WF-43-03
+- Governança WF-43: Gate 2 pendente; sem commit/integração aprovada. Provas técnicas acima não substituem essa aprovação nem comprovam automação noturna.
+- goal WF-43: fila permanente documental nas três CLIs (referencia WF-43-*, sem duplicar contagem).
+
+### NIGHT-42 [classe C3] — execução noturna de campanhas (#42) · origem DECISION · prioridade: diagnóstico autorizado atual · janela: assistida · risco: alto · estimativa: a definir (não medida)
+BLOQUEADA — só detalhar ou desbloquear, nunca lançar. Smoke real único (call 02c8fa8d-8661-4333-8016-1878da9dc86b) falhou: unexpected_model/unrecognized em 1.486s, kill confirmado, sem edições, sem retry. 333 testes Linux + 62 Windows NÃO provam E2E. Suspensão real não autorizada. Diagnóstico específico da falha pendente. Fonte operacional: C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/private/night-loop-pilot-20260919/OPERATIONAL-STATE.md. Não fechar #42 aqui.
+- NIGHT-42-01 [T3] dispatch + telemetria. aceite pendente. estado: bloqueada. Atualização21/09: captura preparada pelo Codex sob autorização excepcional,4testesGREEN; diagnóstico único114ef8f9 consumido,0.609s,initFable→assistant<synthetic>/categoriaauth,guardunexpected_model/killconfirmado. Sandbox auth status loggedIn=false/none; host true/claude.ai. Autenticação sandbox requer orientação,sem copiar credenciais/afrouxar allowlist. Timeout implementador host300s permanece causa indeterminada,sem repetição.5testescontainment/env/argv passaram;cgroup sem cap agregado,nightgenérico bloqueado. Sandbox parada,nenhumgoalproduto iniciado; handoffClaude e OPERATIONAL-STATE.md prevalecem.
+- NIGHT-42-02 [T3] launcher: integração + recuperação. aceite pendente. estado: bloqueada. dep: NIGHT-42-01
+- NIGHT-42-03 [T3] preflight de corpus/base. aceite pendente. estado: bloqueada. dep: NIGHT-42-01
+- NIGHT-42-04 [T3] recursos: cap de CPU/RAM. aceite pendente. estado: bloqueada. dep: NIGHT-42-02
+- NIGHT-42-05 [T3] suspensão opt-in. aceite pendente. estado: bloqueada. dep: NIGHT-42-02; suspensão real não autorizada
+- NIGHT-42-06 [T3] piloto E2E + entrega revisada. aceite pendente. estado: bloqueada. dep: NIGHT-42-01 a NIGHT-42-05
+- goal NIGHT-42: execução noturna confiável de campanhas (referencia NIGHT-42-*).
+
+### CRU [classe C3] — regime cru do motor · origem USER · prioridade: 1 produto · janela: assistida até noite validada · risco: alto · estimativa: a definir (não medida)
+Catálogo em branch não integrada; referência por texto: issue #42 e handoff `2026-09-14-handoff-codex-regime-cru.md`. Não reabre a C1 TRAVESSIA.
+- CRU-01 [T3] baseline reproduzível do catálogo. aceite pendente. estado: bloqueada. dep: piloto NIGHT-42 validado + base/corpus aprovados
+- CRU-02 [T2 provisório] subunidade primária: hipótese generalizável,sem regras por curso/gold; reconciliar regime2 opcional antes de implementar. aceite/meta pendentes. estado: em execução (assistida; Gate 1 de medição aprovado 22/09 ~01:35). W-P1 medido 22/09 (bloco 'Medido: CRU-02, W-P1'): residual dominado por relação ausente 106 vs falha de seleção 53; ordem por cobertura pura seleciona boilerplate W-P2' 118/251 (alias por expressão, 76 perguntas); W-S 22/09 (bloco 'Medido: CRU-02, W-S'): guarda + pergunta por material chega a 213/251 = 84,9 % com custo 261 (~1 resposta por alvo), teto 211 sem corrigir os bloqueios de unidade. Decisão 22/09 (com o Astra): rotulagem pelo professor descartada como requisito; CRU-03 primeiro (W-T em execução). W-U 22/09 (bloco 'Medido: CRU-02, W-U'): relações explícitas do pacote cobrem 56/106 mas são conflitantes em 177/178 — existência não discrimina; 40 B puros exigiriam fonte externa (regime separado). evidência: 84/251 (33,5%); teto prático com vocabulário dentro da unidade 228/251; 8 ausentes reconciliados por ID; parecer Astra em c1-3/astra_ideias_motor_22-09.md. W-Z2 23/09 (bloco 'Medido: W-Z2'): 165 erros = não geração 76 / seleção 67 / unidade 17 / identidade 5; oráculo de unidade só +6; teto do pacote CG 84,1 %; frente recomendada = seleção do assunto principal (Gate 1 W-AA proposto). W-AA 23/09 (bloco 'Medido: W-AA'): S 83, G 76, G+S 73 contra base 86 — mecanismos examinados reprovados; decisão de regime pendente. **Handoff 23/09: `docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md`**. dep: CRU-01 (noite) OU investigação assistida com replay fiel como baseline; hipótese/alvo/allowlist registrados
+- CRU-03 [T2 provisório] unidade: ganho delimitado,preservando outros eixos. estado: em execução (assistida). evidência: #47 commitada 9220a57 (239 → 244/284, 0 perda); #48 commitada b726d4c (244 → 246/284, 0 perda). W-T 22/09 (bloco 'Medido: CRU-03, W-T'): 38 erros = 13 ausentes + 12 adjudicação + 9 dependem do bloco + 4 texto vence errado (0 regressões da #48, conferido por ID 22/09); regra texto-vence-bloco com LOCO reprovada (237/284). Decisão do usuário 22/09 (após 5ª resposta Astra): (a) W-V importação offline dos 13 ausentes = issue #51, em execução (worker Opus, sessão 8072c4bb, estado `.workflow-local/wv-importacao-offline-51-20260922.md`); (b) W-X régua corrigida auditável, em execução em paralelo (worker Opus, estado `.workflow-local/wx-regua-corrigida-20260922.md`); (c) seleção na subunidade e (d) CRU-04 alvo MF 60/66 só depois de (a); W-Y (#52) medido; régua v2 adotada; anatomia v2 = 248/284. W-Z 23/09 (bloco 'Medido: W-Z'): R1/R2/R3/R4 reprovadas na nova base (melhor R1 τ0,80 = 241, +3/−10; cobertura R3/R4 = 237, +1/−12; subunidade cai em todas); 18 = origem 9 (SO bloco-04 duas unidades, bloco-06 rótulo, IA/TCC/ES2 afinidade 0) / homogeneidade 6 (CG) / empate 3; próximo passo exige decisão do usuário sobre a origem do bloco (afinidade 0, rótulo-cabeçalho, bloco de duas unidades), não regra de texto. W-Z2 23/09 (bloco 'Medido: W-Z2'): gold por bloco reclassifica os 18 (origem 5 / homogeneidade 7 / indeterminado 6); oráculo de bloco ideal +4, 0 no CG/SO; sem caminho demonstrado para CG +11 e SO +4. **Handoff 23/09: `docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md`** (anterior: `2026-09-22-handoff-motor-fr-regua-claude.md`; estados em `.workflow/local/`). meta >90% = 256: só a entrada offline dos 12 links (+13 → 259) cruza sem regra nova. dep: Gate 1 de produto/harness para importação offline
+- CRU-04 [T2 provisório] bloco: ganho delimitado,preservando outros eixos. estado: em execução (assistida); aceite técnico cumprido na #48 (213 → 214/237 = 90,3%, 0 perda, replay pela fase real), #48 commitada b726d4c (Gate 2 22/09). residual: MF 54/66, desempates disamb: W-Q reprovado (0/0); W-R medido 22/09 (bloco 'Medido: CRU-04, W-R'): #49 implementada e revisada (V1, 217/237 = 91,6 %, 0 perda), Gate 2 pendente (bloco 'Implementado, aguardando Gate 2 — #49'). dep: integração da #49
+- CRU-05 [T2 provisório] perdas colaterais da 2ª passada (propagação de vocabulário de materiais confiantes, `resolver_apply.py:262-360`): tarefa delimitada de engenharia registrada em 23/09 a pedido do usuário; só medição/diagnóstico, sem mudar código nem desligar a propagação. Rastros: W-Z2 §3.5 (1ª passada 64 → 2ª mantém 60, perde 4, ganha 26; propagação +11/−4; perdas FR `04-protocolo-http` e `unidade2-exercicios-http` com 0 de 4 doadores certos; IA "introdução ao aprendizado de máquina" 30 doadores, 3 certos, 11 movidos, 0 ganho; ES2 0 de 2, 4 movidos) e oráculo de unidade −2 no CG (`bezier-py`, `bezier-python`); W-AA: 2 perdas do braço A e, no B', 2 ganhos/4 perdas só pela 2ª passada; capturas congeladas `.frzero/wz2_captura_base_23-09.json`, `waa_captura_bracos_23-09.json` (`--reavaliar`). Pergunta: separar dependência legítima (doadores certos: MF especificação recursiva 4/5 → 7 ganhos, 1 perda; SO chamadas de sistema 2/2 → 3 ganhos) de propagação sem suporte usando só sinais sem gold (ex.: C2 do W-Z2, doador com evidência estrutural própria), com saldo por curso sobre a base 86/251 (resultado observado, não teto). Não presumir que dependência entre materiais é defeito; sem grade nova de pesos/aliases, sem conhecimento externo, sem S/G/G+S. Aceite de qualquer mudança futura = critério de integração (ganho positivo, zero perda, nenhum curso regride, replay integral). estado: diagnóstico medido 23/09 (`docs/reports/2026-09-23-diag-identidade-e-cru05.md`): propagação +11/−4 por material; ganhos com termo visível vêm de doadores certos (8/8); perdas: FR `server` (doadores 0/2), TCC `aveis` = artefato de acento espaçador do LaTeX (3 de 137 termos propagados são fragmentos), CG `janela` dependente da régua; 23 movidos sem ganho (IA 10). Candidatos sem implementação: normalização de acentos espaçadores; doador com evidência estrutural (hipótese). Próximo: decisão do usuário.
+- goal CRU: regime cru do motor (referencia CRU-*).
+
+### PREWEB [classe C2] — preparação do ambiente web · origem USER · prioridade 4 · janela: a definir · risco: a definir · estimativa: a definir (não medida)
+- PREWEB-01 [T2] do catálogo. aceite pendente. estado: proposta. dep: inventário de branches/PR/tracker
+- goal PREWEB: preparação do ambiente web próprio (referencia PREWEB-01).
+
+### WF-44 [classe C2] — modelos, roteamento e validação · origem USER · prioridade: suporte ao motor · janela assistida
+Integração Alethe21/09: correções locais MCP/representação de hooks/SessionEnd aplicadas; protocolo initialize+tools/list(9) passou sem workers. Fonte e snapshot tooling alinhados,sem segunda fila. Relatório docs/reports/2026-09-21-alethe-interface.md. Persistência da ponte gerada/patch de cache e carregamento/confiança em sessão nova ainda pendentes; orquestração nativa não homologada. Gate2 pendente,estado motor/reviews preservados.
+- WF-44-01 [T2] medir3casos×4perfis AGY. estado: concluída tecnicamente; Gate2 da campanha pendente. aceite cumprido:12/12chamadas,4perfis com3/3acertos,sem promoção global. evidência: docs/reports/2026-09-21-medicao-agy-campanhas.md e lab/private/agy-benchmark-20260921. dep: —; confiança alta no escopo,baixa na generalização.
+- WF-44-02 [T2] validar classificação pelo investigador e perfil escolhido em tarefa delimitada. estado: proposta. aceite: justificativa/modelo solicitado vs observado e resultado; prova anterior Claude→AGY não certifica todos os perfis. dep: WF-44-01.
+- WF-44-03 [T2 provisório] resolver divergência Codex Companion em verify.py. estado: proposta. aceite: uso real inventariado,decisão de política explícita e verificação; não remover plugin para apenas deixar verde. dep: —.
+- WF-44-04 [T1] conferir diff/Gate2/entrega da consolidação. estado: bloqueada. aceite: artefatos coerentes,aprovações e integração rastreáveis. dep: WF-44-02,WF-44-03; sem commit autorizado.
+
+### MEM-45 [classe C1] — replay de memória · origem USER · janela assistida
+- MEM-45-01 [T1] entrega da issue45. estado: bloqueada. evidência: worktree memory-replay-45,38testes e review único já concluídos; Gate2 pendente. aceite: diff confirmado e entrega autorizada,sem repetir review. dep: aprovação Gate2. TypeSafe não integrado; teste conservador teve0%redução. Código novo não é tarefa restante presumida.
+
+### TS-46 [classe C1] — skill TypeSafe · origem USER · janela assistida
+- TS-46-01 [T1] reconciliar instalação verificada e encerramento da issue46. estado: proposta. evidência: instalação pinada já registrada; issue ainda OPEN21/09. aceite: confirmar destino/hash/registro e fechar só conforme aceite autorizado. dep: —. Não reinstalar nem pedir chave.
+
+### UI-11 [classe C2] — estados e movimento · origem USER · janela assistida
+- UI-11-01 [T2] reconciliar e integrar PR40,sem reimplementar a UI existente. estado: bloqueada. evidência21/09: PR40 OPEN,core SUCCESS,mergeStateStatus BLOCKED. aceite: identificar bloqueadores reais,validar evidências das jornadas e obter autorização de merge. dep: bloqueios/aceite da PR; revisão anterior deve ser localizada, nunca resetada.
+
+### OBS-12 [classe C3] — observabilidade local privada · origem USER · janela assistida
+- OBS-12-01 [T3] reconciliar e integrar PR39. estado: bloqueada. evidência21/09: PR39 OPEN,core SUCCESS,mergeStateStatus BLOCKED. risco: privacidade/logs/exportação. aceite: bloqueadores identificados,privacidade e funcionamento offline demonstrados,merge autorizado. dep: bloqueios/aceite da PR; não contratar serviço nem repetir revisão automaticamente.
+
+### WEB [classe C3] — fronteira web histórica C6 · origem USER · janela assistida
+- WEB-14-01 [T2] reconciliar contrato documental da issue14 com entrega existente e continuação41. estado: proposta. evidência: docs/reports/2026-09-19-contrato-qualidade-c6.md,issues14/41 abertas21/09. aceite: indicar entregue/pendente sem duplicar os gates executáveis41. dep: PREWEB-01; confiança média.
+- WEB-41-01 [T3 provisório] primeira fatia vertical e gates executáveis. estado: bloqueada. aceite: contratos Python/web,CI/E2E,desempenho,release/rollback conforme issue41; decomposição a definir. dep: stack/versões e Gate1 específicos,WEB-14-01. Issue não autoriza instalar stack.
+
+### MOTOR-9 [classe C3] — integração da branch motor · origem CODE · prioridade: 1 produto,reconciliar antes de fixar base CRU · janela assistida
+- MOTOR-9-01 [T3 provisório] diagnosticar conflitos/escopo da PR9 antes de integrar. estado: bloqueada. evidência21/09: PR9 OPEN,mergeStateStatus DIRTY,sem checks retornados. aceite: base/diff/conflitos identificados e plano aprovado; não resetar worktree nem sobrescrever alterações. dep: investigação própria/Gate1; não confundir com CRU-02..04.
+
+Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status remoto consultado21/09, pode mudar. Histórico C0/C1 e demais antigas campanhas permanece abaixo, sem reabrir; ausência de issue não prova inexistência de pendência local. Lista é inventário de fontes consultadas, não varredura de todos os checkouts.
+<!-- fila-campanhas-end -->
+
+## [USER/CODE] Consolidação e roteamento das três CLIs (#44, 20/09)
+
+- Bootstrap consolidado e distribuído: 11.648 → 3.450 tokens na régua o200k_base; cenário de planejamento 5.982. Não representa quota nem contexto total da CLI.
+- Hooks de roteamento configurados nas três CLIs, 3/3 comandos locais válidos. [USER] Confiar a nova definição em /hooks no Codex; [CODE] verificar carregamento e delegação em sessão nova. Gates/contadores #42/#43 preservados; agente noturno ainda bloqueado.
+- Evidência e rollback: [relatório #44](2026-09-20-contexto-workflow-44.md). Gate 2 pendente; verify.py mantém o erro anterior sobre Codex Companion.
+
+## Medido: sync do tutor de FR para a P1 de 24/09 (20/09)
+
+- Feito: `scripts/sync_moodle.py fundamentos-de-redes-de-computadores --apply --no-prune` no repo
+  original (stash parado em 31/08, zero material de U3/U4). Resultado: 22 → 32 entries, 0 falhas,
+  0 decisões antigas movidas; as 10 novas com unidade por seção explícita (confiança 0,95), base
+  `pymupdf4llm` e avançado `datalab` presentes em todas. Backup pré-sync (inclui `staging/`,
+  git-ignorado) só no scratchpad da sessão 52d1525e; o repo vivo de FR deixou de coincidir com o
+  pacote de 15/09 (22 entries).
+- [CODE] Escopo da P1 de FR sai sem U03: `bloco-11` (P1, 24/09) tem `scope_unit_slugs` = U01, U02,
+  U04. Causa medida em `course/.timeline_index.json`: o bloco de aula "camada transporte"
+  (03/09) recebeu `unit_slug` = `unidade-02-nivel-de-aplicacao`; `assessment_scope_by_date`
+  (`src/builder/timeline/index.py:1170`) só propaga o erro. U03 e U06 não entram no escopo de
+  nenhuma prova (P2 = só U05). Por que o bloco casou com U02 não foi investigado. Vai por
+  `ecc:orch-fix-defect`, teste vermelho primeiro. Contorno sem código: override manual do escopo
+  do `bloco-11` no dashboard.
+- [USER] Aprovar o markdown de FR no Curator Studio: 0 de 32 aprovados, `content/` só tem
+  `BIBLIOGRAPHY.md`. "Aprovar Todos" promove o base (`curator_studio.py:1142`); nos decks de
+  slides o Datalab é melhor (IPv4: cabeçalho como tabela real contra bullets quebrados no base;
+  linhas de tabela 74 × 0 no IPv4, 108 × 0 no ICMPv4), nas listas os dois se equivalem. Ordem:
+  decks um a um em "Avançado", depois "Aprovar Todos", que pula os já aprovados (`:1001`).
+- [DECISION] Não existe aprovação headless; criar uma é mudança de produto (issue + Gate 1).
+
+## [USER] Workflow de entrega e engenharia do produto (17/09)
+
+- [#16](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/16): deltas de Karpathy Guidelines aplicados nas instruções pessoais das três CLIs; 16 linhas, fonte e três cópias idênticas e `verify.py` verde (75 arquivos, zero divergências). Sem plugin novo. Backup/diff em `agent-workflow-lab/private/karpathy-delta-20260917/`; versionamento/PR pendentes de Gate 2. Laboratório com remote privado desde 23/09 (`HumbertoCG18/agent-workflow-lab`).
+- [#10](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/10): contrato e templates de issue/PR preparados localmente; Gate 2 e abertura do PR pendentes. Instruções em `.mex/patterns/engenharia-produto.md`, com entrada nas três CLIs e Copilot.
+- [#13](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/13): baseline Python e ampliação de CI; não executados nesta entrega documental.
+- [#14](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): qualidade/E2E/release da campanha C6; respeitar a fila da campanha web abaixo.
+
+## Medido: anatomia dos erros de bloco e unidade nos builds de 15/17-09 (21/09)
+
+- Pedido do usuário (21/09): unidade e bloco primeiro; Astra pesquisa o número da subunidade em paralelo
+  (tipo pesquisa, não revisão de diff). Reconstrução por entrada com a régua do harness
+  (`compara_herancas_15-09.py:65-69`), sem build/rede/LLM: reproduz bloco 213/237 e unidade 239/284.
+- 13 entradas ausentes do pacote "desde as fontes" contam como erro nos dois eixos: 12 são links externos
+  (CG 7 vídeos do YouTube; IA 2 páginas; MF 3 repositórios/sites) e 1 é PDF local fora do stash
+  (MF `t1_2026_1.pdf`). Não são erro do motor: link não entra pelo stash (já visto no FR, "os 2 links do
+  youtube não entram pelo stash"). Pesam 6 dos 24 erros de bloco e 13 dos 45 de unidade.
+- Bloco (24 erros; >90% = 214, falta 1): 6 ausentes, 8 vizinho ±1, 7 distantes, 3 vazios. MF concentra 9
+  dos 18 não-ausentes e é o único curso abaixo de 90% (53/66 = 80,3%; por curso precisaria de 60).
+- Unidade (45 erros; >90% = 256, faltam 17): 13 ausentes + 32 errados. Dos 32, 30 têm a unidade vinda do
+  bloco (`herdada_do_bloco`, `reconciliada_do_bloco` ou `herdada_do_vizinho`); só 2 são erro puro do scorer
+  (CG morfologia). 18 com `unit_block_conflict` (o scorer discordou e o bloco venceu); 15 com o bloco CERTO
+  pela régua de bloco (divergência de desenho, não de sinal); 12 adjudicados não-ausentes; 5 com bloco
+  errado a montante; 12 sem gold de bloco (CG). Por curso: CG 16, SO 10, ES2 3, MF 1, IA 1, TCC 1.
+- Já fechado no registro, não repetir: "texto vence sempre" (−15 cru), regra do título (−9 cru), família
+  "precedência por método do bloco" (LOCO: +38 dentro, −3 fora). Aberto e nunca medido: a regra candidata
+  "seção específica mapeada ao plano, corroborada pelo material, supera unidade herdada de bloco misto",
+  no replay contra a régua curricular, com perdas fora das adjudicadas.
+- Aritmética: recuperar as 13 ausentes vale no máximo bloco 219/237 (92,4%) e unidade 252/284 (88,7%);
+  a unidade ainda precisaria de +4 pela precedência. Nada disso está medido.
+
+## Medido: rodada 1 do piloto Alethe — ausentes e replay fiel de unidade (21/09)
+
+- Gate 1 de MEDIÇÃO aprovado pelo usuário em 21/09 (não é Gate 1 de implementação; `src/` intocado, sem
+  commit). 1 chamada `alethe_delegate` (run-01), 2 workers Codex, worktrees isolados, `askForApproval`,
+  600 s. Ambos `succeeded`: W-A 362 s, 1.102.331 tokens (1.008.896 em cache); W-B1 454 s, 1.545.945 tokens
+  (1.455.872 em cache). Modelo/effort solicitado não selecionável no Alethe 1.7.0 e não reportado
+  (`routing: null`): não atestado. Não consome a revisão Astra de diff.
+- W-B1, `c1-3/replay_unidade_21-09.{py,json}` (sha256 do JSON `8971a419ca105bb3611a3d53364ab8fe6a523e9fe60f08cdb03db485e62242c8`):
+  replay em memória da fase real `resolver_apply.apply_unit_subunit_fields`, por import, com
+  `computed_unit_slug`, razões, confiança e conflito apagados antes de decidir; gold só na avaliação.
+  Asserts passam: bloco 213/237, unidade 239/284, fidelidade 338/338, 0 divergência de slug, confiança,
+  razões e conflito; scorer reexecutado nas 338. Reexecutado pelo coordenador: exit 0, 99 s, sha idêntico.
+  Limite: blocos congelados (não é replay do motor de bloco). O manifest não persiste o vencedor bruto
+  pré-gate nem o ranking do scorer; o replay os recomputa. É a base para medir a regra candidata.
+- W-A, `c1-3/ausentes_21-09.md`: os 12 links nunca são materializados pela entrada stash-only
+  (`sources/moodle.py:151` só aceita `type == "file"`; `core/stash_import.py:67-96` só arquivos físicos; o
+  harness `cru_fontes_15-09.py:69-85` não chama `moodle_sync.plan_import`, que converte `acao ==
+  "referencia"` em `FileEntry`, `moodle_sync.py:180`). O manifest não rejeita links
+  (`ops/entry_processing.py:65-75`). Acrescentar `FileEntry(url)` ao build atual tentaria rede
+  (`ops/url_and_cleanup.py:71-98`) e o harness bloqueia conexão (`cru_fontes_15-09.py:50-55`): inclusão
+  exige entrada offline definida.
+- CORREÇÃO da anatomia acima: o PDF `t1_2026_1.pdf` é FALSO AUSENTE. Está no pacote (id `t1-2026-1`),
+  bytes idênticos aos da baseline (sha256 `3783080014067b61…`, conferido pelo coordenador nos dois
+  `raw_target`); só o `source_path` mudou (Downloads → Desktop/Moodle) e a régua casa por caminho completo
+  (`compara_herancas_15-09.py:25-29`). Ausentes reais = 12 links. No pacote o PDF tem categoria `outros`
+  (baseline `trabalhos`), `computed_unit_slug` unidade-01 e nenhum `temporal_block_id`; acerto contra o
+  gold NÃO medido. Placares 213/237 e 239/284 seguem publicados como estão; não reescrever retroativamente
+  sem contrato de identidade por hash.
+- Não medido: contrafactual com os 12 links incluídos; regra candidata "seção específica mapeada ao plano"
+  com LOCO sobre o replay fiel (próximo passo do Gate 1 de medição já aprovado).
+
+## Medido: rodada 2 do piloto Alethe — regra candidata de unidade e PDF por hash (21/09)
+
+- Mesmo Gate 1 de medição; 1 chamada `alethe_delegate` (run-02), 2 workers Codex isolados, 600 s, ambos
+  `succeeded`: W-C 280 s, 611.328 tokens (524.160 em cache); W-D 263 s, 623.811 tokens (564.992 em cache).
+  Modelo/effort não atestado. `src/` intocado, sem commit. Os dois scripts reexecutados pelo coordenador:
+  exit 0, JSON byte-idêntico.
+- Premissa corrigida antes do envio: o corte "bloco misto" SOZINHO não era "nunca medido" — perdeu em 13/09
+  junto com "bloco de método fraco" e "texto confiante" (handoff 12/09 §25.3). Nunca medida era a
+  conjunção com seção→plano.
+- W-C, `c1-3/regra_secao_unidade_21-09.{py,json}` (sha256 `2af303fa5ce592c1862afd90837df80d627aa07d40b580bacb2e0328bd7b29ca`),
+  três variantes pré-declaradas, decisões congeladas por hash antes de carregar o gold, sem parâmetro
+  ajustado. Seção = `source_section` pontuado só contra o plano, máximo positivo estritamente único;
+  corroboração = vencedor bruto do texto (pré-gate, não ambíguo) igual ao da seção; ação só sobre unidade
+  herdada/reconciliada do bloco ou do vizinho.
+  - R (seção + corroboração + bloco misto) e R-sem-corroboração: 0 disparos. O conjunto "bloco misto"
+    está VAZIO nesta base (0 de 338 entradas): a definição de 13/09 (`texto_vence_cortes_13-09.py:48-55`,
+    2+ unidades FINAIS no mesmo bloco) é degenerada quando o bloco decide a unidade. R não foi refutada
+    nem confirmada; o conjunto (c) precisa de outra definição (por vencedor bruto) para ser testável.
+  - R-sem-misto (seção + corroboração): unidade 239 → 244/284 (85,9%), +5/−0, 0 perda dentro ou fora das
+    adjudicadas, nenhum curso regride, bloco 213/237 idêntico; passa o aceite de referência. 8 entradas
+    alteradas, 5 com régua (5/5 certas; 2 das 5 são adjudicadas), 3 do SO sem régua de unidade. Funil: 167
+    herdadas → 60 com seção de vencedor único → 10 em que a seção discorda da unidade final → 8 corroboradas.
+  - Ressalvas: o ganho vem de DUAS seções — SO "Sincronização e Comunicação de Processos" (6 entradas, +3:
+    `0704-laminas-comunicacao-e-sincronizacao`, `0904-laminas-semaforos`, `laminas-cs-4244-…sockets…`) e CG
+    "17 - Mapeamento de Texturas" (2, +2: `maptextures`, `pagina-com-videos-sobre-mapeamento-de-texturas`).
+    n = 5; a corroboração não é independente (o scorer bruto já lê o card); "não ambíguo" é máximo único sem
+    piso nem margem; cursos já estudados não são holdout novo. Meta >90% = 256: faltariam 12.
+- W-D, `c1-3/pdf_identidade_hash_21-09.{py,json}` (sha256 `0133f048e5b1250db42d61fedccafe381c99fc5175a8a132e78d228eb11b59a3`):
+  com identidade por sha256 do `raw_target`, o PDF `t1-2026-1` ERRA o bloco (predição vazia, gold
+  `bloco-11`) e ACERTA a unidade (`unidade-01-metodos-formais`). Placar LATERAL: bloco 213/237, unidade
+  240/284; o publicado (213/237, 239/284) não muda. Nenhuma outra entrada é recuperável por hash (os 12 são
+  links sem `raw_target`). Hash não é identidade universal: há pares com hash repetido dentro do mesmo
+  manifest (baseline/pacote: MF 0/1, SO 1/4, IA 0/3, TCC 2/2, ES2/CG/FR 0/0); o do PDF é único nos dois de MF.
+- Não medido: R-sem-misto somada à identidade por hash (não supor 245); efeito na subunidade das 8
+  alteradas; "bloco misto" por vencedor bruto; contrafactual dos 12 links. Implementar R-sem-misto em
+  `file_map.reconcile_unit_with_block` exige Gate 1 de IMPLEMENTAÇÃO próprio, teste vermelho primeiro e a
+  revisão Astra única do diff.
+
+## Medido: rodada 3 do piloto Alethe — misto por vencedor bruto, sinal de seção e efeito na subunidade (21/09)
+
+- Pedido do usuário: caminho 2 (medir) antes do caminho 1 (Gate 1 de implementação). 1 chamada
+  `alethe_delegate` (run-03), 2 workers Codex isolados, 600 s. OS DOIS ESTOURARAM O TEMPO (`timeout`),
+  chamada consumida, sem retry. W-E já tinha gravado script e JSON completos antes do corte; W-F deixou só
+  o script, com o patch no atributo errado (`resolver_apply.reconcile_unit_with_block` não existe: a
+  função é importada localmente a cada chamada, `resolver_apply.py:394-396`). O coordenador trocou o alvo
+  do patch para `file_map.reconcile_unit_with_block` (3 ocorrências, fora de `src/`) e executou: 227 s.
+  W-E reexecutado: exit 0, 3 s, JSON byte-idêntico. Tokens dos dois não coletados. `src/` intocado.
+- W-E, `c1-3/regra_secao_misto_bruto_21-09.{py,json}` (sha256 `d5f819e6e5ea4b3d…`):
+  - "Bloco misto por vencedor bruto" (2+ vencedores brutos de texto distintos no bloco) NÃO discrimina:
+    30 blocos e 200 das 338 entradas são mistos (MF 6/43, SO 5/30, IA 2/30, ES2 6/27, TCC 1/2, CG 9/66,
+    FR 1/2). R' (seção + corroboração + misto bruto) e R'-sem-corroboração: 241/284, +2/−0 (só as 2 do
+    CG). O conjunto "misto" só CORTA ganho (perde as 3 do SO) e não evita nenhuma perda. Regra original
+    agora testada: não supera R-sem-misto (244/284).
+  - Confiabilidade do sinal de seção, n maior: entre as 45 entradas com vencedor único de seção e régua
+    de unidade, a unidade da seção está no gold em 45/45 (herdada-concorda 8/8, herdada-discorda 6/6 com a
+    seção certa e a final errada nas 6, não-herdada-concorda 31/31, não-herdada-discorda 0). Cobertura
+    baixa: 226 das 284 linhas da régua não têm vencedor único de seção. Erro ≤ ~6,7% a 95% (regra de três).
+  - A corroboração custa 1 ganho: `laminas-sockets-material-alternativo-em-pt` (SO) é elegível, não
+    corroborada, e a seção acerta. Lido da tabela acima, "seção sozinha vence unidade herdada" daria 6/6
+    nas discordâncias com régua (245/284); não rodada como variante, não contar como medida.
+- W-F, `c1-3/regra_secao_efeito_subunidade_21-09.{py,json}` (sha256 `2af4c7d5839e4e0f…`), R-sem-misto
+  aplicada DENTRO da fase real (`apply_unit_subunit_fields`, patch em memória), duas passagens por curso:
+  - Unidade 239 → 244/284 confirmada; 8 entradas mudam, 0 além das 8 (sem propagação no eixo unidade);
+    bloco 213/237 idêntico; fidelidade sem patch 338/338.
+  - Subunidade: primária 84 → 84 (0 ganho, 0 perda); ACEITA 108 → 107 (−1). 13 subunidades mudam: as 8
+    alteradas (7 tinham subunidade da unidade antiga, 1 estava vazia) e mais 5 em entradas cuja unidade
+    NÃO mudou (SO `laminas-sockets-material-alternativo-em-pt`, `exemplo-threads-em-c-exemplo1/2` → vazio;
+    CG `pagina-com-videos-sobre-sintese-de-imagens…` e `pagina-com-videos-sobre-mapeamento-9f410…`). A
+    perda é CG `pagina-com-videos-sobre-sintese-de-imagens…`: `modelos-de-reflexao-ambiente-difus…` →
+    `mapeamento-de-textura`, unidade igual (CG aceita 42 → 41). 6 entradas fora das 8 mudam razões/confiança
+    de subunidade. Mecanismo da propagação na subunidade NÃO investigado.
+  - Leitura contra o aceite da CRU-03 ("ganho delimitado, preservando outros eixos"): a regra passa na
+    unidade e FALHA em preservar a subunidade aceita (−1). Só apareceu porque a medição passou pela fase
+    real; o override pós-fase da rodada 2 não via isso.
+
+## Medido: rodada 4 do piloto Alethe — mecanismo da propagação e variante "seção sozinha" (21/09)
+
+- Continuação do caminho 2. 1 chamada `alethe_delegate` (run-04), 2 workers Codex isolados, 600 s, escopo
+  reduzido; ambos `succeeded`. Reexecutados pelo coordenador: W-G exit 0, 47 s, JSON byte-idêntico; W-H
+  exit 0, 118 s, conteúdo idêntico (hash canônico com chaves ordenadas igual; os bytes diferem só pela
+  ordem de chaves, serialização não determinística do script). `src/` intocado. Tokens não coletados.
+- W-G, `c1-3/regra_secao_propagacao_subunidade_21-09.{py,json}` (sha256 `36ce8102e9c2e75c…`): o efeito
+  colateral é ACOPLAMENTO POR DESENHO, não defeito. A 2ª passada da subunidade
+  (`resolver_apply.propagar_vocabulario_por_headings`, `resolver_apply.py:262-339`) transforma em alias o
+  token exclusivo de UM subtópico DENTRO DA UNIDADE, aprendido dos materiais confiantes, e repontua só os
+  indecisos; o matcher filtra candidatos pela unidade (`file_map.py:183-197`). Mudar a unidade de uma
+  entrada muda o que é "exclusivo" nas duas unidades. Ablação só no CG: patch só em `maptextures` →
+  `…texturas-07bbe3` e `…mapeamento-9f410e` vão de vazio para `recorte`; patch só em `…texturas-07bbe3` →
+  `…sintese-de-imagens-realisticas-a6d9ea` vai de `modelos-de-reflexao-ambiente-difusa-especular` para
+  `mapeamento-de-textura` (é a perda da aceita). Token exato não capturado (hipótese: ownership de
+  vocabulário muda quando `maptextures` sai da unidade 04).
+- W-H, `c1-3/regra_secao_sozinha_fase_real_21-09.{py,json}` (sha256 `73379cf52d0e5362…`), variante única
+  "seção sozinha" (10 entradas, sem corroboração), pela fase real, SO/CG/TCC reexecutados e os demais
+  copiados da base: unidade 245/284 (+6/−0), bloco igual, subunidade primária 84 → 83 (−1), aceita 108 →
+  106 (−2), 0 mudança de unidade além das 10. A perda nova é TCC `aula-06-revisao-alfabeto-…-automatos`
+  (unidade-01 → unidade-02, sem régua de unidade): perde a subunidade primária e a aceita, indício de que
+  a troca de unidade ali está errada. A corroboração do texto é o que barra esse caso.
+- Placar das variantes pela fase real (base 239 / 84 / 108): R-sem-misto 244 / 84 / 107; seção sozinha
+  245 / 83 / 106; R' (misto bruto) 241 na unidade, subunidade não medida. R-sem-misto domina.
+- Rodada 5 (diagnóstico do −1, pedido do usuário; run-05, 2 workers Codex, ambos `succeeded`, reexecutados
+  pelo coordenador com conteúdo idêntico): `c1-3/diag_propagacao_token_{CG,SO}_21-09.{py,json}`.
+  - CG: o alias decisivo é `videos`, token de FORMATO. Ao mover `…texturas-07bbe3` para a unidade 08, a 2ª
+    passada aprende `+texturas` e `+videos` como alias de `mapeamento-de-textura` (2 entradas confiantes =
+    `min_entries` 2; df 18/84 = 21,4% ≤ `df_max` 25%). `…sintese-de-imagens…-a6d9ea` era indecisa na 1ª
+    passada (confiança 0,496 < `conf_min` 0,7); placar `mapeamento-de-textura` × `modelos-de-reflexao…`:
+    0,12 × 12,09 sem a regra, 15,30 × 12,09 com a regra. A salvaguarda que falha é o filtro de stems
+    genéricos: `videos` não está em `MOTOR_GENERIC_STEMS` (`text/stopwords.py:197`). Atribuição só a
+    `videos` é inferência forte (`texturas` não ocorre no alvo), sem ablação isolada.
+  - SO: a regra REMOVE 22 aliases de `unidade-02|algoritmos-de-escalonamento` (`bloqueante`, `buffer`,
+    `consumidor`, `mensagens`, `producer`, `receive`, `send`…), todos aprendidos só de
+    `14-04-troca-de-mensagens` e `1404-troca-de-mensagens`, que estavam na unidade errada.
+    `exemplo-threads-em-c-exemplo1/2` deixam de receber `algoritmos-de-escalonamento` via `buffer` (gold
+    `conceitos-basicos`: errado antes, vazio depois); `laminas-sockets…` sem régua. Leitura (hipótese,
+    medida só no SO): material na unidade errada contaminava o vocabulário; a regra desfaz isso.
+  - Pendência aberta, fora da #47: token de formato virar alias na 2ª passada (`videos`, e provavelmente
+    `pagina`). Correção exige medição própria e Gate 1 próprio.
+- Conclusão do caminho 2: a regra candidata mais defensável é R-sem-misto (seção de vencedor único no
+  plano + vencedor bruto do texto concordante vence unidade herdada do bloco): +5 unidade, 0 perda de
+  unidade, 0 na subunidade primária, −1 na subunidade aceita por acoplamento de desenho da 2ª passada.
+  Gate 1 de IMPLEMENTAÇÃO não aberto; decisão do usuário pendente.
+
+## Medido: CRU-04, replay fiel de bloco e anatomia dos erros (21/09, base 9220a57)
+
+- Gate 1 de medição do bloco aprovado pelo usuário em 21/09 ~21:18. Workers = subagentes nativos do
+  Claude Code em Opus 5 (decisão do usuário; o worker Claude do Alethe herdaria o padrão global
+  `claude-fable-5-1`, não alterado). Effort não selecionável, modelo observado não atestado. 0 mudança em
+  `src/`; sem build, rede ou LLM.
+- W-K, `c1-3/replay_bloco_21-09.{py,json}` (sha256 `dd7483f5d7f26739…`): replay da fase real
+  `motor/apply.apply_anchor_engine` com `TEMPORAL_KEYS` removidas e `voter=None` (sidecar de votos não
+  existe nos pacotes). Bloco 213/237 gravado e replay, 6 ausentes, `temporal_block_id` e os 5 campos
+  temporais 338/338, 0 divergência; reexecutado pelo coordenador em 10 s, JSON byte-idêntico. Insumos que
+  bastam: manifest, `course/.timeline_index.json`, `.card_block_map.json`, `.lessons_index.json`,
+  `.content_taxonomy.json`, Markdown. Diferença real × replay (entries filtradas em
+  `pedagogical_regeneration.py:449,562-590`) medida como imaterial: 0 casos em 338. 133 s, 83 k tokens.
+- W-L, `c1-3/anatomia_bloco_21-09.{py,json,md}` (sha256 `a36cc90a97503911…`), reexecutado idêntico:
+  - 24 erros = 6 ausentes + 8 vizinho ±1 + 7 distantes + 3 vazios (confirma a contagem anterior). Corte
+    mais útil que a distância: dos 15 com âncora, 8 são DESEMPATE (gold estava na janela; todos `disamb`) e
+    7 são JANELA (gold fora dos candidatos; `janela-1` ×4, `disamb` ×3) — mecanismos distintos.
+  - Nenhum dos 15 tem data no nome (regex de `window_provider.py:346-363`): sinal ausente, não ignorado.
+    `computed_block_id` (conceito) acertaria 7 dos 18. O motor ancora cedo: gold posterior em 8 de 11.
+  - Risco por método (certas hoje, sem pino manual): `janela-1/media` 38, `disamb/alta` 21,
+    `disamb/media` 15, `disamb/baixa` 13. Alavancas por razão tocadas÷risco: ingestão de link 5÷0 (exige
+    entrada offline, fora do motor); seção TDE fora de escopo 2÷8; desempate `disamb` 6÷34; fronteira
+    `janela-1` 3÷38; fronteira `disamb` 3÷49. "Seção datada vence" refutada (IA: 2 entradas no mesmo card
+    erram em direções opostas).
+  - CORREÇÃO: os 6 ausentes são 5 links + `t1-2026-1`, que é falso ausente (caminho) E vazio: PDF da seção
+    "TDE Trabalho Discente Efetivo" com categoria `outros` no pacote (na baseline era `trabalhos`, com
+    `due-contain`). `is_out_of_disamb_scope` (`anchor_engine.py:27-32`) descarta qualquer seção TDE e
+    `tier2_due_scope` (`due_window.py:38-44`) só tenta o prazo para `trabalhos`/`provas`/`codigo*`; `t2-2026-1`
+    (gold `bloco-20`) cai no mesmo degrau. Conferido pelo coordenador na fonte e nos 3 manifests.
+  - MF 53 → 60/66 exige ao menos duas famílias (3 links, 2 TDE, 4 desempate, 3 janela-1, 1 janela disamb);
+    nenhuma alavanca isolada cobre 7. Para o total (214) basta +1 líquido. 443 s, 123 k tokens.
+- Passo 3, W-M, `c1-3/regra_tde_prazo_bloco_21-09.{py,json}` (sha256 `6d8ca8af447b999b…`; decisões
+  congeladas por hash antes do gold; reexecutado pelo coordenador em 351 s, JSON byte-idêntico; 775 s,
+  102 k tokens): as duas variantes pré-declaradas — V1 `tier2_due_scope` também para seção TDE e V2 seção
+  TDE vira `trabalhos` — produzem decisões IDÊNTICAS e NÃO passam o aceite. Tocam 3 entradas nos 7 cursos
+  (MF `t1-2026-1`, `t2-2026-1`; ES2 `t1-2026-1`, sem gold); as 8 "em risco" não mudam (SO/TCC não têm seção
+  TDE; as 4 do IA são `provas`, já no escopo). Bloco 213/237 (0 ganho, 0 perda): `t2` cai em `bloco-18` por
+  `due-straddle`, gold `bloco-20`; `t1` cai em `bloco-11` = gold, mas só no placar lateral (ausente pela
+  régua de caminho). Unidade 244 → 243 (t2: `unidade-02` certa → `unidade-03` herdada do bloco errado);
+  subunidade 84/107 preservada. Refutada como está.
+  - Causa do erro de `t2`, já conhecida e NÃO implementada: decisão do usuário de 06/09 ("bloco de prova
+    hospeda entrega", candidata C: vencimento contido em bloco `assessment` ancora nele, invertendo T17)
+    segue só no registro — `due_window.py:34,111-112` continua excluindo `assessment`/`review` e caindo em
+    `due-straddle`. Alcance estático registrado em 06/09: MF T2 e ES2 Trabalho Final. Conferido: `bloco-20`
+    é `assessment` (06/07), `bloco-11` é `deliverable`.
+- W-N, V3 = V1 + candidata C, `c1-3/regra_tde_prazo_assessment_bloco_21-09.{py,json}` (sha256
+  `c8f3c12e0ae9c523…`, congelamento `11a917bc…`; reexecutado em 143 s, byte-idêntico; 729 s, 113 k tokens).
+  Patch fiel: `assessment` sai de `_NON_CONTENT_KINDS` (`review` e não acadêmicos seguem fora). BLOCO
+  214/237 (90,3%): `t2-2026-1` → `bloco-20` por `due-contain` (alta), 0 perda, nenhum curso regride; risco
+  de C medido = ZERO neste corpus (nenhuma entrada de `provas`/`trabalhos` ancora por `due-straddle` hoje;
+  `due-window` só age em 4 entradas, todas `due-contain`, nenhuma muda). Lateral: `t1-2026-1` → `bloco-11`
+  = gold (215 por identidade). ES2 `t1-2026-1` → `bloco-13` por `due-straddle` (efeito colateral do
+  conjunto: `assessment` vira elegível também como "último anterior"; sem gold). Subunidade 84/107
+  preservada. UNIDADE 244 → 243: `bloco-20` não tem unidade e `t2` herda `unidade-03` de `bloco-18`
+  (`herdada_do_vizinho` + `reconciliada_do_bloco`), enquanto o vencedor bruto do texto era `unidade-02`
+  (= gold, conf 0,55, não ambíguo); a #47 não salva (seção TDE sem vencedor único no plano). Aceite REPROVA
+  só pela unidade, por um único id.
+  - Medido pelo coordenador no `replay_unidade_21-09.json` (base): entradas com régua em que a unidade veio
+    do VIZINHO e o texto (gated, não ambíguo) discordava: 4, todas CG, e o vizinho ERRA nas 4
+    (`opengl-cpp` 0,92 e `opengl-py` 0,81 com texto certo; `openglbasico` 0,58 e `texturas-v3` 0,81 com texto
+    errado). Vizinho sobre texto discordante = 0/4 hoje. Regra complementar candidata V4 = V3 + "unidade
+    herdada do vizinho não vence texto gated discordante" (bloco manual/unidade manual intactos):
+    hipótese bloco 214, unidade 246, 0 perda com régua; subunidade a medir (acoplamento da 2ª passada).
+- W-O, V4 = V3 + "vizinho não vence texto", `c1-3/regra_v4_vizinho_nao_vence_texto_21-09.{py,json}` (sha256
+  `d7bfdcaf15a16b5a…`, congelamento `5bc8a9c5…`; reexecutado pelo coordenador em 242 s, byte-idêntico; 540 s,
+  110 k tokens). PASSA O ACEITE: bloco 214/237 (90,3%), unidade 246/284 (86,6%), subunidade primária 84 e
+  aceita 107/251, 0 perda em qualquer eixo, nenhum curso regride; base e V3 reproduzidos por assert.
+  - Regra de unidade, aplicada só onde o próprio `src/` já devolveria `reconciliada_do_bloco` +
+    `herdada_do_vizinho` (depois de bloco manual, unidade manual, explícita e `secao-vence-bloco`): bloco
+    temporal sem unidade própria + texto gated não ambíguo discordante → texto vence, razão
+    `texto-vence-vizinho=<vizinho>`, conflito registrado. Toca 7 entradas (MF 2, CG 4, IA 1): 5 mudam de
+    unidade — MF `t2-2026-1` volta a `unidade-02` (+1), CG `opengl-cpp` e `opengl-py` → `unidade-01` (+2),
+    CG `openglbasico` e `texturas-v3` erro→erro, IA `future-of-jobs-report-2025` sem gold (aposta não
+    verificada). Vizinho acertava 0/5 dos que têm gold.
+  - Subunidade: 11 ids mudam (5 por unidade, 6 por acoplamento da 2ª passada no CG/IA), todos já erravam
+    antes e depois; 0 ganho, 0 perda. Lateral por identidade (`t1-2026-1`): bloco 215, unidade 247; V4 é o
+    único regime que acerta os dois eixos nesse id.
+  - Limites da evidência: +1 no bloco vem de UMA entrada (MF T2), +2 na unidade de duas do CG; cursos já
+    estudados; regra C só tem 2 casos no corpus (MF T2, ES2 Trabalho Final sem gold). Nenhum build real.
+- Conclusão do passo 3: regra candidata para implementação = V4 (duas mudanças pequenas: `due_window.py`
+  — seção TDE tenta o prazo e bloco `assessment` que contém o vencimento ancora; `resolver_apply.py` /
+  `file_map.reconcile_unit_with_block` — vizinho não vence texto gated discordante). Gate 1 de
+  IMPLEMENTAÇÃO pendente de aprovação do usuário.
+
+## Medido: piloto de conhecimento externo (ConceptNet 5.7.0, regime experimental) — reprovado, recomendação encerrar (23/09)
+
+Relatório `docs/reports/2026-09-23-piloto-ke-resultado.md`; estado `.workflow/local/piloto-ke-20260923.md`. Pré-registro antes da aquisição; congelamento antes do gold; execução local sem rede (0 tentativas). Sub primária 86 → 77/251 (+7/−16); bloco e unidade idênticos por ID; gold nos candidatos 136 → 145, escolhido quando candidato 56,6 % → 49,7 %; MF, ES2 e FR regridem; IA sem geração nova (`modelos-preditivos`/`descritivos` sem alias). ACM CCS em pendência de termos; Wikidata não usada. Resultado experimental, não melhoria; nenhuma variante iniciada. Artefatos c1-3/piloto_ke_* aguardam Gate 2 documental.
+
+## Commitado (Gate 2, local): #65 D9 explícito em matéria nova (`844c61b7`); diagnósticos e propostas documentados (`fc4a9466`) (23/09)
+
+Estado: `.workflow/local/d9-65-diagnosticos-20260923.md` (pedidos literais). Gate 2 do usuário: `844c61b7` (código #65) e `fc4a9466` (docs); sem push/PR/merge. Pendente: registrar a decisão na issue #65.
+
+- **#65** (Gate 1 do usuário): `NEW_SUBJECT_FEATURE_FLAGS = {"use_anchor_engine": true}` em `src/models/core.py`, aplicada só a matéria nova no diálogo (`_save`) e no importador do Moodle (ramo created). Perfis existentes, `False`, default de código, pinos e fallback inalterados; `build_course.py`/`sync_moodle.py`/unprocess/reject fora. Testes novos (7) vermelhos antes; suíte 2443 passed / 4 skipped / 1 falha preexistente (golden FR). Reprodutor: matéria criada pelo diálogo roda o D9 (1 chamada, 26/27) com rede bloqueada. Replay integral de preservação da base v2 (`c1-3/preservacao_base_v2_65_23-09.*`): captura idêntica `f941ac33…`, 350 materiais, 0 divergência W-Z2/W-Z. Astra (sessão `01a0d068…`): 0 bloqueantes, 2 advisories de teste tratados.
+- **Identidade `frases_topico`**: defeito confirmado por teste mínimo; alcance na base = 1 chamada (SO, slugs repetidos `estudo-de-casos`/`conceitos-basicos`), 0 decisões mudam. Proposta separada no relatório; sem ganho de acurácia.
+- **Régua CG**: proposta de adjudicação por material em `docs/reports/2026-09-23-regua-cg-adjudicacao-proposta.md` (5.1/5.4/vazio; 7.2.4 descartado; `unit_slug` u04→u05); régua v2 e histórica intocadas.
+- **Piloto de conhecimento externo**: desenho em `docs/plans/piloto-conhecimento-externo-desenho.md` (regime separado, sem aquisição).
+
+## Commitado (Gate 2, local): #63 flags preservadas ao salvar matéria; #64 registro por execução e opções UI = script; proposta #65 (23/09)
+
+Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09). Commits locais (Gate 2 do usuário, 23/09): `7d90debd` #63, `36b00ab9` #64, `f312267d` proposta #65 (documental), `26320215` .gitignore; push autorizado (origin em `26320215`); sem PR ou merge. Diff agregado #63/#64 sha256 `dc253b25…ca33`, igual ao validado. Base: `feat/motor-atribuicao` `14f0e08d`; o #50-fix de outra sessão segue no worktree, fora destes commits. Correções de configuração não contam como ganho de acurácia.
+
+- **#63** `src/ui/dialogs.py` `_save`: matéria existente copia `feature_flags` como estão (inclusive `False`); matéria nova continua `{}`. Teste `tests/test_subject_dialog_save.py` vermelho antes (`{}`), verde depois. Reprodutor `c1-3/waa_iso_d9_fluxo_real_23-09.py` caso 3: `{}` → `{"use_anchor_engine": true}`.
+- **#64 registro**: cada regeneração grava `manifest["assignment_run"]` com `requested` (flags explícitas nas options), `effective` (com defaults do código), `executed` (camada rodou), `fallback` (ligada e não rodou: `voter_unavailable`, `kill_switch_env`, `no_gemini_client`, `error:<tipo>`, `not_run`) e `block_source` (bloco temporal por D9, pino manual, `computed_block_id` ou nenhum; `temporal_block_id_previous_run` quando o D9 não rodou e há temporal de execução anterior). `manifest["options"]` segue histórico, intocado. Política de fallback inalterada. Reprodutor caso 1: `options` diz D9 ligado, `assignment_run` mostra D9 efetivo falso e 26/27 via `computed_block_id`; caso 2: D9 executado, 26 temporal + 1 computed.
+- **#64 mesma fonte**: `scripts/reprocess_assignments.py` deriva as options como a UI (`_build_options_from_config`: AppConfig + flags do perfil casado por `repo_root`), `--flags` por último; `manifest["options"]` só com `--options-do-manifest` (reprodução histórica explícita = ordem antiga manifest → perfil → `--flags`). O patch do `motor_puro.py` (voter OFF via `ra._merge_profile_flags`) continua valendo (teste). UI: `_build_options(subject)` usa o mesmo perfil entregue ao builder (antes a fila e os builds pegavam as flags da matéria ativa).
+- **Pendências observadas, sem mudança**: `scripts/sync_moodle.py:93` ainda parte de `manifest["options"]` (processa entries novas; trocar a base mudaria opções de extração, decisão separada); unprocess/reject (`app.py:2387`, `curator_studio.py:1299`) regeneram com `options={}` (D9 desligado; temporal antigo permanece, agora visível no `assignment_run`); `scripts/build_course.py:148/:181` liga o voter por default e substitui flags do perfil.
+- **#65**: proposta mínima em `docs/plans/proposta-65-default-d9-materia-nova.md` (constante `{"use_anchor_engine": true}` só em matéria nova, pelo diálogo e pelo import do Moodle; default de código, pinos e fallbacks inalterados). Não implementada.
+- **Segunda passada**: registrada como CRU-05 (proposta) na fila; régua CG (5 casos) segue separada e não bloqueia.
+- **Revisão Astra** (1/1, sessão `01a0cfdd…`): 2 bloqueantes corrigidos — votador/vocabulário/resíduo só contam `executed` depois do trabalho, com `detail` (contadores do round do votador, unidades com erro do vocabulário, órfãos/erros do resíduo) e `fallback` `partial`/`not_compiled`/`no_timeline_blocks`; UI usa modo/OCR do perfil do repo quando ele não é a matéria ativa, teste pelo `App._build_options` real. Suíte 2436 passed / 4 skipped / 1 falha preexistente (golden FR). Pendências anotadas sem mudança: renomear matéria no diálogo cria perfil novo com `{}` (o antigo mantém as flags); retomada de operação usa o snapshot `op.options` (`app.py:2305`).
+
+## Medido: W-AA — S (função+extensão) e G (subordinação local) reprovados em todos os braços; issues #63–#65 do D9 (23/09)
+
+- Execução autorizada pelo usuário 23/09 (literal `c1-3/waa_pedido_execucao_23-09.md`); ajustes de interpretação registrados
+  antes de rodar (`2026-09-23-waa-desenho.md` §7). Resultado: **`docs/reports/2026-09-23-waa-resultado.md`**; dados
+  `c1-3/waa_selecao_geracao_23-09.{py,json,md}` (json `00aea77b…`; congelamento dos braços `b265091e…`, antes do gold). D9
+  efetivo no harness (337/350 com bloco temporal); bloco e unidade idênticos por ID nos 3 braços; 0 src.
+- Subunidade primária: base 86 → **A (S) 83** (+1/−4), **B' (G) 76** (+19/−29), **B (G+S) 73** (+20/−33); efeito S −3, G −10,
+  interação 0. Precisão das decisões alteradas 12,5 % / 15,7 % / 15,4 %; abstenção → errada 2 / 21 / 21. Sinal exploratório:
+  gold em 1º pela ordem atual 64 × pela ordem de S 61.
+- S quase não atua: 2,7 % das 8.407 seções têm papel auxiliar marcado no rótulo; agiu em 97/341 e trocou a 1ª passada em 9;
+  extensão favorece assunto de fundo (TCC `aula-10`: "máquinas de Turing" em 29 seções). G: 742 pares (207 novos); ganha
+  quando injeta o tópico-gold (17/19) e perde quando injeta outro (25/29); os ganhos do IA (4 → 15) são colisões de radical
+  com um artigo em inglês ("generalização"~"General Terms", "predição"~"predicate") sobre a classe majoritária do gold — não
+  demonstram a relação categoria → algoritmo. Unicidade só pela unidade: 373/742 pares, sem discriminar ganho de perda.
+- [DECISION] Conclusão limitada aos mecanismos examinados: fontes léxico-estruturais testadas esgotadas para a subunidade.
+  Direções para decisão do usuário: regime separado de conhecimento externo; aceitar e publicar o teto do cru por curso; outro
+  mecanismo sobre o pacote só com fonte de sinal nova. Rotulação pelo professor não volta.
+- Régua CG (5 subunidades vazias): vazio intencional sob u04 (06/09) + inconsistência de migração (unidade v2 u05 em 22/09 sem
+  revisar a subunidade); por material: `instanciamento`, `transformacoesgl` incompletos sob u05; `transformacoesgeometricas`,
+  `pagina-com-videos-sobre-instanciamento` ambíguos 5.x × 7.2.4; `animacao-v2` pode seguir vazio. Régua congelada; decisão do
+  usuário; correção só como versão separada.
+- Issues abertas (sem implementação): **#63** salvar matéria no diálogo apaga `feature_flags`; **#64** `options` do manifest
+  não refletem a execução e `reprocess_assignments.py` diverge da UI; **#65** padrão do D9 para matérias novas e fallback para
+  `computed_block_id` (decisão explícita).
+
+## Planejado: W-AA reformulado (desenho, sem execução) + conferências do W-Z2 + motor D9 no fluxo real (23/09)
+
+- Pedido do usuário 23/09 (texto colado): reformular o W-AA antes de executar; entregar desenho, diferenças para o já medido e
+  conferências. Documento: **`docs/reports/2026-09-23-waa-desenho.md`**. Nada do W-AA executado; 0 src; sem commit.
+- Equivalência registrada: o critério "frase em título/heading" proposto no W-Z2 é variante de localização do **H2 (21/09,
+  +4/−2, refutado)** e sai. Hipótese nova, não medida: **S** = primário por função da seção (principal × revisão,
+  pré-requisito, exemplo, comparação, índice; léxico fixo com guarda contra rótulos de tópico) e extensão (nº de seções
+  principais com o tópico); **G** = candidato local por subordinação (P1 em outro material; P4 só plano/ementa do professor),
+  exclusivo na unidade prevista, alias só no material, com proveniência. Braços fatoriais: base congelada, A (S), B' (G), B
+  (G+S); avaliação nos 251 com correções/perdas por ID, abstenções, precisão das decisões alteradas, demais eixos. Sondagem sem
+  gold: S age em 271/341 elegíveis, G em 209/341. Teto mesmo perfeito 218/251 (86,9 %): decide direção, não fecha 90 %.
+- Conferências: oráculo 86 → 92 = 8 correções (1ª passada 2, propagação 3, seção 2, 1 abstenção aceita pela régua
+  incoerente) e 2 perdas colaterais (CG `bezier-py`/`-python`); saldo por conteúdo +5. Teto CG 84,1 % = 82 − (F1 4 + F7 9) com
+  unidade oráculo; é teto de intervenção sobre as fontes inspecionadas com a régua atual, não limite de informação; com a régua
+  do CG revista seria 73/82 (89,0 %).
+- [DEFECT] Motor D9 no fluxo real (APPDATA isolado, `SubjectManagerDialog` real, cópias do TCC, rede bloqueada): (1) disciplina
+  criada pela UI tem `feature_flags` vazias e roda só o resolvedor antigo (D9 0 chamadas, 0/27 com bloco temporal); (2) salvar
+  uma matéria no diálogo **apaga as flags** (`dialogs.py:1503-1529` não copia `feature_flags`; `SubjectStore.add` substitui o
+  perfil) — nos 8 cursos, editar pela UI desliga D9, votador e vocabulário; (3) `options` do manifest não reflete o que rodou, e
+  `scripts/reprocess_assignments.py` lê essas options antes do perfil (diverge da UI). Nada corrigido: exige issue, proposta e
+  replay próprios.
+- [DECISION] Pendentes do usuário: Gate 1 de execução do W-AA (§3 do documento); régua do CG (5 subunidades vazias × unidade
+  v2); abrir issue para os três achados do D9; Gate 2 documental de 22–23/09.
+
+## Medido: W-Z2 — diagnóstico causal dos três eixos a partir do W-Z; subunidade: não geração 76 / seleção 67 / unidade 17 (23/09)
+
+- Pedido do usuário 23/09 (texto colado; registro literal `c1-3/wz2_pedido_usuario_23-09.md`): completar o diagnóstico sem
+  refazer o W-Z, sem R5, 0 src; medições só para as lacunas registradas antes (Q1–Q6 em
+  `.workflow/local/wz2-diagnostico-causal-20260923.md`). Relatório principal:
+  **`docs/reports/2026-09-23-diagnostico-causal-tres-eixos.md`**; dados `c1-3/wz2_diagnostico_causal_23-09.{py,json}` +
+  `_anexo.md`; capturas congeladas antes do gold em `.frzero/wz2_captura_*`. Fidelidade: base = congelamento do W-Z por ID;
+  DP recomputado = gravado em 125/125 blocos; índice documental reproduz o sha do W-U (`c17786ef…`). Executor: agente ativo
+  (claude-opus-5-5, effort xhigh por escolha do usuário), sem worker; 1ª rodada interrompida por mim antes do gold (desligar
+  pontuação no oráculo de bloco); correção pós-gold só na avaliação (proveniência), reavaliada das capturas.
+- Gold POR BLOCO (`tests/fixtures/eval/gold_units_<C>.csv`, casado por data exata; MF/SO/IA/ES2/TCC) avalia o DP posicional:
+  51/56 blocos certos; sinal próprio único 35/36, preenchimento sem sinal 13/16 (interior 11/12, fronteira 0/2), janela de
+  desvio do IA 2 erros, cabeçalho 9/10. Sem sinal = 50 de 125 candidatos (40 %; o contexto institucional diz "rara").
+  20 acertos de unidade dependem de bloco preenchido. Reconciliação dos 18 pelo gold por bloco: **origem 5, homogeneidade 7,
+  indeterminado 6 (CG sem gold por bloco)**; SO bloco-04 (gold u02) passa de origem a homogeneidade; SO bloco-06 tem gold u04
+  (a hipótese "+2 no SO" do W-Z cai).
+- Proveniência do gold de unidade: 134/284 derivados do bloco-gold, 150 por material (62 decisão do usuário, 60 seção do Moodle
+  no CG, 23 propostos, 5 conteúdo). Dos 37 acertos por compensação (bloco vence texto), 27 são julgados por gold por material:
+  a compensação não é artefato da régua. Heterogeneidade observável só onde há adjudicação (15 de 189 nos 5 cursos).
+- Unidade: oráculo de bloco (ideal) +4 (ES2 1, IA 2, TCC 1), 0 perda, **0 no CG e no SO**. 4 erros de unidade do CG vêm do
+  fallback do resolvedor antigo (`computed_block_id`) quando o D9 não dá bloco temporal (13 materiais nesse caminho).
+- Subunidade (165 erros): F6 relação fora do índice 65 (IA 30), F4b escolha errada 33, F8 vários assuntos 23, F2 unidade 17,
+  F7 relação não encontrada 11, F4a abstenção 8, F1 identidade 5, F5 alterada pela 2ª passada 3. Oráculo de unidade: 86 → 92
+  (+8/−2); persistem 159. Gold entre os candidatos da unidade prevista em 59 erros (43 com evidência acima do resíduo). 2ª
+  passada: +26/−4 (rótulo do plano +10/−0, seção +5/−0, propagação +11/−4; propagação sem suporte no IA: 27 doadores, 3 certos).
+  Evidência fora do índice existe para a maioria, mas ambígua (documental: 103/116 com ≥ 5 tópicos concorrentes).
+- Teto estrutural (ideal, pacote apenas): com unidade oráculo 234/251, mas **CG 69/82 (84,1 %)**; sem corrigir unidade 218/251.
+  [DECISION] Régua CG: 5 subunidades-gold vazias (anotadas sob u04 em 06/09) incoerentes com a unidade v2 u05 (22/09) — não
+  alterada; decisão do usuário.
+- [DECISION] Frentes propostas (nada implementado): (1) seleção do assunto principal entre candidatos (subunidade) —
+  recomendada, com Gate 1 de medição W-AA (discriminabilidade por campo em que a frase do tópico pontua; 2 critérios
+  pré-declarados; precisão > 50 % nos 86 acertos); (2) relação do pacote com proveniência (portão de precisão do W-U);
+  (3) origem do bloco em fronteira/janela/cabeçalho (teto ideal +4/+2). Conhecimento externo só como regime separado.
+
+## Medido: W-Z — R1/R2 na nova base, rastreio dos 18 "bloco certo, gold diverge", variante de cobertura R3/R4 reprovada (23/09)
+
+- Autorização do usuário 22/09 (noite): medição diagnóstica na base v2 congelada, 0 src, sem condições acrescentadas até
+  recuperar os 12; definir "unidade não cobre o conteúdo" antes de medir; LOCO, perdas por ID, replay dos 3 eixos; objetivos
+  separados (+8 total, CG +11, SO +4). Executor: agente ativo (fable, sessão 843a75cb) em vez de worker Opus — desvio do
+  precedente registrado no estado (`.workflow/local/wz-bloco-cobertura-20260922.md`). Script
+  `c1-3/wz_bloco_cobertura_22-09.py` (declaração sha256 `57a93c9f…`, regras/grade no docstring antes de rodar); 3 execuções:
+  1ª morta por memória (7/25), 2ª completa mas quebrou no dump final (chave-tupla), 3ª = 2ª byte-igual (congelamento
+  `788e4372…`, cobertura `ef76a2fc…`, placares idênticos; json `fbbd6e83…`, 4.338 s). Base reproduzida = anatomia v2
+  (223/237, 248/284, 86/109). Congelamento persistido em `.frzero/wz_congelado_22-09.json` (`--reavaliar` reavalia em segundos).
+- Definição operacional: cov(u) = best_topic_score do próprio scorer por unidade (`file_map.py:520-540`;
+  `_score_entry_against_taxonomy_topic`, stem fallback); "b não cobre" = cov(b) < θ_neg (necessária, nunca suficiente);
+  "g cobre" = cov(g) ≥ θ_pos (evidência positiva). R3 no ramo `reconciliada_do_bloco`; R4 = R3 + ramo `herdada_do_bloco` com
+  bruto não ambíguo abaixo do gate. Grade θ_pos {0,55; 2,8; 3,8} × θ_neg {0,25; 1,1; 2,8}; LOCO por curso, empate → célula
+  mais conservadora.
+- **Todas reprovadas.** R2 219/284 (+7/−36). R1 τ por LOCO = 0,80: 241 (+3/−10; MF, ES2, CG regridem); τ0,90: 240 (+1/−9).
+  R3/R4 por LOCO (3,8; 0,25): 237 (+1/−12); maior ganho R4 (0,55; 1,10): +4/−15. Subunidade cai em todas (86 → 65-82; 109 →
+  86-103). Bloco 223/237 constante. CG máximo 68 (meta 84), SO máximo 30 (meta 34). Perdas por ID no MD §3.
+- Compensação posterior (base, 284): bloco sobrepõe texto gated em 51 (`reconciliada`): 37 acertos / 14 erros; texto abstido
+  herda 67 (56/11); vizinho 19 (15/4); concordam 135 (131/4); seção 5/0; texto vence vizinho 4/3. A cobertura não separa 14 de
+  37: célula mais estrita dispara em 12 acertos para 4 erros (1 ganho real). cov(bloco) é alta em erros (TCC `aula-11` 10,3;
+  IA `visao-geral` 4,9; SO `3103-threads` 6,4) e baixa em acertos (CG `bezier-*`, MF `exemplos-zip`, ES2 `microsservicos7`).
+- Rastreio dos 18 (§5 do MD): unidade do bloco vem do DP posicional `assign_units_positional` (`unit_matcher.py:109`) em
+  16 e do vizinho de conteúdo em 2; o material herda pela precedência bloco > texto (`file_map.py:779`): 11 `reconciliada`,
+  5 `herdada`, 2 vizinho. **Veredito: origem 9** (SO 6: bloco-04 é bloco de DUAS unidades, 4 u02 + 5 u03; bloco-06 tem
+  rótulo "Gerência do processador: sincronização" → u02 com 5/5 materiais u03; IA bloco-02 "visão geral" u05 por afinidade 0
+  dentro da janela de desvio; TCC bloco-10 "halting problem" afinidade 0 na fronteira; ES2 bloco-07 afinidade 0 na fronteira,
+  régua ambígua nos vizinhos), **homogeneidade 6** (CG bloco-06 certo para 8 votos u04, hospeda 5 u05 + u08; bloco-03 hospeda 1
+  u03), **empate 3** (MF bloco-01 "apresentação" hospeda u01/u02/u03; MF bloco-11 T1; IA overview em cascata). Recuperáveis
+  por texto: 7 com bruto = gold; os outros 11 só pela unidade do bloco ou decisão por material. Os 18 não são falha da
+  compensação (ela sustenta 37 acertos): 9 são falha de origem do bloco, 9 são material de outra unidade num bloco certo.
+- [DECISION] Nada implementado; as 4 adjudicações do W-Y seguem pendentes. Hipóteses NÃO medidas para Gate 1 futuro: (a)
+  afinidade 0 no DP → seção do Moodle dos materiais ou aliases EN/PT antes de preencher pela ordem (+4 potencial: ES2, IA 2,
+  TCC); (b) rótulo-cabeçalho da unidade anterior vs conteúdo da seguinte (SO bloco-06, +2); (c) bloco de duas unidades (SO
+  bloco-04, CG bloco-06) exige escopo por linha (W-Y) ou decisão por material. CG ≥ 84 é inalcançável sem CRU-04 (9 bloco
+  errado) mesmo com os 6 recuperados (79). Pendente: Gate 2 documental de `wz_*` junto com os artefatos de 22/09.
+
+## Validado: parecer Astra de ideias para o motor (22/09)
+
+- Brief `c1-3/brief_astra_motor_90_22-09.md` enviado manualmente pelo usuário ao GPT-6 Astra; resposta
+  literal em `c1-3/astra_ideias_motor_22-09.md`. Tipo pesquisa/ideias, fora do contador de revisão.
+- Conferência do coordenador contra a evidência existente: (a) aritmética correta — 73–74 % do vocabulário
+  LLM = 183–186/251; limites por curso 0–33/0–8/0–21/0–4/0–54/0–12 são exatamente os erros por curso da
+  base; o ensaio IA 5 → 38 usa comparador diferente do 4/39 da base (dito corretamente); (b) as cinco
+  ideias respeitam as restrições (0 LLM no cru, gold só avalia, sem regra por curso); (c) as faixas
+  das quatro ideias cru (0–12, 0–6, 0–8, 0–2) coincidem com o achado de 21/09 "nenhuma alavanca léxica
+  ≥ +20" e não fecham 142 nem somadas; (d) a ideia 1 (microdeclarações por cobertura) refina a frente
+  regime 2 já aberta (`.workflow-local/regime2-declaracao-20260917.md`: formulário do plano + script
+  gerar/validar, Gate 1 pendente; revisão Astra de 17/09 já retirou o "sempre necessária") — não é frente
+  nova, é a versão mínima dela, alinhada à decisão do usuário "professor declara uma vez".
+- Dados que o Astra pediu e que já existem parcialmente: classes 95/17/47 (`diagnostico_subunidade_17-09`),
+  transições do braço V (tracker §32/33: IA +18 termos em 2 tópicos, 142 → 175 aceita, 100 → 134 primária),
+  taxonomia por curso (`course/.content_taxonomy.json`). Faltam: matriz expressão → materiais → campo, curva
+  acertos × associações, e o residual em 4 classes (sem relação / unidade errada / primazia / ausente).
+- Réplica do Astra (anexada ao mesmo arquivo): continuar a frente regime 2 medindo o MENOR esforço de
+  declaração com ganho real; separar "reduzir trabalho do professor" de "chegar a 226"; protocolo — matriz
+  de evidências incluindo materiais certos (risco), seleção por cobertura marginal sem gold, uma única
+  declaração com prefixos (5/10/20…) reproduzidos no replay integral com 2ª passada reconstruída por
+  prefixo, precisão incluindo abstenção→erro, residual em 4 classes (entrada indisponível / bloqueio pela
+  unidade / relação semântica ausente / falha de seleção), e teste de teto: indisponíveis ∪ bloqueio > 25
+  nos 251 inviabiliza vocabulário sozinho.
+- Respondido pelo coordenador com dados existentes (22/09, read-only): (a) os 8 "faltantes" da
+  reconciliação são as 8 entradas AUSENTES do pacote (`diagnostico_subunidade_17-09.json`: 84 acertos + 8
+  ausentes + 159 erros classificados = 251); reconciliados por ID contra a régua de hoje: os MESMOS 8 —
+  CG 7 links do YouTube + MF `archive-of-formal-proofs-355fb8` (link); o `t1-2026-1` do MF NÃO tem linha
+  de subunidade na régua, logo não entra nos 251); (b) teste de teto sobre os 251, estado após #47/#48: indisponíveis 8 + bloqueio pela unidade 10
+  (ES2 3, CG 7) = 18 ≤ 25 → vocabulário dentro da unidade pode em tese chegar a 233/251; mas 5 do CG têm
+  gold primário FORA da taxonomia (inalcançáveis por vocabulário) → teto prático 228/251, margem de 2
+  sobre 226. Os 144 erros restantes estão na unidade certa (31 abstenções, 113 escolha errada) e são o
+  alvo do vocabulário/seleção. Script em scratchpad (não versionado); refazer dentro do W-P.
+- 3ª resposta do Astra (anexada): aprova a etapa analítica, não mudança no motor. Cuidados incorporados
+  ao W-P: reconciliar por ID (feito com `diagnostico_subunidade_17-09.csv`, coluna `classe`: os 8 ausentes de 17-09 e
+  os 8 de hoje são os MESMOS ids);
+  custo = perguntas examinadas + tempo, não só associações; cada prefixo com o estado daquele orçamento
+  (sem revisão retroativa, aliases/caches reconstruídos); cobertura é prioridade, não ganho; teto ≤ 25
+  torna a meta possível, não a demonstra; LOCO aninhado.
+- Proposta de próximo Gate 1 (medição, 0 mudança em src/): W-P matriz de cobertura + curva simulada de
+  microdeclarações (seleção de expressões sem gold; resposta do professor simulada pelo gold só como
+  oráculo; por curso) e residual em 4 classes; W-Q desempate contrastivo no bloco (ideia 5) sobre
+  `replay_bloco` (10 s), inventário das janelas multicandidatas e risco. Ideias 2–4 aguardam o residual.
+
+## Commitado (Gate 2): bloco de prova hospeda entrega, seção TDE tenta o prazo, vizinho não vence texto — #48 (22/09)
+
+- Gate 1 de implementação aprovado pelo usuário em 22/09 ~00:20. Issue
+  [#48](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/48). Executor Claude Code
+  (claude-fable-5-1, escolha do usuário); TDD, testes vermelhos primeiro. Gate 2 aprovado pelo usuário em
+  22/09 ~01:58 (sessão 60b3a7c4); commit `b726d4c` em `feat/motor-atribuicao`: 25 arquivos (10 de src/tests +
+  15 artefatos de c1-3 das rodadas 6-8, aceite, brief e parecer Astra); suíte reexecutada antes do commit,
+  2407 passam / 4 pulados / 1 falha pré-existente. Sem push/PR/merge; `pendencias.md` e artefatos 17-09 fora.
+- Mudança (V4 medida nas rodadas 6-8): (1) `motor/due_window._NON_CONTENT_KINDS` sem `assessment` — o
+  bloco de prova que contém o vencimento ancora a entrega (`due-contain`) e vale como "último anterior"
+  no `due-straddle`; `review` e não acadêmicos seguem fora. Decisão do usuário de 06/09, até então não
+  implementada. (2) `motor/apply.py`: seção TDE (qualquer categoria) tenta `resolve_due_window` antes de
+  sair por fora-de-escopo; sem due casado segue fora (B-4 preservado; `tier2_due_scope` intacto — mais
+  estreito que a variante medida, idêntico no corpus). (3) `file_map.reconcile_unit_with_block
+  (neighbor_block_id=…)` + `resolver_apply` passa `vizinho`: bloco sem unidade própria + texto gated
+  discordante → texto vence, razão `texto-vence-vizinho=<vizinho>`, conflito registrado; manual, explícita
+  e `secao-vence-bloco` mantêm a precedência.
+- Aceite com o `src/` real, `c1-3/aceite_v4_48_22-09.{py,json}` (sha256 `f7add8cd437ec194…`; base do aceite
+  = estado da #47, pois os manifests gravados são pré-#47): 10/10 — bloco 214/237 (90,3 %), unidade
+  246/284 (86,6 %), subunidade primária 84 e aceita 107/251, 0 perda nova, nenhum curso regride, mudanças
+  de bloco exatamente MF t1/t2 e ES2 t1 (`due-window`), de unidade exatamente as 5 medidas mais as 8 da
+  #47; t1/t2 do MF mantidos certos por `texto-vence-vizinho`.
+- Revisão Astra única (sessão `01a0c72b-92c2-7e10-bfe1-e57499dba67e`, gpt-6-astra/medium observado, 144 s,
+  63.745 tokens, read-only): APROVAR COM AJUSTES, 0 CRITICAL/HIGH/MEDIUM, 3 LOW, os 3 corrigidos com teste
+  antes: UI (`_resolve_backlog_unit_status`) ganha fonte e nota para `texto-vence-vizinho`; comentários e
+  docstring do `due_window` e do teste alinhados ao contrato novo; teste de regressão para a prova como
+  "último anterior" no straddle. Aceite refeito depois dos ajustes: JSON byte-idêntico.
+- Testes: 9 novos + 1 reescrito (T17) + 1 renomeado; afetados 525/525; suíte 2407 passam, 4 pulados, 1 falha
+  PRÉ-EXISTENTE e alheia (`test_pdf_markdown.py::test_respect_actualtext…`). Diff: 10 arquivos, +227/−21.
+- Limites: +1 no bloco vem de uma entrada (MF T2); a regra da prova tem 2 casos no corpus; IA
+  `future-of-jobs-report-2025` muda de unidade sem gold; cursos já estudados; sem build real desde as fontes.
+- Placar após #47 + #48 (base 15/17-09, replay pela fase real): bloco **214/237 (90,3 %) — meta > 90 %
+  atingida**; unidade 246/284 (86,6 %; faltam 10, teto 272 sem links); subunidade primária 84/251 (33,5 %).
+
+## Medido: CRU-02, W-P1 — inventário dos 251, residual em classes, matriz de evidências e ordem das perguntas (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~01:35; dispatch de 01:36 interrompido pelo fim da sessão 634847b0,
+  redisparado às 01:56 pela sessão 60b3a7c4 com o mesmo brief. Worker Opus 5 (Agent, `model: opus`; effort
+  não atestado), 352 s, 114.764 tokens. Artefatos `c1-3/wp1_inventario_matriz_22-09.{py,json,md}` (json
+  8,97 MB, sha256 `d1650b8a0897a8f0…`; congelamento pré-gold `114c6f5efbfe16f3…`). Conferido pelo
+  coordenador: script lido (fase 1 sem gold, greedy por cobertura marginal, congelamento antes de
+  `mede.golds`), reexecutado exit 0 em 2 s, JSON e MD byte-idênticos; `src/` 0 diff.
+- Inventário: 251/84 batem com a contagem do coordenador; residual com sobreposição: indisponível 8,
+  bloqueio pela unidade 10, gold fora da taxonomia 5, `relacao_ausente` 106, `falha_selecao` 53 (abstenção 6
+  + escolha errada 47); soma 159 = 144 + 15 (bloqueio/gold-fora também recebem classe de sinal). Aceita 108
+  = estado gravado no manifest (107 é pós-#47). Por curso (n / certos / relação ausente / falha de seleção):
+  MF 58/25/26/6; SO 15/7/7/1; IA 39/4/27/8; ES2 28/7/6/15; TCC 11/7/0/4; CG 82/28/37/10; FR 18/6/3/9.
+- Achado 1: `relacao_ausente` (106) é 2× `falha_selecao` (53) — na maioria dos erros o motor não tem nenhum
+  vocabulário do tópico gold nos campos fortes (título, stem, rótulo Moodle, headings, 1ª linha da
+  curadoria); é o caso que uma declaração do professor cobre.
+- Matriz: 5.517 expressões candidatas, 10.412 ocorrências; só 245 (4,4 %) já são alias/label da taxonomia.
+  Novas: 189 cobrem ≥ 5 materiais, 434 ≥ 3, 635 = 2, 4.203 = 1 (cauda longa).
+- Perguntas: 50 cobrem 100 % dos materiais com expressão nova; perguntas para 50/80/100 % dos não certos com
+  expressão nova: MF 4/11/17 (30 alvos), CG 1/4/7 (47), IA 1/2/6 (35), ES2 1/1/2 (21), FR 2/5/7 (12), SO
+  1/3/5 (8), TCC 1/1/1 (4). Conflitos: 22/50 tocam materiais em mais de uma unidade vigente, 37/50 tocam
+  material hoje certo, 18 com subunidade divergente entre certos. Sem pergunta possível: 10 (8 indisponíveis
+  + MF `exercicios-conjuntos` e `invariantes`, cujas expressões já são alias).
+- Achado 2 (decisivo para o W-P2): a cobertura marginal pura seleciona boilerplate — CG `extraido` (43
+  materiais), MF `julio machado` (24, nome do professor), IA `celula` (24, heading de notebook), ES2
+  `engenharia` (20), SO `include`, FR `referencia`, TCC `exerc icio` (hifenização de PDF). Frequência alta é
+  sinal de baixa especificidade; nenhuma é perguntável ao professor; a curva por prefixos sobre essa ordem
+  mediria ruído. [DECISION] W-P2 exige critério de especificidade pré-declarado sem gold (df por curso e/ou
+  ganho contra a taxonomia; juntar palavras hifenizadas) — decisão do usuário pendente.
+- Limites: expressões só dos campos fortes (sem corpo do Markdown), por definição; ruído do pipeline de
+  conversão (cabeçalho de slide, hifenização) entra nos campos fortes; sem LOCO (não há parâmetro); cursos já
+  estudados.
+
+## Medido: CRU-04, W-Q — desempate contrastivo no bloco, reprovado; efeito de comprimento confirmado (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~01:35; redisparado às 01:56 (sessão 60b3a7c4) com o mesmo brief.
+  Worker Opus 5 (Agent, `model: opus`; effort não atestado), 700 s, 131.965 tokens. Artefatos
+  `c1-3/wq_desempate_contrastivo_22-09.{py,json}` (json sha256 `f72255835302b232…`; congelamento pré-gold
+  `841b0cfa16c1f177…`). Conferido pelo coordenador: script lido (patch só em memória em
+  `anchor_engine.disambiguate`, restaurado no `__exit__`; o script exige apagar o JSON antes), reexecutado
+  exit 0 em 11 s, JSON byte-idêntico; `src/` 0 diff; citações conferidas na fonte.
+- Fórmula confirmada: `_score = Σ peso_t·log(1+m/df_t)` sobre material ∩ assinatura, dividido por
+  `sqrt(len(sig))` (`motor/disambiguator.py:121-129`); gate D4 em `:232-255`; fallback de card em
+  `anchor_engine.py:283-291`.
+- Inventário (decisões finais `disamb` com ≥ 2 blocos, src #48): 97 janelas — MF 36, SO 7, IA 16, ES2 1,
+  CG 29, FR 8, TCC 0; 53 certas / 11 erradas / 33 sem gold; bandas alta/média/baixa 30/35/32. Os "roteiroN"
+  do ES2 deixaram de ser desempate na #48 (viraram `titulo-topico`/`irmao-card`/`janela-1`).
+- R-contrastiva (termos exclusivos por candidato; troca só com evidência distintiva contra cada concorrente
+  e vencedor sem exclusivo casado): dispara 1× (MF `exerciciosdafny1`, bloco-12 → 11, seria perda; o
+  fallback de card reconduz o id final), ganhos 0, perdas 0, bloco 214/237 = base, nenhum curso regride,
+  unidade vazia por construção. **Aceite (≥ 215 sem perda) REPROVADO.** Dos 8 erros de desempate: 4
+  indistinguíveis (nenhum exclusivo casado: MF `introducao`, `revisao`; CG `basico3d-cpp`, `-py-zip`), 3 com
+  exclusivo dos dois lados (MF `exerciciosdafny2`; IA k-nn e análise exploratória, direções opostas), 1 com
+  exclusivo a favor do errado (MF `exerciciosnusmv`, "ferramenta"). Nenhum corrigível por exclusividade.
+- Contrafactual do Astra CONFIRMADO: `raw` é invariante a termos que não casam; só o divisor muda.
+  Acrescentar K termos não casantes a um candidato muda a escolha vigente em 3/97 (K=1), 10/97 (K=3), 16/97
+  (K=5), 18/97 (K=10) janelas (~19 % dos desempates decididos por comprimento da assinatura). R-contrastiva é
+  imune. [DECISION] Alavanca candidata para o residual de bloco: a normalização `sqrt(len(sig))` do `_score`
+  (variantes pré-declaradas, gold só avalia, aceite bloco ≥ 215 sem perda e unidade ≥ 246) — não medida como
+  regra; exige Gate 1 próprio.
+- Limites: poda de revisão/referência só onde há heading que a identifique (7 janelas podadas, termos
+  distintivos mudaram em 3); IA `lista1`/`minimax` reusam decisão cacheada (`apply.py:117-123`) e não
+  chamam `disambiguate`; 6 ausentes seguem no denominador; sem LOCO (regra binária, sem limiar).
+
+## Medido: CRU-02, W-P2' — curva de microdeclarações do professor por prefixo, três ordens (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~02:11 (menu nativo: "W-P2' e W-R em paralelo"); worker Opus 5
+  (Agent, `model: opus`; effort não atestado), interrompido pelo reinício da sessão às ~02:17 e retomado pelo
+  id, ~987 s no trecho final, 159.482 tokens. Artefatos `c1-3/wp2_curva_microdeclaracoes_22-09.{py,json,md}`
+  (json sha256 `f3a83039dcee0da4…`; congelamento das 3 ordens pré-gold `38185c126de98f08…`, herda o do W-P1
+  `114c6f5e…`). Conferido pelo coordenador: script lido (cap por df fixo a priori, greedy igual ao W-P1,
+  resposta simulada só pelo gold primário, taxonomia em cópia com aliases injetados, `src/` intocado),
+  reexecutado exit 0 (413 s + 2 s da 2ª passada `--marcos`): congelamento idêntico, JSON idêntico por hash
+  canônico sem os campos de tempo; originais mantidos.
+- Base reproduzida com 0 declarações: 84/251 primária, 108 aceita, 8 ausentes, fidelidade 329/329.
+- Totais (primária/251, ganho/perda, perguntas examinadas): NAIVE 5 → 99 (16/1, 29); 10 → 101 (31/14, 42);
+  esgotada 50 → 109 (37/12). CAP-25 5 → 99 (16/1, 35); 10 → **113 (30/1, 59)**; esgotada 76 → **118 (46/12)**.
+  CAP-50 5 → 90 (8/2, 34); 10 → 104 (35/15, 51); esgotada 62 → 112 (41/13). "Depende" (primárias dos
+  materiais alcançados divergem) = 65–70 % das perguntas examinadas; "não associar" = 0.
+- Marcos sobre os 157 alvos (não certos com expressão nova): por alcance a naive é a mais barata (11 perguntas
+  para 50 %, 27 para 80 %); por correção efetiva **nenhuma ordem chega a 50 %** — teto CAP-25 45/157 (28,7 %)
+  com 76 perguntas, CAP-50 40/157, NAIVE 36/157. Veredito: a prefixo igual, CAP-25 domina (113 com 1 perda
+  contra 101 com 14 no prefixo 10); CAP-50 é dominada em todos os prefixos; o cap 25 % excluiu as 7
+  boilerplates do W-P1, o cap 50 % manteve `julio machad` e `refere`.
+- Perdas (12, as mesmas nas três ordens; 13 na CAP-50): MF 10 — a declaração em
+  `linguagens-de-especificacao-e-logicas` rouba materiais certos de `especificacao-de-funcoes-recursivas` (9)
+  e `provadores-de-teoremas` (1): alias certo para o material perguntado, errado para vizinhos da mesma
+  unidade; MF 2 viram abstenção por empate; TCC `aula-06-revisao-alfabeto…` tem gold primário VAZIO e conta
+  como acerto por abstenção (artefato da régua, `herancas_TCC_15-09.csv`); ES2 `roteiro5-conteiners` só na
+  CAP-50 (2ª passada por heading). Precisão das abstenções que viram decisão: 70–74 % (CAP-25/5 = 1/1).
+- Leitura: uma declaração só de alias eleva a primária a no máximo 118/251 (47 %) com 76 perguntas e 12
+  perdas — longe da meta 226; o gargalo é "depende" (a mesma expressão cobre subunidades diferentes) e o
+  roubo entre irmãos da mesma unidade. [DECISION] Próximo passo exige decisão do usuário: (a) declaração
+  por material (não por expressão) para os "depende"; (b) guarda contra roubo (alias declarado só vale para
+  o material/unidade da pergunta); (c) parar a frente de declaração e voltar ao cru. Nada implementado.
+- Limites: hifenização tratada por exclusão (não junção); prefixos 20 e 40 coincidem (maior ordem tem 18
+  perguntas num curso); leituras memoizadas (replay integral); cursos já estudados; caps fixos, sem LOCO.
+
+## Medido: CRU-04, W-R — normalização do `_score` do desempate: V1, V3 e V4 passam o aceite (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~02:11; worker Opus 5 (Agent, `model: opus`; effort não atestado),
+  interrompido pelo reinício da sessão e retomado pelo id, ~1.205 s no trecho final, 122.855 tokens.
+  Artefatos `c1-3/wr_normalizacao_score_bloco_22-09.{py,json}` (json sha256 `b2dbf7705aae3cbe…`; py
+  `510782922df69253…`; congelamento das 5 variantes pré-gold `a8c7c7b6572ff0d8…`). Conferido pelo
+  coordenador: variantes lidas no script (linhas 66-85, patch só em `disambiguator._score`, restaurado),
+  reexecutado exit 0 em 378 s (JSON apagado antes, por exigência do script), JSON byte-idêntico; `src/` 0 diff.
+- V0 (fórmula vigente por patch) reproduz a base byte a byte: 214/237, 246/284, bandas iguais.
+- Variantes (só o divisor muda; `raw` e o gate D4 intactos), pela cadeia bloco → unidade, id e banda FINAIS:
+
+  | variante | bloco | ganhos/perdas | unidade | toques (ids + banda/flag) | imune ao comprimento |
+  |---|---:|---:|---:|---:|---|
+  | V0 `raw/sqrt(len(sig))` | 214/237 | – | 246/284 | 0 | não (18/97) |
+  | V1 `raw` | **217/237** | 3/0 | 246/284 | 3 + 16 | sim (0/97) |
+  | V2 cosseno ponderado | 214/237 | 0/0 | 246/284 | 0 + 3 | não (15/97) |
+  | V3 `raw/log(2+len(sig))` | **217/237** | 3/0 | 246/284 | 3 + 6 | não (15/97) |
+  | V4 `raw/sqrt(|mat∩sig|)` | **217/237** | 3/0 | 246/284 | 3 + 20 | sim (0/97) |
+
+  Aceite (bloco ≥ 215 sem perda, nenhum curso regride, unidade ≥ 246 sem perda): **V1, V3 e V4 passam**
+  (MF 54 → 56, IA 38 → 39); V0 e V2 reprovam só no ≥ 215. Zero id final vazio; novas confiantes todas certas
+  (V1 4/4, V3 2/2, V4 1/1).
+- Dos 8 erros de desempate: V1/V3 corrigem MF `exerciciosnusmv` (18 → 16) e IA `k-nn` (04 → 05); V4 corrige
+  também MF `exerciciosdafny2` (11 → 13). Permanecem em todas: MF `introducao`, `revisao`; IA
+  `analise-exploratoria`; CG `basico3d-cpp`, `-py-zip`. O 3º ganho de V1/V3 (MF `provas`, 05 → 06) vem da
+  cadeia: banda muda, o fallback de card (`anchor_engine.py:283-291`) destrava. Premissa do brief refutada:
+  V2 não é imune ao comprimento (o denominador cresce com termos novos).
+- [DECISION] Gate 1 de implementação pendente: recomendação do coordenador V1 (remover o divisor — menor
+  diff, imune, mesmo placar de V4 com metade das bandas alteradas); alternativa V4 (corrige um erro a mais,
+  20 bandas alteradas, 3 flagadas sem gold). Exige issue, teste vermelho, aceite pelo harness 217/237 e
+  246/284 com exatamente os 3 ids, revisão Astra única e Gate 2.
+- Limites: entradas com decisão cacheada por `content_key` (`apply.py:117-123`) não entram nas 97 janelas;
+  unidade reexecutada só nos cursos cujo bloco mudou; 6 ausentes no denominador; sem limiar, sem LOCO.
+
+## Implementado, aguardando Gate 2: `_score` do desempate sem o divisor sqrt(len(sig)) — #49 (22/09)
+
+- Gate 1 de implementação aprovado pelo usuário em 22/09 ~03:03 (variante V1 do W-R). Issue
+  [#49](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/49). Executor Claude Code
+  (claude-fable-5-1, escolha do usuário); TDD, testes vermelhos primeiro. SEM COMMIT.
+- Mudança: `motor/disambiguator._score` devolve a soma ponderada bruta (`Σ peso_t·log(1+m/df_t)` sobre
+  material ∩ assinatura), sem dividir por `sqrt(len(sig))`; `_block_signature` e o gate D4 intactos;
+  docstrings da função e do módulo atualizadas. Motivo medido (W-Q/W-R): o divisor decidia 18/97 janelas de
+  desempate pelo comprimento da assinatura; a regra nova é imune (0/97).
+- Aceite com o `src/` real, `c1-3/aceite_v1_49_22-09.{py,json}` (sha256 `2954874c398f30ce…`; base = estado
+  da #48; controle da fórmula antiga só em memória para contar bandas): 11/11 — bloco **217/237 (91,6 %)**,
+  unidade 246/284, subunidade 84/107, 0 perda nova, nenhum curso regride (MF 54 → 56, IA 38 → 39); mudanças
+  de bloco exatamente MF `exerciciosnusmv` (18 → 16), MF `provas` (05 → 06, via fallback de card) e IA
+  `algoritmo-de-classificacao-k-nn` (04 → 05); nenhuma unidade além das de #47/#48; 16 mudanças de
+  banda/flag sem trocar bloco (4 confiantes, 3 flagadas, 9 só banda), zero id vazio.
+- Revisão Astra única (sessão `01a0c7be-9dbf-7302-92e9-c1662ebbe5cc`, gpt-6-astra/medium observado, 151 s,
+  68.939 tokens, read-only): APROVAR COM AJUSTES, 0 CRITICAL/HIGH/MEDIUM, 2 LOW só em testes/comentários,
+  tratados: teste do "sink verboso" renomeado e comentado como empate real (ordem da janela decide); teste
+  "vitória só por peso" isola a exigência de token discriminante com `MARGIN_TAU` rebaixado por monkeypatch;
+  teste novo de empate positivo com assinaturas de comprimentos diferentes (sugestão do revisor). Nenhum
+  consumidor de escala absoluta do score (anchor_engine/apply/UI usam banda/flag).
+- Testes: 3 novos (2 nasceram vermelhos), 2 comentários ajustados; disambiguator 28/28; suíte 2410 passam,
+  4 pulados, 1 falha PRÉ-EXISTENTE e alheia. Diff: 2 arquivos, +67/−12 (sha `936e9277ff158f30…`).
+- Placar após #47 + #48 + #49 (base 15/17-09, replay pela fase real): bloco **217/237 (91,6 %)**; unidade
+  246/284 (86,6 %); subunidade primária 84/251 (33,5 %) no cru.
+
+## Medido: CRU-02, W-S — guarda de escopo + declaração por material nos "depende" (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~03:03; worker Opus 5 (Agent, `model: opus`; effort não atestado)
+  gravou os artefatos às 03:13; o relatório final se perdeu no reinício do PC (erro do Codex, ~03:15).
+  Artefatos `c1-3/ws_declaracao_por_material_22-09.{py,json,md}` (json sha256 `30faff12223f6db9…`; ordem
+  CAP-25 congelada `38185c12…` reproduzida antes do gold). Conferido pelo coordenador: reexecutado exit 0
+  (main + `--marcos`, 221 s), congelamento idêntico, JSON idêntico por hash canônico sem os campos de tempo;
+  originais mantidos; `src/` só com o diff da #49.
+- Base reproduzida com o wrapper de taxonomia por entrada e 0 declarações: 84/251, 108 aceita, 329/329.
+- Totais (primária/251, ganhos/perdas, custo = perguntas de expressão + por material): V-G (só guarda)
+  5 → 100 (16/0, 35); 10 → 112 (29/1, 59); esgotada 76 → 127 (45/2). V-GM (guarda + uma pergunta por
+  material alcançado quando a expressão dá "depende") 5 → 180 (99/3, 182); 10 → 200 (119/3, 236);
+  esgotada → **213/251 (84,9 %)** (130/1, custo 261 = 76 + 185). Comparação: W-P2' sem guarda 118/251.
+- Marcos por correção efetiva dos 157 alvos: V-G não chega a 50 % (45/157); V-GM 50 % com custo 182
+  (prefixo 5) e 80 % com custo 261 (prefixo 20; 130/157 = 82,8 %). Por curso (esgotada): IA 35/35, TCC
+  4/4, MF 28/30, FR 11/12, ES2 18/21, CG 31/47, SO 3/8.
+- Perdas: a guarda elimina as 10 perdas por roubo do MF (resta 1 em 20/40, `provasindutivas-…-arvores`);
+  V-GM perde 3 em 5/10 (MF `conjuntosindutivos`, `exerciciosespecificacao` ×2, aliases do material vizinho)
+  que somem no prefixo 20; resta só o artefato TCC `aula-06-revisao…` (gold primário vazio, acerto por
+  abstenção na régua). Precisão das abstenções que viram decisão: V-GM 29/2 (94 %) esgotada.
+- Teto analítico da V-GM esgotada: alcançáveis 211/251; não alcançados: bloqueio pela unidade 17, ausentes
+  8, fora da ordem 9, sem gold primário 6 (5 CG fora da taxonomia + TCC vazio). O teto 226–228 do
+  coordenador só se realiza corrigindo a unidade dos 17 bloqueados (CRU-03).
+- Leitura: o que eleva a subunidade é a resposta por material (213 vs 127 só com alias); custa ~185
+  respostas, ~1 por alvo — é rotulagem quase integral do residual, não "uma declaração". [DECISION]
+  Próximo passo exige decisão do usuário: (a) aceitar o regime "professor rotula os materiais em dúvida" e
+  medir a ordem de perguntas por material mais barata (sem expressão); (b) atacar os 17 bloqueios de
+  unidade (CRU-03) antes; (c) parar a frente de declaração. Nada implementado.
+- Limites: cursos já estudados; caps fixos; resposta simulada pelo gold (professor ideal); prefixos 20 e 40
+  coincidem; leituras memoizadas; artefato TCC pendente na régua.
+
+## Validado: 4ª resposta do Astra — rumo da CRU-02/CRU-03 após W-P2/W-S e #49 (22/09)
+
+- Parecer literal em `c1-3/astra_ideias_motor_22-09.md` (4ª resposta). Síntese: descartar a rotulagem pelo
+  professor como requisito de produto (76 perguntas com maioria "depende" ou 261 intervenções para 84,9 % não
+  cabem numa plataforma que o aluno usa sozinho); seguir com a CRU-03 medindo o efeito na subunidade a partir
+  do cru 84/251, sem declaração (W-S fica como diagnóstico, não previsão); depois separar "relação ausente"
+  em A (falta no vocabulário do motor) e B (ausente de todo o pacote) e medir a cobertura de relações
+  explícitas recuperáveis do pacote antes de qualquer mecanismo; conhecimento externo (ex. CS2023) só como
+  regime separado, com decisão própria; manter denominadores, preservação e LOCO.
+- Validação do coordenador por ID: (1) os "17 bloqueios" do teto do W-S contra os 10 do W-P1: 7 só no W-S —
+  CG `opengl-cpp`/`opengl-py` (o replay do W-S usa a unidade GRAVADA no manifest, pré-#48; a #48 já corrigiu
+  a unidade dos dois) e SO 5 (`1903-estruturas-de-controle`, `3103-threads`, `exemplo-threads-em-c` ×3), cujo
+  gold primário é `conceitos-basicos`, slug DUPLICADO na taxonomia do SO (unidade-02 e unidade-04): W-P1 casou
+  por slug, W-S por (unidade, slug); a régua não distingue o slug por unidade. Contagem real exige recomputo
+  no estado #49 por (unidade, slug). (2) Extração automática de relações explícitas do pacote NÃO foi medida:
+  W-P1 mediu só as relações já conhecidas (aliases/labels = 4,4 % das expressões). (3) 84 + 17 = 101 é teto
+  de efeito direto, não previsão; o efeito real sai do replay integral.
+- [DECISION] Proposta ao usuário (Gate 1 de medição, 0 mudança em src/): W-T (CRU-03) anatomia da unidade
+  no estado #49 (38 erros; bloqueios de subunidade recomputados por (unidade, slug), reconciliados por ID),
+  regras candidatas com LOCO, aceite unidade ≥ 247 sem perda, efeito na subunidade medido do cru 84 sem
+  declaração; W-U (CRU-02) cobertura de relações explícitas recuperáveis do pacote para os 106 "relação
+  ausente" (headings/outlines de outros materiais, plano, timeline), classes A/B, só contagem.
+- Pendências novas da régua: slug de subtópico duplicado entre unidades (SO `conceitos-basicos`); TCC
+  `aula-06-revisao…` com gold primário vazio.
+
+## Medido: CRU-02, W-U — cobertura de relações explícitas recuperáveis do próprio pacote (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~12:53; worker Opus 5 (Agent, `model: opus`; effort não atestado),
+  460 s, 121.926 tokens. Artefatos `c1-3/wu_cobertura_relacoes_22-09.{py,json,md}` (json sha256
+  `e949ebc15a98e1d6…`; congelamento do índice, antes do gold, `c17786ef89c2e59a…`). Conferido pelo
+  coordenador: exclusões por proveniência pré-declaradas no script (saídas do motor fora: FILE_MAP*,
+  COURSE_MAP, *_HEALTH, índices computados, `manifest` `computed_*`; do timeline só o texto), reexecutado
+  exit 0, JSON e MD byte-idênticos; `src/` 0 diff.
+- Documentos usados: Markdown de cada material (headings/listas), SYLLABUS, CRONOGRAMA_DETALHADO, GLOSSARY,
+  COURSE_IDENTITY, SOURCE_REGISTRY, plano de ensino e syllabus do `_inputs_15-09.json`, `.timeline_index`
+  (texto) e `.lessons_index` (ES2, IA, MF). Padrões P1 hierarquia de headings em outro material, P2 mesma
+  linha, P3 bloco/sessão do timeline, P4 linha sob seção de syllabus/glossário/cronograma.
+- Índice (sem gold): 11.663 relações (P2 7.258, P1 2.681, P4 1.470, P3 254); 1.971 expressões com relação,
+  **1.049 (53 %) ambíguas** (≥ 2 tópicos); 199 tópicos alcançados.
+- Cobertura (gold só aqui): existe relação para o tópico gold em 56/106 `relacao_ausente` (53 %; IA 27/27,
+  CG 17/37, MF 7/26, SO 3/7, ES2 1/6, FR 1/3), 53/53 `falha_selecao`, 70/84 certos (controle). B nos 106:
+  50 = **40 "puros"** (nenhum documento do pacote liga expressão ao tópico) + 5 bloqueio pela unidade + 5
+  gold fora da taxonomia. Situação A (Astra) = 56; situação B "pura" = 40.
+- Achado decisivo: **A-conflitante é quase universal** — 177 dos 179 materiais cobertos (56 + 53 + 70; 2 A puros:
+  IA 1 em relação ausente, 1 em falha de seleção; "178" era erro de soma, conferido em 22/09) têm relação também
+  para outros tópicos (maioria 5–19 concorrentes, 21 com ≥ 20; ex. CG `exercicios-de-processamento-de-imagens`
+  com 35). Nos 84 certos, 70/70 cobertos são conflitantes. Existência de relação explícita tem recall razoável
+  e precisão baixíssima: não discrimina. Um mecanismo sobre esse índice exigiria critério de seleção/peso
+  (papel do trecho, hierarquia, especificidade) — o que o Astra chamou de "não transformar contexto em regra
+  global" — e isso ainda não foi medido. [DECISION] Só vale abrir um Gate 1 de mecanismo se antes uma medição
+  mostrar um critério de seleção com precisão > 50 % nos 84 certos (controle) sem gold; caso contrário, os 40
+  B puros + a baixa precisão indicam fonte externa (regime separado) ou aceitar o teto do cru.
+- Limites: menção ao tópico exige label/alias contíguo em stem6 (subestima A); P4 aceita qualquer linha sob a
+  seção (infla P4/P2); nenhuma medida de "assunto principal"; cursos já estudados.
+
+## Medido: CRU-03, W-T — anatomia da unidade no estado #49, bloqueios reconciliados, regra reprovada (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ~12:53; worker Opus 5 (Agent, `model: opus`; effort não atestado),
+  1.151 s, 147.903 tokens. Artefatos `c1-3/wt_anatomia_unidade_49_22-09.{py,json,md}` (json sha256
+  `1962ef5a51c13492…`; congelamento pré-gold `1b56f1dd…`) e `wt_regra_unidade_22-09.{py,json}` (json
+  `01b73dc8…`; regras declaradas antes de medir, sha `278ba0ee…`). Conferido pelo coordenador: anatomia
+  reexecutada pela cadeia real (91 s), congelamento e JSON byte-idênticos; regra reexecutada em background;
+  `src/` 0 diff. Estado #49 reproduzido: 217/237, 246/284, 84/107.
+- 38 erros de unidade por classe: ausente 13 (MF 4, IA 2, CG 7 — 12 links + 1 PDF por `source_path`);
+  herdada do bloco certo mas gold diverge 12 (SO 6, ES2 2, MF/IA/TCC/CG 1 — fila de adjudicação: unidade do
+  bloco ≠ gold curricular); herdada do bloco errado 9 (CG 7, SO 1, ES2 1 — exigem CRU-04 primeiro); texto
+  vence errado 4 (CG, custo conhecido da #48); abstenção 0. Recuperáveis sem tocar o bloco: 9. Régua ambígua: 1.
+- Bloqueios de subunidade por (unidade, slug) no #49: **10** (ES2 3, CG 7), idênticos ao W-P1 por ID. Os 7 a
+  mais do teto do W-S saem: CG `opengl-cpp`/`opengl-py` já corrigidos pela #48; SO 5 têm unidade vigente
+  `unidade-02`, que contém `conceitos-basicos` — não há bloqueio; 4 deles (`3103-threads`,
+  `exemplo-threads-em-c` ×3) são ERRO DE UNIDADE (gold curricular `unidade-03-programacao-concorrente`).
+  0 bloqueios dependem do slug duplicado. Pendência da régua: nesses 4 do SO o gold de unidade (u03) e o
+  gold de subunidade (`conceitos-basicos`, só em u02/u04) são inconsistentes.
+- Regras candidatas (família: 6 erros `reconciliada_do_bloco` com vencedor bruto do texto = gold, acima do
+  gate; risco medido: a mesma cláusula cobre 49 materiais, 38 já certos): **REPROVADAS**. R1 (texto vence o
+  bloco reconciliado se confiança ≥ τ; τ por LOCO = 0,90 em 6/7 folds): unidade 237/284 (ganho 1, perda 10:
+  CG 9 + MF 1; MF e CG regridem), subunidade 80/101; R2 (sem parâmetro): 215/284. Cadeia para a subunidade:
+  zero ganho, nenhum bloqueio se desfaz com aceite. Diagnóstico: a confiança do scorer não ordena a decisão
+  (0,58–0,95 dos dois lados); a precedência bloco > texto continua sendo o melhor agregado.
+- [DECISION] Onde a unidade ainda pode subir: (a) entrada offline dos 12 links (+ o PDF por `source_path`):
+  13 ausentes contam como erro; 246 + 13 = 259 ≥ 256 é o único caminho medido que cruza 90 % sem regra nova
+  (`moodle_sync.plan_import` existe; harness não a chama; rede bloqueada) — exige Gate 1 de produto/harness;
+  (b) 9 erros dependem do bloco (CRU-04, MF/CG); (c) 12 de adjudicação exigem outra evidência que não a
+  confiança do scorer. Nada implementado.
+
+## Medido: W-Y (#52) — tipo de bloco por linha: 0 mudança de segmentação, alvos corrigidos, 2 perdas em SO a adjudicar (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ("Aprovo o gate 1, e, aula antes de prova = review, hospeda material e herda escopo
+  da prova"); worker Opus 5 (Agent, `model: opus`; effort não atestado), 1.813 s, 248.684 tokens. Artefatos
+  `c1-3/wy_kind_por_linha_22-09.{py,json,md}` (json sha256 `760d136a1801644f…`, byte-idêntico na 2ª execução do worker,
+  586/512 s; decisões `b9b21711ec5d8fce…`). Snapshot sha de manifest+course/ dos 8 repos e 7 builds-base igual antes e
+  depois; tripwires socket/Gemini/Datalab/`Path.write_*`. Reexecutado pelo coordenador (570 s, 16:09-16:19): JSON byte-idêntico, sha confirmado.
+- Protótipo P1 (regras do brief com 4 ajustes que os dados exigiram: Atividade "substituição" = makeup; marcador
+  suspension/event vira metadado e o rótulo decide; marcador g2/ps decide só com rótulo vazio; adjacência de dúvidas
+  pula outra linha de dúvidas). Rótulo usa só as colunas de conteúdo (o `content` do índice colava a coluna Atividade);
+  cue de prova ancorado na cabeça + `STRONG_EXAM_RE` (solto, "Correção da P1" virava prova).
+- A) Tipos (controle → P1, 8 cursos vivos; o índice vivo coincide com o reconstruído pelo código atual): office_hours
+  9 → 3, review 4 → 12, holiday 13 → 13, suspended 4 → 4, makeup 6 → 7, assessment 27 → 25, overview 4 → 7. Alvos: IA
+  "ML - Introdução à ML" overview → class; FR 01/10 linha sai class (o vivo já era class só pelo override manual); TCC
+  "Atendimento a dúvidas {kind=g2}" assessment → review; 9 blocos de dúvidas → 6 review + 3 office_hours (os 3 vêm
+  antes de trabalho, não de prova: CG 29/09, CG 26/11, IA "Dúvidas para T1"). Legítimos preservados: 17 feriado/suspensão,
+  4 revisões, 3 overview. NÃO resolvido: TCC "Oficina de problemas - Entrega T2" (Atividade Aula) segue workshop por
+  `^oficina`. Mudanças não previstas: "Apresentação da disciplina" (FR, LR, MF) class → overview (perde a unidade do DP);
+  IA 08/07 "Atendimento. Divulgação dos resultados da G1" results → review; TCC bloco-05 "Revisão: Alfabeto…" vira
+  review na linha, o demote devolve class, mas a unidade passa de u02 para u01 (source_kind tira o bloco do DP).
+- B) Segmentação: 0 fusões e 0 separações nos 8 cursos vivos e 7 builds-base; ids de bloco não mudam.
+- C) Placar nos builds-base: base = controle = 217/237, 246/284, 84/251, 107/251; P0 = P1 = **215/237, 247/284, 85/251,
+  108/251**. Perdas só em SO: `lista-exercicios-p1` (bloco e unidade) e `lista-exercicios-p1-gabarito` (bloco) — o
+  bloco-11 "Duvidas TP1, duvidas p1" vira review e o motor (prep-prova) leva a lista para ele; o gold diz bloco-09 (aula
+  "Comunicação entre processos; Exercícios"): conflito entre a decisão "review hospeda material" e o gold. Ganhos só em CG:
+  `openglbasico` (unidade, sub primária, sub aceita) e `exercicios` (unidade) — bloco-02 "Introdução a OpenGL" era overview
+  pela regra 1 e vira class com u01.
+- D) Obsoletos com o protótipo: `classifier.py` CLASS_INTRO_TERMS (:29), KIND_KEYWORDS (:53), `_content_text`/`_session_text`
+  (:102/:115), `_session_exam_or_review` (:140), `_office_hours_session_majority` (:155), `_text_of` (:176),
+  `_has_unit_evidence` (:184), `_cue_e_conteudo_do_plano` (:192), `row_kind_from_text`/ROW_TEXT_KINDS (:321/:336);
+  WEAK_EXAM_TOKENS (:137) fica (window_provider importa); `index.py` `plan_phrases_para_classificacao` (:53),
+  `_IGNORED_KIND_AS_SOURCE` (:308), `_promote_preexam_reviews` (:1252). Testes com expectativa invertida: test_timeline_kinds
+  (8 casos), test_atividade_kind:31/36/105, test_classifier_office_hours_guard:49/55/67, test_core:5371-5458,
+  test_sarc_kind_flow; guard_prova_plano e cue_conteudo_do_plano mantêm expectativa com API nova.
+- [DECISION] Antes do Gate 1 da etapa 2: adjudicar SO `lista-exercicios-p1` (gold bloco-09 vs review bloco-11);
+  TCC oficina (cauda "Entrega Tn" = deliverable?); "Apresentação da disciplina" → overview (aceitar); TCC bloco-05
+  (regra: review demovida a class não deve perder o DP).
+
+## Medido: W-V (#51) — importação offline dos 13 ausentes: unidade 246 → 252, sem perda, abaixo da meta 256 (22/09)
+
+- Gate 1 de medição aprovado em 22/09 ("abrir (a) como próxima frente"); worker Opus 5 (Agent, `model: opus`; effort não
+  atestado), 1.880 s, 171.762 tokens. Artefatos `c1-3/wv_importacao_offline_22-09.{py,json,md}` (json sha256
+  `e1aa60ae05755086…`; congelamento `8097eaa81141d8bb…`; byte-idêntico na 2ª execução do worker, 715/726 s), cópias em
+  `.frzero/wv_importacao_22-09/` (MF, IA, CG + `_controle_reprocess`). Checks do worker: builds-base e manifests dos
+  repos reais intocados (sha), 0 rede/LLM, `src/`/`tests/` limpos. Reexecutado pelo coordenador (637 s, 16:01-16:12): JSON
+  byte-idêntico, sha confirmado.
+- Placar pela cadeia real: antes 217/237, 246/284, 84/251, 107/251; controle (reprocess sem injeção, `t1-2026-1` ligado
+  por id) 218, 247, 84, 107; depois **223/237, 252/284, 86/251, 109/251**. 0 perda em qualquer eixo. Por curso: MF bloco
+  56 → 60 e unidade 61 → 63; IA bloco 39 → 41; CG unidade 74 → 78, sub primária 28 → 30, aceita 41 → 43.
+- Dos +6 de unidade: +1 é ponte de id (`t1-2026-1` era FALSO ausente: já estava no build do MF com os mesmos bytes do
+  PDF, só com `source_path` do stash — a régua não o ligava porque `herancas_*` tinha `new_id` nulo); +5 vêm dos 12
+  links injetados, **6/13 acertos de unidade**: MF `archive-of-formal-proofs` e `t1`, CG `origens`, `recorte-subdivisao`,
+  `mapeamento-opengl`, `preenchimento 13:00`. Erram: MF `eth2`/`aws-encryption-sdk` (u02 gold, u01 previsto), IA
+  `oracle` (u01 gold, u02) e `ia-responsavel` (u01, u05; o markdown salvo é uma página HTTP 403), CG `opengl-vdi`,
+  `aula-gravada`, `preenchimento 3:30`. Vídeos trazem "Nenhum conteúdo textual": a unidade só pode vir de seção/título.
+- Efeito colateral medido: 7 ids com gold mudam só a subunidade de vazia para preenchida (MF `arvores`, `intro`, `listas`,
+  `provas` → `abordagens-para-verificacao-formal`; CG `resolucao-de-prova-2d/-2d-html/-3d` → `origens`), sem mudar
+  acerto; causa é a importação (o controle não muda); mecanismo não investigado (hipótese: subunidade de prova/lista
+  depende do conjunto de materiais do curso).
+- Veredito: aceite da #51 etapa 1 NÃO cumprido (252 < 256). Entrada disponível ≠ classificação certa, como o Astra
+  previu. Campos mantidos/descartados na injeção listados no JSON (identidade, origem, moodle_*, datas, proveniência de
+  extração, markdown base/curado, raw_target mantidos; temporal_block_*, computed_*, manual_*, auto_*, unit_*, subunit_*,
+  coverage_*, revisar descartados). [DECISION] Etapa 2 (produto importar links offline) fica condicionada a outra fonte de
+  ganho para a unidade; conta atualizada abaixo.
+
+## Curado: repo FR (`Documents/GitHub/Fundamentos-de-Redes-Tutor`) para estudo no Claude Project (22/09; user: "deixe o repo de FR 100% correto")
+
+- Só curadoria + reprocesso headless sem rede (`scratchpad/fr_curadoria_22-09.py`), 0 mudança em `src/`. Julgamento pelo
+  cronograma, pela ordem das seções do Moodle e pelo plano; regra do usuário: dúvidas antes de prova = review.
+- Blocos (`course/.timeline_curation.json`, por uuid): bloco-10 "Dúvidas da P1" office_hours → **review** (escopo u01-03
+  herdado da P1; a lista `exercicios-revisao-topologias-p1` migrou sozinha do bloco-09 para ele pela regra prep-prova);
+  bloco-20 (27/10-03/11, enlace) unidade u04 → **u05** e tópico "Endereçamento" → "Funções e características do nível de
+  enlace"; bloco-21 tópico → "Protocolos de enlace para redes locais cabeadas (Ethernet)"; bloco-22 tópico "Modelos OSI e
+  TCP/IP" → "Camada física e raw sockets" (unidade 06 já por override); bloco-29 (08/12, linha vazia `{kind=g2}`)
+  assessment → reserved. Mantidos: bloco-13 override class (usuário), escopos manuais de P1 (u01-03) e P2 (u04-06).
+- Materiais (pinos `manual_*` no manifest, honrados pelo motor): `01-protocolos-de-rede` bloco-01 → 02; `05-protocolo-dns`
+  e `unidade2-exercicios-dns` bloco-03 → 05 (aula DNS 27/08); `lista-de-exercicios-1-camada-de-aplicacao`, `tcp-example`,
+  `udp-example-c` → bloco-05 (lista da unidade inteira e "Desenvolvimento de aplicações", última subseção da U2);
+  `10-camada-de-rede` bloco-06 → 07 e subunidade `algoritmos-de-roteamento` → `funcoes`; `12-protocolo-ipv4` e
+  `unidade04-exercicios-ip-icmp` subunidade `fragmentacao` → `protocolo-ipv4`; referências YouTube sem texto: "O Triunfo
+  dos Nerds" → bloco-01/u01, "Entre a origem e o destino (bloqueios na Internet)" → bloco-13/u04;
+  `exercicios-revisao-topologias-p1` categoria provas → **listas** (md e PDF movidos para `exercises/lists/` e
+  `raw/pdfs/listas/`), unidade u04 (seção do Moodle) → u01 (topologias 1.3; escopo u01-03 pelo bloco de revisão).
+- `exams/EXAM_INDEX.md` regenerado vazio pela função do gerador: a regeneração pula o arquivo quando não há categoria
+  provas (`pedagogical_regeneration.py:623-625`) e deixava o índice antigo — pendência pequena de produto.
+- Artefatos conferidos: COURSE_MAP (6 unidades, Timeline u04 10/09-15/10, u05 27/10-05/11, u06 10-12/11),
+  CRONOGRAMA_DETALHADO, FILE_MAP, EXERCISE_INDEX, SOURCE_REGISTRY. Pendências que ficam: data da P1 em
+  `.assessment_context.json` = 22/09 (código, pendência #50-2; não aparece ao aluno); "IP Calculator" e "Piratas do Vale
+  do Silício" não importados (SYNC_REPORT). Repo FR com mudanças não commitadas, commit é decisão do usuário.
+- Complemento (22/09, user em aula: "a prova vai até a unidade 4, até a última aula antes de hoje"): escopo manual da
+  P1 → u01-u04 (bloco-11), revisão herda; rótulo da P1 = "P1 — unidades 01 a 03 e unidade 04 até a aula de 17/09
+  (ICMPv4)". Os 2 links "para decidir" do sync importados offline como referências sem captura (markdown mínimo em
+  `staging/markdown-auto/url_fetcher/`): Piratas do Vale do Silício → bloco-01/u01, IP Calculator → bloco-07/u04;
+  SYNC_REPORT continua listando-os como "para decidir" (relatório do sync, estático). Fila `revisar` do FR zerada
+  (2 subunidades em dúvida fixadas: `unidade1-exercicios` → `modelos-osi-e-tcpip`; palestra dos bloqueios →
+  `protocolos-de-roteamento`). 33 materiais, 33 com bloco, 0 em revisão.
+- Código (executor sonnet, TDD, SEM COMMIT, aguardando Gate 2 junto da #50): (1) `timeline/index.py`
+  `_assessment_date_from_timeline_rows` prefere a linha que É a prova (Atividade prova/avaliação/exame; fallback
+  `STRONG_EXAM_RE` só com Atividade vazia) — FR P1 22/09 → **24/09** confirmado no reprocesso; (2)
+  `ops/pedagogical_regeneration.py` `_exam_index_text` sempre escreve `EXAM_INDEX.md` (antes ficava o arquivo antigo
+  com prova fantasma quando a última prova saía da categoria); (3) mesmo padrão em `ops/bootstrap_ops.py:171-173`,
+  reaproveitando a função. 5 arquivos, +93/−7; testes nasceram vermelhos; suíte 2420 passam, 4 pulados, 1 falha
+  pré-existente (caracterização FR vs golden).
+
+## Medido: anatomia v2 da unidade — nova base (régua v2 + 13 presentes): 248/284, 36 erros em 3 classes, 12 recuperáveis pelo scorer bruto (22/09)
+
+- Pedido do usuário 22/09 ("espera o W-Y e reexecuta a anatomia"). Script `c1-3/wt_anatomia_unidade_v2_22-09.py` (cópia do
+  W-T com raízes MF/IA/CG em `.frzero/wv_importacao_22-09/`, ponte por id preservado para os 13 e golds pela régua v2
+  final; congelamento `181b944ee445d47f…`; json `1b13d2ea2779682a…`; 96 s; régua vigente em docs/reports dá o mesmo placar).
+- Placar da nova base: bloco 223/237, **unidade 248/284 (87,3 %)**, subunidade primária 86/251, aceita 109/251. Por curso
+  (unidade): MF 63/66, IA 39/42, CG 73/93, SO 30/37, ES2 26/28, TCC 17/18 (FR sem régua). 90 % = 256 exige +8.
+- 36 erros de unidade: **bloco certo, unidade do bloco ≠ gold 18** (SO 6 = família threads u03 vs u02 herdada; CG 6 =
+  5 transformações u05 vs u04 herdada + `exemplodemanipulacaodeimagens`; MF 2; IA 2; ES2 `microsservicos4`; TCC
+  `aula-11-halting`); bloco errado 11 (CG 9, SO 1, ES2 1; dependem da CRU-04); texto vence errado 7 (CG 5, MF
+  `aws-encryption-sdk`, IA `oracle`); ausentes 0. Recuperáveis sem tocar o bloco (scorer bruto = gold): **12** — CG
+  `exercicios-sobre-curvas-html`, `instanciamento`, `transformacoesgl`, `video-opengl-vdi`; ES2 `azure`; IA
+  `ia-responsavel`, `visao-geral-introducao-e-historico`; MF `eth2`; SO `3103-threads`, `biblioteca-em-c-pthread`,
+  `laminas-sockets`; TCC `aula-11`. Bloqueios de subunidade: 17 (CG 10, SO 4, ES2 3).
+- Leitura: a régua v2 mudou o alvo — a família "bloco certo, gold diverge" (12 no W-T) sobe para 18 e concentra 12
+  recuperáveis; a regra texto-vence-bloco (R1/R2) foi reprovada na régua antiga, em que os 5 do CG contavam como acertos
+  do bloco. [DECISION] Próxima medição proposta: reexecutar `wt_regra_unidade_22-09` (R1 por LOCO, R2) na nova base e
+  medir a variante "texto vence o bloco herdado só quando a unidade do bloco não tem tópico que cubra o conteúdo"
+  (18 alvo, perdas por ID), 0 src.
+
+## Aplicado: régua v2 final (rulings de 22/09) vigente em docs/reports — unidade #49 246 → 242 por anotação (22/09)
+
+- Decisão do usuário 22/09: "Adota a v2; microsservicos4/7 em u02; CG 5 vazios em u05". Script
+  `c1-3/wx_adota_v2_22-09.py` (mesma cadeia e congelamento do W-X, `94e4b83943ad…`): congela a régua vigente em
+  `c1-3/regua_historica_22-09/` (subunit_gt_SO, material_gt_ES2, material_gt_CG) e monta `c1-3/wx_gold_v2_final_22-09/`
+  = v2 do W-X + ES2 `microsservicos4`/`7` u01 → u02 + CG `animacao-v2`, `instanciamento`,
+  `pagina-com-videos-sobre-instanciamento`, `transformacoesgeometricas`, `transformacoesgl` u04 → u05 (sobrepõe o oráculo
+  de 06/09 para esses 5; subunidade deles segue vazia, fora do denominador). Exatamente 12 linhas mudam (SO 4, ES2 3, CG 5).
+- Placar #49 sob a v2 final: bloco 217/237 (0), **unidade 242/284 (−4)**, subunidade 84/107 (0); denominadores iguais.
+  Por id: CG 5 acerto → erro (o motor segue a seção "Processo de Visualização 2D" = u04, que era o gold pelo oráculo);
+  ES2 `microsservicos4` acerto → erro (motor u01), `microsservicos5` e `microsservicos7` erro → acerto (motor já dizia
+  u02). CG unidade 74 → 69/93; ES2 25 → 26/28. Ganho/perda de ANOTAÇÃO, não do motor: a régua passa a exigir
+  conteúdo sobre seção nesses 5 do CG, o que o W-T mediu como precedência bloco > texto ainda ótima no agregado.
+- Aplicada em 22/09 ~16:31 (`wx_adota_v2_22-09.py --apply`, depois das reexecuções de W-V e W-Y): `material_gt_CG.csv`,
+  `material_gt_ES2.csv`, `subunit_gt_SO.csv` modificados (12 linhas); histórico congelado em `c1-3/regua_historica_22-09/`
+  (sha no JSON da adoção, `6b321e593aa79262…`). Usuário manteve u05 para os 5 do CG ("Mantém u05").
+
+## Medido: W-X — régua corrigida auditável (versão v2 proposta), placar #49 sob as duas réguas (22/09)
+
+- Gate 1 de medição aprovado pelo usuário em 22/09 ("(b) como medição paralela"); worker Opus 5 (Agent, `model: opus`;
+  effort não atestado), 1.056 s, 206.971 tokens. Artefatos `c1-3/wx_regua_corrigida_22-09.{py,json,md}` (json sha256
+  `ea6c74ec28c528a3…`; congelamento `94e4b83943a3ed45…`) e `c1-3/wx_gold_v2_22-09/{subunit_gt_SO,material_gt_ES2}.csv`
+  (cópias byte a byte, só as linhas corrigidas mudam, com nota "W-X 22/09 (proposta v2, não adotada)"). Conferido pelo
+  coordenador: reexecutado (141 s), JSON byte-idêntico, 4 checks True; `src/`, `tests/`, CSV históricos e `.frzero/` 0 diff;
+  diff dos CSV = exatamente 5 linhas. Régua histórica reproduz 217/237, 246/284, 84/251, 107/251 no HEAD `493119e`
+  (a #50 não altera o placar).
+- Varredura (52 achados): (i) subunidade gold fora da unidade gold 14 (SO 4, ES2 4, CG 1, FR 5); (iii) id sem material 13
+  (os mesmos do W-T, assunto do W-V); (iv) gold vazio 6 (TCC 1, CG 5); (v) slug repetido entre unidades 2 no SO
+  (`conceitos-basicos` u02/u04, `estudo-de-casos` em 5 unidades — problema do método de pontuação por slug, não da
+  anotação; sensibilidade no #49: 0 acertos creditados só pelo slug com unidade errada); (vii) 11 linhas `scorable=no`
+  motivadas por unidade antiga (MF 5, SO 1, ES2 1, CG 4) — reabrir mudaria o denominador, fica para uma v3; (ii) e (vi) 0.
+- Correções v2 (material + taxonomia, nunca predição do motor): SO `3103-threads`, `exemplo-threads-em-c-exemplo1/2/3`:
+  subunidade `conceitos-basicos` → `programas-multithreads` (u02 → u03; evidência `3103-threads.md` l.42/158,
+  `pthread_create`; threads só existe em u03 4.1); ES2 `microsservicos5`: unidade u01 → u02 (contêiner/Docker/implantação,
+  `microsservicos5.md` l.88/226/406; u02 2.6/2.7; contraria o ruling do usuário de 19/08 que pôs a série em u01).
+- Indecidíveis pelo pacote (mantidos): ES2 `microsservicos4` (circuit breaker) e `microsservicos7` (publish-subscribe):
+  cabem em u01 (1.3.4/1.5) e u02 (2.7); rulings de 19/08 e 26/08 se contradizem. CG 5 golds vazios: título diz u04,
+  conteúdo é 5.1 transformações (u05). Mantidos com motivo: TCC `aula-06` vazio (decisão do usuário, revisão de
+  pré-requisito; risco: seção "Decidíveis vs. Reconhecíveis" casa 2.2 da u02); CG `resolucao-de-prova-3d` ambígua.
+- Placar #49 sob v2: bloco 217/237 (0), unidade **247/284 (+1, ES2 microsservicos5)**, subunidade primária 84 e aceita
+  107 (0) — ganho de anotação, não do motor. As 4 correções do SO não mudam o placar hoje; só tiram exigência
+  incompatível da régua. [DECISION] Adoção da v2, ES2 microsservicos4/7 e CG 5 vazios dependem do usuário.
+
+## Investigado: tipo de bloco decidido por texto — falsos positivos no cronograma, causa comum (22/09; user: "estamos tratando o sintoma")
+
+- Caso relatado: FR 01/10 "Introdução ao roteamento IP" marcado `overview` (tipo "Introdução" = aula de apresentação/plano,
+  sem unidade). Mecanismo: `classify_block` (`timeline/classifier.py:234-242`) manda para OVERVIEW conteúdo com o token
+  "introducao" e ≤ 2 tokens; a normalização descarta "ao" e "IP". No build vivo o usuário corrigiu à mão
+  (`manual_kind_override=class`); no build 15-09 segue overview. Mesmo defeito: IA "ML: Introdução a ML" (overview com
+  unidade). TCC "Atendimento a dúvidas {kind=g2}" → assessment porque o marcador de PERÍODO g2/ps vira tipo
+  (`index.py:308`, `_IGNORED_KIND_AS_SOURCE`).
+- Causa raiz: o tipo é inferido pelo saco de palavras do CONTEÚDO agregado do bloco mesmo quando o professor declarou
+  o tipo (coluna Atividade / marcadores); "Aula" é tratado como ausência de sinal (`index.py:353`) e o bloco cai na
+  tabela de keywords + regra OVERVIEW. Vocabulário pedagógico colide com marcador administrativo e cada colisão ganhou
+  um guard (6 guards, 3 arquivos de teste dedicados). Censo dos 8 builds vivos (`scratchpad/censo_kinds.py`, 22/09):
+  33 blocos com tipo por texto sob Atividade=Aula — feriado/suspensão 15 e revisão 4 legítimos; overview 5 (2 errados);
+  office_hours 9 ("aula de dúvidas"/"dúvidas da P1": CG 5, FR 1, IA 1, SO 2), workshop 1 (TCC oficina, Atividade Aula).
+- Decisão do usuário (22/09): Gate 1 da medição aprovado; **aula de dúvidas/atendimento antes de prova = review**
+  (hospeda material, herda escopo da prova); senão office_hours. Issue
+  [#52](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/52): tipo por LINHA (override > Atividade ≠ Aula >
+  marcador com sentido de tipo > forma do rótulo com cue na cabeça > prova só com sinal forte > aula), bloco = agregação,
+  sem heurística de conteúdo nem guards. W-Y em execução (worker Opus, estado `.workflow-local/wy-kind-por-linha-52-20260922.md`):
+  tabela de mudanças nos 8 cursos, diff de segmentação, placar dos 3 eixos, guards/testes obsoletos. Etapa 2 (src/) exige
+  Gate 1 próprio após a tabela ser revista.
+
+## Commitado (Gate 2): "Prova N" vira P<N>, seção de avaliação com prefixo é lida, unidades sem bloco entram no dashboard — #50 (22/09, `493119e`)
+
+- Origem: usuário viu no FR (build de 22/09) a P2 ausente ("Prova 2" no cronograma) e a unidade 06 (Nível
+  físico) "inexistente no programa". Gate 1 aprovado em 22/09 ("vamos fazer 1+2, depois, 3 e revisar tudo no
+  4"). Issue [#50](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/50). Executor subagente
+  claude-sonnet-5/medium (T1 por routing.md), papel tdd-guide, testes vermelhos primeiro; coordenador
+  claude-fable-5-1 (sessão 8072c4bb). Estado em `.workflow-local/timeline-prova2-unidade06-20260922.md`.
+  Gate 2 aprovado pelo usuário em 22/09 ("faça a recomendação: aprovar (e) e o Gate 2 da #50 agora…"); commit
+  `493119e` (6 arquivos), sem push/PR.
+- Causas medidas: `_exam_code_from_text` (`content_taxonomy.py:981`) só casava `p<n>` — bloco-26 "prova 2" →
+  código vazio; dashboard mostrava "Avaliação", contexto temporal "prova" sem código,
+  `review_list_block_for_entry` sem P2 (o motor já entendia, `anchor_engine.py:105`).
+  `_TEACHING_PLAN_ASSESSMENT_START` (`timeline/index.py:887`) exigia linha iniciada por AVALIAÇÃO e o plano FR
+  usa "PROCEDIMENTOS E CRITÉRIOS DE AVALIAÇÃO:" (0 avaliações lidas). `timeline_dashboard.py:642` listava só
+  unidades com bloco: a 06 existe no plano e no COURSE_MAP, mas sua única aula ("Camada física e raw sockets",
+  10/11) caiu na u02 (token `sockets`) com tópico da u01 (alias "Camada Física" do GLOSSARY), então não era
+  selecionável no override nem no escopo da P2.
+- Mudança: extrator compartilhado aceita `prova <n>` (1 dígito, lookahead contra data: "prova 6/11" → "") e
+  alias "p final" → PF; dashboard delega a `_exam_code_from_block` e lista taxonomia ∪ blocos
+  (`_available_unit_slugs`); START aceita cabeçalho terminado em AVALIAÇÃO; `_assessment_block_label`
+  reaproveita o extrator (antes devolvia "1 DIA 26 11 2026 PROVA 2 PROVA" e "prova final" com data nunca
+  virava PF). Diff: 6 arquivos (5 + `tests/test_assessment_label_and_plan_section.py` novo). Asserts novos
+  nasceram vermelhos ('' == 'P2'; 'Avaliação' == 'P2'; ImportError). Suíte: 2416 passam, 4 pulados, 1 falha
+  PRÉ-EXISTENTE (`test_caracterizacao_blocos_atual[FR]`: compara o repo FR externo com `tests/_golden`, não
+  importa `src`; defasado pelo build do usuário de 22/09 e agora pelo override abaixo).
+- Revisão Astra única (sessão `01a0ca3d-e1db-7123-8192-9bb005b1657b`, gpt-6-astra/medium, read-only, ~5 min,
+  63.262 tokens): 0 bloqueantes, 2 avisos corrigidos com teste vermelho (dia de data com 1 dígito virava P6;
+  alias "p final" perdido); import local mantido por recomendação, comentário encurtado.
+- Item 3 aplicado no repo FR (`course/.timeline_curation.json`, por uuid): bloco-22 → `unidade-06-nivel-fisico`;
+  escopo manual da P2 = u04+u05+u06 (antes u04+u05: a 06 não era selecionável). Reprocesso headless sem rede
+  (`scripts/reprocess_assignments.py`, Gemini/Datalab bloqueados). Medido: bloco-26 código P2; plano lido
+  P1 [1,2,3] / P2 [4,5,6], conflitos []; `unit_periods` ganha a 06 (1 bloco · 10/11 a 12/11) e o COURSE_MAP
+  lista a 06 na Timeline.
+- Pendências fora da #50 (também no comentário da issue):
+  1. Motor (T2, medir nos golds): "Camada física e raw sockets" → u02 / tópico u01. Candidatas: sinônimo
+     camada≈nível no scorer de unidade, ou alias de glossário de tópico "modelo de camadas" não votar em
+     unidade. Sem override a 06 fica sem período.
+  2. `_assessment_date_from_timeline_rows` (`timeline/index.py:1118`) devolve a PRIMEIRA linha casada: P1
+     recebeu 22/09 ("Dúvidas da P1") em vez de 24/09; preferir linha de prova. Só afeta
+     `.assessment_context.json` (conflitos).
+  3. Golden da caracterização FR defasado (u03→u04 num bloco pelo build de 22/09; override do bloco-22):
+     regenerar é decisão da campanha dona do teste.
+  4. Override de unidade não altera `primary_topic_label` do bloco-22 ("Modelos OSI e TCP/IP"); há override
+     manual de tópico no dashboard.
+  5. Escopo declarado no plano (P1 01-03 / P2 04-06) não substitui o escopo por data dos blocos
+     (`apply_assessment_review_scope`: manual > data); usar a declaração como precedência intermediária é
+     mudança de regra, não incluída.
+
+## Validado: 5ª resposta do Astra — W-T/W-U, importação offline, régua corrigida e seleção (22/09)
+
+- Parecer literal em `c1-3/astra_ideias_motor_22-09.md` (5ª resposta, colada pelo usuário). Síntese: favorável
+  ao Gate 1 da importação offline (escopo local, identidade e origem preservadas, pipeline completo sem
+  rede/LLM, relatório por material erro→acerto e efeito nos 3 eixos; disponibilidade da entrada ≠
+  classificação certa, confirmar por replay). A régua precisa de versão CORRIGIDA auditável: histórica
+  congelada, correções sustentadas por materiais e taxonomia (nunca pela resposta do motor), diferenças de
+  anotação separadas dos ganhos de algoritmo. W-U não prova 177 erros, mas o limiar "> 50 % nos 84 certos" NÃO
+  serve como aceite de integração (nesses 84 o motor já acerta por definição): só triagem; um experimento de
+  seleção delimitado exige preservação dos acertos sem lista protetora, precisão sobre TODAS as decisões
+  novas/alteradas (inclusive abstenção→erro), acionamento só por sinais disponíveis, LOCO e replay dos 3
+  eixos, precisão sobre decisões emitidas distinta do denominador completo. Os 40 B puros dão teto condicional
+  211/251 (84,1 %); chegar a 226 exige recuperar ≥ 15 dos 40; repetir a conta DEPOIS da importação (documentos
+  recuperados podem trazer relações). Conhecimento externo = regime explícito, decisão separada. CRU-04: MF
+  56/66 precisa de 60/66; os 6 desempates residuais são MF 3, IA 1, CG 2, e só os de MF dão 59/66 (89,4 %);
+  "indistinguível" deve nomear em quais sinais. Gate 2 documental dos 8 artefatos + parecer: favorável,
+  registra experimentos (inclusive hipóteses reprovadas), não aprova regra; sem push/PR/merge.
+- Três contas que o Astra pediu para esclarecer, conferidas por ID pelo coordenador (22/09,
+  `c1-3/wt_anatomia_unidade_49_22-09.json`, `wu_cobertura_relacoes_22-09.md`, `aceite_v4_48_22-09.json`):
+  1. "+13 com 12 links": os 13 ausentes são 12 links (MF `eth2`, `aws-encryption-sdk`,
+     `archive-of-formal-proofs-355fb8`; IA 2; CG 7 vídeos) + 1 PDF (MF `t1-2026-1`). 246 + 12 = 258 (90,8 %)
+     já cruza; + o PDF = 259. O handoff-49 escrevia "12 links (+13)" por imprecisão; corrigido.
+  2. W-U: 56 + 53 + 70 = 179 cobertos, não 178: A puro 1 + 1 + 0 = 2, A-conflitante 55 + 52 + 70 = **177**.
+     O correto é "177 dos 179 cobertos"; as populações 106/53/84 são disjuntas por construção. Corrigido no
+     bloco W-U abaixo e no handoff-49.
+  3. "4 custos da #48": NÃO são regressões. `perdas_novas_vs_47.unidade = []` (0 acerto→erro) e
+     `cursos_que_regridem_vs_47 = []`. Dos 4 `texto_vence_errado` (todos CG), 2 mudaram de unidade sob a #48
+     por `texto-vence-vizinho` (`openglbasico` u02→u03, `texturas-v3` u02→u01), erro→erro; 2
+     (`morfologiamatematicapptx`, `pagina-com-videos-sobre-morfologia-matematica-06265a`) não têm razão da
+     #48 (texto > bloco por score). Rótulo correto: "texto vence errado 4, 0 regressões da #48". Critério de
+     zero perdas preservado.
+- [DECISION] Decisões que continuam do usuário (o Astra só opina): (a) Gate 1 da importação offline dos 12
+  links + PDF (escopo local, `moodle_sync.plan_import`, replay dos 3 eixos, transições por material);
+  (b) régua corrigida como versão nova auditável (SO 4 inconsistências u03 × `conceitos-basicos`, slug
+  duplicado, TCC gold vazio); (c) experimento de seleção na subunidade só com os critérios acima, de
+  preferência após (a) e (b); (d) CRU-04 com alvo MF 60/66 e famílias além dos desempates; (e) Gate 2
+  documental dos 8 artefatos W-T/W-U + 4ª/5ª respostas do Astra.
+- Decisão do usuário (22/09): aprovou (e) e o Gate 2 da #50; (a) abre como próxima frente; (b) como medição
+  paralela; (c) e (d) depois de (a). (e) commitado em `1a968a2` (9 arquivos: 8 wt_*/wu_* +
+  `astra_ideias_motor_22-09.md`); tracker e handoffs continuam fora do commit por decisão anterior do usuário.
+
+## Commitado (Gate 2): seção corroborada vence unidade herdada do bloco — #47 (21/09)
+
+- Gate 1 de implementação aprovado pelo usuário em 21/09 (aceita o −1 na subunidade aceita; implementar
+  nesta sessão). Issue [#47](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/47). Executor
+  Claude Code (claude-fable-5-1, escolha do usuário); TDD, testes vermelhos primeiro. Gate 2 aprovado
+  21/09 ~21:18; commit `9220a57` em `feat/motor-atribuicao` (8 arquivos de src/tests + 25 artefatos
+  21-09 de c1-3/). Push, PR e merge NÃO autorizados; issue segue aberta. Nova base para a CRU-04.
+- Mudança: `file_map.UnitMatchResult.section_slug`; `file_map.auto_map_entry_unit` pontua a seção sozinha
+  contra um índice só com título e tópicos do plano (`plan_only_unit_specs`), vencedor estritamente único;
+  `resolver_apply.apply_unit_subunit_fields` só aceita a seção se o vencedor bruto do texto, não ambíguo, é
+  a mesma unidade; `file_map.reconcile_unit_with_block(section_unit_slug=…)` deixa essa unidade vencer a
+  herdada/reconciliada do bloco, razão `secao-vence-bloco=<id>`, conflito registrado. Bloco manual, unidade
+  manual, explícita e "sem bloco" inalterados.
+- Aceite com o `src/` real, `c1-3/aceite_regra_secao_47_21-09.{py,json}` (sha256 `ffb64a5ab0fbee94…`): 7/7
+  checks — unidade 244/284, 0 perda, nenhum curso regride, bloco 213/237, subunidade primária 84, aceita
+  107, e mudam exatamente as 8 entradas medidas. A 1ª versão pontuava a seção contra o índice de produção
+  (enriquecido por glossário) e mudava 9 (IA `introducao-a-agentes`, sem régua, a mais); corrigida para o
+  índice só-plano, que é o que foi medido.
+- Revisão Astra única (sessão `01a0c551-cd98-79b2-be2c-77bfde50773d`, gpt-6-astra/medium observado, 165 s,
+  63.670 tokens, read-only): APROVAR COM AJUSTES, 0 CRITICAL/HIGH/MEDIUM, 3 LOW, os 3 corrigidos com teste
+  antes: (1) o índice só-plano disputava o único slot do memo por identidade e os dois índices eram refeitos
+  a cada entrada → slot próprio em `facade/file_map.py`; (2) `ui/dialogs._resolve_backlog_unit_status`
+  explicava o conflito como "matcher mais confiante" e não conhecia a razão nova → fonte e nota próprias;
+  (3) faltavam os casos seção × herdada do vizinho e explícita + seção → adicionados. Aceite refeito depois
+  dos ajustes: JSON byte-idêntico.
+- Testes: 14 novos; arquivos afetados 99/99; suíte 2397 passam, 4 pulados, 1 falha PRÉ-EXISTENTE e alheia
+  (`test_pdf_markdown.py::test_respect_actualtext_tira_a_flag_e_restaura`, premissa de versão do pymupdf,
+  falha igual no HEAD limpo `ce02a8f`).
+- Pendência achada de passagem (legado, não tocado): em `tests/test_core.py` os
+  `test_resolves_backlog_unit_status_*` (~linha 1715) estão aninhados dentro de outra função e NUNCA são
+  coletados pelo pytest.
+- Limites da evidência: 5 decisões avaliáveis em 2 seções; cursos já estudados não são holdout novo; sem
+  build real desde as fontes (34–56 min por curso) — o aceite é replay da fase real sobre os builds 15/17-09.
+
+## Medido: replay fiel da subunidade e hipóteses H1/H2/H3/H3b (21/09)
+
+- Decisões do usuário (21/09): a meta >90% de subunidade primária vale no regime com declaração opcional
+  do professor, 0 LLM; o cru segue publicado como está, sem redefinir métrica; bloco e unidade mantêm a
+  meta no cru. Medição aprovada com 0 mudança em `src/`, tarefa `subunidade-replay-h2h3-20260921`;
+  estado do regime 2 arquivado em `.workflow-local/`, Gate 1 do script/formulários segue pendente e a
+  revisão Astra consumida não se repete.
+- Aritmética (denominador 251, >90% = 226): 84 acertos; 167 não-acertos = 95 rótulo ausente + 17 genérico
+  + 47 presente + 8 entradas ausentes. Somas condicionadas ao diagnóstico (não teto de método): 131
+  (52,2%), 148 com os genéricos (59,0%); >90% exigiria acertar >= 78 dos 103 sem token do rótulo/alias do
+  gold nas fontes que o diagnóstico conta.
+- Harness `c1-3/replay_subunidade_21-09.py` -> `.json` (sha256
+  `6530f72a0c57e7a86065e3005e177a95c6e7b1d30206ad7621f11fefa14799d5`): 1ª + 2ª passada reais
+  (`resolver_apply.py:420-577`), unidade gravada, entries em deepcopy, sem build/rede/LLM. Fidelidade com
+  assert: 329/329 entradas processadas dos manifests, 243/243 do gold, 84/251. Replay só da 1ª passada
+  dava 191/243 e 62 acertos: a diferença inteira é a 2ª passada.
+- Mecanismo nos 47 "presente" (1ª passada, indício): token discriminante em título/heading 30, só corpo
+  16, só campo não lido 1. 28 sem frase dos dois lados (decide o bônus de tokens, cego ao campo,
+  `timeline/index.py:1909-1930`); 11 irmão de rótulo curto casa frase e o gold não; 5 gold fora da
+  unidade; 3 gold casa frase e perde.
+
+| variante | acertos /251 | ganho/perda | leitura |
+|---|---:|---:|---|
+| base (gravado) | 84 | — | replay fiel |
+| H1 `moodle_label` como título | — | +1/−0 | só 1ª passada, indício; descartada |
+| H2 bônus por token exclusivo em heading/título | 86 | +4/−2 | TCC 7→6; REFUTADA pelo aceite |
+| H3 scorer de unidade no lugar do de subtópico, índice congelado | 88 | +18/−14 | CONSTRUÇÃO DEFEITUOSA (Astra, 21/09): ignorava os aliases da 2ª passada; 11 das 14 perdas eram `propagado-headings`/`rotulo-decomposto`. Não vale como refutação |
+| H3a = H3 enxergando os aliases da 2ª passada | 95 | +18/−7 | SO +2/−0, ES2 +8/−1, TCC +2/−0, CG +3/−1, MF +1/−1, FR +2/−4 (6→4); abstenção→decisão 7 certas / 14 erradas (MF 0/9) |
+| H3ad = H3a + frases label/alias deduplicadas | 95 | +19/−8 | FR 6→3; mesmo perfil de abstenções; não passa o aceite |
+| H3b pós-hoc: H3 só onde 1ª e 2ª passada não decidiram | 89 | +5/−0 | 16 abstenções viram 5 acertos + 11 erros (MF 0/9); precisão das decisões novas 31%; não recomendada |
+
+- Pesquisa Astra `01a0c258` (pedida pelo usuário; tipo pesquisa, não revisão de diff; gpt-6-astra/high,
+  read-only, 7 min 57 s, 100.109 tokens, exit 0; cópia em `c1-3/astra_pesquisa_subunidade_21-09.md`).
+  CORRIGE o coordenador em dois pontos: (1) o H3 acima estava mal construído — remedido pareado em
+  `c1-3/replay_subunidade_21-09_h3fix.json` (sha256
+  `f9d615380f86986a0e8984d2c8a8c6d2b9cd6341f6e2179e87da69fc59333ce7`; `h3` congelado reproduz 88, fidelidade
+  329/329 e 243/243 mantida): 95/251 = 37,8%, abaixo dos 99 condicionais que ela estimou; (2) 131 e 148 são
+  somas condicionadas ao diagnóstico, NÃO teto de todo método sem LLM — o parecer de 17/09 já rejeitava
+  essa inferência e o coordenador a repetiu. Vazamento que ela não pôde certificar, conferido depois:
+  `_sem_eco` tira `unit:`/`subunit:`/`bloco:`/`block:` do texto de score (`entry_signals.py:87-91`).
+  Contagens dela: dos 95 "rótulo ausente", 68 têm markdown e 27 resumo de código; 5 têm GOLD VAZIO (o certo
+  é abster); token do gold na seção do Moodle em 18 (4 exclusivos na unidade); prefixo morfológico comum
+  em 28 (candidatos, não correções; radicais já refutados); vizinho confiante na seção existe em 93, mas
+  onde a previsão dos vizinhos é unânime (46) acerta 0. Régua: 13 pai×filho, 82 previsões entre irmãos,
+  24 aceitas-não-primárias; IA concentra 34 erros de gold abstrato (26 preditivos + 8 descritivos).
+  Veredito: nenhuma alavanca com ganho esperado >= +20 sustentado; seletor-oráculo entre H2/H3/H3b
+  recupera só 19 erros distintos. Maior população aberta: relação categoria→algoritmo extraída do
+  próprio material (34 do IA), cadeia não demonstrada. Não verificado por ela: eco de tags (feito acima),
+  linhagem dos `herancas_*`, sinais morfológicos no corpo.
+- Leitura: nenhuma alavanca léxica medida leva a subunidade além de 37,8% no cru (35,5% antes da correção
+  do H3); sustenta a decisão do regime, sem provar teto. O scorer de unidade tem sinal real em rótulo composto (ES2 "estudo de caso … microsserviços",
+  TCC), mas não generaliza. O aceite usado (saldo > 0, 0 perda nos 84, nenhum curso regride) era
+  incompleto: faltava a precisão das decisões novas (abstenção -> erro); incluir nos próximos Gates.
+  Os 7 cursos já foram estudados: tudo aqui é in-sample. A simulação troca só a rota de subtópico; o
+  scorer é compartilhado com bloco->tópico (`index.py:1975`) e unidade (`facade/file_map.py:135`).
+- Próximo: decidir o Gate 1 do regime 2; unidade (+17) e bloco (+1) depois, com baseline revalidado.
+  Linha CRU-02 da fila não foi alterada (exige a política de campanhas).
+
+## Medido: diagnóstico dos 167 erros de subunidade primário nos 7 cursos (17/09)
+
+- Gate 1 aprovado ("Aprovo o Gate 1 do diagnóstico, pode rodar"). Harness
+  `c1-3/diagnostico_subunidade_17-09.py` (+ `.json`, `.csv` por material), 0 mudança em `src/`,
+  sem build, sem rede, sobre os builds existentes (MF/IA de 17/09, demais de 15/09). Autoteste:
+  reproduz o placar 84/251. Evidência = tokens (≥4 chars, sem acento) do rótulo + aliases do
+  tópico gold no que o scorer lê: texto extraído, resumo de código (`code_curation.json`, como
+  `code_summarization.py:295`), título, `moodle_label`, nome do arquivo. Primeira versão
+  marcava os 31 zips como texto vazio por não ler o resumo; corrigida antes de registrar.
+- Classe: errado na unidade certa 92 · vazio 32 · aceito-não-primário 24 · unidade errada 11 ·
+  ausente (gold sem fonte) 8. A unidade está certa em 148 dos 159 classificados: o erro é entre
+  irmãos do mesmo bloco do plano.
+- Evidência (159), corrigida após a Astra (siglas do rótulo contam; exclusividade medida também dentro da
+  unidade, que está certa em 148/159): **rótulo ausente 95 (60%)** · só genérico na unidade 17 (11%) ·
+  **presente com token exclusivo na unidade 47 (30%)** (28 se a exclusividade for no curso inteiro; 11 são
+  pai × filho já estudados). Texto vazio: 0.
+- Categoria: `codigo-professor` 63 (58 rótulo ausente: 27 zips pelo resumo, 31 arquivos de
+  código) · `outros` 51 · `listas` 26 · `material-de-aula` 17 · `bibliografia` 2.
+- Por curso (n / acerto / rótulo ausente): MF 58/25/17 · SO 15/7/8 · IA 39/4/31 · ES2 28/7/6 ·
+  TCC 11/7/0 · CG 82/28/29 · FR 18/6/4. IA: os 34 erros são irmãos dentro da unidade certa e o
+  gold é `modelos-preditivos`/`modelos-descritivos` (3 tokens), que nunca aparecem em material
+  sobre k-NN, perceptron ou agrupamento.
+- Estrutura do professor supre pouco (Astra, medido sobre os 159): seção/card com token exclusivo
+  do gold em 10, rótulos de sessão SARC em 20; sobre os 132 ausentes/genéricos a união é 9, e uma
+  projeção lexical dessas fontes acerta 25 de 100 decisões perdendo 15 acertos. Gold sem token
+  exclusivo: 40 no curso inteiro, **8 dentro da unidade** (a versão anterior deste bloco chamava os
+  40 de "indecidíveis"; estava errado).
+- Leitura corrigida (Astra `01a0b0be`, NÃO SUSTENTA "sempre"; cópia em
+  `c1-3/astra_revisao_regime2_17-09.md`): 60% dos erros não têm palavra do tópico em nada que o
+  motor lê; para esses, relação fornecida é o único caminho demonstrado (braço V IA 5/39 → 38/39;
+  FR do zero 6/18 → 16/18 com vocabulário LLM), sem que isso prove necessidade universal nem teto.
+  30% têm token discriminante presente e o scorer ainda erra: alcançável sem declaração, ganho não
+  medido. Necessidade varia por curso (TCC 7/11 com 3 "presente"; IA 4/39 com 31 "ausente").
+  Retirados do registro: "teto ≈ 40%", "nenhuma fonte fornece", "declaração necessária sempre".
+- Canal `course/.glossary_curation.json`, verificado: manual presente desliga o compilador LLM sem
+  olhar o conteúdo (`vocabulary_compile.py:227`); loader funde manual + `.llm.json` preexistente
+  (`repo.py:1732`); filtro de nome de seção só no compilado (`repo.py:1749`); chave sem código
+  vira chave morta sem aviso (`repo.py:1747`); resync regenera a taxonomia
+  (`incremental_build.py:109`). Regime 2 = opcional, por lacuna, medido antes de adotar.
+
+## Medido: placar dos 3 eixos nos 7 cursos, builds desde as fontes (17/09)
+
+- Pedido do usuário: "medir bloco, unidade e subunidade hoje, depois atacar o que tem menos %;
+  não curamos sintomas, e sim a doença". Consolidação dos builds existentes, sem rebuild:
+  MF e IA de `c1-3/verificacao_pacote_categoria_MF_IA_17-09.json` (17/09, `src` atual);
+  SO, ES2, TCC, CG e FR de `c1-3/verificacao_pacote_7cursos_15-09.json` (15/09). Inferência,
+  não rebuild: `src` desde 15/09 só mudou em `d495c66` (medido 0 ganhos/0 perdas nos 316
+  materiais antes do commit), DeepTutor fora do builder (não toca o motor) e `ce02a8f`
+  (replay: 0 mudanças de categoria fora do MF). FR "do zero" só tem gold de subunidade.
+
+| curso | bloco | unidade | sub aceito | sub primário |
+|---|---|---|---|---|
+| MF (17/09) | 53/66 = 80,3% | 61/66 = 92,4% | 29/58 = 50,0% | 25/58 = 43,1% |
+| SO | 36/39 = 92,3% | 27/37 = 73,0% | 8/15 = 53,3% | 7/15 = 46,7% |
+| IA (17/09) | 38/42 = 90,5% | 39/42 = 92,9% | 5/39 = 12,8% | 4/39 = 10,3% |
+| ES2 | 27/28 = 96,4% | 25/28 = 89,3% | 8/28 = 28,6% | 7/28 = 25,0% |
+| TCC | 26/27 = 96,3% | 17/18 = 94,4% | 9/11 = 81,8% | 7/11 = 63,6% |
+| CG | 33/35 = 94,3% | 70/93 = 75,3% | 42/82 = 51,2% | 28/82 = 34,1% |
+| FR (do zero) | n/d | n/d | 7/18 = 38,9% | 6/18 = 33,3% |
+| **total** | **213/237 = 89,9%** | **239/284 = 84,2%** | **108/251 = 43,0%** | **84/251 = 33,5%** |
+
+- Ausentes (gold sem fonte): MF 4, IA 2, CG 7, total 13 no pacote de 15/09. Bloco e unidade
+  perto do teto descontando ausentes; subunidade primário é o eixo mais baixo em todos os
+  cursos, IA no extremo (4/39). Abaixo do "cru honesto" de 14/09 (100/251 = 39,8%) porque
+  aquele placar carregava heranças do produto; este é desde as fontes.
+- Causa já medida, não sintoma: o motor não tem a relação termo do material → rótulo do plano
+  (braço V: +18 termos em 2 tópicos do IA levaram IA de 5/39 a 38/39, 0 regressão; FR do zero
+  6/18 → 16/18 com vocabulário). Em 17/09 os erros restantes de MF/IA concentram em
+  `codigo-professor` (MF 17 previsões vazias, IA 22–23 erradas). Diagnóstico nos 7 cursos
+  (vazio × errado × rótulo sem token no texto, por categoria) ainda não feito: Gate 1 próprio.
+- RAG/vetores: registrado na caixa de ideias (tag ambiente web), fora do motor.
+
+## Concluído: #11 e #12 na main (23/09)
+
+- [#11](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/11): PR #40 mergeado na main em 23/09 (`bb22572`); revisões do Codex corrigidas em `6aefdad` (movimento reduzido no importador Moodle/M365 e na prévia de tema). Cancelamento de importadores/fluxos auxiliares segue gap conhecido fora da entrega.
+- [#12](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/12): PR #39 mergeado na main em 23/09 (`c2c7d85`); revisões do Codex corrigidas em `7875104` (`entry_point` estável e status `partial`). Exportação externa e instrumentação além de build/incremental/process_single continuam futuras.
+
 ## Concluído: prova matemática não é avaliação (17/09)
 
 - `orch-fix-defect` em `src/utils/helpers.py:682` (`auto_detect_category`): a cue `prova` casava
@@ -3306,12 +4623,22 @@ esta executado ou superado pela SEQUENCIA ACORDADA; le o historico so para "por 
 
 ## CAMPANHA FUTURA (produto) — web local + camada LLM por conta [BACKLOG VIVO]
 
+Requisitos transversais adicionados em 17/09: estados assíncronos/motion acessível (#11), observabilidade (#12) e qualidade/E2E/release (#14). Contrato em `.mex/patterns/engenharia-produto.md`; adoção das ferramentas depende da stack e do Gate 1, sem antecipar C6.
+
 Decisão do user 2026-08-11: campanha própria, DEPOIS da campanha 3 (cutover — motor
 estável antes de produto). Backlog ABERTO: o user vai adicionando ideias com o tempo
 (minerar DeepTutor e spec "Nexo" do amigo como referências). Princípio acordado nas
 discussões: manter o motor de compreensão (compile-time, medido) e trocar só
 VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
 
+- [IDEA] **Escopo de prova como módulo editável pelo aluno** (caixa de ideias, user 22/09, aula de FR: o plano
+  dizia P1 = unidades 01-03, o professor avisou em aula que a P1 vai até a última aula antes de 22/09, ou seja,
+  entra a unidade 04 até 17/09). Hoje o escopo vive em `manual_scope_unit_slugs` por bloco de prova (dashboard) e só
+  por UNIDADE inteira; a revisão herda; reprocesso manual. Ideia: (1) escopo declarado por "até a aula/bloco X" (data)
+  além de unidades, com rótulo legível ("unidade 04 até a aula de 17/09"); (2) o aluno edita quando o professor fala
+  em aula, e o sistema reorganiza (revisões, listas prep-prova, COURSE_MAP "também cobre", contexto temporal) e
+  reprocessa sozinho; (3) fonte da verdade separada do plano de ensino (plano = default, declaração vence), com
+  histórico da mudança. Encaixa na Fase B do painel web (curadoria na web).
 - [DECISION] **Painel web local** (substitui a GUI Python como cara do sistema; motor
   já é headless, zero mudança nele). Fase A read-only: "minha semana" cross-curso
   agregando os 5 `.timeline_index.json`, avaliações cronológicas com escopo
@@ -3469,6 +4796,57 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     Fora do 4.2 por construção: trocar o backend muda o texto extraído, e o scorer
     exige texto idêntico ao pacote de 15/09; comparar exigiria refazer a referência
     com o mesmo backend.
+  - **RAG para o tutor responder ao aluno** [AMBIENTE WEB / IDEIA FUTURA /
+    NÃO IMPLEMENTAR AGORA]: surgiu em 17/09 ("estava vendo alguns sistemas de RAG,
+    vetores"). Decisão do usuário: vai para a caixa de ideias com a tag ambiente web;
+    ele vai estudar sistemas de RAG antes de desenhar a implementação. Escopo: recuperar
+    trechos do acervo do curso para o LLM responder perguntas do aluno no ambiente web
+    (pergunta → trechos → resposta com citação). NÃO é alavanca do motor de atribuição,
+    medido no tracker de 14/09 e 17/09: o motor casa documento → rótulo do plano, sem
+    pergunta nem geração; embedding conta como LLM (§39.1, não reabrir) e só cabe no
+    regime opcional; mesmo o LLM compilando vocabulário fica em 73–74% de primário
+    (meta 95%); os erros de 17/09 estão em `codigo-professor` sem texto extraído, sem
+    o que embutir; rótulos genéricos do plano (`estudo-de-casos` 5x no SO) não ganham
+    discriminação por vetor. Relação com o existente: nota de vector store para
+    "onde vi isso?" cross-curso (embedding local pontual, mesma caixa); DeepTutor fica
+    como inspiração de persona, não de pipeline.
+  Ideias adicionadas 2026-09-20:
+  - **Divergência entre escopo declarado no plano e janela por data vira conflito
+    visível** [MOTOR / TIMELINE / IDEIA FUTURA / NÃO IMPLEMENTAR AGORA]: surgiu em 20/09,
+    véspera da P1 de FR (24/09). Medido: o plano de FR declara "P1 – Prova versando
+    sobre as unidades 01, 02 e 03", mas o cronograma tem aulas de U04 antes da prova
+    (12 Endereçamento IP, 13 IPv4, 14 ICMPv4; "Dúvidas da P1" só em 22/09).
+    `assessment_scope_by_date` (`src/builder/timeline/index.py:1170`) deriva o escopo
+    pela janela (P(k-1), Pk] e por isso põe U04 na P1. O plano já é lido:
+    `declared_unit_numbers` (`index.py:1667`) existe, mas só alimenta observação de
+    conflito; `apply_assessment_review_scope` (`index.py:1357`) não o consulta.
+    Hipótese inicial do user ("o plano quebra a regra da janela") REFUTADA no mesmo dia
+    pelo material do professor: `exercicios-revisao-topologias-p1.pdf`, na seção U4 do
+    Moodle 2026/2, abre com "Revisão Pré-Prova — Unidades 1 a 4" e 4 das 7 questões são
+    de U4 (fragmentação/DF/MTU, ICMP, VLSM). A janela por data acertou; o plano, de
+    vigência 2022/2–2023/2, está defasado. Ressalva: o cabeçalho da lista é "2026/1"
+    (lista do semestre anterior republicada). Consequência para a ideia: NÃO dar
+    precedência automática ao declarado sobre a janela; quando divergirem, mostrar o
+    conflito e deixar o override manual `block_manual_scope_slugs` decidir (já existe,
+    sempre vence, caso TCC em `index.py:1369`). Sinal candidato para desempate: lista
+    de revisão pré-prova no Moodle que declara as unidades.
+  Ideias adicionadas 2026-09-21:
+  - **Subunidade em camadas: motor sem LLM até onde der, LLM opcional no resíduo, por API
+    ou pela assinatura do usuário (OAuth)** [AMBIENTE WEB / MOTOR / IDEIA FUTURA / NÃO
+    IMPLEMENTAR AGORA]: surgiu em 21/09 ("caso conseguimos aumentar a subunidade até uns
+    80%, o resto poderia ser por LLM… tanto por API, como pela assinatura da plataforma").
+    Coerente com os regimes já decididos (cru / declaração opcional / LLM opcional) e com a
+    abstenção honesta do motor (o resíduo é identificável: vazio, ambíguo, empate).
+    Ressalva medida: "80% sem LLM" não tem evidência — cru 84/251 = 33,5%, melhor variante
+    léxica 37,8% com perdas, somas condicionadas ao diagnóstico 52–59%, que não são teto de
+    método (bloco "replay fiel" de 21/09 e pesquisa Astra `01a0c258`); com o LLM só
+    compilando vocabulário uma vez por curso o primário ficou em 73–74% (14/09 e 17/09).
+    O LLM hoje é a alavanca principal, não o resto. Desenho candidato: um canal único
+    (`course/.glossary_curation.json`, o do regime 2) preenchido por professor, por LLM via
+    API ou por LLM via chat da assinatura com colar/importar manual — o mesmo script
+    gerar/validar serve aos três. A verificar na campanha WEB, não presumir: termos de uso
+    de login por assinatura em app de terceiros, por provedor (indício: a Anthropic
+    documenta que produto de terceiros deve usar chave de API; OpenAI não conferido).
 
 ## HARNESS 10/09 — GRAPHIFY MCP NOS 3 CLIs (user: "quero usar ele no claude code, no codex e no agy")
 Estado: Claude Code via `.mcp.json` (local) · agy via `agy mcp add` · Codex `enabled = false` no global porque o
