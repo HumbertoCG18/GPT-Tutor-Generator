@@ -55,27 +55,37 @@ resolve (medido 2026-09-10).
 ### Linux (sessão na nuvem)
 
 ```bash
-apt-get install -y python3.11-tk      # o python3-tk do apt é do 3.12 e não serve ao python3 (3.11)
-python3 -m pip install -e ".[dev]" pydantic cffi "pymupdf4llm==1.27.2.3"
+# dependências (o script do ambiente já instala; repetir só se faltarem)
+python3 -m pip install pydantic cffi "pymupdf4llm==1.27.2.3" "pytest>=7" "pytest-cov>=4.1" "ruff>=0.6"
+# hook do repositório (o script do ambiente não acha o clone; a sessão instala)
 cp scripts/hooks/pre-commit.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
-python3 -m pytest tests -q --deselect tests/test_core.py::TestCliResolution::test_marker_cli_prefers_project_venv
+# suíte: não para na coleta; os erros de coleta continuam contados no resumo
+python3 -m pytest tests -q --continue-on-collection-errors \
+  --deselect tests/test_core.py::TestCliResolution::test_marker_cli_prefers_project_venv
 ```
 
-Medido no piloto de 24/09 na imagem da nuvem (Python 3.11.15), relatório em
-`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md`:
+Instalação editável não é necessária: o `pytest` roda da raiz com `pythonpath = ["."]`. O
+`tkinter` (`python3.11-tk`; o `python3-tk` do apt é do 3.12) exige root e não foi instalado pelo
+script; sem ele, só os testes de UI citados abaixo são afetados.
+
+Medido nos pilotos de 24/09 na imagem da nuvem (Python 3.11.15), relatórios em
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md` e
+`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-2.md`:
 
 - `pydantic` vai à parte: é importado no topo de módulos puxados por `engine.py`, mas não está
   declarado no `pyproject.toml` desta branch (a `main` declara). Sem ele, 45 erros de coleta.
 - `cffi` vai à parte: o `cryptography` do Debian, puxado por `pdfplumber`, não acha
   `_cffi_backend` e derruba a coleta inteira.
 - `pymupdf4llm` fixado na versão da máquina do usuário: com 1.28.2, `test_fracao_empilhada_vira_divisao`
-  falha (a fração some da saída).
+  falha (a fração some da saída); com 1.27.2.3 passa (piloto 2, issue #71).
 - O teste deselecionado força `os.name = "nt"` no processo e derruba o pytest no Linux.
 - Sem `tkinter`, dois módulos de teste falham na coleta e um mock de `tkinter` vaza entre módulos
   (`test_image_curation.py`, `test_datalab_captions.py`), mudando o resultado conforme a ordem.
-- Base Linux conhecida (piloto, com `tkinter` ausente): 26 failed, 2340 passed, 30 skipped. Das
-  falhas, 21 dependem de caminho `C:\...`, `robocopy` ou barra invertida — preexistentes, não
-  causadas por mudança da sessão. Comparar com essa lista antes de atribuir falha nova.
+- Base Linux conhecida (piloto 2, `tkinter` ausente, comando acima): 25 failed, 2341 passed,
+  30 skipped, 2 erros de coleta. Das falhas, 21 dependem de caminho `C:\...`, `robocopy` ou barra
+  invertida (#68), 3 são o vazamento do mock de `tkinter` (#69) e 1 exige o extra `google-genai`.
+  Todas preexistentes; a lista completa está no relatório do piloto 2. Comparar com ela antes de
+  atribuir falha nova à sessão.
 - Testes que leem repositórios-tutor reais (`TUTOR_REPOS`, `TUTOR_COURSES_DIR`, glob `*-Tutor`)
   dão skip sem eles. Não criar dados para contornar o skip.
 - Guia completo da nuvem: [sessao-nuvem.md](sessao-nuvem.md).

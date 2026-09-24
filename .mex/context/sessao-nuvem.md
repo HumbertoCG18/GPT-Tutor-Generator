@@ -29,16 +29,18 @@ código ou o tracker, siga a fonte e registre a divergência no handoff da sess�
 Pare e escreva só um diagnóstico, sem código, se qualquer item abaixo for verdade:
 
 - O pedido não traz escopo e aceite explícitos. Pedido vago não é Gate 1 (§6).
-- O tracker do clone não tem o bloco `<!-- fila-campanhas-start -->`. Em 24/09 esse bloco e os
-  handoffs de 21 a 23/09 existiam só na máquina local, sem commit; o clone estaria atrás e as
-  prioridades dele seriam falsas.
+- A tarefa depende de prioridade ou estado de campanha e o tracker do clone não tem o bloco
+  `<!-- fila-campanhas-start -->`. Em 24/09 esse bloco e os handoffs de 21 a 23/09 existiam só na
+  máquina local, sem commit; o clone estaria atrás. Tarefa presa a uma issue, com escopo e aceite
+  no pedido, não depende do tracker e pode seguir.
 - A tarefa exige algo da §2 que a nuvem não tem (tutores, gold como insumo, rede no produto).
 - A tarefa pertence a uma campanha marcada como bloqueada no tracker.
 
 Primeira ação de toda sessão, antes do pedido: conferir o ambiente com
-`python3 -c "import pydantic, tkinter, pytest"` e `ls "$(git rev-parse --git-common-dir)/hooks/pre-commit"`.
-Se algo faltar, rodar os comandos Linux de [setup.md](setup.md) e registrar no handoff. No piloto de
-24/09 o script do ambiente não tinha instalado nada.
+`python3 -c "import pydantic, pytest"` e `ls "$(git rev-parse --git-common-dir)/hooks/pre-commit"`;
+ler `/tmp/setup-nuvem.log`, se existir. Se faltar dependência ou hook, rodar os comandos Linux de
+[setup.md](setup.md) e registrar no handoff. No piloto 2 de 24/09 o script do ambiente instalou as
+dependências pip, mas não o `tkinter` nem o hook.
 
 ## 2. O que a nuvem não tem
 
