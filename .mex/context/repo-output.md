@@ -15,7 +15,7 @@ edges:
     condition: when understanding which build module generates each file
   - target: context/decisions.md
     condition: when understanding why the repo is structured this way
-last_updated: 2026-09-09
+last_updated: 2026-09-24
 ---
 
 # Repo Output Format
@@ -30,7 +30,7 @@ Reviewed against the current generator modules on 2026-06-21.
 course/CRONOGRAMA_DETALHADO.md               # block-by-block render with linked code; only when timeline blocks exist
 course/CRONOGRAMA_HEALTH.md                  # timeline/unit conflict and health report
 course/CODE_HEALTH.md                        # auto-generated coverage report for code summaries + block linkage
-course/code_curation.json                    # content-hash cache for Gemini summaries; safe to delete
+code_curation.json                           # at repo root: deterministic code summaries (determ v3, 0 API calls since 11/09); cache, prune stale before reading
 course/references_curation.json              # content-hash cache for reference summaries and unit/topic mapping; safe to delete
 course/COURSE_MAP.md                         # pedagogical map and primary tutor entry point
 course/FILE_MAP.md                           # routing index with priority, unit, subtopic, and timeline hints
@@ -78,7 +78,7 @@ README.md                                    # generated repository readme
 | `src/builder/artifacts/cronograma_health.py` | Renders CRONOGRAMA_HEALTH from timeline and curation conflict data. |
 | `src/builder/artifacts/temporal_context.py` | Renders setup/CONTEXTO_TEMPORAL.md from current timeline blocks. |
 | `src/builder/routing/file_map.py` | Builds routing indexes, unit matching, subtopic matching, and timeline scoring used by the generated routing index. |
-| `src/builder/core/code_summarization.py` | Generates Gemini summaries, assigns timeline blocks via concept overlap, prunes stale curation. |
+| `src/builder/core/code_summarization.py` | Produces deterministic code summaries (`synthesize_all_code_entries`; Gemini layer cut on 11/09), assigns timeline blocks via concept overlap, prunes stale curation. |
 | `src/builder/core/reference_summary.py` | Generates optional Gemini reference summaries and deterministic unit/topic mappings in references_curation.json. |
 | `src/builder/core/reference_navigation.py` | Injects mapped references as support lines in COURSE_MAP with overflow pointers to BIBLIOGRAPHY. |
 | `src/builder/runtime/gemini_client.py` | Lazy Gemini API client with exponential backoff on 429/5xx. |

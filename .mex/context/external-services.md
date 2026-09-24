@@ -21,7 +21,7 @@ edges:
     condition: when the question is the PDF backend selection mechanics
   - target: patterns/ollama-vision.md
     condition: when working on the vision client itself
-last_updated: 2026-09-11
+last_updated: 2026-09-24
 ---
 
 # Serviços Externos
@@ -50,7 +50,7 @@ Não há uso de OpenAI, Anthropic, Azure, Mistral, Cohere ou HuggingFace em `src
 | **Fórmulas em página HTML** | **sim, sem saída** | **não** — `src/builder/core/html_material.py` (linha 45) faz uma chamada Datalab paga **por imagem** (cap 400/build); sem chave a imagem vira `![… — não capturada]`. É o acoplamento pago mais duro do sistema. |
 | **Vocabulário (sinônimos)** | não (opt-in, default OFF) | sim: sidecar manual `<repo-tutor>/course/.glossary_curation.json` vence tudo |
 | **Voto de bloco** | não (opt-in, default OFF) | sim, é o default: `voter=None` dá saída byte-idêntica ao motor determinístico |
-| **Resumo de código** | não (opt-in, default OFF) | **parcial**: `assign_code_to_block` é local e determinístico, mas hoje só roda dentro do bloco que exige o Gemini (`src/builder/core/code_summarization.py`, linha 409) |
+| **Resumo de código** | **não** — camada Gemini cortada em 11/09 | **sim, é o padrão**: `synthesize_all_code_entries` (determ v3) roda em todo build, 0 chamadas; kill switch `TUTOR_NO_CODE_SYNTH` só para harness |
 
 ## Seleção de provedor de descrição — já existe, com limites
 
@@ -68,7 +68,7 @@ Para atender "escolher entre Datalab, Gemini e Ollama" faltam três coisas, toda
 
 ## Fallbacks (o que acontece quando falta)
 
-- **Gemini ausente** → `get_gemini_client` devolve `None`; voter mantém FLAG (não chuta), vocabulário não compila, resumo de código não roda, referência degrada para mapeamento por texto. Nada quebra.
+- **Gemini ausente** → `get_gemini_client` devolve `None`; voter mantém FLAG (não chuta), vocabulário não compila, referência degrada para mapeamento por texto. O resumo de código não depende dele (determinístico desde 11/09). Nada quebra.
 - **Datalab ausente** → `DatalabCloudBackend.available()` é `False` e o seletor cai para marker/docling/pymupdf, todos locais. Em runtime, erro do Datalab é registrado e a build segue com o `base_markdown`. Exceção: imagens de HTML ficam sem transcrição, sem alternativa.
 - **Ollama ausente** → a ação da UI aborta com erro; se o modelo cloud não estiver disponível, troca sozinho para `qwen3-vl:8b` local (`src/builder/vision/ollama_client.py`, linha 180). Cuidado: em lote, o texto de erro vira a própria descrição no manifest e **é injetado no markdown**.
 
@@ -98,4 +98,4 @@ repago em outro curso; e 112 das referências de imagem do CG já trazem `alt` n
 
 1. `src/ui/theme.py` (linhas 89-93) reescreve ativamente o modelo de visão local `qwen3-vl:8b` para `qwen3-vl:235b-cloud` a cada load. Quem configura local perde a escolha.
 2. `src/builder/core/html_material.py` (linha 27) cap de 400 chamadas Datalab por build; ao estourar, as imagens seguintes viram `![… — não capturada (cap 400)]` sem erro nem linha no relatório.
-3. `src/builder/core/code_summarization.py` (linha 409): o matcher local está dentro do try que exige o client. Espelhar o padrão de `src/builder/core/reference_summary.py` (rodar com `client=None`) daria atribuição de código sem API paga.
+3. Resolvida em 11/09 (f637a110): o resumo de código virou produtor determinístico em `src/builder/core/code_summarization.py` (`synthesize_all_code_entries`), sem client.
