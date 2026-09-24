@@ -2,7 +2,8 @@
 
 **Resultado experimental, não uma melhoria aprovada.** O candidato derruba a subunidade primária de 86 para 77/251,
 com 16 perdas de acertos atuais e três cursos regredindo (MF, ES2, FR); bloco e unidade não mudam.
-**Recomendação: encerrar este mecanismo** (léxico geral do ConceptNet injetado pelo canal de alias). Nenhuma variante
+**Recomendação: encerrar este mecanismo**: léxico geral, sem desambiguação de sentido, integrado como alias ao pontuador
+de subtópico e, por ele, à 2ª passada. Isso não demonstra que qualquer conhecimento externo seja inútil. Nenhuma variante
 foi iniciada. Não houve mudança em `src/`, na régua ou no regime cru.
 
 Artefatos: `c1-3/piloto_ke_declaracao_23-09.md` (pré-registro), `piloto_ke_lexico_23-09.{py,json}`,
@@ -63,14 +64,16 @@ antes da reavaliação.
 - **Candidatos:** o gold entra no conjunto em 9 materiais a mais (MF 2, ES2 5, CG 1, FR 1). O conjunto médio sobe de
   4,12 para 4,28 tópicos, e 2 materiais ganharam 2 ou mais candidatos novos. Maior cobertura de candidatos não é aceite.
 - **Abstenções:** das decisões antes vazias, 4 passam a certas e 15 a erradas; 5 decisões viram abstenção.
-- **Precisão das decisões novas ou alteradas:** 7 certas em 49 (14 %).
+- **Precisão das decisões novas ou alteradas:** 7/49 (14 %) nas decisões alteradas não vazias; 7/54 (13 %) em todas
+  as saídas alteradas, incluindo as 5 que viraram abstenção. Os denominadores históricos da avaliação não mudam.
 - **Os 5 casos da régua CG:** nenhum mudou; continuam no denominador.
 
 ## 4. Correções e perdas
 
 Das 54 mudanças, 20 têm um alias KE do novo tópico presente no material, **29 não têm nenhum** e 5 viraram abstenção. As
 29 sem alias são efeito indireto: a 1ª passada de outros materiais mudou e isso alterou doadores e confiança na 2ª
-passada.
+passada. Elas se dividem em 2 ganhos, 7 perdas e 20 de erro para outro erro: não são automaticamente 29 perdas, nem prova
+de que toda propagação seja defeituosa.
 
 - **Ganhos (7):**
   - 3 são geração, com o gold entrando nos candidatos só com o KE: MF `logicaproposicional-sintaxe` e
@@ -114,7 +117,7 @@ passada.
 - saldo −9 na subunidade primária;
 - 16 perdas de acertos atuais, quando o aceite exige zero;
 - três cursos regredindo;
-- precisão de 14 % nas decisões alteradas;
+- precisão de 7/49 nas decisões alteradas não vazias (7/54 com as abstenções);
 - geração +9, sem alcançar as relações de categoria → algoritmo que motivaram o piloto;
 - custo de tempo dobrado.
 
@@ -124,4 +127,22 @@ revisão teria de:
 1. usar uma fonte de domínio com sentidos explícitos e licença clara (hoje a ACM CCS está em pendência de termos);
 2. medir primeiro só a geração de candidatos, sem alimentar a seleção nem a 2ª passada.
 
-Mesmo assim, o gargalo medido aqui é a seleção, que o conhecimento externo não resolve.
+Mesmo assim, o gargalo medido aqui é a seleção, que este mecanismo não resolveu.
+
+## 7. Leitura precisa e estado da frente
+
+- **O que foi reprovado:** um léxico geral, sem desambiguação, integrado como alias ao pontuador e à 2ª passada. Não
+  demonstra que qualquer conhecimento externo seja inútil.
+- **O que faltou na fonte:** ela não alcançou as relações centrais (`modelos-preditivos`, `modelos-descritivos`).
+- **Dois problemas distintos:** a geração insuficiente (materiais sem o gold entre os candidatos: base 115, KE 106) e
+  a seleção inadequada (gold entre os candidatos mas não escolhido: base 59, KE 73).
+- **O que continua valendo:** 86/251 é o resultado observado da base, não um teto universal. Nenhuma melhoria de
+  subunidade foi aprovada por este experimento.
+- **Condições para qualquer proposta futura de conhecimento externo:** antes de integrar, demonstrar que fornece
+  relações de domínio com sentidos identificáveis e explicar como geração, seleção e elegibilidade para doação continuam
+  distinguíveis. Melhorar só a cobertura de candidatos não será apresentado como solução da seleção.
+- **Sem abertura automática:** nenhuma nova aquisição, piloto ou troca de fonte; nada de reabrir rotulação pelo
+  professor, R1–R4, H2, S/G ou variantes equivalentes.
+- **Correções já propostas seguem separadas**, cada uma com Gate 1 e validação próprios: identidade de `frases_topico` e
+  normalização de acentos espaçadores. Também dependem de Gate próprio uma regra de seleção de doadores e qualquer
+  desligamento da 2ª passada.
