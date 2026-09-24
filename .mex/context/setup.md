@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-09-03
+last_updated: 2026-09-24
 ---
 
 # Setup
@@ -51,6 +51,22 @@ pip install -e .[code-summarization]
 Servidor MCP do graphify no Windows: `mcp` 2.x importa `pywintypes`; sem `pywin32` o
 processo morre antes do `initialize`. `python -m pip check` acusa; `pip install pywin32`
 resolve (medido 2026-09-10).
+
+### Linux (sessão na nuvem)
+
+```bash
+python3 -m pip install -e ".[dev]" pydantic
+python3 -m pytest tests -q
+```
+
+- `pydantic` vai à parte: é importado no topo de módulos puxados por `engine.py`, mas não está
+  declarado no `pyproject.toml` desta branch (a `main` declara).
+- Módulos de teste que importam `src.ui.*` exigem que `tkinter` seja importável (pacote do sistema,
+  ex.: `python3-tk`); nenhum teste abre janela. Não verificado na imagem da nuvem.
+- Testes que leem repositórios-tutor reais (`TUTOR_REPOS`, `TUTOR_COURSES_DIR`, glob `*-Tutor`)
+  dão skip sem eles. Não criar dados para contornar o skip.
+- A suíte do motor nunca rodou em CI Linux; falha só no Linux é achado a registrar, não a mascarar.
+  Guia completo da nuvem: [sessao-nuvem.md](sessao-nuvem.md).
 
 ## Run
 

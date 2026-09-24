@@ -10,6 +10,7 @@ Fonte única das instruções do projeto para Codex, Claude Code e AGY.
 - Delegar, retomar tarefa, Gates, revisão ou quota: `.workflow/README.md`; estado em `.workflow/local/active-task.md`.
 - Campanhas: bloco `fila-campanhas` de `docs/reports/pendencias.md`; política em `.workflow/references/campaigns.md`.
 - Estrutura e callers: Graphify explain/path; fallback em `.mex/patterns/codegraph-fallback.md`.
+- Sessão na nuvem, ou sem Graphify, tutores locais e laboratório: `.mex/context/sessao-nuvem.md` antes de agir.
 
 ## Invariantes
 

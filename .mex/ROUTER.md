@@ -17,7 +17,8 @@ Engenharia: [patterns/engenharia-produto.md](patterns/engenharia-produto.md).
 | Workflow, CLIs, skills, hooks | [.workflow/HANDOFF.md](../.workflow/HANDOFF.md); fonte canônica indicada no README |
 | Motor/produto | [tracker](../docs/reports/pendencias.md), somente bloco pertinente; [handoff do motor](../docs/reports/2026-09-17-handoff-regime-cru.md) para essa campanha |
 | Agente noturno / fila | Issues #42/#43; conferir worktree e estado próprios antes de ler código ou continuar |
-| Estrutura/callers | Graphify explain/path, query com budget; confirmar projeto/frescor, verificar no código |
+| Sessão na nuvem ou sem contexto local | [context/sessao-nuvem.md](context/sessao-nuvem.md) antes de agir |
+| Estrutura/callers | Graphify explain/path, query com budget; sem Graphify, [context/architecture.md](context/architecture.md); verificar no código |
 | Decisões | [context/decisions.md](context/decisions.md), seção pertinente |
 | Contratos/fixtures | [context/institutional.md](context/institutional.md) e [context/conventions.md](context/conventions.md) |
 | Build/testes/setup | [context/setup.md](context/setup.md), [context/stack.md](context/stack.md), convenções |
