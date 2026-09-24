@@ -78,6 +78,22 @@ Comparação com a base, por teste:
   - falha: 2 de `test_subject_profile_wiring.py`, 2 de `test_tag_catalog.py`, 6 de
     `test_timeline_curation.py`.
 
+### Sobre a base atualizada
+
+`feat/motor-atribuicao` andou 7 commits durante a sessão (até `76e4357`), sem tocar nos 3 arquivos
+desta branch. Merge local sem commit (`git merge --no-commit`), mesmo comando:
+
+| Execução | Resultado |
+|---|---|
+| Base `76e4357` sozinha | 26 failed, 2347 passed, 30 skipped, 2 errors |
+| Base + esta branch, ordem direta e inversa | 32 failed, 2261 passed, 30 skipped, 24 errors; mesmo conjunto nas duas |
+
+- Saem 4 falhas por Mock: as 3 acima e `test_subject_dialog_save.py::test_save_new_subject_gets_only_d9`
+  (novo na base; `test_save_existing_subject_is_not_migrated_to_d9` também é novo e vira erro de
+  coleta com o módulo).
+- Entra, além dos 31 itens, `tests/test_new_subject_d9_default.py` (novo na base), com erro de
+  coleta `ModuleNotFoundError: No module named 'tkinter'`.
+
 ## O que não foi validado
 
 - Windows (o usuário valida na revisão). Esperado sem mudança: lá `tkinter` existe, a fixture sai
