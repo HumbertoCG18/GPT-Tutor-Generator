@@ -1,0 +1,54 @@
+{
+ "dump_sha256": "accd65fe94038584295574ddc26e1500c1919c8c4532bf771811cafd0948af7e",
+ "lexico_sha256": "91043b4b61e8eea52b7958839b69e1f41cbe03db8602feb3c09f0ee644d017ea",
+ "aliases_sha256": "76dd66e9c796fa15ef27b8a2f24485cd7d317176caa22f0e6cb60a843d8fbeb3",
+ "script_sha256": "3ad1de7f27e15957eb57f26500fe34f53045ff406444ab772a105c91bdc447f4",
+ "arestas": 621197,
+ "arestas_por_tipo": {
+  "isa:en->en": 230137,
+  "isa:en->pt": 2,
+  "isa:pt->en": 1,
+  "isa:pt->pt": 5603,
+  "syn:en->en": 222156,
+  "syn:en->pt": 50026,
+  "syn:pt->en": 89186,
+  "syn:pt->pt": 24086
+ },
+ "por_curso": {
+  "CG": {
+   "topicos": 59,
+   "topicos_com_alias_ke": 21,
+   "aliases_ke": 1139
+  },
+  "ES2": {
+   "topicos": 21,
+   "topicos_com_alias_ke": 6,
+   "aliases_ke": 252
+  },
+  "FR": {
+   "topicos": 32,
+   "topicos_com_alias_ke": 12,
+   "aliases_ke": 1168
+  },
+  "IA": {
+   "topicos": 20,
+   "topicos_com_alias_ke": 7,
+   "aliases_ke": 60
+  },
+  "MF": {
+   "topicos": 23,
+   "topicos_com_alias_ke": 6,
+   "aliases_ke": 271
+  },
+  "SO": {
+   "topicos": 36,
+   "topicos_com_alias_ke": 19,
+   "aliases_ke": 384
+  },
+  "TCC": {
+   "topicos": 26,
+   "topicos_com_alias_ke": 1,
+   "aliases_ke": 2
+  }
+ }
+}

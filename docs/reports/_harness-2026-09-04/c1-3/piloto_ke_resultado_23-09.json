@@ -1,0 +1,1409 @@
+{
+ "congelamento": {
+  "captura_base": "f64af429940ef430d5ef476624e2332467504778c5397d6a61a022b1097488e5",
+  "captura_ke": "b141aa83f9fa3c1350b9d600d0dab5d0681206a3ab1d6a2d11b576e7df37e568",
+  "aliases": "76dd66e9c796fa15ef27b8a2f24485cd7d317176caa22f0e6cb60a843d8fbeb3",
+  "lexico": "91043b4b61e8eea52b7958839b69e1f41cbe03db8602feb3c09f0ee644d017ea",
+  "declaracao": "16fa60b71d909cbca2e6a36deefee3af0e695dcb208fcf8af6d1b3fae394c680",
+  "script_execucao": "bbc3cc9424c676243e9d89c8be5c06b6bb0006411ed67122e40fadd777dccfe0",
+  "script_lexico": "3ad1de7f27e15957eb57f26500fe34f53045ff406444ab772a105c91bdc447f4",
+  "momento": "2026-09-23T22:49:22"
+ },
+ "fidelidade_base": "igual",
+ "tempo_memoria": {
+  "base": {
+   "tempo_s": 319.8,
+   "pico_memoria_mb": 183.5,
+   "tentativas_rede": 0
+  },
+  "ke": {
+   "tempo_s": 647.6,
+   "pico_memoria_mb": 185.4,
+   "tentativas_rede": 0
+  }
+ },
+ "placar": {
+  "base": {
+   "bloco": 223,
+   "bloco_n": 237,
+   "unidade": 248,
+   "unidade_n": 284,
+   "sub_primaria": 86,
+   "sub_aceita": 109,
+   "sub_n": 251
+  },
+  "ke": {
+   "bloco": 223,
+   "bloco_n": 237,
+   "unidade": 248,
+   "unidade_n": 284,
+   "sub_primaria": 77,
+   "sub_aceita": 103,
+   "sub_n": 251
+  }
+ },
+ "placar_por_curso": {
+  "base": {
+   "MF": {
+    "bloco_n": 66,
+    "bloco": 60,
+    "unidade_n": 66,
+    "unidade": 63,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "sub_aceita": 29
+   },
+   "SO": {
+    "bloco_n": 39,
+    "bloco": 36,
+    "unidade_n": 37,
+    "unidade": 30,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "IA": {
+    "bloco_n": 42,
+    "bloco": 41,
+    "unidade_n": 42,
+    "unidade": 39,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "sub_aceita": 5
+   },
+   "ES2": {
+    "bloco_n": 28,
+    "bloco": 27,
+    "unidade_n": 28,
+    "unidade": 26,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "TCC": {
+    "bloco_n": 27,
+    "bloco": 26,
+    "unidade_n": 18,
+    "unidade": 17,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "sub_aceita": 9
+   },
+   "CG": {
+    "bloco_n": 35,
+    "bloco": 33,
+    "unidade_n": 93,
+    "unidade": 73,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "sub_aceita": 43
+   },
+   "FR": {
+    "sub_n": 18,
+    "sub_primaria": 6,
+    "sub_aceita": 7
+   }
+  },
+  "ke": {
+   "MF": {
+    "bloco_n": 66,
+    "bloco": 60,
+    "unidade_n": 66,
+    "unidade": 63,
+    "sub_n": 58,
+    "sub_primaria": 19,
+    "sub_aceita": 23
+   },
+   "SO": {
+    "bloco_n": 39,
+    "bloco": 36,
+    "unidade_n": 37,
+    "unidade": 30,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "sub_aceita": 7
+   },
+   "IA": {
+    "bloco_n": 42,
+    "bloco": 41,
+    "unidade_n": 42,
+    "unidade": 39,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "sub_aceita": 5
+   },
+   "ES2": {
+    "bloco_n": 28,
+    "bloco": 27,
+    "unidade_n": 28,
+    "unidade": 26,
+    "sub_n": 28,
+    "sub_primaria": 6,
+    "sub_aceita": 6
+   },
+   "TCC": {
+    "bloco_n": 27,
+    "bloco": 26,
+    "unidade_n": 18,
+    "unidade": 17,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "sub_aceita": 9
+   },
+   "CG": {
+    "bloco_n": 35,
+    "bloco": 33,
+    "unidade_n": 93,
+    "unidade": 73,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "sub_aceita": 46
+   },
+   "FR": {
+    "sub_n": 18,
+    "sub_primaria": 4,
+    "sub_aceita": 7
+   }
+  }
+ },
+ "preservacao": {
+  "bloco_diverge": 0,
+  "unidade_diverge": 0
+ },
+ "preservacao_ids": {
+  "bloco_diverge": [],
+  "unidade_diverge": []
+ },
+ "subunidade_por_curso": {
+  "MF": {
+   "n": 58,
+   "acerto_base": 25,
+   "acerto_ke": 19,
+   "gold_em_cand_base": 41,
+   "gold_em_cand_ke": 43,
+   "gold_so_em_cand_ke": 2,
+   "cand_base_total": 297,
+   "cand_ke_total": 309,
+   "ganhou_2+_candidatos": 0,
+   "ke_gold_em_cand_e_escolhido": 19,
+   "base_gold_em_cand_e_escolhido": 25,
+   "base_gold_em_cand_nao_escolhido": 16,
+   "acerto_sem_gold_em_cand_base": 0,
+   "acerto_sem_gold_em_cand_ke": 0,
+   "ke_gold_em_cand_nao_escolhido": 24,
+   "erro_para_erro": 14,
+   "alteradas_com_decisao": 28,
+   "alteradas_certas": 5,
+   "perda": 11,
+   "ganho": 5,
+   "abstencao_para_certa": 3,
+   "decisao_para_abstencao": 2,
+   "abstencao_para_errada": 7
+  },
+  "SO": {
+   "n": 15,
+   "acerto_base": 7,
+   "acerto_ke": 7,
+   "gold_em_cand_base": 4,
+   "gold_em_cand_ke": 4,
+   "gold_so_em_cand_ke": 0,
+   "cand_base_total": 13,
+   "cand_ke_total": 15,
+   "ganhou_2+_candidatos": 0,
+   "ke_gold_em_cand_e_escolhido": 4,
+   "base_gold_em_cand_e_escolhido": 4,
+   "base_gold_em_cand_nao_escolhido": 0,
+   "acerto_sem_gold_em_cand_base": 3,
+   "acerto_sem_gold_em_cand_ke": 3,
+   "ke_gold_em_cand_nao_escolhido": 0,
+   "erro_para_erro": 2,
+   "alteradas_com_decisao": 2,
+   "alteradas_certas": 0,
+   "abstencao_para_errada": 1
+  },
+  "IA": {
+   "n": 39,
+   "acerto_base": 4,
+   "acerto_ke": 4,
+   "gold_em_cand_base": 8,
+   "gold_em_cand_ke": 8,
+   "gold_so_em_cand_ke": 0,
+   "cand_base_total": 78,
+   "cand_ke_total": 78,
+   "ganhou_2+_candidatos": 0,
+   "ke_gold_em_cand_e_escolhido": 4,
+   "base_gold_em_cand_e_escolhido": 4,
+   "base_gold_em_cand_nao_escolhido": 4,
+   "acerto_sem_gold_em_cand_base": 0,
+   "acerto_sem_gold_em_cand_ke": 0,
+   "ke_gold_em_cand_nao_escolhido": 4
+  },
+  "ES2": {
+   "n": 28,
+   "acerto_base": 7,
+   "acerto_ke": 6,
+   "gold_em_cand_base": 11,
+   "gold_em_cand_ke": 16,
+   "gold_so_em_cand_ke": 5,
+   "cand_base_total": 140,
+   "cand_ke_total": 153,
+   "ganhou_2+_candidatos": 0,
+   "ke_gold_em_cand_e_escolhido": 6,
+   "base_gold_em_cand_e_escolhido": 3,
+   "base_gold_em_cand_nao_escolhido": 8,
+   "acerto_sem_gold_em_cand_base": 4,
+   "acerto_sem_gold_em_cand_ke": 0,
+   "ke_gold_em_cand_nao_escolhido": 10,
+   "erro_para_erro": 6,
+   "decisao_para_abstencao": 1,
+   "alteradas_com_decisao": 6,
+   "alteradas_certas": 0,
+   "abstencao_para_errada": 4,
+   "perda": 1
+  },
+  "TCC": {
+   "n": 11,
+   "acerto_base": 7,
+   "acerto_ke": 7,
+   "gold_em_cand_base": 10,
+   "gold_em_cand_ke": 10,
+   "gold_so_em_cand_ke": 0,
+   "cand_base_total": 35,
+   "cand_ke_total": 35,
+   "ganhou_2+_candidatos": 0,
+   "ke_gold_em_cand_e_escolhido": 6,
+   "base_gold_em_cand_e_escolhido": 6,
+   "base_gold_em_cand_nao_escolhido": 4,
+   "acerto_sem_gold_em_cand_base": 1,
+   "acerto_sem_gold_em_cand_ke": 1,
+   "ke_gold_em_cand_nao_escolhido": 4
+  },
+  "CG": {
+   "n": 82,
+   "acerto_base": 30,
+   "acerto_ke": 30,
+   "gold_em_cand_base": 45,
+   "gold_em_cand_ke": 46,
+   "gold_so_em_cand_ke": 1,
+   "cand_base_total": 407,
+   "cand_ke_total": 414,
+   "ganhou_2+_candidatos": 1,
+   "ke_gold_em_cand_e_escolhido": 29,
+   "base_gold_em_cand_e_escolhido": 29,
+   "base_gold_em_cand_nao_escolhido": 16,
+   "acerto_sem_gold_em_cand_base": 1,
+   "acerto_sem_gold_em_cand_ke": 1,
+   "ke_gold_em_cand_nao_escolhido": 17,
+   "erro_para_erro": 7,
+   "alteradas_com_decisao": 9,
+   "alteradas_certas": 2,
+   "abstencao_para_errada": 2,
+   "decisao_para_abstencao": 2,
+   "ganho": 2,
+   "abstencao_para_certa": 1,
+   "perda": 2
+  },
+  "FR": {
+   "n": 18,
+   "acerto_base": 6,
+   "acerto_ke": 4,
+   "gold_em_cand_base": 17,
+   "gold_em_cand_ke": 18,
+   "gold_so_em_cand_ke": 1,
+   "cand_base_total": 63,
+   "cand_ke_total": 71,
+   "ganhou_2+_candidatos": 1,
+   "ke_gold_em_cand_e_escolhido": 4,
+   "base_gold_em_cand_e_escolhido": 6,
+   "base_gold_em_cand_nao_escolhido": 11,
+   "acerto_sem_gold_em_cand_base": 0,
+   "acerto_sem_gold_em_cand_ke": 0,
+   "ke_gold_em_cand_nao_escolhido": 14,
+   "erro_para_erro": 2,
+   "alteradas_com_decisao": 4,
+   "alteradas_certas": 0,
+   "perda": 2,
+   "abstencao_para_errada": 1
+  }
+ },
+ "subunidade_total": {
+  "n": 251,
+  "acerto_base": 86,
+  "acerto_ke": 77,
+  "gold_em_cand_base": 136,
+  "gold_em_cand_ke": 145,
+  "gold_so_em_cand_ke": 9,
+  "cand_base_total": 1033,
+  "cand_ke_total": 1075,
+  "ganhou_2+_candidatos": 2,
+  "ke_gold_em_cand_e_escolhido": 72,
+  "base_gold_em_cand_e_escolhido": 77,
+  "base_gold_em_cand_nao_escolhido": 59,
+  "acerto_sem_gold_em_cand_base": 9,
+  "acerto_sem_gold_em_cand_ke": 5,
+  "ke_gold_em_cand_nao_escolhido": 73,
+  "erro_para_erro": 31,
+  "alteradas_com_decisao": 49,
+  "alteradas_certas": 7,
+  "perda": 16,
+  "ganho": 7,
+  "abstencao_para_certa": 4,
+  "decisao_para_abstencao": 5,
+  "abstencao_para_errada": 15
+ },
+ "mudancas_por_id": [
+  {
+   "curso": "MF",
+   "eid": "archive-of-formal-proofs-355fb8",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "base": "abordagens-para-verificacao-formal",
+   "ke": "sistemas-formais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosformalizacaoalgoritmosrecursao3",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "exemplos-de-aplicacoes",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "original",
+     "via": "isa",
+     "de": "model",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/original/n/wn/cognition/,/c/en/model/n/wn/cognition/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "logicapredicados-semantica",
+   "gold": [
+    "fundamentos-de-logica-de-primeira-ordem"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "logicapredicados-sintaxe",
+   "gold": [
+    "fundamentos-de-logica-de-primeira-ordem"
+   ],
+   "base": "fundamentos-de-logica-de-primeira-ordem",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "logicaproposicional-sintaxe",
+   "gold": [
+    "linguagens-de-especificacao-e-logicas"
+   ],
+   "base": "",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "ganho",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "introducao",
+   "gold": [
+    "abordagens-para-verificacao-formal"
+   ],
+   "base": "abordagens-para-verificacao-formal",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    },
+    {
+     "alias": "raciocínio",
+     "via": "syn",
+     "de": "logica",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/raciocínio/n/,/c/pt/lógica/]",
+     "dataset": "/d/wiktionary/en"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "provasindutivas-especificacoesrecursivas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "provasindutivas-especificacoesrecursivas-arvores",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "provasindutivas-especificacoesrecursivas-listas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosformalizacaoalgoritmosrecursao2",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosisabelle2",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "logicaproposicional-semantica",
+   "gold": [
+    "linguagens-de-especificacao-e-logicas"
+   ],
+   "base": "",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "ganho",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosformalizacaoalgoritmosrecursao-respostas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "formalizacaoalgoritmos-recursao",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "logica",
+     "via": "casamento",
+     "frase_do_plano": "Lógicas"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "intro",
+   "gold": [
+    "provadores-de-teoremas"
+   ],
+   "base": "abordagens-para-verificacao-formal",
+   "ke": "linguagens-de-especificacao-e-logicas",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exercicioscorrecaoterminacao",
+   "gold": [
+    "correcao-parcial-e-total"
+   ],
+   "base": "invariante-e-variante-de-laco",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "ganho",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "number",
+     "via": "syn",
+     "de": "total",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/number/v/wn/stative/,/c/en/total/v/wn/stative/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "logicadehoare",
+   "gold": [
+    "logica-de-hoare"
+   ],
+   "base": "logica-de-hoare",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "divisor",
+     "via": "isa",
+     "de": "number",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/divisor/n/,/c/en/number/]",
+     "dataset": "/d/wiktionary/de"
+    },
+    {
+     "alias": "inteiro",
+     "via": "syn",
+     "de": "total",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/total/a/,/c/pt/inteiro/]",
+     "dataset": "/d/wiktionary/fr"
+    },
+    {
+     "alias": "number",
+     "via": "syn",
+     "de": "total",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/number/v/wn/stative/,/c/en/total/v/wn/stative/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosdafny2",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "pre-e-pos-condicoes",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "number",
+     "via": "syn",
+     "de": "total",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/number/v/wn/stative/,/c/en/total/v/wn/stative/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosdafny3",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "number",
+     "via": "syn",
+     "de": "total",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/number/v/wn/stative/,/c/en/total/v/wn/stative/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "MF",
+   "eid": "colecoes-arrays",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "colecoes-conjuntos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "colecoes-sequences",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exercicios-conjuntos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "hoare",
+   "gold": [
+    "logica-de-hoare"
+   ],
+   "base": "correcao-parcial-e-total",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "introducao-zip",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "invariantes",
+   "gold": [
+    "invariante-e-variante-de-laco"
+   ],
+   "base": "sistema-de-prova",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "ganho",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "terminacao",
+   "gold": [
+    "correcao-parcial-e-total"
+   ],
+   "base": "",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "ganho",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "tiposindutivos",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "",
+   "ke": "correcao-parcial-e-total",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exerciciosformalizacaoalgoritmosrecursao3-respostas",
+   "gold": [
+    "especificacao-de-funcoes-recursivas"
+   ],
+   "base": "especificacao-de-funcoes-recursivas",
+   "ke": "",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "MF",
+   "eid": "exercicios-arrays",
+   "gold": [
+    "softwares-de-suporte-a-verificacao-formal-de-programas"
+   ],
+   "base": "sistema-de-prova",
+   "ke": "invariante-e-variante-de-laco",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "SO",
+   "eid": "exercicios",
+   "gold": [
+    "algoritmos-de-escalonamento"
+   ],
+   "base": "",
+   "ke": "estudo-de-casos",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "SO",
+   "eid": "definicao-e-historico",
+   "gold": [
+    "evolucao-historica"
+   ],
+   "base": "servicos-dos-sistemas-operacionais",
+   "ke": "chamadas-de-sistema",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "revisaoarquiteturapadroes",
+   "gold": [
+    "conceito-de-arquitetura-de-software"
+   ],
+   "base": "estilos-e-padroes-arquiteturais",
+   "ke": "",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro1",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "base": "",
+   "ke": "estilos-e-padroes-arquiteturais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro2",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "base": "",
+   "ke": "estilos-e-padroes-arquiteturais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro3",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "base": "",
+   "ke": "estilos-e-padroes-arquiteturais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro5-conteiners",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "base": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+   "ke": "gerenciamento-da-configuracao",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro3-gateway",
+   "gold": [
+    "estudo-de-caso-arquitetura-orientada-a-microsservicos"
+   ],
+   "base": "cliente-servidor",
+   "ke": "estilos-e-padroes-arquiteturais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "ES2",
+   "eid": "roteiro4",
+   "gold": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   ],
+   "base": "",
+   "ke": "estilos-e-padroes-arquiteturais",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "CG",
+   "eid": "basico3d-py",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "base": "pipeline-de-visualizacao-3d",
+   "ke": "perspectiva",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "CG",
+   "eid": "opengl3d",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "base": "",
+   "ke": "projecoes",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "projecao",
+     "via": "casamento",
+     "frase_do_plano": "Projeções"
+    },
+    {
+     "alias": "projection",
+     "via": "syn",
+     "de": "projecao",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/projection/n/,/c/pt/projeção/]",
+     "dataset": "/d/wiktionary/en"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "opengl3dcpp-vdi",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "base": "algoritmo-z-buffer",
+   "ke": "",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "CG",
+   "eid": "opengl3dcpp",
+   "gold": [
+    "conceito-de-camera-sintetica"
+   ],
+   "base": "algoritmo-z-buffer",
+   "ke": "",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "CG",
+   "eid": "vis3d",
+   "gold": [
+    "projecoes"
+   ],
+   "base": "",
+   "ke": "projecoes",
+   "efeito": "ganho",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "exibição",
+     "via": "syn",
+     "de": "projecao",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/projeção/n/,/c/pt/exibição/]",
+     "dataset": "/d/wiktionary/en"
+    },
+    {
+     "alias": "projecao",
+     "via": "casamento",
+     "frase_do_plano": "Projeções"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "exemplozbuffer",
+   "gold": [
+    "algoritmo-z-buffer"
+   ],
+   "base": "algoritmo-z-buffer",
+   "ke": "algoritmos-de-remocao-de-elementos-ocultos",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "CG",
+   "eid": "programabasico3d",
+   "gold": [
+    "modelos-de-reflexao-ambiente-difusa-especular"
+   ],
+   "base": "modelos-de-reflexao-ambiente-difusa-especular",
+   "ke": "modelos-de-iluminacao-luz-pontual-direcional-spot",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "back",
+     "via": "isa",
+     "de": "position",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/back/n/wn/american_football/,/c/en/position/n/wn/sport/]",
+     "dataset": "/d/wordnet/3.1"
+    },
+    {
+     "alias": "front",
+     "via": "isa",
+     "de": "position",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/front/n/wn/location/,/c/en/position/n/wn/location/]",
+     "dataset": "/d/wordnet/3.1"
+    },
+    {
+     "alias": "left",
+     "via": "isa",
+     "de": "position",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/left/n/wn/location/,/c/en/position/n/wn/location/]",
+     "dataset": "/d/wordnet/3.1"
+    },
+    {
+     "alias": "light",
+     "via": "isa",
+     "de": "position",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/light/n/wn/cognition/,/c/en/position/n/wn/cognition/]",
+     "dataset": "/d/wordnet/3.1"
+    },
+    {
+     "alias": "position",
+     "via": "syn",
+     "de": "spot",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/spot/n/wn/act/,/c/en/position/n/wn/act/]",
+     "dataset": "/d/wordnet/3.1"
+    },
+    {
+     "alias": "right",
+     "via": "isa",
+     "de": "position",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/right/n/wn/location/,/c/en/position/n/wn/location/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "openglbasico",
+   "gold": [
+    "aplicacoes"
+   ],
+   "base": "introducao-e-exemplos-de-aplicacoes",
+   "ke": "cores-e-tipos-de-imagens",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": false,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "centro",
+     "via": "syn",
+     "de": "core",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/centro/n/wn/location/,/c/en/core/n/wn/location/]",
+     "dataset": "/d/wordnet/3.1"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "remocaoderuido",
+   "gold": [
+    "filtros"
+   ],
+   "base": "cores-e-tipos-de-imagens",
+   "ke": "filtros",
+   "efeito": "ganho",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "filter",
+     "via": "syn",
+     "de": "filtro",
+     "lingua": "en",
+     "uri": "/a/[/r/Synonym/,/c/en/filter/n/,/c/pt/filtro/]",
+     "dataset": "/d/wiktionary/en"
+    },
+    {
+     "alias": "filtro",
+     "via": "casamento",
+     "frase_do_plano": "Filtros"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "pagina-com-videos-sobre-visualizacao-3d-35a833",
+   "gold": [
+    "pipeline-de-visualizacao-3d"
+   ],
+   "base": "",
+   "ke": "projecoes",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "projecao",
+     "via": "casamento",
+     "frase_do_plano": "Projeções"
+    }
+   ]
+  },
+  {
+   "curso": "CG",
+   "eid": "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea",
+   "gold": [
+    "modelos-de-iluminacao-luz-pontual-direcional-spot"
+   ],
+   "base": "mapeamento-de-textura",
+   "ke": "modelos-de-reflexao-ambiente-difusa-especular",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  },
+  {
+   "curso": "FR",
+   "eid": "01-protocolos-de-rede",
+   "gold": [
+    "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia"
+   ],
+   "base": "modelos-osi-e-tcpip",
+   "ke": "conceitos-de-redes-de-computadores-e-internet",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": false,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "rede",
+     "via": "syn",
+     "de": "internet",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/rede/n/,/c/pt/internet/]",
+     "dataset": "/d/wiktionary/en"
+    }
+   ]
+  },
+  {
+   "curso": "FR",
+   "eid": "02-modelos-de-referencia",
+   "gold": [
+    "modelos-osi-e-tcpip"
+   ],
+   "base": "modelos-osi-e-tcpip",
+   "ke": "conceitos-de-redes-de-computadores-e-internet",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "rede",
+     "via": "syn",
+     "de": "internet",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/rede/n/,/c/pt/internet/]",
+     "dataset": "/d/wiktionary/en"
+    }
+   ]
+  },
+  {
+   "curso": "FR",
+   "eid": "unidade1-exercicios",
+   "gold": [
+    "modelos-osi-e-tcpip"
+   ],
+   "base": "",
+   "ke": "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia",
+   "efeito": "erro_para_erro",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": [
+    {
+     "alias": "area",
+     "via": "isa",
+     "de": "place",
+     "lingua": "en",
+     "uri": "/a/[/r/IsA/,/c/en/area/,/c/en/place/]",
+     "dataset": "/d/conceptnet/4/en"
+    },
+    {
+     "alias": "estabelecimento",
+     "via": "isa",
+     "de": "lugar",
+     "lingua": "pt",
+     "uri": "/a/[/r/IsA/,/c/pt/estabelecimento/,/c/pt/lugar/]",
+     "dataset": "/d/conceptnet/4/pt"
+    },
+    {
+     "alias": "local",
+     "via": "casamento",
+     "frase_do_plano": "locais"
+    },
+    {
+     "alias": "países",
+     "via": "isa",
+     "de": "lugar",
+     "lingua": "pt",
+     "uri": "/a/[/r/IsA/,/c/pt/países/,/c/pt/lugar/]",
+     "dataset": "/d/conceptnet/4/pt"
+    },
+    {
+     "alias": "ponto",
+     "via": "syn",
+     "de": "local",
+     "lingua": "pt",
+     "uri": "/a/[/r/Synonym/,/c/pt/ponto/n/,/c/pt/local/]",
+     "dataset": "/d/wiktionary/en"
+    }
+   ]
+  },
+  {
+   "curso": "FR",
+   "eid": "unidade2-exercicios-dns",
+   "gold": [
+    "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   ],
+   "base": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat",
+   "ke": "paradigmas-clienteservidor-e-p2p",
+   "efeito": "perda",
+   "gold_em_cand_base": true,
+   "gold_em_cand_ke": true,
+   "cg5": false,
+   "aliases_ke_do_novo_topico_presentes": []
+  }
+ ],
+ "aliases_por_curso": {
+  "CG": {
+   "topicos_com_alias": 21,
+   "aliases": 1139
+  },
+  "ES2": {
+   "topicos_com_alias": 6,
+   "aliases": 252
+  },
+  "FR": {
+   "topicos_com_alias": 12,
+   "aliases": 1168
+  },
+  "IA": {
+   "topicos_com_alias": 7,
+   "aliases": 60
+  },
+  "MF": {
+   "topicos_com_alias": 6,
+   "aliases": 271
+  },
+  "SO": {
+   "topicos_com_alias": 19,
+   "aliases": 384
+  },
+  "TCC": {
+   "topicos_com_alias": 1,
+   "aliases": 2
+  }
+ }
+}
