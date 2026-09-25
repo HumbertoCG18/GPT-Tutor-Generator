@@ -224,7 +224,7 @@ Pelo diálogo **Aluno → Conectar e escolher cursos**:
 
 - Login no Moodle institucional (a senha nunca é persistida — apenas o token de sessão)
 - Seleção de cursos com download automático de PDFs
-- Suporte a arquivos hospedados no **OneDrive/M365** via device-code flow
+- Suporte a arquivos hospedados no **OneDrive/M365** via device-code flow; o refresh token fica fora do repositório, protegido pelo Windows (DPAPI) — ver `.mex/context/setup.md`
 - Cards do Moodle viram evidência de mapeamento (`source_section`), usada na atribuição de bloco
 
 ---
