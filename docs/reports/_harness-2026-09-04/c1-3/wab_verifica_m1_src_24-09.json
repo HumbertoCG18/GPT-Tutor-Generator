@@ -1,0 +1,12 @@
+{
+ "escopo": "W-AB, conferência da implementação do M1 em src (24/09): replay real sem patch deve ser igual, por ID, ao braço M1\ncongelado em .frzero/wab_captura_bracos_24-09.json (bloco, unidade, subunidade, em todos os materiais dos 7 cursos).\nSem gold, build, rede, LLM ou commit. Uso: python wab_verifica_m1_src_24-09.py\n",
+ "captura_wab_sha256": "04f2d59ed254b55de126396a02b3b16bfa8c0cf5dde9c5c67bd602d81c016506",
+ "contagens": {
+  "bloco_igual": 350,
+  "unidade_igual": 350,
+  "sub_igual": 350
+ },
+ "divergencias": [],
+ "materiais_com_razao_texto_vence_fallback": 1,
+ "identico": true
+}

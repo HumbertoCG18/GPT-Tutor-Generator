@@ -394,6 +394,10 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
   com proveniência. Meta de unidade segue não alcançável com os sinais do cru. Decisão do usuário (24/09): Gate 1 de
   IMPLEMENTAÇÃO só do M1 (replay integral deve dar 249); M2 fica registrado, não implementado (n=1, pares de subtópico).
   Gate 2 documental dos artefatos de 24/09 autorizado.
+- Implementação do M1 (sem commit, aguardando Gate 2): `file_map.reconcile_unit_with_block(block_is_fallback)` +
+  `resolver_apply` (sem `temporal_block_id` e `resolve_effective_block` "auto"); UI explica "texto-vence-fallback".
+  Conferência `c1-3/wab_verifica_m1_src_24-09.json`: src = braço M1 por ID (350/350 × 3 eixos). TDD; suíte 2448
+  passed + 1 falha preexistente (FR). Astra (medium): aprovado com ressalvas, 1 BAIXO corrigido.
 
 ## Medido: unidade — caminhos admissíveis na base v2, estimativa direta sem replay; teto 253/284 < 256 (24/09)
 

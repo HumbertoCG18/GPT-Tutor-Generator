@@ -27,9 +27,9 @@ def _fns(unit_match):
     )
 
 def test_unit_reconciliada_contra_bloco_do_motor():
-    # unidade auto (u1, conf 0.7) discorda do bloco NOVO (u-2 -> u2) com block_conf 0.8
-    # block_conf >= unit_conf: reconcilia pro bloco, reason "reconciliada_do_bloco=u-2".
-    e = _entry()
+    # unidade auto (u1, conf 0.7) discorda do bloco TEMPORAL (u-2 -> u2): reconcilia pro bloco,
+    # reason "reconciliada_do_bloco=bloco-02". (Sem temporal_block_id vale o M1: ver os testes de fallback.)
+    e = _entry(temporal_block_id="u-2")
     m = SimpleNamespace(slug="u1", confidence=0.7, ambiguous=False, reasons=["score"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
@@ -40,7 +40,7 @@ def test_unit_reconciliada_contra_bloco_do_motor():
 def test_bloco_vence_unidade_forte_e_registra_conflito():
     """2026-08-21: a unidade e a do bloco; o texto forte discordante vira so
     registro de conflito (auditoria), nao decisao."""
-    e = _entry(computed_block_confidence=0.5)
+    e = _entry(computed_block_confidence=0.5, temporal_block_id="u-2")
     m = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
@@ -120,8 +120,8 @@ def test_subunit_gated_e_best_effort():
 
 def test_subunit_restrita_a_unidade_reconciliada():
     seen = {}
-    e = _entry()
-    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=[])  # gated vazio -> herda u2
+    e = _entry(temporal_block_id="u-2")
+    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=[])  # texto discorda; bloco temporal vence -> u2
     fns = _fns(m)
     def _sub(e_, tax, md, winning_unit_slug=""):
         seen["unit"] = winning_unit_slug
@@ -326,3 +326,24 @@ def test_texto_ambiguo_ou_abaixo_do_gate_ainda_herda_do_vizinho():
     assert any(r.startswith("herdada_do_vizinho=bloco-01") for r in out[0]["unit_match_reasons"])
     assert not any(r.startswith("texto-vence-vizinho") for r in out[0]["unit_match_reasons"])
 
+
+
+# --- M1 (24/09): bloco do fallback antigo (sem temporal_block_id) nao vence texto gated ---
+
+def test_texto_gated_vence_bloco_do_fallback_na_fase():
+    e = _entry()   # so computed_block_id: o D9 nao deu bloco temporal
+    m = SimpleNamespace(slug="u1", confidence=0.7, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u1"
+    assert "texto-vence-fallback=bloco-02" in out[0]["unit_match_reasons"]
+    assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "bloco-02"}
+
+
+def test_fallback_com_texto_ambiguo_ou_pino_manual_mantem_o_bloco():
+    ambiguo = SimpleNamespace(slug="u1", confidence=0.3, ambiguous=True, reasons=["ambiguous"])
+    out = apply_unit_subunit_fields([_entry()], BLOCKS, {}, None, None, {}, **_fns(ambiguo))
+    assert out[0]["computed_unit_slug"] == "u2"
+    forte = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields([_entry(manual_timeline_block_id="bloco-02")], BLOCKS, {}, None, None, {},
+                                    **_fns(forte))
+    assert out[0]["computed_unit_slug"] == "u2"

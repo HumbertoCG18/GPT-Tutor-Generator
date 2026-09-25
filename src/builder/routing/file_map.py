@@ -788,6 +788,7 @@ def reconcile_unit_with_block(
     unit_is_explicit: bool = False,
     section_unit_slug: str = "",
     neighbor_block_id: str = "",
+    block_is_fallback: bool = False,
 ) -> Tuple[str, List[str], Dict[str, str]]:
     """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
 
@@ -822,6 +823,11 @@ def reconcile_unit_with_block(
            nos 7 cursos: o vizinho acertava 0/5 desses casos; unidade 244 -> 246,
            0 perda. Texto vazio continua herdando; bloco com unidade propria
            continua vencendo.
+         - `block_is_fallback` (2026-09-24, W-AB): o D9 nao deu bloco temporal e
+           o bloco veio do resolvedor antigo (`computed_block_id`). Se o texto
+           gated discorda, o texto vence ("texto-vence-fallback=<id>") e o
+           conflito fica registrado. Medido nos 7 cursos: unidade 248 -> 249,
+           0 perda, bloco e subunidade iguais. Texto vazio continua herdando.
 
     conflict é {} exceto nos casos em que a unidade venceu bloco discordante.
     """
@@ -851,6 +857,12 @@ def reconcile_unit_with_block(
         return (
             computed_unit_slug,
             [f"texto-vence-vizinho={neighbor_block_id}"],
+            {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+        )
+    if block_is_fallback:
+        return (
+            computed_unit_slug,
+            [f"texto-vence-fallback={computed_block_id}"],
             {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
         )
     # 2026-08-21: a verdade de unidade e, por construcao, a unidade do bloco

@@ -229,3 +229,28 @@ def test_manual_e_explicita_vencem_mesmo_com_vizinho():
     )
     assert (unit, reasons) == ("unidade-3", ["explicita-vence-bloco=bloco-2"])
 
+
+
+# --- M1 (24/09): bloco do fallback antigo nao vence texto gated discordante ---
+
+def test_texto_gated_vence_bloco_do_fallback_antigo():
+    """W-AB (24/09): sem bloco temporal do D9, o bloco vem do resolvedor antigo
+    (computed_block_id). Texto gated discordante vence; unidade 248 -> 249, 0 perda."""
+    unit, reasons, conflict = _call(
+        computed_unit_slug="unidade-3", unit_confidence=0.8,
+        computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1",
+        block_is_fallback=True,
+    )
+    assert unit == "unidade-3"
+    assert reasons == ["texto-vence-fallback=bloco-2"]
+    assert conflict == {"unit": "unidade-3", "block_unit": "unidade-1", "block_id": "bloco-2"}
+
+
+def test_fallback_herda_texto_vazio_e_cede_a_manual_secao_e_concordancia():
+    base = dict(computed_block_id="bloco-2", block_confidence=1.0, block_unit_slug="unidade-1", block_is_fallback=True)
+    assert _call(computed_unit_slug="", **base)[:2] == ("unidade-1", ["herdada_do_bloco=bloco-2"])
+    assert _call(computed_unit_slug="unidade-3", unit_confidence=0.9, block_is_manual=True, **base)[:2] == (
+        "unidade-1", ["unidade_do_bloco_manual"])
+    assert _call(computed_unit_slug="unidade-3", unit_confidence=0.9, section_unit_slug="unidade-3", **base)[1] == [
+        "secao-vence-bloco=bloco-2"]
+    assert _call(computed_unit_slug="unidade-1", unit_confidence=0.9, **base)[:2] == ("unidade-1", [])

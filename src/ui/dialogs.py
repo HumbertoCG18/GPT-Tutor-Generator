@@ -4111,6 +4111,8 @@ def _resolve_backlog_unit_status(
     secao_venceu = any(r.startswith("secao-vence-bloco=") for r in reasons)
     # #48: bloco sem unidade propria — o texto gated venceu a unidade herdada do vizinho.
     vizinho_perdeu = next((r.split("=", 1)[1] for r in reasons if r.startswith("texto-vence-vizinho=")), "")
+    # M1 (24/09): sem bloco temporal do D9 — o texto gated venceu o bloco do resolvedor antigo.
+    fallback_perdeu = any(r.startswith("texto-vence-fallback=") for r in reasons)
 
     def _auto_source(default: str) -> str:
         if any(r == "unidade_do_bloco_manual" for r in reasons):
@@ -4119,6 +4121,8 @@ def _resolve_backlog_unit_status(
             return "Seção do Moodle confirmada pelo texto (auto)"
         if vizinho_perdeu:
             return "Texto do material (bloco sem unidade própria)"
+        if fallback_perdeu:
+            return "Texto do material (bloco do resolvedor antigo)"
         if any(r.startswith("reconciliada_do_bloco=") for r in reasons):
             return "Reconciliada do bloco (auto)"
         if any(r.startswith("herdada_do_bloco=") for r in reasons):
@@ -4134,6 +4138,13 @@ def _resolve_backlog_unit_status(
                 f" ⚠ Conflito: o bloco «{conflict.get('block_id', '')}» não tem unidade própria e herdaria "
                 f"«{conflict.get('block_unit', '')}» do vizinho «{vizinho_perdeu}», mas o texto do material "
                 f"aponta «{conflict.get('unit', '')}», que prevaleceu. Revise."
+            )
+        if fallback_perdeu:
+            # M1: decide por proveniencia (bloco do resolvedor antigo, sem bloco temporal), nao por confianca.
+            return (
+                f" ⚠ Conflito: o bloco «{conflict.get('block_id', '')}» veio do resolvedor antigo (sem bloco "
+                f"temporal) e aponta «{conflict.get('block_unit', '')}», mas o texto do material aponta "
+                f"«{conflict.get('unit', '')}», que prevaleceu. Revise."
             )
         if secao_venceu:
             # #47: vence sem comparar confianca — pode estar abaixo do gate de unidade.

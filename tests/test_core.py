@@ -5807,3 +5807,24 @@ def test_backlog_unit_status_explica_texto_que_venceu_o_vizinho(tmp_path):
     assert status["source"] == "Texto do material (bloco sem unidade própria)"
     assert "mais confiante" not in status["note"]
     assert "bloco-18" in status["note"] and "bloco-20" in status["note"]
+
+
+def test_backlog_unit_status_explica_texto_que_venceu_o_fallback(tmp_path):
+    # Revisao Astra (M1, 24/09): `texto-vence-fallback=` decide por proveniencia (bloco do
+    # resolvedor antigo, sem bloco temporal), nao por confianca.
+    from src.ui.dialogs import _resolve_backlog_unit_status
+
+    status = _resolve_backlog_unit_status(
+        {
+            "title": "exercicios sobre curvas",
+            "category": "listas",
+            "computed_unit_slug": "unidade-07",
+            "unit_match_reasons": ["winner_score=3.1", "texto-vence-fallback=bloco-04"],
+            "unit_block_conflict": {"unit": "unidade-07", "block_unit": "unidade-02", "block_id": "bloco-04"},
+        },
+        tmp_path / "repo",
+    )
+
+    assert status["source"] == "Texto do material (bloco do resolvedor antigo)"
+    assert "mais confiante" not in status["note"]
+    assert "resolvedor antigo" in status["note"] and "bloco-04" in status["note"]

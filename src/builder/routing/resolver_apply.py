@@ -392,7 +392,7 @@ def apply_unit_subunit_fields(
     Só toca entries que o motor decidiu (material + computed_block_id).
     """
     from src.builder.routing.file_map import (
-        reconcile_unit_with_block, resolve_temporal_block, unit_of_block_or_neighbor,
+        reconcile_unit_with_block, resolve_effective_block, resolve_temporal_block, unit_of_block_or_neighbor,
     )
     from src.builder.routing.thresholds import T
     from src.models.tag_profile import build_learned_unit_boosts, load_tag_profile
@@ -521,6 +521,9 @@ def apply_unit_subunit_fields(
             unit_is_explicit=any(str(r).startswith("unidade-explicita=") for r in (unit_reasons or [])),
             section_unit_slug=section_unit,
             neighbor_block_id=vizinho,
+            # Sem bloco temporal do D9: o bloco e o do resolvedor antigo (W-AB, 24/09).
+            block_is_fallback=(not str(entry.get("temporal_block_id") or "").strip()
+                               and resolve_effective_block(entry, blocks).source == "auto"),
         )
         if vizinho and reconciled == block_unit and not manual_unit:
             suffix = list(suffix) + [f"herdada_do_vizinho={vizinho}"]
