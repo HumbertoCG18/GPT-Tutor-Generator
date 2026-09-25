@@ -1,0 +1,501 @@
+{
+ "aceite": {
+  "M1": {
+   "aprovado": true,
+   "bloco_identico": true,
+   "nenhum_curso_regride": true,
+   "saldo_positivo": true,
+   "zero_perda": true
+  },
+  "M1M2": {
+   "aprovado": true,
+   "bloco_identico": true,
+   "nenhum_curso_regride": true,
+   "saldo_positivo": true,
+   "zero_perda": true
+  },
+  "M2": {
+   "aprovado": true,
+   "bloco_identico": true,
+   "nenhum_curso_regride": true,
+   "saldo_positivo": true,
+   "zero_perda": true
+  }
+ },
+ "alteradas_sem_gold": {
+  "M1": [],
+  "M1M2": [],
+  "M2": []
+ },
+ "blocos_m2_contra_gold_por_bloco": [
+  {
+   "antes_certo": false,
+   "bloco": "bloco-10",
+   "curso": "TCC",
+   "de": "unidade-02-turing-computabilidade",
+   "depois_certo": true,
+   "gold_bloco": "unidade-03-problemas-indecidiveis",
+   "manual": false,
+   "para": "unidade-03-problemas-indecidiveis"
+  }
+ ],
+ "escopo": "W-AB (24/09): unidade - M1 (texto confiante vence o bloco do fallback antigo) e M2 (pares de termos do pacote nas\nfronteiras sem sinal do DP), sobre a base atual. 0 mudanca em src/tests/regua/defaults/configuracao persistida.\n\nAutorizacao: Gate 1 de medicao do usuario em 24/09 (\"Medir os +5 mesmo assim\"); estado em\n.workflow/local/unidade-caminhos-20260924.md; estimativa previa em unidade_caminhos_24-09.json. Gold so depois do\ncongelamento dos bracos por sha256.\n\nBRACOS (replay real replay_bloco_21-09 -> replay_unidade_21-09; patches em memoria, restaurados no finally):\n- base_atual: sem patch. Conferida por ID contra a base congelada do W-Z2 (f941ac33); divergencia = mudanca de src\n  desde 23/09, relatada; os bracos comparam contra a base_atual.\n- M1: se o bloco temporal do material vem do fallback (sem temporal_block_id e resolve_effective_block.source == \"auto\")\n  e a reconciliacao daria \"reconciliada_do_bloco\" (bloco com unidade propria vence texto discordante), a unidade gated\n  do texto (nao ambigua, >= T.UNIT_TAG) vence: razao \"texto-vence-fallback=<bloco>\". Mesmo padrao da #48 (vizinho).\n- M2: pares \"A (B[, C])\" do pacote do curso (titulos dos materiais, headings do markdown dos materiais, plano de ensino e\n  ementa do profile_input). A = ate 4 palavras antes do parentese; B = cada item do parentese separado por virgula ou\n  ponto e virgula; tokens pelo tokenizador do DP (unit_matcher._tokens); par so com os dois lados nao vazios e\n  disjuntos. Aplicacao so nos blocos-aula com afinidade 0 em todas as unidades E em fronteira (classe e posicao do\n  W-Z2, calculadas sem gold): se B esta contido nos tokens do bloco, acrescenta A; se A esta contido, acrescenta B.\n  DP refeito com esses tokens; a unidade do bloco muda onde o DP mudar e o bloco nao tiver unidade manual. A timeline\n  alterada alimenta o motor de bloco (usa unit_slug do bloco) e a fase de unidade.\n- M1M2: os dois.\nACEITE (por braco, contra base_atual): saldo > 0 na unidade; 0 perda por ID em bloco, unidade, subunidade primaria e\naceita; nenhum curso regride em nenhum eixo; bloco identico por ID. Sem parametro livre -> sem LOCO.\nSem build, rede, LLM, commit. Uso: python wab_unidade_fallback_fronteiras_24-09.py [--reavaliar]\n",
+ "fidelidade_base_atual_vs_wz2": {
+  "contagens": {
+   "bloco_igual": 350,
+   "sub_igual": 350,
+   "unidade_igual": 350
+  },
+  "exemplos": []
+ },
+ "m2": {
+  "aumentos": {
+   "CG": [],
+   "ES2": [
+    {
+     "acrescenta": [
+      "discovery"
+     ],
+     "bloco": "bloco-07",
+     "prov": {
+      "fonte": "syllabus",
+      "linha": "| 5 | SEX | 10/04/2026 | NP 21:00 - 22:30 | Microserviços no Spring (discovery). | Aula |  |",
+      "material": ""
+     },
+     "via": [
+      "microservicos",
+      "spring"
+     ]
+    },
+    {
+     "acrescenta": [
+      "api",
+      "gateway"
+     ],
+     "bloco": "bloco-07",
+     "prov": {
+      "fonte": "syllabus",
+      "linha": "| 6 | SEX | 17/04/2026 | NP 21:00 - 22:30 | Microserviços no Spring (API gateway). | Aula |  |",
+      "material": ""
+     },
+     "via": [
+      "microservicos",
+      "spring"
+     ]
+    }
+   ],
+   "FR": [],
+   "IA": [],
+   "MF": [],
+   "SO": [],
+   "TCC": [
+    {
+     "acrescenta": [
+      "parada",
+      "problema"
+     ],
+     "bloco": "bloco-10",
+     "prov": {
+      "fonte": "titulo",
+      "linha": "Aula 11 - O Problema da Parada (Halting Problem, Halteproblem)",
+      "material": "aula-11-o-problema-da-parada-halting-problem-halteproblem"
+     },
+     "via": [
+      "halting",
+      "problem"
+     ]
+    }
+   ]
+  },
+  "fronteiras_alvo": {
+   "CG": [
+    "bloco-02",
+    "bloco-11",
+    "bloco-16"
+   ],
+   "ES2": [
+    "bloco-07"
+   ],
+   "FR": [],
+   "IA": [
+    "bloco-08",
+    "bloco-11"
+   ],
+   "MF": [
+    "bloco-08"
+   ],
+   "SO": [
+    "bloco-08",
+    "bloco-11",
+    "bloco-17"
+   ],
+   "TCC": [
+    "bloco-10"
+   ]
+  },
+  "mudancas_de_bloco": {
+   "CG": [],
+   "ES2": [],
+   "FR": [],
+   "IA": [],
+   "MF": [],
+   "SO": [],
+   "TCC": [
+    {
+     "bloco": "bloco-10",
+     "de": "unidade-02-turing-computabilidade",
+     "manual": false,
+     "para": "unidade-03-problemas-indecidiveis"
+    }
+   ]
+  },
+  "pares_por_curso": {
+   "CG": 11,
+   "ES2": 21,
+   "FR": 35,
+   "IA": 60,
+   "MF": 32,
+   "SO": 33,
+   "TCC": 28
+  }
+ },
+ "mudancas": {
+  "M1": {
+   "bloco_divergente_por_id": [],
+   "cursos_que_regridem": {
+    "bloco": [],
+    "sub_aceita": [],
+    "sub_primaria": [],
+    "unidade": []
+   },
+   "ganhos": {
+    "unidade": [
+     "CG|exercicios-sobre-curvas-html"
+    ]
+   },
+   "n_bloco_divergente": 0,
+   "perdas": {},
+   "saldo_unidade": 1
+  },
+  "M1M2": {
+   "bloco_divergente_por_id": [],
+   "cursos_que_regridem": {
+    "bloco": [],
+    "sub_aceita": [],
+    "sub_primaria": [],
+    "unidade": []
+   },
+   "ganhos": {
+    "unidade": [
+     "CG|exercicios-sobre-curvas-html",
+     "TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf"
+    ]
+   },
+   "n_bloco_divergente": 0,
+   "perdas": {},
+   "saldo_unidade": 2
+  },
+  "M2": {
+   "bloco_divergente_por_id": [],
+   "cursos_que_regridem": {
+    "bloco": [],
+    "sub_aceita": [],
+    "sub_primaria": [],
+    "unidade": []
+   },
+   "ganhos": {
+    "unidade": [
+     "TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf"
+    ]
+   },
+   "n_bloco_divergente": 0,
+   "perdas": {},
+   "saldo_unidade": 1
+  }
+ },
+ "placar": {
+  "M1": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 43,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "unidade": 74,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 29,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "unidade": 249,
+    "unidade_n": 284
+   }
+  },
+  "M1M2": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 43,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "unidade": 74,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 29,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "unidade": 18,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "unidade": 250,
+    "unidade_n": 284
+   }
+  },
+  "M2": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 43,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 29,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "unidade": 18,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "unidade": 249,
+    "unidade_n": 284
+   }
+  },
+  "base_atual": {
+   "CG": {
+    "bloco": 33,
+    "bloco_n": 35,
+    "sub_aceita": 43,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "unidade": 73,
+    "unidade_n": 93
+   },
+   "ES2": {
+    "bloco": 27,
+    "bloco_n": 28,
+    "sub_aceita": 8,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "unidade": 26,
+    "unidade_n": 28
+   },
+   "FR": {
+    "sub_aceita": 7,
+    "sub_n": 18,
+    "sub_primaria": 6
+   },
+   "IA": {
+    "bloco": 41,
+    "bloco_n": 42,
+    "sub_aceita": 5,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "unidade": 39,
+    "unidade_n": 42
+   },
+   "MF": {
+    "bloco": 60,
+    "bloco_n": 66,
+    "sub_aceita": 29,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "unidade": 63,
+    "unidade_n": 66
+   },
+   "SO": {
+    "bloco": 36,
+    "bloco_n": 39,
+    "sub_aceita": 8,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "unidade": 30,
+    "unidade_n": 37
+   },
+   "TCC": {
+    "bloco": 26,
+    "bloco_n": 27,
+    "sub_aceita": 9,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "unidade": 17,
+    "unidade_n": 18
+   },
+   "TOTAL": {
+    "bloco": 223,
+    "bloco_n": 237,
+    "sub_aceita": 109,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "unidade": 248,
+    "unidade_n": 284
+   }
+  }
+ },
+ "segundos": 402.7,
+ "sha256_bracos": "04f2d59ed254b55de126396a02b3b16bfa8c0cf5dde9c5c67bd602d81c016506",
+ "sha256_declaracao": "381c2dd41de931494e027c62097c7818ef36ab57f2bdcc3bd284a4282a10e2d4"
+}

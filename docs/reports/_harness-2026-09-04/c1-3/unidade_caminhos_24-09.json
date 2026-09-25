@@ -1,0 +1,115 @@
+{
+ "fonte_sha256": "0a7fbdee84d634b43a05125d38ebaddac803815e727571ec3b91a229e29723e6",
+ "escopo": "estimativa direta sobre o congelamento do W-Z2; sem replay; 2a passada e subunidade não recalculadas",
+ "efeitos": {
+  "H-secao": {
+   "SO:ganho": 1
+  },
+  "H-fallback": {
+   "CG:ganho": 1
+  }
+ },
+ "ids": {
+  "H-secao": [
+   {
+    "curso": "SO",
+    "entry_id": "laminas-sockets-material-alternativo-em-pt",
+    "efeito": 1
+   }
+  ],
+  "H-fallback": [
+   {
+    "curso": "CG",
+    "entry_id": "exercicios-sobre-curvas-html",
+    "efeito": 1
+   }
+  ]
+ },
+ "alcance": {
+  "MF:secao_presente": 0,
+  "MF:secao_gold_da_secao": 0,
+  "MF:fallback": 0,
+  "SO:secao_presente": 6,
+  "SO:secao_gold_da_secao": 0,
+  "SO:fallback": 1,
+  "IA:secao_presente": 0,
+  "IA:secao_gold_da_secao": 0,
+  "IA:fallback": 0,
+  "ES2:secao_presente": 1,
+  "ES2:secao_gold_da_secao": 0,
+  "ES2:fallback": 0,
+  "TCC:secao_presente": 11,
+  "TCC:secao_gold_da_secao": 0,
+  "TCC:fallback": 0,
+  "CG:secao_presente": 28,
+  "CG:secao_gold_da_secao": 28,
+  "CG:fallback": 8
+ },
+ "frente3_ideal": {
+  "ES2": 1,
+  "IA": 2,
+  "TCC": 1
+ },
+ "por_curso": [
+  {
+   "curso": "MF",
+   "base": 63,
+   "n": 66,
+   "ideal": 63,
+   "minimo_90": 60,
+   "ganho": 0,
+   "perda": 0
+  },
+  {
+   "curso": "SO",
+   "base": 30,
+   "n": 37,
+   "ideal": 30,
+   "minimo_90": 34,
+   "ganho": 0,
+   "perda": 0
+  },
+  {
+   "curso": "IA",
+   "base": 39,
+   "n": 42,
+   "ideal": 41,
+   "minimo_90": 38,
+   "ganho": 2,
+   "perda": 0
+  },
+  {
+   "curso": "ES2",
+   "base": 26,
+   "n": 28,
+   "ideal": 27,
+   "minimo_90": 26,
+   "ganho": 1,
+   "perda": 0
+  },
+  {
+   "curso": "TCC",
+   "base": 17,
+   "n": 18,
+   "ideal": 18,
+   "minimo_90": 17,
+   "ganho": 1,
+   "perda": 0
+  },
+  {
+   "curso": "CG",
+   "base": 73,
+   "n": 93,
+   "ideal": 74,
+   "minimo_90": 84,
+   "ganho": 1,
+   "perda": 0
+  }
+ ],
+ "total": {
+  "base": 248,
+  "n": 284,
+  "ideal": 253,
+  "minimo_90": 256
+ }
+}

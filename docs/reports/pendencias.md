@@ -74,7 +74,8 @@ Integração Alethe21/09: correções locais MCP/representação de hooks/Sessio
 - WEB-41-01 [T3 provisório] primeira fatia vertical e gates executáveis. estado: bloqueada. aceite: contratos Python/web,CI/E2E,desempenho,release/rollback conforme issue41; decomposição a definir. dep: stack/versões e Gate1 específicos,WEB-14-01. Issue não autoriza instalar stack.
 
 ### MOTOR-9 [classe C3] — integração da branch motor · origem CODE · prioridade: 1 produto,reconciliar antes de fixar base CRU · janela assistida
-- MOTOR-9-01 [T3 provisório] diagnosticar conflitos/escopo da PR9 antes de integrar. estado: bloqueada. evidência21/09: PR9 OPEN,mergeStateStatus DIRTY,sem checks retornados. aceite: base/diff/conflitos identificados e plano aprovado; não resetar worktree nem sobrescrever alterações. dep: investigação própria/Gate1; não confundir com CRU-02..04.
+- MOTOR-9-01 [T3] diagnosticar conflitos/escopo da PR9 antes de integrar. estado: concluída (24/09). evidência: relatório da nuvem (`nuvem/2026-09-24-motor-9-01-plano-integracao`, `d5b98b9e`, PR #77 rascunho) + revisão 1 local, sem commit (ours/theirs corrigido, 9 conflitos resolvidos por origem/blob, Ruff 61 fp/97 ocorrências = 93 do motor + 4 da config + 0 do merge, pytest de CI também bloqueia, baseline de preservação exige clone limpo sem a #50). Segurança: token M365 revogado pelo titular 24/09 16:00 (tentativas estranhas todas malsucedidas); PAT GitHub de 30/04 conferido revogado; higiene PR #79 mergeada (`345e423f`). Prevenção entregue na PR #83 (merge `d815e205`, 24/09): #81 e #82 fechadas; #80 fase 1 (token M365 fora do repo, DPAPI) feita, fase 2 aberta (`moddle/.env`, `.env`); check `secrets` obrigatório na main junto com `core`; hook local reinstalado. Pendentes: secret scanning/push protection (campanha web); token ainda na ponta de `docs/14-c6-quality` e da `main` local antiga; motor tem 8 versionados-ignorados que falharão o check `secrets` na PR #9. Base atual: main `345e423f`, motor `76e4357b`, 9 conflitos.
+- MOTOR-9-02 [T2] preparar e validar a integração main→motor em clone separado (merge --no-ff --no-commit, resolução por origem, migração auditável do baseline Ruff, validação Windows completa). estado: pausada por decisão do usuário (24/09: voltar ao motor). dep: Gate 1 com D12 (pytest de CI: #68/#69/google-genai), baseline limpa do motor, #14, D11.
 
 Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status remoto consultado21/09, pode mudar. Histórico C0/C1 e demais antigas campanhas permanece abaixo, sem reabrir; ausência de issue não prova inexistência de pendência local. Lista é inventário de fontes consultadas, não varredura de todos os checkouts.
 <!-- fila-campanhas-end -->
@@ -372,6 +373,51 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
   — seção TDE tenta o prazo e bloco `assessment` que contém o vencimento ancora; `resolver_apply.py` /
   `file_map.reconcile_unit_with_block` — vizinho não vence texto gated discordante). Gate 1 de
   IMPLEMENTAÇÃO pendente de aprovação do usuário.
+
+## Medido: W-AB — M1 (texto vence o fallback antigo) e M2 (pares do pacote nas fronteiras) aprovados no aceite; unidade 248 → 250/284 (24/09)
+
+- Gate 1 de medição do usuário em 24/09 ("Medir os +5 mesmo assim"). Script `c1-3/wab_unidade_fallback_fronteiras_24-09.py`
+  (declaração `381c2dd4…`; braços congelados `04f2d59e…` em `.frzero/wab_captura_bracos_24-09.json`; json `7e6548c6…`;
+  403 s). Replays reais bloco → unidade, patches só em memória, gold depois do congelamento; 0 src.
+- Base atual (src em `15ea8c4a`) = base congelada do W-Z2 por ID: 350/350 em bloco, unidade e subunidade.
+- M1 (bloco do fallback: sem `temporal_block_id`, `resolve_effective_block` "auto"; texto gated não ambíguo vence
+  "reconciliada_do_bloco"): unidade +1/−0 (CG `exercicios-sobre-curvas-html`).
+- M2 (pares "A (B)" do pacote, só em blocos-aula de fronteira com afinidade 0; DP refeito; a timeline alterada alimenta
+  também o motor de bloco): 11 fronteiras-alvo nos 7 cursos, 2 recebem termos (ES2 bloco-07, TCC bloco-10), 1 muda de
+  unidade (TCC bloco-10 u02 → u03, = gold por bloco): unidade +1/−0 (TCC `aula-11-…halting-problem…`). O par veio do
+  título do próprio material. Ressalva: a regra também aceita pares de subtópico do plano (ES2 "Microserviços no Spring
+  (discovery)"), sem efeito aqui.
+- **M1+M2: bloco 223/237 (idêntico por ID), unidade 250/284 (88,0 %), subunidade primária 86/251 e aceita 109 iguais;
+  0 perda em qualquer eixo, nenhum curso regride, 0 material sem gold alterado (inclui FR).** Aceite do Gate 1 cumprido
+  nos três braços. Por curso: CG 74/93 (meta 84), TCC 18/18, SO 30/37 (meta 34), ES2 26, IA 39, MF 63.
+- Leitura: ganho real +2 dos +5 do teto; a janela do IA (2) e a fronteira do ES2 (grafia "microservicos") não têm par
+  com proveniência. Meta de unidade segue não alcançável com os sinais do cru. Decisão do usuário (24/09): Gate 1 de
+  IMPLEMENTAÇÃO só do M1 (replay integral deve dar 249); M2 fica registrado, não implementado (n=1, pares de subtópico).
+  Gate 2 documental dos artefatos de 24/09 autorizado.
+
+## Medido: unidade — caminhos admissíveis na base v2, estimativa direta sem replay; teto 253/284 < 256 (24/09)
+
+- Pedido do usuário 24/09: eixo unidade primeiro, diagnóstico só leitura antes de qualquer Gate 1. Script
+  `c1-3/unidade_caminhos_24-09.py` sobre o congelamento do W-Z2 (`wz2_diagnostico_causal_23-09.json`); json
+  `unidade_caminhos_24-09.json` sha256 `69ab65642cc02087…`. 0 src, 0 replay; subunidade e 2ª passada não recalculadas.
+- Metas >90 %: total 256 (base 248), CG 84 (73), SO 34 (30); demais cursos já passam.
+- H-fallback (texto bruto acima do gate, sem empate, vence o `computed_block_id` do resolvedor antigo): 9 do fallback com
+  gold, +1/−0 (CG `exercicios-sobre-curvas-html`); 4 do fallback sem gold não avaliáveis.
+- H-seção (seção sozinha vence o bloco): hoje +1/−0 nos com gold (SO `laminas-sockets…`), mas é a variante W-H de 21/09,
+  dominada pela R-sem-misto e com perda de subunidade em material sem gold de unidade (TCC `aula-06`). Fora da soma.
+- H-prova (resolução de prova sem bloco herda o escopo da avaliação): só 3 casos, todos no CG; nos outros cursos as provas
+  caem em bloco temporal e acertam. Regra ajustada a 3 IDs de um curso = risco de ajuste ao benchmark; não proposta.
+- Frente 3 do W-Z2 (fronteiras, janela, cabeçalho): ideal +4 (ES2 1, IA 2, TCC 1), mecanismo ainda não definido; ameaça 20
+  acertos que dependem de preenchimento.
+- **Teto admissível somado: 253/284 (89,1 %) < 256; CG 74/93 (meta 84), SO 30/37 (meta 34).** Restante do CG (19): 5
+  decididos u05 pelo usuário contra a seção u04, 3 resoluções de prova, 5 texto errado (3 concordam com o bloco), 2
+  `basico3d` com bloco temporal errado, 2 vizinho, 2 herdados sem sinal. SO (7): 6 da família threads no bloco-04 misto
+  (famílias "texto vence" reprovadas) + `laminas`.
+- Lacuna de insumo (fato, sem efeito nas regras atuais): dos 60 golds do CG propostos pela seção do Moodle, 32 materiais
+  não têm seção no insumo do motor; 6 dos 20 erros estão entre eles. O texto não corrobora em nenhum dos 6, e usar a seção
+  no CG é circular com a régua.
+- Leitura: com os sinais admissíveis do cru, a meta de unidade >90 % não fecha no total nem no CG e no SO; nenhuma família
+  fechada foi reaberta. Decisão do usuário pendente.
 
 ## Medido: piloto de conhecimento externo (ConceptNet 5.7.0, regime experimental) — reprovado, recomendação encerrar (23/09)
 
