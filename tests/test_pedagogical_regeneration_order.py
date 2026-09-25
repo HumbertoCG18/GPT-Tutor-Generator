@@ -11,6 +11,11 @@ import inspect
 from src.builder.ops import pedagogical_regeneration as pr
 
 
+class _FakeEntry:
+    def __init__(self, category):
+        self.category = category
+
+
 def test_attach_runs_before_concept_resolver():
     src = inspect.getsource(pr.regenerate_pedagogical_files)
     i_attach = src.find("attach_block_summary_fields(")
@@ -92,3 +97,39 @@ def test_regenerate_pedagogical_files_e2e_locks_call_order(tmp_path, monkeypatch
         "apply_concept_resolver",
         "apply_unit_subunit_fields",
     ], calls
+
+
+def test_exam_index_text_renders_even_with_zero_exam_entries():
+    """Regressao: quando a ultima prova sai da categoria (reclassificada p/
+    'listas'), EXAM_INDEX.md tem que ser reescrito com 0 provas, nao ficar
+    parado anunciando uma prova fantasma que ja saiu do manifesto."""
+    entries = [_FakeEntry("listas")]  # nenhuma entrada de prova
+    calls = []
+
+    def fake_render(course_meta, exam_entries):
+        calls.append(list(exam_entries))
+        return "RENDERED"
+
+    text = pr._exam_index_text({"course_name": "X"}, entries, {"provas"}, fake_render)
+    assert text == "RENDERED"
+    assert calls == [[]]
+
+
+def test_bootstrap_ops_reuses_exam_index_text_and_always_renders():
+    """bootstrap_ops.write_root_files tinha o mesmo `if exam_entries:
+    write_text(...)` de pedagogical_regeneration -- reaproveita a mesma
+    funcao pura (sem duplicar), sempre reescreve o indice."""
+    from src.builder.ops import bootstrap_ops as bo
+
+    assert bo._exam_index_text is pr._exam_index_text
+
+    entries = [_FakeEntry("listas")]  # nenhuma entrada de prova
+    calls = []
+
+    def fake_render(course_meta, exam_entries):
+        calls.append(list(exam_entries))
+        return "RENDERED"
+
+    text = bo._exam_index_text({"course_name": "X"}, entries, {"provas"}, fake_render)
+    assert text == "RENDERED"
+    assert calls == [[]]

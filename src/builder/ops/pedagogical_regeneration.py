@@ -20,6 +20,15 @@ from src.utils.helpers import slugify, write_text
 logger = logging.getLogger(__name__)
 
 
+def _exam_index_text(course_meta: dict, all_entries: list, exam_categories, fn) -> str:
+    """Texto do EXAM_INDEX.md -- sempre gerado (fn ja renderiza o placeholder
+    "_Nenhuma prova mapeada ainda._" com lista vazia). Sem isto, quando a
+    ultima prova saia da categoria (ex.: lista de revisao reclassificada p/
+    'listas'), o arquivo antigo ficava parado anunciando prova fantasma."""
+    exam_entries = [e for e in all_entries if e.category in exam_categories]
+    return fn(course_meta, exam_entries)
+
+
 def _resolve_gemini_client(builder):
     """Resolve o client Gemini real (mesmo factory de summarize_all_code_entries).
 
@@ -653,9 +662,10 @@ def regenerate_pedagogical_files(
     if builder.subject_profile and builder.subject_profile.syllabus:
         write_text(builder.root_dir / "course" / "SYLLABUS.md", syllabus_md_fn(builder.subject_profile))
 
-    exam_entries = [e for e in all_entries if e.category in exam_categories]
-    if exam_entries:
-        write_text(builder.root_dir / "exams" / "EXAM_INDEX.md", exam_index_md_fn(builder.course_meta, exam_entries))
+    write_text(
+        builder.root_dir / "exams" / "EXAM_INDEX.md",
+        _exam_index_text(builder.course_meta, all_entries, exam_categories, exam_index_md_fn),
+    )
 
     exercise_entries = [e for e in all_entries if e.category in exercise_categories]
     if exercise_entries:

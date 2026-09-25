@@ -7,6 +7,7 @@ import json
 from src.builder.timeline.index import (
     _assessment_block_label,
     _parse_assessments_from_teaching_plan,
+    _assessment_date_from_timeline_rows,
     _normalize_match_text,
 )
 from src.builder.extraction.teaching_plan import _normalize_teaching_plan_heading
@@ -120,3 +121,19 @@ def test_available_unit_slugs_without_taxonomy_on_disk(tmp_path):
     course_dir.mkdir()
     blocks = [{"unit_slug": "unidade-02-nivel-de-aplicacao"}, {"unit_slug": ""}]
     assert _available_unit_slugs(blocks, course_dir) == ["unidade-02-nivel-de-aplicacao"]
+
+
+def test_assessment_date_prefers_row_that_is_the_exam_over_earlier_mention():
+    # FR real (22/09): "Duvidas da P1" (Atividade=Aula, 22/09) casa pelo alias
+    # "p1" e vem ANTES de "Prova P1" (Atividade=Prova, 24/09) na tabela -- a
+    # data escolhida tem que ser a da prova de verdade, nao da duvida.
+    rows = [
+        {"data": "22/09/2026", "descrição": "Dúvidas da P1", "atividade": "Aula"},
+        {"data": "24/09/2026", "descrição": "Prova P1", "atividade": "Prova"},
+    ]
+    assert _assessment_date_from_timeline_rows(rows) == "24/09/2026"
+
+
+def test_assessment_date_falls_back_to_first_row_without_exam_row():
+    rows = [{"data": "22/09/2026", "descrição": "Dúvidas da P1", "atividade": "Aula"}]
+    assert _assessment_date_from_timeline_rows(rows) == "22/09/2026"

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from src.builder.ops.pedagogical_regeneration import _exam_index_text
 from src.builder.ops.state_ops import ensure_unit_battery_directories
 from src.utils.helpers import ensure_dir, slugify, write_text
 
@@ -168,9 +169,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
     bib_entries = [e for e in builder.entries if e.category == "bibliografia"]
     write_text(builder.root_dir / "content" / "BIBLIOGRAPHY.md", bibliography_md_fn(builder.course_meta, bib_entries, builder.subject_profile))
 
-    exam_entries = [e for e in builder.entries if e.category in exam_categories]
-    if exam_entries:
-        write_text(builder.root_dir / "exams" / "EXAM_INDEX.md", exam_index_md_fn(builder.course_meta, exam_entries))
+    write_text(
+        builder.root_dir / "exams" / "EXAM_INDEX.md",
+        _exam_index_text(builder.course_meta, builder.entries, exam_categories, exam_index_md_fn),
+    )
 
     exercise_entries = [e for e in builder.entries if e.category in exercise_categories]
     if exercise_entries:

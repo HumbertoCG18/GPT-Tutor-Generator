@@ -10,7 +10,7 @@ from typing import Callable, Dict, List, Optional
 
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
-from src.builder.timeline.classifier import classify_block, row_kind_from_text
+from src.builder.timeline.classifier import classify_block, row_kind_from_text, STRONG_EXAM_RE
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation, load_boundary_dates
 from src.builder.timeline.unit_matcher import assign_units_by_work_milestones, assign_units_positional
@@ -1118,9 +1118,25 @@ def _assessment_match_row_text(row: dict, *, normalize_match_text: Callable[[str
     return normalize_match_text(" ".join(str(value) for value in row.values() if str(value).strip()))
 
 
+def _row_is_exam(row: Dict[str, str]) -> bool:
+    """A linha É a prova (não so cita o alias, ex. "Dúvidas da P1" antes da
+    "Prova P1" no FR). Atividade e o sinal autoritativo quando presente (mesmo
+    criterio de _build_timeline_candidate_rows); so cai pro conteudo (STRONG_
+    EXAM_RE) quando a coluna Atividade vier vazia."""
+    atividade = norm_ascii_lower(_row_atividade(row))
+    if atividade:
+        return any(
+            kind == "assessment" and needle in atividade
+            for needle, kind in ATIVIDADE_KIND_MAP.items()
+        )
+    content = norm_ascii_lower(" ".join(str(v) for v in row.values() if str(v).strip()))
+    return bool(STRONG_EXAM_RE.search(content))
+
+
 def _assessment_date_from_timeline_rows(rows: List[Dict[str, str]]) -> str:
     if not rows:
         return ""
+    rows = sorted(rows, key=lambda row: 0 if _row_is_exam(row) else 1)
     for row in rows:
         for key in row.keys():
             if any(token in key for token in ["data", "date"]):
