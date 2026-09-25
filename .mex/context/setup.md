@@ -8,12 +8,14 @@ triggers:
   - environment
   - test
   - pytest
+  - gitleaks
+  - credentials
 edges:
   - target: context/stack.md
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-06-08
+last_updated: 2026-09-24
 ---
 
 # Setup
@@ -70,6 +72,23 @@ python -m pytest tests/test_tag_catalog.py -q
 python -m pytest tests/test_student_state_v2.py -q
 python -m pytest tests/test_student_state_manual_import.py -q
 ```
+
+## Segredos e credenciais (#80-#82; incidente de 24/09/2026)
+
+- Hook obrigatorio, compartilhado por todas as worktrees:
+  `cp scripts/hooks/pre-commit.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"`.
+  Sem gitleaks 8.30.1 ou sem Python 3.8+, o commit falha; nao ha modo de aviso.
+- gitleaks fixado: `python scripts/security/gitleaks_scan.py install --dest <dir no PATH>` baixa a release oficial e
+  confere o SHA-256 antes de extrair (Windows x64, Linux e macOS x64/arm64). Na nuvem, o SessionStart de
+  `.claude/settings.json` roda `scripts/security/setup_nuvem.sh` (so com `CLAUDE_CODE_REMOTE=true`): instala o
+  gitleaks em `~/.local/bin` e o pre-commit com `chmod +x`. Se o download falhar, os commits ficam bloqueados.
+- Varredura manual, saida so com regra, arquivo, linha e commit:
+  `gitleaks_scan.py staged | range BASE..HEAD | history`. Higiene: `check_repo_hygiene.py tree | range BASE..HEAD | staged`.
+- CI: `.github/workflows/security.yml` roda as duas verificacoes nos commits novos de PR e de push na `main`.
+- Token M365: fora do repositorio, protegido pelo Windows (DPAPI), em
+  `%LOCALAPPDATA%\GPTTutorGenerator\credentials\m365_refresh_token.dpapi`. `GPT_TUTOR_CREDENTIALS_DIR` (absoluto, fora
+  do repositorio) troca o diretorio; `GPT_TUTOR_M365_NO_PERSIST=1` desliga a persistencia (login a cada sessao; unico
+  modo fora do Windows). O cache antigo `moddle/.m365_token.json` nao e lido nem migrado: apagar manualmente.
 
 ## Operational Flow
 
