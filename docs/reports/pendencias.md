@@ -374,6 +374,21 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
   `file_map.reconcile_unit_with_block` — vizinho não vence texto gated discordante). Gate 1 de
   IMPLEMENTAÇÃO pendente de aprovação do usuário.
 
+## Publicado: teto do regime cru por curso + W-AC (varredura final de sinais da subunidade, nenhum passa) (24/09)
+
+- Pedido do usuário 24/09: "Varredura e depois teto". W-AC `c1-3/wac_varredura_sinais_subunidade_24-09.{py,json}`
+  (declaração `50faa611…`, previsões congeladas `49a901a5…` antes do gold; json `096ff3f7…`; 3 s; 0 src, 0 replay).
+  Portão: precisão > 50 % nos 86 acertos e saldo > 0. P1 posição da aula × ordem dos tópicos: 21 %, aponta o gold em 60
+  erros, saldo −3; P2 posição na seção do Moodle: 13 %, −31; P4 referência cruzada: não dispara; P5 `primary_topic_slug`
+  do bloco: 65 %, saldo −6. Nenhum passa. Exploratório posterior (indício): P1 só em abstenções +4/−1, só com confiança
+  < 0,7 +11/−8. P3 (doadores fortes na 2ª passada): teto +4, não medido.
+- **Relatório: `docs/reports/2026-09-24-teto-regime-cru.md`.** Placar atual (`eebc698c`): bloco 223/237, unidade 249/284,
+  sub primária 86/251, aceita 109. Teto da unidade 253 (medido 250, implementado 249); teto ideal da subunidade 218/251
+  (86,9 %) < 226; CG, SO e ES2 abaixo da meta mesmo no ideal. Famílias de erro, tentativas e o que cada uma exigiria.
+- Leitura: no cru, a meta de subunidade não é alcançável com os insumos do pacote, e a de unidade não fecha no CG nem no
+  SO. Mudar o teto exige sinal que o pacote não contém (regime separado, com decisão própria) ou plano mais granular.
+  Próximos passos são decisão do usuário.
+
 ## Medido: W-AB — M1 (texto vence o fallback antigo) e M2 (pares do pacote nas fronteiras) aprovados no aceite; unidade 248 → 250/284 (24/09)
 
 - Gate 1 de medição do usuário em 24/09 ("Medir os +5 mesmo assim"). Script `c1-3/wab_unidade_fallback_fronteiras_24-09.py`

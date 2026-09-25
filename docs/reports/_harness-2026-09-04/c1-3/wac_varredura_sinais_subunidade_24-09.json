@@ -1,0 +1,310 @@
+{
+ "base_wz2": "f941ac331a5e676dc897135ce42d0c537ff5470730074ca1863d9f71416037ef",
+ "escopo": "W-AC (24/09): varredura só leitura de sinais de subunidade nunca testados, sobre a base congelada do W-Z2.\n\nAutorização: usuário em 24/09 (\"Varredura e depois teto\"). 0 src, 0 replay, sem build, rede, LLM ou commit. Cada sinal\nprevê no máximo um tópico por material, sem gold; as previsões são congeladas por sha256 ANTES de ler o gold.\nBase de decisão: final da captura do W-Z2 (`.frzero/wz2_captura_base_23-09.json`, igual ao src atual exceto 1 unidade\ndo M1, que não muda subunidade). Tópicos candidatos: os da unidade final, na ordem da taxonomia\n(`_iter_content_taxonomy_topics`, o que o seletor vê).\n\nSINAIS (pré-declarados):\n- P1 ordem da aula: bloco temporal do material é aula (kind class) da unidade final u; k = posição do bloco entre as\n  aulas de u (ordem do cronograma), n = nº de aulas de u, m = nº de tópicos de u; prevê o tópico de índice floor(k*m/n).\n- P2 posição na seção do Moodle: materiais com a mesma `moodle_section_index` e a mesma unidade final, ordenados por\n  `moodle_module_index`; i = posição, N = tamanho do grupo (>= 2); prevê o tópico de índice floor(i*m/N).\n- P4 referência cruzada: o texto do material contém, como frase, o título normalizado de OUTRO material do curso (>= 3\n  tokens de >= 3 letras, título único no curso); herda a subunidade final daquele material (decisão do motor, não gold).\n  Mais de um referido com subunidades diferentes -> não prevê.\n- P5 tópico primário da aula: `primary_topic_slug` do bloco temporal, com `topic_ambiguous` falso, se for tópico da\n  unidade final do material.\n- P3 (2ª passada só com doadores fortes) não é sinal novo: o teto é recuperar as 4 perdas que a propagação causa hoje\n  (W-Z2 §3.5: +11/-4); registrado sem medição.\nPORTÃO (o mesmo do tracker): precisão > 50 % nos 86 acertos atuais onde o sinal dispara E saldo potencial > 0 se o sinal\nsubstituísse a decisão quando dispara (ganhos nos erros - perdas nos acertos). Sem parâmetro livre -> sem LOCO.\nUso: python wac_varredura_sinais_subunidade_24-09.py\n",
+ "exemplos": {
+  "P1": [
+   {
+    "base": "especificacao-de-funcoes-recursivas",
+    "curso": "MF",
+    "gold_id": "logicapredicados-semantica",
+    "previsto": "fundamentos-de-logica-de-primeira-ordem"
+   },
+   {
+    "base": "especificacao-de-funcoes-recursivas",
+    "curso": "MF",
+    "gold_id": "exerciciosisabelle2",
+    "previsto": "provadores-de-teoremas"
+   },
+   {
+    "base": "exemplos-de-aplicacoes",
+    "curso": "MF",
+    "gold_id": "exemplos",
+    "previsto": "provadores-de-teoremas"
+   },
+   {
+    "base": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "gold_id": "provas",
+    "previsto": "provadores-de-teoremas"
+   },
+   {
+    "base": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "gold_id": "logicadehoare2",
+    "previsto": "logica-de-hoare"
+   },
+   {
+    "base": "correcao-parcial-e-total",
+    "curso": "MF",
+    "gold_id": "exerciciosdafny5",
+    "previsto": "softwares-de-suporte-a-verificacao-formal-de-programas"
+   },
+   {
+    "base": "correcao-parcial-e-total",
+    "curso": "MF",
+    "gold_id": "hoare",
+    "previsto": "logica-de-hoare"
+   },
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "tiposindutivos",
+    "previsto": "softwares-de-suporte-a-verificacao-formal-de-programas"
+   }
+  ],
+  "P2": [
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "logicaproposicional-sintaxe",
+    "previsto": "linguagens-de-especificacao-e-logicas"
+   },
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "revisao",
+    "previsto": "sistemas-formais"
+   },
+   {
+    "base": "abordagens-para-verificacao-formal",
+    "curso": "MF",
+    "gold_id": "arvores",
+    "previsto": "provadores-de-teoremas"
+   },
+   {
+    "base": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "gold_id": "logicadehoare2",
+    "previsto": "logica-de-hoare"
+   },
+   {
+    "base": "correcao-parcial-e-total",
+    "curso": "MF",
+    "gold_id": "exerciciosdafny4",
+    "previsto": "softwares-de-suporte-a-verificacao-formal-de-programas"
+   },
+   {
+    "base": "modelos-de-kripke",
+    "curso": "MF",
+    "gold_id": "exercicioslogicatemporal",
+    "previsto": "fundamentos-de-logicas-temporais"
+   },
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "exerciciosnusmv",
+    "previsto": "softwares-de-suporte-a-verificacao-formal-de-modelos"
+   },
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "colecoes-conjuntos",
+    "previsto": "softwares-de-suporte-a-verificacao-formal-de-programas"
+   }
+  ],
+  "P4": [],
+  "P5": [
+   {
+    "base": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "gold_id": "exercicioscorrecaoterminacao",
+    "previsto": "correcao-parcial-e-total"
+   },
+   {
+    "base": "invariante-e-variante-de-laco",
+    "curso": "MF",
+    "gold_id": "logicadehoare2",
+    "previsto": "logica-de-hoare"
+   },
+   {
+    "base": "correcao-parcial-e-total",
+    "curso": "MF",
+    "gold_id": "hoare",
+    "previsto": "logica-de-hoare"
+   },
+   {
+    "base": "",
+    "curso": "MF",
+    "gold_id": "terminacao",
+    "previsto": "correcao-parcial-e-total"
+   },
+   {
+    "base": "",
+    "curso": "SO",
+    "gold_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+    "previsto": "chamadas-de-sistema"
+   },
+   {
+    "base": "algoritmo-z-buffer",
+    "curso": "CG",
+    "gold_id": "elemoculto",
+    "previsto": "algoritmos-de-remocao-de-elementos-ocultos"
+   }
+  ]
+ },
+ "p3_teto_sem_medicao": "+4 (perdas atuais da propagação, W-Z2 §3.5)",
+ "por_curso": {
+  "P1": {
+   "CG": {
+    "acerto_concorda": 3,
+    "acerto_discorda": 26,
+    "erro_concorda": 11,
+    "erro_discorda": 33
+   },
+   "ES2": {
+    "acerto_discorda": 7,
+    "erro_concorda": 2,
+    "erro_discorda": 19
+   },
+   "FR": {
+    "acerto_concorda": 1,
+    "acerto_discorda": 5,
+    "erro_concorda": 3,
+    "erro_discorda": 8
+   },
+   "IA": {
+    "acerto_discorda": 3,
+    "erro_concorda": 34,
+    "erro_discorda": 1
+   },
+   "MF": {
+    "acerto_concorda": 12,
+    "acerto_discorda": 10,
+    "erro_concorda": 8,
+    "erro_discorda": 21
+   },
+   "SO": {
+    "acerto_discorda": 7,
+    "erro_concorda": 1,
+    "erro_discorda": 6
+   },
+   "TCC": {
+    "acerto_concorda": 1,
+    "acerto_discorda": 5,
+    "erro_concorda": 1,
+    "erro_discorda": 3
+   }
+  },
+  "P2": {
+   "CG": {
+    "acerto_concorda": 2,
+    "acerto_discorda": 19,
+    "erro_concorda": 7,
+    "erro_discorda": 26
+   },
+   "ES2": {
+    "acerto_discorda": 7,
+    "erro_concorda": 3,
+    "erro_discorda": 18
+   },
+   "FR": {
+    "acerto_concorda": 1,
+    "acerto_discorda": 5,
+    "erro_concorda": 1,
+    "erro_discorda": 11
+   },
+   "IA": {
+    "acerto_concorda": 1,
+    "acerto_discorda": 3,
+    "erro_concorda": 8,
+    "erro_discorda": 26
+   },
+   "MF": {
+    "acerto_concorda": 4,
+    "acerto_discorda": 20,
+    "erro_concorda": 11,
+    "erro_discorda": 21
+   },
+   "SO": {
+    "acerto_concorda": 2,
+    "acerto_discorda": 5,
+    "erro_concorda": 1,
+    "erro_discorda": 5
+   },
+   "TCC": {
+    "acerto_discorda": 5,
+    "erro_concorda": 2,
+    "erro_discorda": 1
+   }
+  },
+  "P4": {
+   "CG": {
+    "erro_discorda": 1
+   }
+  },
+  "P5": {
+   "CG": {
+    "acerto_concorda": 7,
+    "acerto_discorda": 1,
+    "erro_concorda": 1,
+    "erro_discorda": 14
+   },
+   "MF": {
+    "acerto_concorda": 5,
+    "acerto_discorda": 10,
+    "erro_concorda": 4,
+    "erro_discorda": 4
+   },
+   "SO": {
+    "acerto_concorda": 6,
+    "acerto_discorda": 1,
+    "erro_concorda": 1,
+    "erro_discorda": 6
+   },
+   "TCC": {
+    "acerto_concorda": 4,
+    "erro_discorda": 2
+   }
+  }
+ },
+ "por_sinal": {
+  "P1": {
+   "acerto_concorda": 17,
+   "acerto_discorda": 63,
+   "acertos": 86,
+   "erro_concorda": 60,
+   "erro_discorda": 91,
+   "erros": 165,
+   "n": 251,
+   "passa_portao": false,
+   "precisao_nos_acertos": 0.212,
+   "saldo_potencial": -3
+  },
+  "P2": {
+   "acerto_concorda": 10,
+   "acerto_discorda": 64,
+   "acertos": 86,
+   "erro_concorda": 33,
+   "erro_discorda": 108,
+   "erros": 165,
+   "n": 251,
+   "passa_portao": false,
+   "precisao_nos_acertos": 0.135,
+   "saldo_potencial": -31
+  },
+  "P4": {
+   "acertos": 86,
+   "erro_discorda": 1,
+   "erros": 165,
+   "n": 251,
+   "passa_portao": false,
+   "precisao_nos_acertos": null,
+   "saldo_potencial": 0
+  },
+  "P5": {
+   "acerto_concorda": 22,
+   "acerto_discorda": 12,
+   "acertos": 86,
+   "erro_concorda": 6,
+   "erro_discorda": 26,
+   "erros": 165,
+   "n": 251,
+   "passa_portao": false,
+   "precisao_nos_acertos": 0.647,
+   "saldo_potencial": -6
+  }
+ },
+ "segundos": 2.8,
+ "sha256_declaracao": "50faa611d355362e0202811fee4f71241e9d8e122bd04d3dd0c5c00c73a7d0b8",
+ "sha256_previsoes": "49a901a5f5f674b57479336a69b98244cc0195e732664c86f2672bcfa32e0670"
+}
