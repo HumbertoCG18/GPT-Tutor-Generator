@@ -3,12 +3,16 @@
 Arquivos que o professor hospeda no OneDrive dele não aparecem na API do Moodle.
 Descoberta via /me/insights/shared (o que a página /shared do OneDrive mostra),
 download via /me/insights/shared/{id}/resource. Auth device-code (client público
-"Microsoft Graph Command Line Tools"); só leitura. Token em moddle/.m365_token.json.
+"Microsoft Graph Command Line Tools"); só leitura. O refresh token fica FORA do repositório, protegido pelo sistema
+operacional (`src.utils.credential_store`; DPAPI em %LOCALAPPDATA%/GPTTutorGenerator/credentials no Windows). Sem
+proteção disponível, falha antes do login, a menos que GPT_TUTOR_M365_NO_PERSIST=1 (sem persistência: login a cada
+sessão). O cache antigo em moddle/.m365_token.json nunca é lido nem migrado (incidente de 24/09); só gera aviso.
 """
 from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import time
 import unicodedata
@@ -20,6 +24,7 @@ import requests
 from src.builder.sources.moodle import (
     looks_like_expected, sanitize_folder_name, default_token_path,
 )
+from src.utils import credential_store
 
 log = logging.getLogger("m365")
 
@@ -141,27 +146,37 @@ class M365Client:
         return r.content
 
 
-def _token_path() -> Path:
-    return default_token_path().parent / ".m365_token.json"
+_SECRET_NAME = "m365_refresh_token"
+ENV_NO_PERSIST = "GPT_TUTOR_M365_NO_PERSIST"
+# Cache em texto puro da versão anterior (publicado no incidente de 24/09). NUNCA lido, migrado ou apagado aqui.
+LEGACY_TOKEN_PATH = default_token_path().parent / ".m365_token.json"
+
+
+def _sem_persistencia() -> bool:
+    return os.environ.get(ENV_NO_PERSIST, "").strip() == "1"
+
+
+def _avisar_cache_legado() -> None:
+    if LEGACY_TOKEN_PATH.exists():
+        log.warning("cache M365 antigo em %s IGNORADO: não é lido nem migrado; apague o arquivo manualmente. "
+                    "O token agora fica protegido fora do repositório e será pedido um novo login.", LEGACY_TOKEN_PATH)
 
 
 def _save_token(tok: dict) -> None:
     rt = tok.get("refresh_token")
-    if not rt:
+    if not rt or _sem_persistencia():
         return
-    p = _token_path()
-    p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps({"refresh_token": rt}), encoding="utf-8")
+    credential_store.save_secret(_SECRET_NAME, rt)
 
 
 def load_cached_token():
-    """Access token via refresh token salvo, ou None se ausente/expirado."""
-    p = _token_path()
-    if not p.is_file():
+    """Access token via refresh token protegido, ou None se ausente, ilegível ou expirado."""
+    if _sem_persistencia():
         return None
     try:
-        rt = (json.loads(p.read_text(encoding="utf-8")) or {}).get("refresh_token")
-    except (ValueError, OSError):
+        rt = credential_store.load_secret(_SECRET_NAME)
+    except credential_store.CredentialStoreError as exc:
+        log.warning("cache M365 protegido indisponível ou ilegível (%s); será pedido novo login", type(exc).__name__)
         return None
     if not rt:
         return None
@@ -209,7 +224,16 @@ def device_login(prompt_callback=None) -> str:
 
 
 def get_client(prompt_callback=None) -> "M365Client":
-    """Cliente pronto: usa refresh token salvo ou faz device-login."""
+    """Cliente pronto: usa refresh token protegido ou faz device-login. Sem proteção do SO, falha ANTES do login."""
+    _avisar_cache_legado()
+    if not _sem_persistencia():
+        try:
+            credential_store.ensure_available()
+        except credential_store.CredentialStoreError as exc:
+            # A UI mostra só os 160 primeiros caracteres: a instrução vem antes do motivo.
+            raise credential_store.ProtectedStorageUnavailable(
+                f"Cache protegido do token M365 indisponível; defina {ENV_NO_PERSIST}=1 para entrar sem salvar "
+                f"(login a cada sessão). Motivo: {exc}") from exc
     tok = load_cached_token()
     if tok:
         log.info("usando refresh token salvo")
