@@ -374,6 +374,17 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
   `file_map.reconcile_unit_with_block` — vizinho não vence texto gated discordante). Gate 1 de
   IMPLEMENTAÇÃO pendente de aprovação do usuário.
 
+## Planejado: regime separado VOCAB para a subunidade — desenho, sem execução (24/09)
+
+- Pedido do usuário 24/09 ("Regime separado"). Desenho: `docs/reports/2026-09-24-regime-vocab-desenho.md`. Sinal: relação
+  termo → tópico compilada por LLM (`compile_vocabulary`, já ligada nos 8 perfis; sidecars LLM nos 8 tutores), versionada,
+  congelada antes do gold, sem benchmark no prompt nem na seleção; sidecars manuais de proveniência mista em quarentena.
+- Fase 1 sem src e sem rede: CRU × VOCAB-atual × VOCAB-LLM × controles (maior unidade, aleatório) na régua v2; à parte,
+  VOCAB-limpo (recompilação, exige rede/API). Fase 2 (compilador v2, relação com evidência) só com Gate próprio.
+  Validação de generalização exige cursos novos (~300 materiais em 6 cursos); os 7 atuais servem de diagnóstico.
+- Decisões do usuário 24/09: regime aceito (separado, opcional); Fase 1 autorizada (sem rede, sem src); VOCAB-limpo só
+  depois da Fase 1; sidecars manuais mantidos no produto e em quarentena no regime; validação em cursos novos não decidida.
+
 ## Publicado: teto do regime cru por curso + W-AC (varredura final de sinais da subunidade, nenhum passa) (24/09)
 
 - Pedido do usuário 24/09: "Varredura e depois teto". W-AC `c1-3/wac_varredura_sinais_subunidade_24-09.{py,json}`
