@@ -10,7 +10,8 @@ dependencies = [
     "pillow>=10.0.0",
     "requests>=2.31.0",
     "pymupdf>=1.24.0",
-    "pymupdf4llm>=0.0.10",
+    # <1.28: com 1.28.2 a fração empilhada some do markdown (#71).
+    "pymupdf4llm>=0.0.10,<1.28",
     "pdfplumber>=0.10.0",
     "jsonschema>=4.0.0",
 ]
