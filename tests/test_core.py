@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -9,14 +10,6 @@ import tempfile
 from dataclasses import asdict
 from pathlib import Path
 from unittest import mock
-
-# Mock tkinter before importing the main module (not available in headless CI)
-_tk_mock = mock.MagicMock()
-sys.modules.setdefault("tkinter", _tk_mock)
-sys.modules.setdefault("tkinter.filedialog", _tk_mock)
-sys.modules.setdefault("tkinter.messagebox", _tk_mock)
-sys.modules.setdefault("tkinter.simpledialog", _tk_mock)
-sys.modules.setdefault("tkinter.ttk", _tk_mock)
 
 import pytest
 
@@ -87,6 +80,32 @@ from tests.fixtures.syllabus_timeline_cases import (
     METODOS_FORMAIS_SYLLABUS,
     METODOS_FORMAIS_UNITS,
 )
+
+
+_HAS_TKINTER = importlib.util.find_spec("tkinter") is not None
+_TK_MODULES = ("tkinter", "tkinter.filedialog", "tkinter.messagebox", "tkinter.simpledialog", "tkinter.ttk")
+
+
+@pytest.fixture(autouse=True)
+def _tkinter_stub(monkeypatch):
+    """Sem tkinter real, simula-o só durante o teste e descarta os módulos presos ao stub (#69)."""
+    if _HAS_TKINTER:
+        yield
+        return
+    tk_mock = mock.MagicMock()
+    for name in _TK_MODULES:
+        monkeypatch.setitem(sys.modules, name, tk_mock)
+    before = set(sys.modules)
+    yield
+    for name in set(sys.modules) - before:
+        module = sys.modules[name]
+        attrs = getattr(module, "__dict__", {}).values()
+        if not name.startswith("src.ui") and not any(isinstance(v, mock.NonCallableMock) for v in attrs):
+            continue
+        del sys.modules[name]
+        parent, _, child = name.rpartition(".")
+        if getattr(sys.modules.get(parent), child, None) is module:
+            delattr(sys.modules[parent], child)
 
 
 # ---------------------------------------------------------------------------
