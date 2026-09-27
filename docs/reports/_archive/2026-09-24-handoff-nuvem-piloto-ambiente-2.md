@@ -5,9 +5,9 @@ no container.
 
 ## Pedido, issue, base
 
-- Pedido: fazer a "primeira ação" de [sessao-nuvem.md](../../.mex/context/sessao-nuvem.md) §1
+- Pedido: fazer a "primeira ação" de [sessao-nuvem.md](../../../.mex/context/sessao-nuvem.md) §1
   antes de instalar qualquer coisa e registrar o resultado cru; rodar o comando de testes de
-  [setup.md](../../.mex/context/setup.md) (seção Linux) e comparar com a base conhecida; não
+  [setup.md](../../../.mex/context/setup.md) (seção Linux) e comparar com a base conhecida; não
   corrigir nada.
 - Issues: nenhuma específica deste piloto. Relacionadas e abertas:
   [#68](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/68) (suíte portável no Linux) e
@@ -178,7 +178,7 @@ Em `docs/reports/pendencias.md`, junto das entradas do piloto 1:
 - "Piloto 2 (24/09): a imagem da nuvem já instala `pydantic`, `pytest`, `cffi` e
   `pymupdf4llm==1.27.2.3`; faltam `python3.11-tk`, `gitleaks`, o hook do pre-commit e o pacote
   editável. Suíte: 25 failed, 2341 passed, 30 skipped (a fração empilhada passou). Ver
-  `docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-2.md`."
+  `docs/reports/_archive/2026-09-24-handoff-nuvem-piloto-ambiente-2.md`."
 
 ## 7. Decisões para o usuário
 

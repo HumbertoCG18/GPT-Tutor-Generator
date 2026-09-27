@@ -5,7 +5,7 @@ até a manhã de 23/09; depois **claude-opus-5-5 [1M], effort xhigh, por escolha
 executadas pelo próprio agente ativo (sem worker separado; desvio do precedente Opus-worker registrado nos estados). Sem
 revisão Astra (só medição e documentos). Branch `feat/motor-atribuicao`, HEAD `14f0e08d`, **ahead 2** de `origin` (os dois
 commits documentais desta sessão; sem push). Antes deles outra sessão fez merge de PRs no branch (`e5e55e16`, #59/#60).
-Handoff anterior: `2026-09-22-handoff-motor-fr-regua-claude.md`. Tracker: `docs/reports/pendencias.md` (blocos de 23/09 no
+Handoff anterior: `_archive/2026-09-22-handoff-motor-fr-regua-claude.md`. Tracker: `docs/reports/pendencias.md` (blocos de 23/09 no
 topo da zona; alterado e **não commitado** por decisão anterior do usuário).
 
 ## 1. Pedido vigente, decisões e limites (não reabrir)
@@ -46,7 +46,7 @@ Bloco cumpre em todos (MF exatamente no mínimo). Unidade falta +8 (CG +11, SO +
   de cobertura 237 (+1/−12); todas reprovadas; subunidade cai em todas. Três execuções (1ª morta por memória; 2ª quebrou no
   dump; 3ª = 2ª byte a byte).
 - **W-Z2 diagnóstico causal** (`wz2_diagnostico_causal_23-09.{py,json}` + `_anexo.md`; relatório
-  `docs/reports/2026-09-23-diagnostico-causal-tres-eixos.md`). Reexecução de conferência completa, idêntica.
+  `docs/reports/Feitos/2026-09-23-diagnostico-causal-tres-eixos.md`). Reexecução de conferência completa, idêntica.
   - Gold **por bloco** existe (`tests/fixtures/eval/gold_units_{MF,SO,IA,ES2,TCC}.csv`) e casa com os blocos dos builds por
     data exata. DP posicional acerta 51/56 blocos; erros = 2 preenchimentos em fronteira (ES2 bloco-07, TCC bloco-10), 2 na
     janela de desvio do IA, 1 cabeçalho (SO bloco-06, gold u04). 40 % dos blocos-candidatos têm afinidade zero.

@@ -72,8 +72,8 @@ pela rede Confiável, e o `python3-tk` do Ubuntu é do 3.12. Sem ele, só os tes
 abaixo são afetados. O `gitleaks` também fica ausente; o hook só avisa.
 
 Medido nos pilotos de 24/09 na imagem da nuvem (Python 3.11.15), relatórios em
-`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md`,
-`docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-2.md` e
+`docs/reports/_archive/2026-09-24-handoff-nuvem-piloto-ambiente.md`,
+`docs/reports/_archive/2026-09-24-handoff-nuvem-piloto-ambiente-2.md` e
 `docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente-3.md` (este confirmou a base e o hook ativo):
 
 - `pydantic` vai à parte: é importado no topo de módulos puxados por `engine.py`, mas não está

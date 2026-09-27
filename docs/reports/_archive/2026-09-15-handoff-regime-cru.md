@@ -203,7 +203,7 @@ Contraponto: o fix do teto deu **0** no placar do cru. Ele era pré-requisito de
 ## 12. Primeira mensagem sugerida
 
 ```
-Leia .mex/AGENTS.md, .mex/ROUTER.md e docs/reports/2026-09-15-handoff-regime-cru.md inteiro
+Leia .mex/AGENTS.md, .mex/ROUTER.md e docs/reports/_archive/2026-09-15-handoff-regime-cru.md inteiro
 (e o de 14/09 §3–§9 sob demanda). Não mude src/ nem rode medição ainda.
 Mostre o git diff --stat de src/ e diga se o diff da taxonomia direta está pronto para Gate 2,
 depois resuma em 5 linhas as decisões em aberto da §7, separando medido de hipótese.

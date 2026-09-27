@@ -129,7 +129,7 @@ mudar o importador do produto.
 
 ```
 Leia .mex/AGENTS.md, .mex/ROUTER.md, .workflow/README.md, .workflow/HANDOFF.md e
-docs/reports/2026-09-16-handoff-regime-cru.md inteiro (o de 15/09 §3–§11 sob demanda).
+docs/reports/_archive/2026-09-16-handoff-regime-cru.md inteiro (o de 15/09 §3–§11 sob demanda).
 Confira branch e HEAD antes de tudo; não mude src/ nem rode medição ainda.
 Resuma em 5 linhas as decisões em aberto da §4, separando medido de hipótese, e proponha o plano do item 4.2
 (cópia nova, MF + controle IA, 0 chamadas de LLM) para eu aprovar antes de rodar.

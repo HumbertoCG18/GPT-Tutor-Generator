@@ -28,7 +28,7 @@ armadilha documentada no ledger), 4 repos reprocessados gated, goldens re-baseli
 Ferramenta permanente: `scripts/check_sarc_freshness.py` (gate exit-1).
 **Gold de unidades**: xlsx com dropdown (`scripts/gold_units_xlsx.py` build/export/fix-dropdowns),
 82→86 blocos-régua, rotulagem user 4/5 congelada em `tests/fixtures/eval/gold_units_*.csv`,
-baseline `docs/reports/2026-08-08-eval-units-baseline.json`. IA: rotulagem substituída por
+baseline `docs/reports/_archive/2026-08-08-eval-units-baseline.json`. IA: rotulagem substituída por
 `CRUZAMENTO_IA_SARC.md` (validável, insumo do ruling).
 **Curas**: MF (refresh já aplicou U1/U1b) · SO em 3 atos (9a sinal: E/S "/" invisível +
 office_hours sequestrando aulas + higiene topic_text; 9b investigação; 9c splits por

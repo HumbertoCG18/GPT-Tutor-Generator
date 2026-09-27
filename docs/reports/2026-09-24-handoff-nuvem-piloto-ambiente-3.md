@@ -18,7 +18,7 @@ foi o hook do pre-commit, exigida pela §1 de
 - Branch: `nuvem/2026-09-24-piloto-ambiente-3`.
 - Arquivo mudado: só este.
 - Base de comparação: "Base Linux conhecida" do `setup.md` (medida no
-  [piloto 2](2026-09-24-handoff-nuvem-piloto-ambiente-2.md)).
+  [piloto 2](_archive/2026-09-24-handoff-nuvem-piloto-ambiente-2.md)).
 
 ## 1. Antes de qualquer instalação
 

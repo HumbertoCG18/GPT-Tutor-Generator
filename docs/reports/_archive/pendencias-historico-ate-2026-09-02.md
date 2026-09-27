@@ -4065,7 +4065,7 @@ SO 9/11 · TCC 13/13; 0 pinos violados; suite 1886 passed / 1 skipped;
 `scripts/audit_taxonomy_losses.py` = 0 ausentes nos 5 (era TCC 11/27, SO 3/34, ES2 1/21).
 Taxonomia em disco: SO 31->36 topicos, TCC 14->26, ES2 20->21.
 Medicao completa (2 rodadas): `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md`.
-Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.patch`.
+Patch da 1a tentativa do card: `docs/reports/_archive/2026-08-18-card-signal-tentativa.patch`.
 
 - [CODE] **CAUSA RAIZ DO MATCHING FRACO DE UNIDADE: `_topic_text` serializa dict**
   (`extraction/teaching_plan.py:_topic_text`, `as-of 2026-08-18`) — a funcao trata tupla e str,
@@ -4092,7 +4092,7 @@ Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.pa
   (`Cap. sobre Algoritmos Geneticos` no IA — candidato a pino). Detalhe:
   `docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md` §Rodada 2.
 - [HISTORICO] **Card: primeira tentativa revertida no mesmo dia.**
-  Patch guardado: `docs/reports/2026-08-18-card-signal-tentativa.patch` (`card_text` nos sinais
+  Patch guardado: `docs/reports/_archive/2026-08-18-card-signal-tentativa.patch` (`card_text` nos sinais
   + peso 2.5 exato / 0.40 parcial no scorer de unidade; testes inclusos). Medicao em sandbox nos
   5 cursos: gates continuaram verdes (reguas sem regressao, 0 pinos violados), MAS bissecao
   isolando o card mostrou dano real no MF — **delta de unidade 1 (so ganho) sem o card contra 9

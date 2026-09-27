@@ -33,7 +33,7 @@ Debian em `/usr/lib/python3/dist-packages` foram compilados para o 3.12 (ex.:
 
 Na ordem, para isolar o efeito de cada dependência:
 
-1. `python3 -m pip install -e ".[dev]"` (instalação do [setup.md](../../.mex/context/setup.md)).
+1. `python3 -m pip install -e ".[dev]"` (instalação do [setup.md](../../../.mex/context/setup.md)).
 2. `python3 -m pip install cffi` (contorno do bloqueio 2.1; não está no guia).
 3. `python3 -m pip install pydantic` (o guia manda instalar à parte).
 
@@ -53,7 +53,7 @@ resolveu (`import pdfplumber` passou).
 ### 2.2 Efeito do `pydantic`
 
 Com `cffi` e sem `pydantic`: 1635 testes coletados, 47 erros de coleta (45 por `pydantic`, 2 por
-`tkinter`). Confirma a lacuna 12 de [sessao-nuvem.md](../../.mex/context/sessao-nuvem.md): o pacote
+`tkinter`). Confirma a lacuna 12 de [sessao-nuvem.md](../../../.mex/context/sessao-nuvem.md): o pacote
 não está declarado no `pyproject.toml` desta base.
 
 ## 3. Execução da suíte
@@ -149,12 +149,12 @@ Nenhum dado foi criado para contornar skip.
 
 ## 6. Divergências com o guia da nuvem
 
-- [sessao-nuvem.md](../../.mex/context/sessao-nuvem.md) §2 diz "O setup instala o hook". Neste
+- [sessao-nuvem.md](../../../.mex/context/sessao-nuvem.md) §2 diz "O setup instala o hook". Neste
   container o hook não estava instalado.
 - §1: `docs/reports/pendencias.md` deste clone **não** tem o bloco `<!-- fila-campanhas-start -->`,
   e os handoffs de 21 a 23/09 não existem aqui (o mais recente é de 17/09). Pelo guia, o clone está
   atrás da máquina local; por isso esta sessão se limitou a diagnóstico, como o pedido já exigia.
-- [setup.md](../../.mex/context/setup.md) (Linux) não menciona o bloqueio do `_cffi_backend` nem o
+- [setup.md](../../../.mex/context/setup.md) (Linux) não menciona o bloqueio do `_cffi_backend` nem o
   pacote `python3.11-tk`.
 
 ## 7. O que não foi validado
@@ -175,5 +175,5 @@ Em `docs/reports/pendencias.md`, na caixa de ideias ou em manutenção:
 
 - "Suíte no Linux: 1 teste derruba o pytest (`os.name` global em `test_core.py`), 21 dependem de
   caminho `C:\...`, `robocopy` ou barra invertida, e o mock de `tkinter` vaza entre módulos. Ver
-  `docs/reports/2026-09-24-handoff-nuvem-piloto-ambiente.md`."
+  `docs/reports/_archive/2026-09-24-handoff-nuvem-piloto-ambiente.md`."
 - "Setup da nuvem: `python3.11-tk`, `cffi`, `pydantic`, `gitleaks` e instalação do pre-commit."
