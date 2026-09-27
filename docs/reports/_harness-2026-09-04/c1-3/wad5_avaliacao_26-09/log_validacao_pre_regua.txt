@@ -1,0 +1,124 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\wad5_avaliacao_26-09\\pycache_vazio",
+  "valida_pre_regua.py"
+ ],
+ "saida": 0,
+ "segundos": 5.4,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+OK    ambiente declarado
+OK    avaliador.py = hash aprovado
+OK    comum.py = hash aprovado
+OK    congelamento: id_comum = aprovado
+OK    congelamento: ligações normativo→id e insumos→insumos_braco
+OK    código do pacote = congelado (inclui avaliador, comum, testes, helpers)
+OK    intérprete = congelado
+OK    distribuições = assinatura congelada
+OK    congelamento de entradas = normativo
+OK    protocolo normativo (adendo v4) = protocolo_sha
+OK    manifesto de capturas aprovado e do mesmo congelamento
+OK    manifesto com os sete braços
+OK    CRU: arquivo = caminho esperado pelo avaliador
+OK    CRU: sha256 do arquivo = manifesto
+OK    CRU: conteudo_sha recalculado = manifesto
+OK    CRU: validador completo
+OK    CRU: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    CRU: 350 registros = inventário congelado
+OK    VOCAB_ATUAL: arquivo = caminho esperado pelo avaliador
+OK    VOCAB_ATUAL: sha256 do arquivo = manifesto
+OK    VOCAB_ATUAL: conteudo_sha recalculado = manifesto
+OK    VOCAB_ATUAL: validador completo
+OK    VOCAB_ATUAL: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    VOCAB_ATUAL: 350 registros = inventário congelado
+OK    VOCAB_LLM: arquivo = caminho esperado pelo avaliador
+OK    VOCAB_LLM: sha256 do arquivo = manifesto
+OK    VOCAB_LLM: conteudo_sha recalculado = manifesto
+OK    VOCAB_LLM: validador completo
+OK    VOCAB_LLM: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    VOCAB_LLM: 350 registros = inventário congelado
+OK    CTRL_MAIOR: arquivo = caminho esperado pelo avaliador
+OK    CTRL_MAIOR: sha256 do arquivo = manifesto
+OK    CTRL_MAIOR: conteudo_sha recalculado = manifesto
+OK    CTRL_MAIOR: validador completo
+OK    CTRL_MAIOR: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    CTRL_MAIOR: 350 registros = inventário congelado
+OK    CTRL_ALEAT_1: arquivo = caminho esperado pelo avaliador
+OK    CTRL_ALEAT_1: sha256 do arquivo = manifesto
+OK    CTRL_ALEAT_1: conteudo_sha recalculado = manifesto
+OK    CTRL_ALEAT_1: validador completo
+OK    CTRL_ALEAT_1: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    CTRL_ALEAT_1: 350 registros = inventário congelado
+OK    CTRL_ALEAT_2: arquivo = caminho esperado pelo avaliador
+OK    CTRL_ALEAT_2: sha256 do arquivo = manifesto
+OK    CTRL_ALEAT_2: conteudo_sha recalculado = manifesto
+OK    CTRL_ALEAT_2: validador completo
+OK    CTRL_ALEAT_2: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    CTRL_ALEAT_2: 350 registros = inventário congelado
+OK    CTRL_ALEAT_3: arquivo = caminho esperado pelo avaliador
+OK    CTRL_ALEAT_3: sha256 do arquivo = manifesto
+OK    CTRL_ALEAT_3: conteudo_sha recalculado = manifesto
+OK    CTRL_ALEAT_3: validador completo
+OK    CTRL_ALEAT_3: identidade (braço, modo, esquema, id_comum, insumos, 0 violações)
+OK    CTRL_ALEAT_3: 350 registros = inventário congelado
+OK    diretório de capturas: exatamente sete capturas completas, todas deste congelamento
+OK    sem falhas registradas no congelamento
+OK    snapshots de taxonomia e índice + palcos locais = congelamento (7 braços x 7 cursos)
+OK    descritor da régua sem pendências
+OK    CG: manifest de referência = sha256 congelado
+OK    ES2: manifest de referência = sha256 congelado
+OK    FR: manifest de referência = sha256 congelado
+OK    IA: manifest de referência = sha256 congelado
+OK    MF: manifest de referência = sha256 congelado
+OK    SO: manifest de referência = sha256 congelado
+OK    TCC: manifest de referência = sha256 congelado
+OK    CG: manifest salvo = árvore congelada
+OK    ES2: manifest salvo = árvore congelada
+OK    FR: manifest salvo = árvore congelada
+OK    IA: manifest salvo = árvore congelada
+OK    MF: manifest salvo = árvore congelada
+OK    SO: manifest salvo = árvore congelada
+OK    TCC: manifest salvo = árvore congelada
+OK    régua: 38 arquivos com blob do índice = congelado (arquivos não abertos)
+PRE-REGUA APROVADA
+
+--- stderr

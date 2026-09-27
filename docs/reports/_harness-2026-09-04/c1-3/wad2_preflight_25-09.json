@@ -1,0 +1,2489 @@
+{
+ "P0_estado": {
+  "diff_src_tests_vazio": true,
+  "head": "2589ed5a",
+  "protocolo_anterior": {
+   "capturas": [],
+   "palcos": ".frzero/wad_sidecars_24-09 (não reutilizáveis)",
+   "script": "c1-3/wad_regime_vocab_fase1_24-09.py",
+   "script_sha256": "bbf234ccae40c2e2"
+  },
+  "status": [
+   "?? docs/reports/2026-09-25-regime-vocab-adendo-fase1.md",
+   "?? docs/reports/_harness-2026-09-04/c1-3/astra_revisao_regime2_17-09.md",
+   "?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.csv",
+   "?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.json",
+   "?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.py",
+   "?? docs/reports/_harness-2026-09-04/c1-3/wad2_regime_vocab_fase1_25-09.py",
+   "?? docs/reports/_harness-2026-09-04/c1-3/wad_regime_vocab_fase1_24-09.py"
+  ]
+ },
+ "P1_proveniencia": {
+  "Computacao-Grafica-Tutor": {
+   ".glossary_curation.json": {
+    "_modelo": null,
+    "_nota": "Curadoria 2026-09-05 (user): pinos de unidade nos blocos 06 (u04, nome do SARC/Moodle 'Processo de Visualizacao 2D'), 08 (u03, morfologia entre processamento de",
+    "_provenance": null,
+    "chaves": 4,
+    "modificado": "2026-09-12 00:59",
+    "origem": "Computacao-Grafica-Tutor\\course\\.glossary_curation.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "c6060cce1e55fba6",
+    "tem_raw": false,
+    "termos": 5
+   },
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 22,
+    "modificado": "2026-09-11 17:30",
+    "origem": "Computacao-Grafica-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "03923fdda3f90c5e",
+    "tem_raw": true,
+    "termos": 83
+   }
+  },
+  "Engenharia-Software-2-Tutor": {
+   ".glossary_curation.json": {
+    "_modelo": null,
+    "_nota": "GERADO automaticamente de fontes do PROFESSOR (SARC + secao do Moodle + titulo/headings dos materiais da secao), sem olhar gold nenhum — `c1-3/gera_sidecar_prof",
+    "_provenance": null,
+    "chaves": 2,
+    "modificado": "2026-09-12 00:59",
+    "origem": "Engenharia-Software-2-Tutor\\course\\.glossary_curation.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "218a3a2f3d7507d8",
+    "tem_raw": false,
+    "termos": 22
+   },
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 13,
+    "modificado": "2026-09-11 02:32",
+    "origem": "Engenharia-Software-2-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "cb8e709e6987bd39",
+    "tem_raw": true,
+    "termos": 60
+   }
+  },
+  "Fundamentos-de-Redes-Tutor": {
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 8,
+    "modificado": "2026-09-02 11:16",
+    "origem": "Fundamentos-de-Redes-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "a61b7c597c61472f",
+    "tem_raw": true,
+    "termos": 53
+   }
+  },
+  "Inteligencia-Artifical-Tutor": {
+   ".glossary_curation.json": {
+    "_modelo": null,
+    "_nota": "GERADO automaticamente de fontes do PROFESSOR (SARC + secao do Moodle + titulo/headings dos materiais da secao), sem olhar gold nenhum — `c1-3/gera_sidecar_prof",
+    "_provenance": null,
+    "chaves": 2,
+    "modificado": "2026-09-07 23:12",
+    "origem": "Inteligencia-Artifical-Tutor\\course\\.glossary_curation.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "21a32a1b0d2d2311",
+    "tem_raw": false,
+    "termos": 21
+   },
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 15,
+    "modificado": "2026-09-11 02:32",
+    "origem": "Inteligencia-Artifical-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "12fa7a18c0c9d7d5",
+    "tem_raw": true,
+    "termos": 80
+   }
+  },
+  "Laboratorio-de-Redes-Tutor": {
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 3,
+    "modificado": "2026-09-02 11:16",
+    "origem": "Laboratorio-de-Redes-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "d0e2396b6b4f47db",
+    "tem_raw": true,
+    "termos": 8
+   }
+  },
+  "Metodos-Formais-Tutor": {
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 17,
+    "modificado": "2026-09-11 02:32",
+    "origem": "Metodos-Formais-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "dfa26d4b73e88c01",
+    "tem_raw": true,
+    "termos": 81
+   }
+  },
+  "Sistemas-Operacionais-Tutor": {
+   ".glossary_curation.json": {
+    "_modelo": null,
+    "_nota": "GERADO automaticamente de fontes do PROFESSOR (SARC + secao do Moodle + titulo/headings dos materiais da secao), sem olhar gold nenhum — `c1-3/gera_sidecar_prof",
+    "_provenance": null,
+    "chaves": 4,
+    "modificado": "2026-09-12 00:32",
+    "origem": "Sistemas-Operacionais-Tutor\\course\\.glossary_curation.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "598c02b40307f20e",
+    "tem_raw": false,
+    "termos": 11
+   },
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 17,
+    "modificado": "2026-09-11 02:32",
+    "origem": "Sistemas-Operacionais-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "8d888201d388fa00",
+    "tem_raw": true,
+    "termos": 99
+   }
+  },
+  "TCC-Tutor": {
+   ".glossary_curation.json": {
+    "_modelo": null,
+    "_nota": "GERADO automaticamente de fontes do PROFESSOR (SARC + secao do Moodle + titulo/headings dos materiais da secao), sem olhar gold nenhum — `c1-3/gera_sidecar_prof",
+    "_provenance": null,
+    "chaves": 3,
+    "modificado": "2026-09-07 23:13",
+    "origem": "TCC-Tutor\\course\\.glossary_curation.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "ecd57abd52c7efef",
+    "tem_raw": false,
+    "termos": 7
+   },
+   ".glossary_curation.llm.json": {
+    "_modelo": "gemini-3.5-flash",
+    "_nota": "Vocabulario compilado por LLM (Fase 1b, 1 chamada por unidade com material; termos dos titulos/headings dos materiais classificados nos topicos do plano). Cache",
+    "_provenance": "llm",
+    "chaves": 19,
+    "modificado": "2026-09-11 02:32",
+    "origem": "TCC-Tutor\\course\\.glossary_curation.llm.json",
+    "prompt_versao": null,
+    "proveniencia_incompleta": true,
+    "sha256": "8161633ccde7140a",
+    "tem_raw": true,
+    "termos": 96
+   }
+  }
+ },
+ "P2_equivalencias": {
+  "CG": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "Matematica",
+      "b": "Cálculo de u",
+      "caminho": ".units[5].topics[5].aliases[1]"
+     },
+     {
+      "a": "Cálculo de u",
+      "b": "Cálculo de v",
+      "caminho": ".units[5].topics[5].aliases[2]"
+     },
+     {
+      "a": "Cálculo de v",
+      "b": "Cálculo de w",
+      "caminho": ".units[5].topics[5].aliases[3]"
+     },
+     {
+      "a": "Cálculo de w",
+      "b": "Matematica",
+      "caminho": ".units[5].topics[5].aliases[4]"
+     }
+    ],
+    "aliases_acrescentados": 85,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "18a0c82da3ae4ebb",
+    "topicos_alterados": 23
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "Matematica",
+      "b": "Cálculo de u",
+      "caminho": ".units[5].topics[5].aliases[1]"
+     },
+     {
+      "a": "Cálculo de u",
+      "b": "Cálculo de v",
+      "caminho": ".units[5].topics[5].aliases[2]"
+     },
+     {
+      "a": "Cálculo de v",
+      "b": "Cálculo de w",
+      "caminho": ".units[5].topics[5].aliases[3]"
+     },
+     {
+      "a": "Cálculo de w",
+      "b": "Matematica",
+      "caminho": ".units[5].topics[5].aliases[4]"
+     }
+    ],
+    "aliases_acrescentados": 80,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "d196fd4f70e7e717",
+    "topicos_alterados": 19
+   }
+  },
+  "ES2": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 80,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "c09b234d2c781119",
+    "topicos_alterados": 12
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 58,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "ad0a505ff4828833",
+    "topicos_alterados": 12
+   }
+  },
+  "FR": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 55,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "817f267ba47aa796",
+    "topicos_alterados": 8
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 55,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "817f267ba47aa796",
+    "topicos_alterados": 8
+   }
+  },
+  "IA": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "visão geral",
+      "b": "Inteligência Adaptativa",
+      "caminho": ".units[0].topics[0].aliases[1]"
+     },
+     {
+      "a": "Inteligência Adaptativa",
+      "b": "Inteligência Artificial",
+      "caminho": ".units[0].topics[0].aliases[2]"
+     },
+     {
+      "a": "Inteligência Artificial",
+      "b": "modelos de IA",
+      "caminho": ".units[0].topics[0].aliases[3]"
+     },
+     {
+      "a": "modelos de IA",
+      "b": "visão geral",
+      "caminho": ".units[0].topics[0].aliases[4]"
+     },
+     {
+      "a": "Subáreas e disciplinas afins",
+      "b": "ChatGPT",
+      "caminho": ".units[0].topics[2].aliases[0]"
+     },
+     {
+      "a": "ChatGPT",
+      "b": "Copilot",
+      "caminho": ".units[0].topics[2].aliases[1]"
+     },
+     {
+      "a": "Copilot",
+      "b": "IA generativa",
+      "caminho": ".units[0].topics[2].aliases[2]"
+     },
+     {
+      "a": "IA generativa",
+      "b": "Subáreas e disciplinas afins",
+      "caminho": ".units[0].topics[2].aliases[3]"
+     },
+     {
+      "a": "Questões filosóficas de IA",
+      "b": "IA Responsável",
+      "caminho": ".units[0].topics[3].aliases[0]"
+     },
+     {
+      "a": "IA Responsável",
+      "b": "Questões filosóficas de IA",
+      "caminho": ".units[0].topics[3].aliases[1]"
+     },
+     {
+      "a": "Introdução a agentes em ambientes determinísticos",
+      "b": "Agentes e Algoritmos de Busca",
+      "caminho": ".units[1].topics[0].aliases[0]"
+     },
+     {
+      "a": "agentes racionais",
+      "b": "Introdução a agentes em ambientes determinísticos",
+      "caminho": ".units[1].topics[0].aliases[1]"
+     },
+     {
+      "a": "Agentes e Algoritmos de Busca",
+      "b": "agentes racionais",
+      "caminho": ".units[1].topics[0].aliases[2]"
+     },
+     {
+      "a": "Representação de problemas",
+      "b": "Espaço de Busca",
+      "caminho": ".units[1].topics[1].aliases[0]"
+     },
+     {
+      "a": "modelagem do problema",
+      "b": "Estado de Mundo",
+      "caminho": ".units[1].topics[1].aliases[1]"
+     },
+     {
+      "a": "Espaço de Busca",
+      "b": "Estados de mundo",
+      "caminho": ".units[1].topics[1].aliases[2]"
+     },
+     {
+      "a": "Estado de Mundo",
+      "b": "Representação de problemas",
+      "caminho": ".units[1].topics[1].aliases[3]"
+     },
+     {
+      "a": "Estados de mundo",
+      "b": "modelagem do problema",
+      "caminho": ".units[1].topics[1].aliases[4]"
+     },
+     {
+      "a": "Busca informada (heurística)",
+      "b": "Algoritmos de Busca Informada",
+      "caminho": ".units[1].topics[2].aliases[0]"
+     },
+     {
+      "a": "busca heurística",
+      "b": "Busca Informada",
+      "caminho": ".units[1].topics[2].aliases[1]"
+     },
+     {
+      "a": "Algoritmos de Busca Informada",
+      "b": "Busca informada (heurística)",
+      "caminho": ".units[1].topics[2].aliases[2]"
+     },
+     {
+      "a": "Busca Informada",
+      "b": "busca heurística",
+      "caminho": ".units[1].topics[2].aliases[3]"
+     },
+     {
+      "a": "Algoritmos de Busca com Informação",
+      "b": "Algoritmo Hill-Climbing",
+      "caminho": ".units[1].topics[3].aliases[0]"
+     },
+     {
+      "a": "search algorithms",
+      "b": "Algoritmo Simulated Annealing",
+      "caminho": ".units[1].topics[3].aliases[1]"
+     },
+     {
+      "a": "Algoritmo Hill-Climbing",
+      "b": "Algoritmo de Dijkstra",
+      "caminho": ".units[1].topics[3].aliases[2]"
+     }
+    ],
+    "aliases_acrescentados": 100,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "08ef7730062e1f02",
+    "topicos_alterados": 15
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "visão geral",
+      "b": "Inteligência Adaptativa",
+      "caminho": ".units[0].topics[0].aliases[1]"
+     },
+     {
+      "a": "Inteligência Adaptativa",
+      "b": "Inteligência Artificial",
+      "caminho": ".units[0].topics[0].aliases[2]"
+     },
+     {
+      "a": "Inteligência Artificial",
+      "b": "modelos de IA",
+      "caminho": ".units[0].topics[0].aliases[3]"
+     },
+     {
+      "a": "modelos de IA",
+      "b": "visão geral",
+      "caminho": ".units[0].topics[0].aliases[4]"
+     },
+     {
+      "a": "Subáreas e disciplinas afins",
+      "b": "ChatGPT",
+      "caminho": ".units[0].topics[2].aliases[0]"
+     },
+     {
+      "a": "ChatGPT",
+      "b": "Copilot",
+      "caminho": ".units[0].topics[2].aliases[1]"
+     },
+     {
+      "a": "Copilot",
+      "b": "IA generativa",
+      "caminho": ".units[0].topics[2].aliases[2]"
+     },
+     {
+      "a": "IA generativa",
+      "b": "Subáreas e disciplinas afins",
+      "caminho": ".units[0].topics[2].aliases[3]"
+     },
+     {
+      "a": "Questões filosóficas de IA",
+      "b": "IA Responsável",
+      "caminho": ".units[0].topics[3].aliases[0]"
+     },
+     {
+      "a": "IA Responsável",
+      "b": "Questões filosóficas de IA",
+      "caminho": ".units[0].topics[3].aliases[1]"
+     },
+     {
+      "a": "Introdução a agentes em ambientes determinísticos",
+      "b": "Agentes e Algoritmos de Busca",
+      "caminho": ".units[1].topics[0].aliases[0]"
+     },
+     {
+      "a": "agentes racionais",
+      "b": "Introdução a agentes em ambientes determinísticos",
+      "caminho": ".units[1].topics[0].aliases[1]"
+     },
+     {
+      "a": "Agentes e Algoritmos de Busca",
+      "b": "agentes racionais",
+      "caminho": ".units[1].topics[0].aliases[2]"
+     },
+     {
+      "a": "Representação de problemas",
+      "b": "Espaço de Busca",
+      "caminho": ".units[1].topics[1].aliases[0]"
+     },
+     {
+      "a": "modelagem do problema",
+      "b": "Estado de Mundo",
+      "caminho": ".units[1].topics[1].aliases[1]"
+     },
+     {
+      "a": "Espaço de Busca",
+      "b": "Estados de mundo",
+      "caminho": ".units[1].topics[1].aliases[2]"
+     },
+     {
+      "a": "Estado de Mundo",
+      "b": "Representação de problemas",
+      "caminho": ".units[1].topics[1].aliases[3]"
+     },
+     {
+      "a": "Estados de mundo",
+      "b": "modelagem do problema",
+      "caminho": ".units[1].topics[1].aliases[4]"
+     },
+     {
+      "a": "Busca informada (heurística)",
+      "b": "Algoritmos de Busca Informada",
+      "caminho": ".units[1].topics[2].aliases[0]"
+     },
+     {
+      "a": "busca heurística",
+      "b": "Busca Informada",
+      "caminho": ".units[1].topics[2].aliases[1]"
+     },
+     {
+      "a": "Algoritmos de Busca Informada",
+      "b": "Busca informada (heurística)",
+      "caminho": ".units[1].topics[2].aliases[2]"
+     },
+     {
+      "a": "Busca Informada",
+      "b": "busca heurística",
+      "caminho": ".units[1].topics[2].aliases[3]"
+     },
+     {
+      "a": "Algoritmos de Busca com Informação",
+      "b": "Algoritmo Hill-Climbing",
+      "caminho": ".units[1].topics[3].aliases[0]"
+     },
+     {
+      "a": "search algorithms",
+      "b": "Algoritmo Simulated Annealing",
+      "caminho": ".units[1].topics[3].aliases[1]"
+     },
+     {
+      "a": "Algoritmo Hill-Climbing",
+      "b": "Algoritmo de Dijkstra",
+      "caminho": ".units[1].topics[3].aliases[2]"
+     }
+    ],
+    "aliases_acrescentados": 79,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "9d89ade7708251bd",
+    "topicos_alterados": 15
+   }
+  },
+  "MF": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "Archive of Formal Proofs",
+      "b": "Alfabeto e palavra",
+      "caminho": ".units[0].topics[0].aliases[1]"
+     },
+     {
+      "a": "Alfabeto e palavra",
+      "b": "Archive of Formal Proofs",
+      "caminho": ".units[0].topics[0].aliases[2]"
+     },
+     {
+      "a": "Formal Verification of Axiom-Free Gödelian Ontological Argument and Trinity Necessity Proof in Isabelle HOL",
+      "b": "Formal Verification",
+      "caminho": ".units[0].topics[5].aliases[1]"
+     },
+     {
+      "a": "Formal Verification",
+      "b": "Formal Verification of Axiom-Free Gödelian Ontological Argument and Trinity Necessity Proof in Isabelle HOL",
+      "caminho": ".units[0].topics[5].aliases[2]"
+     },
+     {
+      "a": "assistentes de prova",
+      "b": "Isabelle",
+      "caminho": ".units[0].topics[6].aliases[1]"
+     },
+     {
+      "a": "Isabelle",
+      "b": "Isar",
+      "caminho": ".units[0].topics[6].aliases[2]"
+     },
+     {
+      "a": "Isar",
+      "b": "assistentes de prova",
+      "caminho": ".units[0].topics[6].aliases[3]"
+     },
+     {
+      "a": "exemplos",
+      "b": "AWS Encryption SDK",
+      "caminho": ".units[0].topics[7].aliases[1]"
+     },
+     {
+      "a": "AWS Encryption SDK",
+      "b": "Ariane 5",
+      "caminho": ".units[0].topics[7].aliases[2]"
+     },
+     {
+      "a": "Ariane 5",
+      "b": "Eth2.0 spec",
+      "caminho": ".units[0].topics[7].aliases[3]"
+     },
+     {
+      "a": "Eth2.0 spec",
+      "b": "Gödelian Ontological Argument",
+      "caminho": ".units[0].topics[7].aliases[4]"
+     },
+     {
+      "a": "Gödelian Ontological Argument",
+      "b": "Pentium FDIV",
+      "caminho": ".units[0].topics[7].aliases[5]"
+     },
+     {
+      "a": "Pentium FDIV",
+      "b": "Therac-25",
+      "caminho": ".units[0].topics[7].aliases[6]"
+     },
+     {
+      "a": "Therac-25",
+      "b": "exemplos",
+      "caminho": ".units[0].topics[7].aliases[7]"
+     },
+     {
+      "a": "tripla de Hoare",
+      "b": "Atribuição",
+      "caminho": ".units[1].topics[0].aliases[1]"
+     },
+     {
+      "a": "Atribuição",
+      "b": "Composição",
+      "caminho": ".units[1].topics[0].aliases[2]"
+     },
+     {
+      "a": "Composição",
+      "b": "Consequência",
+      "caminho": ".units[1].topics[0].aliases[3]"
+     },
+     {
+      "a": "Consequência",
+      "b": "Cálculo de Floyd-Hoare",
+      "caminho": ".units[1].topics[0].aliases[4]"
+     },
+     {
+      "a": "Cálculo de Floyd-Hoare",
+      "b": "Lógica de Floyd-Hoare",
+      "caminho": ".units[1].topics[0].aliases[5]"
+     },
+     {
+      "a": "Lógica de Floyd-Hoare",
+      "b": "Triplas de Hoare",
+      "caminho": ".units[1].topics[0].aliases[6]"
+     },
+     {
+      "a": "Triplas de Hoare",
+      "b": "tripla de Hoare",
+      "caminho": ".units[1].topics[0].aliases[7]"
+     },
+     {
+      "a": "precondições e pós-condições",
+      "b": "PosFraco",
+      "caminho": ".units[1].topics[1].aliases[1]"
+     },
+     {
+      "a": "PosFraco",
+      "b": "PreForte",
+      "caminho": ".units[1].topics[1].aliases[2]"
+     },
+     {
+      "a": "PreForte",
+      "b": "precondições e pós-condições",
+      "caminho": ".units[1].topics[1].aliases[3]"
+     },
+     {
+      "a": "invariante de laço",
+      "b": "Invariantes",
+      "caminho": ".units[1].topics[3].aliases[1]"
+     }
+    ],
+    "aliases_acrescentados": 80,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "2630c2ae186a7f29",
+    "topicos_alterados": 17
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "Archive of Formal Proofs",
+      "b": "Alfabeto e palavra",
+      "caminho": ".units[0].topics[0].aliases[1]"
+     },
+     {
+      "a": "Alfabeto e palavra",
+      "b": "Archive of Formal Proofs",
+      "caminho": ".units[0].topics[0].aliases[2]"
+     },
+     {
+      "a": "Formal Verification of Axiom-Free Gödelian Ontological Argument and Trinity Necessity Proof in Isabelle HOL",
+      "b": "Formal Verification",
+      "caminho": ".units[0].topics[5].aliases[1]"
+     },
+     {
+      "a": "Formal Verification",
+      "b": "Formal Verification of Axiom-Free Gödelian Ontological Argument and Trinity Necessity Proof in Isabelle HOL",
+      "caminho": ".units[0].topics[5].aliases[2]"
+     },
+     {
+      "a": "assistentes de prova",
+      "b": "Isabelle",
+      "caminho": ".units[0].topics[6].aliases[1]"
+     },
+     {
+      "a": "Isabelle",
+      "b": "Isar",
+      "caminho": ".units[0].topics[6].aliases[2]"
+     },
+     {
+      "a": "Isar",
+      "b": "assistentes de prova",
+      "caminho": ".units[0].topics[6].aliases[3]"
+     },
+     {
+      "a": "exemplos",
+      "b": "AWS Encryption SDK",
+      "caminho": ".units[0].topics[7].aliases[1]"
+     },
+     {
+      "a": "AWS Encryption SDK",
+      "b": "Ariane 5",
+      "caminho": ".units[0].topics[7].aliases[2]"
+     },
+     {
+      "a": "Ariane 5",
+      "b": "Eth2.0 spec",
+      "caminho": ".units[0].topics[7].aliases[3]"
+     },
+     {
+      "a": "Eth2.0 spec",
+      "b": "Gödelian Ontological Argument",
+      "caminho": ".units[0].topics[7].aliases[4]"
+     },
+     {
+      "a": "Gödelian Ontological Argument",
+      "b": "Pentium FDIV",
+      "caminho": ".units[0].topics[7].aliases[5]"
+     },
+     {
+      "a": "Pentium FDIV",
+      "b": "Therac-25",
+      "caminho": ".units[0].topics[7].aliases[6]"
+     },
+     {
+      "a": "Therac-25",
+      "b": "exemplos",
+      "caminho": ".units[0].topics[7].aliases[7]"
+     },
+     {
+      "a": "tripla de Hoare",
+      "b": "Atribuição",
+      "caminho": ".units[1].topics[0].aliases[1]"
+     },
+     {
+      "a": "Atribuição",
+      "b": "Composição",
+      "caminho": ".units[1].topics[0].aliases[2]"
+     },
+     {
+      "a": "Composição",
+      "b": "Consequência",
+      "caminho": ".units[1].topics[0].aliases[3]"
+     },
+     {
+      "a": "Consequência",
+      "b": "Cálculo de Floyd-Hoare",
+      "caminho": ".units[1].topics[0].aliases[4]"
+     },
+     {
+      "a": "Cálculo de Floyd-Hoare",
+      "b": "Lógica de Floyd-Hoare",
+      "caminho": ".units[1].topics[0].aliases[5]"
+     },
+     {
+      "a": "Lógica de Floyd-Hoare",
+      "b": "Triplas de Hoare",
+      "caminho": ".units[1].topics[0].aliases[6]"
+     },
+     {
+      "a": "Triplas de Hoare",
+      "b": "tripla de Hoare",
+      "caminho": ".units[1].topics[0].aliases[7]"
+     },
+     {
+      "a": "precondições e pós-condições",
+      "b": "PosFraco",
+      "caminho": ".units[1].topics[1].aliases[1]"
+     },
+     {
+      "a": "PosFraco",
+      "b": "PreForte",
+      "caminho": ".units[1].topics[1].aliases[2]"
+     },
+     {
+      "a": "PreForte",
+      "b": "precondições e pós-condições",
+      "caminho": ".units[1].topics[1].aliases[3]"
+     },
+     {
+      "a": "invariante de laço",
+      "b": "Invariantes",
+      "caminho": ".units[1].topics[3].aliases[1]"
+     }
+    ],
+    "aliases_acrescentados": 80,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "2630c2ae186a7f29",
+    "topicos_alterados": 17
+   }
+  },
+  "SO": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 107,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "5328a8246bf83860",
+    "topicos_alterados": 17
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": true,
+    "B_diferencas": [],
+    "aliases_acrescentados": 98,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "604ed8faaee81963",
+    "topicos_alterados": 17
+   }
+  },
+  "TCC": {
+   "A_diferencas": [],
+   "A_sem_sidecar_igual_congelada": true,
+   "VOCAB_ATUAL": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais",
+      "b": "3-Dimensional Matching",
+      "caminho": ".units[3].topics[6].aliases[0]"
+     },
+     {
+      "a": "3-Dimensional Matching",
+      "b": "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais",
+      "caminho": ".units[3].topics[6].aliases[1]"
+     }
+    ],
+    "aliases_acrescentados": 103,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "65594ee54faa5d9f",
+    "topicos_alterados": 19
+   },
+   "VOCAB_LLM": {
+    "B_aditiva_igual_reconstrucao": false,
+    "B_diferencas": [
+     {
+      "a": "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais",
+      "b": "3-Dimensional Matching",
+      "caminho": ".units[3].topics[6].aliases[0]"
+     },
+     {
+      "a": "3-Dimensional Matching",
+      "b": "4.5.2 Exemplos de Problemas Importantes em NP e suas aplicações industriais",
+      "caminho": ".units[3].topics[6].aliases[1]"
+     }
+    ],
+    "aliases_acrescentados": 96,
+    "aliases_removidos": 0,
+    "delta_vazio": false,
+    "taxonomia_sha": "60947cd2f8e34cb5",
+    "topicos_alterados": 19
+   }
+  }
+ },
+ "P3_controles": {
+  "CG": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.637,
+    "unidades": {
+     "unidade-01-introducao-ao-processamento-grafico": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-02-fundamentos-matematicos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 19,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-processamento-de-imagens-e-visao-computacional": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-04-processo-de-visualizacao-2d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 3,
+      "relacoes": 7,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-06-processo-de-visualizacao-3d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 14,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 7
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.637,
+    "unidades": {
+     "unidade-01-introducao-ao-processamento-grafico": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-02-fundamentos-matematicos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 16,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-processamento-de-imagens-e-visao-computacional": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 16,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-04-processo-de-visualizacao-2d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 5,
+      "relacoes": 7,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-06-processo-de-visualizacao-3d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 14,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 7
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.675,
+    "unidades": {
+     "unidade-01-introducao-ao-processamento-grafico": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-02-fundamentos-matematicos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 20,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-processamento-de-imagens-e-visao-computacional": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 18,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-04-processo-de-visualizacao-2d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 4,
+      "relacoes": 7,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-06-processo-de-visualizacao-3d": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 12,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 7
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-introducao-ao-processamento-grafico": {
+       "decisoes_no_majoritario": 6,
+       "majoritario": "origens",
+       "relacoes": 5,
+       "termos_apos_dedup": 5
+      },
+      "unidade-02-fundamentos-matematicos": {
+       "decisoes_no_majoritario": 6,
+       "majoritario": "algoritmos-de-geometria-computacional",
+       "relacoes": 23,
+       "termos_apos_dedup": 23
+      },
+      "unidade-03-processamento-de-imagens-e-visao-computacional": {
+       "decisoes_no_majoritario": 7,
+       "majoritario": "cores-e-tipos-de-imagens",
+       "relacoes": 29,
+       "termos_apos_dedup": 29
+      },
+      "unidade-04-processo-de-visualizacao-2d": {
+       "decisoes_no_majoritario": 8,
+       "majoritario": "recorte",
+       "relacoes": 7,
+       "termos_apos_dedup": 7
+      },
+      "unidade-06-processo-de-visualizacao-3d": {
+       "decisoes_no_majoritario": 4,
+       "majoritario": "algoritmo-z-buffer",
+       "relacoes": 16,
+       "termos_apos_dedup": 16
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "ES2": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.707,
+    "unidades": {
+     "unidade-01-arquitetura-de-software": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 32,
+      "relacoes": 38,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-integracao-de-desenvolvimento-e-operacao-devops": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 9,
+      "relacoes": 20,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.759,
+    "unidades": {
+     "unidade-01-arquitetura-de-software": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 32,
+      "relacoes": 38,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-integracao-de-desenvolvimento-e-operacao-devops": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 12,
+      "relacoes": 20,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.828,
+    "unidades": {
+     "unidade-01-arquitetura-de-software": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 35,
+      "relacoes": 38,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-integracao-de-desenvolvimento-e-operacao-devops": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 13,
+      "relacoes": 20,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-arquitetura-de-software": {
+       "decisoes_no_majoritario": 10,
+       "majoritario": "estilos-e-padroes-arquiteturais",
+       "relacoes": 38,
+       "termos_apos_dedup": 38
+      },
+      "unidade-02-integracao-de-desenvolvimento-e-operacao-devops": {
+       "decisoes_no_majoritario": 7,
+       "majoritario": "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+       "relacoes": 20,
+       "termos_apos_dedup": 20
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "FR": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.691,
+    "unidades": {
+     "unidade-01-introducao-a-redes-de-computadores": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-nivel-de-aplicacao": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 23,
+      "relacoes": 31,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.6,
+    "unidades": {
+     "unidade-01-introducao-a-redes-de-computadores": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 11,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-nivel-de-aplicacao": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 22,
+      "relacoes": 31,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.655,
+    "unidades": {
+     "unidade-01-introducao-a-redes-de-computadores": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 14,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-nivel-de-aplicacao": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 22,
+      "relacoes": 31,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-introducao-a-redes-de-computadores": {
+       "decisoes_no_majoritario": 2,
+       "majoritario": "modelos-osi-e-tcpip",
+       "relacoes": 24,
+       "termos_apos_dedup": 24
+      },
+      "unidade-02-nivel-de-aplicacao": {
+       "decisoes_no_majoritario": 7,
+       "majoritario": "paradigmas-clienteservidor-e-p2p",
+       "relacoes": 31,
+       "termos_apos_dedup": 31
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "IA": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.684,
+    "unidades": {
+     "unidade-de-aprendizagem-01-visao-geral": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 5,
+      "relacoes": 8,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-de-aprendizagem-02-solucao-de-problemas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 27,
+      "relacoes": 36,
+      "tentativas": 1,
+      "topicos_com_vaga": 6
+     },
+     "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-de-aprendizagem-05-aprendizado-de-maquina": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 22,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.608,
+    "unidades": {
+     "unidade-de-aprendizagem-01-visao-geral": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 7,
+      "relacoes": 8,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-de-aprendizagem-02-solucao-de-problemas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 21,
+      "relacoes": 36,
+      "tentativas": 1,
+      "topicos_com_vaga": 6
+     },
+     "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-de-aprendizagem-05-aprendizado-de-maquina": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 20,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.709,
+    "unidades": {
+     "unidade-de-aprendizagem-01-visao-geral": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 4,
+      "relacoes": 8,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-de-aprendizagem-02-solucao-de-problemas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 25,
+      "relacoes": 36,
+      "tentativas": 1,
+      "topicos_com_vaga": 6
+     },
+     "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "sem_embaralhamento_informativo",
+      "mudaram_de_destino": 0,
+      "relacoes": 5,
+      "tentativas": 1,
+      "topicos_com_vaga": 1
+     },
+     "unidade-de-aprendizagem-05-aprendizado-de-maquina": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 27,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [
+      {
+       "alias": "Aprendizado Supervisionado",
+       "topico": "introducao-ao-aprendizado-de-maquina",
+       "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina"
+      }
+     ],
+     "unidades": {
+      "unidade-de-aprendizagem-01-visao-geral": {
+       "decisoes_no_majoritario": 0,
+       "majoritario": "conceituacao",
+       "relacoes": 8,
+       "termos_apos_dedup": 8
+      },
+      "unidade-de-aprendizagem-02-solucao-de-problemas": {
+       "decisoes_no_majoritario": 11,
+       "majoritario": "algoritmos-de-busca-com-informacao",
+       "relacoes": 36,
+       "termos_apos_dedup": 36
+      },
+      "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento": {
+       "decisoes_no_majoritario": 1,
+       "majoritario": "planejamento-classico",
+       "relacoes": 5,
+       "termos_apos_dedup": 5
+      },
+      "unidade-de-aprendizagem-05-aprendizado-de-maquina": {
+       "decisoes_no_majoritario": 43,
+       "majoritario": "introducao-ao-aprendizado-de-maquina",
+       "relacoes": 30,
+       "termos_apos_dedup": 29
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "MF": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.887,
+    "unidades": {
+     "unidade-01-metodos-formais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 46,
+      "relacoes": 51,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-verificacao-de-programas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 17,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-verificacao-de-modelos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 10,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.713,
+    "unidades": {
+     "unidade-01-metodos-formais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 41,
+      "relacoes": 51,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-verificacao-de-programas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 7,
+      "relacoes": 17,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-verificacao-de-modelos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 9,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.762,
+    "unidades": {
+     "unidade-01-metodos-formais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 42,
+      "relacoes": 51,
+      "tentativas": 1,
+      "topicos_com_vaga": 8
+     },
+     "unidade-02-verificacao-de-programas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 12,
+      "relacoes": 17,
+      "tentativas": 1,
+      "topicos_com_vaga": 5
+     },
+     "unidade-03-verificacao-de-modelos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 7,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-metodos-formais": {
+       "decisoes_no_majoritario": 15,
+       "majoritario": "especificacao-de-funcoes-recursivas",
+       "relacoes": 51,
+       "termos_apos_dedup": 51
+      },
+      "unidade-02-verificacao-de-programas": {
+       "decisoes_no_majoritario": 6,
+       "majoritario": "invariante-e-variante-de-laco",
+       "relacoes": 17,
+       "termos_apos_dedup": 17
+      },
+      "unidade-03-verificacao-de-modelos": {
+       "decisoes_no_majoritario": 1,
+       "majoritario": "maquinas-de-estado",
+       "relacoes": 12,
+       "termos_apos_dedup": 12
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "SO": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.561,
+    "unidades": {
+     "unidade-01-introducao-ao-estudo-de-sistemas-operacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 10,
+      "relacoes": 11,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-gerencia-do-processador": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-programacao-concorrente": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 8,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-05-gerencia-de-memoria": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-06-gerencia-de-arquivos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 7,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.694,
+    "unidades": {
+     "unidade-01-introducao-ao-estudo-de-sistemas-operacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 5,
+      "relacoes": 11,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-gerencia-do-processador": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 24,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-programacao-concorrente": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 8,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-05-gerencia-de-memoria": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 21,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-06-gerencia-de-arquivos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 10,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.602,
+    "unidades": {
+     "unidade-01-introducao-ao-estudo-de-sistemas-operacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 8,
+      "relacoes": 11,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-gerencia-do-processador": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 15,
+      "relacoes": 29,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-programacao-concorrente": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 8,
+      "relacoes": 12,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-05-gerencia-de-memoria": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 22,
+      "relacoes": 30,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-06-gerencia-de-arquivos": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 6,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-introducao-ao-estudo-de-sistemas-operacionais": {
+       "decisoes_no_majoritario": 7,
+       "majoritario": "chamadas-de-sistema",
+       "relacoes": 11,
+       "termos_apos_dedup": 11
+      },
+      "unidade-02-gerencia-do-processador": {
+       "decisoes_no_majoritario": 5,
+       "majoritario": "escalonamento",
+       "relacoes": 29,
+       "termos_apos_dedup": 29
+      },
+      "unidade-03-programacao-concorrente": {
+       "decisoes_no_majoritario": 6,
+       "majoritario": "comunicacao-e-sincronizacao-de-processos",
+       "relacoes": 12,
+       "termos_apos_dedup": 12
+      },
+      "unidade-05-gerencia-de-memoria": {
+       "decisoes_no_majoritario": 1,
+       "majoritario": "swapping",
+       "relacoes": 30,
+       "termos_apos_dedup": 30
+      },
+      "unidade-06-gerencia-de-arquivos": {
+       "decisoes_no_majoritario": 4,
+       "majoritario": "arquivos",
+       "relacoes": 16,
+       "termos_apos_dedup": 16
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  },
+  "TCC": {
+   "CTRL_ALEAT_1": {
+    "fracao_mudou_destino": 0.667,
+    "unidades": {
+     "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 10,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-turing-computabilidade": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 14,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-problemas-indecidiveis": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 12,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 28,
+      "relacoes": 33,
+      "tentativas": 1,
+      "topicos_com_vaga": 9
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_2": {
+    "fracao_mudou_destino": 0.688,
+    "unidades": {
+     "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 11,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-turing-computabilidade": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 13,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-problemas-indecidiveis": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 12,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 30,
+      "relacoes": 33,
+      "tentativas": 1,
+      "topicos_com_vaga": 9
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_ALEAT_3": {
+    "fracao_mudou_destino": 0.656,
+    "unidades": {
+     "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 11,
+      "relacoes": 23,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-02-turing-computabilidade": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 16,
+      "relacoes": 24,
+      "tentativas": 1,
+      "topicos_com_vaga": 3
+     },
+     "unidade-03-problemas-indecidiveis": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 11,
+      "relacoes": 16,
+      "tentativas": 1,
+      "topicos_com_vaga": 4
+     },
+     "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais": {
+      "colisoes": 0,
+      "duplicados": 0,
+      "estado": "pareado",
+      "mudaram_de_destino": 25,
+      "relacoes": 33,
+      "tentativas": 1,
+      "topicos_com_vaga": 9
+     }
+    },
+    "verificacao": {
+     "contagem_por_topico_preservada": true,
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "multiconjunto_de_termos_preservado": true,
+     "multiplicidade_por_termo_preservada": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "CTRL_MAIOR": {
+    "definicao": {
+     "colisoes": [],
+     "unidades": {
+      "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas": {
+       "decisoes_no_majoritario": 4,
+       "majoritario": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+       "relacoes": 23,
+       "termos_apos_dedup": 23
+      },
+      "unidade-02-turing-computabilidade": {
+       "decisoes_no_majoritario": 3,
+       "majoritario": "maquinas-de-turing",
+       "relacoes": 24,
+       "termos_apos_dedup": 24
+      },
+      "unidade-03-problemas-indecidiveis": {
+       "decisoes_no_majoritario": 5,
+       "majoritario": "prova-da-indecidibilidade-do-problema-da-parada",
+       "relacoes": 16,
+       "termos_apos_dedup": 16
+      },
+      "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais": {
+       "decisoes_no_majoritario": 5,
+       "majoritario": "reducao-polinomial-de-problemas",
+       "relacoes": 33,
+       "termos_apos_dedup": 33
+      }
+     }
+    },
+    "verificacao": {
+     "diferencas": [],
+     "identico_pos_carregador": true,
+     "n_diferencas": 0,
+     "remocoes_de_aliases": 0
+    }
+   },
+   "sanidade_identidade": {
+    "diferencas": [],
+    "identico_pos_carregador": true,
+    "n_diferencas": 0,
+    "remocoes_de_aliases": 0
+   }
+  }
+ },
+ "P4_cru": {
+  "com_primeira_passada": 341,
+  "compilador": 0,
+  "divergencias": [],
+  "gold": [],
+  "igual_por_id_a_referencia": true,
+  "manual_presente": {
+   "CG": false,
+   "ES2": false,
+   "FR": false,
+   "IA": false,
+   "MF": false,
+   "SO": false,
+   "TCC": false
+  },
+  "materiais": 350,
+  "n_unidade_1a_diferente": 0,
+  "rede": 0,
+  "segundos": 98.8,
+  "sha_decisoes_canon": "2bf79173d213eda2",
+  "sha_referencia_wab_M1": "2bf79173d213eda2",
+  "unidade_1a_diferente_da_final": []
+ },
+ "P5_carga": {
+  "CRU": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "090d36e738378fb4",
+    "ES2": "c96f8f4d35650f30",
+    "FR": "b643460a3c8b9902",
+    "IA": "1e11cb1d9d9a369c",
+    "MF": "ea6eda327e218fb9",
+    "SO": "d8197723502d3819",
+    "TCC": "5f288fffa3e2d7cc"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "CTRL_ALEAT_1": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "776e0a7096094482",
+    "ES2": "9cbd22f39acb52bc",
+    "FR": "db0ae91c6db13423",
+    "IA": "3549bceeddbb2489",
+    "MF": "fcde42aa4e719293",
+    "SO": "bfbbcdc34d92df00",
+    "TCC": "264a46fa3a4b79b9"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "CTRL_ALEAT_2": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "7e6ca900f92535fb",
+    "ES2": "d11280c695db3d6a",
+    "FR": "9e2819259b50cc9a",
+    "IA": "cea71685246e65ab",
+    "MF": "77e331fbd0680623",
+    "SO": "c0bf7f498c8bff95",
+    "TCC": "96334648409709f2"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "CTRL_ALEAT_3": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "49241b10295cfaec",
+    "ES2": "59586e79153094fb",
+    "FR": "1e9c1dac34d933ab",
+    "IA": "aa336fb6e0e0c39e",
+    "MF": "dbb53ac9307b15c7",
+    "SO": "71f5b3e7f7bb53b6",
+    "TCC": "9b029016bd8771df"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "CTRL_MAIOR": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "79123c8886f9993d",
+    "ES2": "da11f423f86f59f3",
+    "FR": "08f9c0026c9842d1",
+    "IA": "381f9c5fad7786c8",
+    "MF": "f0c2880c3aa61fd8",
+    "SO": "fb9c65cff21d226d",
+    "TCC": "db1c53bab13a6f31"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "VOCAB_ATUAL": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": true,
+    "ES2": true,
+    "FR": false,
+    "IA": true,
+    "MF": false,
+    "SO": true,
+    "TCC": true
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "18a0c82da3ae4ebb",
+    "ES2": "c09b234d2c781119",
+    "FR": "817f267ba47aa796",
+    "IA": "08ef7730062e1f02",
+    "MF": "2630c2ae186a7f29",
+    "SO": "5328a8246bf83860",
+    "TCC": "65594ee54faa5d9f"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  },
+  "VOCAB_LLM": {
+   "compilador": 0,
+   "gold": [],
+   "indice_unidades": {
+    "CG": 9,
+    "ES2": 3,
+    "FR": 6,
+    "IA": 5,
+    "MF": 3,
+    "SO": 7,
+    "TCC": 4
+   },
+   "leituras_de_outro_braco": [],
+   "manual_presente": {
+    "CG": false,
+    "ES2": false,
+    "FR": false,
+    "IA": false,
+    "MF": false,
+    "SO": false,
+    "TCC": false
+   },
+   "rede": 0,
+   "taxonomia_sha": {
+    "CG": "d196fd4f70e7e717",
+    "ES2": "ad0a505ff4828833",
+    "FR": "817f267ba47aa796",
+    "IA": "9d89ade7708251bd",
+    "MF": "2630c2ae186a7f29",
+    "SO": "604ed8faaee81963",
+    "TCC": "60947cd2f8e34cb5"
+   },
+   "unidades_motor_sha": "74dfaab2d6fb2ec5"
+  }
+ },
+ "condicoes": {
+  "P0 src/tests sem diff": true,
+  "P2 A em todos os cursos": true,
+  "P2 delta não vazio nos braços com sidecar": true,
+  "P3 controles idênticos ao pretendido pós-carregador": true,
+  "P3 identidade reproduz VOCAB_LLM": true,
+  "P4 CRU = referência por ID": true,
+  "P4 sem gold, rede, compilador": true,
+  "P4 unidade da 1a passada = final": true,
+  "P5 manual só no VOCAB_ATUAL": true,
+  "P5 nenhuma leitura de outro braço": true,
+  "P5 sem gold, rede, compilador": true,
+  "P5 taxonomia dos braços históricos = P2": true,
+  "P5 unidades do motor iguais em todos os braços": true
+ },
+ "escopo": "W-AD2 (25/09): regime VOCAB, Fase 1 corrigida — preflights SEM GOLD e captura por braço em processo isolado.\n\nProtocolo: docs/reports/2026-09-25-regime-vocab-adendo-fase1.md (adendo ao desenho de 24/09). Resultado nomeado \"efeito do\nvocabulário sobre a cadeia de atribuição, condicionado à timeline histórica congelada\". Este script NUNCA lê gold: não\nimporta módulos de avaliação, e uma trava aborta qualquer leitura de arquivo de gold. A avaliação é outro script.\n\nModos:\n  --preflight                          P0-P6 sem gold (estado, proveniência, equivalências A/B, captura CRU e reprodução por\n                                       ID, controles e verificação pós-carregador, carga isolada por braço). Grava\n                                       c1-3/wad2_preflight_25-09.{json,md}.\n  --capturar BRACO                     captura um braço completo em processo próprio (NÃO autorizado nesta etapa, exceto\n                                       CRU dentro do preflight).\n  --worker --braco B --modo M --saida  uso interno (processo isolado por braço).\nSem build, rede, LLM, recompilação ou commit.\n",
+ "gold_lido_no_preflight": [],
+ "preflight_aprovado": true,
+ "script_sha256": "18e4155349736bf5",
+ "segundos": 117.6
+}

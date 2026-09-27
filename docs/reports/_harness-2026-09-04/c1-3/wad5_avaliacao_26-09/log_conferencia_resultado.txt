@@ -1,0 +1,75 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\wad5_avaliacao_26-09\\pycache_vazio",
+  "confere_resultado.py"
+ ],
+ "saida": 0,
+ "segundos": 0.3,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+OK    CRU: placar por curso = registros por ID
+OK    CRU: soma dos cursos = TOTAL
+OK    CRU: denominadores por curso = pré-registrados
+OK    VOCAB_ATUAL: placar por curso = registros por ID
+OK    VOCAB_ATUAL: soma dos cursos = TOTAL
+OK    VOCAB_ATUAL: denominadores por curso = pré-registrados
+OK    VOCAB_LLM: placar por curso = registros por ID
+OK    VOCAB_LLM: soma dos cursos = TOTAL
+OK    VOCAB_LLM: denominadores por curso = pré-registrados
+OK    CTRL_MAIOR: placar por curso = registros por ID
+OK    CTRL_MAIOR: soma dos cursos = TOTAL
+OK    CTRL_MAIOR: denominadores por curso = pré-registrados
+OK    CTRL_ALEAT_1: placar por curso = registros por ID
+OK    CTRL_ALEAT_1: soma dos cursos = TOTAL
+OK    CTRL_ALEAT_1: denominadores por curso = pré-registrados
+OK    CTRL_ALEAT_2: placar por curso = registros por ID
+OK    CTRL_ALEAT_2: soma dos cursos = TOTAL
+OK    CTRL_ALEAT_2: denominadores por curso = pré-registrados
+OK    CTRL_ALEAT_3: placar por curso = registros por ID
+OK    CTRL_ALEAT_3: soma dos cursos = TOTAL
+OK    CTRL_ALEAT_3: denominadores por curso = pré-registrados
+OK    CRU = referência pré-registrada por curso e eixo oficial
+OK    transições: células, correções, perdas, saldo e precisão = registros por ID
+OK    registros por ID: eid no inventário congelado ou ausente explícito
+CONFERENCIA APROVADA
+
+--- stderr

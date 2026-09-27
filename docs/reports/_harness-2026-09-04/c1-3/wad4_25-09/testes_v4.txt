@@ -1,0 +1,77 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\Humberto\AppData\Local\Programs\Python\Python311\python.exe
+rootdir: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
+configfile: pyproject.toml
+plugins: anyio-4.13.0, Faker-40.11.0, cov-7.1.0
+collecting ... collected 68 items
+
+test_defeitos_v4.py::test_fixture_completa_e_valida PASSED              
+test_defeitos_v4.py::test_verificacoes_ou_por_curso_ausentes PASSED     
+test_defeitos_v4.py::test_manual_indevido_no_cru PASSED                 
+test_defeitos_v4.py::test_hash_de_taxonomia_ou_indice_errado_com_conteudo_sha_recalculado PASSED
+test_defeitos_v4.py::test_curso_ou_id_interno_diferente_das_chaves PASSED
+test_defeitos_v4.py::test_pontuacoes_string_score_nao_finito_candidato_duplicado PASSED
+test_defeitos_v4.py::test_saida_fora_da_taxonomia_nao_e_erro_estrutural PASSED
+test_defeitos_v4.py::test_captura_nao_cru_em_cache_sem_autorizacao PASSED
+test_defeitos_v4.py::test_descritor_de_insumos_alterado_sem_atualizar_identificador PASSED
+test_defeitos_v4.py::test_codigo_alterado_depois_do_preflight PASSED    
+test_defeitos_v4.py::test_ambiente_relevante_divergente PASSED          
+test_defeitos_v4.py::test_import_de_outra_raiz PASSED                   
+test_defeitos_v4.py::test_validacao_historica_sem_checkout_original PASSED
+test_defeitos_v4.py::test_arquivo_lido_alterado_e_reaberto PASSED       
+test_defeitos_v4.py::test_conteudo_restaurado_antes_do_fim_preserva_violacao PASSED
+test_defeitos_v4.py::test_arquivo_lido_e_removido PASSED                
+test_defeitos_v4.py::test_escrita_em_codigo PASSED                      
+test_defeitos_v4.py::test_permissao_de_subprocesso_fecha_em_excecao PASSED
+test_defeitos_v4.py::test_caminho_proibido_como_source_path_na_preparacao PASSED
+test_defeitos_v4.py::test_gid_ausente_versus_none_explicito PASSED      
+test_defeitos_v4.py::test_origem_ambigua_e_rejeitada PASSED             
+test_defeitos_v4.py::test_duplicidade_de_eid_e_distribuicao_por_curso PASSED
+test_defeitos_v4.py::test_veredicto_b_nao_veta_por_subunidade_aceita PASSED
+test_defeitos_v4.py::test_material_ausente_ou_nao_chamado_sem_elegibilidade_ficticia PASSED
+test_defeitos_v4.py::test_worker_recebe_ambiente_declarado_mesmo_com_os_environ_mutado PASSED
+test_defeitos_v4.py::test_codigo_somente_leitura_na_configuracao_real PASSED
+test_wad4.py::test_captura_valida_passa PASSED                          
+test_wad4.py::test_json_de_outro_braco_em_modo_carga_no_caminho_do_cru_e_rejeitado PASSED
+test_wad4.py::test_mudar_so_um_helper_ou_so_um_sidecar_invalida_a_captura PASSED
+test_wad4.py::test_conteudo_alterado_status_parcial_e_violacao_sao_rejeitados PASSED
+test_wad4.py::test_json_invalido_e_id_duplicado_sao_erro_de_integridade PASSED
+test_wad4.py::test_curso_extra_ausente_registro_incompleto_e_premissa_de_unidade PASSED
+test_wad4.py::test_gravacao_atomica_nao_deixa_parcial PASSED            
+test_wad4.py::test_git_com_erro_nao_vira_arvore_limpa PASSED            
+test_wad4.py::test_captura_dos_seis_bracos_segue_bloqueada PASSED       
+test_wad4.py::test_import_nao_carrega_produto_nem_avaliacao_historica PASSED
+test_wad4.py::test_controle_sem_violacao_sai_zero PASSED                
+test_wad4.py::test_leitura_de_arquivo_proibido_artificial PASSED        
+test_wad4.py::test_leitura_de_palco_de_outro_braco PASSED               
+test_wad4.py::test_tentativa_de_compilacao PASSED                       
+test_wad4.py::test_tentativas_de_rede PASSED                            
+test_wad4.py::test_insumo_congelado_divergente_e_nao_congelado PASSED   
+test_wad4.py::test_entrada_externa_so_pelo_caminho_exato_e_congelada PASSED
+test_wad4.py::test_violacao_capturada_internamente_ainda_reprova PASSED 
+test_wad4.py::test_negado_por_declaracao_impede_leitura_sem_virar_violacao PASSED
+test_wad4.py::test_violacao_so_no_processo_principal_sai_com_erro PASSED
+test_wad4.py::test_compara_referencia_cursos_ids_e_registros PASSED     
+test_wad4.py::test_instrumentacao_preserva_valores_exatos_identidade_e_decisao PASSED
+test_wad4.py::test_verifica_controle_reprova_acrescimo_com_remocao PASSED
+test_wad4.py::test_verifica_controle_reprova_mudanca_estrutural PASSED  
+test_wad4.py::test_multiconjunto_igual_nao_e_identidade_ordenada PASSED 
+test_wad4.py::test_diagnostico_b_inspeciona_tudo_e_separa_ordem_de_conteudo PASSED
+test_wad4.py::test_identidade_sorteada_nao_e_nao_informativa PASSED     
+test_wad4.py::test_pareado_estrutural_e_sem_permutacao_no_orcamento PASSED
+test_wad4.py::test_controle_aleatorio_marca_bloqueio PASSED             
+test_wad4.py::test_avaliacao_placar_transicoes_precisao_e_veredictos PASSED
+test_wad4.py::test_registros_por_id_sao_a_origem_dos_agregados PASSED   
+test_wad4.py::test_cru_que_nao_reproduz_a_referencia_por_curso_recusa PASSED
+test_wad4.py::test_material_ausente_e_erro_e_registro_ausente_invalida PASSED
+test_wad4.py::test_avaliacao_recusa_conjunto_invalido PASSED            
+test_wad4.py::test_meta_por_contagem_exata PASSED                       
+test_wad4.py::test_estados_da_selecao PASSED                            
+test_wad4.py::test_score_do_gold_homonimos_limiares_e_unidade_vazia PASSED
+test_wad4.py::test_geracao_grupos_e_selecao_no_subconjunto_comum PASSED 
+test_wad4.py::test_regua_de_estado_segue_o_contrato_historico PASSED    
+test_wad4.py::test_carregador_local_segue_o_historico_com_bytes_conferidos PASSED
+test_wad4.py::test_carregador_local_recusa_bytes_manifest_e_pendencias_divergentes PASSED
+test_wad4.py::test_regua_real_bloqueada_sem_autorizacao PASSED          
+
+============================= 68 passed in 2.01s ==============================

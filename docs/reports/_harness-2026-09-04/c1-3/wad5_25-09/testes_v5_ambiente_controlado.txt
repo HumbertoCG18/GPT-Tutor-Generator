@@ -1,0 +1,22 @@
+# Suíte W-AD5 no ambiente controlado da medição (comum.ambiente_controlado + -B).
+# A única falha é de decodificação do teste herdado test_regua_real_bloqueada_sem_autorizacao: com PYTHONIOENCODING=utf-8 o
+# subprocesso imprime UTF-8 e o teste decodifica pelo locale (cp1252). Saída 2 e mensagem corretas. Idêntico na v4 revisada.
+
+........................................................................ [ 82%]
+..............F                                                          [100%]
+================================== FAILURES ===================================
+__________________ test_regua_real_bloqueada_sem_autorizacao __________________
+
+    def test_regua_real_bloqueada_sem_autorizacao():
+        with pytest.raises(PermissionError):
+            AV.carrega_regua_historica()
+        r = subprocess.run([sys.executable, "-B", str(HERE / "avaliador.py")], capture_output=True, text=True)
+>       assert r.returncode == 2 and "não autorizada" in r.stdout
+E       AssertionError: assert (2 == 2 and 'não autorizada' in 'avaliaÃ§Ã£o real nÃ£o autorizada nesta etapa (adendo v3 Â§9)\n')
+E        +  where 2 = CompletedProcess(args=['C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', 'C:\\User...5-09\\avaliador.py'], returncode=2, stdout='avaliaÃ§Ã£o real nÃ£o autorizada nesta etapa (adendo v3 Â§9)\n', stderr='').returncode
+E        +  and   'avaliaÃ§Ã£o real nÃ£o autorizada nesta etapa (adendo v3 Â§9)\n' = CompletedProcess(args=['C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', 'C:\\User...5-09\\avaliador.py'], returncode=2, stdout='avaliaÃ§Ã£o real nÃ£o autorizada nesta etapa (adendo v3 Â§9)\n', stderr='').stdout
+
+test_wad4.py:662: AssertionError
+=========================== short test summary info ===========================
+FAILED test_wad4.py::test_regua_real_bloqueada_sem_autorizacao - AssertionErr...
+1 failed, 86 passed in 2.70s

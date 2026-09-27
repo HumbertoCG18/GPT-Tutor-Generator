@@ -1,0 +1,8 @@
+W-AD4: origens (avaliador.origem = compara_herancas.source) repetidas nos manifests salvo e de referência. Sem gold.
+MF: salvo 70 entradas, origens repetidas 0, vazias 0; referência 67 entradas, origens repetidas 0, vazias 0
+SO: salvo 42 entradas, origens repetidas 0, vazias 0; referência 42 entradas, origens repetidas 0, vazias 0
+IA: salvo 63 entradas, origens repetidas 0, vazias 0; referência 61 entradas, origens repetidas 0, vazias 0
+ES2: salvo 35 entradas, origens repetidas 0, vazias 0; referência 35 entradas, origens repetidas 0, vazias 0
+TCC: salvo 27 entradas, origens repetidas 0, vazias 0; referência 27 entradas, origens repetidas 0, vazias 0
+CG: salvo 93 entradas, origens repetidas 0, vazias 0; referência 86 entradas, origens repetidas 0, vazias 0
+FR: salvo 20 entradas, origens repetidas 0, vazias 0; referência 20 entradas, origens repetidas 0, vazias 0

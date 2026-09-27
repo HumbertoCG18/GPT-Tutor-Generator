@@ -1,0 +1,622 @@
+--- wad4_25-09/comum.py
++++ wad5_25-09/comum.py
+@@ -1,6 +1,7 @@
+-"""W-AD4 (25/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/ nem módulos de avaliação.
++"""W-AD5 (25/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/ nem módulos de avaliação.
+ 
+-Protocolo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v3.md. Versão anterior preservada em ../wad3_25-09/.
++Protocolo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md. Versões anteriores preservadas em ../wad4_25-09/ e
++../wad3_25-09/.
+ Testado só com dados sintéticos (test_wad4.py, test_defeitos_v4.py); nada lê gold.
+ 
+ Hashes (procedimento declarado):
+@@ -23,15 +24,17 @@
+ import time
+ from pathlib import Path
+ 
+-ESQUEMA_CAPTURA = "wad4-captura-1"
+-ESQUEMA_CONGELAMENTO = "wad4-congelamento-1"
++ESQUEMA_CAPTURA = "wad5-captura-1"
++ESQUEMA_CONGELAMENTO = "wad5-congelamento-1"
+ NOMES = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
+          "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "CG": "Computacao-Grafica-Tutor",
+          "FR": "Fundamentos-de-Redes-Tutor"}
+ BRACOS = ("CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3")
+ SEMENTES = {"CTRL_ALEAT_1": 1, "CTRL_ALEAT_2": 2, "CTRL_ALEAT_3": 3}
+ MANUAL_ESPERADO = {b: {s: (b == "VOCAB_ATUAL" and s in {"CG", "ES2", "IA", "SO", "TCC"}) for s in NOMES} for b in BRACOS}
+-CAPTURA_LIBERADA = frozenset({"CRU"})   # nesta entrega; mudar isto é mudança de código e de congelamento
++# Gate condicional de 25/09 (revisão independente do W-AD4): captura dos sete braços; NÃO libera gold nem avaliação.
++# Mudar isto é mudança de código e de congelamento.
++CAPTURA_LIBERADA = frozenset({"CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3"})
+ INVENTARIO_ESPERADO = 350
+ DENOMINADORES = {"bloco": 237, "unidade": 284, "sub_primaria": 251}
+ # Denominadores e referência do CRU por curso: tabela do relatório 2026-09-24-teto-regime-cru.md §1 (documentação já
+@@ -221,7 +224,8 @@
+     builtins.open/io.open (inclui Path.open/read_text/read_bytes e json via open), socket.connect/connect_ex/
+     create_connection/getaddrinfo, subprocess.Popen e o compilador de vocabulário (quando o módulo é carregado).
+     NÃO cobre os.open, mmap, importações (io.open_code) nem extensões C: o código importado é conferido à parte
+-    (verifica_modulos). Cada abertura de leitura de entrada é conferida contra o hash; ao final, releitura de tudo."""
++    (verifica_modulos). Cada abertura de leitura de entrada é conferida contra o hash; arquivo congelado ausente é
++    violação mesmo antes da 1ª leitura; ao final, releitura de tudo o que foi lido e do inventário congelado inteiro."""
+ 
+     def __init__(self, papel):
+         self.papel = papel
+@@ -237,6 +241,7 @@
+         self.comandos_permitidos = frozenset()
+         self._abrir_original = io.open
+         self._instalado = False
++        self._integridade = set()   # caminhos já registrados como desaparecidos/divergentes (sem duplicar)
+ 
+     def permite(self, categoria, *raizes, somente_leitura=False):
+         self.permitidos.setdefault(categoria, []).extend(str(Path(r).resolve()) for r in raizes)
+@@ -314,6 +319,9 @@
+         reg = self.acessos.setdefault(p, {"categoria": cat, "modo": set(), "sha": None, "n": 0})
+         reg["modo"].add("w" if escrita else "r")
+         reg["n"] += 1
++        if not escrita and p in self.congelados and not os.path.isfile(p):
++            self._uma_vez("insumo_desaparecido", p)   # esperado no congelamento: ausência é quebra, não opcional
++            raise Violacao("insumo congelado ausente ou não utilizável como arquivo")
+         if escrita or cat in ("codigo", "saida", "protocolo") or not os.path.isfile(p):
+             return
+         atual = sha_arq(p, _abrir)                     # TODA abertura de entrada é conferida
+@@ -384,14 +392,33 @@
+ 
+         modulo_vocab.compile_course_vocabulary = sem_compilar
+ 
++    def _uma_vez(self, tipo, p):
++        if p not in self._integridade:
++            self._integridade.add(p)
++            self.registra(tipo, p)
++
++    def confere_congelados(self):
++        """Inventário congelado INTEIRO, lido ou não: cada arquivo esperado existe como arquivo e tem o hash congelado.
++        Roda no início e no fim de cada worker; pega o consumidor que só consulta exists()/is_file() ou nunca abre."""
++        prob = []
++        for p, h in sorted(self.congelados.items()):
++            if not os.path.isfile(p):
++                self._uma_vez("insumo_desaparecido", p)
++                prob.append(f"insumo congelado ausente: {p}")
++            elif sha_arq(p, self._abrir_original) != h:
++                self._uma_vez("insumo_divergente", p)
++                prob.append(f"insumo congelado divergente: {p}")
++        return prob
++
+     def rehash_leituras(self):
+-        """Ao final: tudo o que foi lido continua existindo e igual em disco."""
++        """Ao final: tudo o que foi lido continua existindo e igual em disco, e o inventário congelado inteiro confere."""
+         for p, reg in self.acessos.items():
+             if reg["sha"] and "r" in reg["modo"]:
+                 if not os.path.exists(p):
+-                    self.registra("insumo_desaparecido", p)
++                    self._uma_vez("insumo_desaparecido", p)
+                 elif sha_arq(p, self._abrir_original) != reg["sha"]:
+-                    self.registra("insumo_alterado_durante_execucao", p)
++                    self._uma_vez("insumo_alterado_durante_execucao", p)
++        self.confere_congelados()
+ 
+     def resumo(self):
+         return {"violacoes": list(self.violacoes), "negados": list(self.negados),
+--- wad4_25-09/captura.py
++++ wad5_25-09/captura.py
+@@ -1,18 +1,23 @@
+-"""W-AD4 (25/09): regime VOCAB, Fase 1 — harness v4 (preflights SEM GOLD e captura isolada por braço).
++"""W-AD5 (25/09): regime VOCAB, Fase 1 — harness v5 (preflights SEM GOLD e captura isolada por braço).
+ 
+-Protocolo normativo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v3.md (bloco NORMATIVO). v3 preservada em
+-../wad3_25-09/ (congelamento 05dc9cf1…). Nunca lê gold: não importa módulos de avaliação; as travas (comum.Travas)
+-invalidam qualquer acesso proibido, mesmo quando uma camada intermediária engole a exceção.
++Protocolo normativo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md (bloco NORMATIVO). v4 revisada preservada
++em ../wad4_25-09/ (congelamento b3254509…); v5 = v4 + os dois ajustes da revisão independente + liberação da captura.
++Nunca lê gold: não importa módulos de avaliação; as travas (comum.Travas) invalidam qualquer acesso proibido, mesmo
++quando uma camada intermediária engole a exceção.
+ 
+ Garantia "código executado = código validado" (estratégia declarada): o processo se relança com ambiente controlado,
+ `-B` e `-X pycache_prefix=<área vazia isolada>` (compila sempre a partir do fonte, sem bytecode em cache); os hashes do
+ harness, dos helpers e de todo `src/` são conferidos ANTES dos imports do produto e de novo no fim; DEPOIS dos imports,
+ a origem (`__file__`) e o hash de cada módulo `src.*` e dos helpers carregados são conferidos contra o congelamento.
++A assinatura das distribuições instaladas é recalculada e conferida no início e no fim de cada worker e pelo
++coordenador antes de aceitar; o inventário congelado inteiro (pacotes, externos, palco e snapshots do braço) também.
+ 
+ Uso:
+-  python -B captura.py --preflight          P0-P5 sem gold; grava preflight_v4.{json,md} e o congelamento.
++  python -B captura.py --preflight          P0-P5 sem gold; grava preflight_v5.{json,md} e o congelamento.
++  python -B captura.py --capturar           exige preflight v5 aprovado; captura os seis braços em sequência e valida
++                                            as sete capturas; grava manifesto_capturas_v5.json. Não lê gold.
+   python -B captura.py --worker ...         uso interno (processo isolado por braço).
+-Captura completa só do CRU (comum.CAPTURA_LIBERADA), conferida antes de lançar, de reutilizar e de aceitar.
++Braços liberados em comum.CAPTURA_LIBERADA, conferidos antes de lançar, de reutilizar e de aceitar.
+ """
+ import argparse
+ import collections
+@@ -21,6 +26,7 @@
+ import json
+ import os
+ import platform
++import re
+ import random
+ import shutil
+ import site
+@@ -42,18 +48,21 @@
+ 
+ AMBIENTE_INICIAL = dict(os.environ)   # antes de qualquer import do produto, que grava em os.environ (TESSDATA_PREFIX)
+ 
+-BASE = DATA / ".frzero/wad4_25-09"
++BASE = DATA / ".frzero/wad5_25-09"
+ PALCOS, SNAP, CAPS, FALHAS = BASE / "palcos", BASE / "snapshots", BASE / "capturas", BASE / "falhas"
+ PYCACHE = BASE / "pycache_vazio"
+ CONG = BASE / "congelamento.json"
+ CONG_ENTRADAS = BASE / "congelamento_entradas.json"
+-ADENDO = DATA / "docs/reports/2026-09-25-regime-vocab-adendo-fase1-v3.md"
++ADENDO = DATA / "docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md"
+ CAP_WAB = DATA / ".frzero/wab_captura_bracos_24-09.json"
+-OUT_JSON, OUT_MD = HERE / "preflight_v4.json", HERE / "preflight_v4.md"
++OUT_JSON, OUT_MD = HERE / "preflight_v5.json", HERE / "preflight_v5.md"
++OUT_CAP_JSON, OUT_CAP_MD = HERE / "manifesto_capturas_v5.json", HERE / "capturas_v5.md"
++ORDEM_CAPTURA = ("VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3")
+ BASE_PRETENDIDA = "2589ed5a95ab8dd841de384bd219d80ee27d2cbf"
+ HELPERS = {"replay_bloco_21-09.py": C13 / "replay_bloco_21-09.py", "replay_unidade_21-09.py": C13 / "replay_unidade_21-09.py"}
+ CODIGO = {"captura.py": HERE / "captura.py", "comum.py": HERE / "comum.py", "avaliador.py": HERE / "avaliador.py",
+-          "test_wad4.py": HERE / "test_wad4.py", "test_defeitos_v4.py": HERE / "test_defeitos_v4.py", **HELPERS}
++          "test_wad4.py": HERE / "test_wad4.py", "test_defeitos_v4.py": HERE / "test_defeitos_v4.py",
++          "test_ajustes_v5.py": HERE / "test_ajustes_v5.py", **HELPERS}
+ LLM, MANUAL = ".glossary_curation.llm.json", ".glossary_curation.json"
+ OITAVO = "Laboratorio-de-Redes-Tutor"
+ TUTORES = list(K.NOMES.values()) + [OITAVO]
+@@ -146,9 +155,29 @@
+         prob += K.verifica_codigo(cong["normativo"]["codigo"], CODIGO)
+         if K.arvore(DATA / "src") != cong["normativo"]["produto"]["src_arquivos"]:
+             prob.append("árvore src/ diferente da congelada")
++        prob += verifica_distribuicoes(cong)
+     return prob
+ 
+ 
++def verifica_distribuicoes(cong):
++    """Assinatura das distribuições instaladas (mesmo procedimento do congelamento: sha_json(distribuicoes())) contra o
++    valor congelado. Ausente, inválido ou divergente reprova; o esperado nunca é preenchido com o valor atual."""
++    esperado = ((cong.get("normativo") or {}).get("interprete") or {}).get("distribuicoes_sha")
++    if not isinstance(esperado, str) or not re.fullmatch(r"[0-9a-f]{64}", esperado):
++        return ["assinatura das distribuições ausente ou inválida no congelamento"]
++    if K.sha_json(distribuicoes()) != esperado:
++        return ["distribuições instaladas divergem da assinatura congelada"]
++    return []
++
++
++def verifica_fim(cong):
++    """Fim do worker, antes de aceitar a captura: código, src/ e distribuições ainda iguais ao congelamento."""
++    fim = K.verifica_codigo(cong["normativo"]["codigo"], CODIGO)
++    if K.arvore(DATA / "src") != cong["normativo"]["produto"]["src_arquivos"]:
++        fim.append("src/ mudou durante a execução")
++    return fim + verifica_distribuicoes(cong)
++
++
+ # ------------------------------------------------------------------------------------------- produto (import tardio)
+ def modulos(travas, src_arquivos):
+     from src.builder.artifacts import repo as REPO
+@@ -473,14 +502,18 @@
+         ins = cong["insumos"][braco]
+         for sig in K.NOMES:
+             exige(arquivos_do_palco(braco, sig) == ins[sig]["palco"], f"{sig}: palco em disco != congelado")
++            travas.congela(PALCOS / braco / K.NOMES[sig], ins[sig]["palco"])
++            travas.congela(SNAP / braco / sig, {"taxonomia.json": ins[sig]["taxonomia_arquivo_sha"],
++                                                "indice_unidade.json": ins[sig]["indice_arquivo_sha"]})
++        faltam = travas.confere_congelados()   # inventário esperado inteiro, antes de qualquer import do produto
++        exige(not faltam, f"inventário congelado não confere antes do worker: {faltam[:4]}")
+         M = modulos(travas, cong["normativo"]["produto"]["src_arquivos"])
+         cap = executa(M, travas, braco, modo, cong, ins)
+         cap["verificacoes"]["modulos_src_verificados"] = M.n_modulos_src
+-        fim = K.verifica_codigo(cong["normativo"]["codigo"], CODIGO)
+-        if K.arvore(DATA / "src") != cong["normativo"]["produto"]["src_arquivos"]:
+-            fim.append("src/ mudou durante a execução")
+-        exige(not fim, f"código mudou durante a execução: {fim[:4]}")
+-        travas.rehash_leituras()
++        cap["verificacoes"]["inventario_congelado_conferido"] = len(travas.congelados)
++        fim = verifica_fim(cong)
++        exige(not fim, f"código, src/ ou distribuições mudaram durante a execução: {fim[:4]}")
++        travas.rehash_leituras()   # leituras + inventário congelado inteiro
+         status = "concluida" if not travas.violacoes else "falhou"
+     except Exception as exc:  # noqa: BLE001  (a falha vira diagnóstico; nunca vira sucesso)
+         erro = f"{type(exc).__name__}: {str(exc)[:400]}"
+@@ -641,6 +674,8 @@
+         prob = K.valida_captura(cap, congelamento=cong, braco=braco, modo=modo)
+         if prob:
+             raise Falha(f"captura inválida no caminho esperado {destino.name}; não sobrescrevo: {prob[:4]}")
++        dist = verifica_distribuicoes(cong)
++        exige(not dist, f"captura em cache de {braco}/{modo} não reutilizada: {dist}")
+         return cap, "reutilizada"
+     cmd = [sys.executable, "-B", "-X", f"pycache_prefix={PYCACHE}", str(HERE / "captura.py"), "--worker",
+            "--braco", braco, "--modo", modo, "--controlado"]
+@@ -648,6 +683,12 @@
+         r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                            env=K.ambiente_controlado(AMBIENTE_INICIAL))
+     exige(r.returncode == 0, f"worker {braco}/{modo} saiu {r.returncode}: {r.stdout[-600:]} {r.stderr[-900:]}")
++    dist = verifica_distribuicoes(cong)
++    if dist:   # mudou durante o worker: a captura sai do caminho de reúso e fica preservada como falha
++        FALHAS.mkdir(parents=True, exist_ok=True)
++        if destino.exists():
++            destino.replace(FALHAS / f"rejeitada_{destino.name}")
++        raise Falha(f"captura de {braco}/{modo} recusada: {dist}")
+     cap = read(destino)
+     prob = K.valida_captura(cap, congelamento=cong, braco=braco, modo=modo)
+     exige(not prob, f"captura de {braco}/{modo} inválida: {prob[:4]}")
+@@ -741,7 +782,7 @@
+     abrir = travas._abrir_original
+     R, ok = {"escopo": __doc__}, {}
+     if OUT_JSON.exists():   # fora do try: nunca sobrescrever evidência anterior
+-        print("preflight_v4.json já existe: preservar evidência (usar nova versão)", flush=True)
++        print("preflight_v5.json já existe: preservar evidência (usar nova versão)", flush=True)
+         sys.exit(1)
+     try:
+         exige((DATA / "src").is_dir() and (DATA / ".git").exists() and (DATA / "docs").is_dir(),
+@@ -940,6 +981,7 @@
+         ok["P5 entradas externas iguais antes/depois"] = externas(manifestos, abrir, travas) == externos
+         fim = K.verifica_codigo(codigo_inicio, CODIGO)
+         ok["P5 código do harness, helpers e src/ iguais antes/depois"] = not fim and K.arvore(DATA / "src", abrir) == src_arquivos
++        ok["P5 distribuições iguais à assinatura congelada"] = not verifica_distribuicoes(cong)
+         travas.rehash_leituras()
+     except Exception as exc:  # noqa: BLE001  (qualquer falha interrompe com relatório e saída != 0)
+         R["interrompido"] = f"{type(exc).__name__}: {exc}"
+@@ -978,8 +1020,129 @@
+     cong["insumos_braco"][braco] = K.sha_json(ins)
+ 
+ 
++def capturar_bracos():
++    """Gate de captura: exige o preflight v5 aprovado com este mesmo congelamento; captura os seis braços não-CRU em
++    sequência (um worker isolado por braço), valida o conjunto das sete capturas com o validador completo e grava o
++    manifesto final. Não lê gold, não calcula acerto nem compara braços."""
++    platform.uname()
++    platform.platform()   # aquece o cache antes das travas
++    travas = travas_principal()
++    travas.permitidos.pop("preparo")   # nesta etapa o coordenador não lê tutores vivos
++    for nome in TUTORES:
++        travas.proibe(ORIG / nome, "tutor vivo")
++    travas.permite("referencia", CONG, CONG_ENTRADAS, OUT_JSON, somente_leitura=True)
++    travas.permite("saida", OUT_CAP_JSON, OUT_CAP_MD)
++    travas.instala()
++    abrir = travas._abrir_original
++    R, ok = {"escopo": "captura dos seis braços não-CRU e validação das sete capturas; sem gold"}, {}
++    if OUT_CAP_JSON.exists():   # nunca sobrescrever evidência anterior
++        print("manifesto_capturas_v5.json já existe: preservar evidência", flush=True)
++        sys.exit(1)
++    try:
++        cong = read(CONG)
++        entradas = read(CONG_ENTRADAS)
++        pf = read(OUT_JSON)
++        R["congelamento_id_comum"] = cong["id_comum"]
++        prob = K.valida_congelamento(cong) + verifica_processo(cong)
++        if K.sha_json(entradas) != cong["normativo"]["entradas_arquivo_sha"]:
++            prob.append("congelamento de entradas divergente")
++        R["pre_condicoes"] = prob
++        ok["preflight v5 aprovado com este congelamento"] = (pf.get("aprovado") is True
++                                                             and pf.get("congelamento_id_comum") == cong["id_comum"])
++        ok["processo, código, src/ e distribuições = congelamento (início)"] = not prob
++        ok["CAPTURA_LIBERADA = os sete braços"] = K.CAPTURA_LIBERADA == frozenset(K.BRACOS)
++        exige(all(ok.values()), f"pré-condições da captura não atendidas: {prob[:4]}")
++        for sig, root in RAIZES.items():
++            travas.congela(root, entradas[sig])
++        travas.congela_arquivos(entradas["_externos"])
++        faltam = travas.confere_congelados()
++        ok["inventário de entradas confere (início)"] = not faltam
++        exige(not faltam, f"inventário de entradas não confere: {faltam[:4]}")
++
++        caps, R["bracos"] = {}, {}
++        for b in ("CRU", *ORDEM_CAPTURA):   # o CRU é o do preflight v5 (mesmo congelamento), revalidado
++            exige(not verifica_distribuicoes(cong), f"distribuições divergem antes de {b}")
++            caps[b], origem = roda_worker(b, "capturar", cong, travas)
++            R["bracos"][b] = {"origem": origem}
++            print("  captura", b, origem, round(time.time() - T0), "s", flush=True)
++
++        # conferência final do conjunto (sem gold)
++        destinos = {b: CAPS / f"capturar_{b}_{cong['id_comum'][:16]}_{cong['insumos_braco'][b][:16]}.json" for b in K.BRACOS}
++        prob_conj = {b: K.valida_historica(caps[b], cong, braco=b) for b in K.BRACOS}
++        ok["sete capturas completas, validador completo sem problemas"] = (set(caps) == set(K.BRACOS)
++                                                                            and not any(prob_conj.values()))
++        ok["350 registros por captura, IDs = inventário congelado"] = all(
++            sum(len(v) for v in c["decisoes"].values()) == K.INVENTARIO_ESPERADO
++            and {s: sorted(v) for s, v in c["decisoes"].items()} == cong["normativo"]["inventario"] for c in caps.values())
++        ok["mesmo congelamento comum e insumos do próprio braço"] = all(
++            c["congelamento_comum"] == cong["id_comum"] and c["insumos_braco"] == cong["insumos_braco"][b]
++            and c["esquema"] == K.ESQUEMA_CAPTURA and c["modo"] == "capturar" and c["braco"] == b for b, c in caps.items())
++        ok["nenhuma violação nas capturas"] = all(c["violacoes"] == [] for c in caps.values())
++        ok["arquivos de captura = conteúdo validado"] = all(read(destinos[b])["conteudo_sha"] == caps[b]["conteudo_sha"]
++                                                          for b in K.BRACOS)
++        ok["palcos e snapshots = insumos congelados (fim)"] = all(
++            arquivos_do_palco(b, s) == cong["insumos"][b][s]["palco"]
++            and K.sha_arq(SNAP / b / s / "taxonomia.json", abrir) == cong["insumos"][b][s]["taxonomia_arquivo_sha"]
++            and K.sha_arq(SNAP / b / s / "indice_unidade.json", abrir) == cong["insumos"][b][s]["indice_arquivo_sha"]
++            for b in K.BRACOS for s in K.NOMES)
++        fim = verifica_fim(cong)
++        ok["código, src/ e distribuições = congelamento (fim)"] = not fim
++        ok["entradas comuns preservadas (árvores inteiras)"] = all(K.arvore(root, abrir) == entradas[s] for s, root in RAIZES.items())
++        ok["inventário de entradas confere (fim)"] = not travas.confere_congelados()
++        R["problemas_por_braco"] = prob_conj
++        R["fim"] = fim
++        R["capturas"] = {b: {"arquivo": destinos[b].relative_to(DATA).as_posix(), "sha256": K.sha_arq(destinos[b], abrir),
++                             "conteudo_sha": c["conteudo_sha"], "origem": R["bracos"][b]["origem"],
++                             "materiais": sum(len(v) for v in c["decisoes"].values()),
++                             "chamados": sum(1 for v in c["decisoes"].values() for d in v.values() if d["chamado"]),
++                             "nao_chamados": sum(1 for v in c["decisoes"].values() for d in v.values() if not d["chamado"]),
++                             "violacoes": len(c["violacoes"]), "negados": sorted({Path(n["caminho"]).name for n in c["negados"]}),
++                             "manual_carregado": sorted(s for s, v in c["verificacoes"]["manual_carregado"].items() if v),
++                             "inventario_congelado_conferido": c["verificacoes"].get("inventario_congelado_conferido"),
++                             "segundos": c.get("segundos")}
++                         for b, c in caps.items()}
++        R["referencias"] = {
++            "protocolo": {"arquivo": ADENDO.relative_to(DATA).as_posix(), "sha256": K.sha_arq(ADENDO, abrir),
++                          "protocolo_sha_normativo": cong["normativo"]["protocolo_sha"]},
++            "congelamento": {"arquivo": CONG.relative_to(DATA).as_posix(), "sha256": K.sha_arq(CONG, abrir)},
++            "congelamento_entradas": {"arquivo": CONG_ENTRADAS.relative_to(DATA).as_posix(), "sha256": K.sha_arq(CONG_ENTRADAS, abrir)},
++            "preflight": {"arquivo": OUT_JSON.relative_to(DATA).as_posix(), "sha256": K.sha_arq(OUT_JSON, abrir)},
++            "codigo": cong["normativo"]["codigo"], "produto_src_arvore_sha": cong["normativo"]["produto"]["src_arvore_sha"],
++            "interprete": {k: v for k, v in cong["normativo"]["interprete"].items() if k != "estrategia"},
++            "ambiente": cong["normativo"]["ambiente"], "insumos_braco": cong["insumos_braco"],
++            "snapshots": {b: {s: {k: v[k] for k in ("taxonomia_arquivo_sha", "indice_arquivo_sha")} for s, v in ins.items()}
++                          for b, ins in cong["insumos"].items()}}
++        travas.rehash_leituras()
++    except Exception as exc:  # noqa: BLE001  (qualquer falha interrompe com relatório e saída != 0)
++        R["interrompido"] = f"{type(exc).__name__}: {exc}"
++    ok["coordenador sem violações"] = not travas.violacoes
++    R["violacoes_coordenador"] = travas.violacoes
++    R["negados_coordenador"] = travas.negados
++    R["condicoes"] = ok
++    R["aprovado"] = bool(ok) and all(ok.values()) and "interrompido" not in R
++    R["segundos"] = round(time.time() - T0, 1)
++    K.grava_atomico(OUT_CAP_JSON, R, abrir)
++    L = ["# W-AD5 — captura dos sete braços, sem gold (25/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++         f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**"
++         + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""), "", "## Condições", ""]
++    L += [f"- {'✅' if v else '❌'} {k}" for k, v in ok.items()]
++    if "capturas" in R:
++        L += ["", "## Capturas", "", "| braço | origem | materiais | chamados | não chamados | violações | manual | conteudo_sha | sha256 do arquivo |",
++              "|---|---|---:|---:|---:|---:|---|---|---|"]
++        L += [f"| {b} | {c['origem']} | {c['materiais']} | {c['chamados']} | {c['nao_chamados']} | {c['violacoes']} | "
++              f"{', '.join(c['manual_carregado']) or '—'} | `{c['conteudo_sha']}` | `{c['sha256']}` |" for b, c in R["capturas"].items()]
++    with abrir(OUT_CAP_MD, "w", encoding="utf-8") as fh:
++        fh.write("\n".join(L) + "\n")
++    for k, v in ok.items():
++        print(("OK    " if v else "FALHA ") + k, flush=True)
++    if "interrompido" in R:
++        print("INTERROMPIDO:", R["interrompido"], flush=True)
++    print("CAPTURA", "APROVADA" if R["aprovado"] else "REPROVADA", round(time.time() - T0), "s", flush=True)
++    K.encerra(travas, ok=R["aprovado"], codigo_falha=1)
++
++
+ def escreve_md(R, abrir):
+-    L = ["# W-AD4 — preflight v4 sem gold (25/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++    L = ["# W-AD5 — preflight v5 sem gold (25/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
+          f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**" + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""),
+          "", "## Condições", ""]
+     L += [f"- {'✅' if v else '❌'} {k}" for k, v in R["condicoes"].items()]
+@@ -1019,10 +1182,13 @@
+     ap.add_argument("--worker", action="store_true")
+     ap.add_argument("--braco")
+     ap.add_argument("--modo")
++    ap.add_argument("--capturar", action="store_true")
+     ap.add_argument("--controlado", action="store_true")
+     a = ap.parse_args(argv)
+     if a.worker:
+         worker(a.braco, a.modo)
++    elif a.capturar:
++        capturar_bracos()
+     elif a.preflight:
+         preflight()
+     else:
+--- wad4_25-09/test_wad4.py
++++ wad5_25-09/test_wad4.py
+@@ -157,8 +157,15 @@
+     assert erro and "saiu" in erro
+ 
+ 
+-def test_captura_dos_seis_bracos_segue_bloqueada():
+-    assert K.CAPTURA_LIBERADA == frozenset({"CRU"})
++def test_captura_liberada_exatamente_os_sete_bracos_e_braco_fora_da_lista_rejeitado(tmp_path, monkeypatch):
++    # W-AD5 (Gate condicional de 25/09): libera CAPTURA dos sete braços; gold continua bloqueado (teste da régua abaixo).
++    assert K.CAPTURA_LIBERADA == frozenset({"CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1",
++                                            "CTRL_ALEAT_2", "CTRL_ALEAT_3"}) == frozenset(K.BRACOS)
++    monkeypatch.setattr(CP, "CAPS", tmp_path)
++    cong = congelamento(INV)
++    cong["insumos_braco"]["VOCAB_LIMPO"] = "x"   # braço que o protocolo não prevê
++    with pytest.raises(CP.Falha, match="não autorizad"):
++        CP.roda_worker("VOCAB_LIMPO", "capturar", cong, K.Travas("teste"))
+ 
+ 
+ def test_import_nao_carrega_produto_nem_avaliacao_historica():
+--- wad4_25-09/test_defeitos_v4.py
++++ wad5_25-09/test_defeitos_v4.py
+@@ -140,6 +140,7 @@
+ def test_captura_nao_cru_em_cache_sem_autorizacao(tmp_path, monkeypatch):
+     cong = congelamento()
+     monkeypatch.setattr(CP, "CAPS", tmp_path)
++    monkeypatch.setattr(K, "CAPTURA_LIBERADA", frozenset({"CRU"}))   # W-AD5 libera os sete; o mecanismo segue testado
+     cap = captura_valida(cong, braco="VOCAB_LLM")
+     destino = tmp_path / f"capturar_VOCAB_LLM_{cong['id_comum'][:16]}_{cong['insumos_braco']['VOCAB_LLM'][:16]}.json"
+     destino.write_text(json.dumps(cap), encoding="utf-8")
+--- /dev/null
++++ wad5_25-09/test_ajustes_v5.py
+@@ -0,0 +1,187 @@
++"""W-AD5: reprodutores dos dois ajustes pedidos pela revisão independente do W-AD4. Resultados esperados escritos à mão.
++
++Fase vermelha: rodados contra cópias byte a byte do código revisado (congelamento b3254509…) → testes_v5_vermelho.txt.
++Fase verde: contra o código W-AD5. Só arquivos temporários; nenhuma fonte real é apagada; o ambiente real não é mudado
++(a lista de distribuições é simulada).
++"""
++import json
++import subprocess
++import sys
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++
++HERE = Path(__file__).resolve().parent
++sys.path.insert(0, str(HERE))
++import captura as CP  # noqa: E402
++import comum as K  # noqa: E402
++from test_defeitos_v4 import captura_valida, congelamento  # noqa: E402  (fixtures completas herdadas)
++
++# ------------------------------------------------------------------------------------------- ajuste 1
++MODELO = r'''
++import json, os, sys
++sys.path.insert(0, {here!r})
++import comum as K
++t = K.Travas("teste")
++t.permite("codigo", {base!r}, {prefix!r}, {here!r}, somente_leitura=True)
++t.permite("saida", {saida!r})
++t.permite("comum", {raiz!r}, somente_leitura=True)
++t.congela({raiz!r}, {congelado!r})
++t.instala()
++try:
++{acao}
++except Exception:
++    pass   # consumidor que engole a exceção
++t.rehash_leituras()   # conferência final do worker
++with open({rel!r}, "w", encoding="utf-8") as fh:
++    json.dump([v["tipo"] for v in t.violacoes], fh)
++K.encerra(t, ok=True)
++'''
++
++
++def raiz_congelada(tmp_path):
++    """Raiz comum sintética com a.txt e b.txt congelados."""
++    raiz = tmp_path / "raiz"
++    raiz.mkdir()
++    (raiz / "a.txt").write_bytes(b"a")
++    (raiz / "b.txt").write_bytes(b"b")
++    return raiz, {"a.txt": K.sha_bytes(b"a"), "b.txt": K.sha_bytes(b"b")}
++
++
++def roda(tmp_path, raiz, congelado, acao):
++    rel = tmp_path / "saida" / "viol.json"
++    rel.parent.mkdir(exist_ok=True)
++    src = MODELO.format(here=str(HERE), base=sys.base_prefix, prefix=sys.prefix, saida=str(tmp_path / "saida"),
++                        raiz=str(raiz), congelado=congelado, rel=str(rel),
++                        acao="\n".join("    " + x for x in acao.strip().splitlines()))
++    r = subprocess.run([sys.executable, "-B", "-c", src], capture_output=True, text=True)
++    return r.returncode, json.loads(rel.read_text(encoding="utf-8")) if rel.exists() else None, r.stderr
++
++
++def test_a_congelado_ausente_antes_da_1a_leitura_com_filenotfound_capturado(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    (raiz / "a.txt").unlink()   # some ANTES da primeira leitura
++    acao = f"try:\n    open({str(raiz / 'a.txt')!r}).read()\nexcept FileNotFoundError:\n    pass"
++    rc, viol, err = roda(tmp_path, raiz, cong, acao)
++    assert rc == 2 and "insumo_desaparecido" in viol, (rc, viol, err)
++
++
++def test_a2_congelado_substituido_por_pasta(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    (raiz / "a.txt").unlink()
++    (raiz / "a.txt").mkdir()    # existe, mas não é arquivo utilizável
++    rc, viol, err = roda(tmp_path, raiz, cong, f"open({str(raiz / 'a.txt')!r}).read()")
++    assert rc == 2 and "insumo_desaparecido" in viol, (rc, viol, err)
++
++
++def test_b_consumidor_so_consulta_exists_is_file(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    (raiz / "a.txt").unlink()
++    acao = f"if not os.path.exists({str(raiz / 'a.txt')!r}) or not os.path.isfile({str(raiz / 'a.txt')!r}):\n    pass"
++    rc, viol, err = roda(tmp_path, raiz, cong, acao)
++    assert rc == 2 and viol.count("insumo_desaparecido") == 1, (rc, viol, err)
++
++
++def test_b2_conferencia_de_inventario_antes_do_worker(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    (raiz / "b.txt").unlink()
++    (raiz / "a.txt").write_bytes(b"A")
++    t = K.Travas("teste")
++    t.congela(raiz, cong)
++    prob = t.confere_congelados()
++    assert len(prob) == 2 and any("b.txt" in p for p in prob) and any("a.txt" in p for p in prob)
++    assert sorted(v["tipo"] for v in t.violacoes) == ["insumo_desaparecido", "insumo_divergente"]
++
++
++def test_c_congelado_nunca_aberto_some_durante_a_execucao(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    acao = f"open({str(raiz / 'a.txt')!r}).read()\nos.remove({str(raiz / 'b.txt')!r})"
++    rc, viol, err = roda(tmp_path, raiz, cong, acao)
++    assert rc == 2 and viol == ["insumo_desaparecido"], (rc, viol, err)
++
++
++def test_c2_congelado_nunca_aberto_alterado_durante_a_execucao(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    acao = f"with t._abrir_original({str(raiz / 'b.txt')!r}, 'w') as fh:\n    fh.write('B')"
++    rc, viol, err = roda(tmp_path, raiz, cong, acao)
++    assert rc == 2 and viol == ["insumo_divergente"], (rc, viol, err)
++
++
++def test_d_entradas_congeladas_intactas_passam(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    rc, viol, err = roda(tmp_path, raiz, cong, f"open({str(raiz / 'a.txt')!r}).read()")
++    assert (rc, viol) == (0, []), err
++
++
++def test_e_opcional_nunca_congelado_ausente_segue_a_politica_existente(tmp_path):
++    raiz, cong = raiz_congelada(tmp_path)
++    acao = f"try:\n    open({str(raiz / 'opcional.json')!r}).read()\nexcept FileNotFoundError:\n    pass"
++    rc, viol, err = roda(tmp_path, raiz, cong, acao)
++    assert (rc, viol) == (0, []), err
++
++
++# ------------------------------------------------------------------------------------------- ajuste 2
++def processo_falso(monkeypatch, tmp_path, dist_atual, **interprete):
++    """Todos os demais parâmetros de verifica_processo iguais ao congelado; só as distribuições variam (simuladas)."""
++    pyc = tmp_path / "pyc"
++    pyc.mkdir()
++    monkeypatch.setattr(CP, "PYCACHE", pyc)
++    monkeypatch.setattr(CP, "sys", SimpleNamespace(
++        flags=SimpleNamespace(dont_write_bytecode=1, no_user_site=1), pycache_prefix=str(pyc),
++        path=[str(CP.HERE), str(CP.DATA)], executable="python-fixo", version="3.x-fixo"))
++    monkeypatch.setattr(K, "verifica_ambiente", lambda env: [])
++    monkeypatch.setattr(K, "verifica_codigo", lambda esperado, arquivos, _abrir=None: [])
++    monkeypatch.setattr(K, "arvore", lambda *a, **k: {"m.py": "h"})
++    monkeypatch.setattr(CP, "distribuicoes", lambda: list(dist_atual))
++    return {"normativo": {"interprete": {"executavel": "python-fixo", "versao": "3.x-fixo", **interprete},
++                          "codigo": {}, "produto": {"src_arquivos": {"m.py": "h"}}}}
++
++
++def test_2c_assinatura_correta_passa(tmp_path, monkeypatch):
++    cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=K.sha_json(["pkg==1.0"]))
++    assert CP.verifica_processo(cong) == []
++
++
++def test_2a_assinatura_divergente_reprova(tmp_path, monkeypatch):
++    cong = processo_falso(monkeypatch, tmp_path, ["pkg==2.0"], distribuicoes_sha=K.sha_json(["pkg==1.0"]))
++    assert any("distribuições" in p for p in CP.verifica_processo(cong))
++
++
++@pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
++def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
++    cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
++    assert any("distribuições" in p for p in CP.verifica_processo(cong))
++    assert cong["normativo"]["interprete"]["distribuicoes_sha"] == valor   # o esperado não é preenchido
++
++
++def test_2b_assinatura_ausente_reprova(tmp_path, monkeypatch):
++    cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"])
++    assert any("distribuições" in p for p in CP.verifica_processo(cong))
++    assert "distribuicoes_sha" not in cong["normativo"]["interprete"]
++
++
++def test_2d_assinatura_muda_entre_inicio_e_fim_captura_nao_aceita(tmp_path, monkeypatch):
++    cong = congelamento(interprete={"distribuicoes_sha": K.sha_json(["pkg==1.0"])})
++    monkeypatch.setattr(CP, "CAPS", tmp_path / "capturas")
++    monkeypatch.setattr(CP, "FALHAS", tmp_path / "falhas")
++    (tmp_path / "capturas").mkdir()
++    atual = {"lista": ["pkg==1.0"]}
++    monkeypatch.setattr(CP, "distribuicoes", lambda: list(atual["lista"]))
++    destino = tmp_path / "capturas" / f"capturar_CRU_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU'][:16]}.json"
++
++    def worker_falso(cmd, **kw):   # o worker grava uma captura estruturalmente válida; as distribuições mudam no meio
++        destino.write_text(json.dumps(captura_valida(cong)), encoding="utf-8")
++        atual["lista"] = ["pkg==2.0"]
++        return SimpleNamespace(returncode=0, stdout="", stderr="")
++
++    monkeypatch.setattr(CP.subprocess, "run", worker_falso)
++    with pytest.raises(CP.Falha, match="distribuições"):
++        CP.roda_worker("CRU", "capturar", cong, K.Travas("teste"))
++    assert not destino.exists()                                  # não fica no caminho de reúso
++    assert list((tmp_path / "falhas").glob("rejeitada_*.json"))  # preservada como falha
++
++
++def test_2d_fim_do_worker_confere_distribuicoes(tmp_path, monkeypatch):
++    cong = processo_falso(monkeypatch, tmp_path, ["pkg==2.0"], distribuicoes_sha=K.sha_json(["pkg==1.0"]))
++    assert any("distribuições" in p for p in CP.verifica_fim(cong))

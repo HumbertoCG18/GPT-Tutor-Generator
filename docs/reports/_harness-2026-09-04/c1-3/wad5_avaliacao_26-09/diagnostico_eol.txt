@@ -1,0 +1,12 @@
+core.autocrlf = true
+== código histórico (não é régua): disco x índice
+  compara_herancas_15-09.py      bytes==blob: True | CRLF no disco: 0 | sem CRLF==blob: True | git status: limpo
+  mede_3eixos_12-09.py           bytes==blob: True | CRLF no disco: 0 | sem CRLF==blob: True | git status: limpo
+  wx_regua_corrigida_22-09.py    bytes==blob: False | CRLF no disco: 680 | sem CRLF==blob: True | git status: limpo
+  wz_bloco_cobertura_22-09.py    bytes==blob: True | CRLF no disco: 0 | sem CRLF==blob: True | git status: limpo
+  eval_entry_unit.py             bytes==blob: False | CRLF no disco: 199 | sem CRLF==blob: True | git status: limpo
+  eval_ground_truth.py           bytes==blob: False | CRLF no disco: 344 | sem CRLF==blob: True | git status: limpo
+== régua: só metadados (nenhum conteúdo lido)
+  tamanho no disco != tamanho do blob: 37 de 38
+   ['gold_units/ES2:+16', 'gold_units/IA:+24', 'gold_units/MF:+24', 'gold_units/SO:+26', 'gold_units/TCC:+36', 'ground_truth/CG:+49', 'ground_truth/ES2:+36', 'ground_truth/IA:+73', 'ground_truth/MF:+67', 'ground_truth/SO:+40', 'ground_truth/TCC:+34', 'herancas_csv/CG:+94', 'herancas_csv/ES2:+32', 'herancas_csv/FR:+19', 'herancas_csv/IA:+43', 'herancas_csv/MF:+67', 'herancas_csv/SO:+40', 'herancas_csv/TCC:+28', 'herancas_json/CG:+2482', 'herancas_json/ES2:+1004', 'herancas_json/FR:+506', 'herancas_json/IA:+1247', 'herancas_json/MF:+2029', 'herancas_json/SO:+1190', 'herancas_json/TCC:+825', 'material_gt/CG:+94', 'material_gt/ES2:+20', 'material_gt/IA:+4', 'material_gt/MF:+14', 'material_gt/SO:+20', 'material_gt/TCC:+4', 'subunit_gt/CG:+94', 'subunit_gt/ES2:+36', 'subunit_gt/IA:+41', 'subunit_gt/MF:+67', 'subunit_gt/SO:+24', 'subunit_gt/TCC:+13']
+  git status dos arquivos da régua: todos limpos (conteúdo normalizado = índice)

@@ -1,0 +1,727 @@
+{
+ "adendo_v2": {
+  "arquivo": "docs/reports/2026-09-25-regime-vocab-adendo-fase1-v2.md",
+  "bloco_normativo_sha256": "e1cc3b45ccc56fd113e9cfb996f2e0a17a4cfa2bd664fc2d81590ae51f082133",
+  "nota": "o registro fora do bloco normativo pode mudar sem alterar o congelamento"
+ },
+ "arquivo_congelamento": {
+  ".frzero/wad3_25-09/congelamento.json": "c94ea05e6306565f6d8e507583fb15ef75d767d33e34bfeea3989bc3683fdfa0",
+  ".frzero/wad3_25-09/congelamento_entradas.json": "91d88c2cfe3df99c233af9df61b69c5f19beaaa33df7903c5a8f48b46b422413"
+ },
+ "capturas": {
+  "capturar_CRU_05dc9cf1e3f35c09_6689d5f05bf10fc3.json": {
+   "conteudo_sha": "1753879d8d9237e57ec5a6cc733dea38b96e4479c1110c05ca86ea075562077d",
+   "sha256_arquivo": "dc4d2e06a03798f69392827c82e52a80bb64659e57e15924a11c20104972236a"
+  },
+  "carga_CRU_05dc9cf1e3f35c09_6689d5f05bf10fc3.json": {
+   "conteudo_sha": "6a6e2b995ff1a6b5fe916416f567b82ed4c3698d5cfdd6241a13d506a0a0a497",
+   "sha256_arquivo": "11d6dedb93e2b89029959d53c460119d60219338ca7529000b975e62dc3aef67"
+  },
+  "carga_CTRL_ALEAT_1_05dc9cf1e3f35c09_c593fc0105e5733b.json": {
+   "conteudo_sha": "e1f38e8773b4e9e13eedd0ba22b9a09744bcdce5bbd12e93aab01163d5794161",
+   "sha256_arquivo": "7c295c744dbff1bb190d18a764cc788c95817f57c11c4c46167e402e88248cf1"
+  },
+  "carga_CTRL_ALEAT_2_05dc9cf1e3f35c09_5cc5ff73b6f5d5a0.json": {
+   "conteudo_sha": "78b6473f7a8a56fb820c720c67d840a6fc876dca03f4e59b9266cb0f098be88f",
+   "sha256_arquivo": "38e5f5f8ad9b75136df32d1e1f55490403c668f8551536ce08d8966402f5d7f5"
+  },
+  "carga_CTRL_ALEAT_3_05dc9cf1e3f35c09_7e88f881f1834bf6.json": {
+   "conteudo_sha": "9483897029604aa21b00db562746858a727b896c895ca757e2b0d942920a65a7",
+   "sha256_arquivo": "5c39e8d8b33ce6a1150b83a7d71ecaf783da0fd4d58dbfc54d788d2556a2053c"
+  },
+  "carga_CTRL_MAIOR_05dc9cf1e3f35c09_9a8a2d0325aa70c7.json": {
+   "conteudo_sha": "980a6f6e1d90eba71a52b824b59dd2f5727b5a6be569a364b0ef04a4cf7e4744",
+   "sha256_arquivo": "41953e7e6790b7f6e7776b99cdcc31df82d6230ac31aa1ce6d6f8af0763b01b0"
+  },
+  "carga_VOCAB_ATUAL_05dc9cf1e3f35c09_b6bc6f52fe164f84.json": {
+   "conteudo_sha": "5de0ab21fbd7d832402107ca2697d1e0f135b1816c2755fc3113dc5c84779d92",
+   "sha256_arquivo": "d0c06893842208abd2b38fb2b776e446198912d2a30873c7617b57bb616be50b"
+  },
+  "carga_VOCAB_LLM_05dc9cf1e3f35c09_eb322c734dd3b7ea.json": {
+   "conteudo_sha": "93098c684d48411aa1557eb13eb287a77af391c09472a30ea16a431ef44885b2",
+   "sha256_arquivo": "4ffe2e4f58d72d32000076915f5404814180d82a620d98d98ce818bc05e2967f"
+  }
+ },
+ "codigo_arquivos_sha256": {
+  "avaliador.py": "ac064830dda4bb5a725dd8dff862267e1867132fcd3dd1dfaa0855d7da9d0d73",
+  "captura.py": "a62515a8c6034f24b5ecb7716a09bd8936f4a71f612c3eb58ac0c0438876cc10",
+  "comum.py": "2215e817557244f9e2fd46f15ba7f5c1a9d42cf93fd4b8ed710beb861a066dbe",
+  "test_wad3.py": "5ee61c730b22674fff22f475f05bdb92118264075a58d4fb4a029064dff3ea97"
+ },
+ "controles": {
+  "bloqueados": []
+ },
+ "helpers_sha256": {
+  "replay_bloco_21-09.py": "86df738554faa726edf778eab59569d2b5c05bc32873c091cbddd50651deaed0",
+  "replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf"
+ },
+ "id_comum": "05dc9cf1e3f35c09c79104fb1cfc953c8ee49660e56c045679ca4200366ad8f7",
+ "insumos_braco": {
+  "CRU": "6689d5f05bf10fc3aad857c5a9c538588e4dd30fca66a1d78dfb545e2c0bbab4",
+  "CTRL_ALEAT_1": "c593fc0105e5733b5d9a72b4e9d5c0945ca383169d019cc7c25a8987e5e0b771",
+  "CTRL_ALEAT_2": "5cc5ff73b6f5d5a058770259d9bb712b1f4f43b96baca8487a24374b1add8efe",
+  "CTRL_ALEAT_3": "7e88f881f1834bf6c1c6dcaa198d8f1ce8b49da5fbf8d0c9c2cceb50a19eeb61",
+  "CTRL_MAIOR": "9a8a2d0325aa70c73ab6a3bf06890c7edc9de6e9eb38815b30e52d4da51071b3",
+  "VOCAB_ATUAL": "b6bc6f52fe164f84dd512e5935558db1c120038aa8ef3743c7ffbe9b55201d1d",
+  "VOCAB_LLM": "eb322c734dd3b7ea6b1e62e9ce4ab39604898ae00ca5b3c78bf72bb5db6f9ed7"
+ },
+ "insumos_por_braco_curso": {
+  "CRU": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "090d36e738378fb4fa759be5464563fe7eb2696cfea929a6ed63d6952336eab2",
+    "taxonomia_sha": "03e5ac610d39e5aa91dafdd2a07197f0a3df8f35c501b9236031614a91adbb2d"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "c96f8f4d35650f30a5952b650f66e5402ed1c71569fecb00e9eab9a9bd13ea9c",
+    "taxonomia_sha": "eb3cfb8a5407549df04a6ccc63679d977b7f5a6731a9352d65229f2db3078108"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "b643460a3c8b9902f74d94f6da4aa594f68ad2f9d40decedf45751a2f04f5203",
+    "taxonomia_sha": "ad659eae23f3d5cf5ca67c49940a9870727653118188b021fa795c6fb4c4c3d7"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "1e11cb1d9d9a369c6668b5f7c760a33fbff4e797817d1d19c5807449d806bde4",
+    "taxonomia_sha": "6e5142cc3738517b50add74082e3d748e489f5ea76f4bd66abe5a90544dec74a"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "ea6eda327e218fb9dd20df4cc2742453faef71b30c78ed1e7d2d13d0e11d8b7e",
+    "taxonomia_sha": "2118909bd40138feb9975df85737f49d4d1b3863de9ff40d448ba029c86aa087"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "d8197723502d3819a59cefc15f88cecff43b7631b5fb0ceb101d5f9e4f88655b",
+    "taxonomia_sha": "6db68509926a951f9e2eb4cce303d5e1f110bc1c300759527443406fead57ca9"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "5f288fffa3e2d7cca9d09de7fc236607f7733338d5f4a6939f6477d8b9194c0f",
+    "taxonomia_sha": "dfb000c28ce83811720b1b1cfde8e956c81a5c278a011a6ad2b721e401e97bf7"
+   }
+  },
+  "CTRL_ALEAT_1": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.llm.json": "b9a9baffae06de8ca8a0ba2f58ddd7b2dc61246353887fa53e8f9e049a9b9579",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "776e0a709609448242c44f3b1c9477f383a1b629c995f69e843c9b6b8f0c1543",
+    "taxonomia_sha": "b53499f675bf23f3ea4da6285a71cc48117e613d7e8e81c02827e36afa4e6685"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.llm.json": "fac6cdb806a13a0ac07e9dae954aea1d41acf6f7f3004808f25876d83d00ac6f",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "9cbd22f39acb52bc30c3d9b15f9cc4a081ffb806900a45ea6e90e017a709d8b1",
+    "taxonomia_sha": "0f2bfe894e4135bdf4ce5bfc4b8cc3135dc7205c3aeb78dff0c0661ae0876ed8"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "9dfdf2f097ce1d31854ee6da4795b0060a4918780cb39a241172d300fb6eff1f",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "db0ae91c6db13423bc84a45db6e3d7b990561a0859af7e1deb16d77053034bac",
+    "taxonomia_sha": "80637d4936d05aea76a049d4004c8e6257eed3c79c9a8e5ee1c2b95b6df898ad"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.llm.json": "e324d7034863481f5b2d4261f8530ecd9a9690e29c7307576a5c27ef5de59c5e",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "3549bceeddbb24894c26ff5c35baf10a65a1a704c014f2d8fe756ea0ec5306bb",
+    "taxonomia_sha": "21e760a9f0b5c9dbe3909f5fc7777f50a1bd72ab519e6d38566a7d85bcb63059"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "6cab400ebfbd9081699031dffc9e81fd90d2cae94aa9c34ef1ba482f06456ea4",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "fcde42aa4e719293a2f1c40c63b0c5a52d1f3197da7dc5e9dcc0aeccced5ed3d",
+    "taxonomia_sha": "d6e0273127aaedeca053305dda4c15191c68969e052da4d3870a4abe739d8860"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.llm.json": "298b247d189ddd982b33768afe119f8347e175e32392947aea38d931b553e83b",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "bfbbcdc34d92df0084ea8509dfba2d37430a7018cc35e36da043c0ae2b7cfd80",
+    "taxonomia_sha": "ae537f27211559462a007975bc578707cab1c4a9ad619eb2a631222ecb85a3b7"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.llm.json": "a63f0da4d637dae14ed25e007eef0f09ff9456eccf11ffccce7c829d907b6429",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "264a46fa3a4b79b93ace8cc16d75f4093330fcef3612cba2ff0f2e8da1a81176",
+    "taxonomia_sha": "eb9c0f8b3be437020052b68aeaed3f699409fdf9931bbcad7fd4150099800634"
+   }
+  },
+  "CTRL_ALEAT_2": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.llm.json": "dbe45c3a07273fc10c79abeb6694d60050f30d6f997df5aa2a03c53588937bb6",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "7e6ca900f92535fbe1c6c4c3c58b62dc53559e0c1ff4d100a4d7ebb6f9f36f28",
+    "taxonomia_sha": "03eb74ab3118a329fa7eb0774b49002b86fc1cf431c38274d075cddd9cbf68c2"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.llm.json": "a9e8a1b681230e25c549d5362581ca28e6cff67c26fa3722a13f69676e150ccc",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "d11280c695db3d6a849bc27d7acab2f755bbbfa83e5193d5814584b8c753552b",
+    "taxonomia_sha": "954a79cdc9bfbe8585d7c7bddda3c3e90a872914e6c3b0a98eb28d1eb27ce2df"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "1bf5cc895f786b49a3361e10a39ad6be6d09567a61c9f493fcc47e1fff07e05e",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "9e2819259b50cc9a080b9a98672c768990e497ffaf735fa6e9f4df60d3aa54f8",
+    "taxonomia_sha": "ce567b6e022296c4dacd56cd08ba3b6a1a638ac78ab2ff029e55c5fa4fd01db1"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.llm.json": "77c3831fccb832de00bb99508ffe3a3d83a99fb194b183341289b7db3e452583",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "cea71685246e65abddc30ab08b66781cd4de6cbc115c45b81726ada3d1d8d586",
+    "taxonomia_sha": "34294fdfacfbc1e04cbf4a21a157829b878e898a2ae901ee1727bc00bc80ba3c"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "bed7d06d66210c105eba1b2659758ccfca6f41d262e4ab6545baba86b8f3557c",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "77e331fbd06806234fc4fc80dce205b9861dc144cb522b4f9bd39c1dd04c93dd",
+    "taxonomia_sha": "c795fb0d8801dd1a477b4d39320b7b5cf1ffce3da947fdc599fcbe9aeafc28e4"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.llm.json": "1d971bdc0f35eed7a4496e7dd93fc21c6b804b016f2338de574487b10bb988b4",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "c0bf7f498c8bff957c0482a4c96647a8e8f7652a1f62cc0e86041f8750285be6",
+    "taxonomia_sha": "65704f97fedb07c9e2e02e947dc5f83e1fcbe63e21ee8be2a842e2329d420fa8"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.llm.json": "eae7195d050f9a64254ef4fd932fc1ba3548d428ae06ec4cd5a5c719983ebe58",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "96334648409709f2b96d5809e19340411fe41db98d4671cf06186ac44863cc3b",
+    "taxonomia_sha": "77bbdd1f842d3422e472610b5b5790dbca3382a4bcb505d063548ef52e61f5e2"
+   }
+  },
+  "CTRL_ALEAT_3": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.llm.json": "3be4797c1a09cf83fac3ed69ffbdd480626e5c14036cf4d6a0ffea8440405cb6",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "49241b10295cfaecb0660397dcae3fe35a2e6b2da3058d1033f8c941132b6f42",
+    "taxonomia_sha": "15ae1a67aece39800f72c6119d89c41f7eed98570c1b274aecdc5490c1bc7cf9"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.llm.json": "b4943bd75cb46be012988ee96fc95085dc40a2ed2429c606eb290bbb830a858c",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "59586e79153094fb7bd143d9eafeef2dfb6e298dffb857abb1cb39776f1b08a3",
+    "taxonomia_sha": "dc9b3a27f74c7d10293a9208ff9a30c22acd25c0d86923acb6242976d7004bf9"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "b3b16eb3ab08ebbe3bc678794de286d2ea483a06dc99f47a1e57ab197b2ef41a",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "1e9c1dac34d933abae36f5fe696afe121a70b86c9219bd6176de65864ba3fd45",
+    "taxonomia_sha": "cf0bae60ef9e507654754c0a48685f293c7ecdb994310858cb65f1c4d8c14b85"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.llm.json": "f16404a38c721dc93d6c8a4f3467466a21dd79fd5a84aa9a3b87fa6b6e7baf9c",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "aa336fb6e0e0c39e1d573f90faa6d5eee6b3f5492f2bc5605da73fea9bda8b31",
+    "taxonomia_sha": "e75775c53463e347ce4362ed5804f2623990338b222b6c98214325482525697e"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "fb1d5f00583e7f3152c9bc36cdf4b842c513079301f68d649807c19701cc56d9",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "dbb53ac9307b15c71001bb41b6618c219f97c44a2790660dff5fc0b4c22a54db",
+    "taxonomia_sha": "31c2d3267969928f2d0cc078b752291011ad61812c27f1c0dbdd152ba99cfa4b"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.llm.json": "f509f2d496e374ac6eb560cdf041bfd4a3eb1a6b929fdf5c28df405596ce06b6",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "71f5b3e7f7bb53b6847463d6ce70f6ac10df81cf80d133143807438e77583391",
+    "taxonomia_sha": "b88f53f982cebefdb9faa1576ab7c8e1b1caed77137a8dcf754746943bf1b193"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.llm.json": "3066f25ec956342b78003488ea1586a8a254be5108d32cff32639aa6e1572da1",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "9b029016bd8771df90a7da3302188683428128dcde416af29faf802a47406a9c",
+    "taxonomia_sha": "1b1d2f67f7f0709f5590f31e51884ad08e0458126355459e4df5d7d2ded2abd1"
+   }
+  },
+  "CTRL_MAIOR": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.llm.json": "68f12ee6d09bb8738acce99f0ad501080614e6244985aa72e822b4d65bc3526b",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "79123c8886f9993d917b6f39f73373148c70bd6d900a1ee2d0bb89b1c404d745",
+    "taxonomia_sha": "54e672f97edd183abb48f2e8036746c5796fdaad02bb11672c589746203633e8"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.llm.json": "7fdc503b1c6a1d9120eeadf1aba6115f1b07cef290f4def724cf2185df2fb0a5",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "da11f423f86f59f3c5df128be00b3988014cb3df9885a46c735b3f125838b4cd",
+    "taxonomia_sha": "090c0c78ddef3f55fe02ad16af6fbf6eaaed18a94661450e6e9d9eccc3c90afe"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "a9f68dee858f65190ca8a7c73e984a9b12b97aae5292cbf15d51edb3e8bb78fe",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "08f9c0026c9842d1c9d7f47a084eb18b30e7097c869b626b89e149b96ee5d5a5",
+    "taxonomia_sha": "17ce6528f76e92d2489965e46c03c6d03930464c0346c5ae87c712db91cf0f7b"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.llm.json": "01a47f4f908e52219bcefa6f0dd368a9e412d880db7c81dcb268a37f56060e02",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "381f9c5fad7786c83f7e2d1ea02ab11c30e492be6dac1ecda3be77163157f8f5",
+    "taxonomia_sha": "f3cedbcd564ea49cf7d5cc0250436b4c4f251e0524ba3a08aa1ca832f8bd4d78"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "75d79698bb1ecc0089aab66b9ae5289553e40e0dd251870c659b929cdd0d3dd3",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "f0c2880c3aa61fd832ed0650625a44416e18236a07a1ac36a753492a0d723d6f",
+    "taxonomia_sha": "410fe08ef0ac8cf596fb3182361a48bc11b2e922c789f34e6c5ff8d1b63116fa"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.llm.json": "4fd542692e7cbcc6070aedb0a235e7afb3c53bfe98445319984f0808a39dcef9",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "fb9c65cff21d226d2ba567065080927d8103742c6723abe109f978e7f6262cf0",
+    "taxonomia_sha": "3d19ef55059072eb91706d5efce648a3eb111cb4e800725925dec5f6656eccb2"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.llm.json": "662d3c24faa99315d3edc6ca9a6080496fe6c8f44d5131a1b8816b59bb441ec9",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "db1c53bab13a6f31462b7647005899224969786c6c916abcf68923f1d3e34d41",
+    "taxonomia_sha": "5056c0ac9e27ecb633e9523a32c28bd56370e9cd6cc8dc253c40544198a5fa38"
+   }
+  },
+  "VOCAB_ATUAL": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.json": "a1e6c431c3809af1afd5e4a97a2f98548cd884ff9d82820d88b1949004760385",
+     "course/.glossary_curation.llm.json": "35f539826de71a4b7daaccc0bec5846f17357b931ba6cff81e60f6acfb6959f4",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "18a0c82da3ae4ebb772658bf2101153dd9211e3deaac375df3e0438c7777f1b5",
+    "taxonomia_sha": "1aa44a4317267aba738650a71a898920dcc4d7faa11a1f5608dfc9d42c6a018b"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.json": "4e2d6d08d0b43e31bf86837ec94137a7b9bd9d5372db0d0ce038a667514b79c9",
+     "course/.glossary_curation.llm.json": "543c9e44d6e84eed02a9e08a3cc1a70579f539beb622c3ba549c5e6ecbfefdf7",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "c09b234d2c781119fbf98608714b0115c3d50f8e51de64d28ada2d6f90031c1f",
+    "taxonomia_sha": "b2899101ce88b6d7077e9c1e4ba66f29f857539c0e97b67ec3a01065b2219def"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "2fa9e40c83506c9f9d272acfcad4e901ee03e66f73bdb13ea3a4820d4ef47d55",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "817f267ba47aa7967cf9b7ec6af2107dfffd1af9398a6183e6849e305e28b23d",
+    "taxonomia_sha": "048276709c4cbc2cd0da22827c170c49bbd07def83b8360e5f62f9d33837e2ae"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.json": "84248c14bf9977ed71521cdb96fbb4ff3fdccbc0454202ff4592602a7625cd87",
+     "course/.glossary_curation.llm.json": "31f541b6f893752e2ddce84eddb1549c2ae7aa02fdef13224b8bcdf0ec8829b0",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "08ef7730062e1f025dff54f05afdebd6759e48663d89b0cfeb54e14bc7a82cea",
+    "taxonomia_sha": "12ecd1a500d8acff5e91dd9af46033cf5553794b167f72c957a80b1df6cd96e4"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "607535531bce61b56513df920551117922135d8c89cd9b3f7025570112fe128e",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "2630c2ae186a7f290a38acb702da329766b9df588fc252826869c58e85d05d65",
+    "taxonomia_sha": "94cd6274252b6b004594c717b5984058c7ccf222219fa3bd0b10476f85d585da"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.json": "87a1da2ef059def2ef7b1815277c624e96a42422977c6bea1af6f0fddc9024fe",
+     "course/.glossary_curation.llm.json": "bf86985b64a3b735b54f97c0697e4fb87b5c7c0d528680f86b642e7a8146c483",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "5328a8246bf83860ef8a6305c895f9804ae69824c867ec0a1d009efe0bd8938c",
+    "taxonomia_sha": "82cc88d3d612c46b443ebe850389c65ac900a55ed1d5905f863a41aa5e81b406"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.json": "ab2ecfd3dab6b5f3d21e6cb91d63f86d6fe2b062477855a6f8516ab7f99d835a",
+     "course/.glossary_curation.llm.json": "962f1618854cf0841b19fad1e87fb2973326ae28d10005ef068e7e7efa4e5b2f",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "65594ee54faa5d9fb5f62e3362c7c832e6f6d228265707de3e58a9795d92f745",
+    "taxonomia_sha": "bc6105f740f995f00e9bc15ed17382bef7af1a94c91281207799f69aeca3cac2"
+   }
+  },
+  "VOCAB_LLM": {
+   "CG": {
+    "indice_arquivo_sha": "d9a3af7d5bf10165902cde84e63284589c5f84104b374bf613d3a2084e71e0b8",
+    "indice_sha": "e47e4915f04e6f76bab2a621e61200f61cc0ec1cde01b64945aae66778a13583",
+    "palco": {
+     "course/.glossary_curation.llm.json": "35f539826de71a4b7daaccc0bec5846f17357b931ba6cff81e60f6acfb6959f4",
+     "manifest.json": "02b1dec54be7524bc67dc7bbbfde610099757a3ce1c034ac6eb9248b7ccab9e5"
+    },
+    "taxonomia_arquivo_sha": "d196fd4f70e7e71701d027a01d53d4cdfff45615058a649c9c3a6d007372a677",
+    "taxonomia_sha": "b58e9e4df56e2230908a5e970b797c21e0a3441d90a5ce3f8efc68e2a97786ba"
+   },
+   "ES2": {
+    "indice_arquivo_sha": "d31b63ba0ebc09da495cc313d2e4d18ef71b9dca316bec46a0374a31511683c7",
+    "indice_sha": "bcc3f429db915aa8ab6aa8514edbe4e28a7f66d30c4da1a36bbf710755624df2",
+    "palco": {
+     "course/.glossary_curation.llm.json": "543c9e44d6e84eed02a9e08a3cc1a70579f539beb622c3ba549c5e6ecbfefdf7",
+     "manifest.json": "54a3f0d6b5eeee2e6fe81f618b0ba25ae994714833aa93a631dfa6f163d54fe7"
+    },
+    "taxonomia_arquivo_sha": "ad0a505ff482883379363b20ef44212b02adb5e228adaa0146fb35bca6f307be",
+    "taxonomia_sha": "42015e38660743bde4c7a8806eca44422246a4ac460c4542565792bf20c21cf9"
+   },
+   "FR": {
+    "indice_arquivo_sha": "832840b5a9772b5cf23890594faee3b4282e91990404e8497d013009c1719a15",
+    "indice_sha": "dc23c4936bebcb1fb612fd8d00998437605769ef884c4d3ebd291dda0fd746ff",
+    "palco": {
+     "course/.glossary_curation.llm.json": "2fa9e40c83506c9f9d272acfcad4e901ee03e66f73bdb13ea3a4820d4ef47d55",
+     "manifest.json": "186771dde8fb46364c55b6e4bb157857a67dafe33188dfca1a07614505713141"
+    },
+    "taxonomia_arquivo_sha": "817f267ba47aa7967cf9b7ec6af2107dfffd1af9398a6183e6849e305e28b23d",
+    "taxonomia_sha": "048276709c4cbc2cd0da22827c170c49bbd07def83b8360e5f62f9d33837e2ae"
+   },
+   "IA": {
+    "indice_arquivo_sha": "88b077aca2c33905704f2f3412703d5f7dc87b87a527b738dbd0b7c060476b88",
+    "indice_sha": "2d5f17a98bbea7ca7bc2c558ec4adb13d3b6f74ca787ef7e3eccf8cb9b4c1e96",
+    "palco": {
+     "course/.glossary_curation.llm.json": "31f541b6f893752e2ddce84eddb1549c2ae7aa02fdef13224b8bcdf0ec8829b0",
+     "manifest.json": "fbefa52b89cc71c9a0d44c74d5f80d0635742abd3559bbe91c2b539c355b5d5a"
+    },
+    "taxonomia_arquivo_sha": "9d89ade7708251bd0f7484f915e08b30ef6fd2b4a8a23c63658529611419cd38",
+    "taxonomia_sha": "0bcdc6f6728833a85bec715e3b82829c5f0c283a8210c40872f3c342bfe8c6a2"
+   },
+   "MF": {
+    "indice_arquivo_sha": "76999c45d2ff04883f8f13d6641a68cf23d3193505a095591cb9f54d46bc7b6c",
+    "indice_sha": "08103a9877a61b832cb68f51481314a41f1988864fd2fddac0de130d15ad11aa",
+    "palco": {
+     "course/.glossary_curation.llm.json": "607535531bce61b56513df920551117922135d8c89cd9b3f7025570112fe128e",
+     "manifest.json": "5112a3ae48af321fb2cbe2486df0109d0806c5511e9bc9d59d781ffd247b6345"
+    },
+    "taxonomia_arquivo_sha": "2630c2ae186a7f290a38acb702da329766b9df588fc252826869c58e85d05d65",
+    "taxonomia_sha": "94cd6274252b6b004594c717b5984058c7ccf222219fa3bd0b10476f85d585da"
+   },
+   "SO": {
+    "indice_arquivo_sha": "4cc4c11152b5cb0e11ceed7522090093f1d1dad42afb9a0ab8b9c5c04c438259",
+    "indice_sha": "bef041438ff8e0da886fec959ff40baaa7382981879333b6a2a7050cc608fe59",
+    "palco": {
+     "course/.glossary_curation.llm.json": "bf86985b64a3b735b54f97c0697e4fb87b5c7c0d528680f86b642e7a8146c483",
+     "manifest.json": "5686982471b516695dc13aaa6614e83eeb4ee60858ec6bf1e5e82fce8cd237fe"
+    },
+    "taxonomia_arquivo_sha": "604ed8faaee81963ec3edf1adc02d9af63dbed79526fed7ac84ac81fe90ffa9e",
+    "taxonomia_sha": "bbc10cda2d2843743c0c79e12b0446127fefcbe8432fb636c1c31a3bbce4bf3b"
+   },
+   "TCC": {
+    "indice_arquivo_sha": "52f5600e6ab5d33cc642b59dd2a3e921e4f99af6663f308bbf40edd7e8bf7834",
+    "indice_sha": "8fd9da5fbd7ea641b725bf8f32fadc6944d2662a2cd0f830a41aa36f101fadfc",
+    "palco": {
+     "course/.glossary_curation.llm.json": "962f1618854cf0841b19fad1e87fb2973326ae28d10005ef068e7e7efa4e5b2f",
+     "manifest.json": "33d0172eaf76668aef46337843a4f0d7b317f4713355e9a42d8aaacbdf927563"
+    },
+    "taxonomia_arquivo_sha": "60947cd2f8e34cb5c0115a2847d30491046612abdb4e5ecfbb3ebb58ff9d3d37",
+    "taxonomia_sha": "54e5f5715174d24689e494ff3e25b442cc88e364920dfa72bc1fdabe6f70939e"
+   }
+  }
+ },
+ "inventario_por_curso": {
+  "CG": 93,
+  "ES2": 35,
+  "FR": 20,
+  "IA": 63,
+  "MF": 70,
+  "SO": 42,
+  "TCC": 27
+ },
+ "matriz_achados_v3_md": "2278999bd0d5f62c1227f9385128da46e0438703a79554435f513466909520ea",
+ "normativo_sem_inventario": {
+  "ambiente": {
+   "distribuicoes_sha": "654b5abbfcc985cf1615540182fc7426e461060ba23b48ac685d9f0bebd3c829",
+   "env": {
+    "PYTHONDONTWRITEBYTECODE": null,
+    "PYTHONHASHSEED": "0",
+    "PYTHONIOENCODING": null,
+    "TUTOR_NO_VOCAB_COMPILE": "1"
+   },
+   "plataforma": "Windows-10-10.0.26200-SP0",
+   "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]"
+  },
+  "codigo": {
+   "avaliador.py": "ac064830dda4bb5a725dd8dff862267e1867132fcd3dd1dfaa0855d7da9d0d73",
+   "captura.py": "a62515a8c6034f24b5ecb7716a09bd8936f4a71f612c3eb58ac0c0438876cc10",
+   "comum.py": "2215e817557244f9e2fd46f15ba7f5c1a9d42cf93fd4b8ed710beb861a066dbe",
+   "replay_bloco_21-09.py": "86df738554faa726edf778eab59569d2b5c05bc32873c091cbddd50651deaed0",
+   "replay_unidade_21-09.py": "a39e95af186466a53c5cf3ebc15164cdb30c2ee4e3ad820f8534c7fa0bfb81bf",
+   "test_wad3.py": "5ee61c730b22674fff22f475f05bdb92118264075a58d4fb4a029064dff3ea97"
+  },
+  "entradas_arquivo_sha": "fb5d15d0df391caf1587d09f33ddefe11cfd064ac2e3a29a6a04e0c192fb03cd",
+  "entradas_comuns": {
+   "CG": {
+    "arvore_sha": "dba73f1fcf562033a501250fbf2f0deb3ddc04c952c8630acf9740afa1e428ff",
+    "raiz": ".frzero/wv_importacao_22-09/Computacao-Grafica-Tutor"
+   },
+   "ES2": {
+    "arvore_sha": "79cba5f0faffcded008028c4873b5790d3bd3be45f8d26df3b15e8ad860fb27b",
+    "raiz": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor"
+   },
+   "FR": {
+    "arvore_sha": "7dccfd7fae37c169fae8697cf7e161c13a83eb43abfaa08fcabac744548a37a1",
+    "raiz": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor"
+   },
+   "IA": {
+    "arvore_sha": "17481b1f418d3bf992afdff064a97f2cbf51b2d375c6be1592257060f1fa213d",
+    "raiz": ".frzero/wv_importacao_22-09/Inteligencia-Artifical-Tutor"
+   },
+   "MF": {
+    "arvore_sha": "667f383573252df4a31e91a061c75fae244a0d9d50744cf46994a6e51d6acbe0",
+    "raiz": ".frzero/wv_importacao_22-09/Metodos-Formais-Tutor"
+   },
+   "SO": {
+    "arvore_sha": "fd2390800306123c7778162f0190e2744863e382b9418fc03c96d7b1d02c03e0",
+    "raiz": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor"
+   },
+   "TCC": {
+    "arvore_sha": "c0244ec09bedbc75a1f5ca8ae86ea8227f7dda9d1cbbb4bdd3e7091dc29932d7",
+    "raiz": ".frzero/pacote_fontes_15-09/TCC-Tutor"
+   }
+  },
+  "entradas_externas": {
+   "n": 338,
+   "sha": "8178442e4d3a5d54fe609cd286e50eb63d8368fc6782a464007df61e1227036d"
+  },
+  "esperado": {
+   "captura_liberada": [
+    "CRU"
+   ],
+   "denominadores": {
+    "bloco": 237,
+    "sub_primaria": 251,
+    "unidade": 284
+   },
+   "inventario_total": 350,
+   "manual": {
+    "CRU": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    },
+    "CTRL_ALEAT_1": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    },
+    "CTRL_ALEAT_2": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    },
+    "CTRL_ALEAT_3": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    },
+    "CTRL_MAIOR": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    },
+    "VOCAB_ATUAL": {
+     "CG": true,
+     "ES2": true,
+     "FR": false,
+     "IA": true,
+     "MF": false,
+     "SO": true,
+     "TCC": true
+    },
+    "VOCAB_LLM": {
+     "CG": false,
+     "ES2": false,
+     "FR": false,
+     "IA": false,
+     "MF": false,
+     "SO": false,
+     "TCC": false
+    }
+   }
+  },
+  "produto": {
+   "base": "2589ed5a95ab8dd841de384bd219d80ee27d2cbf",
+   "src_arvore_sha": "c2c4fe30ee365125e9d00e951c5dd872e4a6728727c0e92e81e234502fe7d33e"
+  },
+  "protocolo_sha": "e1cc3b45ccc56fd113e9cfb996f2e0a17a4cfa2bd664fc2d81590ae51f082133",
+  "referencias": {
+   "wab_captura_bracos_24-09.json": "c443a480cacbdd6525c244d8e7924497f649d03c9290c802fb03b1cb53b5b712"
+  }
+ },
+ "preflight_v3": {
+  "json": "5e2abb2fdb4af76d74dd4cbcc3e8a3f6a122ff4a2189793752539615fcae762f",
+  "md": "982b3817513b4cb103bf1cc6404df17dc7d7201bd1bb1aa9e70f36dadd199143"
+ },
+ "testes_v3_txt": "13a92593df17e6f5c323c6c5730d248d76b49ad47e27588ad649a5766ee3a4e0"
+}

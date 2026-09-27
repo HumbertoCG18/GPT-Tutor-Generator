@@ -1,0 +1,4 @@
+test_defeitos_v4.py:361: AssertionError
+=========================== short test summary info ===========================
+FAILED test_defeitos_v4.py::test_worker_recebe_ambiente_declarado_mesmo_com_os_environ_mutado
+1 failed, 25 deselected in 0.44s

@@ -1,0 +1,58 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\wad5_avaliacao_26-09\\pycache_vazio",
+  "monta_espelho.py"
+ ],
+ "saida": 1,
+ "segundos": 1.3,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+
+--- stderr
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_avaliacao_26-09\monta_espelho.py", line 76, in <module>
+    grava(rel, dados)
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_avaliacao_26-09\monta_espelho.py", line 34, in grava
+    exige(not destino.exists(), f"espelho já contém {rel}: não sobrescrevo")
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_avaliacao_26-09\monta_espelho.py", line 29, in exige
+    raise K.ErroIntegridade(msg)
+comum.ErroIntegridade: espelho já contém .frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/manifest.json: não sobrescrevo

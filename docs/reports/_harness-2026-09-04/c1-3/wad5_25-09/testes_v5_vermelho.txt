@@ -1,0 +1,273 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\Humberto\AppData\Local\Programs\Python\Python311\python.exe
+rootdir: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
+configfile: pyproject.toml
+plugins: anyio-4.13.0, Faker-40.11.0, cov-7.1.0
+collecting ... collected 19 items
+
+test_ajustes_v5.py::test_a_congelado_ausente_antes_da_1a_leitura_com_filenotfound_capturado FAILED
+test_ajustes_v5.py::test_a2_congelado_substituido_por_pasta FAILED      
+test_ajustes_v5.py::test_b_consumidor_so_consulta_exists_is_file FAILED 
+test_ajustes_v5.py::test_b2_conferencia_de_inventario_antes_do_worker FAILED
+test_ajustes_v5.py::test_c_congelado_nunca_aberto_some_durante_a_execucao FAILED
+test_ajustes_v5.py::test_c2_congelado_nunca_aberto_alterado_durante_a_execucao FAILED
+test_ajustes_v5.py::test_d_entradas_congeladas_intactas_passam PASSED   
+test_ajustes_v5.py::test_e_opcional_nunca_congelado_ausente_segue_a_politica_existente PASSED
+test_ajustes_v5.py::test_2c_assinatura_correta_passa PASSED             
+test_ajustes_v5.py::test_2a_assinatura_divergente_reprova FAILED        
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[None] FAILED    
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[] FAILED        
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[abc] FAILED     
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[123] FAILED     
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG] FAILED
+test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[97E640B2CB7740EBEE3869C64A9228E88F6F31C108F113BD2D372867C7A6F460] FAILED
+test_ajustes_v5.py::test_2b_assinatura_ausente_reprova FAILED           
+test_ajustes_v5.py::test_2d_assinatura_muda_entre_inicio_e_fim_captura_nao_aceita FAILED
+test_ajustes_v5.py::test_2d_fim_do_worker_confere_distribuicoes FAILED  
+
+================================== FAILURES ===================================
+___ test_a_congelado_ausente_antes_da_1a_leitura_com_filenotfound_capturado ___
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_a_congelado_ausente_antes0')
+
+    def test_a_congelado_ausente_antes_da_1a_leitura_com_filenotfound_capturado(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        (raiz / "a.txt").unlink()   # some ANTES da primeira leitura
+        acao = f"try:\n    open({str(raiz / 'a.txt')!r}).read()\nexcept FileNotFoundError:\n    pass"
+        rc, viol, err = roda(tmp_path, raiz, cong, acao)
+>       assert rc == 2 and "insumo_desaparecido" in viol, (rc, viol, err)
+E       AssertionError: (0, [], '')
+E       assert (0 == 2)
+
+test_ajustes_v5.py:67: AssertionError
+___________________ test_a2_congelado_substituido_por_pasta ___________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_a2_congelado_substituido_0')
+
+    def test_a2_congelado_substituido_por_pasta(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        (raiz / "a.txt").unlink()
+        (raiz / "a.txt").mkdir()    # existe, mas não é arquivo utilizável
+        rc, viol, err = roda(tmp_path, raiz, cong, f"open({str(raiz / 'a.txt')!r}).read()")
+>       assert rc == 2 and "insumo_desaparecido" in viol, (rc, viol, err)
+E       AssertionError: (0, [], '')
+E       assert (0 == 2)
+
+test_ajustes_v5.py:75: AssertionError
+________________ test_b_consumidor_so_consulta_exists_is_file _________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_b_consumidor_so_consulta_0')
+
+    def test_b_consumidor_so_consulta_exists_is_file(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        (raiz / "a.txt").unlink()
+        acao = f"if not os.path.exists({str(raiz / 'a.txt')!r}) or not os.path.isfile({str(raiz / 'a.txt')!r}):\n    pass"
+        rc, viol, err = roda(tmp_path, raiz, cong, acao)
+>       assert rc == 2 and viol.count("insumo_desaparecido") == 1, (rc, viol, err)
+E       AssertionError: (0, [], '')
+E       assert (0 == 2)
+
+test_ajustes_v5.py:83: AssertionError
+______________ test_b2_conferencia_de_inventario_antes_do_worker ______________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_b2_conferencia_de_inventa0')
+
+    def test_b2_conferencia_de_inventario_antes_do_worker(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        (raiz / "b.txt").unlink()
+        (raiz / "a.txt").write_bytes(b"A")
+        t = K.Travas("teste")
+        t.congela(raiz, cong)
+>       prob = t.confere_congelados()
+               ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'Travas' object has no attribute 'confere_congelados'
+
+test_ajustes_v5.py:92: AttributeError
+____________ test_c_congelado_nunca_aberto_some_durante_a_execucao ____________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_c_congelado_nunca_aberto_0')
+
+    def test_c_congelado_nunca_aberto_some_durante_a_execucao(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        acao = f"open({str(raiz / 'a.txt')!r}).read()\nos.remove({str(raiz / 'b.txt')!r})"
+        rc, viol, err = roda(tmp_path, raiz, cong, acao)
+>       assert rc == 2 and viol == ["insumo_desaparecido"], (rc, viol, err)
+E       AssertionError: (0, [], '')
+E       assert (0 == 2)
+
+test_ajustes_v5.py:101: AssertionError
+_________ test_c2_congelado_nunca_aberto_alterado_durante_a_execucao __________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_c2_congelado_nunca_aberto0')
+
+    def test_c2_congelado_nunca_aberto_alterado_durante_a_execucao(tmp_path):
+        raiz, cong = raiz_congelada(tmp_path)
+        acao = f"with t._abrir_original({str(raiz / 'b.txt')!r}, 'w') as fh:\n    fh.write('B')"
+        rc, viol, err = roda(tmp_path, raiz, cong, acao)
+>       assert rc == 2 and viol == ["insumo_divergente"], (rc, viol, err)
+E       AssertionError: (0, [], '')
+E       assert (0 == 2)
+
+test_ajustes_v5.py:108: AssertionError
+____________________ test_2a_assinatura_divergente_reprova ____________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2a_assinatura_divergente_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E432243D0>
+
+    def test_2a_assinatura_divergente_reprova(tmp_path, monkeypatch):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==2.0"], distribuicoes_sha=K.sha_json(["pkg==1.0"]))
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2a_assinatura_divergente_reprova.<locals>.<genexpr> at 0x0000026E43375150>)
+
+test_ajustes_v5.py:148: AssertionError
+__________________ test_2b_assinatura_invalida_reprova[None] __________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E433BFDD0>
+valor = None
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E432E8A00>)
+
+test_ajustes_v5.py:154: AssertionError
+____________________ test_2b_assinatura_invalida_reprova[] ____________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43261210>
+valor = ''
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E432572A0>)
+
+test_ajustes_v5.py:154: AssertionError
+__________________ test_2b_assinatura_invalida_reprova[abc] ___________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43324890>
+valor = 'abc'
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E431CDB10>)
+
+test_ajustes_v5.py:154: AssertionError
+__________________ test_2b_assinatura_invalida_reprova[123] ___________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43195710>
+valor = 123
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E4326A4D0>)
+
+test_ajustes_v5.py:154: AssertionError
+_ test_2b_assinatura_invalida_reprova[GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG] _
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43299890>
+valor = 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG'
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E43377780>)
+
+test_ajustes_v5.py:154: AssertionError
+_ test_2b_assinatura_invalida_reprova[97E640B2CB7740EBEE3869C64A9228E88F6F31C108F113BD2D372867C7A6F460] _
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_invalida_re5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43289910>
+valor = '97E640B2CB7740EBEE3869C64A9228E88F6F31C108F113BD2D372867C7A6F460'
+
+    @pytest.mark.parametrize("valor", [None, "", "abc", 123, "G" * 64, K.sha_json(["pkg==1.0"]).upper()])
+    def test_2b_assinatura_invalida_reprova(tmp_path, monkeypatch, valor):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"], distribuicoes_sha=valor)
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_invalida_reprova.<locals>.<genexpr> at 0x0000026E433E2190>)
+
+test_ajustes_v5.py:154: AssertionError
+_____________________ test_2b_assinatura_ausente_reprova ______________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2b_assinatura_ausente_rep0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E4324DF10>
+
+    def test_2b_assinatura_ausente_reprova(tmp_path, monkeypatch):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==1.0"])
+>       assert any("distribuições" in p for p in CP.verifica_processo(cong))
+E       assert False
+E        +  where False = any(<generator object test_2b_assinatura_ausente_reprova.<locals>.<genexpr> at 0x0000026E432EB850>)
+
+test_ajustes_v5.py:160: AssertionError
+________ test_2d_assinatura_muda_entre_inicio_e_fim_captura_nao_aceita ________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2d_assinatura_muda_entre_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43396650>
+
+    def test_2d_assinatura_muda_entre_inicio_e_fim_captura_nao_aceita(tmp_path, monkeypatch):
+        cong = congelamento(interprete={"distribuicoes_sha": K.sha_json(["pkg==1.0"])})
+        monkeypatch.setattr(CP, "CAPS", tmp_path / "capturas")
+        monkeypatch.setattr(CP, "FALHAS", tmp_path / "falhas")
+        (tmp_path / "capturas").mkdir()
+        atual = {"lista": ["pkg==1.0"]}
+        monkeypatch.setattr(CP, "distribuicoes", lambda: list(atual["lista"]))
+        destino = tmp_path / "capturas" / f"capturar_CRU_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU'][:16]}.json"
+    
+        def worker_falso(cmd, **kw):   # o worker grava uma captura estruturalmente válida; as distribuições mudam no meio
+            destino.write_text(json.dumps(captura_valida(cong)), encoding="utf-8")
+            atual["lista"] = ["pkg==2.0"]
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+    
+        monkeypatch.setattr(CP.subprocess, "run", worker_falso)
+>       with pytest.raises(CP.Falha, match="distribuições"):
+E       Failed: DID NOT RAISE <class 'captura.Falha'>
+
+test_ajustes_v5.py:179: Failed
+_________________ test_2d_fim_do_worker_confere_distribuicoes _________________
+
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2658/test_2d_fim_do_worker_confere_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026E43227ED0>
+
+    def test_2d_fim_do_worker_confere_distribuicoes(tmp_path, monkeypatch):
+        cong = processo_falso(monkeypatch, tmp_path, ["pkg==2.0"], distribuicoes_sha=K.sha_json(["pkg==1.0"]))
+>       assert any("distribuições" in p for p in CP.verifica_fim(cong))
+                                                 ^^^^^^^^^^^^^^^
+E       AttributeError: module 'captura' has no attribute 'verifica_fim'
+
+test_ajustes_v5.py:187: AttributeError
+=========================== short test summary info ===========================
+FAILED test_ajustes_v5.py::test_a_congelado_ausente_antes_da_1a_leitura_com_filenotfound_capturado
+FAILED test_ajustes_v5.py::test_a2_congelado_substituido_por_pasta - Assertio...
+FAILED test_ajustes_v5.py::test_b_consumidor_so_consulta_exists_is_file - Ass...
+FAILED test_ajustes_v5.py::test_b2_conferencia_de_inventario_antes_do_worker
+FAILED test_ajustes_v5.py::test_c_congelado_nunca_aberto_some_durante_a_execucao
+FAILED test_ajustes_v5.py::test_c2_congelado_nunca_aberto_alterado_durante_a_execucao
+FAILED test_ajustes_v5.py::test_2a_assinatura_divergente_reprova - assert False
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[None] - assert...
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[] - assert False
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[abc] - assert ...
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[123] - assert ...
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG]
+FAILED test_ajustes_v5.py::test_2b_assinatura_invalida_reprova[97E640B2CB7740EBEE3869C64A9228E88F6F31C108F113BD2D372867C7A6F460]
+FAILED test_ajustes_v5.py::test_2b_assinatura_ausente_reprova - assert False
+FAILED test_ajustes_v5.py::test_2d_assinatura_muda_entre_inicio_e_fim_captura_nao_aceita
+FAILED test_ajustes_v5.py::test_2d_fim_do_worker_confere_distribuicoes - Attr...
+======================== 16 failed, 3 passed in 0.96s =========================
