@@ -1,0 +1,59 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "limpo.py",
+  "--compilar"
+ ],
+ "saida": 0,
+ "segundos": 265.4,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+  MF: 3/3 unidades, 3 tentativas, erros []
+  SO: 5/5 unidades, 5 tentativas, erros []
+  IA: 3/3 unidades, 3 tentativas, erros []
+  ES2: 2/2 unidades, 2 tentativas, erros []
+  TCC: 4/4 unidades, 4 tentativas, erros []
+  CG: 7/7 unidades, 7 tentativas, erros []
+  FR: 2/2 unidades, 2 tentativas, erros []
+GERACAO COMPLETA | abortado: None | violacoes: 0
+
+--- stderr

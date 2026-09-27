@@ -1,0 +1,71 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "limpo.py",
+  "--ensaio"
+ ],
+ "saida": 1,
+ "segundos": 15.8,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+  MF: 3 chamadas previstas
+  SO: 5 chamadas previstas
+  IA: 3 chamadas previstas
+  ES2: 2 chamadas previstas
+  TCC: 4 chamadas previstas
+  CG: 7 chamadas previstas
+  FR: 2 chamadas previstas
+
+--- stderr
+Traceback (most recent call last):
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\vocab_limpo_26-09\limpo.py", line 225, in <module>
+    {"--staging": staging, "--ensaio": ensaio}.get(cmd, lambda: sys.exit(f"subcomando desconhecido: {cmd}"))()
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\vocab_limpo_26-09\limpo.py", line 215, in ensaio
+    K.grava_atomico(INVENTARIO, inv)
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_25-09\comum.py", line 130, in grava_atomico
+    with (_abrir or io.open)(tmp, "w", encoding="utf-8") as fh:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_25-09\comum.py", line 360, in aberto
+    travas.verifica_acesso(file, mode, abrir)
+  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\wad5_25-09\comum.py", line 315, in verifica_acesso
+    raise Violacao("acesso fora da lista permitida")
+comum.Violacao: acesso fora da lista permitida

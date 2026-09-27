@@ -22,10 +22,18 @@ Fila compartilhada: #43, worktree GPT-Tutor-Generator-campaign-43; inspecionar a
 Smoke noturno anterior falhou por unexpected_model; generic_night/Codex executor/suspensão bloqueados.
 Não reiniciar claude-mem por quota nem repetir revisão consumida. Commit/merge seguem seus Gates.
 
-22/09: frente do motor — bloco 214/237 (>90 %) com #47 commitada (9220a57) e #48 implementada sem commit (Gate 2 pendente); CRU-02 (subunidade) iniciada com protocolo do Astra, workers W-P1/W-Q interrompidos. Handoff: docs/reports/2026-09-22-handoff-motor-cru02-claude.md; estado em .workflow/local/active-task.md.
+22/09: frente do motor — bloco 214/237 (>90 %) com #47 commitada (9220a57) e #48 implementada sem commit (Gate 2 pendente); CRU-02 (subunidade) iniciada com protocolo do Astra, workers W-P1/W-Q interrompidos. Handoff: docs/reports/_archive/2026-09-22-handoff-motor-cru02-claude.md; estado em .workflow/local/active-task.md.
 
 22/09 (tarde), frente do motor: #48 (b726d4c) e #49 (410592d) commitadas; bloco 217/237 (91,6 %), unidade 246/284,
 subunidade cru 84/251. CRU-02 medida ate o teto da declaracao (W-P1, W-P2, W-S: alias por expressao 118/251;
-guarda + pergunta por material 213/251 com custo 261). Handoff: docs/reports/2026-09-22-handoff-motor-49-claude.md.
+guarda + pergunta por material 213/251 com custo 261). Handoff: docs/reports/_archive/2026-09-22-handoff-motor-49-claude.md.
 Proximo: decisao do usuario sobre o rumo da CRU-02; nenhum Gate 1 aberto.
 22/09 13:40: W-T (unidade: regras reprovadas; 12 links offline = unico caminho para 90 %) e W-U (relacoes explicitas cobrem 56/106 mas nao discriminam) conferidos; adendo no handoff de 22/09; decisoes (a)/(b)/(c) pendentes do usuario.
+
+26/09, frente regime VOCAB (sessão ee4dd19b): Fase 1 avaliada e encerrada (válida com ressalvas; A verdadeiro, B não
+atendido, C só no IA; errata final). Rodada VOCAB_LIMPO: recompilação limpa única (26 chamadas, congelamento 62b45e38…)
+e seis braços capturados sem gold (congelamento 6a0f9652…). Aguardando revisão do GPT e Gate de avaliação. Nada
+commitado; 14 renames da limpeza de docs/reports staged. Handoff: docs/reports/2026-09-26-handoff-regime-vocab-claude.md.
+27/09: rodada VOCAB_LIMPO avaliada (primária 174/251; A_limpo verdadeiro, B_limpo e C_limpo não atendidos; relatório
+c1-3/vocab_limpo_avaliacao_26-09/relatorio_avaliacao_vl.md). Gate 2 documental: artefatos da frente commitados localmente,
+sem push. Em curso: diagnóstico das perdas recorrentes e preparo da validação em cursos novos (Gate próprio para rede/LLM).

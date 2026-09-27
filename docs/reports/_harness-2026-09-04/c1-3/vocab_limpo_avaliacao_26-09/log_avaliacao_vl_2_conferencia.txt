@@ -1,0 +1,55 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/.frzero/vocab_limpo_avaliacao_26-09/espelho/docs/reports/_harness-2026-09-04/c1-3/vocab_limpo_26-09/avaliador.py",
+  "--autorizo-gold",
+  "C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/.frzero/vocab_limpo_26-09/captura/capturas",
+  "C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/.frzero/vocab_limpo_26-09/captura/congelamento.json",
+  "C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/.frzero/vocab_limpo_26-09/captura/snapshots",
+  "C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/docs/reports/_harness-2026-09-04/c1-3/vocab_limpo_avaliacao_26-09/avaliacao_vl_2_conferencia.json"
+ ],
+ "saida": 0,
+ "segundos": 1.4,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+
+--- stderr

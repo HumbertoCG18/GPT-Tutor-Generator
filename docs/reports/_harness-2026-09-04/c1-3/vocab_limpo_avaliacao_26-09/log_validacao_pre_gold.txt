@@ -1,0 +1,149 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "vocab_limpo_avaliacao_26-09/valida_pre_gold_vl.py"
+ ],
+ "saida": 0,
+ "segundos": 2.7,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+OK    ambiente declarado
+OK    manifesto_rodada_vl: 279 hashes = disco
+OK    manifesto_rodada_vl: ids e protocolo = autorização
+OK    §2 sha256(compilacao.json) = 09874d90…
+OK    §2 compilacao.id_recompilacao = 62b45e38…
+OK    §2 id recalculado do normativo da recompilação = id congelado
+OK    §2 congelamento da recompilação: sha = captura = manifesto
+OK    §2 protocolo_sha da recompilação = 42e52218…
+OK    §2 inventário: sha = congelado
+OK    §2 completa == true, abortado nulo, 0 violações
+OK    §2 inventário (arquivo) = inventário (congelamento), 26 chamadas
+OK    §2 exatamente 26 registros, sem duplicata, = os 26 curso/unidade previstos
+OK    §2 todas na tentativa 1, status ok, sem erro
+OK    §2 modelo pedido = congelado em todas
+OK    §2 model_version registrado em cada resposta
+OK    §2 por curso: 0 retries, 0 erros, 0 unidades com erro, tentativas = previstas = chamadas = inventário
+OK    §2 rede: único host resolvido = Gemini
+OK    §2 negados na geração: só .env
+OK    §2 nenhum segundo conjunto de compilação/chamadas em .frzero/vocab_limpo_26-09
+OK    §3 exatamente 52 arquivos, todos no padrão, nenhum subdiretório
+OK    §3 26 requests + 26 responses, todos t1, nenhum _t2_/_t3_
+OK    §3 pares (curso, índice) no disco = inventário
+OK    §3 disco = manifesto (nenhuma sobrando de nenhum lado)
+OK    §3 hash de cada arquivo = manifesto
+OK    §3 cada request/response ↔ registro ↔ inventário (curso, unidade, bundle, modelo, schema, system, parsed)
+OK    §3 response_id presentes e distintos (26)
+OK    §4 sidecars 7/7: compilação = sanidade = congelamento da captura = manifesto = disco
+OK    §4 sanidade: aprovada, mesmo id, sha = captura = manifesto
+OK    §4 compilação: sha = congelamento da captura = manifesto
+OK    §4 pasta de sidecars só com os 7 .llm.json (nenhum manual)
+OK    §4 staging sem sidecar manual
+OK    §4 sidecars históricos intactos (= sanidade = congelamento da Fase 1)
+OK    §4 palco VOCAB_LIMPO = conteúdo do sidecar gerado (≠ histórico) e = hash congelado
+OK    §4 nenhum manual em nenhum palco (congelamento e disco)
+OK    §5 avaliador.py = manifesto da rodada = congelado
+OK    §5 comum.py = manifesto da rodada = congelado
+OK    §5 captura.py = manifesto da rodada = congelado
+OK    §5 congelamento: id_comum = 6a0f9652…
+OK    §5/§6 congelamento: normativo→id e insumos→insumos_braco recalculados
+OK    §5 código do pacote = congelado
+OK    §5 intérprete = congelado
+OK    §5 distribuições = assinatura congelada
+OK    §5 congelamento de entradas = normativo
+OK    §5 protocolo normativo = protocolo_sha 42e52218…
+OK    §5 manifesto de capturas aprovado, deste congelamento, com os seis braços
+OK    §5 CRU_LIMPO: caminho = esperado pelo avaliador
+OK    §5 CRU_LIMPO: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 CRU_LIMPO: conteudo_sha recalculado = manifesto
+OK    §5 CRU_LIMPO: validador histórico/estrutural completo
+OK    §5 CRU_LIMPO: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 CRU_LIMPO: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 CRU_LIMPO: manual ausente
+OK    §5 VOCAB_LIMPO: caminho = esperado pelo avaliador
+OK    §5 VOCAB_LIMPO: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 VOCAB_LIMPO: conteudo_sha recalculado = manifesto
+OK    §5 VOCAB_LIMPO: validador histórico/estrutural completo
+OK    §5 VOCAB_LIMPO: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 VOCAB_LIMPO: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 VOCAB_LIMPO: manual ausente
+OK    §5 CTRL_MAIOR_LIMPO: caminho = esperado pelo avaliador
+OK    §5 CTRL_MAIOR_LIMPO: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 CTRL_MAIOR_LIMPO: conteudo_sha recalculado = manifesto
+OK    §5 CTRL_MAIOR_LIMPO: validador histórico/estrutural completo
+OK    §5 CTRL_MAIOR_LIMPO: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 CTRL_MAIOR_LIMPO: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 CTRL_MAIOR_LIMPO: manual ausente
+OK    §5 CTRL_ALEAT_LIMPO_1: caminho = esperado pelo avaliador
+OK    §5 CTRL_ALEAT_LIMPO_1: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 CTRL_ALEAT_LIMPO_1: conteudo_sha recalculado = manifesto
+OK    §5 CTRL_ALEAT_LIMPO_1: validador histórico/estrutural completo
+OK    §5 CTRL_ALEAT_LIMPO_1: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 CTRL_ALEAT_LIMPO_1: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 CTRL_ALEAT_LIMPO_1: manual ausente
+OK    §5 CTRL_ALEAT_LIMPO_2: caminho = esperado pelo avaliador
+OK    §5 CTRL_ALEAT_LIMPO_2: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 CTRL_ALEAT_LIMPO_2: conteudo_sha recalculado = manifesto
+OK    §5 CTRL_ALEAT_LIMPO_2: validador histórico/estrutural completo
+OK    §5 CTRL_ALEAT_LIMPO_2: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 CTRL_ALEAT_LIMPO_2: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 CTRL_ALEAT_LIMPO_2: manual ausente
+OK    §5 CTRL_ALEAT_LIMPO_3: caminho = esperado pelo avaliador
+OK    §5 CTRL_ALEAT_LIMPO_3: sha256 do arquivo = manifesto de capturas = manifesto da rodada
+OK    §5 CTRL_ALEAT_LIMPO_3: conteudo_sha recalculado = manifesto
+OK    §5 CTRL_ALEAT_LIMPO_3: validador histórico/estrutural completo
+OK    §5 CTRL_ALEAT_LIMPO_3: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)
+OK    §5 CTRL_ALEAT_LIMPO_3: 350 materiais = inventário congelado; 341 chamados; 9 não chamados
+OK    §5 CTRL_ALEAT_LIMPO_3: manual ausente
+OK    §5 os mesmos 9 não chamados em todos os braços
+OK    §5 diretório de capturas: exatamente seis capturas completas, todas deste congelamento
+OK    §5 sem falhas registradas
+OK    §5 referência W-AB = hash congelado
+OK    §5 CRU_LIMPO = referência por ID (350 materiais, 0 divergências)
+OK    §6 snapshots de taxonomia e índice + palcos = congelamento (6 braços x 7 cursos)
+OK    §6 insumos_braco recalculados = congelamento = capturas
+OK    §6 descritor da régua sem pendências
+OK    §6 manifests de referência = sha256 congelado
+OK    §6 manifests salvos = árvore congelada
+OK    §6 régua: 38 arquivos com blob do índice = congelado (arquivos NÃO abertos)
+PRE-GOLD APROVADA (98/98)
+
+--- stderr

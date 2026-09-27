@@ -1,0 +1,71 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "vocab_limpo_avaliacao_26-09/confere_resultado_vl.py"
+ ],
+ "saida": 0,
+ "segundos": 0.6,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+OK    execução original e de conferência byte-idênticas
+OK    placar por curso = registros por ID (todos os braços)
+OK    soma dos cursos = TOTAL (todos os braços)
+OK    denominadores por curso e total = oficiais; aceita com o n da primária
+OK    CRU_LIMPO = referência por curso e eixo oficial (223/249/86)
+OK    transições: células = registros = n do eixo
+OK    transições: derivadas = recálculo por ID
+OK    transições: correções − perdas = diferença de acertos
+OK    precisão sobre TODAS as alteradas = recálculo por ID
+OK    precisão das alteradas não vazias = recálculo por ID
+OK    derivadas sobrepostas tratadas como sobrepostas (abstenção→certa ⊆ correção; abstenção→errada ⊆ erro→erro)
+OK    registros por ID: eid no inventário congelado ou ausente explícito
+OK    A_limpo recalculado = avaliador
+OK    B_limpo: perdas e regressões recalculadas = avaliador (só eixos oficiais)
+OK    B_limpo: texto do avaliador coerente com o recálculo
+OK    C_limpo recalculado (acertos*10 > 9*n) = avaliador
+OK    aceita auxiliar não veta B (B recalculado sem sub_aceita)
+OK    entradas intactas depois da avaliação: 279 hashes do manifesto da rodada
+OK    espelho intacto depois da avaliação (régua por blob, manifests e código por sha256)
+OK    proveniência: id_comum, protocolo, avaliador, comum e capturas = congelados
+CONFERENCIA APROVADA (20/20)
+
+--- stderr

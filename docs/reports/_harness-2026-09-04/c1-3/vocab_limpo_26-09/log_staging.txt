@@ -1,0 +1,59 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "limpo.py",
+  "--staging"
+ ],
+ "saida": 0,
+ "segundos": 19.4,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+  MF: 70 entries, unidade trocada pela do CRU em 0, 57 markdown
+  SO: 42 entries, unidade trocada pela do CRU em 6, 41 markdown
+  IA: 63 entries, unidade trocada pela do CRU em 0, 59 markdown
+  ES2: 35 entries, unidade trocada pela do CRU em 0, 27 markdown
+  TCC: 27 entries, unidade trocada pela do CRU em 0, 27 markdown
+  CG: 93 entries, unidade trocada pela do CRU em 1, 79 markdown
+  FR: 20 entries, unidade trocada pela do CRU em 0, 15 markdown
+STAGING OK 040fe431468beeaa1f419d1f61a3f277f08357c447452db410ba1970dbc50b46
+
+--- stderr

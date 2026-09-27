@@ -1,0 +1,274 @@
+"""Gate de avaliação VOCAB_LIMPO (26/09), condições PRÉ-GOLD (§§2-6 da autorização). Não lê gold nem régua.
+
+Roda no ambiente controlado (../vocab_limpo_26-09/roda_controlado.py). Só leitura, exceto a saída JSON.
+Esperados fixos = valores da autorização; nunca são substituídos pelo valor atual. Saída 0 = tudo confere; 1 = parar.
+"""
+import datetime
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+AQUI = Path(__file__).resolve().parent
+PACOTE = AQUI.parent / "vocab_limpo_26-09"
+sys.path.insert(0, str(PACOTE))
+import captura as CP  # noqa: E402  (só stdlib no import; não importa src/)
+import comum as K  # noqa: E402
+
+DATA, VL = CP.DATA, CP.VL
+ESP = {"compilacao_sha256": "09874d90afefc61ec0e18bd73cd465a8fbd4106fe3dfde5507b9e6e6c801feaa",
+       "id_recompilacao": "62b45e38750efc300fcc03da89f874def35e611054946d273b52d86d93cff676",
+       "id_comum": "6a0f9652fb8cfaffde15cd9d113705536c7fcc5f9b303474a74438ceee8c0e81",
+       "protocolo_sha": "42e52218dfd5015468a794b03868f6c86d26177466c9157c3154f9558b0f88cd",
+       "id_fase1": "3fe5d1ff97258644b3148860cbe235aa3e16acfac91e9a291ea3c3e63a8e355d",
+       "host": "generativelanguage.googleapis.com"}
+HIST = DATA / ".frzero/wad5_25-09/palcos/VOCAB_LLM"   # sidecars LLM históricos copiados na Fase 1
+CONG5 = DATA / ".frzero/wad5_25-09/congelamento.json"
+ok, info = {}, {}
+
+
+def marca(nome, cond, detalhe=None):
+    ok[nome] = bool(cond)
+    if detalhe is not None:
+        info[nome] = detalhe
+    print(("OK    " if cond else "FALHA ") + nome + (f"  {detalhe}" if detalhe is not None and not cond else ""), flush=True)
+
+
+def rel(p):
+    return Path(p).relative_to(DATA).as_posix()
+
+
+def ts(s):
+    return datetime.datetime.fromisoformat(s)
+
+
+info["interprete"] = {"executavel": sys.executable, "versao": sys.version, "flags_B": sys.flags.dont_write_bytecode}
+marca("ambiente declarado", not K.verifica_ambiente(os.environ), K.verifica_ambiente(os.environ))
+
+# ---------------------------------------------------------------- manifesto geral da rodada (todos os hashes)
+MR = K.carrega_json_estrito(PACOTE / "manifesto_rodada_vl.json")
+div = [(g, r) for g in ("captura", "chamadas", "pacote", "recompilacao", "sidecars") for r, h in MR[g].items()
+       if not (DATA / r).is_file() or K.sha_arq(DATA / r) != h]
+div += [(g, MR[g]["arquivo"]) for g in ("protocolo", "errata_fase1") if K.sha_arq(DATA / MR[g]["arquivo"]) != MR[g]["sha256"]]
+n_mr = sum(len(MR[g]) for g in ("captura", "chamadas", "pacote", "recompilacao", "sidecars")) + 2
+marca(f"manifesto_rodada_vl: {n_mr} hashes = disco", not div, div[:5])
+marca("manifesto_rodada_vl: ids e protocolo = autorização",
+      MR["id_recompilacao"] == ESP["id_recompilacao"] and MR["congelamento_captura"] == ESP["id_comum"]
+      and MR["protocolo"]["protocolo_sha"] == ESP["protocolo_sha"])
+
+# ---------------------------------------------------------------- §2 compilação
+comp_p, san_p, rec_p, inv_p = VL / "compilacao.json", VL / "sanidade.json", VL / "congelamento_recompilacao.json", VL / "inventario_chamadas.json"
+marca("§2 sha256(compilacao.json) = 09874d90…", K.sha_arq(comp_p) == ESP["compilacao_sha256"], K.sha_arq(comp_p))
+comp, san = K.carrega_json_estrito(comp_p), K.carrega_json_estrito(san_p)
+rec, inv = K.carrega_json_estrito(rec_p), K.carrega_json_estrito(inv_p)
+cong = K.carrega_json_estrito(CP.CONG)
+vlc = cong["normativo"]["vocab_limpo"]
+marca("§2 compilacao.id_recompilacao = 62b45e38…", comp["id_recompilacao"] == ESP["id_recompilacao"], comp["id_recompilacao"])
+marca("§2 id recalculado do normativo da recompilação = id congelado",
+      K.sha_json({"esquema": "vocab-limpo-congelamento-1", **rec["normativo"]}) == rec["id_recompilacao"] == ESP["id_recompilacao"])
+marca("§2 congelamento da recompilação: sha = captura = manifesto",
+      K.sha_arq(rec_p) == vlc["congelamento_recompilacao_sha256"] == MR["recompilacao"][rel(rec_p)])
+marca("§2 protocolo_sha da recompilação = 42e52218…", rec["normativo"]["protocolo"]["protocolo_sha"] == ESP["protocolo_sha"])
+marca("§2 inventário: sha = congelado", K.sha_arq(inv_p) == rec["normativo"]["inventario"]["sha256"])
+marca("§2 completa == true, abortado nulo, 0 violações",
+      comp["completa"] is True and comp["abortado"] is None and comp["violacoes"] == [])
+regs = comp["registros"]
+esperadas = {(s, e["indice"], e["unidade"]) for s, lst in inv["cursos"].items() for e in lst}
+esperadas_cong = {(s, x[0], x[1]) for s, lst in rec["normativo"]["inventario"]["chamadas"].items() for x in lst}
+feitas = [(r["curso"], r["indice"], r["unidade"]) for r in regs]
+marca("§2 inventário (arquivo) = inventário (congelamento), 26 chamadas",
+      esperadas == esperadas_cong and len(esperadas) == 26 == inv["total_chamadas"])
+marca("§2 exatamente 26 registros, sem duplicata, = os 26 curso/unidade previstos",
+      len(regs) == 26 and len(set(feitas)) == 26 and set(feitas) == esperadas, sorted(set(feitas) ^ esperadas))
+marca("§2 todas na tentativa 1, status ok, sem erro", all(r["tentativa"] == 1 and r["status"] == "ok" and "erro" not in r for r in regs))
+modelo = rec["normativo"]["modelo"]["identificador"]
+marca("§2 modelo pedido = congelado em todas", all(r["modelo_pedido"] == modelo for r in regs), modelo)
+marca("§2 model_version registrado em cada resposta",
+      all(isinstance(r.get("model_version"), str) and r["model_version"] for r in regs),
+      sorted({str(r.get("model_version")) for r in regs}))
+info["model_version"] = sorted({r["model_version"] for r in regs})
+por_curso = {s: sum(1 for r in regs if r["curso"] == s) for s in K.NOMES}
+marca("§2 por curso: 0 retries, 0 erros, 0 unidades com erro, tentativas = previstas = chamadas = inventário",
+      all(c["retries"] == 0 and c["erros_de_chamada"] == [] and c["unidades_com_erro"] == []
+          and c["tentativas"] == c["chamadas_previstas"] == c["unidades_chamadas"] == len(inv["cursos"][s]) == por_curso[s]
+          for s, c in comp["cursos"].items()) and set(comp["cursos"]) == set(K.NOMES))
+marca("§2 rede: único host resolvido = Gemini", set(comp["hosts_resolvidos"]) == {ESP["host"]}, comp["hosts_resolvidos"])
+info["negados_geracao"] = [Path(n["caminho"]).name for n in comp["negados"]]
+marca("§2 negados na geração: só .env", info["negados_geracao"] == [".env"], info["negados_geracao"])
+outros = sorted(p.name for p in VL.iterdir() if p.name != "compilacao.json" and re.search(r"compila|chamadas", p.name))
+marca("§2 nenhum segundo conjunto de compilação/chamadas em .frzero/vocab_limpo_26-09",
+      outros == ["chamadas", "inventario_chamadas.json"], outros)
+
+# ---------------------------------------------------------------- §3 requests e responses
+CH = VL / "chamadas"
+nomes = sorted(p.name for p in CH.iterdir())
+padrao = re.compile(r"^(MF|SO|IA|ES2|TCC|CG|FR)_(\d\d)_t(\d+)_(request|response)\.json$")
+casados = [padrao.match(n) for n in nomes]
+marca("§3 exatamente 52 arquivos, todos no padrão, nenhum subdiretório",
+      len(nomes) == 52 and all(casados) and all((CH / n).is_file() for n in nomes), [n for n, m in zip(nomes, casados) if not m])
+marca("§3 26 requests + 26 responses, todos t1, nenhum _t2_/_t3_",
+      sum(1 for m in casados if m and m[4] == "request") == 26 and sum(1 for m in casados if m and m[4] == "response") == 26
+      and all(m and m[3] == "1" for m in casados))
+pares = {(m[1], int(m[2])) for m in casados if m}
+marca("§3 pares (curso, índice) no disco = inventário", pares == {(s, i) for s, i, _ in esperadas}, sorted(pares ^ {(s, i) for s, i, _ in esperadas}))
+no_man = {r for r in MR["chamadas"]}
+no_disco = {f".frzero/vocab_limpo_26-09/chamadas/{n}" for n in nomes}
+marca("§3 disco = manifesto (nenhuma sobrando de nenhum lado)", no_man == no_disco, sorted(no_man ^ no_disco))
+marca("§3 hash de cada arquivo = manifesto", all(K.sha_arq(DATA / r) == MR["chamadas"][r] for r in no_man & no_disco))
+sch, sysha = inv["schema_sha256"], inv["system_sha256"]
+prob3, ids = [], []
+for r in regs:
+    base = f"{r['curso']}_{r['indice']:02d}_t1"
+    rq_p, rs_p = CH / f"{base}_request.json", CH / f"{base}_response.json"
+    if r["request"]["arquivo"] != rel(rq_p) or r["response"]["arquivo"] != rel(rs_p):
+        prob3.append(f"{base}: arquivo do registro não corresponde ao curso/índice")
+        continue
+    if K.sha_arq(rq_p) != r["request"]["sha256"] or K.sha_arq(rs_p) != r["response"]["sha256"]:
+        prob3.append(f"{base}: hash do arquivo != compilacao.json")
+    rq, rs = K.carrega_json_estrito(rq_p), K.carrega_json_estrito(rs_p)
+    exp = next(e for e in inv["cursos"][r["curso"]] if e["indice"] == r["indice"])
+    csha = K.sha_bytes(str(rq["contents"]).encode("utf-8"))
+    if not (csha == r["request"]["contents_sha256"] == exp["bundle_sha256"]):
+        prob3.append(f"{base}: contents da request != bundle do inventário")
+    if exp["unidade"] != r["unidade"]:
+        prob3.append(f"{base}: unidade do registro != inventário")
+    if rq["model"] != modelo or rq["response_schema_sha256"] != sch:
+        prob3.append(f"{base}: modelo ou schema da request divergem")
+    if K.sha_bytes(str(rq["config"]["system_instruction"]).encode("utf-8")) != sysha:
+        prob3.append(f"{base}: system_instruction != congelado")
+    if rs.get("model_version") != r["model_version"] or rs.get("parsed") != r["parsed"]:
+        prob3.append(f"{base}: response não corresponde ao registro (model_version/parsed)")
+    ids.append(rs.get("response_id"))
+marca("§3 cada request/response ↔ registro ↔ inventário (curso, unidade, bundle, modelo, schema, system, parsed)", not prob3, prob3[:5])
+marca("§3 response_id presentes e distintos (26)", len(ids) == 26 and all(ids) and len(set(ids)) == 26)
+
+# ---------------------------------------------------------------- §4 sidecars: compilação → sanidade → congelamento → manifesto → disco
+cadeia, prob4 = {}, []
+for s, nome in K.NOMES.items():
+    p = VL / "sidecars" / nome / CP.LLM
+    v = {"compilacao": comp["cursos"][s]["sidecar_sha256"], "sanidade": san["sidecars"][s]["sha256"],
+         "congelamento_captura": vlc["sidecars"][s]["sha256"], "manifesto_rodada": MR["sidecars"].get(rel(p)),
+         "disco": K.sha_arq(p)}
+    cadeia[s] = v
+    if len(set(v.values())) != 1 or san["sidecars"][s]["arquivo"] != rel(p) or vlc["sidecars"][s]["arquivo"] != rel(p):
+        prob4.append(s)
+info["cadeia_sidecars"] = cadeia
+marca("§4 sidecars 7/7: compilação = sanidade = congelamento da captura = manifesto = disco", not prob4 and len(cadeia) == 7, prob4)
+marca("§4 sanidade: aprovada, mesmo id, sha = captura = manifesto",
+      san["aprovado"] is True and san["id_recompilacao"] == ESP["id_recompilacao"]
+      and K.sha_arq(san_p) == vlc["sanidade_sha256"] == MR["recompilacao"][rel(san_p)])
+marca("§4 compilação: sha = congelamento da captura = manifesto",
+      K.sha_arq(comp_p) == vlc["compilacao_sha256"] == MR["recompilacao"][rel(comp_p)] == ESP["compilacao_sha256"])
+extras = sorted(rel(p) for p in (VL / "sidecars").rglob("*") if p.is_file() and p.name != CP.LLM)
+marca("§4 pasta de sidecars só com os 7 .llm.json (nenhum manual)",
+      not extras and sum(1 for p in (VL / "sidecars").rglob(CP.LLM)) == 7, extras)
+manual_staging = sorted(rel(p) for p in (VL / "staging").rglob(CP.MANUAL))
+marca("§4 staging sem sidecar manual", not manual_staging, manual_staging)
+# mtime: informativo (a prova decisiva de "sem edição posterior" é o hash registrado na própria geração)
+ini, fim = ts(comp["inicio"]), ts(comp["fim"])
+info["mtime_sidecars"] = {s: datetime.datetime.fromtimestamp((VL / "sidecars" / n / CP.LLM).stat().st_mtime, datetime.timezone.utc).isoformat()
+                          for s, n in K.NOMES.items()}
+info["mtime_dentro_da_geracao"] = {s: ini <= ts(m) <= fim for s, m in info["mtime_sidecars"].items()}
+# históricos intactos e não usados como entrada do braço limpo
+cong5 = K.carrega_json_estrito(CONG5)
+prob_h, prob_u = [], []
+for s, nome in K.NOMES.items():
+    hp = HIST / nome / "course" / CP.LLM
+    hsha = K.sha_arq(hp)
+    if not (hsha == san["comparacao_descritiva_com_historico"][s]["hist_sha256"]
+            == cong5["insumos"]["VOCAB_LLM"][s]["palco"]["course/" + CP.LLM]):
+        prob_h.append(s)
+    palco = CP.PALCOS / "VOCAB_LIMPO" / nome / "course" / CP.LLM
+    limpo = K.carrega_json_estrito(VL / "sidecars" / nome / CP.LLM)
+    usado = K.carrega_json_estrito(palco)
+    if usado != limpo or usado == K.carrega_json_estrito(hp) or K.sha_arq(palco) != cong["insumos"]["VOCAB_LIMPO"][s]["palco"]["course/" + CP.LLM]:
+        prob_u.append(s)
+marca("§4 sidecars históricos intactos (= sanidade = congelamento da Fase 1)", not prob_h, prob_h)
+marca("§4 palco VOCAB_LIMPO = conteúdo do sidecar gerado (≠ histórico) e = hash congelado", not prob_u, prob_u)
+man_palco = sorted(f"{b}/{s}" for b in K.BRACOS for s in K.NOMES
+                   if ("course/" + CP.MANUAL) in cong["insumos"][b][s]["palco"] or (CP.PALCOS / b / K.NOMES[s] / "course" / CP.MANUAL).exists())
+marca("§4 nenhum manual em nenhum palco (congelamento e disco)", not man_palco, man_palco)
+
+# ---------------------------------------------------------------- §5 capturas + código + congelamento
+for n in ("avaliador.py", "comum.py", "captura.py"):
+    marca(f"§5 {n} = manifesto da rodada = congelado",
+          K.sha_arq(PACOTE / n) == MR["pacote"][rel(PACOTE / n)] == cong["normativo"]["codigo"][n])
+marca("§5 congelamento: id_comum = 6a0f9652…", cong["id_comum"] == ESP["id_comum"], cong["id_comum"])
+marca("§5/§6 congelamento: normativo→id e insumos→insumos_braco recalculados", not K.valida_congelamento(cong), K.valida_congelamento(cong))
+marca("§5 código do pacote = congelado", not K.verifica_codigo(cong["normativo"]["codigo"], CP.CODIGO), K.verifica_codigo(cong["normativo"]["codigo"], CP.CODIGO))
+marca("§5 intérprete = congelado", sys.executable == cong["normativo"]["interprete"]["executavel"] and sys.version == cong["normativo"]["interprete"]["versao"])
+marca("§5 distribuições = assinatura congelada", not CP.verifica_distribuicoes(cong), CP.verifica_distribuicoes(cong))
+entradas = K.carrega_json_estrito(CP.CONG_ENTRADAS)
+marca("§5 congelamento de entradas = normativo", K.sha_json(entradas) == cong["normativo"]["entradas_arquivo_sha"])
+marca("§5 protocolo normativo = protocolo_sha 42e52218…",
+      K.sha_bytes(CP.normativo_protocolo().encode("utf-8")) == cong["normativo"]["protocolo_sha"] == ESP["protocolo_sha"])
+man = K.carrega_json_estrito(PACOTE / "manifesto_capturas_vl.json")
+marca("§5 manifesto de capturas aprovado, deste congelamento, com os seis braços",
+      man["aprovado"] is True and man["congelamento_id_comum"] == ESP["id_comum"] and set(man["capturas"]) == set(K.BRACOS))
+caps, nao_chamados = {}, {}
+for b in K.BRACOS:
+    c = man["capturas"][b]
+    p = DATA / c["arquivo"]
+    cap = K.carrega_json_estrito(p)
+    caps[b] = cap
+    esperado_nome = f"capturar_{b}_{ESP['id_comum'][:16]}_{cong['insumos_braco'][b][:16]}.json"
+    marca(f"§5 {b}: caminho = esperado pelo avaliador", p.name == esperado_nome and p.parent == CP.CAPS)
+    marca(f"§5 {b}: sha256 do arquivo = manifesto de capturas = manifesto da rodada",
+          K.sha_arq(p) == c["sha256"] == MR["captura"][c["arquivo"]])
+    marca(f"§5 {b}: conteudo_sha recalculado = manifesto", K.conteudo_sha(cap) == cap["conteudo_sha"] == c["conteudo_sha"])
+    prob = K.valida_historica(cap, cong, braco=b)
+    marca(f"§5 {b}: validador histórico/estrutural completo", not prob, prob[:3])
+    marca(f"§5 {b}: identidade (braço, modo, esquema, id_comum, insumos_braco, 0 violações, concluída)",
+          cap["braco"] == b and cap["modo"] == "capturar" and cap["esquema"] == K.ESQUEMA_CAPTURA
+          and cap["congelamento_comum"] == ESP["id_comum"] != ESP["id_fase1"]
+          and cap["insumos_braco"] == cong["insumos_braco"][b] and cap["violacoes"] == [] and cap["status"] == "concluida")
+    decs = [(s, e, d) for s, v in cap["decisoes"].items() for e, d in v.items()]
+    nao_chamados[b] = sorted((s, e) for s, e, d in decs if not d["chamado"])
+    marca(f"§5 {b}: 350 materiais = inventário congelado; 341 chamados; 9 não chamados",
+          len(decs) == 350 and {s: sorted(v) for s, v in cap["decisoes"].items()} == cong["normativo"]["inventario"]
+          and sum(1 for *_, d in decs if d["chamado"]) == 341 and len(nao_chamados[b]) == 9)
+    marca(f"§5 {b}: manual ausente", not any(cap["verificacoes"]["manual_carregado"].values()))
+marca("§5 os mesmos 9 não chamados em todos os braços", len({tuple(v) for v in nao_chamados.values()}) == 1)
+info["nao_chamados"] = nao_chamados["CRU_LIMPO"]
+capturar = sorted(x.name for x in CP.CAPS.glob("capturar_*.json"))
+marca("§5 diretório de capturas: exatamente seis capturas completas, todas deste congelamento",
+      len(capturar) == 6 and all(f"_{ESP['id_comum'][:16]}_" in x for x in capturar), capturar)
+marca("§5 sem falhas registradas", not (CP.FALHAS.exists() and any(CP.FALHAS.iterdir())))
+marca("§5 referência W-AB = hash congelado", K.sha_arq(CP.CAP_WAB) == cong["normativo"]["referencias"]["wab_captura_bracos_24-09.json"])
+prob_ref, difs_ref = CP.compara_referencia(caps["CRU_LIMPO"], CP.CAP_WAB)
+marca("§5 CRU_LIMPO = referência por ID (350 materiais, 0 divergências)",
+      not prob_ref and not difs_ref and sum(len(v) for v in caps["CRU_LIMPO"]["decisoes"].values()) == 350,
+      {"problemas": prob_ref[:3], "divergencias": len(difs_ref)})
+
+# ---------------------------------------------------------------- §6 snapshots, palcos e insumos
+snap = []
+for b in K.BRACOS:
+    for s in K.NOMES:
+        ins = cong["insumos"][b][s]
+        snap.append((b, s, K.sha_arq(CP.SNAP / b / s / "taxonomia.json") == ins["taxonomia_arquivo_sha"]
+                     and K.sha_arq(CP.SNAP / b / s / "indice_unidade.json") == ins["indice_arquivo_sha"]
+                     and CP.arquivos_do_palco(b, s) == ins["palco"]))
+marca("§6 snapshots de taxonomia e índice + palcos = congelamento (6 braços x 7 cursos)",
+      len(snap) == 42 and all(x[2] for x in snap), [f"{b}/{s}" for b, s, v in snap if not v])
+marca("§6 insumos_braco recalculados = congelamento = capturas",
+      all(K.sha_json(cong["insumos"][b]) == cong["insumos_braco"][b] == caps[b]["insumos_braco"] for b in K.BRACOS))
+desc = cong["normativo"]["avaliacao"]
+marca("§6 descritor da régua sem pendências", desc["pendencias"] == [], desc["pendencias"])
+marca("§6 manifests de referência = sha256 congelado",
+      all(K.sha_arq(DATA / m["caminho"]) == m["sha256"] for m in desc["manifestos_referencia"].values()))
+marca("§6 manifests salvos = árvore congelada",
+      all(K.sha_arq(DATA / e["raiz"] / "manifest.json") == entradas[s]["manifest.json"] for s, e in cong["normativo"]["entradas_comuns"].items()))
+caminhos = sorted({it["caminho"] for papel in desc["arquivos"].values() for it in papel.values()})
+r = subprocess.run(["git", "ls-files", "-s", "--", *caminhos], cwd=DATA, capture_output=True, text=True, encoding="utf-8")
+blobs = {ln.split("\t", 1)[1]: ln.split()[1] for ln in r.stdout.splitlines()}
+div = [it["caminho"] for papel in desc["arquivos"].values() for it in papel.values() if blobs.get(it["caminho"]) != it["blob_git"]]
+marca(f"§6 régua: {len(caminhos)} arquivos com blob do índice = congelado (arquivos NÃO abertos)", r.returncode == 0 and not div, div)
+
+res = {"etapa": "condições pré-gold (§§2-6), sem gold", "aprovado": all(ok.values()), "n_condicoes": len(ok),
+       "condicoes": ok, "info": info}
+K.grava_atomico(AQUI / "validacao_pre_gold_vl.json", res)
+print("PRE-GOLD", "APROVADA" if res["aprovado"] else "REPROVADA", f"({sum(ok.values())}/{len(ok)})", flush=True)
+sys.exit(0 if res["aprovado"] else 1)

@@ -1,0 +1,711 @@
+--- wad5_25-09/comum.py
++++ vocab_limpo_26-09/comum.py
+@@ -1,7 +1,7 @@
+-"""W-AD5 (25/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/ nem módulos de avaliação.
++"""Rodada VOCAB_LIMPO (26/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/ nem módulos de avaliação.
+ 
+-Protocolo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md. Versões anteriores preservadas em ../wad4_25-09/ e
+-../wad3_25-09/.
++Protocolo: docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md. Cópia do comum.py congelado da Fase 1
++(../wad5_25-09/, 04a535b6…) com SÓ nomes de braços, mapa de manuais, liberação e esquemas trocados.
+ Testado só com dados sintéticos (test_wad4.py, test_defeitos_v4.py); nada lê gold.
+ 
+ Hashes (procedimento declarado):
+@@ -24,17 +24,18 @@
+ import time
+ from pathlib import Path
+ 
+-ESQUEMA_CAPTURA = "wad5-captura-1"
+-ESQUEMA_CONGELAMENTO = "wad5-congelamento-1"
++ESQUEMA_CAPTURA = "vl-captura-1"
++ESQUEMA_CONGELAMENTO = "vl-congelamento-1"
+ NOMES = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
+          "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "CG": "Computacao-Grafica-Tutor",
+          "FR": "Fundamentos-de-Redes-Tutor"}
+-BRACOS = ("CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3")
+-SEMENTES = {"CTRL_ALEAT_1": 1, "CTRL_ALEAT_2": 2, "CTRL_ALEAT_3": 3}
+-MANUAL_ESPERADO = {b: {s: (b == "VOCAB_ATUAL" and s in {"CG", "ES2", "IA", "SO", "TCC"}) for s in NOMES} for b in BRACOS}
+-# Gate condicional de 25/09 (revisão independente do W-AD4): captura dos sete braços; NÃO libera gold nem avaliação.
++BRACOS = ("CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
++SEMENTES = {"CTRL_ALEAT_LIMPO_1": 1, "CTRL_ALEAT_LIMPO_2": 2, "CTRL_ALEAT_LIMPO_3": 3}
++MANUAL_ESPERADO = {b: {s: False for s in NOMES} for b in BRACOS}   # rodada limpa: nenhum manual em nenhum braço
++# Gate 1 de 26/09 (rodada limpa): captura dos seis braços da rodada; NÃO libera gold nem avaliação.
+ # Mudar isto é mudança de código e de congelamento.
+-CAPTURA_LIBERADA = frozenset({"CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3"})
++CAPTURA_LIBERADA = frozenset({"CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2",
++                              "CTRL_ALEAT_LIMPO_3"})
+ INVENTARIO_ESPERADO = 350
+ DENOMINADORES = {"bloco": 237, "unidade": 284, "sub_primaria": 251}
+ # Denominadores e referência do CRU por curso: tabela do relatório 2026-09-24-teto-regime-cru.md §1 (documentação já
+@@ -618,7 +619,7 @@
+             prob.append("manual efetivamente carregado != mapa congelado")
+         if "temporais" in norm and ver.get("artefatos_temporais_sha") != norm["temporais"]:
+             prob.append("artefatos temporais != referência congelada")
+-        if braco != "CRU" and ver.get("taxonomia_congelada_lida") != []:
++        if braco != "CRU_LIMPO" and ver.get("taxonomia_congelada_lida") != []:
+             prob.append("braço não-CRU leu a taxonomia congelada (ou campo ausente)")
+     dec = cap.get("decisoes")
+     if modo == "carga":
+--- wad5_25-09/captura.py
++++ vocab_limpo_26-09/captura.py
+@@ -1,7 +1,8 @@
+-"""W-AD5 (25/09): regime VOCAB, Fase 1 — harness v5 (preflights SEM GOLD e captura isolada por braço).
++"""Rodada VOCAB_LIMPO (26/09): regime VOCAB — harness da rodada limpa (preflight SEM GOLD e captura isolada por braço).
+ 
+-Protocolo normativo: docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md (bloco NORMATIVO). v4 revisada preservada
+-em ../wad4_25-09/ (congelamento b3254509…); v5 = v4 + os dois ajustes da revisão independente + liberação da captura.
++Protocolo normativo: docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md (bloco NORMATIVO). Cópia do captura.py
++congelado da Fase 1 (../wad5_25-09/) com SÓ: nomes dos braços, fonte do sidecar do VOCAB_LIMPO (recompilação congelada;
++tutores vivos não são lidos), nenhum manual, caminhos de saída e proibições da rodada (resultados da Fase 1 por ID).
+ Nunca lê gold: não importa módulos de avaliação; as travas (comum.Travas) invalidam qualquer acesso proibido, mesmo
+ quando uma camada intermediária engole a exceção.
+ 
+@@ -48,21 +49,26 @@
+ 
+ AMBIENTE_INICIAL = dict(os.environ)   # antes de qualquer import do produto, que grava em os.environ (TESSDATA_PREFIX)
+ 
+-BASE = DATA / ".frzero/wad5_25-09"
++BASE = DATA / ".frzero/vocab_limpo_26-09/captura"
+ PALCOS, SNAP, CAPS, FALHAS = BASE / "palcos", BASE / "snapshots", BASE / "capturas", BASE / "falhas"
+ PYCACHE = BASE / "pycache_vazio"
+ CONG = BASE / "congelamento.json"
+ CONG_ENTRADAS = BASE / "congelamento_entradas.json"
+-ADENDO = DATA / "docs/reports/2026-09-25-regime-vocab-adendo-fase1-v4.md"
++ADENDO = DATA / "docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md"
++VL = DATA / ".frzero/vocab_limpo_26-09"          # recompilação limpa congelada (sidecars, compilação, sanidade)
++VL_SIDECARS, VL_SANIDADE, VL_COMP, VL_CONG = VL / "sidecars", VL / "sanidade.json", VL / "compilacao.json", VL / "congelamento_recompilacao.json"
++PROIBIDOS_RODADA = {C13 / "wad5_avaliacao_26-09": "resultados da avaliação da Fase 1 (por ID)",
++                    DATA / ".frzero/wad5_avaliacao_26-09": "espelho da régua da Fase 1",
++                    DATA / "docs/reports/pendencias.md": "tracker (contém IDs das perdas da Fase 1)"}
+ CAP_WAB = DATA / ".frzero/wab_captura_bracos_24-09.json"
+-OUT_JSON, OUT_MD = HERE / "preflight_v5.json", HERE / "preflight_v5.md"
+-OUT_CAP_JSON, OUT_CAP_MD = HERE / "manifesto_capturas_v5.json", HERE / "capturas_v5.md"
+-ORDEM_CAPTURA = ("VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3")
++OUT_JSON, OUT_MD = HERE / "preflight_vl.json", HERE / "preflight_vl.md"
++OUT_CAP_JSON, OUT_CAP_MD = HERE / "manifesto_capturas_vl.json", HERE / "capturas_vl.md"
++ORDEM_CAPTURA = ("VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
+ BASE_PRETENDIDA = "2589ed5a95ab8dd841de384bd219d80ee27d2cbf"
+ HELPERS = {"replay_bloco_21-09.py": C13 / "replay_bloco_21-09.py", "replay_unidade_21-09.py": C13 / "replay_unidade_21-09.py"}
+ CODIGO = {"captura.py": HERE / "captura.py", "comum.py": HERE / "comum.py", "avaliador.py": HERE / "avaliador.py",
+           "test_wad4.py": HERE / "test_wad4.py", "test_defeitos_v4.py": HERE / "test_defeitos_v4.py",
+-          "test_ajustes_v5.py": HERE / "test_ajustes_v5.py", **HELPERS}
++          "test_ajustes_v5.py": HERE / "test_ajustes_v5.py", "test_rodada_limpa.py": HERE / "test_rodada_limpa.py", **HELPERS}
+ LLM, MANUAL = ".glossary_curation.llm.json", ".glossary_curation.json"
+ OITAVO = "Laboratorio-de-Redes-Tutor"
+ TUTORES = list(K.NOMES.values()) + [OITAVO]
+@@ -121,6 +127,8 @@
+     for nome in TUTORES:
+         t.proibe(ORIG / nome, "tutor vivo")
+     t.nega(DATA / ".env", "arquivo .env da raiz (pode conter segredos e configuração)")
++    for alvo, motivo in PROIBIDOS_RODADA.items():
++        t.proibe(alvo, motivo)
+     return t
+ 
+ 
+@@ -131,9 +139,12 @@
+     t.permite("protocolo", ADENDO, somente_leitura=True)
+     t.permite("comum", *RAIZES.values(), somente_leitura=True)
+     t.permite("preparo", *[ORIG / n / "course" for n in TUTORES], somente_leitura=True)
+-    t.permite("referencia", CAP_WAB, *[DATA / p for p in REGUA_MANIFESTOS.values()], somente_leitura=True)
++    t.permite("referencia", CAP_WAB, *[DATA / p for p in REGUA_MANIFESTOS.values()], VL_SIDECARS, VL_SANIDADE, VL_COMP,
++              VL_CONG, somente_leitura=True)
+     t.permite("saida", BASE, OUT_JSON, OUT_MD)
+     t.nega(DATA / ".env", "arquivo .env da raiz (pode conter segredos e configuração)")
++    for alvo, motivo in PROIBIDOS_RODADA.items():
++        t.proibe(alvo, motivo)
+     return t
+ 
+ 
+@@ -588,7 +599,7 @@
+         exige(K.sha_arq(snap_tax) == ins[sig]["taxonomia_arquivo_sha"], f"{sig}: snapshot de taxonomia alterado")
+         exige(K.sha_arq(snap_idx) == ins[sig]["indice_arquivo_sha"], f"{sig}: snapshot de índice alterado")
+         tax = read(snap_tax)
+-        if braco != "CRU":
++        if braco != "CRU_LIMPO":
+             exige(K.sha_json(reconstroi(M, root, palco)) == K.sha_json(tax), f"{sig}: reconstrução != snapshot")
+         idx_atual, idx_snap = indice_unidade(M, root, palco, tax), read(snap_idx)
+         if K.sha_json(idx_atual) != K.sha_json(idx_snap):
+@@ -782,7 +793,7 @@
+     abrir = travas._abrir_original
+     R, ok = {"escopo": __doc__}, {}
+     if OUT_JSON.exists():   # fora do try: nunca sobrescrever evidência anterior
+-        print("preflight_v5.json já existe: preservar evidência (usar nova versão)", flush=True)
++        print("preflight_vl.json já existe: preservar evidência (usar nova versão)", flush=True)
+         sys.exit(1)
+     try:
+         exige((DATA / "src").is_dir() and (DATA / ".git").exists() and (DATA / "docs").is_dir(),
+@@ -821,22 +832,25 @@
+         ok["P0 inventário congelado = 350 sem duplicatas"] = (sum(len(v) for v in inventario.values()) == K.INVENTARIO_ESPERADO
+                                                               and not any(dup.values()))
+ 
+-        # P1 proveniência (única leitura dos tutores vivos) e palcos
+-        R["P1_proveniencia"] = proveniencia()
+-        vivos = {}
+-        for sig in K.NOMES:
+-            tutor = ORIG / K.NOMES[sig] / "course"
+-            vivos[sig] = {arq: (read(tutor / arq) if (tutor / arq).is_file() else None) for arq in (LLM, MANUAL)}
++        # P1 fonte do VOCAB_LIMPO: sidecars da recompilação limpa congelada (tutores vivos NÃO são lidos)
+         travas.permitidos.pop("preparo")
+         for nome in TUTORES:
+-            travas.proibe(ORIG / nome, "tutor vivo depois do preparo")
+-        manual_real = {b: {s: (b == "VOCAB_ATUAL" and vivos[s][MANUAL] is not None) for s in K.NOMES} for b in K.BRACOS}
+-        ok["P1 inventário de manuais = referência declarada"] = manual_real == K.MANUAL_ESPERADO
+-        exige(ok["P1 inventário de manuais = referência declarada"], f"mudança de insumo: manuais {manual_real['VOCAB_ATUAL']}")
++            travas.proibe(ORIG / nome, "tutor vivo (rodada limpa não lê tutores vivos)")
++        san, comp, vlc = read(VL_SANIDADE), read(VL_COMP), read(VL_CONG)
++        exige(san["aprovado"] is True and comp["completa"] is True and san["id_recompilacao"] == comp["id_recompilacao"]
++              == vlc["id_recompilacao"], "recompilação limpa incompleta, reprovada ou de outro congelamento")
++        limpo = {}
++        for sig in K.NOMES:
++            p = VL_SIDECARS / K.NOMES[sig] / LLM
++            exige(K.sha_arq(p, abrir) == san["sidecars"][sig]["sha256"], f"{sig}: sidecar VOCAB_LIMPO != congelado")
++            limpo[sig] = read(p)
++        R["P1_vocab_limpo"] = {"id_recompilacao": vlc["id_recompilacao"], "sidecars": san["sidecars"]}
+         for sig in K.NOMES:
+-            grava_palco("CRU", sig, abrir=abrir)
+-            grava_palco("VOCAB_ATUAL", sig, vivos[sig][LLM], vivos[sig][MANUAL], abrir=abrir)
+-            grava_palco("VOCAB_LLM", sig, vivos[sig][LLM], abrir=abrir)
++            grava_palco("CRU_LIMPO", sig, abrir=abrir)
++            grava_palco("VOCAB_LIMPO", sig, limpo[sig], abrir=abrir)
++        manual_real = {b: {s: (PALCOS / b / K.NOMES[s] / "course" / MANUAL).exists() for s in K.NOMES} for b in K.BRACOS}
++        ok["P1 nenhum manual em nenhum palco (mapa declarado)"] = manual_real == K.MANUAL_ESPERADO
++        exige(ok["P1 nenhum manual em nenhum palco (mapa declarado)"], "manual presente em algum palco")
+ 
+         # congelamento comum (normativo, sem resultados)
+         entradas = {**{sig: arvores[sig] for sig in K.NOMES}, "_externos": externos}
+@@ -860,6 +874,9 @@
+             "entradas_arquivo_sha": K.sha_json(entradas),
+             "entradas_externas": {"n": len(externos), "sha": K.sha_json(externos)},
+             "referencias": {"wab_captura_bracos_24-09.json": K.sha_arq(CAP_WAB, abrir)},
++            "vocab_limpo": {"id_recompilacao": vlc["id_recompilacao"], "sidecars": san["sidecars"],
++                            "compilacao_sha256": K.sha_arq(VL_COMP, abrir), "sanidade_sha256": K.sha_arq(VL_SANIDADE, abrir),
++                            "congelamento_recompilacao_sha256": K.sha_arq(VL_CONG, abrir)},
+             "inventario": inventario,
+             "esperado": {"manual": K.MANUAL_ESPERADO, "captura_liberada": sorted(K.CAPTURA_LIBERADA),
+                          "denominadores": K.DENOMINADORES, "inventario_total": K.INVENTARIO_ESPERADO},
+@@ -876,14 +893,14 @@
+         R["P2"] = {}
+         for sig, root in RAIZES.items():
+             congelada[sig] = read(root / "course/.content_taxonomy.json")
+-            sem[sig] = reconstroi(M, root, PALCOS / "CRU" / K.NOMES[sig])
++            sem[sig] = reconstroi(M, root, PALCOS / "CRU_LIMPO" / K.NOMES[sig])
+             difA = diferencas_completas(congelada[sig], sem[sig])
+             e = {"A_igual": congelada[sig] == sem[sig], "A_n_diferencas": len(difA), "A_exemplos": difA[:5]}
+-            snaps = {"CRU": congelada[sig]}
+-            for b in ("VOCAB_ATUAL", "VOCAB_LLM"):
++            snaps = {"CRU_LIMPO": congelada[sig]}
++            for b in ("VOCAB_LIMPO",):
+                 com = reconstroi(M, root, PALCOS / b / K.NOMES[sig])
+                 rel = relacoes(com, sem[sig])
+-                if b == "VOCAB_LLM":
++                if b == "VOCAB_LIMPO":
+                     rel_llm[sig] = rel
+                 e[b] = {"B_diagnostico": diagnostico_b(aditiva(congelada[sig], rel), com),
+                         "aliases_add": sum(len(r["add"]) for r in rel.values()),
+@@ -895,17 +912,17 @@
+                 grava_snapshot(b, sig, tax, i, abrir)
+             R["P2"][sig] = e
+         ok["P2 A (sem sidecar == congelada) nos 7"] = all(e["A_igual"] for e in R["P2"].values())
+-        ok["P2 delta não vazio nos braços históricos"] = all(not e[b]["delta_vazio"] for e in R["P2"].values()
+-                                                            for b in ("VOCAB_ATUAL", "VOCAB_LLM"))
++        ok["P2 delta não vazio no VOCAB_LIMPO"] = all(not e[b]["delta_vazio"] for e in R["P2"].values()
++                                                     for b in ("VOCAB_LIMPO",))
+         ok["P2 B: diferenças só de ordem de aliases (inspeção integral)"] = all(
+-            e[b]["B_diagnostico"]["somente_ordem_de_aliases"] for e in R["P2"].values() for b in ("VOCAB_ATUAL", "VOCAB_LLM"))
++            e[b]["B_diagnostico"]["somente_ordem_de_aliases"] for e in R["P2"].values() for b in ("VOCAB_LIMPO",))
+         exige(ok["P2 A (sem sidecar == congelada) nos 7"], "equivalência A falhou; parar antes de qualquer avaliação")
+-        for b in ("CRU", "VOCAB_ATUAL", "VOCAB_LLM"):
++        for b in ("CRU_LIMPO", "VOCAB_LIMPO"):
+             fecha_insumos(cong, b)
+         K.grava_atomico(CONG, cong, abrir)
+ 
+         # P4 captura CRU (processo isolado) e reprodução por ID
+-        cru, origem = roda_worker("CRU", "capturar", cong, travas)
++        cru, origem = roda_worker("CRU_LIMPO", "capturar", cong, travas)
+         prob, difs = compara_referencia(cru, CAP_WAB)
+         R["P4"] = {"origem": origem, "problemas_estrutura": prob, "divergencias": difs[:20], "n_divergencias": len(difs),
+                    "conteudo_sha": cru["conteudo_sha"], "chamados": sum(1 for v in cru["decisoes"].values() for d in v.values() if d["chamado"]),
+@@ -924,16 +941,16 @@
+             grava_palco("_IDENTIDADE", sig, sidecar_de(ident, tax), abrir=abrir)
+             com_id = reconstroi(M, root, PALCOS / "_IDENTIDADE" / K.NOMES[sig])
+             idx_id = indice_unidade(M, root, PALCOS / "_IDENTIDADE" / K.NOMES[sig], com_id)
+-            vocab = read(SNAP / "VOCAB_LLM" / sig / "taxonomia.json")
++            vocab = read(SNAP / "VOCAB_LIMPO" / sig / "taxonomia.json")
+             difC = diferencas_completas(vocab, com_id)
+             rec = {"C_identidade": {"taxonomia_igual_ordenada": vocab == com_id, "n_diferencas": len(difC),
+-                                    "exemplos": difC[:5], "indice_igual": idx_id == idx["VOCAB_LLM"][sig]}}
++                                    "exemplos": difC[:5], "indice_igual": idx_id == idx["VOCAB_LIMPO"][sig]}}
+             dec_cru = {e: d["final"] for e, d in cru["decisoes"][sig].items()}
+             atrib, info = controle_maior(rel_llm[sig], tax, dec_cru)
+-            grava_palco("CTRL_MAIOR", sig, sidecar_de(atrib, tax), abrir=abrir)
+-            com = reconstroi(M, root, PALCOS / "CTRL_MAIOR" / K.NOMES[sig])
+-            grava_snapshot("CTRL_MAIOR", sig, com, indice_unidade(M, root, PALCOS / "CTRL_MAIOR" / K.NOMES[sig], com), abrir)
+-            rec["CTRL_MAIOR"] = {"definicao": info, "verificacao": verifica_controle(atrib, tax, com)}
++            grava_palco("CTRL_MAIOR_LIMPO", sig, sidecar_de(atrib, tax), abrir=abrir)
++            com = reconstroi(M, root, PALCOS / "CTRL_MAIOR_LIMPO" / K.NOMES[sig])
++            grava_snapshot("CTRL_MAIOR_LIMPO", sig, com, indice_unidade(M, root, PALCOS / "CTRL_MAIOR_LIMPO" / K.NOMES[sig], com), abrir)
++            rec["CTRL_MAIOR_LIMPO"] = {"definicao": info, "verificacao": verifica_controle(atrib, tax, com)}
+             for b, s in K.SEMENTES.items():
+                 atrib, info, bloq = controle_aleatorio(rel_llm[sig], tax, sig, s)
+                 if bloq:
+@@ -946,14 +963,14 @@
+                           "verificacao": verifica_controle(atrib, tax, com, vocab_rel=rel_llm[sig]),
+                           "fracao_mudou_destino": sum(i["mudaram_de_destino"] for i in info.values()) / n_rel if n_rel else None}
+             R["P3"][sig] = rec
+-        ok["P3 C: identidade == VOCAB_LLM (taxonomia ordenada e índice)"] = all(
++        ok["P3 C: identidade == VOCAB_LIMPO (taxonomia ordenada e índice)"] = all(
+             r["C_identidade"]["taxonomia_igual_ordenada"] and r["C_identidade"]["indice_igual"] for r in R["P3"].values())
+-        ok["P3 CTRL_MAIOR: pares, estrutura e remoções"] = all(r["CTRL_MAIOR"]["verificacao"]["aprovado"] for r in R["P3"].values())
++        ok["P3 CTRL_MAIOR_LIMPO: pares, estrutura e remoções"] = all(r["CTRL_MAIOR_LIMPO"]["verificacao"]["aprovado"] for r in R["P3"].values())
+         ok["P3 aleatórios: pares, contagem, multiconjunto, multiplicidade, sem duplicata/remoção"] = all(
+             r[b]["verificacao"]["aprovado"] for r in R["P3"].values() for b in K.SEMENTES)
+         ok["P3 nenhum aleatório bloqueado por orçamento"] = not bloqueados
+         cong["controles"] = {"bloqueados": bloqueados}
+-        for b in ("CTRL_MAIOR", *K.SEMENTES):
++        for b in ("CTRL_MAIOR_LIMPO", *K.SEMENTES):
+             fecha_insumos(cong, b)
+         K.grava_atomico(CONG, cong, abrir)
+ 
+@@ -970,7 +987,7 @@
+         P5 = R["P5"]
+         ok["P5 manual efetivamente carregado = mapa esperado"] = all(P5[b]["manual_carregado"] == K.MANUAL_ESPERADO[b] for b in K.BRACOS)
+         ok["P5 artefatos temporais idênticos entre braços"] = len({K.sha_json(P5[b]["temporais"]) for b in K.BRACOS}) == 1
+-        ok["P5 braços não-CRU não leem a taxonomia congelada"] = all(not P5[b]["taxonomia_congelada_lida"] for b in K.BRACOS if b != "CRU")
++        ok["P5 braços não-CRU não leem a taxonomia congelada"] = all(not P5[b]["taxonomia_congelada_lida"] for b in K.BRACOS if b != "CRU_LIMPO")
+         ok["P5 unidades do motor iguais entre braços"] = len({P5[b]["unidades_motor_sha"] for b in K.BRACOS}) == 1
+         ok["P5 taxonomia e índice = snapshots congelados"] = all(
+             P5[b]["taxonomia_sha"][s] == cong["insumos"][b][s]["taxonomia_sha"]
+@@ -1034,9 +1051,9 @@
+     travas.permite("saida", OUT_CAP_JSON, OUT_CAP_MD)
+     travas.instala()
+     abrir = travas._abrir_original
+-    R, ok = {"escopo": "captura dos seis braços não-CRU e validação das sete capturas; sem gold"}, {}
++    R, ok = {"escopo": "captura dos cinco braços não-CRU da rodada limpa e validação das seis capturas; sem gold"}, {}
+     if OUT_CAP_JSON.exists():   # nunca sobrescrever evidência anterior
+-        print("manifesto_capturas_v5.json já existe: preservar evidência", flush=True)
++        print("manifesto_capturas_vl.json já existe: preservar evidência", flush=True)
+         sys.exit(1)
+     try:
+         cong = read(CONG)
+@@ -1047,10 +1064,10 @@
+         if K.sha_json(entradas) != cong["normativo"]["entradas_arquivo_sha"]:
+             prob.append("congelamento de entradas divergente")
+         R["pre_condicoes"] = prob
+-        ok["preflight v5 aprovado com este congelamento"] = (pf.get("aprovado") is True
++        ok["preflight da rodada aprovado com este congelamento"] = (pf.get("aprovado") is True
+                                                              and pf.get("congelamento_id_comum") == cong["id_comum"])
+         ok["processo, código, src/ e distribuições = congelamento (início)"] = not prob
+-        ok["CAPTURA_LIBERADA = os sete braços"] = K.CAPTURA_LIBERADA == frozenset(K.BRACOS)
++        ok["CAPTURA_LIBERADA = os seis braços da rodada"] = K.CAPTURA_LIBERADA == frozenset(K.BRACOS)
+         exige(all(ok.values()), f"pré-condições da captura não atendidas: {prob[:4]}")
+         for sig, root in RAIZES.items():
+             travas.congela(root, entradas[sig])
+@@ -1060,7 +1077,7 @@
+         exige(not faltam, f"inventário de entradas não confere: {faltam[:4]}")
+ 
+         caps, R["bracos"] = {}, {}
+-        for b in ("CRU", *ORDEM_CAPTURA):   # o CRU é o do preflight v5 (mesmo congelamento), revalidado
++        for b in ("CRU_LIMPO", *ORDEM_CAPTURA):   # o CRU_LIMPO é o do preflight desta rodada (mesmo congelamento), revalidado
+             exige(not verifica_distribuicoes(cong), f"distribuições divergem antes de {b}")
+             caps[b], origem = roda_worker(b, "capturar", cong, travas)
+             R["bracos"][b] = {"origem": origem}
+@@ -1069,7 +1086,7 @@
+         # conferência final do conjunto (sem gold)
+         destinos = {b: CAPS / f"capturar_{b}_{cong['id_comum'][:16]}_{cong['insumos_braco'][b][:16]}.json" for b in K.BRACOS}
+         prob_conj = {b: K.valida_historica(caps[b], cong, braco=b) for b in K.BRACOS}
+-        ok["sete capturas completas, validador completo sem problemas"] = (set(caps) == set(K.BRACOS)
++        ok["seis capturas completas, validador completo sem problemas"] = (set(caps) == set(K.BRACOS)
+                                                                             and not any(prob_conj.values()))
+         ok["350 registros por captura, IDs = inventário congelado"] = all(
+             sum(len(v) for v in c["decisoes"].values()) == K.INVENTARIO_ESPERADO
+@@ -1122,7 +1139,7 @@
+     R["aprovado"] = bool(ok) and all(ok.values()) and "interrompido" not in R
+     R["segundos"] = round(time.time() - T0, 1)
+     K.grava_atomico(OUT_CAP_JSON, R, abrir)
+-    L = ["# W-AD5 — captura dos sete braços, sem gold (25/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++    L = ["# Rodada VOCAB_LIMPO — captura dos seis braços, sem gold (26/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
+          f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**"
+          + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""), "", "## Condições", ""]
+     L += [f"- {'✅' if v else '❌'} {k}" for k, v in ok.items()]
+@@ -1142,24 +1159,24 @@
+ 
+ 
+ def escreve_md(R, abrir):
+-    L = ["# W-AD5 — preflight v5 sem gold (25/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++    L = ["# Rodada VOCAB_LIMPO — preflight sem gold (26/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
+          f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**" + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""),
+          "", "## Condições", ""]
+     L += [f"- {'✅' if v else '❌'} {k}" for k, v in R["condicoes"].items()]
+     if "P2" in R:
+-        L += ["", "## P2 por curso", "", "| curso | A | B ATUAL só ordem | B LLM só ordem | +LLM | +ATUAL |", "|---|---|---|---|---:|---:|"]
++        L += ["", "## P2 por curso", "", "| curso | A | B LIMPO só ordem | +LIMPO | -LIMPO |", "|---|---|---|---:|---:|"]
+         for s, e in R["P2"].items():
+-            L.append(f"| {s} | {e['A_igual']} | {e['VOCAB_ATUAL']['B_diagnostico']['somente_ordem_de_aliases']} | "
+-                     f"{e['VOCAB_LLM']['B_diagnostico']['somente_ordem_de_aliases']} | {e['VOCAB_LLM']['aliases_add']} | {e['VOCAB_ATUAL']['aliases_add']} |")
++            L.append(f"| {s} | {e['A_igual']} | {e['VOCAB_LIMPO']['B_diagnostico']['somente_ordem_de_aliases']} | "
++                     f"{e['VOCAB_LIMPO']['aliases_add']} | {e['VOCAB_LIMPO']['aliases_rem']} |")
+     if "P3" in R:
+         L += ["", "## P3 por curso", "", "| curso | C taxonomia | C índice | MAIOR | ALEAT 1/2/3 | estados das unidades (3 sementes) |", "|---|---|---|---|---|---|"]
+         for s, r in R["P3"].items():
+             est = collections.Counter(i["estado"] for b in K.SEMENTES for i in r[b]["unidades"].values())
+             L.append(f"| {s} | {r['C_identidade']['taxonomia_igual_ordenada']} | {r['C_identidade']['indice_igual']} | "
+-                     f"{r['CTRL_MAIOR']['verificacao']['aprovado']} | {'/'.join(str(r[b]['verificacao']['aprovado']) for b in K.SEMENTES)} | {dict(est)} |")
++                     f"{r['CTRL_MAIOR_LIMPO']['verificacao']['aprovado']} | {'/'.join(str(r[b]['verificacao']['aprovado']) for b in K.SEMENTES)} | {dict(est)} |")
+     if "P4" in R:
+         p = R["P4"]
+-        L += ["", "## P4", "", f"- CRU ({p['origem']}): problemas de estrutura {len(p['problemas_estrutura'])}, divergências {p['n_divergencias']}, "
++        L += ["", "## P4", "", f"- CRU_LIMPO ({p['origem']}): problemas de estrutura {len(p['problemas_estrutura'])}, divergências {p['n_divergencias']}, "
+               f"chamados {p['chamados']}, não chamados por motivo {p['nao_chamados_por_motivo']}."]
+         L += ["", "Não chamados do CRU (motivo do harness; `nao_identificado` = sem evidência suficiente para outro motivo):", ""]
+         L += [f"- {x['curso']}/{x['id']}: {x['motivo']}; final unidade={x['final']['unidade']!r}, sub={x['final']['sub']!r}, "
+--- wad5_25-09/avaliador.py
++++ vocab_limpo_26-09/avaliador.py
+@@ -1,4 +1,7 @@
+-"""W-AD4 (25/09): avaliador SEPARADO da Fase 1 do regime VOCAB. Definições: adendo v3 (bloco NORMATIVO) §§6–8.
++"""Rodada VOCAB_LIMPO (26/09): adaptador do avaliador congelado da Fase 1 (../wad5_25-09/avaliador.py, aeac2996…) com SÓ
++os nomes dos braços trocados em `veredictos` e `avalia`. Métricas, régua, denominadores e contrato idênticos.
++
++Original: avaliador SEPARADO da Fase 1 do regime VOCAB. Definições: adendo v3 (bloco NORMATIVO) §§6–8.
+ 
+ Não importa gold nem módulos históricos de avaliação (nem no import, nem depois). A régua real é lida por CÓPIAS LOCAIS
+ identificadas dos carregadores históricos (HISTORICO), a partir dos caminhos EXPLÍCITOS do congelamento; cada arquivo só é
+@@ -331,23 +334,23 @@
+ def veredictos(pl, comp, regua):
+     """A: sinal exploratório. B: contrato de integração nos TRÊS eixos oficiais; sub_aceita só relatada. C: meta."""
+     sp = {b: pl[b]["TOTAL"]["sub_primaria"]["acertos"] for b in pl}
+-    controles = ("CRU", "CTRL_MAIOR", "CTRL_ALEAT_1", "CTRL_ALEAT_2", "CTRL_ALEAT_3")
+-    a = all(sp["VOCAB_LLM"] > sp[c] for c in controles)
+-    t = comp["VOCAB_LLM"]
++    controles = ("CRU_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
++    a = all(sp["VOCAB_LIMPO"] > sp[c] for c in controles)
++    t = comp["VOCAB_LIMPO"]
+     perdas = {e: t[e]["derivadas"].get("perda", 0) for e in OFICIAIS}
+-    regride = {e: [s for s in regua if pl["VOCAB_LLM"][s][e]["acertos"] < pl["CRU"][s][e]["acertos"]] for e in OFICIAIS}
+-    if sp["VOCAB_LLM"] > sp["CRU"] and not any(perdas.values()) and not any(regride.values()):
++    regride = {e: [s for s in regua if pl["VOCAB_LIMPO"][s][e]["acertos"] < pl["CRU_LIMPO"][s][e]["acertos"]] for e in OFICIAIS}
++    if sp["VOCAB_LIMPO"] > sp["CRU_LIMPO"] and not any(perdas.values()) and not any(regride.values()):
+         b = "sem violação do contrato na Fase 1 condicionada à timeline congelada (não comprova integração completa)"
+     elif a:
+         b = "sinal exploratório observado; candidato reprovado para integração"
+     else:
+         b = "sem sinal exploratório"
+-    return {"A_sinal_exploratorio": a, "A_detalhe": {c_: sp[c_] for c_ in ("VOCAB_LLM", *controles)},
++    return {"A_sinal_exploratorio": a, "A_detalhe": {c_: sp[c_] for c_ in ("VOCAB_LIMPO", *controles)},
+             "B_integracao": b, "B_perdas": perdas, "B_cursos_que_regridem": regride,
+             "B_perdas_sub_aceita_auxiliar": t["sub_aceita"]["derivadas"].get("perda", 0),
+-            "B_cursos_que_regridem_sub_aceita_auxiliar": [s for s in regua if pl["VOCAB_LLM"][s]["sub_aceita"]["acertos"]
+-                                                          < pl["CRU"][s]["sub_aceita"]["acertos"]],
+-            "C_meta_VOCAB_LLM": meta(pl["VOCAB_LLM"], regua)}
++            "B_cursos_que_regridem_sub_aceita_auxiliar": [s for s in regua if pl["VOCAB_LIMPO"][s]["sub_aceita"]["acertos"]
++                                                          < pl["CRU_LIMPO"][s]["sub_aceita"]["acertos"]],
++            "C_meta_VOCAB_LIMPO": meta(pl["VOCAB_LIMPO"], regua)}
+ 
+ 
+ def proveniencia(capturas, congelamento, taxonomias, regua_prov):
+@@ -366,14 +369,14 @@
+         raise K.ErroIntegridade("avaliação recusada: " + "; ".join(prob[:8]))
+     regs = {b: registros_por_id(capturas[b], regua) for b in K.BRACOS}
+     pl = {b: placar_de(regs[b], regua) for b in K.BRACOS}
+-    ref = confere_referencia_cru(pl["CRU"])
++    ref = confere_referencia_cru(pl["CRU_LIMPO"])
+     if ref:
+         raise K.ErroIntegridade("avaliação recusada: CRU não reproduz a referência por curso: " + "; ".join(ref[:8]))
+-    comp = {b: {e: transicoes(capturas["CRU"], capturas[b], regua, e) for e in EIXOS} for b in K.BRACOS if b != "CRU"}
+-    somas = [p for b, v in comp.items() for e, tr in v.items() for p in confere_transicoes(tr, pl["CRU"], pl[b], e)]
++    comp = {b: {e: transicoes(capturas["CRU_LIMPO"], capturas[b], regua, e) for e in EIXOS} for b in K.BRACOS if b != "CRU_LIMPO"}
++    somas = [p for b, v in comp.items() for e, tr in v.items() for p in confere_transicoes(tr, pl["CRU_LIMPO"], pl[b], e)]
+     if somas:
+         raise K.ErroIntegridade("agregados não conferem com os registros por ID: " + "; ".join(somas[:8]))
+-    gen = {b: geracao_selecao(capturas["CRU"], capturas[b], regua, taxonomias["CRU"], taxonomias[b]) for b in K.BRACOS if b != "CRU"}
++    gen = {b: geracao_selecao(capturas["CRU_LIMPO"], capturas[b], regua, taxonomias["CRU_LIMPO"], taxonomias[b]) for b in K.BRACOS if b != "CRU_LIMPO"}
+     return {"placar": pl, "registros": regs, "comparacoes": comp, "geracao_selecao": gen,
+             "meta": {b: meta(pl[b], regua) for b in K.BRACOS}, "veredictos": veredictos(pl, comp, regua),
+             "proveniencia": proveniencia(capturas, congelamento, taxonomias, regua_prov)}
+--- wad5_25-09/test_wad4.py
++++ vocab_limpo_26-09/test_wad4.py
+@@ -64,7 +64,7 @@
+     return cap
+ 
+ 
+-def valida(cap, cong, braco="CRU", modo="capturar"):
++def valida(cap, cong, braco="CRU_LIMPO", modo="capturar"):
+     return K.valida_captura(cap, congelamento=cong, braco=braco, modo=modo)
+ 
+ 
+@@ -78,43 +78,43 @@
+ # ------------------------------------------------------------------------------------------- §2 cache e congelamento
+ def test_captura_valida_passa():
+     cong = congelamento(INV)
+-    assert valida(captura(cong, "CRU", decisoes_ok()), cong) == []
++    assert valida(captura(cong, "CRU_LIMPO", decisoes_ok()), cong) == []
+ 
+ 
+ def test_json_de_outro_braco_em_modo_carga_no_caminho_do_cru_e_rejeitado(tmp_path, monkeypatch):
+     cong = congelamento(INV)
+     monkeypatch.setattr(CP, "CAPS", tmp_path)
+-    destino = tmp_path / f"capturar_CRU_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU'][:16]}.json"
+-    plantado = captura(cong, "VOCAB_LLM", {}, modo="carga")
++    destino = tmp_path / f"capturar_CRU_LIMPO_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU_LIMPO'][:16]}.json"
++    plantado = captura(cong, "VOCAB_LIMPO", {}, modo="carga")
+     destino.write_text(json.dumps(plantado), encoding="utf-8")
+     prob = valida(plantado, cong)
+     assert any("braço errado" in p for p in prob) and any("modo errado" in p for p in prob)
+     with pytest.raises(CP.Falha, match="captura inválida no caminho esperado"):
+-        CP.roda_worker("CRU", "capturar", cong, K.Travas("teste"))
++        CP.roda_worker("CRU_LIMPO", "capturar", cong, K.Travas("teste"))
+     assert json.loads(destino.read_text(encoding="utf-8")) == plantado   # não sobrescreveu a evidência
+ 
+ 
+ def test_mudar_so_um_helper_ou_so_um_sidecar_invalida_a_captura():
+     cong = congelamento(INV)
+-    cap = captura(cong, "CRU", decisoes_ok())
++    cap = captura(cong, "CRU_LIMPO", decisoes_ok())
+     helper = congelamento(INV, codigo={"replay_bloco_21-09.py": "b" * 64})
+     assert "congelamento comum divergente" in valida(cap, helper)
+     sidecar = copy.deepcopy(cong)
+-    sidecar["insumos_braco"]["CRU"] = K.sha_json({"palco": {"course/.glossary_curation.llm.json": "c" * 64}})
++    sidecar["insumos_braco"]["CRU_LIMPO"] = K.sha_json({"palco": {"course/.glossary_curation.llm.json": "c" * 64}})
+     assert "insumos do braço divergentes" in valida(cap, sidecar)
+ 
+ 
+ def test_conteudo_alterado_status_parcial_e_violacao_sao_rejeitados():
+     cong = congelamento(INV)
+-    cap = captura(cong, "CRU", decisoes_ok())
++    cap = captura(cong, "CRU_LIMPO", decisoes_ok())
+     alterada = copy.deepcopy(cap)
+     alterada["decisoes"]["S"]["e1"]["final"]["sub"] = "tX"
+     assert "conteúdo alterado (hash não confere)" in valida(alterada, cong)
+-    parcial = captura(cong, "CRU", decisoes_ok())
++    parcial = captura(cong, "CRU_LIMPO", decisoes_ok())
+     parcial["status"] = "falhou"
+     parcial["conteudo_sha"] = K.conteudo_sha(parcial)
+     assert any("status" in p for p in valida(parcial, cong))
+-    viol = captura(cong, "CRU", decisoes_ok())
++    viol = captura(cong, "CRU_LIMPO", decisoes_ok())
+     viol["violacoes"] = [{"tipo": "rede"}]
+     viol["conteudo_sha"] = K.conteudo_sha(viol)
+     assert any("violações" in p for p in valida(viol, cong))
+@@ -133,16 +133,16 @@
+ 
+ def test_curso_extra_ausente_registro_incompleto_e_premissa_de_unidade():
+     cong = congelamento(INV)
+-    extra = captura(cong, "CRU", decisoes_ok())
++    extra = captura(cong, "CRU_LIMPO", decisoes_ok())
+     extra["inventario"]["X"] = ["z"]
+     extra["conteudo_sha"] = K.conteudo_sha(extra)
+     assert any("extras ['X']" in p for p in valida(extra, cong))
+     inc = decisoes_ok()
+     del inc["S"]["e2"]["final"]["sub"]
+-    assert any("final.sub" in p for p in valida(captura(cong, "CRU", inc), cong))
++    assert any("final.sub" in p for p in valida(captura(cong, "CRU_LIMPO", inc), cong))
+     prem = decisoes_ok()
+     prem["S"]["e1"]["p1"]["unidade_fornecida"] = "u9"
+-    assert any("unidade da 1ª passada != final" in p for p in valida(captura(cong, "CRU", prem), cong))
++    assert any("unidade da 1ª passada != final" in p for p in valida(captura(cong, "CRU_LIMPO", prem), cong))
+ 
+ 
+ def test_gravacao_atomica_nao_deixa_parcial(tmp_path):
+@@ -157,15 +157,15 @@
+     assert erro and "saiu" in erro
+ 
+ 
+-def test_captura_liberada_exatamente_os_sete_bracos_e_braco_fora_da_lista_rejeitado(tmp_path, monkeypatch):
++def test_captura_liberada_exatamente_os_seis_bracos_da_rodada_e_braco_fora_da_lista_rejeitado(tmp_path, monkeypatch):
+     # W-AD5 (Gate condicional de 25/09): libera CAPTURA dos sete braços; gold continua bloqueado (teste da régua abaixo).
+-    assert K.CAPTURA_LIBERADA == frozenset({"CRU", "VOCAB_ATUAL", "VOCAB_LLM", "CTRL_MAIOR", "CTRL_ALEAT_1",
+-                                            "CTRL_ALEAT_2", "CTRL_ALEAT_3"}) == frozenset(K.BRACOS)
++    assert K.CAPTURA_LIBERADA == frozenset({"CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1",
++                                            "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3"}) == frozenset(K.BRACOS)
+     monkeypatch.setattr(CP, "CAPS", tmp_path)
+     cong = congelamento(INV)
+-    cong["insumos_braco"]["VOCAB_LIMPO"] = "x"   # braço que o protocolo não prevê
++    cong["insumos_braco"]["VOCAB_ATUAL"] = "x"   # braço que a rodada não prevê
+     with pytest.raises(CP.Falha, match="não autorizad"):
+-        CP.roda_worker("VOCAB_LIMPO", "capturar", cong, K.Travas("teste"))
++        CP.roda_worker("VOCAB_ATUAL", "capturar", cong, K.Travas("teste"))
+ 
+ 
+ def test_import_nao_carrega_produto_nem_avaliacao_historica():
+@@ -444,7 +444,7 @@
+     monkeypatch.setattr(K, "REFERENCIA_CRU", {"S": {"bloco": 0, "unidade": 0, "sub_primaria": 3}})
+     cong = congelamento(INV8)
+     caps = {b: captura(cong, b, decisoes_de(SUB_CRU)) for b in K.BRACOS}
+-    caps["VOCAB_LLM"] = captura(cong, "VOCAB_LLM", decisoes_de(SUB_LLM))
++    caps["VOCAB_LIMPO"] = captura(cong, "VOCAB_LIMPO", decisoes_de(SUB_LLM))
+     tax = tax_de([("u1", [(f"t{i}", []) for i in range(1, 10)])])
+     return cong, caps, {b: {"S": tax} for b in K.BRACOS}
+ 
+@@ -452,18 +452,18 @@
+ def test_avaliacao_placar_transicoes_precisao_e_veredictos(cenario):
+     cong, caps, taxs = cenario
+     r = AV.avalia(caps, cong, REGUA, taxs)
+-    assert r["placar"]["CRU"]["TOTAL"]["sub_primaria"] == {"acertos": 3, "n": 9}
+-    assert r["placar"]["VOCAB_LLM"]["TOTAL"]["sub_primaria"] == {"acertos": 4, "n": 9}
+-    assert r["placar"]["VOCAB_LLM"]["TOTAL"]["sub_aceita"] == {"acertos": 5, "n": 9}
+-    tp = r["comparacoes"]["VOCAB_LLM"]["sub_primaria"]
++    assert r["placar"]["CRU_LIMPO"]["TOTAL"]["sub_primaria"] == {"acertos": 3, "n": 9}
++    assert r["placar"]["VOCAB_LIMPO"]["TOTAL"]["sub_primaria"] == {"acertos": 4, "n": 9}
++    assert r["placar"]["VOCAB_LIMPO"]["TOTAL"]["sub_aceita"] == {"acertos": 5, "n": 9}
++    tp = r["comparacoes"]["VOCAB_LIMPO"]["sub_primaria"]
+     assert tp["derivadas"] == {"correcao": 3, "perda": 2, "erro_para_outro_erro": 2, "abstencao_para_certa": 1,
+                                "abstencao_para_errada": 1, "decisao_para_vazio": 1}
+     assert tp["precisao_alteradas"] == {"num": 3, "den": 7, "valor": 3 / 7}
+     assert tp["precisao_alteradas_nao_vazias"] == {"num": 2, "den": 6, "valor": 2 / 6}
+-    ta = r["comparacoes"]["VOCAB_LLM"]["sub_aceita"]
++    ta = r["comparacoes"]["VOCAB_LIMPO"]["sub_aceita"]
+     assert ta["derivadas"]["correta_para_outra_correta"] == 1 and ta["derivadas"]["perda"] == 1
+     assert ta["precisao_alteradas"] == {"num": 4, "den": 7, "valor": 4 / 7}
+-    igual = r["comparacoes"]["CTRL_MAIOR"]["sub_primaria"]["precisao_alteradas"]
++    igual = r["comparacoes"]["CTRL_MAIOR_LIMPO"]["sub_primaria"]["precisao_alteradas"]
+     assert igual == {"num": 0, "den": 0, "valor": "não aplicável"}
+     v = r["veredictos"]
+     assert v["A_sinal_exploratorio"] is True
+@@ -474,18 +474,18 @@
+ def test_registros_por_id_sao_a_origem_dos_agregados(cenario):
+     cong, caps, taxs = cenario
+     r = AV.avalia(caps, cong, REGUA, taxs)
+-    regs = r["registros"]["VOCAB_LLM"]
++    regs = r["registros"]["VOCAB_LIMPO"]
+     assert len(regs) == 18                                              # 9 linhas x (primária, aceita)
+     assert sum(x["certo"] for x in regs if x["eixo"] == "sub_primaria") == 4
+     assert {x["gold_id"] for x in regs if x["eixo"] == "sub_primaria" and x["certo"]} == {"r1", "r2", "r6", "r8"}
+-    tr = r["comparacoes"]["VOCAB_LLM"]["sub_primaria"]
++    tr = r["comparacoes"]["VOCAB_LIMPO"]["sub_primaria"]
+     assert len(tr["registros"]) == sum(tr["celulas"].values()) == 9
+     assert [x["gold_id"] for x in tr["registros"] if x["certo_antes"] and not x["certo_depois"]] == ["r3", "r5"]
+     quebrado = copy.deepcopy(tr)
+     quebrado["derivadas"]["perda"] += 1                                 # agregado que não bate com os registros
+     pl = r["placar"]
+-    assert any("correções − perdas" in p for p in AV.confere_transicoes(quebrado, pl["CRU"], pl["VOCAB_LLM"], "sub_primaria"))
+-    assert AV.confere_transicoes(tr, pl["CRU"], pl["VOCAB_LLM"], "sub_primaria") == []
++    assert any("correções − perdas" in p for p in AV.confere_transicoes(quebrado, pl["CRU_LIMPO"], pl["VOCAB_LIMPO"], "sub_primaria"))
++    assert AV.confere_transicoes(tr, pl["CRU_LIMPO"], pl["VOCAB_LIMPO"], "sub_primaria") == []
+ 
+ 
+ def test_cru_que_nao_reproduz_a_referencia_por_curso_recusa(cenario, monkeypatch):
+@@ -498,8 +498,8 @@
+ def test_material_ausente_e_erro_e_registro_ausente_invalida(cenario):
+     cong, caps, _ = cenario
+     assert AV.acerta("sub_primaria", linha("rx", None, {""}, {""}), None) is False   # ausente nunca vira abstenção certa
+-    assert AV.acerta("sub_primaria", linha("rx", "e8", {""}, {""}), caps["VOCAB_LLM"]["decisoes"]["S"]["e8"]) is True
+-    quebrada = copy.deepcopy(caps["CRU"])
++    assert AV.acerta("sub_primaria", linha("rx", "e8", {""}, {""}), caps["VOCAB_LIMPO"]["decisoes"]["S"]["e8"]) is True
++    quebrada = copy.deepcopy(caps["CRU_LIMPO"])
+     del quebrada["decisoes"]["S"]["e3"]
+     with pytest.raises(K.ErroIntegridade):
+         AV.registro(quebrada, "S", "e3")
+@@ -509,11 +509,11 @@
+     cong, caps, taxs = cenario
+     outro = congelamento(INV8, codigo={"replay_bloco_21-09.py": "f" * 64})
+     caps2 = dict(caps)
+-    caps2["CTRL_MAIOR"] = captura(outro, "CTRL_MAIOR", decisoes_de(SUB_CRU))
++    caps2["CTRL_MAIOR_LIMPO"] = captura(outro, "CTRL_MAIOR_LIMPO", decisoes_de(SUB_CRU))
+     with pytest.raises(K.ErroIntegridade, match="recusada"):
+         AV.avalia(caps2, cong, REGUA, taxs)
+-    sem_braco = {b: c for b, c in caps.items() if b != "CTRL_ALEAT_3"}
+-    assert any("faltam ['CTRL_ALEAT_3']" in p for p in AV.valida_conjunto(sem_braco, cong))
++    sem_braco = {b: c for b, c in caps.items() if b != "CTRL_ALEAT_LIMPO_3"}
++    assert any("faltam ['CTRL_ALEAT_LIMPO_3']" in p for p in AV.valida_conjunto(sem_braco, cong))
+     bloq = copy.deepcopy(cong)
+     bloq["controles"]["bloqueados"] = ["CTRL_ALEAT_1/S"]
+     assert any("bloqueados" in p for p in AV.valida_conjunto(caps, bloq))
+--- wad5_25-09/test_defeitos_v4.py
++++ vocab_limpo_26-09/test_defeitos_v4.py
+@@ -39,13 +39,13 @@
+             "vencedor": {"unidade": unidade, "topico": sub}, "conf": 0.5, "ambigua": False, "motivos": ["r"]}
+ 
+ 
+-def registro(sig, eid, sub, cong, braco="CRU", unidade="u1"):
++def registro(sig, eid, sub, cong, braco="CRU_LIMPO", unidade="u1"):
+     return {"curso": sig, "id": eid, "chamado": True, "motivo_nao_chamado": "", "p1": chamada(sub, unidade),
+             "chamadas_posteriores": [], "taxonomia_sha": cong["insumos"][braco][sig]["taxonomia_sha"],
+             "final": {"bloco": "b1", "unidade": unidade, "sub": sub, "conf_sub": 0.5, "motivos_sub": [], "motivos_unidade": []}}
+ 
+ 
+-def captura_valida(cong, braco="CRU", modo="capturar"):
++def captura_valida(cong, braco="CRU_LIMPO", modo="capturar"):
+     inv = cong["normativo"]["inventario"]
+     cap = {"esquema": K.ESQUEMA_CAPTURA, "braco": braco, "modo": modo, "status": "concluida",
+            "congelamento_comum": cong["id_comum"], "insumos_braco": cong["insumos_braco"][braco],
+@@ -66,7 +66,7 @@
+     return cap
+ 
+ 
+-def problemas(cap, cong, braco="CRU", modo="capturar"):
++def problemas(cap, cong, braco="CRU_LIMPO", modo="capturar"):
+     return K.valida_captura(cap, congelamento=cong, braco=braco, modo=modo)
+ 
+ 
+@@ -140,18 +140,18 @@
+ def test_captura_nao_cru_em_cache_sem_autorizacao(tmp_path, monkeypatch):
+     cong = congelamento()
+     monkeypatch.setattr(CP, "CAPS", tmp_path)
+-    monkeypatch.setattr(K, "CAPTURA_LIBERADA", frozenset({"CRU"}))   # W-AD5 libera os sete; o mecanismo segue testado
+-    cap = captura_valida(cong, braco="VOCAB_LLM")
+-    destino = tmp_path / f"capturar_VOCAB_LLM_{cong['id_comum'][:16]}_{cong['insumos_braco']['VOCAB_LLM'][:16]}.json"
++    monkeypatch.setattr(K, "CAPTURA_LIBERADA", frozenset({"CRU_LIMPO"}))   # W-AD5 libera os sete; o mecanismo segue testado
++    cap = captura_valida(cong, braco="VOCAB_LIMPO")
++    destino = tmp_path / f"capturar_VOCAB_LLM_{cong['id_comum'][:16]}_{cong['insumos_braco']['VOCAB_LIMPO'][:16]}.json"
+     destino.write_text(json.dumps(cap), encoding="utf-8")
+     with pytest.raises(CP.Falha, match="não autorizad"):
+-        CP.roda_worker("VOCAB_LLM", "capturar", cong, K.Travas("teste"))
++        CP.roda_worker("VOCAB_LIMPO", "capturar", cong, K.Travas("teste"))
+ 
+ 
+ # ------------------------------------------------------------------------------------------- §2 congelamento
+ def test_descritor_de_insumos_alterado_sem_atualizar_identificador():
+     cong = congelamento()
+-    cong["insumos"]["CRU"]["S"]["taxonomia_sha"] = "trocado"
++    cong["insumos"]["CRU_LIMPO"]["S"]["taxonomia_sha"] = "trocado"
+     assert any("insumos" in p for p in K.valida_congelamento(cong))
+ 
+ 
+@@ -330,9 +330,9 @@
+             "sub_aceita": {"acertos": 2, "n": 2}}
+     melhor = dict(base, sub_primaria={"acertos": 2, "n": 2}, sub_aceita={"acertos": 1, "n": 2})
+     pl = {b: {"S": copy.deepcopy(base), "TOTAL": copy.deepcopy(base)} for b in K.BRACOS}
+-    pl["VOCAB_LLM"] = {"S": melhor, "TOTAL": melhor}
+-    comp = {b: {e: {"derivadas": {}} for e in AV.EIXOS} for b in K.BRACOS if b != "CRU"}
+-    comp["VOCAB_LLM"]["sub_aceita"]["derivadas"] = {"perda": 1}
++    pl["VOCAB_LIMPO"] = {"S": melhor, "TOTAL": melhor}
++    comp = {b: {e: {"derivadas": {}} for e in AV.EIXOS} for b in K.BRACOS if b != "CRU_LIMPO"}
++    comp["VOCAB_LIMPO"]["sub_aceita"]["derivadas"] = {"perda": 1}
+     v = AV.veredictos(pl, comp, {"S": []})
+     assert v["B_integracao"].startswith("sem violação") and v["B_perdas_sub_aceita_auxiliar"] == 1
+ 
+@@ -358,13 +358,13 @@
+ 
+     monkeypatch.setattr(CP.subprocess, "run", falso)
+     with pytest.raises(CP.Falha):
+-        CP.roda_worker("CRU", "carga", cong, K.Travas("teste"))
++        CP.roda_worker("CRU_LIMPO", "carga", cong, K.Travas("teste"))
+     assert "env" in visto and "TESSDATA_PREFIX" not in visto["env"]
+     assert K.verifica_ambiente(visto["env"]) == []
+ 
+ 
+ def test_codigo_somente_leitura_na_configuracao_real():
+-    for travas in (CP.travas_worker("CRU"), CP.travas_principal()):
++    for travas in (CP.travas_worker("CRU_LIMPO"), CP.travas_principal()):
+         assert "codigo" in travas.leitura_so
+         p, cat, _ = travas.classifica(CP.DATA / "src" / "qualquer.py")
+         assert cat == "codigo"
+--- wad5_25-09/test_ajustes_v5.py
++++ vocab_limpo_26-09/test_ajustes_v5.py
+@@ -168,7 +168,7 @@
+     (tmp_path / "capturas").mkdir()
+     atual = {"lista": ["pkg==1.0"]}
+     monkeypatch.setattr(CP, "distribuicoes", lambda: list(atual["lista"]))
+-    destino = tmp_path / "capturas" / f"capturar_CRU_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU'][:16]}.json"
++    destino = tmp_path / "capturas" / f"capturar_CRU_LIMPO_{cong['id_comum'][:16]}_{cong['insumos_braco']['CRU_LIMPO'][:16]}.json"
+ 
+     def worker_falso(cmd, **kw):   # o worker grava uma captura estruturalmente válida; as distribuições mudam no meio
+         destino.write_text(json.dumps(captura_valida(cong)), encoding="utf-8")
+@@ -177,7 +177,7 @@
+ 
+     monkeypatch.setattr(CP.subprocess, "run", worker_falso)
+     with pytest.raises(CP.Falha, match="distribuições"):
+-        CP.roda_worker("CRU", "capturar", cong, K.Travas("teste"))
++        CP.roda_worker("CRU_LIMPO", "capturar", cong, K.Travas("teste"))
+     assert not destino.exists()                                  # não fica no caminho de reúso
+     assert list((tmp_path / "falhas").glob("rejeitada_*.json"))  # preservada como falha
+ 
