@@ -1,0 +1,57 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "vocab_limpo_diag_perdas_27-09/diag_perdas_vl.py"
+ ],
+ "saida": 0,
+ "segundos": 471.5,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+CG: reexecução idêntica à captura em 93 materiais
+ES2: reexecução idêntica à captura em 35 materiais
+IA: reexecução idêntica à captura em 63 materiais
+MF: reexecução idêntica à captura em 70 materiais
+SO: reexecução idêntica à captura em 42 materiais
+TCC: reexecução idêntica à captura em 27 materiais
+DIAGNOSTICO GRAVADO 13 perdas
+
+--- stderr

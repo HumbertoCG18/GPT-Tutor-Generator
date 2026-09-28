@@ -409,6 +409,18 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
   - Relatório `c1-3/vocab_limpo_avaliacao_26-09/relatorio_avaliacao_vl.md`; manifesto `manifesto_avaliacao_vl.json`.
   - Decisões do usuário (27/09): Gate 2 documental (commit local dos artefatos, sem push); diagnóstico das perdas
     recorrentes (pesquisa com gold já visto); preparo da validação em cursos novos até o Gate de rede/LLM.
+  - **Gate 2 documental (27/09):** commits locais `339d2571` (limpeza), `d9f783d8` (Fase 1), `71dff722` (exceção
+    estreita do gitleaks: "resumo" casava a regra do Sumo Logic), `f9084937` (rodada limpa e avaliação), `b4d3d8cb`
+    (script W-AD de 24/09). Sem push.
+  - **Diagnóstico das 13 perdas (27/09, pós-gold):** reexecução idêntica à captura em 330 materiais; 9 na 1ª passada
+    (4 ES2: migalha de token de 0,1077 impede a regra "seção nomeia subtópico"; 4 MF/IA: aliases acumulados no
+    vizinho e diluição do bônus de cobertura do certo; 1 CG `slab`: termo específico no título), 4 na 2ª passada
+    (3 propagação por headings, 1 ambiguidade nova libera a regra de seção). Saldo: propagação +16/−3, regra de seção
+    0/−1. As 7 recorrentes vêm dos mesmos mecanismos, não dos mesmos termos. Nada aplicado.
+    `c1-3/vocab_limpo_diag_perdas_27-09/diagnostico_perdas_vl.md`.
+  - **Validação em cursos novos:** desenho `docs/reports/2026-09-27-regime-vocab-validacao-cursos-novos-desenho.md`.
+    No disco só há o LR além dos sete (7 entradas, sem gold): exige cursos novos do usuário, com gold cego. Gate 1
+    bloqueado nas decisões da §6 do desenho.
 - Handoff para continuar em outra sessão: `docs/reports/2026-09-26-handoff-regime-vocab-claude.md`.
 
 ## Avaliado: regime VOCAB, Fase 1 — A verdadeiro, B reprovado (candidato reprovado para integração), C só no IA (26/09)

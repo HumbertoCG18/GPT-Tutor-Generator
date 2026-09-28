@@ -36,4 +36,6 @@ e seis braços capturados sem gold (congelamento 6a0f9652…). Aguardando revis�
 commitado; 14 renames da limpeza de docs/reports staged. Handoff: docs/reports/2026-09-26-handoff-regime-vocab-claude.md.
 27/09: rodada VOCAB_LIMPO avaliada (primária 174/251; A_limpo verdadeiro, B_limpo e C_limpo não atendidos; relatório
 c1-3/vocab_limpo_avaliacao_26-09/relatorio_avaliacao_vl.md). Gate 2 documental: artefatos da frente commitados localmente,
-sem push. Em curso: diagnóstico das perdas recorrentes e preparo da validação em cursos novos (Gate próprio para rede/LLM).
+sem push. Feitos em 27/09: diagnóstico das 13 perdas (c1-3/vocab_limpo_diag_perdas_27-09/) e desenho da validação em
+cursos novos (docs/reports/2026-09-27-regime-vocab-validacao-cursos-novos-desenho.md). Próximo: decisões do usuário na §6
+do desenho; rede/LLM e gold novo não autorizados.

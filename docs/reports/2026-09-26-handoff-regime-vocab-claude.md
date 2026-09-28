@@ -1,6 +1,6 @@
 # Handoff 26/09/2026 — regime VOCAB: Fase 1 avaliada e encerrada; rodada VOCAB_LIMPO capturada, aguardando revisão e Gate de avaliação
 
-> **Atualização 26/09 (sessão seguinte):** Gate de avaliação da rodada limpa executado. Resultado em `c1-3/vocab_limpo_avaliacao_26-09/relatorio_avaliacao_vl.md`: VOCAB_LIMPO 174/251 na primária; A_limpo verdadeiro, B_limpo e C_limpo não atendidos. Os §§4–5 abaixo descrevem o estado ANTERIOR à avaliação. Em 27/09 o Gate 2 documental commitou localmente os artefatos da frente (sem push); os §§7–8 ficaram superados nesse ponto.
+> **Atualização 26/09 (sessão seguinte):** Gate de avaliação da rodada limpa executado. Resultado em `c1-3/vocab_limpo_avaliacao_26-09/relatorio_avaliacao_vl.md`: VOCAB_LIMPO 174/251 na primária; A_limpo verdadeiro, B_limpo e C_limpo não atendidos. Os §§4–5 abaixo descrevem o estado ANTERIOR à avaliação. Em 27/09 o Gate 2 documental commitou localmente os artefatos da frente (sem push); os §§7–8 ficaram superados nesse ponto. Também em 27/09: diagnóstico das perdas (`c1-3/vocab_limpo_diag_perdas_27-09/`) e desenho da validação em cursos novos (`2026-09-27-regime-vocab-validacao-cursos-novos-desenho.md`), cuja §6 é o próximo ponto de entrada.
 
 Sessão Claude Code `ee4dd19b-7491-4289-baf7-43a7b14dfb38`, de 25/09 a 26/09, com o usuário via Remote Control. Coordenador
 único da frente "regime VOCAB" do motor. Branch `feat/motor-atribuicao`, HEAD `2589ed5a`, em dia com a origin.

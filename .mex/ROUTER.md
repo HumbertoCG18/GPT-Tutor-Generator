@@ -15,7 +15,7 @@ Engenharia: [patterns/engenharia-produto.md](patterns/engenharia-produto.md).
 | Tarefa | Estado e fontes |
 |---|---|
 | Workflow, CLIs, skills, hooks | [.workflow/HANDOFF.md](../.workflow/HANDOFF.md); fonte canônica indicada no README |
-| Motor/produto | [tracker](../docs/reports/pendencias.md), somente bloco pertinente; regime VOCAB: [handoff de 26/09](../docs/reports/2026-09-26-handoff-regime-vocab-claude.md); [handoff do motor](../docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md) para o resto da campanha (anteriores, em `docs/reports/_archive/`: 2026-09-22-handoff-motor-fr-regua-claude.md, 2026-09-22-handoff-motor-49-claude.md, 2026-09-17-handoff-regime-cru.md) |
+| Motor/produto | [tracker](../docs/reports/pendencias.md), somente bloco pertinente; regime VOCAB: [handoff de 26/09](../docs/reports/2026-09-26-handoff-regime-vocab-claude.md) e [desenho da validação em cursos novos](../docs/reports/2026-09-27-regime-vocab-validacao-cursos-novos-desenho.md); [handoff do motor](../docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md) para o resto da campanha (anteriores, em `docs/reports/_archive/`: 2026-09-22-handoff-motor-fr-regua-claude.md, 2026-09-22-handoff-motor-49-claude.md, 2026-09-17-handoff-regime-cru.md) |
 | Agente noturno / fila | Issues #42/#43; conferir worktree e estado próprios antes de ler código ou continuar |
 | Sessão na nuvem ou sem contexto local | [context/sessao-nuvem.md](context/sessao-nuvem.md) antes de agir |
 | Estrutura/callers | Graphify explain/path, query com budget; sem Graphify, [context/architecture.md](context/architecture.md); verificar no código |

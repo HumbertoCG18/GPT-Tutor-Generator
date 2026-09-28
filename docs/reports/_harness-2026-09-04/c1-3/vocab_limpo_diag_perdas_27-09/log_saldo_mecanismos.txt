@@ -1,0 +1,59 @@
+{
+ "comando": [
+  "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "-B",
+  "-X",
+  "pycache_prefix=C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\vocab_limpo_26-09\\pycache_vazio",
+  "vocab_limpo_diag_perdas_27-09/saldo_mecanismos_vl.py"
+ ],
+ "saida": 0,
+ "segundos": 0.7,
+ "ambiente": {
+  "declarado": {
+   "PYTHONHASHSEED": "0",
+   "TUTOR_NO_VOCAB_COMPILE": "1",
+   "TUTOR_NO_CODE_SYNTH": "1",
+   "UNIT_GENERIC_MODE": "df",
+   "PYTHONIOENCODING": "utf-8",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONNOUSERSITE": "1"
+  },
+  "herdados_sistema": [
+   "APPDATA",
+   "COMMONPROGRAMFILES",
+   "COMMONPROGRAMFILES(X86)",
+   "COMSPEC",
+   "HOMEDRIVE",
+   "HOMEPATH",
+   "LOCALAPPDATA",
+   "NUMBER_OF_PROCESSORS",
+   "OS",
+   "PATH",
+   "PATHEXT",
+   "PROCESSOR_ARCHITECTURE",
+   "PROGRAMDATA",
+   "PROGRAMFILES",
+   "PROGRAMFILES(X86)",
+   "PROGRAMW6432",
+   "SYSTEMDRIVE",
+   "SYSTEMROOT",
+   "TEMP",
+   "TMP",
+   "USERPROFILE",
+   "WINDIR"
+  ]
+ },
+ "pycache_vazio_depois": true
+}
+--- stdout
+1a                               correções  84  perdas  9  saldo +75
+1a:vazio                         correções   1  perdas  0  saldo +1
+2a:propagado-headings            correções  16  perdas  3  saldo +13
+2a:secao-nomeia-subtopico        correções   0  perdas  1  saldo -1
+cru=1a                           correções  63  perdas  8  saldo +55
+cru=1a:vazio                     correções  23  perdas  0  saldo +23
+cru=2a:outra                     correções   1  perdas  0  saldo +1
+cru=2a:propagado-headings        correções  14  perdas  1  saldo +13
+cru=2a:secao-nomeia-subtopico    correções   0  perdas  4  saldo -4
+
+--- stderr
