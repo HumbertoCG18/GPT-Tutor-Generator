@@ -595,8 +595,9 @@
           "id": "LIMPEZA-01",
           "titulo": "Apagar as worktrees já mergeadas (#62, #66, #83)",
           "nivel": "T1",
-          "estado": "pronta",
-          "nota": "apagar exige sua autorização"
+          "estado": "concluída",
+          "nota": "apagar exige sua autorização",
+          "evidencia": "02/10: worktrees workflow-claude-code, issue-14 e seguranca removidas (limpas, branches mantidas)"
         },
         {
           "id": "LIMPEZA-02",
