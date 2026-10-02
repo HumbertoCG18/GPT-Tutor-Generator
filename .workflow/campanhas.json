@@ -1,0 +1,621 @@
+{
+  "versao": 1,
+  "projeto": "GPT-Tutor-Generator",
+  "tronco": "dev",
+  "estados": [
+    "proposta",
+    "pronta",
+    "em execução",
+    "bloqueada",
+    "reservada",
+    "concluída"
+  ],
+  "campanhas": [
+    {
+      "id": "MOODLE-V1",
+      "titulo": "Correção da aquisição do Moodle (R-META/R-PAGE)",
+      "prioridade": 1,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-moodle-v1",
+        "GPT-Tutor-Generator"
+      ],
+      "handoff": "GPT-Tutor-Generator-moodle-v1/docs/reports/2026-10-01-correcao-moodle-v1/relatorio.md",
+      "atualizado_em": "2026-10-01",
+      "tarefas": [
+        {
+          "id": "MOODLE-V1-01",
+          "titulo": "Correção V1 na worktree moodle-v1",
+          "nivel": "T2",
+          "estado": "em execução",
+          "depende_de": [],
+          "nota": "sem commit; relatório de 01/10"
+        },
+        {
+          "id": "MOODLE-V1-02",
+          "titulo": "Reconciliar a cópia antiga do delta na pasta principal (moodle.py, test_moodle.py)",
+          "nivel": "T1",
+          "estado": "pronta",
+          "depende_de": [
+            "MOODLE-V1-01"
+          ]
+        },
+        {
+          "id": "MOODLE-V1-03",
+          "titulo": "Validação externa do pacote e do adquire v3 (P1)",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "MOODLE-V1-01"
+          ],
+          "origem": "pendencias.md l.443-482"
+        },
+        {
+          "id": "MOODLE-V1-04",
+          "titulo": "Gate 2: commit e PR para dev",
+          "nivel": "T1",
+          "estado": "bloqueada",
+          "depende_de": [
+            "MOODLE-V1-02",
+            "MOODLE-V1-03"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MOTOR",
+      "titulo": "Motor acima de 90% nos três eixos (subunidade, unidade, bloco)",
+      "prioridade": 2,
+      "janela": "assistida",
+      "regra": "uma mudança de motor por vez; replay integral nos três eixos antes do PR e de novo após o merge na dev; zero perda em eixo e curso",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-p1",
+        "GPT-Tutor-Generator-cru05"
+      ],
+      "handoff": "docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md",
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "MOTOR-00",
+          "titulo": "Versionar a referência de medição replay_base.json (e024d396…), hoje só na worktree cru05",
+          "nivel": "T1",
+          "estado": "pronta",
+          "depende_de": [],
+          "nota": "antes de qualquer limpeza de worktree"
+        },
+        {
+          "id": "MOTOR-01",
+          "eixo": "subunidade",
+          "titulo": "Proposta P1: termos pouco discriminantes (frases compartilhadas)",
+          "nivel": "T2",
+          "estado": "em execução",
+          "depende_de": [
+            "MOTOR-00"
+          ],
+          "nota": "worktree p1 tem implementação de 02/10; o tracker de 01/10 dizia implementação não autorizada: confirmar",
+          "origem": "CRU-02, CRU-05"
+        },
+        {
+          "id": "MOTOR-02",
+          "eixo": "subunidade",
+          "titulo": "CRU-05 acentos espaçadores",
+          "nivel": "T2",
+          "estado": "concluída",
+          "resultado": "reprovada (86 → 85)",
+          "origem": "CRU-05"
+        },
+        {
+          "id": "MOTOR-03",
+          "eixo": "unidade",
+          "titulo": "CRU-03 sinal de seção do Moodle",
+          "nivel": "T2",
+          "estado": "concluída",
+          "resultado": "nulo (0/80)",
+          "origem": "CRU-03"
+        },
+        {
+          "id": "MOTOR-04",
+          "eixo": "unidade",
+          "titulo": "M1 reconcile_unit_with_block: Gate 2",
+          "nivel": "T2",
+          "estado": "bloqueada",
+          "motivo": "Gate 2; situação real do working tree a conferir",
+          "origem": "W-AB, l.634"
+        },
+        {
+          "id": "MOTOR-05",
+          "eixo": "unidade",
+          "titulo": "M2 (registrado, não implementado)",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "MOTOR-04"
+          ]
+        },
+        {
+          "id": "MOTOR-06",
+          "eixo": "unidade",
+          "titulo": "#51 etapa 2: importar links offline no produto",
+          "nivel": "T2",
+          "estado": "bloqueada",
+          "motivo": "condicionada a outra fonte de ganho"
+        },
+        {
+          "id": "MOTOR-07",
+          "eixo": "bloco",
+          "titulo": "#49: Gate 2 (217/237, sem commit registrado)",
+          "nivel": "T2",
+          "estado": "bloqueada",
+          "motivo": "Gate 2 desde 22/09; conferir working tree",
+          "origem": "CRU-04"
+        },
+        {
+          "id": "MOTOR-08",
+          "eixo": "bloco",
+          "titulo": "#52 etapa 2 (src/): Gate 1 não aberto",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "MOTOR-07"
+          ]
+        },
+        {
+          "id": "MOTOR-09",
+          "titulo": "Gate 2 documental dos artefatos W-Z2, W-AA, KE e wz_*; encerrar o piloto KE",
+          "nivel": "T1",
+          "estado": "pronta",
+          "depende_de": []
+        }
+      ]
+    },
+    {
+      "id": "REGUA",
+      "titulo": "Gold e adjudicações das réguas",
+      "prioridade": 3,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [],
+      "atualizado_em": "2026-09-23",
+      "tarefas": [
+        {
+          "id": "REGUA-01",
+          "titulo": "Decidir as 5 subunidades vazias do CG × u05",
+          "nivel": "T1",
+          "estado": "pronta",
+          "nota": "decisão sua",
+          "origem": "2026-09-23-regua-cg-adjudicacao-proposta.md"
+        },
+        {
+          "id": "REGUA-02",
+          "titulo": "Adjudicações pendentes do W-Y (#52) e do W-Z (4)",
+          "nivel": "T1",
+          "estado": "pronta",
+          "nota": "decisão sua"
+        },
+        {
+          "id": "REGUA-03",
+          "titulo": "Régua v3: 11 linhas scorable=no",
+          "nivel": "T1",
+          "estado": "proposta"
+        },
+        {
+          "id": "REGUA-04",
+          "titulo": "Slug duplicado no SO",
+          "nivel": "T1",
+          "estado": "pronta"
+        },
+        {
+          "id": "REGUA-05",
+          "titulo": "Gold vazio da aula-06 do TCC",
+          "nivel": "T1",
+          "estado": "pronta"
+        }
+      ]
+    },
+    {
+      "id": "VOCAB",
+      "titulo": "Regime VOCAB (frente separada do cru)",
+      "prioridade": 4,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator"
+      ],
+      "handoff": "docs/reports/2026-09-26-handoff-regime-vocab-claude.md",
+      "atualizado_em": "2026-10-01",
+      "tarefas": [
+        {
+          "id": "VOCAB-01",
+          "titulo": "Versionar os relatórios de validação externa de 29/09 (não versionados na principal)",
+          "nivel": "T1",
+          "estado": "pronta",
+          "depende_de": []
+        },
+        {
+          "id": "VOCAB-02",
+          "titulo": "Decisões D1–D9 da validação externa",
+          "nivel": "T2",
+          "estado": "pronta",
+          "nota": "decisão sua"
+        },
+        {
+          "id": "VOCAB-03",
+          "titulo": "Teste de generalização em cursos novos (8 N0 candidatas)",
+          "nivel": "T2",
+          "estado": "bloqueada",
+          "janela": "noite",
+          "depende_de": [
+            "VOCAB-02",
+            "MOODLE-V1-04"
+          ]
+        },
+        {
+          "id": "VOCAB-04",
+          "titulo": "Fase 2: compilador v2 (Gate próprio)",
+          "nivel": "T3",
+          "estado": "proposta",
+          "depende_de": [
+            "VOCAB-03"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PRODUTO",
+      "titulo": "Dívidas de código do produto",
+      "prioridade": 5,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [],
+      "atualizado_em": "2026-09-23",
+      "decomposta": false,
+      "tarefas": [
+        {
+          "id": "PRODUTO-01",
+          "titulo": "#63–#65: sync_moodle.py:93, unprocess/reject com options={}, voter default, renomear matéria cria perfil {}, app.py:2305",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "PRODUTO-02",
+          "titulo": "#50: 5 pendências do FR (timeline, override de unidade, escopo, golden)",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "PRODUTO-03",
+          "titulo": "#47: testes aninhados nunca coletados",
+          "nivel": "T1",
+          "estado": "pronta"
+        },
+        {
+          "id": "PRODUTO-04",
+          "titulo": "FR curado: mudanças não commitadas no repo Fundamentos-de-Redes-Tutor (incerto)",
+          "nivel": "T1",
+          "estado": "proposta"
+        },
+        {
+          "id": "PRODUTO-05",
+          "titulo": "Sync FR U03/U06 e aprovação no Curator",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "PRODUTO-06",
+          "titulo": "Triar pendências antigas de 03 a 14/09 (incertas)",
+          "nivel": "T1",
+          "estado": "proposta"
+        }
+      ]
+    },
+    {
+      "id": "INTEGRACAO",
+      "titulo": "Fluxo worktree → dev → main e integração do motor na main",
+      "prioridade": 6,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [],
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "INTEGRACAO-01",
+          "titulo": "Criar dev a partir de feat/motor-atribuicao",
+          "nivel": "T1",
+          "estado": "concluída",
+          "resultado": "local em bf46d51f (02/10); gitleaks nos 6 commits não publicados: sem achados"
+        },
+        {
+          "id": "INTEGRACAO-02",
+          "titulo": "Publicar dev e apontar as worktrees novas para ela",
+          "nivel": "T1",
+          "estado": "concluída",
+          "depende_de": [
+            "INTEGRACAO-01"
+          ],
+          "nota": "push exige sua autorização",
+          "evidencia": "origin/dev publicada em 02/10 (bf46d51f); gitleaks sem achados"
+        },
+        {
+          "id": "INTEGRACAO-03",
+          "titulo": "Segurança: token antigo nas pontas de docs/14-c6-quality e da main local; secret scanning e push protection",
+          "nivel": "T3",
+          "estado": "pronta"
+        },
+        {
+          "id": "INTEGRACAO-04",
+          "titulo": "8 arquivos versionados-ignorados (check secrets da PR #9); #80 fase 2",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "INTEGRACAO-05",
+          "titulo": "Merge dev → main (1.123 commits): Gate 1, D12, baseline limpa",
+          "nivel": "T3",
+          "estado": "bloqueada",
+          "motivo": "pausada por você em 24/09",
+          "depende_de": [
+            "INTEGRACAO-03",
+            "INTEGRACAO-04"
+          ],
+          "origem": "MOTOR-9-02"
+        }
+      ]
+    },
+    {
+      "id": "WEB",
+      "titulo": "Preparação e produto web",
+      "prioridade": 7,
+      "janela": "assistida",
+      "depende_de": [
+        "INTEGRACAO",
+        "MOTOR"
+      ],
+      "worktrees": [],
+      "atualizado_em": "2026-09-22",
+      "decomposta": false,
+      "tarefas": [
+        {
+          "id": "WEB-01",
+          "titulo": "PREWEB-01: inventário de branches, PRs e tracker",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "WEB-02",
+          "titulo": "WEB-14-01",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "WEB-01"
+          ]
+        },
+        {
+          "id": "WEB-03",
+          "titulo": "WEB-41-01: stack (Gate 1)",
+          "nivel": "T3",
+          "estado": "bloqueada",
+          "depende_de": [
+            "WEB-02"
+          ]
+        },
+        {
+          "id": "WEB-04",
+          "titulo": "Backlog futuro: painel, LLM por conta, Moodle assistido, RAG, imagens no chat",
+          "nivel": "T2",
+          "estado": "proposta"
+        }
+      ]
+    },
+    {
+      "id": "WORKFLOW",
+      "titulo": "Ferramentas e fluxo de trabalho dos agentes",
+      "prioridade": 8,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-campaign-43",
+        "GPT-Tutor-Generator-memory-replay-45",
+        "auditoria-enxame-codex-skill",
+        "GPT-Tutor-Generator-codexhooks",
+        "GPT-Tutor-Generator-validacao"
+      ],
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "WORKFLOW-01",
+          "titulo": "Registro de campanhas, seletor e hook do /clear (este desenho)",
+          "nivel": "T2",
+          "estado": "em execução",
+          "origem": "WF-43"
+        },
+        {
+          "id": "WORKFLOW-02",
+          "titulo": "Branch do WF-43 (17 commits): conferir contra o laboratório e arquivar",
+          "nivel": "T1",
+          "estado": "pronta",
+          "depende_de": [
+            "WORKFLOW-01"
+          ]
+        },
+        {
+          "id": "WORKFLOW-03",
+          "titulo": "MEM-45: Gate 2 (18 commits)",
+          "nivel": "T1",
+          "estado": "bloqueada",
+          "motivo": "Gate 2 desde 21/09"
+        },
+        {
+          "id": "WORKFLOW-04",
+          "titulo": "Skill enxame: levar os 3 commits da skill para a dev (ou o laboratório) e arquivar a worktree",
+          "nivel": "T1",
+          "estado": "pronta",
+          "nota": "os outros 4 commits já foram superados no tronco"
+        },
+        {
+          "id": "WORKFLOW-05",
+          "titulo": "PRs #86 e #88: merge seu",
+          "nivel": "T0",
+          "estado": "pronta"
+        },
+        {
+          "id": "WORKFLOW-06",
+          "titulo": "WF-44: hooks no Codex, Codex Companion no verify.py, aceite de conversa nova",
+          "nivel": "T2",
+          "estado": "proposta"
+        },
+        {
+          "id": "WORKFLOW-07",
+          "titulo": "TS-46: skill TypeSafe",
+          "nivel": "T1",
+          "estado": "proposta"
+        }
+      ]
+    },
+    {
+      "id": "NOITE",
+      "titulo": "Agente noturno usando o registro",
+      "prioridade": 9,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-night-42",
+        "GPT-Tutor-Generator-noite-20260930"
+      ],
+      "atualizado_em": "2026-10-01",
+      "tarefas": [
+        {
+          "id": "NOITE-01",
+          "titulo": "Versionar os relatórios da noite de 30/09 e conferir o .workflow alterado na worktree",
+          "nivel": "T1",
+          "estado": "pronta"
+        },
+        {
+          "id": "NOITE-02",
+          "titulo": "Decidir o fim da trilha NIGHT-42 (sandbox), já que a noite pelo Alethe funcionou em 30/09 e 01/10",
+          "nivel": "T1",
+          "estado": "pronta",
+          "nota": "decisão sua",
+          "origem": "NIGHT-42-01..06"
+        },
+        {
+          "id": "NOITE-03",
+          "titulo": "O noturno lê o registro e só pega tarefas com janela noite e sem bloqueio",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "WORKFLOW-01"
+          ]
+        },
+        {
+          "id": "NOITE-04",
+          "titulo": "Um coordenador novo por tarefa, para o contexto não crescer a noite inteira",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "NOITE-03"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "REPLAY-NOTURNO",
+      "titulo": "Medição longa da dev, só à noite",
+      "prioridade": 10,
+      "janela": "noite",
+      "depende_de": [],
+      "worktrees": [],
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "REPLAY-01",
+          "titulo": "Replay integral da dev depois de cada merge de motor, contra a referência e024d396…",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "MOTOR-00",
+            "INTEGRACAO-02"
+          ],
+          "recorrente": true
+        },
+        {
+          "id": "REPLAY-02",
+          "titulo": "CRU-01: baseline reproduzível do catálogo",
+          "nivel": "T3",
+          "estado": "bloqueada",
+          "depende_de": [
+            "NOITE-03"
+          ],
+          "origem": "CRU-01"
+        }
+      ]
+    },
+    {
+      "id": "AUDITORIA",
+      "titulo": "Auditoria de código morto com o enxame",
+      "prioridade": 11,
+      "janela": "noite",
+      "depende_de": [],
+      "worktrees": [],
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "AUDITORIA-01",
+          "titulo": "Rodada read-only do enxame na dev, com relatório",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [
+            "WORKFLOW-04"
+          ],
+          "recorrente": true
+        },
+        {
+          "id": "AUDITORIA-02",
+          "titulo": "Graphify desatualizado (1.320 arquivos novos)",
+          "nivel": "T1",
+          "estado": "proposta"
+        }
+      ]
+    },
+    {
+      "id": "LIMPEZA",
+      "titulo": "Worktrees e campanhas encerradas",
+      "prioridade": 12,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "workflow-claude-code",
+        "GPT-Tutor-Generator-issue-14",
+        "GPT-Tutor-Generator-seguranca"
+      ],
+      "atualizado_em": "2026-10-02",
+      "tarefas": [
+        {
+          "id": "LIMPEZA-01",
+          "titulo": "Apagar as worktrees já mergeadas (#62, #66, #83)",
+          "nivel": "T1",
+          "estado": "pronta",
+          "nota": "apagar exige sua autorização"
+        },
+        {
+          "id": "LIMPEZA-02",
+          "titulo": "Encerrar UI-11 e OBS-12 (PRs #39 e #40 mergeados em 23/09)",
+          "nivel": "T0",
+          "estado": "pronta"
+        },
+        {
+          "id": "LIMPEZA-03",
+          "titulo": "Apagar as worktrees de trabalho depois que a evidência estiver versionada",
+          "nivel": "T1",
+          "estado": "bloqueada",
+          "depende_de": [
+            "MOTOR-00",
+            "VOCAB-01",
+            "NOITE-01"
+          ]
+        }
+      ]
+    }
+  ]
+}
