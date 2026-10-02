@@ -18,7 +18,7 @@
 - modelo_effort_por_fase_e_justificativa:
 - modelo_observado_e_uso: <não atestado até evidência; input/cache_create/cache_read/output/tempo>
 - executor: <Claude/modelo conforme routing.md ou escolha explícita>
-- revisor: Astra (somente leitura)
+- revisor: papel reviewer ou reviewer-high (somente leitura; registrar o modelo observado)
 - restricoes_explicitas:
 - gate_1: pendente
 - gate_2: pendente
@@ -31,6 +31,9 @@
 - evidencias_e_tentativas:
 - diff_e_testes:
 - escaladas_automaticas: 0
+- papel_autorizado: <opcional; papéis fora do nível escolhidos pelo usuário, separados por vírgula>
+- revisao_autorizada: <opcional; autorização explícita do usuário para nova revisão>
+- brief_grande_autorizado: <opcional; escolha do usuário de não dividir tarefa com mais de 8 arquivos>
 - status: planejando
 - sessao_delegada:
 - inicio_e_timeout:

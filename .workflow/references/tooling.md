@@ -9,9 +9,22 @@ Graphify é principal. CBM é fallback nas três CLIs, com auto_index=false e
  auto_watch=false. Antes do primeiro fallback da sessão, ou após mudar fontes,
 executar index_repository explicitamente. Não sincronizar os bancos entre si.
 No GPT Tutor, seguir também `.mex/patterns/codegraph-fallback.md`.
-Antes de usar Graphify MCP em outro projeto, conferir se o graph.json configurado
-pertence ao projeto atual; se não, usar a CLI local. Não consultar o grafo do GPT
-Tutor como se representasse outro repositório.
+Graphify roda pela CLI local nas três (graphify query/explain/path no projeto atual);
+o MCP saiu porque servia um graph.json fixo do GPT Tutor em qualquer projeto.
+
+## MCPs por CLI (paridade medida em 30/09/2026)
+
+Iguais nas três: context7, claude-mem (mcp-search) e codebase-memory-mcp (fallback).
+GitHub e Graphify pelas CLIs gh e graphify. Uso real medido (tool_use) antes de remover:
+github 1/0/0 chamadas (Claude/Codex/AGY) contra gh 491/252; graphify MCP 2/0/~1 contra
+CLI 18/82; chrome-devtools 0/0/0; perssua 0/0/0. Removidos: github (as três),
+graphify e chrome-devtools-mcp (Claude, AGY), perssua (Claude; segue desligado no
+Codex e no AGY). O chrome-devtools continua via plugin ECC no Claude e no Codex.
+Codex mantém as ferramentas do app (cua_repl, node_repl, codex_app).
+Readicionar: claude mcp add perssua -s user -e PERSSUA_MCP_SOURCE=... -- cmd.exe /d /s
+/c npx -y @perssua/mcp; graphify MCP com graph.json do projeto como argumento.
+Backups: ~/.claude.json, ~/.codex/config.toml e ~/.gemini/config/mcp_config.json com
+sufixo .bak-paridade-20260930-011932 (e .bak-github-mcp-20260930-004949).
 
 RTK 0.49.0 está em `C:/Users/Humberto/.local/bin/rtk.exe`. Uso aprovado inicialmente:
 `rtk pytest <argumentos>` para leitura humana da saída. Se o pytest do projeto não
@@ -30,7 +43,7 @@ Fora dele, usar subagente nativo quando disponível. Se a CLI não expuser
 o papel, executar a etapa inline seguindo a definição em
 `C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/agents/`
 (tdd-guide.md ou python-reviewer.md), preservando Gates 1/2. Nunca inventar
-uma chamada de subagente. Ausência do papel ECC não é gatilho para escalar a Astra.
+uma chamada de subagente. Ausência do papel ECC não é gatilho para escalar ao revisor.
 
 ## Alethe como Orquestração principal
 

@@ -10,7 +10,7 @@ Núcleo e permissões: ../workflow.md. Uma tarefa mantém um coordenador.
 | Pergunta/status ou ajuste documental/local pequeno | Agente ativo, resposta/verificação local |
 | Implementação pequena e bem delimitada | Claude Code pelo nível em routing.md, teste e diff |
 | Mudança complexa, múltiplos componentes, arquitetura ou aceite ambíguo | Codex planeja/orquestra; plano e aceites delimitados; Claude Code implementa pelo nível investigado |
-| Código relevante pronto para revisão | Astra em sessão independente, read-only, uma tentativa registrada |
+| Código relevante pronto para revisão | Revisor em sessão independente, read-only, uma tentativa registrada |
 | Auditoria, pesquisa/corpus ou redação de achados | AGY, fontes verificáveis e relatório; arquivos de saída explicitamente permitidos |
 
 Classificação, matriz e perfis: routing.md é a fonte canônica; investigador decide e coordenador registra.

@@ -8,7 +8,7 @@ Fonte única das instruções do projeto para Codex, Claude Code e AGY.
 - Localizar a fonte de um domínio (motor, PDF, saída, decisões, contratos): `.mex/ROUTER.md`.
 - Issue, PR, release, UI, observabilidade e qualidade: `.mex/patterns/engenharia-produto.md`.
 - Delegar, retomar tarefa, Gates, revisão ou quota: `.workflow/README.md`; estado em `.workflow/local/active-task.md`.
-- Campanhas: bloco `fila-campanhas` de `docs/reports/pendencias.md`; política em `.workflow/references/campaigns.md`.
+- Campanhas: registro `.workflow/campanhas.json`, alterado só por `agent-workflow-lab/bin/campanhas.py` (`estado`, `tarefa`) ou pela Todo List do Alethe; política em `.workflow/references/campaigns.md`.
 - Estrutura e callers: Graphify explain/path; fallback em `.mex/patterns/codegraph-fallback.md`.
 - Sessão na nuvem, ou sem Graphify, tutores locais e laboratório: `.mex/context/sessao-nuvem.md` antes de agir.
 
@@ -19,7 +19,7 @@ Fonte única das instruções do projeto para Codex, Claude Code e AGY.
 - Gemini: google-genai, imports lazy; nunca o SDK legado google-generativeai nem a classe GenerativeModel (padrões em scripts/hooks/gemini-antipattern-guard.js).
 - code_curation.json gerado é cache: podar obsoletos antes de ler, escrever atomicamente.
 - Fixtures reproduzem contrato real com proveniência: [convenções](.mex/context/conventions.md) e [contratos](.mex/context/institutional.md). Ler antes de código/testes.
-- Estado vivo apenas em docs/reports/pendencias.md; resultado concluído sai da fila viva e entra em Concluído. Atualizar só o escopo da tarefa.
+- Estado vivo apenas em `.workflow/campanhas.json`; `docs/reports/pendencias.md` guarda histórico e medições, não é mais fila. Atualizar só o escopo da tarefa.
 - Plano/spec/report concluídos com todos os aceites verdes vão para Feitos/ do próprio diretório; git mv quando trackeados. Não arquivar trabalho incompleto.
 - MEX guarda intenção/convenções/contratos; Graphify estrutura. Sem duplicar estado no mapa/contexto.
 - Ao mudar código, atualizar o grafo; ao mudar arquitetura/pipeline/atribuição, atualizar docs/Overview-Sistema.html.

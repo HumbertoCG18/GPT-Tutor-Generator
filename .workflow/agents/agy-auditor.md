@@ -14,4 +14,4 @@ Para cada achado: gravidade, arquivo:linha, condição, evidência/reprodução 
 Indicar verificações executadas, lacunas e hipóteses; ausência de achados não prova cobertura total.
 Encerrar ao responder às perguntas. Quota/ferramenta indisponível: devolver limitação, sem fallback.
 Pesquisa de biblioteca/API usa agy-researcher.md; redação documental usa agy-doc-updater.md.
-Auditoria não substitui a única revisão Astra exigida para código relevante.
+Auditoria não substitui a única revisão do revisor exigida para código relevante.

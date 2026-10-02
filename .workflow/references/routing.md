@@ -5,7 +5,7 @@ Aplicar sem exigir pedido explícito de delegação. Ler uma vez por tarefa; esc
 - Pergunta/status/documentação pequena: agente ativo.
 - Código: Claude Code executa conforme nível investigado abaixo.
 - Arquitetura, múltiplos componentes ou aceite ambíguo: Codex planeja/orquestra; Claude Code implementa.
-- Código relevante pronto: revisão Astra independente, uma tentativa conforme review.md.
+- Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md.
 - Auditoria/corpus/pesquisa/achados: AGY, fontes e arquivos de saída delimitados.
 
 ## Investigador e níveis (aprovado em 21/09/2026)
@@ -22,9 +22,13 @@ nível sustentado pelos critérios, não soma nem número de tokens/arquivos.
 | Nível | Critério | Executor Claude | Planejador Codex se necessário | Auditor AGY padrão se necessário |
 |---|---|---|---|---|
 | T0 | Determinístico: consulta, contagem, check mecânico | ferramenta, sem nova chamada | agente ativo | sem nova chamada |
-| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5 / medium | gpt-5.6-terra / medium | gemini-3.8-flash-low |
-| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5 / high | gpt-5.6-sol / high | gemini-3.8-flash-medium |
+| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5-5 / medium | gpt-6-luna / medium | gemini-3.8-flash-low |
+| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5-5 / high | gpt-6.1-sol / high | gemini-3.8-flash-medium |
 | T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-fable-5-1 / high | gpt-6-astra / high | gemini-3.8-flash-high |
+
+Modelos em uso (conferidos em 30/09/2026): Claude Code prioriza claude-sonnet-5-5 e
+claude-opus-5-5, mais claude-fable-5-1; Codex usa gpt-6.1-sol, gpt-6-astra, gpt-6-sol e
+gpt-6-luna. Linhas anteriores (claude-*-5, gpt-5.6-*) saem da seleção.
 
 Incerteza não investigada não vira T1: manter classificação provisória e investigar
 antes de executar. Para investigação delegada, a triagem propõe nível provisório e o
@@ -39,10 +43,18 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 - claude-opus-4-6-thinking: candidato T3 de código, variante Thinking.
 - Investigador pode escolher esses perfis aprovados com justificativa; superioridade
   ainda não medida. Não chamar vários para a mesma auditoria sem avaliação delimitada
-  e autorizada. Não substituem a revisão Astra.
+  e autorizada. Não substituem a revisão do revisor.
 - Gemini: escolher ID da variante, sem inventar variantes. Sonnet/Opus Thinking no AGY:
   esforço individual não anunciado; omitir --effort e registrar não informado. Não
   transferir parâmetros ou supor mesma assinatura/quota do Claude Code.
+- Modelos do AGY (agy models, 30/09/2026): gemini-3.8/3.7/3.6-flash-{low,medium,high},
+  gemini-3.1-pro-{low,high}, claude-sonnet-4-6 (Thinking), claude-opus-4-6-thinking e
+  gpt-oss-120b-medium.
+- Pendente para o worker AGY no Alethe: o CLI aceita --effort low|medium|high|max, mas
+  nem todo modelo muda de esforço. Gemini Flash tem low/medium/high; Gemini 3.1 Pro só
+  low/high; Sonnet 4.6, Opus 4.6 (Thinking) e GPT-OSS 120B (Medium) têm esforço fixo.
+  O papel/worker AGY só deve oferecer os esforços de cada modelo e não repassar
+  --effort aos fixos; medir antes se o CLI recusa ou ignora --effort nesses casos.
 
 ## Campanhas e limites
 
@@ -52,7 +64,7 @@ separadamente; classe não fixa modelo para todas. Janela noturna é eixo indepe
 exige preflight, dependências cumpridas e opt-in; tarefa bloqueada não executa.
 
 Matriz governa próximas chamadas autorizadas, não troca sessão/default global silenciosamente.
-Código relevante mantém uma revisão Astra read-only: medium T1/T2, high T3; correção pelo
+Código relevante mantém uma revisão read-only do revisor: medium T1/T2, high T3; correção pelo
 executor selecionado. Não abrir chamada só para preencher coluna. Haiku/Luna ficam fora
 da seleção automática até avaliação; xhigh/max exigem justificativa/aprovação específica;
 ultra/ultracode não habilitados (orquestração adicional). Ausência/permissão/quota: parar.
