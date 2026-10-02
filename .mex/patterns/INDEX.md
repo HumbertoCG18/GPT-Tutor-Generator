@@ -1,6 +1,6 @@
 # Pattern Index
 
-last_updated: 2026-09-17
+last_updated: 2026-10-01
 
 Lookup table for all pattern files in this directory. Check here before starting any task — if a pattern exists, follow it.
 
@@ -18,6 +18,7 @@ Lookup table for all pattern files in this directory. Check here before starting
 | [add-ui-feature.md](add-ui-feature.md) | Adding dialogs, tabs, dashboard widgets, or new entry controls to the Tkinter UI |
 | [debug-build-failure.md](debug-build-failure.md) | Diagnosing failures during repository builds — manifest errors, conversion errors, stalls |
 | [delegar-codex-agy.md](delegar-codex-agy.md) | Claude chama Codex (revisor) e agy (leitor) em modo headless; receitas e gotchas medidos |
+| [validacao-externa-pelo-alethe.md](validacao-externa-pelo-alethe.md) | Pacote de validação externa pronto: até 2 rodadas pelo worker validador-externo do Alethe antes da rodada final no app |
 | [atualizar-claude-mem-e-codex.md](atualizar-claude-mem-e-codex.md) | Atualizar claude-mem ou Codex a mao sem erro de porta do worker; limpar releases antigas do Codex |
 | [debug-graphify-mcp.md](debug-graphify-mcp.md) | Diagnosing Graphify MCP startup, stdio, and initialize handshake failures; Alethe rewriting `.codex/config.toml` |
 | [pdf-backend-integration.md#task-add-a-new-backend](pdf-backend-integration.md#task-add-a-new-backend) | Adding a new PDF conversion backend |
