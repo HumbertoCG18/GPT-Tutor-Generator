@@ -90,12 +90,13 @@
           "eixo": "subunidade",
           "titulo": "Proposta P1: termos pouco discriminantes (frases compartilhadas)",
           "nivel": "T2",
-          "estado": "em execução",
-          "depende_de": [
-            "MOTOR-00"
-          ],
-          "nota": "worktree p1 tem implementação de 02/10; o tracker de 01/10 dizia implementação não autorizada: confirmar",
-          "origem": "CRU-02, CRU-05"
+          "estado": "bloqueada",
+          "depende_de": [],
+          "nota": "02/10: avaliação congelada §5 v2 e rodada noturna Alethe autorizadas explicitamente pelo usuário; sem integração/commit, nova revisão ou ajustes. MOTOR-00 continua pronta: versionamento obrigatório antes de limpeza da worktree; não é precondição técnica da avaliação com referência selada e preservada. Removida dependência administrativa dessa fase; referência não será limpa.",
+          "origem": "CRU-02, CRU-05",
+          "janela": "noite",
+          "evidencia": "P1/docs/reports/2026-10-02-p1-avaliacao/plano-integracao-acentos-p1.md; relatorio-avaliacao-final.md; tentativa2/verificacao-coordenador.json",
+          "resultado": "A+P1 escolhido explicitamente pelo usuário em 02/10: 87/251 primária,+1/0 contra base,bloco/unidade invariantes;suíte comparável2469pass/4skip/1falha antiga,0nova. Plano preparado com ativação nas duas passadas,reversão conjunta,referências86/87 distintas. Gate de integração/ativação não concedido;commit não autorizado;referência vigente86 preservada."
         },
         {
           "id": "MOTOR-02",
@@ -414,13 +415,7 @@
       "prioridade": 8,
       "janela": "assistida",
       "depende_de": [],
-      "worktrees": [
-        "GPT-Tutor-Generator-campaign-43",
-        "GPT-Tutor-Generator-memory-replay-45",
-        "auditoria-enxame-codex-skill",
-        "GPT-Tutor-Generator-codexhooks",
-        "GPT-Tutor-Generator-validacao"
-      ],
+      "worktrees": [],
       "atualizado_em": "2026-10-02",
       "tarefas": [
         {
@@ -434,30 +429,34 @@
           "id": "WORKFLOW-02",
           "titulo": "Branch do WF-43 (17 commits): conferir contra o laboratório e arquivar",
           "nivel": "T1",
-          "estado": "pronta",
+          "estado": "concluída",
           "depende_de": [
             "WORKFLOW-01"
-          ]
+          ],
+          "resultado": "auditoria 02/10: nada a trazer, as versões antigas regrediriam a dev; worktree removida, branch mantida"
         },
         {
           "id": "WORKFLOW-03",
           "titulo": "MEM-45: Gate 2 (18 commits)",
           "nivel": "T1",
-          "estado": "bloqueada",
-          "motivo": "Gate 2 desde 21/09"
+          "estado": "concluída",
+          "motivo": "Gate 2 desde 21/09",
+          "resultado": "piloto de replay levado ao laboratório (f1c842d); demais commits descartados; worktree removida, branch mantida"
         },
         {
           "id": "WORKFLOW-04",
           "titulo": "Skill enxame: levar os 3 commits da skill para a dev (ou o laboratório) e arquivar a worktree",
           "nivel": "T1",
-          "estado": "pronta",
-          "nota": "os outros 4 commits já foram superados no tronco"
+          "estado": "concluída",
+          "nota": "os outros 4 commits já foram superados no tronco",
+          "evidencia": "agent-workflow-lab f1c842d (skills/auditoria-enxame, guardada sem distribuição)"
         },
         {
           "id": "WORKFLOW-05",
           "titulo": "PRs #86 e #88: merge seu",
           "nivel": "T0",
-          "estado": "pronta"
+          "estado": "concluída",
+          "evidencia": "PR #91 integrado na dev; #86 e #88 fechados"
         },
         {
           "id": "WORKFLOW-06",
@@ -479,17 +478,15 @@
       "prioridade": 9,
       "janela": "assistida",
       "depende_de": [],
-      "worktrees": [
-        "GPT-Tutor-Generator-night-42",
-        "GPT-Tutor-Generator-noite-20260930"
-      ],
-      "atualizado_em": "2026-10-01",
+      "worktrees": [],
+      "atualizado_em": "2026-10-02",
       "tarefas": [
         {
           "id": "NOITE-01",
           "titulo": "Versionar os relatórios da noite de 30/09 e conferir o .workflow alterado na worktree",
           "nivel": "T1",
-          "estado": "pronta"
+          "estado": "concluída",
+          "evidencia": "dev d4346c89 (5 relatórios de 30/09); .workflow da worktree superado pelo laboratório (dev 3799c7a5)"
         },
         {
           "id": "NOITE-02",
@@ -584,11 +581,7 @@
       "prioridade": 12,
       "janela": "assistida",
       "depende_de": [],
-      "worktrees": [
-        "workflow-claude-code",
-        "GPT-Tutor-Generator-issue-14",
-        "GPT-Tutor-Generator-seguranca"
-      ],
+      "worktrees": [],
       "atualizado_em": "2026-10-02",
       "tarefas": [
         {
