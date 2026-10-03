@@ -10,12 +10,22 @@ targetRules = ["sourcegraph-access-token"]
 regexTarget = "secret"
 regexes = ['''^[0-9a-f]{40}$''']
 
-# Manifestos do harness listam o sha256 de arquivos "resumo*.json"; "resumo" contem "sumo" e casa a regra
-# do Sumo Logic. O projeto nao usa Sumo Logic; so esse formato exato (chave .json + 64 hex), no harness, e ignorado.
+# Manifestos do harness listam o sha256 de arquivos "resumo*.json" e "resumo*.md"; "resumo" contem "sumo" e casa a regra
+# do Sumo Logic. O projeto nao usa Sumo Logic; so esse formato exato (chave .json/.md + 64 hex), no harness, e ignorado.
 [[allowlists]]
-description = "sha256 de arquivo resumo*.json em manifesto do harness"
+description = "sha256 de arquivo resumo*.json/.md em manifesto do harness"
 targetRules = ["sumologic-access-token"]
 condition = "AND"
 regexTarget = "match"
-regexes = ['''resumo[\w.-]*\.json"\s*:\s*"[0-9a-f]{64}''']
+regexes = ['''resumo[\w.-]*\.(json|md)"\s*:\s*"[0-9a-f]{64}''']
+paths = ['''^docs/reports/_harness-2026-09-04/''']
+
+# Manifestos do harness mapeiam nome de arquivo -> sha256; nomes com "key" (ex.: "..._keys_poster.jpg") casam a
+# regra generic-api-key. So esse formato exato (chave com extensao + 64 hex), no harness, e ignorado.
+[[allowlists]]
+description = "sha256 de arquivo em manifesto do harness"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+regexes = ['''\.\w+"\s*:\s*"[0-9a-f]{64}''']
 paths = ['''^docs/reports/_harness-2026-09-04/''']
