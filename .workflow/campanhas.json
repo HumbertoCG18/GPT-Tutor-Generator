@@ -22,7 +22,7 @@
         "GPT-Tutor-Generator"
       ],
       "handoff": "GPT-Tutor-Generator-moodle-v1/docs/reports/2026-10-01-correcao-moodle-v1/relatorio.md",
-      "atualizado_em": "2026-10-01",
+      "atualizado_em": "2026-10-03",
       "tarefas": [
         {
           "id": "MOODLE-V1-01",
@@ -75,7 +75,7 @@
         "GPT-Tutor-Generator-cru05"
       ],
       "handoff": "docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md",
-      "atualizado_em": "2026-10-02",
+      "atualizado_em": "2026-10-03",
       "tarefas": [
         {
           "id": "MOTOR-00",
@@ -416,14 +416,15 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-10-02",
+      "atualizado_em": "2026-10-03",
       "tarefas": [
         {
           "id": "WORKFLOW-01",
           "titulo": "Registro de campanhas, seletor e hook do /clear (este desenho)",
           "nivel": "T2",
-          "estado": "em execução",
-          "origem": "WF-43"
+          "estado": "concluída",
+          "origem": "WF-43",
+          "evidencia": "agent-workflow-lab 4f6d760, 1e189a0, 9110d86, d57d790 (registro, seletor --json, criação de tarefa) e hooks/campanhas-sessao.py"
         },
         {
           "id": "WORKFLOW-02",
@@ -462,13 +463,17 @@
           "id": "WORKFLOW-06",
           "titulo": "WF-44: hooks no Codex, Codex Companion no verify.py, aceite de conversa nova",
           "nivel": "T2",
-          "estado": "proposta"
+          "estado": "concluída",
+          "evidencia": "transferida para o registro do laboratório: ROTEAMENTO-01 a 04",
+          "resultado": "transferida; o workflow mora no agent-workflow-lab"
         },
         {
           "id": "WORKFLOW-07",
           "titulo": "TS-46: skill TypeSafe",
           "nivel": "T1",
-          "estado": "proposta"
+          "estado": "concluída",
+          "evidencia": "transferida para o registro do laboratório: TYPESAFE-01",
+          "resultado": "transferida; o workflow mora no agent-workflow-lab"
         }
       ]
     },
