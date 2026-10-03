@@ -492,9 +492,10 @@
           "id": "NOITE-02",
           "titulo": "Decidir o fim da trilha NIGHT-42 (sandbox), já que a noite pelo Alethe funcionou em 30/09 e 01/10",
           "nivel": "T1",
-          "estado": "pronta",
+          "estado": "concluída",
           "nota": "decisão sua",
-          "origem": "NIGHT-42-01..06"
+          "origem": "NIGHT-42-01..06",
+          "resultado": "Opção A (decisão do usuário 02/10): trilha NIGHT-42 na sandbox encerrada, substituída pela noite no Alethe; branch feat/42-night-goals guardada; partes úteis viraram propostas (REPLAY-NOTURNO e AGENDADOR do Alethe)"
         },
         {
           "id": "NOITE-03",
@@ -545,6 +546,14 @@
             "NOITE-03"
           ],
           "origem": "CRU-01"
+        },
+        {
+          "id": "REPLAY-NOTURNO-01",
+          "titulo": "Checagem prévia de corpus e base antes de um replay noturno (herdada da NIGHT-42-03)",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "DECISION"
         }
       ]
     },
