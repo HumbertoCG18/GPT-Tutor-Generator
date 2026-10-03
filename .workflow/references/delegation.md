@@ -35,6 +35,11 @@ Dimensionar cada tarefa para o teto: o Alethe informa o orçamento no início do
   referencia campanha/tarefa; tasks contém o brief acima. Uma chamada gera uma Run.
   Registrar os IDs retornados plannerId/runId/jobId/threadId no estado existente,
   sem substituir task_id nem escrever diretamente no armazenamento do Alethe.
+- Projeto com `.workflow/campanhas.json`: toda delegação, revisão e validação pertence a
+  uma tarefa aberta do registro. Fluxo: escolher a tarefa; `tarefa: <ID>` em active-task.md
+  e `status: executando` (o hook põe `em execução`); delegar com `task: <ID>`; revisar;
+  Gate 2 do usuário; `concluída`. Sem tarefa, o delegate-gate bloqueia e dá o comando
+  `campanhas.py tarefa` (references/campaigns.md).
 - alethe_delegate inicia execução; não usá-lo para cadastrar rascunhos. Conferir
   agent, cwd, isolamento, permissões e timeoutSeconds (máximo 600 neste contrato;
   exceção aprovada em 01/10: o papel validador-externo usa 1800).

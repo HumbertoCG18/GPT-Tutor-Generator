@@ -1,7 +1,8 @@
 # Estado da tarefa — copiar para .workflow/local/active-task.md
 
 - task_id: <ID estável>
-- campanha_task_e_goal: <IDs do bloco fila-campanhas do tracker | nenhuma>
+- campanha: <ID do registro .workflow/campanhas.json | nenhuma>
+- tarefa: <ID da tarefa no registro | nenhuma>
 - reserva_e_janela: <nenhuma | reservada: assistida/noturna; reservar não lança>
 - estimativa_nao_medida_e_duracao_medida:
 - evidencia_de_aceite:

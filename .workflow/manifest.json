@@ -9,17 +9,18 @@
   "evals/research-output.schema.json": "379a6db0ce2bfa97179127690fb1e2d4b4968d493643d8885b3282a1e12f6480",
   "HANDOFF.md": "6ce960bdbab1a77c7d217795603977a7db4973ea963b52dce6c749aece59b7c6",
   "README.md": "f79432da71bb5cb9c034027122b5e24615ff8d36705c7f209e99df3085037806",
+  "references/campaigns.md": "670571e28e07fcf735880abf6adf8ac2c10988983cac3a582392ea7e07b4d421",
   "references/capabilities.md": "df94f71923f631619268e422541b973b3864b55c78689fd673a739f029c6906f",
-  "references/campaigns.md": "8baaa39cc78adb176c987a17a9938aefe6d3b20f1c885ccdedfbb6ee3a7957d5",
-  "references/delegation.md": "eab75750af338b0efb06b963d218408331a179a80b17617ee7b121fa65d3b4fe",
+  "references/delegation.md": "8346caab404a7251e4ae60267bc5010b46f3e38c3f3f77303d6f2327d3f6ddd4",
   "references/delivery.md": "5839c8628493aba8927c8de340b12d32c1ebf0d15fee606e95c6ca26bd48b75e",
+  "references/noite.md": "ba4177712e9ed755c9c0299d9182a9b74dab23b675a48368a99c4082f2fda6b4",
   "references/parallel.md": "830a18c4427954a1e542c9b1c5e9755b4839151c914ef817dea8af1c471f82c4",
   "references/resume.md": "819799424a735be0235a9f361ac129ed4772b0506a488f1170f9c030f3a0eb70",
-  "references/review.md": "9eabb1e035ad9c3c87d4b6ee52c8a4d5dec78263330e495f9fc8df61a4dac079",
+  "references/review.md": "d7a2ede81e95c39642e575481386abeb2be2c41f70b4c56550424865fcbec2c9",
   "references/routing-details.md": "54d602f3b1a7e42e2d389aee582dc80153d3153560497df8c325d67525916c09",
   "references/routing.md": "bb25d8ec467479d7072ff3a08fdd8dae74dd1630880ffdc660d27af366eefca2",
   "references/services.md": "ef308ed758f539ff7515b49546f153a4bf278fad56de6713bf0ac7fb6e11b086",
   "references/tooling.md": "e0a3345e6baeb9ff6186ee87b5aca448fd72e3d19bf6a2f94fcfe4ebb4ba24f3",
-  "task-state.template.md": "326f52a6ef29422de54b13a8a14f42600011c6a7b8ef8db741858c55212ae4b9",
-  "workflow.md": "b22de6948035fe31fa83dcae5a35a11dcc05201647517fd2ea1c3b14b815e17d"
+  "task-state.template.md": "85a794881c54028c3392c78ef8d1144b29ee4ea056ec08784b77f8992073279d",
+  "workflow.md": "d3bab8338cebaa23cb25a6b4e9ad9795313522dddadc04a0d6387a7e127c6fac"
 }

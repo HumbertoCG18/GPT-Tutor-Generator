@@ -32,6 +32,7 @@ Ler a referência da ação antes de executá-la; não carregar a tabela inteira
 | Rodar trabalhadores simultâneos | [Enxame experimental](references/parallel.md) |
 | Usar Context7 ou saída estruturada AGY | [Context7 e segredos](references/services.md) |
 | Consultar, selecionar, reservar ou atualizar campanhas | [Fila de campanhas](references/campaigns.md) |
+| Coordenar trabalho noturno | [Agente noturno](references/noite.md) |
 
 ## Estado da automação
 
