@@ -1,0 +1,1954 @@
+{
+ "worktree": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05",
+ "normalize_carregado": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05\\src\\builder\\text\\normalize.py",
+ "src_fora_da_worktree": [],
+ "captura_congelada": {
+  "arquivo": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\wz2_captura_base_23-09.json",
+  "sha256_base": "f941ac331a5e676dc897135ce42d0c537ff5470730074ca1863d9f71416037ef"
+ },
+ "referencia": "captura congelada W-Z2 (f941ac33)",
+ "mudancas_por_id": [
+  {
+   "curso": "CG",
+   "eid": "exercicios-sobre-curvas-html",
+   "congelada": {
+    "bloco": "",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": ""
+   },
+   "execucao": {
+    "bloco": "",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "hermite"
+   }
+  }
+ ],
+ "sha256_mudancas_pre_gold": "829325a97f190b1aac0e33aac48b0a5e45a99e603415f7dd30191e4a8f7ec66b",
+ "mudancas_contra_captura_congelada": 1,
+ "decisoes": {
+  "MF": {
+   "exemplos": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-03-verificacao-de-modelos",
+    "sub": "maquinas-de-estado"
+   },
+   "exercicioslogicatemporal": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-03-verificacao-de-modelos",
+    "sub": "modelos-de-kripke"
+   },
+   "exerciciosnusmv": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-03-verificacao-de-modelos",
+    "sub": ""
+   },
+   "verificacaomodelos": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-03-verificacao-de-modelos",
+    "sub": "verificacao-de-modelos-model-checking"
+   },
+   "conjuntosindutivos": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-conjuntos-indutivos"
+   },
+   "exerciciosconjuntosindutivos": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-conjuntos-indutivos"
+   },
+   "exerciciosformalizacaoalgoritmosrecursao": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosformalizacaoalgoritmosrecursao2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosformalizacaoalgoritmosrecursao3": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosformalizacaoalgoritmosrecursao3-respostas": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosformalizacaoalgoritmosrecursao-respostas": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "formalizacaoalgoritmos-recursao": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "formalizacaoalgoritmos-recursao2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "formalizacaoalgoritmos-recursao3": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "revisao-p1": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "revisao-p1-gabarito": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "introducao": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "rigoroussoftwaredevelopment-chapters-1-2": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "plano": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "arvores": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "exemplos-thy": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "exemplos-de-aplicacoes"
+   },
+   "exercicioscorrecaoinducaomatematica": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosisabelle": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "provadores-de-teoremas"
+   },
+   "exerciciosisabelle2": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "intro": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "listas": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "mcs": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "provas": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "provasindutivas-especificacoesrecursivas": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "provasindutivas-especificacoesrecursivas-arvores": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "provasindutivas-especificacoesrecursivas-listas": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "exerciciosespecificacao": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "linguagens-de-especificacao-e-logicas"
+   },
+   "exerciciosespecificacao-respostas": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "linguagens-de-especificacao-e-logicas"
+   },
+   "logicapredicados-semantica": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "logicapredicados-sintaxe": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "fundamentos-de-logica-de-primeira-ordem"
+   },
+   "logicaproposicional-semantica": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "logicaproposicional-sintaxe": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "revisao": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": ""
+   },
+   "t1-2026-1": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "especificacao-de-funcoes-recursivas"
+   },
+   "t1-2026-1-thy": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "t2-2026-1": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "classes-parte1": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "classes-parte2": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "colecoes-arrays": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "colecoes-conjuntos": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "colecoes-sequences": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "correcaoterminacao": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "correcao-parcial-e-total"
+   },
+   "exercicios-arrays": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "sistema-de-prova"
+   },
+   "exercicios-conjuntos": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "exercicioscorrecaoterminacao": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "exerciciosdafny1": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "correcao-parcial-e-total"
+   },
+   "exerciciosdafny2": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "pre-e-pos-condicoes"
+   },
+   "exerciciosdafny3": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "exerciciosdafny4": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "correcao-parcial-e-total"
+   },
+   "exerciciosdafny5": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "correcao-parcial-e-total"
+   },
+   "exerciciosformalizacaoalgoritmosinvariantes": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "formalizacaoalgoritmos-invarianteslaco": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "hoare": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "correcao-parcial-e-total"
+   },
+   "ieeesoftwaredafny2017": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "logica-de-hoare"
+   },
+   "introducao-zip": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "invariantes": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "sistema-de-prova"
+   },
+   "logicadehoare": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "logica-de-hoare"
+   },
+   "logicadehoare1-exercicios-respostas": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "logica-de-hoare"
+   },
+   "logicadehoare2": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "invariante-e-variante-de-laco"
+   },
+   "logicadehoare-exercicios-respostas": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": "logica-de-hoare"
+   },
+   "terminacao": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "tiposindutivos": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-02-verificacao-de-programas",
+    "sub": ""
+   },
+   "eth2": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "aws-encryption-sdk": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   },
+   "archive-of-formal-proofs-355fb8": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-metodos-formais",
+    "sub": "abordagens-para-verificacao-formal"
+   }
+  },
+  "SO": {
+   "2306-laminas-gerencia-de-arquivos": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-gerencia-de-arquivos",
+    "sub": "arquivos"
+   },
+   "2306-laminas-laminas-armazenamento-em-massa": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-gerencia-de-arquivos",
+    "sub": "arquivos"
+   },
+   "0206-laminas-gerencia-de-i-o-livro-texto": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": ""
+   },
+   "0206-laminas-mecanismos-de-interrupcao": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": ""
+   },
+   "0205-laminas-segmentacao": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": "segmentacao"
+   },
+   "0206-laminas-memoria-virtual-livro-texto": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": "memoria-virtual"
+   },
+   "1205-laminas-gerencia-de-memoria": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": "swapping"
+   },
+   "2105-laminas-paginacao": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-05-gerencia-de-memoria",
+    "sub": "paginacao"
+   },
+   "2403-escalonamento-de-processos": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "escalonamento"
+   },
+   "2603-algoritmos-de-escalonamento": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "algoritmos-de-escalonamento"
+   },
+   "exercicios": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": ""
+   },
+   "apresentacao-da-disciplina": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": ""
+   },
+   "exercicios-p2": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-gerencia-de-arquivos",
+    "sub": "arquivos"
+   },
+   "lista-exercicios-p1-gabarito": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "programas-multithreads"
+   },
+   "lista-exercicios-p1": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": ""
+   },
+   "lista-exercicios-p2": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-gerencia-de-arquivos",
+    "sub": "arquivos"
+   },
+   "lista1-gab": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "lista2": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "plano-de-ensino": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": ""
+   },
+   "programa": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": ""
+   },
+   "questoes-do-enade-sobre-sisop": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": ""
+   },
+   "definicao-e-historico": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "servicos-dos-sistemas-operacionais"
+   },
+   "1203-processos": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "1703-chamada-de-sistema": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "1903-estruturas-de-controle": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "escalonamento"
+   },
+   "exemplo-criacao-de-processos-no-unix-linux-filho": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": ""
+   },
+   "exemplo-criacao-de-processos-no-unix-linux-teste01": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "exemplo-criacao-de-processos-no-unix-linux-teste02": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "exemplo-criacao-de-processos-no-unix-linux-teste03": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+    "sub": "chamadas-de-sistema"
+   },
+   "0704-laminas-comunicacao-e-sincronizacao": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "0904-laminas-semaforos": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "14-04-troca-de-mensagens": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "1404-laminas-ipc": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "1404-troca-de-mensagens": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "laminas-cs-4244-internet-programming-sockets-programming": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-03-programacao-concorrente",
+    "sub": "comunicacao-e-sincronizacao-de-processos"
+   },
+   "laminas-sockets-material-alternativo-em-pt": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "escalonamento"
+   },
+   "0704-exemplo-threads-em-java": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "conceitos-basicos"
+   },
+   "3103-threads": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "escalonamento"
+   },
+   "biblioteca-em-c-pthread": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": "escalonamento"
+   },
+   "exemplo-threads-em-c-exemplo1": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": ""
+   },
+   "exemplo-threads-em-c-exemplo2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": ""
+   },
+   "exemplo-threads-em-c-exemplo3": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-gerencia-do-processador",
+    "sub": ""
+   }
+  },
+  "IA": {
+   "future-of-jobs-report-2025": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "visao-geral-introducao-e-historico": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "algoritmo-genetico": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "problemas-de-otimizacao"
+   },
+   "cap-sobre-algoritmos-geneticos-lacerda-e-outros": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "introducao-a-busca-informada": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "busca-informada-heuristica"
+   },
+   "outros-operadores": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "programa-exemplo-ag": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "ag-feito-em-aula-pelo-luca": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "algoritmo-dijkstra": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "hill-climbing-e-simulated-annealing": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "problemas-de-otimizacao"
+   },
+   "programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "busca-informada-heuristica"
+   },
+   "implementacaominimax": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "busca-adversaria"
+   },
+   "lista-de-exercicios-i": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "lista1": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "minimax-teoria": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "minimax": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "respostas-da-lista-i-feito-pela-aluna-chiara": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "algoritmos-de-busca-com-informacao"
+   },
+   "introducao-a-agentes": {
+    "bloco": "bloco-17",
+    "unidade": "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento",
+    "sub": "planejamento-classico"
+   },
+   "caracteristicas-dos-dados": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "introducao-a-ml": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "algoritmo-de-classificacao-k-nn": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "analise-exploratoria-dos-dados-exemplo-2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "analise-exploratoria-de-dados-exemplo-1": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "artigo-usando-k-nn-em-texto": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-2-k-nn-com-iriscsv-mais-completo": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-com-k-nn": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-de-programa-com-k-nn-em-java": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exercicio-2-solucao-com-rede-perceptron-atualizado": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "introducao-a-redes-neurais": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "k-nn-para-classificacao-exemplo-cardio": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "k-nn-para-regressao-exemplo-imc": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-classificacao-planta-iris": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-classificacao-de-cliente": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-exemplo-atualizado": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-or-em-python": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-reconhecendo-letras": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "mlp-xoripynb": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "mlp-classificacao-iris-atualizado": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "mlp-regressao-cardio": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "mlp": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "rede-perceptron-e-equacao-de-reta": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "xor-backpropagation-em-python": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "como-analisar-resultados-acc-pr-re-e-f1": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-1-arvores-de-decisao-classificacao-planta-iris": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-2-arvores-de-decisao-regressao-diabetes": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "exemplo-complementar-classificacao-com-arvores-de-decisao": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "metricas-de-avaliacao"
+   },
+   "arvores-de-decisao": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "agrupamento-usando-k-means-exemplo-1-ipynb": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "agrupamento-usando-k-means-exemplo-2-ipynb": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "artigo-usando-agrupamento": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "aula-sobre-agrupamento-parte-1-particional": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "survey-on-clustering": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "agrupamento-hierarquico-exemplo-1": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "aula-sobre-agrupamento-parte-2-hierarquico": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "p2-202401": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "p2-202402": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "prova-1-2024-02": {
+    "bloco": "",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "prova-1-202402": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": "introducao-ao-aprendizado-de-maquina"
+   },
+   "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+    "sub": "problemas-de-otimizacao"
+   },
+   "ia-responsável-7c4626": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+    "sub": ""
+   }
+  },
+  "ES2": {
+   "devops": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "integracao-continua-ci"
+   },
+   "kubernetes": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "revisao-p1": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "revisao-p1-respostas": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "revisao-p2": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": ""
+   },
+   "revisao-p2-respostas": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": ""
+   },
+   "azure": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "microsservicos": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "microsservicos2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "microsservicos3": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "microsservicos4": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "microsservicos5": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "entrega-continua-cd"
+   },
+   "microsservicos6": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "gerenciamento-da-configuracao"
+   },
+   "microsservicos7": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "gerenciamento-da-configuracao"
+   },
+   "roteiro1": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": ""
+   },
+   "roteiro1-introducao": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "roteiro2": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": ""
+   },
+   "roteiro2-nameserver": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "roteiro3": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": ""
+   },
+   "roteiro3-gateway": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "cliente-servidor"
+   },
+   "roteiro4": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": ""
+   },
+   "roteiro4-circuitbreaker": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "roteiro5": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "roteiro5-conteiners": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "roteiro6": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "roteiro6-conteiners-composicao": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "gerenciamento-da-configuracao"
+   },
+   "roteiro7": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "roteiro7-filas": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "gerenciamento-da-configuracao"
+   },
+   "roteiro7-history-service": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "estudo-de-caso-integracao-e-implantacao-de-microsservicos"
+   },
+   "roteiro8-autenticacao-autorizacao": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "gerenciamento-da-configuracao"
+   },
+   "plano": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": ""
+   },
+   "revisaoarquiteturapadroes": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "estilos-e-padroes-arquiteturais"
+   },
+   "servicos": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "orientada-a-servicos"
+   },
+   "web": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-arquitetura-de-software",
+    "sub": "cliente-servidor"
+   },
+   "t1-2026-1": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+    "sub": "entrega-continua-cd"
+   }
+  },
+  "TCC": {
+   "plano-de-ensino": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": ""
+   },
+   "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": ""
+   },
+   "aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": "conjuntos-enumeraveis"
+   },
+   "aula-16-exemplo-de-prova-para-revisao": {
+    "bloco": "bloco-16",
+    "unidade": "unidade-03-problemas-indecidiveis",
+    "sub": "prova-da-indecidibilidade-do-problema-da-parada"
+   },
+   "aula-16-classes-de-problemas-e-complexidade": {
+    "bloco": "bloco-19",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "hierarquia-de-classes-de-complexidade-de-problemas"
+   },
+   "aula-17-complexidade-de-tempo-classes-p-e-np": {
+    "bloco": "bloco-19",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "complexidade-de-tempo-e-de-espaco"
+   },
+   "aula-17-np-completude": {
+    "bloco": "bloco-19",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "teorema-de-cook-levin"
+   },
+   "trabalho-t2-enunciado": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "reducao-polinomial-de-problemas"
+   },
+   "3d-matching": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "reducao-polinomial-de-problemas"
+   },
+   "3dm-caetano-gabriel-e-gustavo": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "reducao-polinomial-de-problemas"
+   },
+   "cubic-3-edge-coloring": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": ""
+   },
+   "integer-programming-0001": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "reducao-polinomial-de-problemas"
+   },
+   "programacao-inteira-01-20260617-154423-0000": {
+    "bloco": "bloco-25",
+    "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+    "sub": "reducao-polinomial-de-problemas"
+   },
+   "aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+   },
+   "aula-04-funcoes-computaveis-funcoes-recursivas-parciais": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+   },
+   "aula-05-minimizacao-de-funcoes-recursivas-parciais": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+   },
+   "t1-enunciado": {
+    "bloco": "",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais"
+   },
+   "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+    "sub": ""
+   },
+   "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-02-turing-computabilidade",
+    "sub": "maquinas-de-turing"
+   },
+   "aula-08-maquinas-de-turing-como-processadoras-de-funcoes": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-02-turing-computabilidade",
+    "sub": "maquinas-de-turing"
+   },
+   "aula-09-variacoes-de-maquinas-de-turing": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-02-turing-computabilidade",
+    "sub": "maquinas-de-turing"
+   },
+   "aula-10-linguagens-reconheciveis-e-linguagens-decidiveis": {
+    "bloco": "bloco-09",
+    "unidade": "unidade-02-turing-computabilidade",
+    "sub": "linguagens-reconheciveis-e-decidiveis"
+   },
+   "aula-11-o-problema-da-parada-halting-problem-halteproblem": {
+    "bloco": "bloco-10",
+    "unidade": "unidade-02-turing-computabilidade",
+    "sub": "conjectura-de-church-turing"
+   },
+   "aula-12-entscheidungsproblem": {
+    "bloco": "bloco-11",
+    "unidade": "unidade-03-problemas-indecidiveis",
+    "sub": "prova-da-indecidibilidade-do-problema-da-parada"
+   },
+   "aula-13-teorema-de-rice": {
+    "bloco": "bloco-12",
+    "unidade": "unidade-03-problemas-indecidiveis",
+    "sub": "prova-da-indecidibilidade-do-problema-da-parada"
+   },
+   "aula-14-problema-da-correspondencia-de-post": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-03-problemas-indecidiveis",
+    "sub": "prova-da-indecidibilidade-do-problema-da-parada"
+   },
+   "aula-15-teoremas-de-incompletude-de-godel": {
+    "bloco": "bloco-14",
+    "unidade": "unidade-03-problemas-indecidiveis",
+    "sub": "prova-da-indecidibilidade-do-problema-da-parada"
+   }
+  },
+  "CG": {
+   "intro": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "origensdacomputacaografica": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "segmentacao"
+   },
+   "pagina-com-videos-sobre-segmentacao-por-texturas-e03566": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "segmentacao"
+   },
+   "segmentacaopptx": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "segmentacao"
+   },
+   "segmentacaodetexturas": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "segmentacao"
+   },
+   "morfologiamatematicapptx": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "a-matematica-das-projecoes-planares"
+   },
+   "pagina-com-videos-sobre-morfologia-matematica-06265a": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "a-matematica-das-projecoes-planares"
+   },
+   "csg": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "geometria-solida-construtiva-csg"
+   },
+   "modelagem3d": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "representacao-aramada"
+   },
+   "paginas-com-videos-sobre-modelagem-geometrica-f2614a": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "geometria-solida-construtiva-csg"
+   },
+   "atividade": {
+    "bloco": "bloco-19",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": ""
+   },
+   "basico3d-py": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "pipeline-de-visualizacao-3d"
+   },
+   "opengl3d": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": ""
+   },
+   "opengl3dcpp-vdi": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "algoritmo-z-buffer"
+   },
+   "opengl3dcpp": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "algoritmo-z-buffer"
+   },
+   "pagina-com-videos-sobre-visualizacao-3d-35a833": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": ""
+   },
+   "vis3d": {
+    "bloco": "bloco-18",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": ""
+   },
+   "basico3d-cpp": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-poligonos"
+   },
+   "basico3d-py-zip": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "operacoes-com-vetores"
+   },
+   "exerciciodemodelagem": {
+    "bloco": "bloco-15",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "tecnicas-de-modelagem-3d"
+   },
+   "elemoculto": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "algoritmo-z-buffer"
+   },
+   "exemplozbuffer": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "algoritmo-z-buffer"
+   },
+   "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a": {
+    "bloco": "bloco-20",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "algoritmos-de-remocao-de-elementos-ocultos"
+   },
+   "iluminacao": {
+    "bloco": "bloco-21",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "modelos-de-reflexao-ambiente-difusa-especular"
+   },
+   "pagina-com-videos-sobre-sintese-de-imagens-realisticas-a6d9ea": {
+    "bloco": "bloco-21",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "mapeamento-de-textura"
+   },
+   "programabasico3d": {
+    "bloco": "bloco-21",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "modelos-de-reflexao-ambiente-difusa-especular"
+   },
+   "maptextures": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "mapeamento-de-textura"
+   },
+   "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "mapeamento-de-textura"
+   },
+   "exercicios": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": ""
+   },
+   "opengl-cpp": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "conceitos"
+   },
+   "opengl-py": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "conceitos"
+   },
+   "openglbasico": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "introducao-e-exemplos-de-aplicacoes"
+   },
+   "texturas-v3": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "conceitos"
+   },
+   "exemplodemanipulacaodeimagens": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "operacoes-com-vetores"
+   },
+   "exercicio-com-animacao": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-poligonos"
+   },
+   "exercicio-com-poligonos": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-poligonos"
+   },
+   "exercicio-de-animacao-foguete": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-poligonos"
+   },
+   "fundamentosmatematicos": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "operacoes-com-vetores"
+   },
+   "matematica": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": ""
+   },
+   "pagina-com-videos-sobre-fundamentos-matematicos-para-computacao-grafica-d1d4a9": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-poligonos"
+   },
+   "colisao": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-deteccao-e-calculo-de-interseccao"
+   },
+   "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84": {
+    "bloco": "bloco-04",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": ""
+   },
+   "domina": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "geomcomp": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "pagina-com-videos-sobre-geometria-computacional-ebca9a": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "planesweep": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "slab": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "animacao-v2": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "desenho-de-linhas"
+   },
+   "exercicios-teoricos-sobre-processo-de-visualizacao-2d": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "desenho-de-linhas"
+   },
+   "instanciamento": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "sistema-de-coordenadas-cartesianas"
+   },
+   "mapeamento": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "pagina-com-videos-sobre-instanciamento": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "desenho-de-linhas"
+   },
+   "pagina-com-videos-sobre-mapeamento-9f410e": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "pagina-com-videos-sobre-recorte-e257d3": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "recorte": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "transformacoesgeometricas": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "transformacoesgl": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "sistema-de-coordenadas-cartesianas"
+   },
+   "vis2d": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "bezier-animacao": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "bezier-e-algoritmo-de-casteljau"
+   },
+   "bezier-cpp": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "bezier-e-algoritmo-de-casteljau"
+   },
+   "bezier-py": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "bezier-e-algoritmo-de-casteljau"
+   },
+   "bezier-python": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "bezier-e-algoritmo-de-casteljau"
+   },
+   "curvas": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "hermite"
+   },
+   "curvasparametricas": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "representacao-de-curvas-parametricas"
+   },
+   "exercicios-sobre-curvas": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "hermite"
+   },
+   "pagina-com-videos-sobre-curvas-parametricas-63d902": {
+    "bloco": "bloco-13",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "hermite"
+   },
+   "exercicioduascores": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "floodfill": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "img": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "pagina-com-videos-sobre-manipulacao-de-imagens-61ddde": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "remocaoderuido": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "exercicios-de-processamento-de-imagens": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   },
+   "introducaoprocimg": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "filtros"
+   },
+   "pagina-com-videos-sobre-introducao-ao-processamento-de-imagens-61f156": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "filtros"
+   },
+   "exercicios-de-geometria-computacional": {
+    "bloco": "",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "algoritmos-de-geometria-computacional"
+   },
+   "exercicios-sobre-curvas-html": {
+    "bloco": "",
+    "unidade": "unidade-07-representacao-e-modelagem-de-objetos",
+    "sub": "hermite"
+   },
+   "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html": {
+    "bloco": "",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "desenho-de-linhas"
+   },
+   "exerciciosfundamentosmatematicos": {
+    "bloco": "",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": "operacoes-com-vetores"
+   },
+   "resolucao-de-prova-de-computacao-grafica-2d": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "listadeexercicios2026-1": {
+    "bloco": "bloco-21",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "modelos-de-reflexao-ambiente-difusa-especular"
+   },
+   "cronograma2026-2": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": ""
+   },
+   "planodeensino-4645z-04-fundamentos-de-computacao-grafica": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": ""
+   },
+   "videoscg-v2": {
+    "bloco": "",
+    "unidade": "unidade-08-sintese-de-imagens-realisticas",
+    "sub": "mapeamento-de-textura"
+   },
+   "resolucao-de-prova-de-computacao-grafica-2d-html": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "resolucao-de-prova-de-computacao-grafica-3d": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "video-sobre-origens-da-computacao-grafica-806e66": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "origens"
+   },
+   "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-02-fundamentos-matematicos",
+    "sub": ""
+   },
+   "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "video-sobre-mapeamento-em-opengl-1dad3c": {
+    "bloco": "bloco-06",
+    "unidade": "unidade-04-processo-de-visualizacao-2d",
+    "sub": "recorte"
+   },
+   "aula-gravada-975b85": {
+    "bloco": "bloco-08",
+    "unidade": "unidade-06-processo-de-visualizacao-3d",
+    "sub": "a-matematica-das-projecoes-planares"
+   },
+   "video-sobre-prechimento-de-areas-duracao-330-defae7": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-ao-processamento-grafico",
+    "sub": "areas-relacionadas"
+   },
+   "video-sobre-prechimento-de-areas-duracao-1300-d87e5f": {
+    "bloco": "bloco-07",
+    "unidade": "unidade-03-processamento-de-imagens-e-visao-computacional",
+    "sub": "cores-e-tipos-de-imagens"
+   }
+  },
+  "FR": {
+   "plano-de-ensino-20262": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": ""
+   },
+   "01-protocolos-de-rede": {
+    "bloco": "bloco-01",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": "modelos-osi-e-tcpip"
+   },
+   "02-modelos-de-referencia": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": "modelos-osi-e-tcpip"
+   },
+   "02-poster-network-protocols": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": ""
+   },
+   "03-tipos-de-redes": {
+    "bloco": "bloco-02",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": "conceito-de-protocolo-de-redes-pessoais-locais-metropolitanas-e-de-longa-distancia"
+   },
+   "unidade1-exercicios": {
+    "bloco": "",
+    "unidade": "unidade-01-introducao-a-redes-de-computadores",
+    "sub": ""
+   },
+   "04-camada-de-aplicacao": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+   },
+   "04-protocolo-http": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "05-protocolo-dns": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+   },
+   "06-protocolo-dhcp": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   },
+   "07-protocolos-de-e-mail": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-o-usuario-http-https-smtp-pop3-imap"
+   },
+   "08-desenvolvimento-de-aplicacoes": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": ""
+   },
+   "lista-de-exercicios-1-camada-de-aplicacao": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "tcp-chat-c": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "tcp-example": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "udp-example-c": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "udp-example-java": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   },
+   "unidade2-exercicios-dhcp": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   },
+   "unidade2-exercicios-dns": {
+    "bloco": "bloco-05",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "protocolos-de-aplicacao-para-infraestrutura-dns-dhcp-snmp-nat"
+   },
+   "unidade2-exercicios-http": {
+    "bloco": "bloco-03",
+    "unidade": "unidade-02-nivel-de-aplicacao",
+    "sub": "paradigmas-clienteservidor-e-p2p"
+   }
+  }
+ },
+ "placar_referencia": {
+  "total": {
+   "bloco_n": 237,
+   "bloco": 223,
+   "unidade_n": 284,
+   "unidade": 248,
+   "sub_n": 251,
+   "sub_primaria": 86,
+   "sub_aceita": 109
+  },
+  "por_curso": {
+   "MF": {
+    "bloco_n": 66,
+    "bloco": 60,
+    "unidade_n": 66,
+    "unidade": 63,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "sub_aceita": 29
+   },
+   "SO": {
+    "bloco_n": 39,
+    "bloco": 36,
+    "unidade_n": 37,
+    "unidade": 30,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "IA": {
+    "bloco_n": 42,
+    "bloco": 41,
+    "unidade_n": 42,
+    "unidade": 39,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "sub_aceita": 5
+   },
+   "ES2": {
+    "bloco_n": 28,
+    "bloco": 27,
+    "unidade_n": 28,
+    "unidade": 26,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "TCC": {
+    "bloco_n": 27,
+    "bloco": 26,
+    "unidade_n": 18,
+    "unidade": 17,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "sub_aceita": 9
+   },
+   "CG": {
+    "bloco_n": 35,
+    "bloco": 33,
+    "unidade_n": 93,
+    "unidade": 73,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "sub_aceita": 43
+   },
+   "FR": {
+    "sub_n": 18,
+    "sub_primaria": 6,
+    "sub_aceita": 7
+   }
+  }
+ },
+ "placar_execucao": {
+  "total": {
+   "bloco_n": 237,
+   "bloco": 223,
+   "unidade_n": 284,
+   "unidade": 249,
+   "sub_n": 251,
+   "sub_primaria": 86,
+   "sub_aceita": 109
+  },
+  "por_curso": {
+   "MF": {
+    "bloco_n": 66,
+    "bloco": 60,
+    "unidade_n": 66,
+    "unidade": 63,
+    "sub_n": 58,
+    "sub_primaria": 25,
+    "sub_aceita": 29
+   },
+   "SO": {
+    "bloco_n": 39,
+    "bloco": 36,
+    "unidade_n": 37,
+    "unidade": 30,
+    "sub_n": 15,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "IA": {
+    "bloco_n": 42,
+    "bloco": 41,
+    "unidade_n": 42,
+    "unidade": 39,
+    "sub_n": 39,
+    "sub_primaria": 4,
+    "sub_aceita": 5
+   },
+   "ES2": {
+    "bloco_n": 28,
+    "bloco": 27,
+    "unidade_n": 28,
+    "unidade": 26,
+    "sub_n": 28,
+    "sub_primaria": 7,
+    "sub_aceita": 8
+   },
+   "TCC": {
+    "bloco_n": 27,
+    "bloco": 26,
+    "unidade_n": 18,
+    "unidade": 17,
+    "sub_n": 11,
+    "sub_primaria": 7,
+    "sub_aceita": 9
+   },
+   "CG": {
+    "bloco_n": 35,
+    "bloco": 33,
+    "unidade_n": 93,
+    "unidade": 74,
+    "sub_n": 82,
+    "sub_primaria": 30,
+    "sub_aceita": 43
+   },
+   "FR": {
+    "sub_n": 18,
+    "sub_primaria": 6,
+    "sub_aceita": 7
+   }
+  }
+ },
+ "ganhos": {
+  "unidade": [
+   [
+    "CG",
+    "exercicios-sobre-curvas-html"
+   ]
+  ],
+  "sub_primaria": [],
+  "sub_aceita": []
+ },
+ "perdas": {
+  "unidade": [],
+  "sub_primaria": [],
+  "sub_aceita": []
+ },
+ "segundos": 138
+}
