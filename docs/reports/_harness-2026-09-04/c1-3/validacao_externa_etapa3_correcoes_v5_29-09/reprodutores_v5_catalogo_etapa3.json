@@ -1,0 +1,104 @@
+{
+ "esquema": "reprodutores-v5-catalogo-etapa3-1",
+ "origem_dos_achados": "revisor, por inspeção de catalogo() (linhas 129–146 do adquire v5); não executados pelo revisor",
+ "metodo": "reprodutores executados aqui ANTES da correção (vermelho) e depois (verde); transporte falso; sem rede",
+ "achados": {
+  "1_orcamento_acumulado": [
+   "test_catalogo_repetido_desconta_o_consumo_anterior",
+   "test_primeira_execucao_interrompida_parcial_e_segunda_limitada",
+   "test_registro_do_catalogo_ilegivel_nao_vira_zero[*]",
+   "test_baixar_usa_o_registro_do_catalogo_e_nao_a_triagem_antiga",
+   "test_baixar_com_registro_ilegivel_ou_inconsistente_nao_requisita[*]"
+  ],
+  "2_interrupcao": [
+   "test_interrupcao_no_catalogo_registra_os_bytes_e_propaga[durante-site_info]",
+   "test_interrupcao_no_catalogo_registra_os_bytes_e_propaga[durante-get_users_courses]",
+   "test_primeira_execucao_interrompida_parcial_e_segunda_limitada"
+  ]
+ },
+ "motivos_do_vermelho": {
+  "orcamento": "DID NOT RAISE OrcamentoExcedido (segunda execução recebeu o teto inteiro)",
+  "interrupcao": "UnboundLocalError: 'erro' sem valor no finally; KeyboardInterrupt substituído, nada gravado"
+ },
+ "casos": [
+  {
+   "teste": "test_baixar_com_registro_ilegivel_ou_inconsistente_nao_requisita[ilegivel]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_baixar_com_registro_ilegivel_ou_inconsistente_nao_requisita[menor-que-a-triagem]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_baixar_usa_o_registro_do_catalogo_e_nao_a_triagem_antiga",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_catalogo_repetido_desconta_o_consumo_anterior",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_interrupcao_no_catalogo_registra_os_bytes_e_propaga[durante-get_users_courses]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_interrupcao_no_catalogo_registra_os_bytes_e_propaga[durante-site_info]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_primeira_execucao_interrompida_parcial_e_segunda_limitada",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_registro_do_catalogo_ilegivel_nao_vira_zero[bytes-negativos]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_registro_do_catalogo_ilegivel_nao_vira_zero[ilegivel]",
+   "antes": "falhou",
+   "depois": "passou"
+  },
+  {
+   "teste": "test_registro_do_catalogo_ilegivel_nao_vira_zero[total-inconsistente]",
+   "antes": "falhou",
+   "depois": "passou"
+  }
+ ],
+ "pasta_aquisicao_v5": "40 passed in 1.60s",
+ "hashes": {
+  "adquire_v5_antes": "c06a63f5c0087da492ba96479e0eed67383a91fb97fd7d720d00e41674888d28",
+  "adquire_v5_depois": "f7549835202f108d78434a035b6a150e614c63021ae4b672dbc12a55dccd3031",
+  "test_adquire_v5": "af6eb563dcdc12751c592447b062ac7ce8368674725258ad5e2cf79a6eb62071",
+  "src_moodle": "244301234d671b4ebb990499c96d4f2a6257348d614abcc15ee3e987c12b319b",
+  "tests_test_moodle": "99951fdbdc2a2618c3a164ada26e70111a5486e02e00d14e0731f4fcc4be5716"
+ },
+ "produto": "src/ e tests/test_moodle.py inalterados desde reprodutores_v5_etapa3.json (mesmos sha256); suíte completa não repetida",
+ "grafo_local": {
+  "comando": "graphify update . (Python de graphify-out/.graphify_python)",
+  "llm": false,
+  "rede": false,
+  "resultado": "18138 nós, 39079 arestas, 852 comunidades",
+  "nao_executado": [
+   "graphify label (renome de comunidades por LLM)",
+   "extração semântica de documentos"
+  ]
+ },
+ "restricoes": {
+  "aquisicao_real": false,
+  "gold": false,
+  "adjudicacao": false,
+  "motor": false,
+  "build_replay": false,
+  "P3_P31_aplicada": false,
+  "R_VIS_implementada": false,
+  "commit": false
+ }
+}

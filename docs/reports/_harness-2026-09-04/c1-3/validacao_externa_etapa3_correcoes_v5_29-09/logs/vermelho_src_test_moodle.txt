@@ -1,0 +1,11 @@
+FAILED tests/test_moodle.py::test_call_conta_bytes_do_corpo_e_mantem_resultado_sem_limite
+FAILED tests/test_moodle.py::test_call_corpo_exatamente_no_limite_com_termino_confirmado
+FAILED tests/test_moodle.py::test_call_termino_nao_confirmado_nao_ultrapassa_o_orcamento[exato-sem-content-length]
+FAILED tests/test_moodle.py::test_call_termino_nao_confirmado_nao_ultrapassa_o_orcamento[maior-sem-content-length]
+FAILED tests/test_moodle.py::test_call_content_length_acima_do_orcamento_nao_le_o_corpo
+FAILED tests/test_moodle.py::test_call_corpo_truncado_conta_e_preserva_o_parcial[sem-limite]
+FAILED tests/test_moodle.py::test_call_corpo_truncado_conta_e_preserva_o_parcial[com-limite]
+FAILED tests/test_moodle.py::test_call_orcamento_esgotado_nao_abre_a_requisicao
+FAILED tests/test_moodle.py::test_call_json_invalido_e_erro_da_api_contam_bytes
+FAILED tests/test_moodle.py::test_call_interrupcao_preserva_a_contagem_dos_blocos_lidos
+10 failed, 44 passed in 1.94s

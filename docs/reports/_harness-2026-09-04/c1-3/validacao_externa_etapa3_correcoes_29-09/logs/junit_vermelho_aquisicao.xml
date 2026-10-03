@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="11" skipped="0" tests="11" time="1.774" timestamp="2026-09-29T13:09:00.656706-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_truncated_http_body_regression" time="0.104"><failure message="AssertionError: assert 'ok' == 'falha_http:IncompleteRead'&#10;  &#10;  - falha_http:IncompleteRead&#10;  + ok">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_truncated_http_body_regre0')
+rede = {}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125ECB5D0&gt;
+
+    def test_truncated_http_body_regression(tmp_path, rede, monkeypatch):
+        """Content-Length 5, corpo 'abc': a v2 recusava (IncompleteRead); a v3 aceitava 3 bytes como ok."""
+        bruto = b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 5\r\n\r\nabc"
+        monkeypatch.setattr(A.urllib.request, "urlopen", lambda url, timeout=None: resposta_http(bruto))
+        arquivos, o = baixa(curso(modulo(1, "resource", conteudo("x.txt", "u/x"))), tmp_path / "c")
+&gt;       assert arquivos[0]["status"] == "falha_http:IncompleteRead"
+E       AssertionError: assert 'ok' == 'falha_http:IncompleteRead'
+E         
+E         - falha_http:IncompleteRead
+E         + ok
+
+correcoes\aquisicao\test_adquire_v4.py:54: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_path_traversal" time="0.004"><failure message="AssertionError: assert ('ok' == 'caminho_inseguro'&#10;  &#10;  - caminho_inseguro&#10;  + ok)">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_path_traversal0')
+rede = {'u/e': b'fuga'}
+
+    def test_path_traversal(tmp_path, rede):
+        rede["u/e"] = b"fuga"
+        arquivos, _ = baixa(curso(modulo(1, "resource", conteudo("../../../escaped.txt", "u/e"))), tmp_path / "a/b/c")
+&gt;       assert arquivos[0]["status"] == "caminho_inseguro" and "caminho" not in arquivos[0]
+E       AssertionError: assert ('ok' == 'caminho_inseguro'
+E         
+E         - caminho_inseguro
+E         + ok)
+
+correcoes\aquisicao\test_adquire_v4.py:61: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_rejected_transfer_budget" time="0.005"><failure message="assert (0, 0) == (9, 3)&#10;  &#10;  At index 0 diff: 0 != 9&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_rejected_transfer_budget0')
+rede = {'u/1': b'1234567', 'u/2': b'abc'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125F1BED0&gt;
+
+    def test_rejected_transfer_budget(tmp_path, rede, monkeypatch):
+        """Bytes de resposta recusada (e o byte de sondagem) contam como transferidos."""
+        monkeypatch.setattr(A, "ORC", {"bytes_por_arquivo_max": 5, "bytes_totais_max": 10, "cursos_baixados_max": 10})
+        rede.update({"u/1": b"1234567", "u/2": b"abc"})
+        arquivos, o = baixa(curso(modulo(1, "resource", conteudo("1.txt", "u/1")), modulo(2, "resource", conteudo("2.txt", "u/2"))),
+                            tmp_path / "c")
+        assert [a["status"] for a in arquivos] == ["acima_do_limite_real", "ok"]
+&gt;       assert (o["transferidos"], o["aceitos"]) == (6 + 3, 3)
+E       assert (0, 0) == (9, 3)
+E         
+E         At index 0 diff: 0 != 9
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v4.py:72: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_probe_respects_remaining_budget" time="0.003"><failure message="assert (0 == 5)">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_probe_respects_remaining_0')
+rede = {'u/x': b'1234567'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FE4FD0&gt;
+
+    def test_probe_respects_remaining_budget(tmp_path, rede, monkeypatch):
+        """Nunca lê além do orçamento restante, nem o byte de sondagem."""
+        monkeypatch.setattr(A, "ORC", {"bytes_por_arquivo_max": 10, "bytes_totais_max": 5, "cursos_baixados_max": 10})
+        rede["u/x"] = b"1234567"
+        arquivos, o = baixa(curso(modulo(1, "resource", conteudo("x.txt", "u/x"))), tmp_path / "c")
+        assert arquivos[0]["status"] == "nao_baixado_orcamento_real"
+&gt;       assert o["transferidos"] == 5 and o["aceitos"] == 0
+E       assert (0 == 5)
+
+correcoes\aquisicao\test_adquire_v4.py:82: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_partial_write" time="0.004"><failure message="AssertionError: assert ('falha_local:OSError' == 'falha_local:OSError'&#10;  &#10;    falha_local:OSError and 0 == 5)">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_partial_write0')
+rede = {'u/x': b'12345'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FC8B50&gt;
+
+    def test_partial_write(tmp_path, rede, monkeypatch):
+        """Escrita parcial falha: o byte persistido tem referência e conta como transferido."""
+        rede["u/x"] = b"12345"
+        escreve = Path.write_bytes
+    
+        def meia_escrita(self, dados):
+            escreve(self, dados[:2])
+            raise OSError("disco cheio")
+    
+        monkeypatch.setattr(Path, "write_bytes", meia_escrita)
+        arquivos, o = baixa(curso(modulo(1, "resource", conteudo("x.txt", "u/x"))), tmp_path / "c")
+        r = arquivos[0]
+&gt;       assert r["status"] == "falha_local:OSError" and o["transferidos"] == 5 and o["aceitos"] == 0
+E       AssertionError: assert ('falha_local:OSError' == 'falha_local:OSError'
+E         
+E           falha_local:OSError and 0 == 5)
+
+correcoes\aquisicao\test_adquire_v4.py:97: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_interrupt_after_write[escrita_do_parcial]" time="0.005"><failure message="AssertionError: assert [] == ['gravando']&#10;  &#10;  Right contains one more item: 'gravando'&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_interrupt_after_write_esc0')
+rede = {'u/x': b'12345'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125F9FE90&gt;
+onde = 'escrita_do_parcial'
+
+    @pytest.mark.parametrize("onde", ["escrita_do_parcial", "publicacao_do_arquivo"])
+    def test_interrupt_after_write(tmp_path, rede, monkeypatch, onde):
+        """Interrupção na escrita do parcial ou na publicação: o registro já existe e aponta o que está no disco."""
+        rede["u/x"] = b"12345"
+        if onde == "escrita_do_parcial":
+            escreve = Path.write_bytes
+    
+            def corta(self, dados):
+                escreve(self, dados[:3])
+                raise KeyboardInterrupt
+    
+            monkeypatch.setattr(Path, "write_bytes", corta)
+        else:
+            substitui = os.replace
+    
+            def publica(src, dst):   # só a publicação do arquivo; o contents.json publica normalmente
+                if str(src).endswith(".parcial"):
+                    raise KeyboardInterrupt
+                return substitui(src, dst)
+    
+            monkeypatch.setattr(os, "replace", publica)
+        arquivos = []
+        with pytest.raises(KeyboardInterrupt):
+            A.baixa_curso(curso(modulo(1, "resource", conteudo("x.txt", "u/x"))), "c", tmp_path / "c", orc(), arquivos)
+&gt;       assert [a["status"] for a in arquivos] == ["gravando"]
+E       AssertionError: assert [] == ['gravando']
+E         
+E         Right contains one more item: 'gravando'
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v4.py:125: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_interrupt_after_write[publicacao_do_arquivo]" time="0.004"><failure message="Failed: DID NOT RAISE &lt;class 'KeyboardInterrupt'&gt;">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_interrupt_after_write_pub0')
+rede = {'u/x': b'12345'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125F1BCD0&gt;
+onde = 'publicacao_do_arquivo'
+
+    @pytest.mark.parametrize("onde", ["escrita_do_parcial", "publicacao_do_arquivo"])
+    def test_interrupt_after_write(tmp_path, rede, monkeypatch, onde):
+        """Interrupção na escrita do parcial ou na publicação: o registro já existe e aponta o que está no disco."""
+        rede["u/x"] = b"12345"
+        if onde == "escrita_do_parcial":
+            escreve = Path.write_bytes
+    
+            def corta(self, dados):
+                escreve(self, dados[:3])
+                raise KeyboardInterrupt
+    
+            monkeypatch.setattr(Path, "write_bytes", corta)
+        else:
+            substitui = os.replace
+    
+            def publica(src, dst):   # só a publicação do arquivo; o contents.json publica normalmente
+                if str(src).endswith(".parcial"):
+                    raise KeyboardInterrupt
+                return substitui(src, dst)
+    
+            monkeypatch.setattr(os, "replace", publica)
+        arquivos = []
+&gt;       with pytest.raises(KeyboardInterrupt):
+E       Failed: DID NOT RAISE &lt;class 'KeyboardInterrupt'&gt;
+
+correcoes\aquisicao\test_adquire_v4.py:123: Failed</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_baixar_interrupt_after_write" time="0.012"><failure message="AssertionError: assert [] == [('x.txt', 'gravando')]&#10;  &#10;  Right contains one more item: ('x.txt', 'gravando')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_baixar_interrupt_after_wr0')
+rede = {'u/x': b'12345'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FDB450&gt;
+
+    def test_baixar_interrupt_after_write(tmp_path, rede, monkeypatch):
+        rede["u/x"] = b"12345"
+        escreve = Path.write_bytes
+    
+        def corta(self, dados):
+            escreve(self, dados)
+            if self.name.startswith("x.txt"):
+                raise KeyboardInterrupt
+    
+        monkeypatch.setattr(Path, "write_bytes", corta)
+        saida = prepara_baixar(tmp_path, monkeypatch, {"1": [secao("S", modulo(1, "resource", conteudo("x.txt", "u/x")))]}, ["1"])
+        with pytest.raises(KeyboardInterrupt):
+            A.baixar()
+        inv = json.loads((saida / "inventario_downloads.json").read_text(encoding="utf-8"))
+        assert inv["concluido"] is False
+&gt;       assert [(a["arquivo"], a["status"]) for a in inv["cursos"][0]["arquivos"]] == [("x.txt", "gravando")]
+E       AssertionError: assert [] == [('x.txt', 'gravando')]
+E         
+E         Right contains one more item: ('x.txt', 'gravando')
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v4.py:145: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_inventory_write_interruption[escrita_do_temporario]" time="0.004"><failure message="assert b'{' == b'{\n &quot;versao... &quot;a&quot;\n ]\n}\n'&#10;  &#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_inventory_write_interrupt0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FF0150&gt;
+onde = 'escrita_do_temporario'
+
+    @pytest.mark.parametrize("onde", ["escrita_do_temporario", "publicacao"])
+    def test_inventory_write_interruption(tmp_path, monkeypatch, onde):
+        """O checkpoint anterior sobrevive à falha na publicação do próximo."""
+        p = tmp_path / "inventario_downloads.json"
+        A.grava_json(p, {"versao": 1, "cursos": ["a"] * 20})
+        anterior = p.read_bytes()
+        if onde == "escrita_do_temporario":
+            escreve = Path.write_text
+    
+            def corta(self, texto, **k):
+                escreve(self, texto[:1], **k)
+                raise KeyboardInterrupt
+    
+            monkeypatch.setattr(Path, "write_text", corta)
+        else:
+            monkeypatch.setattr(os, "replace", lambda *a: (_ for _ in ()).throw(KeyboardInterrupt()))
+        with pytest.raises(KeyboardInterrupt):
+            A.grava_json(p, {"versao": 2})
+&gt;       assert p.read_bytes() == anterior
+E       assert b'{' == b'{\n "versao... "a"\n ]\n}\n'
+E         
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v4.py:167: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_inventory_write_interruption[publicacao]" time="0.004"><failure message="Failed: DID NOT RAISE &lt;class 'KeyboardInterrupt'&gt;">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_inventory_write_interrupt1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FA0310&gt;
+onde = 'publicacao'
+
+    @pytest.mark.parametrize("onde", ["escrita_do_temporario", "publicacao"])
+    def test_inventory_write_interruption(tmp_path, monkeypatch, onde):
+        """O checkpoint anterior sobrevive à falha na publicação do próximo."""
+        p = tmp_path / "inventario_downloads.json"
+        A.grava_json(p, {"versao": 1, "cursos": ["a"] * 20})
+        anterior = p.read_bytes()
+        if onde == "escrita_do_temporario":
+            escreve = Path.write_text
+    
+            def corta(self, texto, **k):
+                escreve(self, texto[:1], **k)
+                raise KeyboardInterrupt
+    
+            monkeypatch.setattr(Path, "write_text", corta)
+        else:
+            monkeypatch.setattr(os, "replace", lambda *a: (_ for _ in ()).throw(KeyboardInterrupt()))
+&gt;       with pytest.raises(KeyboardInterrupt):
+E       Failed: DID NOT RAISE &lt;class 'KeyboardInterrupt'&gt;
+
+correcoes\aquisicao\test_adquire_v4.py:165: Failed</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.aquisicao.test_adquire_v4" name="test_metadata_outside_budget" time="0.010"><failure message="KeyError: 'bytes_transferidos'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2732/test_metadata_outside_budget0')
+rede = {'u/a': b'a'}
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000017125FCA3D0&gt;
+
+    def test_metadata_outside_budget(tmp_path, rede, monkeypatch):
+        """O cliente do produto não expõe os bytes recebidos de core_course_get_contents: impedimento registrado, e o
+        tamanho do JSON reserializado não é contado como transferência."""
+        rede["u/a"] = b"a"
+        saida = prepara_baixar(tmp_path, monkeypatch, {"1": [secao("S", modulo(1, "resource", conteudo("a.txt", "u/a")))]}, ["1"])
+        A.baixar()
+        inv = json.loads((saida / "inventario_downloads.json").read_text(encoding="utf-8"))
+&gt;       assert (inv["bytes_transferidos"], inv["bytes_aceitos"], inv["bytes_metadados"]) == (1, 1, None)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'bytes_transferidos'
+
+correcoes\aquisicao\test_adquire_v4.py:177: KeyError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,627 @@
+{
+ "esquema": "reprodutores-pos-correcao-etapa3-1",
+ "metodo": "Verificação das correções pós-revisão da etapa 3, cada versão em processo próprio (sem reuso de módulos importados).",
+ "restricoes": {
+  "rede": false,
+  "gold": false,
+  "adjudicacao": false,
+  "motor": false,
+  "build_replay": false,
+  "recompilacao_vocabulario": false,
+  "P3_aplicada": false,
+  "elegibilidade_P3_calculada": false
+ },
+ "dependencias": {
+  "python": "3.11.9",
+  "versoes": {
+   "fitz": "1.27.2.3",
+   "pypdf": "6.14.2",
+   "docx": "1.2.0",
+   "openpyxl": "3.1.5",
+   "pptx": "1.0.2",
+   "pytest": "9.0.2"
+  },
+  "reais_no_codigo": [
+   "src.builder.extraction (rótulos do plano)",
+   "src.builder.sources.moodle (MoodleClient, sanitize_folder_name, looks_like_expected)",
+   "fitz/PyMuPDF (declarado no pyproject)"
+  ],
+  "so_nos_testes": [
+   "pypdf, python-docx, openpyxl, python-pptx (instalados, não declarados no pyproject)"
+  ],
+  "stubs": "nenhum stub de src/ nesta execução local; rede substituída por cliente/urlopen falsos e http.client sobre BytesIO"
+ },
+ "execucao": {
+  "pacote_cego": {
+   "codigo_antigo_sha256": "66a8bdabd65bc7b38f1b4c95dd260429557c8a5812206c8600a26455cef17633",
+   "codigo_novo_sha256": "ca04561583fa578cc7f4d128a85b0382e65baec28416038b2a75a9206999762e",
+   "vermelho": "30 failed, 9 passed in 3.19s",
+   "verde_novos": "39 passed in 3.30s",
+   "verde_pasta_inteira": "101 passed in 6.48s"
+  },
+  "aquisicao": {
+   "codigo_antigo_sha256": "139509ec34f439342d47536305624941e927336d491b5ad703d092d551f371f2",
+   "codigo_novo_sha256": "ceca5f52f392f3dcc33e37ef35428fd24349166107e2f136da767d1c83abee25",
+   "vermelho": "11 failed in 1.78s",
+   "verde_novos": "11 passed in 1.89s",
+   "verde_pasta_inteira": "17 passed in 1.76s"
+  },
+  "exposicao": {
+   "codigo_antigo_sha256": "d668bfac174df93f2b75cd9e5f607d364dcaea20d3160e74ed1ba69c3440de7c",
+   "codigo_novo_sha256": "fc36c8a71ef7a91ae1d85c63222bc27b23f385dcbff90a49b840a33452b0abb6",
+   "vermelho": "6 failed in 2.53s",
+   "verde_novos": "6 passed in 2.01s",
+   "verde_pasta_inteira": "11 passed in 3.58s"
+  },
+  "conferencia": {
+   "codigo_antigo_sha256": "be35381e53ad1fa925631f3624bbeeb1772767ae8fa105bb593cd1e54053d383",
+   "codigo_novo_sha256": "554d1baced869b2382471bea6014f340c9b67ca82329226cf7dcc1a109b5ad21",
+   "vermelho": "2 failed in 0.32s",
+   "verde_novos": "2 passed in 0.25s",
+   "verde_pasta_inteira": "2 passed in 0.24s"
+  }
+ },
+ "regressao": {
+  "etapa3_pacote_cego_v3": "62 passed in 4.80s",
+  "etapa3_aquisicao_v3": "6 passed in 1.64s",
+  "etapa3_exposicao_v1": "5 passed in 2.10s",
+  "etapa2_correcoes": "45 passed in 7.65s"
+ },
+ "casos_anteriores": {
+  "v2": {
+   "versao": "v2",
+   "gerador_sha256": "e2fe9b0743acb37ecd33c6acd62ce16569bda9ad0fff295604d545b2c00645b9",
+   "adquire_sha256": "6c850c12185056aa368c6c5cdd6e33c54ac807420c4afa0ba8ad6b44f010eae5",
+   "plano_com_predicao": {
+    "auditoria": [],
+    "conteudo_copiado": true
+   },
+   "zip_real_conteudo_nao_examinado": {
+    "auditoria": [],
+    "tipo": "arquivo",
+    "adjudicavel": true,
+    "bytes_copiados": true
+   },
+   "origem_unico_candidato_outra_secao": {
+    "pasta_pedida": "Secao B",
+    "retornado": {
+     "rel": "stash/Secao A/slides.pdf",
+     "sha": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "nome": "slides.pdf",
+     "tamanho": 15
+    }
+   },
+   "anexo_page_fora_da_raiz": {
+    "excecao": "ValueError",
+    "mensagem": "'<tmp>\\\\downloads\\\\curso_anexos_de_pagina\\\\2-imagem.png' is not in the subpath of '<tmp>\\\\downloads\\\\curso' OR one path is relative and the other is absolute."
+   },
+   "limite_confiado_ao_filesize": {
+    "limite_arquivo": 5,
+    "limite_total": 5,
+    "bytes_enviados": 7,
+    "status": "ok",
+    "orcamento": {
+     "bytes": 7
+    }
+   }
+  },
+  "v3": {
+   "versao": "v3",
+   "gerador_sha256": "66a8bdabd65bc7b38f1b4c95dd260429557c8a5812206c8600a26455cef17633",
+   "adquire_sha256": "139509ec34f439342d47536305624941e927336d491b5ad703d092d551f371f2",
+   "plano_com_predicao": {
+    "excecao": "PlanoRecusado",
+    "mensagem": "plano.md: texto com assinatura de saída do motor; pacote não gerado"
+   },
+   "zip_real_conteudo_nao_examinado": {
+    "auditoria": [],
+    "tipo": "recusado",
+    "adjudicavel": false,
+    "bytes_copiados": false
+   },
+   "origem_unico_candidato_outra_secao": {
+    "pasta_pedida": "Secao B",
+    "retornado": [
+     null,
+     "origem_nao_confirmada"
+    ]
+   },
+   "anexo_page_fora_da_raiz": {
+    "retornou_inventario": true,
+    "registros": [
+     {
+      "arquivo": "a.txt",
+      "status": "ok",
+      "base": "curso",
+      "caminho": "stash/Geral/a.txt"
+     },
+     {
+      "arquivo": "imagem.png",
+      "status": "ok",
+      "base": "anexos_de_pagina",
+      "caminho": "2-imagem.png"
+     }
+    ]
+   },
+   "limite_confiado_ao_filesize": {
+    "limite_arquivo": 5,
+    "limite_total": 5,
+    "bytes_enviados": 7,
+    "status": "acima_do_limite_real",
+    "orcamento": {
+     "bytes": 0
+    }
+   }
+  },
+  "v4": {
+   "versao": "v4",
+   "gerador_sha256": "ca04561583fa578cc7f4d128a85b0382e65baec28416038b2a75a9206999762e",
+   "adquire_sha256": "ceca5f52f392f3dcc33e37ef35428fd24349166107e2f136da767d1c83abee25",
+   "plano_com_predicao": {
+    "excecao": "PlanoRecusado",
+    "mensagem": "plano.md: texto com assinatura de saída do motor; pacote não gerado"
+   },
+   "zip_real_conteudo_nao_examinado": {
+    "auditoria": [],
+    "tipo": "recusado",
+    "adjudicavel": false,
+    "bytes_copiados": false
+   },
+   "origem_unico_candidato_outra_secao": {
+    "pasta_pedida": "Secao B",
+    "retornado": [
+     null,
+     "origem_nao_confirmada"
+    ]
+   },
+   "anexo_page_fora_da_raiz": {
+    "retornou_inventario": true,
+    "registros": [
+     {
+      "arquivo": "a.txt",
+      "status": "ok",
+      "base": "curso",
+      "caminho": "stash/Geral/a.txt"
+     },
+     {
+      "arquivo": "imagem.png",
+      "status": "ok",
+      "base": "anexos_de_pagina",
+      "caminho": "2-imagem.png"
+     }
+    ]
+   },
+   "limite_confiado_ao_filesize": {
+    "limite_arquivo": 5,
+    "limite_total": 5,
+    "bytes_enviados": 7,
+    "status": "nao_baixado_orcamento_real",
+    "orcamento": {
+     "transferidos": 5,
+     "aceitos": 0
+    }
+   }
+  }
+ },
+ "contraexemplos": [
+  {
+   "area": "pacote_cego",
+   "teste": "test_PC25_ligacao_sem_inventario_nao_confirma_proveniencia",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_PC26_anexo_de_pagina_na_arvore_nao_vira_sobra",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_PC27_plano_docx_com_entidade_nao_gera_pacote",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_com_inventario_arquivo_fora_do_inventario_nao_e_entregue",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_documentos_completos_reabrem_nas_bibliotecas_consumidoras",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_inventario_exige_sha_esperado[sem-sha-esperado]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_inventario_exige_sha_esperado[sha-divergente]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_pdf_sem_camada_de_texto_fica_registrado",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC06-odt-atributo]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC07-ods-atributo]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC08-odp-atributo]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC09-docx-membro-dat]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC10-docx-printerSettings]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC11-zip-manual-review]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC12-zip-course-map]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC13-zip-aninhado-docx-atributo]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC19-pdf-anexo-literal]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC20-pdf-anexo-escapado]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC21-pdf-texto-motor]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC27-docx-entidade]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC28-xlsx-entidade]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC29-pptx-utf16]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC30-docx-hiperlink-token]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[PC31-pdf-comentario-apos-eof]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[controle-docx-limpo]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[controle-odt-limpo]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[controle-pdf-limpo]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[controle-xlsx-limpo]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[controle-zip-limpo]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[docx-dtd-entidade]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[docx-emf]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[docx-fonte-embutida]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[html-entidade-motor]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[pdf-anexo-orfao]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[pdf-anexo-por-anotacao]",
+   "v3_ou_v1": "passou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[pdf-invalido]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[pptx-padrao-printerSettings-recusado]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[txt-utf16-motor]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_verifica_material_v4[zip-com-doc-ole]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_baixar_interrupt_after_write",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "baixar_interrupt_after_write",
+   "id_json_revisor": "AQ07",
+   "id_parecer": "AQ-02"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_interrupt_after_write[escrita_do_parcial]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "interrupt_after_write",
+   "id_json_revisor": "AQ02",
+   "id_parecer": "AQ-02"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_interrupt_after_write[publicacao_do_arquivo]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "interrupt_after_write",
+   "id_json_revisor": "AQ02",
+   "id_parecer": "AQ-02"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_inventory_write_interruption[escrita_do_temporario]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "inventory_write_interruption",
+   "id_json_revisor": "AQ06",
+   "id_parecer": "AQ-03"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_inventory_write_interruption[publicacao]",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "inventory_write_interruption",
+   "id_json_revisor": "AQ06",
+   "id_parecer": "AQ-03"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadata_outside_budget",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "metadata_outside_budget",
+   "id_json_revisor": "AQ03",
+   "id_parecer": "AQ-05"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_partial_write",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "partial_write",
+   "id_json_revisor": "AQ01",
+   "id_parecer": "AQ-01"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_path_traversal",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "path_traversal",
+   "id_json_revisor": "AQ05",
+   "id_parecer": "AQ-06"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_probe_respects_remaining_budget",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "probe_respects_remaining_budget",
+   "id_json_revisor": "novo",
+   "id_parecer": "AQ-05"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_rejected_transfer_budget",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "rejected_transfer_budget",
+   "id_json_revisor": "AQ04",
+   "id_parecer": "AQ-05"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_truncated_http_body_regression",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou",
+   "canonico": "truncated_http_body_regression",
+   "id_json_revisor": "AQ08",
+   "id_parecer": "AQ-04"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP01_caminho_acentuado_sem_aspas",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP03_fonte_de_pastas_ausente_e_indeterminado",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP05_categorias_e_motivo_de_omissao",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP06_saida_nao_interpretada_e_indeterminado",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP08_cor_do_git_nao_vira_zero",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "exposicao",
+   "teste": "test_EXP09_todos_os_matches_da_linha",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "conferencia",
+   "teste": "test_CONF01_inventario_alterado_derruba_o_resultado_global",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  },
+  {
+   "area": "conferencia",
+   "teste": "test_controle_integridade_global_verdadeira",
+   "v3_ou_v1": "falhou",
+   "v4_ou_v2": "passou"
+  }
+ ],
+ "correspondencia_AQ": {
+  "partial_write": {
+   "id_json_revisor": "AQ01",
+   "id_parecer": "AQ-01"
+  },
+  "interrupt_after_write": {
+   "id_json_revisor": "AQ02",
+   "id_parecer": "AQ-02"
+  },
+  "metadata_outside_budget": {
+   "id_json_revisor": "AQ03",
+   "id_parecer": "AQ-05"
+  },
+  "rejected_transfer_budget": {
+   "id_json_revisor": "AQ04",
+   "id_parecer": "AQ-05"
+  },
+  "path_traversal": {
+   "id_json_revisor": "AQ05",
+   "id_parecer": "AQ-06"
+  },
+  "inventory_write_interruption": {
+   "id_json_revisor": "AQ06",
+   "id_parecer": "AQ-03"
+  },
+  "baixar_interrupt_after_write": {
+   "id_json_revisor": "AQ07",
+   "id_parecer": "AQ-02"
+  },
+  "truncated_http_body_regression": {
+   "id_json_revisor": "AQ08",
+   "id_parecer": "AQ-04"
+  },
+  "probe_respects_remaining_budget": {
+   "id_json_revisor": "novo",
+   "id_parecer": "AQ-05"
+  }
+ }
+}

@@ -1,0 +1,22 @@
+--- validacao_externa_29-09/pacote_cego/test_pacote_cego.py	2026-09-29 00:45:03.492324700 -0300
++++ validacao_externa_etapa2_29-09/correcoes/pacote_cego/test_pacote_cego.py	2026-09-29 01:34:09.423209800 -0300
+@@ -99,10 +99,15 @@
+                      ("pagina", True)]
+     aula = next(m for m in mats if m["nome_original"] == "aula1.pdf")
+     assert len(aula["ocorrencias"]) == 2          # mesmo arquivo em duas seções = um material
+-    todo = "".join(q.read_text(encoding="utf-8", errors="ignore") for q in p.rglob("*") if q.suffix in {".json", ".csv", ".md"})
+-    for proibido in ("computed_", "subunit_match", "winner_score", "sinal", "destino", "Professor Fulano", "userid",
+-                     "license", "labels.json", "links.json", "manual-review"):
+-        assert proibido not in todo, proibido
++    textos = {q.name: q.read_text(encoding="utf-8", errors="ignore") for q in p.rglob("*") if q.suffix in {".json", ".csv", ".md"}}
++    todo = "".join(textos.values())
++    for proibido in ("computed_", "subunit_match", "winner_score", "sinal", "destino", "Professor Fulano", "userid", "license"):
++        assert proibido not in todo, proibido   # v2: conteúdo proibido em lugar nenhum, nem no manifesto
++    sem_manifesto = "".join(v for k, v in textos.items() if k != "pacote_manifesto.json")
++    ignorados = {x["fonte"] for x in carrega(p / "pacote_manifesto.json")["fontes_nao_usadas"]}
++    for nome in ("labels.json", "links.json", "manual-review", ".moodle_nomes.json"):
++        assert nome not in sem_manifesto, nome   # v2: o NOME do ignorado só aparece no registro de procedência
++        assert any(nome in f for f in ignorados), nome
+     arquivos = {q.relative_to(p).as_posix() for q in p.rglob("*") if q.is_file()}
+     assert not any("moodle_nomes" in a or a.endswith("labels.json") for a in arquivos)
+     gold = (p / "gold_modelo.csv").read_text(encoding="utf-8").splitlines()

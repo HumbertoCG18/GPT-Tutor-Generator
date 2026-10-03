@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="13" skipped="0" tests="13" time="1.789" timestamp="2026-09-29T16:38:41.679362-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_metadados_contados_pelo_corpo_recebido_nao_pelo_json_reserializado" time="0.284"><failure message="assert None == (40 + 343)&#10; +  where 343 = len(b'[\n  {\n    &quot;section&quot;: 0,\n    &quot;name&quot;: &quot;S&quot;,\n    &quot;modules&quot;: [\n      {\n        &quot;id&quot;: 1,\n        &quot;modname&quot;: &quot;resour...&quot;/&quot;,\n            &quot;filesize&quot;: 1,\n            &quot;fileurl&quot;: &quot;https://m/a&quot;\n          }\n        ]\n      }\n    ]\n  }\n]')">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_metadados_contados_pelo_c0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B79EA6D0&gt;
+
+    def test_metadados_contados_pelo_corpo_recebido_nao_pelo_json_reserializado(tmp_path, monkeypatch):
+        mod = {"id": 1, "modname": "resource", "contents": [conteudo("a.txt", "https://m/a", 1)]}
+        corpo = contents_json(mod)
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, True)}, {"https://m/a": b"a"})
+        saida = prepara(tmp_path, monkeypatch, cli, {"bytes_metadados_catalogo": 40})
+        A.baixar()
+        inv = inventario(saida)
+        reserializado = len((tmp_path / "fontes/1/raw/moodle/contents.json").read_bytes())
+        assert reserializado != len(corpo)
+&gt;       assert inv["bytes_metadados"] == 40 + len(corpo)
+E       assert None == (40 + 343)
+E        +  where 343 = len(b'[\n  {\n    "section": 0,\n    "name": "S",\n    "modules": [\n      {\n        "id": 1,\n        "modname": "resour..."/",\n            "filesize": 1,\n            "fileurl": "https://m/a"\n          }\n        ]\n      }\n    ]\n  }\n]')
+
+correcoes\aquisicao\test_adquire_v5.py:78: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_metadados_acima_do_orcamento[com-content-length]" time="0.012"><failure message="AssertionError: assert None == 'nao_baixado_orcamento_real:metadados'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_metadados_acima_do_orcame0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7A542D0&gt;
+content_length = True, lidos = 0
+
+    @pytest.mark.parametrize("content_length, lidos", [(True, 0), (False, 50)], ids=["com-content-length", "sem-content-length"])
+    def test_metadados_acima_do_orcamento(tmp_path, monkeypatch, content_length, lidos):
+        corpo = contents_json({"id": 1, "modname": "resource", "contents": [conteudo("a.txt", "https://m/a", 1)]})
+        assert len(corpo) &gt; 50
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, content_length)})
+        saida = prepara(tmp_path, monkeypatch, cli, {"bytes_metadados_catalogo": 0}, {"bytes_totais_max": 50})
+        A.baixar()
+        inv = inventario(saida)
+&gt;       assert inv["cursos"][0]["erro"] == "nao_baixado_orcamento_real:metadados"
+E       AssertionError: assert None == 'nao_baixado_orcamento_real:metadados'
+
+correcoes\aquisicao\test_adquire_v5.py:91: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_metadados_acima_do_orcamento[sem-content-length]" time="0.013"><failure message="AssertionError: assert None == 'nao_baixado_orcamento_real:metadados'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_metadados_acima_do_orcame1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7A3EE10&gt;
+content_length = False, lidos = 50
+
+    @pytest.mark.parametrize("content_length, lidos", [(True, 0), (False, 50)], ids=["com-content-length", "sem-content-length"])
+    def test_metadados_acima_do_orcamento(tmp_path, monkeypatch, content_length, lidos):
+        corpo = contents_json({"id": 1, "modname": "resource", "contents": [conteudo("a.txt", "https://m/a", 1)]})
+        assert len(corpo) &gt; 50
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, content_length)})
+        saida = prepara(tmp_path, monkeypatch, cli, {"bytes_metadados_catalogo": 0}, {"bytes_totais_max": 50})
+        A.baixar()
+        inv = inventario(saida)
+&gt;       assert inv["cursos"][0]["erro"] == "nao_baixado_orcamento_real:metadados"
+E       AssertionError: assert None == 'nao_baixado_orcamento_real:metadados'
+
+correcoes\aquisicao\test_adquire_v5.py:91: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_metadados_contados_no_caminho_de_falha[json-invalido]" time="0.007"><failure message="AssertionError: assert ('falha:JSONDecodeError' == 'falha:JSONDecodeError'&#10;  &#10;    falha:JSONDecodeError and None == 11)&#10; +  where 11 = len(b'{nao e json')">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_metadados_contados_no_cam0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7B0DAD0&gt;
+corpo = b'{nao e json', erro = 'falha:JSONDecodeError'
+
+    @pytest.mark.parametrize("corpo, erro", [(b"{nao e json", "falha:JSONDecodeError"),
+                                             (json.dumps({"exception": "x", "errorcode": "e", "message": "m"}).encode(), "falha:RuntimeError")],
+                             ids=["json-invalido", "erro-da-api"])
+    def test_metadados_contados_no_caminho_de_falha(tmp_path, monkeypatch, corpo, erro):
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, True)})
+        saida = prepara(tmp_path, monkeypatch, cli, {"bytes_metadados_catalogo": 0})
+        A.baixar()
+        inv = inventario(saida)
+&gt;       assert inv["cursos"][0]["erro"] == erro and inv["bytes_metadados"] == len(corpo) == inv["bytes_transferidos"]
+E       AssertionError: assert ('falha:JSONDecodeError' == 'falha:JSONDecodeError'
+E         
+E           falha:JSONDecodeError and None == 11)
+E        +  where 11 = len(b'{nao e json')
+
+correcoes\aquisicao\test_adquire_v5.py:103: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_metadados_contados_no_caminho_de_falha[erro-da-api]" time="0.006"><failure message="assert ('falha:RuntimeError' == 'falha:RuntimeError'&#10;  &#10;    falha:RuntimeError and None == 52)&#10; +  where 52 = len(b'{&quot;exception&quot;: &quot;x&quot;, &quot;errorcode&quot;: &quot;e&quot;, &quot;message&quot;: &quot;m&quot;}')">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_metadados_contados_no_cam1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7B1A150&gt;
+corpo = b'{"exception": "x", "errorcode": "e", "message": "m"}'
+erro = 'falha:RuntimeError'
+
+    @pytest.mark.parametrize("corpo, erro", [(b"{nao e json", "falha:JSONDecodeError"),
+                                             (json.dumps({"exception": "x", "errorcode": "e", "message": "m"}).encode(), "falha:RuntimeError")],
+                             ids=["json-invalido", "erro-da-api"])
+    def test_metadados_contados_no_caminho_de_falha(tmp_path, monkeypatch, corpo, erro):
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, True)})
+        saida = prepara(tmp_path, monkeypatch, cli, {"bytes_metadados_catalogo": 0})
+        A.baixar()
+        inv = inventario(saida)
+&gt;       assert inv["cursos"][0]["erro"] == erro and inv["bytes_metadados"] == len(corpo) == inv["bytes_transferidos"]
+E       assert ('falha:RuntimeError' == 'falha:RuntimeError'
+E         
+E           falha:RuntimeError and None == 52)
+E        +  where 52 = len(b'{"exception": "x", "errorcode": "e", "message": "m"}')
+
+correcoes\aquisicao\test_adquire_v5.py:103: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_catalogo_conta_site_info_e_get_users_courses" time="0.007"><failure message="KeyError: 'bytes_metadados_catalogo'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_catalogo_conta_site_info_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7A3F690&gt;
+
+    def test_catalogo_conta_site_info_e_get_users_courses(tmp_path, monkeypatch):
+        info = json.dumps({"siteurl": "https://m", "userid": 7}, indent=4).encode()
+        cursos = json.dumps([{"id": 5, "fullname": "Espaço institucional", "shortname": "esp"}], indent=4).encode()
+        cli = transporte(monkeypatch, {"core_webservice_get_site_info": (info, True), "core_enrol_get_users_courses": (cursos, False)})
+        saida = tmp_path / "saida"
+        saida.mkdir()
+        monkeypatch.setattr(A, "AQUI", saida)
+        monkeypatch.setattr(A, "cliente", lambda: (cli, "https://m"))
+        monkeypatch.setattr(A, "pastas_anteriores", lambda: set())
+        monkeypatch.setattr(A, "ORC", {"bytes_por_arquivo_max": 100, "bytes_totais_max": 1000, "cursos_baixados_max": 10})
+        A.catalogo()
+        tri = json.loads((saida / "triagem.json").read_text(encoding="utf-8"))
+&gt;       assert tri["bytes_metadados_catalogo"] == len(info) + len(cursos)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'bytes_metadados_catalogo'
+
+correcoes\aquisicao\test_adquire_v5.py:118: KeyError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_triagem_sem_contagem_do_catalogo_registra_impedimento" time="0.011"><failure message="assert (None == 64)&#10; +  where 64 = len(b'[\n  {\n    &quot;section&quot;: 0,\n    &quot;name&quot;: &quot;S&quot;,\n    &quot;modules&quot;: []\n  }\n]')">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_triagem_sem_contagem_do_c0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x00000216B7B2ED10&gt;
+
+    def test_triagem_sem_contagem_do_catalogo_registra_impedimento(tmp_path, monkeypatch):
+        corpo = contents_json()
+        cli = transporte(monkeypatch, {"core_course_get_contents": (corpo, True)})
+        saida = prepara(tmp_path, monkeypatch, cli)
+        A.baixar()
+        inv = inventario(saida)
+&gt;       assert inv["bytes_metadados"] == len(corpo) and any("catálogo" in i for i in inv["impedimentos"])
+E       assert (None == 64)
+E        +  where 64 = len(b'[\n  {\n    "section": 0,\n    "name": "S",\n    "modules": []\n  }\n]')
+
+correcoes\aquisicao\test_adquire_v5.py:127: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_anexo_html_nao_vira_html_principal" time="0.006"><failure message="KeyError: 'papel'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_anexo_html_nao_vira_html_0')
+rede = {'u/i': b'&lt;p&gt;pagina&lt;/p&gt;', 'u/n': b'&lt;p&gt;notas&lt;/p&gt;'}
+
+    def test_anexo_html_nao_vira_html_principal(tmp_path, rede):
+        rede.update({"u/n": b"&lt;p&gt;notas&lt;/p&gt;", "u/i": b"&lt;p&gt;pagina&lt;/p&gt;"})
+        arquivos = baixa(pagina(conteudo("notas.html", "u/n", 12), idx("u/i")), tmp_path / "c")
+        por = {a["arquivo"]: a for a in arquivos}
+&gt;       assert (por["index.html"]["caminho"], por["index.html"]["papel"]) == ("raw/moodle/pages/9-index.html", "html_principal")
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'papel'
+
+correcoes\aquisicao\test_adquire_v5.py:151: KeyError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_colisao_com_index_html_de_anexo" time="0.007"><failure message="assert (0 == 1)&#10; +  where 0 = len([])">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_colisao_com_index_html_de0')
+rede = {'u/i': b'&lt;p&gt;pagina&lt;/p&gt;', 'u/real': b'&lt;p&gt;anexo chamado index&lt;/p&gt;'}
+
+    def test_colisao_com_index_html_de_anexo(tmp_path, rede):
+        rede.update({"u/real": b"&lt;p&gt;anexo chamado index&lt;/p&gt;", "u/i": b"&lt;p&gt;pagina&lt;/p&gt;"})
+        arquivos = baixa(pagina(idx("u/real", filesize=26, mimetype="text/html"), idx("u/i")), tmp_path / "c")
+        principal = [a for a in arquivos if a.get("papel") == "html_principal"]
+&gt;       assert len(principal) == 1 and (tmp_path / "c" / principal[0]["caminho"]).read_bytes() == b"&lt;p&gt;pagina&lt;/p&gt;"
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+correcoes\aquisicao\test_adquire_v5.py:159: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[dois-candidatos]" time="0.007"><failure message="AssertionError: assert [] == [('html_princ...mbiguo', '9')]&#10;  &#10;  Right contains one more item: ('html_principal_ambiguo', '9')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_zero_ou_varios_candidatos0')
+rede = {'u/1': b'&lt;p&gt;1&lt;/p&gt;', 'u/2': b'&lt;p&gt;2&lt;/p&gt;'}
+conteudos = [{'filename': 'index.html', 'filepath': '/', 'filesize': 0, 'fileurl': 'u/1', ...}, {'filename': 'index.html', 'filepath': '/', 'filesize': 0, 'fileurl': 'u/2', ...}]
+status = 'html_principal_ambiguo'
+
+    @pytest.mark.parametrize("conteudos, status", [
+        ([idx("u/1"), idx("u/2")], "html_principal_ambiguo"),
+        ([idx("u/1", filepath=None)], "html_principal_ausente"),
+        ([idx("u/1", filesize=None)], "html_principal_ausente"),
+        ([], "html_principal_ausente"),
+    ], ids=["dois-candidatos", "sem-filepath", "sem-filesize", "sem-conteudos"])
+    def test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador(tmp_path, rede, conteudos, status):
+        rede.update({"u/1": b"&lt;p&gt;1&lt;/p&gt;", "u/2": b"&lt;p&gt;2&lt;/p&gt;"})
+        arquivos = baixa(pagina(*conteudos), tmp_path / "c")
+        ocorr = [a for a in arquivos if a.get("papel") == "html_principal"]
+&gt;       assert [(a["status"], a["modulo_id"]) for a in ocorr] == [(status, "9")]
+E       AssertionError: assert [] == [('html_princ...mbiguo', '9')]
+E         
+E         Right contains one more item: ('html_principal_ambiguo', '9')
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v5.py:173: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filepath]" time="0.005"><failure message="AssertionError: assert [] == [('html_princ...usente', '9')]&#10;  &#10;  Right contains one more item: ('html_principal_ausente', '9')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_zero_ou_varios_candidatos1')
+rede = {'u/1': b'&lt;p&gt;1&lt;/p&gt;', 'u/2': b'&lt;p&gt;2&lt;/p&gt;'}
+conteudos = [{'filename': 'index.html', 'filesize': 0, 'fileurl': 'u/1', 'type': 'file'}]
+status = 'html_principal_ausente'
+
+    @pytest.mark.parametrize("conteudos, status", [
+        ([idx("u/1"), idx("u/2")], "html_principal_ambiguo"),
+        ([idx("u/1", filepath=None)], "html_principal_ausente"),
+        ([idx("u/1", filesize=None)], "html_principal_ausente"),
+        ([], "html_principal_ausente"),
+    ], ids=["dois-candidatos", "sem-filepath", "sem-filesize", "sem-conteudos"])
+    def test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador(tmp_path, rede, conteudos, status):
+        rede.update({"u/1": b"&lt;p&gt;1&lt;/p&gt;", "u/2": b"&lt;p&gt;2&lt;/p&gt;"})
+        arquivos = baixa(pagina(*conteudos), tmp_path / "c")
+        ocorr = [a for a in arquivos if a.get("papel") == "html_principal"]
+&gt;       assert [(a["status"], a["modulo_id"]) for a in ocorr] == [(status, "9")]
+E       AssertionError: assert [] == [('html_princ...usente', '9')]
+E         
+E         Right contains one more item: ('html_principal_ausente', '9')
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v5.py:173: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filesize]" time="0.004"><failure message="AssertionError: assert [] == [('html_princ...usente', '9')]&#10;  &#10;  Right contains one more item: ('html_principal_ausente', '9')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_zero_ou_varios_candidatos2')
+rede = {'u/1': b'&lt;p&gt;1&lt;/p&gt;', 'u/2': b'&lt;p&gt;2&lt;/p&gt;'}
+conteudos = [{'filename': 'index.html', 'filepath': '/', 'fileurl': 'u/1', 'type': 'file'}]
+status = 'html_principal_ausente'
+
+    @pytest.mark.parametrize("conteudos, status", [
+        ([idx("u/1"), idx("u/2")], "html_principal_ambiguo"),
+        ([idx("u/1", filepath=None)], "html_principal_ausente"),
+        ([idx("u/1", filesize=None)], "html_principal_ausente"),
+        ([], "html_principal_ausente"),
+    ], ids=["dois-candidatos", "sem-filepath", "sem-filesize", "sem-conteudos"])
+    def test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador(tmp_path, rede, conteudos, status):
+        rede.update({"u/1": b"&lt;p&gt;1&lt;/p&gt;", "u/2": b"&lt;p&gt;2&lt;/p&gt;"})
+        arquivos = baixa(pagina(*conteudos), tmp_path / "c")
+        ocorr = [a for a in arquivos if a.get("papel") == "html_principal"]
+&gt;       assert [(a["status"], a["modulo_id"]) for a in ocorr] == [(status, "9")]
+E       AssertionError: assert [] == [('html_princ...usente', '9')]
+E         
+E         Right contains one more item: ('html_principal_ausente', '9')
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v5.py:173: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.aquisicao.test_adquire_v5" name="test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-conteudos]" time="0.004"><failure message="AssertionError: assert [] == [('html_princ...usente', '9')]&#10;  &#10;  Right contains one more item: ('html_principal_ausente', '9')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2762/test_zero_ou_varios_candidatos3')
+rede = {'u/1': b'&lt;p&gt;1&lt;/p&gt;', 'u/2': b'&lt;p&gt;2&lt;/p&gt;'}, conteudos = []
+status = 'html_principal_ausente'
+
+    @pytest.mark.parametrize("conteudos, status", [
+        ([idx("u/1"), idx("u/2")], "html_principal_ambiguo"),
+        ([idx("u/1", filepath=None)], "html_principal_ausente"),
+        ([idx("u/1", filesize=None)], "html_principal_ausente"),
+        ([], "html_principal_ausente"),
+    ], ids=["dois-candidatos", "sem-filepath", "sem-filesize", "sem-conteudos"])
+    def test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador(tmp_path, rede, conteudos, status):
+        rede.update({"u/1": b"&lt;p&gt;1&lt;/p&gt;", "u/2": b"&lt;p&gt;2&lt;/p&gt;"})
+        arquivos = baixa(pagina(*conteudos), tmp_path / "c")
+        ocorr = [a for a in arquivos if a.get("papel") == "html_principal"]
+&gt;       assert [(a["status"], a["modulo_id"]) for a in ocorr] == [(status, "9")]
+E       AssertionError: assert [] == [('html_princ...usente', '9')]
+E         
+E         Right contains one more item: ('html_principal_ausente', '9')
+E         Use -v to get more diff
+
+correcoes\aquisicao\test_adquire_v5.py:173: AssertionError</failure></testcase></testsuite></testsuites>

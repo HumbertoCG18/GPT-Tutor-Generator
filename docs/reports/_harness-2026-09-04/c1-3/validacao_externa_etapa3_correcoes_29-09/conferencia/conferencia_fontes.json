@@ -1,0 +1,659 @@
+{
+ "entradas": {
+  "inventario_sha256": "d5098196eac9b7bc4e51040ff3746f479e9e55b5e741819a1e9fe916a8a1d6a3",
+  "fontes_congeladas_sha256": "cfc255e296d0aea2136aabdeedbfe8e68ad5f6f1e18e39d353a88c109de08762",
+  "inventario_confere_com_congelamento": true
+ },
+ "cursos": {
+  "90231": {
+   "bytes": {
+    "arquivos_esperados": 37,
+    "arquivos_em_disco": 37,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 83,
+    "itens_no_inventario": 83,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "assign": 1,
+     "forum": 1,
+     "label": 21
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 47,
+     "ok": 36
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [
+    [
+     "stash/21.11 - Avaliação - Game Design Document - GDD/GEDD EXEMPLO - FLAME.pdf",
+     "stash/Modelo de GDD/GEDD EXEMPLO - FLAME.pdf"
+    ],
+    [
+     "stash/21.11 - Avaliação - Game Design Document - GDD/GDD EXEMPLO - TRANSFORMERS.pdf",
+     "stash/Modelo de GDD/GDD EXEMPLO - TRANSFORMERS.pdf"
+    ],
+    [
+     "stash/21.11 - Avaliação - Game Design Document - GDD/GDD EXEMPLO - BALLET.pdf",
+     "stash/Modelo de GDD/GDD EXEMPLO - BALLET.pdf"
+    ]
+   ],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "doc": 2,
+    "docx": 10,
+    "jpg": 4,
+    "pdf": 19,
+    "png": 1
+   },
+   "formatos_fora_do_recorte": {}
+  },
+  "88738": {
+   "bytes": {
+    "arquivos_esperados": 83,
+    "arquivos_em_disco": 83,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 97,
+    "itens_no_inventario": 97,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "assign": 3,
+     "board": 1,
+     "forum": 1,
+     "groupselect": 1,
+     "label": 42
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 15,
+     "ok": 82
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [
+    [
+     "stash/Material Auxiliar para Aprendizado de Golang/GoBootcamp.pdf",
+     "stash/Referencias/GoBootcamp.pdf"
+    ],
+    [
+     "stash/M5 - Memória Compartilhada - Conceitos/SCPeterson.java",
+     "stash/M6 - Memória Compartilhada - Semáforos/SCPeterson.java"
+    ],
+    [
+     "stash/M5 - Memória Compartilhada - Conceitos/Count.java",
+     "stash/M6 - Memória Compartilhada - Semáforos/Count.java"
+    ],
+    [
+     "stash/M6 - Memória Compartilhada - Semáforos/FPPDSemaforo.go",
+     "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/FPPDSemaforo/FPPDSemaforo.go"
+    ],
+    [
+     "stash/M6 - Memória Compartilhada - Semáforos/SC-semaforo-1.go",
+     "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/SC-semaforo-1.go"
+    ]
+   ],
+   "colisoes_de_nome": [
+    "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/FPPDSemaforo/FPPDSemaforo.go",
+    "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/SC-semaforo-1.go"
+   ],
+   "formatos_ok": {
+    "go": 33,
+    "html": 1,
+    "java": 8,
+    "mod": 1,
+    "pdf": 36,
+    "zip": 3
+   },
+   "formatos_fora_do_recorte": {
+    "go": 33,
+    "mod": 1
+   }
+  },
+  "81476": {
+   "bytes": {
+    "arquivos_esperados": 9,
+    "arquivos_em_disco": 9,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 8,
+    "itens_no_inventario": 8,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "board": 1,
+     "forum": 2,
+     "label": 3
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "ok": 8
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "pdf": 8
+   },
+   "formatos_fora_do_recorte": {}
+  },
+  "82667": {
+   "bytes": {
+    "arquivos_esperados": 35,
+    "arquivos_em_disco": 35,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 82,
+    "itens_no_inventario": 82,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "board": 1,
+     "forum": 7,
+     "label": 20
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 48,
+     "ok": 34
+    }
+   },
+   "paginas": {
+    "modulos": [
+     {
+      "modulo_id": "2953898",
+      "arquivos": [
+       "index.html"
+      ]
+     },
+     {
+      "modulo_id": "3266435",
+      "arquivos": [
+       "index.html"
+      ]
+     },
+     {
+      "modulo_id": "3008008",
+      "arquivos": [
+       "index.html"
+      ]
+     },
+     {
+      "modulo_id": "3060904",
+      "arquivos": [
+       "index.html"
+      ]
+     }
+    ],
+    "registros": [
+     {
+      "modulo_id": "2953898",
+      "arquivo": "index.html",
+      "status": "ok",
+      "caminho": "raw/moodle/pages/2953898-index.html"
+     },
+     {
+      "modulo_id": "3266435",
+      "arquivo": "index.html",
+      "status": "ok",
+      "caminho": "raw/moodle/pages/3266435-index.html"
+     },
+     {
+      "modulo_id": "3008008",
+      "arquivo": "index.html",
+      "status": "ok",
+      "caminho": "raw/moodle/pages/3008008-index.html"
+     },
+     {
+      "modulo_id": "3060904",
+      "arquivo": "index.html",
+      "status": "ok",
+      "caminho": "raw/moodle/pages/3060904-index.html"
+     }
+    ],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "(sem)": 5,
+    "c": 10,
+    "html": 4,
+    "pdf": 12,
+    "zip": 3
+   },
+   "formatos_fora_do_recorte": {
+    "(sem)": 5
+   }
+  },
+  "89447": {
+   "bytes": {
+    "arquivos_esperados": 21,
+    "arquivos_em_disco": 21,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 55,
+    "itens_no_inventario": 55,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "assign": 2,
+     "forum": 1,
+     "label": 1
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 35,
+     "ok": 20
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "pdf": 20
+   },
+   "formatos_fora_do_recorte": {}
+  },
+  "90572": {
+   "bytes": {
+    "arquivos_esperados": 26,
+    "arquivos_em_disco": 26,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 33,
+    "itens_no_inventario": 33,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "assign": 2,
+     "forum": 2,
+     "label": 7
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 8,
+     "ok": 25
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "pdf": 23,
+    "txt": 2
+   },
+   "formatos_fora_do_recorte": {}
+  },
+  "89100": {
+   "bytes": {
+    "arquivos_esperados": 22,
+    "arquivos_em_disco": 22,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 56,
+    "itens_no_inventario": 56,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "board": 1,
+     "forum": 6,
+     "groupselect": 2,
+     "label": 28,
+     "quiz": 3
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 12,
+     "ok": 21,
+     "tipo_inesperado": 23
+    }
+   },
+   "paginas": {
+    "modulos": [
+     {
+      "modulo_id": "3466730",
+      "arquivos": [
+       "index.html"
+      ]
+     }
+    ],
+    "registros": [
+     {
+      "modulo_id": "3466730",
+      "arquivo": "index.html",
+      "status": "ok",
+      "caminho": "raw/moodle/pages/3466730-index.html"
+     }
+    ],
+    "anexos_em_disco": []
+   },
+   "falhas": [
+    {
+     "modulo_id": "3433463",
+     "modname": "resource",
+     "arquivo": "ch2_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3433464",
+     "modname": "resource",
+     "arquivo": "ch1_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3453468",
+     "modname": "resource",
+     "arquivo": "ch3_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3453470",
+     "modname": "resource",
+     "arquivo": "ch4_respostas.hs",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3453471",
+     "modname": "resource",
+     "arquivo": "ch3_respostas.hs",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468097",
+     "modname": "resource",
+     "arquivo": "ch5_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468099",
+     "modname": "resource",
+     "arquivo": "exemplos_listas.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468101",
+     "modname": "resource",
+     "arquivo": "ch5_respostas.hs",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468103",
+     "modname": "resource",
+     "arquivo": "ch6_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468105",
+     "modname": "resource",
+     "arquivo": "exemplos_listas_recursao.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3468106",
+     "modname": "resource",
+     "arquivo": "ch6_respostas.hs",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3475675",
+     "modname": "resource",
+     "arquivo": "ch7_respostas.hs",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3478739",
+     "modname": "resource",
+     "arquivo": "ch8_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3478741",
+     "modname": "resource",
+     "arquivo": "exemplos_tipos_classes.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3482402",
+     "modname": "resource",
+     "arquivo": "ch10_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3482403",
+     "modname": "resource",
+     "arquivo": "exemplos_entrada_saida.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3485117",
+     "modname": "resource",
+     "arquivo": "ch12_br.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3485118",
+     "modname": "resource",
+     "arquivo": "funtores2.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3485119",
+     "modname": "resource",
+     "arquivo": "exemplos_funtores.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3485120",
+     "modname": "resource",
+     "arquivo": "exercicios_funtores.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3485121",
+     "modname": "resource",
+     "arquivo": "exemplos_monadas.zip",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3491191",
+     "modname": "resource",
+     "arquivo": "exercicios_revisao.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    },
+    {
+     "modulo_id": "3491193",
+     "modname": "resource",
+     "arquivo": "exercicios_revisao2.pdf",
+     "status": "tipo_inesperado",
+     "tamanho_api": 0
+    }
+   ],
+   "duplicatas_no_curso": [],
+   "colisoes_de_nome": [],
+   "formatos_ok": {
+    "html": 1,
+    "pdf": 16,
+    "txt": 3,
+    "zip": 1
+   },
+   "formatos_fora_do_recorte": {}
+  },
+  "80922": {
+   "bytes": {
+    "arquivos_esperados": 42,
+    "arquivos_em_disco": 42,
+    "faltando": [],
+    "extras": [],
+    "divergentes": [],
+    "inventario_x_disco": []
+   },
+   "inventario_x_contents": {
+    "itens_na_api": 47,
+    "itens_no_inventario": 47,
+    "sem_registro": [],
+    "registro_sem_item_na_api": [],
+    "chaves_modulo_arquivo_repetidas": [],
+    "modulos_sem_conteudo_fora_do_escopo": {
+     "assign": 1,
+     "board": 1,
+     "forum": 1,
+     "groupselect": 1,
+     "label": 11
+    },
+    "todos_os_registros_com_status_conhecido": true,
+    "status": {
+     "link_externo": 6,
+     "ok": 41
+    }
+   },
+   "paginas": {
+    "modulos": [],
+    "registros": [],
+    "anexos_em_disco": []
+   },
+   "falhas": [],
+   "duplicatas_no_curso": [
+    [
+     "stash/sem-secao/P2_OAP - C - Gabarito.pdf",
+     "stash/sem-secao/_mod3285953/P2_OAP - C - Gabarito.pdf"
+    ]
+   ],
+   "colisoes_de_nome": [
+    "stash/sem-secao/_mod3285953/P2_OAP - C - Gabarito.pdf",
+    "stash/Arquitetura de Processadores/_mod2883169/div_por2_recursiva.asm"
+   ],
+   "formatos_ok": {
+    "asm": 9,
+    "docx": 2,
+    "gif": 1,
+    "jar": 1,
+    "pdf": 23,
+    "pptx": 2,
+    "zip": 3
+   },
+   "formatos_fora_do_recorte": {
+    "jar": 1,
+    "asm": 9
+   }
+  }
+ },
+ "duplicatas_entre_cursos": [],
+ "resumo": {
+  "integridade_global": true,
+  "inventario_confere_com_congelamento": true,
+  "bytes_conferem": true,
+  "inventario_completo": true,
+  "status_total": {
+   "link_externo": 171,
+   "ok": 267,
+   "tipo_inesperado": 23
+  },
+  "falhas": 23,
+  "duplicatas_no_curso": 9,
+  "colisoes_de_nome": 4,
+  "formatos_fora_do_recorte": {
+   "88738": {
+    "go": 33,
+    "mod": 1
+   },
+   "82667": {
+    "(sem)": 5
+   },
+   "80922": {
+    "jar": 1,
+    "asm": 9
+   }
+  },
+  "paginas": 5,
+  "anexos_de_pagina_em_disco": 0
+ }
+}

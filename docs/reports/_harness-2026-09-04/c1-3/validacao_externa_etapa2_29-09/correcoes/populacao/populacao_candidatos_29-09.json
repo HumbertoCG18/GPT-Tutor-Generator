@@ -1,0 +1,891 @@
+{
+ "regra": {
+  "versao": 2,
+  "sal": "vocab-validacao-externa-2026-09-29",
+  "K_MAX": 6,
+  "MIN_CURSOS_GERAL": 3,
+  "MIN_ADJUDICAVEIS_GERAL": 100,
+  "MIN_ADJUDICAVEIS_CURSO": 10,
+  "MIN_PERCENT_LOCAL": 90,
+  "script_sha256": "7b99f60918bbb4ae277dea44edfd1655a901f2ebbd28cba033f17b71a0cd8a3b",
+  "base_evidencia": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+  "candidatos_arquivo": "candidatos_29-09.json",
+  "candidatos_sha256": "846a6fb34600e3275543cea61262ff8dc3ba92e318ec8fa7f6a7b82c286b419e"
+ },
+ "candidatos": [
+  {
+   "sigla": "MF",
+   "nome": "Métodos Formais para Computação",
+   "fonte": "~/Desktop/Moodle/metodos-formais-para-computacao",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 76,
+    "materiais_unicos_por_hash": 60,
+    "extensoes": {
+     "pdf": 47,
+     "zip": 13
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 60,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 59,
+    "com_fonte_local": 59,
+    "fracao_com_fonte_local": {
+     "num": 59,
+     "den": 59
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\metodos-formais-para-computacao\\Plano de Ensino\\plano.pdf",
+    "sha256": "4ad5138a7a8b168052ded6a653fd2a893044ae6123e1d7d905a003ea89c6adb2"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 568,
+    "exemplos": [
+     ".mex/context/audit-2026-09-07.md",
+     ".mex/context/institutional.md",
+     "docs/deeptutor-soul-template.md",
+     "docs/plans/Feitos/2026-05-07-unit-subunit-assignment-fix.md",
+     "docs/plans/Feitos/2026-05-09-tag-scoring-completion.md",
+     "docs/plans/Feitos/2026-06-03-cronograma-schema-robusto-review.html"
+    ],
+    "commits": [
+     "53b1659f feat(leitura): rotulo padronizado de unidade e subtopico no FILE_MAP — \"03 - Nome\" e \"3.5 - Nome\", compostos de `code` + `label` que a taxonomia ja guarda separados (text/rotulos.py). Sem `code` (planos que nao numeram, IA e LR) mostra so o nome, nunca inventa numero; unidade fora da taxonomia cai no slug (fallback).",
+     "2508db3f fix(tags): B-4 -- fonte unica _tool_matches com fronteira de palavra nos 2 caminhos de ferramenta",
+     "304ef2c4 feat(unidade): genericos de unidade calculados POR CURSO (df sobre o plano + nome do curso) no lugar das listas do MF",
+     "f598ab26 feat(cobertura): regras A/B/C do eixo N:N + coverage_units chega aos consumidores"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "cf82b585ca4587e1ab064832542420fcd083e9f096de8455e1120a2c97b3d84f"
+  },
+  {
+   "sigla": "SO",
+   "nome": "Sistemas Operacionais",
+   "fonte": "~/Desktop/Moodle/sistemas-operacionais",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 53,
+    "materiais_unicos_por_hash": 40,
+    "extensoes": {
+     "c": 7,
+     "pdf": 30,
+     "txt": 2,
+     "zip": 1
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 40,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 38,
+    "com_fonte_local": 38,
+    "fracao_com_fonte_local": {
+     "num": 38,
+     "den": 38
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\sistemas-operacionais\\Informações Gerais\\Plano de Ensino.pdf",
+    "sha256": "5adb98ea162194929ca9097e001db1221ca298f191c4b7052e2b8a5559974b1c"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 347,
+    "exemplos": [
+     "docs/plans/Feitos/2026-05-07-unit-subunit-assignment-fix.md",
+     "docs/plans/Feitos/2026-06-06-cronograma-sarc-tipo-backend.md",
+     "docs/plans/Feitos/2026-07-08-fase2-providers-p3-p4.md",
+     "docs/plans/Feitos/2026-07-10-fase4-integracao-d9.md",
+     "docs/plans/Feitos/2026-08-03-rollout-flagon-trilha1.md",
+     "docs/plans/Feitos/2026-08-05-fio-subject-profile.md"
+    ],
+    "commits": [
+     "f28d8e11 cura unidades SO: gold remendado (splits) + goldens/teste atualizados (T9c)",
+     "56b5a3cd fix(timeline): guard de maioria evita OFFICE_HOURS sequestrar bloco de aula",
+     "b5af54f3 docs(planob): task 5 fix round 1 — medicao pre/pos D-H em TCC/SO registrada (T17)"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "2621c1c88ccceb6fccbfbeb0bf0c0faa08af9bf0f2d32d4f0755c17285e2e18a"
+  },
+  {
+   "sigla": "IA",
+   "nome": "Inteligência Artificial",
+   "fonte": "~/Desktop/Moodle/inteligencia-artificial",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 90,
+    "materiais_unicos_por_hash": 64,
+    "extensoes": {
+     "csv": 4,
+     "ipynb": 24,
+     "pdf": 29,
+     "py": 1,
+     "txt": 2,
+     "zip": 4
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 64,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 62,
+    "com_fonte_local": 62,
+    "fracao_com_fonte_local": {
+     "num": 62,
+     "den": 62
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 353,
+    "exemplos": [
+     "docs/plans/Feitos/2026-05-07-unit-subunit-assignment-fix.md",
+     "docs/plans/Feitos/2026-06-06-cronograma-sarc-tipo-backend.md",
+     "docs/plans/Feitos/2026-07-10-fase4-integracao-d9.md",
+     "docs/plans/Feitos/2026-08-07-campanha-unidades.md",
+     "docs/reports/2026-09-14-handoff-codex-regime-cru.md",
+     "docs/reports/Feitos/2026-06-18-handoff-s0-feito-rumo-a1.md"
+    ],
+    "commits": [
+     "7554e823 test(blocos): Fase 0 caracterização — trava divisão/atribuição/render atuais"
+    ]
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "a106e5acb93f53ee08e4e6993e9cada8a0925c4849e996ed62f5b7376af940cb"
+  },
+  {
+   "sigla": "ES2",
+   "nome": "Engenharia de Software II",
+   "fonte": "~/Desktop/Moodle/engenharia-de-software-ii",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 41,
+    "materiais_unicos_por_hash": 35,
+    "extensoes": {
+     "pdf": 27,
+     "zip": 8
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 35,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 34,
+    "com_fonte_local": 34,
+    "fracao_com_fonte_local": {
+     "num": 34,
+     "den": 34
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\engenharia-de-software-ii\\Plano de Ensino\\plano.pdf",
+    "sha256": "0e5e979ed10040fb9d8fb4ea93a2abeeb6d2a6d9dd577570bb22ac3cae1b40c6"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 358,
+    "exemplos": [
+     "docs/plans/Feitos/2026-05-07-unit-subunit-assignment-fix.md",
+     "docs/plans/Feitos/2026-06-03-cronograma-schema-robusto-review.html",
+     "docs/plans/Feitos/2026-06-06-cronograma-sarc-tipo-backend.md",
+     "docs/plans/Feitos/2026-08-05-fio-subject-profile.md",
+     "docs/plans/Feitos/2026-08-07-campanha-unidades.md",
+     "docs/reports/2026-09-14-handoff-codex-regime-cru.md"
+    ],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "5f44a13a90a5b09c2ad19b64a7a60721e5679efae90eba19eafcfe8c50a26a54"
+  },
+  {
+   "sigla": "TCC",
+   "nome": "Teoria da Computabilidade e Complexidade",
+   "fonte": "~/Desktop/Moodle/teoria-da-computabilidade-e-complexidade",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 42,
+    "materiais_unicos_por_hash": 25,
+    "extensoes": {
+     "pdf": 25
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 25,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 23,
+    "com_fonte_local": 23,
+    "fracao_com_fonte_local": {
+     "num": 23,
+     "den": 23
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\teoria-da-computabilidade-e-complexidade\\sem-secao\\Plano de Ensino.pdf",
+    "sha256": "2136de4cc5fd4e4eb5e0aed93da83a424bcb01233b732630d23fcf3566dd4d34"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 346,
+    "exemplos": [
+     "docs/plans/Feitos/2026-06-06-cronograma-sarc-tipo-backend.md",
+     "docs/plans/Feitos/2026-07-08-fase2-providers-p3-p4.md",
+     "docs/plans/Feitos/2026-07-10-fase4-integracao-d9.md",
+     "docs/plans/Feitos/2026-08-03-rollout-flagon-trilha1.md",
+     "docs/plans/Feitos/2026-08-05-fio-subject-profile.md",
+     "docs/plans/Feitos/2026-08-06-gerador-indice-unico.md"
+    ],
+    "commits": [
+     "75385a40 test(caracterizacao): atualiza baseline do TCC apos a descontaminacao do gold",
+     "bdacdf3b fix(determinismo): soma de score em ordem fixa — reprocess vira ponto fixo",
+     "a6f7b73a feat(classifier): posicional — promote de vespera + guard planning + heranca de scope manual",
+     "b5af54f3 docs(planob): task 5 fix round 1 — medicao pre/pos D-H em TCC/SO registrada (T17)"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "d00c9cb6e66a8a39bd0a703e719b64a28aa6a5bcf18d7d545dc5aa0ce0b4e22c"
+  },
+  {
+   "sigla": "CG",
+   "nome": "Computação Gráfica",
+   "fonte": "~/Desktop/Moodle/computacao-grafica",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 531,
+    "materiais_unicos_por_hash": 262,
+    "extensoes": {
+     "cpp": 3,
+     "gif": 53,
+     "htm": 6,
+     "html": 51,
+     "jpeg": 1,
+     "jpg": 45,
+     "pdf": 56,
+     "png": 31,
+     "xlsx": 2,
+     "zip": 14
+    },
+    "modulos_moodle": {
+     "board": 1,
+     "forum": 6,
+     "label": 11,
+     "page": 31,
+     "resource": 35,
+     "url": 27
+    },
+    "links_moodle": 27,
+    "entries_brutas": 289,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 287,
+    "com_fonte_local": 260,
+    "fracao_com_fonte_local": {
+     "num": 260,
+     "den": 287
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\computacao-grafica\\Plano de Ensino\\PlanoDeEnsino-4645Z-04-Fundamentos de Computação Gráfica.pdf",
+    "sha256": "7f63cb6b2620b1d7045d4c201606b0aac9f0c3e3d4e4c5114b10a750d0f73425"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 442,
+    "exemplos": [
+     ".mex/context/decisions.md",
+     ".mex/context/institutional.md",
+     "docs/reports/2026-09-12-handoff-regime-cru.md",
+     "docs/reports/2026-09-14-handoff-codex-regime-cru.md",
+     "docs/reports/2026-09-23-regua-cg-adjudicacao-proposta.md",
+     "docs/reports/Feitos/2026-09-23-diagnostico-causal-tres-eixos.md"
+    ],
+    "commits": [
+     "15ca1a7f docs(institutional): contrato estrutural do HTML do Moodle, medido nos 42 do CG",
+     "e40426f3 docs(handoff): passos 1-3 da CG executados; stash em Desktop/Moodle/computacao-grafica; falta o build real",
+     "3cc1baa1 docs(handoff): passos 1-3 da CG executados; stash em Desktop/Moodle/computacao-grafica; falta o build real"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "31f6cae2c9631ac7de9045e8cd829e9ec4e6ad9becb5fdf1018e88738527a288"
+  },
+  {
+   "sigla": "FR",
+   "nome": "Fundamentos de Redes de Computadores",
+   "fonte": "~/Desktop/Moodle/fundamentos-de-redes-de-computadores",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 38,
+    "materiais_unicos_por_hash": 27,
+    "extensoes": {
+     "html": 1,
+     "pdf": 25,
+     "png": 1
+    },
+    "modulos_moodle": {
+     "board": 1,
+     "forum": 2,
+     "label": 9,
+     "resource": 30,
+     "url": 5
+    },
+    "links_moodle": 5,
+    "entries_brutas": 32,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 30,
+    "com_fonte_local": 25,
+    "fracao_com_fonte_local": {
+     "num": 25,
+     "den": 30
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\fundamentos-de-redes-de-computadores\\stash\\Plano de Ensino\\Plano de Ensino - 20262.pdf",
+    "sha256": "7bc6fedee4b5548e238dc608e3c0abec615a67851d184ecb57364be78289f2d9"
+   },
+   "exposicao": {
+    "nivel": "N3",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 237,
+    "exemplos": [
+     "docs/reports/2026-09-14-handoff-codex-regime-cru.md",
+     "docs/reports/_archive/2026-08-31-handoff-cobertura57-e-fila-antiga.md",
+     "docs/reports/_archive/2026-09-22-handoff-motor-fr-regua-claude.md",
+     "docs/reports/_archive/pendencias-historico-ate-2026-09-02.md",
+     "docs/reports/_archive/scripts-2026-09-04/eval_subunit_gt.py",
+     "docs/reports/_harness-2026-09-02/compila_vocab_v2.py"
+    ],
+    "commits": [
+     "844c61b7 feat(config): ativar D9 cru para matérias novas (#65)",
+     "36b00ab9 fix(config): registrar execução da atribuição e alinhar opções da UI e do script (#64)"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "excluido",
+   "motivo": "desenvolvimento: gold visto e usado nas campanhas do motor",
+   "ordem_deterministica": "db93ce1432283ca827d7b51becd2f7734ea9f15af37306a5445ce1649c5425c8"
+  },
+  {
+   "sigla": "LR",
+   "nome": "Laboratório de Redes de Computadores",
+   "fonte": "~/Desktop/Moodle/laboratorio-de-redes-de-computadores",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 25,
+    "materiais_unicos_por_hash": 12,
+    "extensoes": {
+     "html": 5,
+     "pdf": 7
+    },
+    "modulos_moodle": {
+     "assign": 3,
+     "forum": 2,
+     "groupselect": 1,
+     "label": 2,
+     "resource": 7,
+     "url": 2
+    },
+    "links_moodle": 2,
+    "entries_brutas": 14,
+    "meta_por_nome": 3,
+    "potencialmente_adjudicaveis": 11,
+    "com_fonte_local": 9,
+    "fracao_com_fonte_local": {
+     "num": 9,
+     "den": 11
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Desktop\\Moodle\\laboratorio-de-redes-de-computadores\\Plano de Ensino\\Plano de ensino.pdf",
+    "sha256": "703082ffad883b46ecc26cc5e59f708796f96f84ca5569aff73646e252a9a157"
+   },
+   "exposicao": {
+    "nivel": "N2",
+    "tutor_construido": true,
+    "falhas_da_busca": [],
+    "mencoes_repo": 270,
+    "exemplos": [
+     ".mex/context/audit-2026-09-07.md",
+     ".mex/context/decisions.md",
+     ".mex/context/institutional.md",
+     ".mex/context/text-chain.md",
+     ".mex/patterns/medir-alavanca-ablacao.md",
+     "docs/Overview-Sistema.html"
+    ],
+    "commits": [
+     "bf46d51f docs(motor): regime VOCAB — diagnóstico das perdas e desenho da validação em cursos novos",
+     "4640cd0b docs(placar): placar consolidado do dia - o que sobrou depois de 4 correcoes e 9 refutacoes",
+     "91fd97d4 feat(subunidade): seletor de topicos carentes construido e medido - 5 topicos sem gold levam o cru de 58,6% a 70,9%",
+     "a8ad2d07 docs(medicao): a unidade se sustenta sem gold? parcialmente, e depende muito do curso"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "smoke",
+   "motivo": "tutor construído e processado pelo motor; fora da população principal",
+   "ordem_deterministica": "65082b0da797b7d8328fdcae20fcca55d024bb7c5733ccf5b549a00dd9a89e6c"
+  },
+  {
+   "sigla": "LSO",
+   "nome": "Laboratório de Sistemas Operacionais",
+   "fonte": "~/Desktop/Moodle/laboratorio-de-sistemas-operacionais",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 29,
+    "materiais_unicos_por_hash": 22,
+    "extensoes": {
+     "html": 3,
+     "pdf": 19
+    },
+    "modulos_moodle": {
+     "assign": 1,
+     "forum": 2,
+     "groupselect": 1,
+     "label": 8,
+     "resource": 20,
+     "url": 7
+    },
+    "links_moodle": 7,
+    "entries_brutas": 29,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 28,
+    "com_fonte_local": 21,
+    "fracao_com_fonte_local": {
+     "num": 21,
+     "den": 28
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~/Desktop/claude-tutor/lab-so.pdf",
+    "sha256": "022cd22fa038282ccd9568fea556e62e13f19f7bdf90bb848029549c6832c08e"
+   },
+   "exposicao": {
+    "nivel": "N1",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 24,
+    "exemplos": [
+     "docs/reports/_archive/2026-08-31-handoff-cobertura57-e-fila-antiga.md",
+     "docs/reports/_archive/2026-08-31b-handoff-gate-meta-e-fila-nova.md",
+     "docs/reports/_archive/2026-09-01-handoff-tokens-curtos.md",
+     "docs/reports/_archive/2026-09-01c-handoff-tokens-curtos-fechados.md",
+     "docs/reports/_archive/2026-09-02c-handoff-fase3-medida.md",
+     "docs/reports/_archive/2026-09-03-handoff-sync.md"
+    ],
+    "commits": [
+     "aa2c03bb feat(p3): builds Lab Redes + Fund. Redes -- LR/FR entram nos watchdogs; regua pula curso sem gold",
+     "649f03dd docs: estado 31/08 no tracker (regua 199/191/55/87, nu 194/134/54, 6 remotes 0/0) + PENDENTE DE VERDADE + handoff P1/P2",
+     "d2d69706 feat(timeline): F5 -- entregas numeradas segmentam as unidades em cadeira sem prova",
+     "cf20504d feat(ingestao): F10 -- categoria decide sobre nome do MODULO + nome do ARQUIVO"
+    ]
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 90% com fonte local (exato)",
+   "ordem_deterministica": "6856412f8eff7ddf4f1ee2208af7da102fc1940923b0bdca51a497b867088474"
+  },
+  {
+   "sigla": "UX",
+   "nome": "Experiência do Usuário",
+   "fonte": "~/Desktop/Moodle/experiencia-do-usuario",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 29,
+    "materiais_unicos_por_hash": 20,
+    "extensoes": {
+     "docx": 2,
+     "pdf": 18
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 20,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 19,
+    "com_fonte_local": 19,
+    "fracao_com_fonte_local": {
+     "num": 19,
+     "den": 19
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N1",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 9,
+    "exemplos": [
+     "docs/plans/Feitos/2026-06-12-atribuicao-p1p2p3-funil.md",
+     "docs/plans/Feitos/2026-06-12-atribuicao-p4-scorer.md",
+     "docs/reports/Feitos/2026-06-12-catalogo-formatos-labels-moodle.md",
+     "docs/reports/_archive/pendencias-historico-ate-2026-09-02.md",
+     "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "docs/specs/Feitos/2026-06-12-atribuicao-p4-scorer-design.md"
+    ],
+    "commits": [
+     "3f594527 feat(score): S1 camelcase nos titulos (placar no corpo)"
+    ]
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano",
+   "ordem_deterministica": "f0c79d792ba051da89fb85f1ca6c42969981a64e138cd77d7f3adc99e4b75b8b"
+  },
+  {
+   "sigla": "CALC1",
+   "nome": "Cálculo 1 (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Calculo 1",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 4,
+    "materiais_unicos_por_hash": 4,
+    "extensoes": {
+     "pdf": 4
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 4,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 4,
+    "com_fonte_local": 4,
+    "fracao_com_fonte_local": {
+     "num": 4,
+     "den": 4
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": false,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 10 adjudicáveis",
+   "ordem_deterministica": "bcc87724581d15eb66fda8b34c7399341d0d8b2f39dbef198e944b5d3919724c"
+  },
+  {
+   "sigla": "FP",
+   "nome": "Fundamentos da Programação (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Fundamentos-da-Programacao",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 76,
+    "materiais_unicos_por_hash": 34,
+    "extensoes": {
+     "java": 24,
+     "pdf": 8,
+     "txt": 2
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 34,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 34,
+    "com_fonte_local": 34,
+    "fracao_com_fonte_local": {
+     "num": 34,
+     "den": 34
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano",
+   "ordem_deterministica": "60af1635d1acc3298bcfe1486ab9a5c4c93d1f821c2bbeb90c76155dcc1d2a5d"
+  },
+  {
+   "sigla": "IC",
+   "nome": "Introdução à Computação (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Introdução a Computação",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 2,
+    "materiais_unicos_por_hash": 1,
+    "extensoes": {
+     "pdf": 1
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 1,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 1,
+    "com_fonte_local": 1,
+    "fracao_com_fonte_local": {
+     "num": 1,
+     "den": 1
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N1",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 4,
+    "exemplos": [
+     "docs/reports/_harness-2026-09-04/c0-12/travessia_12_CG.log",
+     "docs/reports/_travessia_cache/CG.json",
+     "docs/reports/travessia_result_CG_llm-completo.json",
+     "docs/reports/travessia_result_CG_llm.json"
+    ],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": false,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 10 adjudicáveis",
+   "ordem_deterministica": "55eaf2c12d0d04d7c8e676c083bff6aa0df3b2da9dc88ed72d8948523737d6e3"
+  },
+  {
+   "sigla": "MD",
+   "nome": "Matemática Discreta (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Matemática Discreta",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 12,
+    "materiais_unicos_por_hash": 11,
+    "extensoes": {
+     "pdf": 11
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 11,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 11,
+    "com_fonte_local": 11,
+    "fracao_com_fonte_local": {
+     "num": 11,
+     "den": 11
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N1",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 3,
+    "exemplos": [
+     "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "docs/reports/_harness-2026-09-02/moodle_sections/MF.json",
+     "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl"
+    ],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano",
+   "ordem_deterministica": "9147fc3c2ceefb5db8fdf22d18968662a1a6ce1af85f718c1c25db4715461839"
+  },
+  {
+   "sigla": "MC",
+   "nome": "Metodologia Científica (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Metodologia Cientifica",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 0,
+    "materiais_unicos_por_hash": 0,
+    "extensoes": {},
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 0,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 0,
+    "com_fonte_local": 0,
+    "fracao_com_fonte_local": {
+     "num": 0,
+     "den": 0
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": false,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 10 adjudicáveis, >= 90% com fonte local (exato)",
+   "ordem_deterministica": "0b4c1b1fe4eb350c85b3f81372573ac9e14fcd8494da2222cb5caa67a325c32f"
+  },
+  {
+   "sigla": "MSA",
+   "nome": "Modelagem, Simulação e Métodos Analíticos (projeto do aluno)",
+   "fonte": "~/Desktop/MetodosAnaliticos",
+   "origem": "universo local de 29/09 (v1)",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 52,
+    "materiais_unicos_por_hash": 21,
+    "extensoes": {
+     "docx": 2,
+     "html": 1,
+     "md": 8,
+     "pdf": 3,
+     "png": 2,
+     "py": 3,
+     "txt": 2
+    },
+    "modulos_moodle": {},
+    "links_moodle": 0,
+    "entries_brutas": 21,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 21,
+    "com_fonte_local": 21,
+    "fracao_com_fonte_local": {
+     "num": 21,
+     "den": 21
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N1",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 2,
+    "exemplos": [
+     "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "docs/reports/_workflow-audit-2026-09-15/inventory-summary.json"
+    ],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano",
+   "ordem_deterministica": "58e6654951b35bb2f9374e7a7d582c402165902d17bfe0c42ed540a81c24355e"
+  }
+ ],
+ "proposta": {
+  "generalizacao": [],
+  "generalizacao_fora_do_orcamento": [],
+  "piloto_externo": [],
+  "piloto_fora_do_orcamento": [],
+  "smoke_descritivo": [
+   "LR"
+  ],
+  "indeterminados": [],
+  "adjudicaveis_generalizacao": 0,
+  "minimo_generalizacao_atingido": false
+ }
+}

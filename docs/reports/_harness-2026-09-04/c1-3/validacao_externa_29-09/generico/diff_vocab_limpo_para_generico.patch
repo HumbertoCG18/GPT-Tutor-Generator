@@ -1,0 +1,1564 @@
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/avaliador.py ./avaliador.py
+--- ../../vocab_limpo_26-09/avaliador.py	2026-09-26 01:34:17.783869600 -0300
++++ ./avaliador.py	2026-09-29 00:35:35.575119600 -0300
+@@ -1,5 +1,8 @@
+-"""Rodada VOCAB_LIMPO (26/09): adaptador do avaliador congelado da Fase 1 (../wad5_25-09/avaliador.py, aeac2996…) com SÓ
+-os nomes dos braços trocados em `veredictos` e `avalia`. Métricas, régua, denominadores e contrato idênticos.
++"""Harness genérico (validação externa, 29/09): avaliador da rodada VOCAB_LIMPO (../../vocab_limpo_26-09/avaliador.py)
++com SÓ: nomes de braço trocados pelos papéis da configuração (K.CRU, K.CANDIDATO, K.CTRL_MAIOR, K.CTRL_ALEAT); cursos com
++régua de unidade (UNI) vindos da configuração; um segundo carregador de régua para o gold externo (`gold_externo.py`),
++escolhido pela configuração; e, quando a configuração pede (cursos novos, bloco sem gold), a invariância de bloco por ID
++entre CRU e candidato como condição adicional de B. Métricas, transições, geração/seleção, meta e contrato idênticos.
+ 
+ Original: avaliador SEPARADO da Fase 1 do regime VOCAB. Definições: adendo v3 (bloco NORMATIVO) §§6–8.
+ 
+@@ -21,15 +24,16 @@
+ from pathlib import Path
+ 
+ HERE = Path(__file__).resolve().parent
+-DATA = HERE.parents[4]
++DATA = HERE.parents[5]   # o genérico fica um nível abaixo de c1-3
+ sys.path.insert(0, str(HERE))
+ import comum as K  # noqa: E402
++import gold_externo as GE  # noqa: E402  (só stdlib)
+ 
+ EIXOS = ("bloco", "unidade", "sub_primaria", "sub_aceita")
+ OFICIAIS = ("bloco", "unidade", "sub_primaria")   # sub_aceita é auxiliar: relatada, nunca veta nem aprova
+ CORTES = {"maior_que_zero": lambda s: s > 0, "maior_ou_igual_0_05": lambda s: s >= 0.05}
+ NA = "não aplicável"
+-UNI = frozenset({"MF", "SO", "IA", "ES2", "TCC", "CG"})   # cursos com régua de unidade (mede_3eixos_12-09.UNI)
++UNI = K.R.UNI   # cursos com régua de unidade (configuração da rodada)
+ CAMPOS_LINHA = {"gold_id", "eid", "bloco", "unidade", "sub_primaria", "sub_aceita"}
+ # Origem de cada cópia local. Blobs do código histórico: congelamento.normativo.avaliacao.codigo_historico_blob.
+ HISTORICO = {
+@@ -334,23 +338,40 @@
+ def veredictos(pl, comp, regua):
+     """A: sinal exploratório. B: contrato de integração nos TRÊS eixos oficiais; sub_aceita só relatada. C: meta."""
+     sp = {b: pl[b]["TOTAL"]["sub_primaria"]["acertos"] for b in pl}
+-    controles = ("CRU_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
+-    a = all(sp["VOCAB_LIMPO"] > sp[c] for c in controles)
+-    t = comp["VOCAB_LIMPO"]
++    controles = (K.CRU, K.CTRL_MAIOR, *K.CTRL_ALEAT)
++    a = all(sp[K.CANDIDATO] > sp[c] for c in controles)
++    t = comp[K.CANDIDATO]
+     perdas = {e: t[e]["derivadas"].get("perda", 0) for e in OFICIAIS}
+-    regride = {e: [s for s in regua if pl["VOCAB_LIMPO"][s][e]["acertos"] < pl["CRU_LIMPO"][s][e]["acertos"]] for e in OFICIAIS}
+-    if sp["VOCAB_LIMPO"] > sp["CRU_LIMPO"] and not any(perdas.values()) and not any(regride.values()):
++    regride = {e: [s for s in regua if pl[K.CANDIDATO][s][e]["acertos"] < pl[K.CRU][s][e]["acertos"]] for e in OFICIAIS}
++    if sp[K.CANDIDATO] > sp[K.CRU] and not any(perdas.values()) and not any(regride.values()):
+         b = "sem violação do contrato na Fase 1 condicionada à timeline congelada (não comprova integração completa)"
+     elif a:
+         b = "sinal exploratório observado; candidato reprovado para integração"
+     else:
+         b = "sem sinal exploratório"
+-    return {"A_sinal_exploratorio": a, "A_detalhe": {c_: sp[c_] for c_ in ("VOCAB_LIMPO", *controles)},
++    return {"A_sinal_exploratorio": a, "A_detalhe": {c_: sp[c_] for c_ in (K.CANDIDATO, *controles)},
+             "B_integracao": b, "B_perdas": perdas, "B_cursos_que_regridem": regride,
+             "B_perdas_sub_aceita_auxiliar": t["sub_aceita"]["derivadas"].get("perda", 0),
+-            "B_cursos_que_regridem_sub_aceita_auxiliar": [s for s in regua if pl["VOCAB_LIMPO"][s]["sub_aceita"]["acertos"]
+-                                                          < pl["CRU_LIMPO"][s]["sub_aceita"]["acertos"]],
+-            "C_meta_VOCAB_LIMPO": meta(pl["VOCAB_LIMPO"], regua)}
++            "B_cursos_que_regridem_sub_aceita_auxiliar": [s for s in regua if pl[K.CANDIDATO][s]["sub_aceita"]["acertos"]
++                                                          < pl[K.CRU][s]["sub_aceita"]["acertos"]],
++            f"C_meta_{K.CANDIDATO}": meta(pl[K.CANDIDATO], regua)}
++
++
++def mudancas_bloco(cru, candidato):
++    """IDs (curso/eid) cuja predição de bloco difere entre CRU e candidato, em TODOS os materiais das capturas."""
++    return sorted(f"{s}/{e}" for s, v in cru["decisoes"].items() for e, d in v.items()
++                  if d["final"]["bloco"] != candidato["decisoes"][s][e]["final"]["bloco"])
++
++
++def veredictos_rodada(pl, comp, regua, capturas):
++    """Veredictos da rodada anterior, idênticos; com `invariancia_bloco` na configuração (cursos novos, bloco sem gold),
++    acrescenta a invariância de bloco por ID e o B da rodada (`B_rodada`), que exige B sem violação E nenhuma mudança."""
++    v = veredictos(pl, comp, regua)
++    if K.R.CFG["regua"]["invariancia_bloco"]:
++        mud = mudancas_bloco(capturas[K.CRU], capturas[K.CANDIDATO])
++        v["B_mudancas_bloco_por_id"] = mud
++        v["B_rodada"] = v["B_integracao"].startswith("sem violação") and not mud
++    return v
+ 
+ 
+ def proveniencia(capturas, congelamento, taxonomias, regua_prov):
+@@ -369,16 +390,16 @@
+         raise K.ErroIntegridade("avaliação recusada: " + "; ".join(prob[:8]))
+     regs = {b: registros_por_id(capturas[b], regua) for b in K.BRACOS}
+     pl = {b: placar_de(regs[b], regua) for b in K.BRACOS}
+-    ref = confere_referencia_cru(pl["CRU_LIMPO"])
++    ref = confere_referencia_cru(pl[K.CRU])
+     if ref:
+         raise K.ErroIntegridade("avaliação recusada: CRU não reproduz a referência por curso: " + "; ".join(ref[:8]))
+-    comp = {b: {e: transicoes(capturas["CRU_LIMPO"], capturas[b], regua, e) for e in EIXOS} for b in K.BRACOS if b != "CRU_LIMPO"}
+-    somas = [p for b, v in comp.items() for e, tr in v.items() for p in confere_transicoes(tr, pl["CRU_LIMPO"], pl[b], e)]
++    comp = {b: {e: transicoes(capturas[K.CRU], capturas[b], regua, e) for e in EIXOS} for b in K.BRACOS if b != K.CRU}
++    somas = [p for b, v in comp.items() for e, tr in v.items() for p in confere_transicoes(tr, pl[K.CRU], pl[b], e)]
+     if somas:
+         raise K.ErroIntegridade("agregados não conferem com os registros por ID: " + "; ".join(somas[:8]))
+-    gen = {b: geracao_selecao(capturas["CRU_LIMPO"], capturas[b], regua, taxonomias["CRU_LIMPO"], taxonomias[b]) for b in K.BRACOS if b != "CRU_LIMPO"}
++    gen = {b: geracao_selecao(capturas[K.CRU], capturas[b], regua, taxonomias[K.CRU], taxonomias[b]) for b in K.BRACOS if b != K.CRU}
+     return {"placar": pl, "registros": regs, "comparacoes": comp, "geracao_selecao": gen,
+-            "meta": {b: meta(pl[b], regua) for b in K.BRACOS}, "veredictos": veredictos(pl, comp, regua),
++            "meta": {b: meta(pl[b], regua) for b in K.BRACOS}, "veredictos": veredictos_rodada(pl, comp, regua, capturas),
+             "proveniencia": proveniencia(capturas, congelamento, taxonomias, regua_prov)}
+ 
+ 
+@@ -545,6 +566,42 @@
+     return regua, {"arquivos_conferidos": conferidos, "mapeamento": mapeamento, "regua_efetiva_sha": K.sha_json(regua)}
+ 
+ 
++def carrega_gold_externo(congelamento=None, entradas=None, *, autorizado=False):
++    """Porta do gold externo; só com autorização. Gold, rótulos e mapa material->entry vêm do descritor do congelamento,
++    cada um conferido contra o blob git congelado; os bytes interpretados são os bytes conferidos."""
++    if autorizado is not True:
++        raise PermissionError("leitura do gold não autorizada nesta etapa")
++    desc = congelamento["normativo"]["avaliacao"]
++    if desc["pendencias"]:
++        raise K.ErroIntegridade(f"descritor da régua com pendências: {desc['pendencias'][:3]}")
++    conferidos, regua, resumo = {}, {}, {}
++
++    def ler(papel, sig):
++        item = desc["arquivos"][papel][sig]
++        dados = (DATA / item["caminho"]).read_bytes()
++        if K.blob_git(dados) != item["blob_git"]:
++            raise K.ErroIntegridade(f"{item['caminho']}: bytes != blob congelado")
++        conferidos[item["caminho"]] = item["blob_git"]
++        return dados
++
++    for sig in K.NOMES:
++        rot = _json_bytes(ler("rotulos", sig))
++        mapa_doc = _json_bytes(ler("mapa", sig))
++        linhas = GE.le_csv(ler("gold", sig))
++        prob = GE.valida(linhas, sorted(mapa_doc["mapa"]), rot)
++        if prob:
++            raise K.ErroIntegridade(f"{sig}: gold inválido: {prob[:3]}")
++        regua[sig], resumo[sig] = GE.regua(linhas, rot, mapa_doc["mapa"])
++    return regua, {"arquivos_conferidos": conferidos, "mapeamento": resumo, "regua_efetiva_sha": K.sha_json(regua)}
++
++
++def carrega_regua(congelamento=None, entradas=None, *, autorizado=False):
++    """Escolhe o carregador pela configuração congelada da rodada (régua histórica ou gold externo)."""
++    if K.R.CFG["regua"]["tipo"] == "gold_externo":
++        return carrega_gold_externo(congelamento, entradas, autorizado=autorizado)
++    return carrega_regua_historica(congelamento, entradas, autorizado=autorizado)
++
++
+ def carrega_taxonomias(congelamento, snap_dir):
+     """Snapshots de taxonomia por braço/curso, conferidos contra o congelamento (bytes conferidos = bytes lidos)."""
+     out = {}
+@@ -584,7 +641,7 @@
+     if prob:
+         raise K.ErroIntegridade("capturas inválidas: " + "; ".join(prob[:8]))
+     taxonomias = carrega_taxonomias(cong, snap_dir)
+-    regua, prov = carrega_regua_historica(cong, entradas, autorizado=True)   # só depois das validações acima
++    regua, prov = carrega_regua(cong, entradas, autorizado=True)   # só depois das validações acima
+     K.grava_atomico(saida, K.canon(avalia(capturas, cong, regua, taxonomias, prov)))
+ 
+ 
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/captura.py ./captura.py
+--- ../../vocab_limpo_26-09/captura.py	2026-09-26 01:34:17.782306500 -0300
++++ ./captura.py	2026-09-29 00:38:22.516750900 -0300
+@@ -1,8 +1,10 @@
+-"""Rodada VOCAB_LIMPO (26/09): regime VOCAB — harness da rodada limpa (preflight SEM GOLD e captura isolada por braço).
++"""Harness genérico (validação externa, 29/09): preflight SEM GOLD e captura isolada por braço, para qualquer rodada.
+ 
+-Protocolo normativo: docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md (bloco NORMATIVO). Cópia do captura.py
+-congelado da Fase 1 (../wad5_25-09/) com SÓ: nomes dos braços, fonte do sidecar do VOCAB_LIMPO (recompilação congelada;
+-tutores vivos não são lidos), nenhum manual, caminhos de saída e proibições da rodada (resultados da Fase 1 por ID).
++Cópia do captura.py da rodada VOCAB_LIMPO (../../vocab_limpo_26-09/captura.py) com SÓ: cursos, raízes, braços,
++tutores proibidos, caminhos, protocolo, régua e referência do CRU lidos da configuração da rodada (`rodada.py`);
++literais de braço trocados pelos papéis (K.CRU, K.CANDIDATO, K.CTRL_MAIOR, K.CTRL_ALEAT); e, quando a rodada não tem
++referência publicada do CRU (cursos novos), o P4 registra a captura sem comparação e a fase de captura recaptura o CRU
++num worker novo, exigindo decisões idênticas por ID às do preflight (controle de determinismo no lugar da referência).
+ Nunca lê gold: não importa módulos de avaliação; as travas (comum.Travas) invalidam qualquer acesso proibido, mesmo
+ quando uma camada intermediária engole a exceção.
+ 
+@@ -40,8 +42,8 @@
+ T0 = time.time()
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
+-C13 = HERE.parent
+-DATA = HERE.parents[4]
++C13 = HERE.parents[1]   # pasta c1-3 (o genérico fica um nível abaixo)
++DATA = HERE.parents[5]
+ ORIG = DATA.parent
+ sys.path.insert(0, str(HERE))
+ sys.path.insert(1, str(DATA))   # src/ importável (import tardio, depois das travas e das verificações)
+@@ -49,51 +51,37 @@
+ 
+ AMBIENTE_INICIAL = dict(os.environ)   # antes de qualquer import do produto, que grava em os.environ (TESSDATA_PREFIX)
+ 
+-BASE = DATA / ".frzero/vocab_limpo_26-09/captura"
++RODADA = K.R
++BASE = DATA / RODADA.CFG["saida_base"]
+ PALCOS, SNAP, CAPS, FALHAS = BASE / "palcos", BASE / "snapshots", BASE / "capturas", BASE / "falhas"
+ PYCACHE = BASE / "pycache_vazio"
+ CONG = BASE / "congelamento.json"
+ CONG_ENTRADAS = BASE / "congelamento_entradas.json"
+-ADENDO = DATA / "docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md"
+-VL = DATA / ".frzero/vocab_limpo_26-09"          # recompilação limpa congelada (sidecars, compilação, sanidade)
++ADENDO = DATA / RODADA.CFG["protocolo"]
++VL = DATA / RODADA.CFG["recompilacao"]          # recompilação congelada do candidato (sidecars, compilação, sanidade)
+ VL_SIDECARS, VL_SANIDADE, VL_COMP, VL_CONG = VL / "sidecars", VL / "sanidade.json", VL / "compilacao.json", VL / "congelamento_recompilacao.json"
+-PROIBIDOS_RODADA = {C13 / "wad5_avaliacao_26-09": "resultados da avaliação da Fase 1 (por ID)",
+-                    DATA / ".frzero/wad5_avaliacao_26-09": "espelho da régua da Fase 1",
+-                    DATA / "docs/reports/pendencias.md": "tracker (contém IDs das perdas da Fase 1)"}
+-CAP_WAB = DATA / ".frzero/wab_captura_bracos_24-09.json"
+-OUT_JSON, OUT_MD = HERE / "preflight_vl.json", HERE / "preflight_vl.md"
+-OUT_CAP_JSON, OUT_CAP_MD = HERE / "manifesto_capturas_vl.json", HERE / "capturas_vl.md"
+-ORDEM_CAPTURA = ("VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
+-BASE_PRETENDIDA = "2589ed5a95ab8dd841de384bd219d80ee27d2cbf"
++PROIBIDOS_RODADA = {DATA / p: m for p, m in RODADA.CFG["proibidos"].items()}
++CAP_WAB = DATA / RODADA.CFG["referencia_cru"]["arquivo"] if RODADA.CFG["referencia_cru"] else None   # None = sem referência
++SUF = RODADA.CFG["sufixo"]
++OUT_JSON, OUT_MD = HERE / f"preflight_{SUF}.json", HERE / f"preflight_{SUF}.md"
++OUT_CAP_JSON, OUT_CAP_MD = HERE / f"manifesto_capturas_{SUF}.json", HERE / f"capturas_{SUF}.md"
++ORDEM_CAPTURA = (K.CANDIDATO, K.CTRL_MAIOR, *K.CTRL_ALEAT)
++BASE_PRETENDIDA = RODADA.CFG["base_produto"]
+ HELPERS = {"replay_bloco_21-09.py": C13 / "replay_bloco_21-09.py", "replay_unidade_21-09.py": C13 / "replay_unidade_21-09.py"}
+ CODIGO = {"captura.py": HERE / "captura.py", "comum.py": HERE / "comum.py", "avaliador.py": HERE / "avaliador.py",
++          "rodada.py": HERE / "rodada.py", "rodada_config.json": RODADA.CAMINHO, "gold_externo.py": HERE / "gold_externo.py",
+           "test_wad4.py": HERE / "test_wad4.py", "test_defeitos_v4.py": HERE / "test_defeitos_v4.py",
+-          "test_ajustes_v5.py": HERE / "test_ajustes_v5.py", "test_rodada_limpa.py": HERE / "test_rodada_limpa.py", **HELPERS}
++          "test_ajustes_v5.py": HERE / "test_ajustes_v5.py", "test_generico.py": HERE / "test_generico.py", **HELPERS}
+ LLM, MANUAL = ".glossary_curation.llm.json", ".glossary_curation.json"
+-OITAVO = "Laboratorio-de-Redes-Tutor"
+-TUTORES = list(K.NOMES.values()) + [OITAVO]
+-RAIZES = {s: DATA / (".frzero/wv_importacao_22-09" if s in ("MF", "IA", "CG") else ".frzero/pacote_fontes_15-09") / n
+-          for s, n in K.NOMES.items()}
++TUTORES = list(K.NOMES.values()) + list(RODADA.CFG["tutores_proibidos"])
++RAIZES = {c["sigla"]: DATA / c["raiz_pacote"] for c in RODADA.CFG["cursos"]}
+ TENTATIVAS_ALEAT = 2000
+ ARTEFATOS_TEMPORAIS = (".timeline_index.json", ".card_block_map.json", ".lessons_index.json")
+-# Proveniência da avaliação (§7): caminhos EXPLÍCITOS, iguais aos que a resolução histórica p(nome) escolhe hoje (a pasta
+-# final da v2 só tem 3 arquivos, com blobs idênticos aos de docs/reports). Nada é aberto aqui: blob IDs vêm do índice.
+-REP, FINAL, FIX = "docs/reports", "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09", "tests/fixtures/eval"
+-C13R = "docs/reports/_harness-2026-09-04/c1-3"
+-UNI = ("MF", "SO", "IA", "ES2", "TCC", "CG")
+-REGUA_ARQUIVOS = {
+-    "ground_truth": {s: f"{REP}/ground_truth_{s}.csv" for s in UNI},
+-    "material_gt": {s: f"{FINAL if s in ('CG', 'ES2') else REP}/material_gt_{s}.csv" for s in UNI},
+-    "subunit_gt": {s: f"{FINAL if s == 'SO' else REP}/subunit_gt_{s}.csv" for s in K.NOMES},
+-    "gold_units": {s: f"{FIX}/gold_units_{s}.csv" for s in ("MF", "SO", "IA", "ES2", "TCC")},
+-    "herancas_csv": {s: f"{C13R}/herancas_{s}_15-09.csv" for s in K.NOMES},
+-    "herancas_json": {s: f"{C13R}/herancas_{s}_15-09.json" for s in K.NOMES},
+-}
+-REGUA_MANIFESTOS = {s: f".frzero/pacote_fontes_15-09/{n}/manifest.json" for s, n in K.NOMES.items()}
+-REGUA_CODIGO = {n: f"{C13R}/{n}" for n in ("compara_herancas_15-09.py", "mede_3eixos_12-09.py",
+-                                            "wx_regua_corrigida_22-09.py", "wz_bloco_cobertura_22-09.py")}
+-REGUA_CODIGO.update({n: n for n in ("scripts/eval_ground_truth.py", "scripts/eval_entry_unit.py")})
+-
++# Proveniência da avaliação (§7): caminhos EXPLÍCITOS da configuração da rodada. Nada é aberto aqui: blob IDs vêm do índice.
++UNI = tuple(s for s in K.NOMES if s in RODADA.UNI)
++REGUA_ARQUIVOS = {papel: dict(m) for papel, m in RODADA.CFG["regua"]["arquivos"].items()}
++REGUA_MANIFESTOS = dict(RODADA.CFG["regua"]["manifestos"])
++REGUA_CODIGO = dict(RODADA.CFG["regua"]["codigo"])
+ 
+ class Falha(RuntimeError):
+     pass
+@@ -139,7 +127,7 @@
+     t.permite("protocolo", ADENDO, somente_leitura=True)
+     t.permite("comum", *RAIZES.values(), somente_leitura=True)
+     t.permite("preparo", *[ORIG / n / "course" for n in TUTORES], somente_leitura=True)
+-    t.permite("referencia", CAP_WAB, *[DATA / p for p in REGUA_MANIFESTOS.values()], VL_SIDECARS, VL_SANIDADE, VL_COMP,
++    t.permite("referencia", *([CAP_WAB] if CAP_WAB else []), *[DATA / p for p in REGUA_MANIFESTOS.values()], VL_SIDECARS, VL_SANIDADE, VL_COMP,
+               VL_CONG, somente_leitura=True)
+     t.permite("saida", BASE, OUT_JSON, OUT_MD)
+     t.nega(DATA / ".env", "arquivo .env da raiz (pode conter segredos e configuração)")
+@@ -377,7 +365,7 @@
+ def sidecar_de(atribuicao, tax):
+     por_id = {(str(u.get("slug") or ""), str(t.get("slug") or "")): t for u in tax.get("units") or []
+               for t in u.get("topics") or []}
+-    out = {"_provenance": "controle-wad3", "_nota": "reendereçamento das relações efetivas do VOCAB_LLM (adendo v2 §4)"}
++    out = {"_provenance": "controle-wad3", "_nota": "reendereçamento das relações efetivas do candidato (adendo v2 §4)"}
+     for k, termos in atribuicao.items():
+         if termos:
+             out.setdefault(chave_topico(por_id[k]), {"synonyms": []})["synonyms"].extend(termos)
+@@ -599,7 +587,7 @@
+         exige(K.sha_arq(snap_tax) == ins[sig]["taxonomia_arquivo_sha"], f"{sig}: snapshot de taxonomia alterado")
+         exige(K.sha_arq(snap_idx) == ins[sig]["indice_arquivo_sha"], f"{sig}: snapshot de índice alterado")
+         tax = read(snap_tax)
+-        if braco != "CRU_LIMPO":
++        if braco != K.CRU:
+             exige(K.sha_json(reconstroi(M, root, palco)) == K.sha_json(tax), f"{sig}: reconstrução != snapshot")
+         idx_atual, idx_snap = indice_unidade(M, root, palco, tax), read(snap_idx)
+         if K.sha_json(idx_atual) != K.sha_json(idx_snap):
+@@ -707,6 +695,21 @@
+     return cap, "nova"
+ 
+ 
++def confere_determinismo_cru(anterior, novo):
++    """Rodada sem referência publicada: a recaptura do CRU tem de repetir, por ID, todas as decisões do preflight."""
++    prob = []
++    if anterior.get("braco") != novo.get("braco") or anterior.get("insumos_braco") != novo.get("insumos_braco"):
++        prob.append("braço ou insumos diferentes")
++    if set(anterior.get("decisoes") or {}) != set(novo.get("decisoes") or {}):
++        prob.append("cursos diferentes")
++    for sig in sorted(set(anterior.get("decisoes") or {}) & set(novo.get("decisoes") or {})):
++        a, b = anterior["decisoes"][sig], novo["decisoes"][sig]
++        if set(a) != set(b):
++            prob.append(f"{sig}: IDs diferentes")
++        prob += [f"{sig}/{e}: decisão diferente" for e in sorted(set(a) & set(b)) if K.sha_json(a[e]) != K.sha_json(b[e])]
++    return prob
++
++
+ def normativo_protocolo():
+     txt = ADENDO.read_text(encoding="utf-8")
+     ini, fim = "<!-- NORMATIVO:INICIO -->", "<!-- NORMATIVO:FIM -->"
+@@ -793,7 +796,7 @@
+     abrir = travas._abrir_original
+     R, ok = {"escopo": __doc__}, {}
+     if OUT_JSON.exists():   # fora do try: nunca sobrescrever evidência anterior
+-        print("preflight_vl.json já existe: preservar evidência (usar nova versão)", flush=True)
++        print(f"{OUT_JSON.name} já existe: preservar evidência (usar nova versão)", flush=True)
+         sys.exit(1)
+     try:
+         exige((DATA / "src").is_dir() and (DATA / ".git").exists() and (DATA / "docs").is_dir(),
+@@ -842,12 +845,12 @@
+         limpo = {}
+         for sig in K.NOMES:
+             p = VL_SIDECARS / K.NOMES[sig] / LLM
+-            exige(K.sha_arq(p, abrir) == san["sidecars"][sig]["sha256"], f"{sig}: sidecar VOCAB_LIMPO != congelado")
++            exige(K.sha_arq(p, abrir) == san["sidecars"][sig]["sha256"], f"{sig}: sidecar {K.CANDIDATO} != congelado")
+             limpo[sig] = read(p)
+         R["P1_vocab_limpo"] = {"id_recompilacao": vlc["id_recompilacao"], "sidecars": san["sidecars"]}
+         for sig in K.NOMES:
+-            grava_palco("CRU_LIMPO", sig, abrir=abrir)
+-            grava_palco("VOCAB_LIMPO", sig, limpo[sig], abrir=abrir)
++            grava_palco(K.CRU, sig, abrir=abrir)
++            grava_palco(K.CANDIDATO, sig, limpo[sig], abrir=abrir)
+         manual_real = {b: {s: (PALCOS / b / K.NOMES[s] / "course" / MANUAL).exists() for s in K.NOMES} for b in K.BRACOS}
+         ok["P1 nenhum manual em nenhum palco (mapa declarado)"] = manual_real == K.MANUAL_ESPERADO
+         exige(ok["P1 nenhum manual em nenhum palco (mapa declarado)"], "manual presente em algum palco")
+@@ -873,7 +876,7 @@
+                                 for sig in K.NOMES},
+             "entradas_arquivo_sha": K.sha_json(entradas),
+             "entradas_externas": {"n": len(externos), "sha": K.sha_json(externos)},
+-            "referencias": {"wab_captura_bracos_24-09.json": K.sha_arq(CAP_WAB, abrir)},
++            "referencias": {CAP_WAB.name: K.sha_arq(CAP_WAB, abrir)} if CAP_WAB else {},
+             "vocab_limpo": {"id_recompilacao": vlc["id_recompilacao"], "sidecars": san["sidecars"],
+                             "compilacao_sha256": K.sha_arq(VL_COMP, abrir), "sanidade_sha256": K.sha_arq(VL_SANIDADE, abrir),
+                             "congelamento_recompilacao_sha256": K.sha_arq(VL_CONG, abrir)},
+@@ -893,14 +896,14 @@
+         R["P2"] = {}
+         for sig, root in RAIZES.items():
+             congelada[sig] = read(root / "course/.content_taxonomy.json")
+-            sem[sig] = reconstroi(M, root, PALCOS / "CRU_LIMPO" / K.NOMES[sig])
++            sem[sig] = reconstroi(M, root, PALCOS / K.CRU / K.NOMES[sig])
+             difA = diferencas_completas(congelada[sig], sem[sig])
+             e = {"A_igual": congelada[sig] == sem[sig], "A_n_diferencas": len(difA), "A_exemplos": difA[:5]}
+-            snaps = {"CRU_LIMPO": congelada[sig]}
+-            for b in ("VOCAB_LIMPO",):
++            snaps = {K.CRU: congelada[sig]}
++            for b in (K.CANDIDATO,):
+                 com = reconstroi(M, root, PALCOS / b / K.NOMES[sig])
+                 rel = relacoes(com, sem[sig])
+-                if b == "VOCAB_LIMPO":
++                if b == K.CANDIDATO:
+                     rel_llm[sig] = rel
+                 e[b] = {"B_diagnostico": diagnostico_b(aditiva(congelada[sig], rel), com),
+                         "aliases_add": sum(len(r["add"]) for r in rel.values()),
+@@ -912,26 +915,28 @@
+                 grava_snapshot(b, sig, tax, i, abrir)
+             R["P2"][sig] = e
+         ok["P2 A (sem sidecar == congelada) nos 7"] = all(e["A_igual"] for e in R["P2"].values())
+-        ok["P2 delta não vazio no VOCAB_LIMPO"] = all(not e[b]["delta_vazio"] for e in R["P2"].values()
+-                                                     for b in ("VOCAB_LIMPO",))
++        ok[f"P2 delta não vazio no {K.CANDIDATO}"] = all(not e[b]["delta_vazio"] for e in R["P2"].values()
++                                                     for b in (K.CANDIDATO,))
+         ok["P2 B: diferenças só de ordem de aliases (inspeção integral)"] = all(
+-            e[b]["B_diagnostico"]["somente_ordem_de_aliases"] for e in R["P2"].values() for b in ("VOCAB_LIMPO",))
++            e[b]["B_diagnostico"]["somente_ordem_de_aliases"] for e in R["P2"].values() for b in (K.CANDIDATO,))
+         exige(ok["P2 A (sem sidecar == congelada) nos 7"], "equivalência A falhou; parar antes de qualquer avaliação")
+-        for b in ("CRU_LIMPO", "VOCAB_LIMPO"):
++        for b in (K.CRU, K.CANDIDATO):
+             fecha_insumos(cong, b)
+         K.grava_atomico(CONG, cong, abrir)
+ 
+         # P4 captura CRU (processo isolado) e reprodução por ID
+-        cru, origem = roda_worker("CRU_LIMPO", "capturar", cong, travas)
+-        prob, difs = compara_referencia(cru, CAP_WAB)
+-        R["P4"] = {"origem": origem, "problemas_estrutura": prob, "divergencias": difs[:20], "n_divergencias": len(difs),
++        cru, origem = roda_worker(K.CRU, "capturar", cong, travas)
++        # sem referência publicada (cursos novos): o determinismo do CRU é exigido na fase de captura (recaptura)
++        prob, difs = compara_referencia(cru, CAP_WAB) if CAP_WAB else ([], [])
++        R["P4"] = {"referencia": CAP_WAB.name if CAP_WAB else None, "origem": origem, "problemas_estrutura": prob, "divergencias": difs[:20], "n_divergencias": len(difs),
+                    "conteudo_sha": cru["conteudo_sha"], "chamados": sum(1 for v in cru["decisoes"].values() for d in v.values() if d["chamado"]),
+                    "nao_chamados_por_motivo": dict(collections.Counter(d["motivo_nao_chamado"] for v in cru["decisoes"].values()
+                                                                       for d in v.values() if not d["chamado"])),
+                    "taxonomia_congelada_lida": cru["verificacoes"]["taxonomia_congelada_lida"] != [],
+                    "nao_chamados": [{"curso": s, "id": e, "motivo": d["motivo_nao_chamado"], "final": d["final"]}
+                                     for s, v in cru["decisoes"].items() for e, d in sorted(v.items()) if not d["chamado"]]}
+-        ok["P4 CRU = referência por ID (conjuntos completos)"] = not prob and not difs
++        ok["P4 CRU = referência por ID (conjuntos completos)" if CAP_WAB else
++           "P4 CRU capturado (sem referência publicada; determinismo exigido na captura)"] = not prob and not difs
+ 
+         # P3 controles (a partir das decisões do CRU desta execução)
+         R["P3"], bloqueados = {}, []
+@@ -941,16 +946,16 @@
+             grava_palco("_IDENTIDADE", sig, sidecar_de(ident, tax), abrir=abrir)
+             com_id = reconstroi(M, root, PALCOS / "_IDENTIDADE" / K.NOMES[sig])
+             idx_id = indice_unidade(M, root, PALCOS / "_IDENTIDADE" / K.NOMES[sig], com_id)
+-            vocab = read(SNAP / "VOCAB_LIMPO" / sig / "taxonomia.json")
++            vocab = read(SNAP / K.CANDIDATO / sig / "taxonomia.json")
+             difC = diferencas_completas(vocab, com_id)
+             rec = {"C_identidade": {"taxonomia_igual_ordenada": vocab == com_id, "n_diferencas": len(difC),
+-                                    "exemplos": difC[:5], "indice_igual": idx_id == idx["VOCAB_LIMPO"][sig]}}
++                                    "exemplos": difC[:5], "indice_igual": idx_id == idx[K.CANDIDATO][sig]}}
+             dec_cru = {e: d["final"] for e, d in cru["decisoes"][sig].items()}
+             atrib, info = controle_maior(rel_llm[sig], tax, dec_cru)
+-            grava_palco("CTRL_MAIOR_LIMPO", sig, sidecar_de(atrib, tax), abrir=abrir)
+-            com = reconstroi(M, root, PALCOS / "CTRL_MAIOR_LIMPO" / K.NOMES[sig])
+-            grava_snapshot("CTRL_MAIOR_LIMPO", sig, com, indice_unidade(M, root, PALCOS / "CTRL_MAIOR_LIMPO" / K.NOMES[sig], com), abrir)
+-            rec["CTRL_MAIOR_LIMPO"] = {"definicao": info, "verificacao": verifica_controle(atrib, tax, com)}
++            grava_palco(K.CTRL_MAIOR, sig, sidecar_de(atrib, tax), abrir=abrir)
++            com = reconstroi(M, root, PALCOS / K.CTRL_MAIOR / K.NOMES[sig])
++            grava_snapshot(K.CTRL_MAIOR, sig, com, indice_unidade(M, root, PALCOS / K.CTRL_MAIOR / K.NOMES[sig], com), abrir)
++            rec[K.CTRL_MAIOR] = {"definicao": info, "verificacao": verifica_controle(atrib, tax, com)}
+             for b, s in K.SEMENTES.items():
+                 atrib, info, bloq = controle_aleatorio(rel_llm[sig], tax, sig, s)
+                 if bloq:
+@@ -963,14 +968,14 @@
+                           "verificacao": verifica_controle(atrib, tax, com, vocab_rel=rel_llm[sig]),
+                           "fracao_mudou_destino": sum(i["mudaram_de_destino"] for i in info.values()) / n_rel if n_rel else None}
+             R["P3"][sig] = rec
+-        ok["P3 C: identidade == VOCAB_LIMPO (taxonomia ordenada e índice)"] = all(
++        ok[f"P3 C: identidade == {K.CANDIDATO} (taxonomia ordenada e índice)"] = all(
+             r["C_identidade"]["taxonomia_igual_ordenada"] and r["C_identidade"]["indice_igual"] for r in R["P3"].values())
+-        ok["P3 CTRL_MAIOR_LIMPO: pares, estrutura e remoções"] = all(r["CTRL_MAIOR_LIMPO"]["verificacao"]["aprovado"] for r in R["P3"].values())
++        ok[f"P3 {K.CTRL_MAIOR}: pares, estrutura e remoções"] = all(r[K.CTRL_MAIOR]["verificacao"]["aprovado"] for r in R["P3"].values())
+         ok["P3 aleatórios: pares, contagem, multiconjunto, multiplicidade, sem duplicata/remoção"] = all(
+             r[b]["verificacao"]["aprovado"] for r in R["P3"].values() for b in K.SEMENTES)
+         ok["P3 nenhum aleatório bloqueado por orçamento"] = not bloqueados
+         cong["controles"] = {"bloqueados": bloqueados}
+-        for b in ("CTRL_MAIOR_LIMPO", *K.SEMENTES):
++        for b in (K.CTRL_MAIOR, *K.SEMENTES):
+             fecha_insumos(cong, b)
+         K.grava_atomico(CONG, cong, abrir)
+ 
+@@ -987,7 +992,7 @@
+         P5 = R["P5"]
+         ok["P5 manual efetivamente carregado = mapa esperado"] = all(P5[b]["manual_carregado"] == K.MANUAL_ESPERADO[b] for b in K.BRACOS)
+         ok["P5 artefatos temporais idênticos entre braços"] = len({K.sha_json(P5[b]["temporais"]) for b in K.BRACOS}) == 1
+-        ok["P5 braços não-CRU não leem a taxonomia congelada"] = all(not P5[b]["taxonomia_congelada_lida"] for b in K.BRACOS if b != "CRU_LIMPO")
++        ok["P5 braços não-CRU não leem a taxonomia congelada"] = all(not P5[b]["taxonomia_congelada_lida"] for b in K.BRACOS if b != K.CRU)
+         ok["P5 unidades do motor iguais entre braços"] = len({P5[b]["unidades_motor_sha"] for b in K.BRACOS}) == 1
+         ok["P5 taxonomia e índice = snapshots congelados"] = all(
+             P5[b]["taxonomia_sha"][s] == cong["insumos"][b][s]["taxonomia_sha"]
+@@ -1053,7 +1058,7 @@
+     abrir = travas._abrir_original
+     R, ok = {"escopo": "captura dos cinco braços não-CRU da rodada limpa e validação das seis capturas; sem gold"}, {}
+     if OUT_CAP_JSON.exists():   # nunca sobrescrever evidência anterior
+-        print("manifesto_capturas_vl.json já existe: preservar evidência", flush=True)
++        print(f"{OUT_CAP_JSON.name} já existe: preservar evidência", flush=True)
+         sys.exit(1)
+     try:
+         cong = read(CONG)
+@@ -1077,9 +1082,22 @@
+         exige(not faltam, f"inventário de entradas não confere: {faltam[:4]}")
+ 
+         caps, R["bracos"] = {}, {}
+-        for b in ("CRU_LIMPO", *ORDEM_CAPTURA):   # o CRU_LIMPO é o do preflight desta rodada (mesmo congelamento), revalidado
++        for b in (K.CRU, *ORDEM_CAPTURA):   # o CRU é o do preflight desta rodada (mesmo congelamento), revalidado
+             exige(not verifica_distribuicoes(cong), f"distribuições divergem antes de {b}")
+-            caps[b], origem = roda_worker(b, "capturar", cong, travas)
++            if b == K.CRU and CAP_WAB is None:
++                # rodada sem referência publicada: preserva o CRU do preflight e recaptura num worker novo
++                destino_cru = CAPS / f"capturar_{b}_{cong['id_comum'][:16]}_{cong['insumos_braco'][b][:16]}.json"
++                preservado = CAPS / f"preflight_{destino_cru.name}"
++                exige(destino_cru.exists() and not preservado.exists(), "CRU do preflight ausente ou já preservado")
++                anterior = read(destino_cru)
++                destino_cru.replace(preservado)
++                caps[b], origem = roda_worker(b, "capturar", cong, travas)
++                det = confere_determinismo_cru(anterior, caps[b])
++                R["determinismo_cru"] = {"preservado": preservado.name, "problemas": det}
++                ok["CRU recapturado = CRU do preflight (decisões por ID)"] = not det
++                exige(not det, f"CRU não determinístico: {det[:3]}")
++            else:
++                caps[b], origem = roda_worker(b, "capturar", cong, travas)
+             R["bracos"][b] = {"origem": origem}
+             print("  captura", b, origem, round(time.time() - T0), "s", flush=True)
+ 
+@@ -1139,7 +1157,7 @@
+     R["aprovado"] = bool(ok) and all(ok.values()) and "interrompido" not in R
+     R["segundos"] = round(time.time() - T0, 1)
+     K.grava_atomico(OUT_CAP_JSON, R, abrir)
+-    L = ["# Rodada VOCAB_LIMPO — captura dos seis braços, sem gold (26/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++    L = [f"# Rodada {SUF} — captura dos braços, sem gold", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
+          f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**"
+          + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""), "", "## Condições", ""]
+     L += [f"- {'✅' if v else '❌'} {k}" for k, v in ok.items()]
+@@ -1159,24 +1177,24 @@
+ 
+ 
+ def escreve_md(R, abrir):
+-    L = ["# Rodada VOCAB_LIMPO — preflight sem gold (26/09)", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
++    L = [f"# Rodada {SUF} — preflight sem gold", "", f"Congelamento comum: `{R.get('congelamento_id_comum', '—')}`.",
+          f"Resultado: **{'APROVADO' if R['aprovado'] else 'REPROVADO'}**" + (f" — interrompido: {R['interrompido']}" if "interrompido" in R else ""),
+          "", "## Condições", ""]
+     L += [f"- {'✅' if v else '❌'} {k}" for k, v in R["condicoes"].items()]
+     if "P2" in R:
+-        L += ["", "## P2 por curso", "", "| curso | A | B LIMPO só ordem | +LIMPO | -LIMPO |", "|---|---|---|---:|---:|"]
++        L += ["", "## P2 por curso", "", "| curso | A | B candidato só ordem | +candidato | -candidato |", "|---|---|---|---:|---:|"]
+         for s, e in R["P2"].items():
+-            L.append(f"| {s} | {e['A_igual']} | {e['VOCAB_LIMPO']['B_diagnostico']['somente_ordem_de_aliases']} | "
+-                     f"{e['VOCAB_LIMPO']['aliases_add']} | {e['VOCAB_LIMPO']['aliases_rem']} |")
++            L.append(f"| {s} | {e['A_igual']} | {e[K.CANDIDATO]['B_diagnostico']['somente_ordem_de_aliases']} | "
++                     f"{e[K.CANDIDATO]['aliases_add']} | {e[K.CANDIDATO]['aliases_rem']} |")
+     if "P3" in R:
+         L += ["", "## P3 por curso", "", "| curso | C taxonomia | C índice | MAIOR | ALEAT 1/2/3 | estados das unidades (3 sementes) |", "|---|---|---|---|---|---|"]
+         for s, r in R["P3"].items():
+             est = collections.Counter(i["estado"] for b in K.SEMENTES for i in r[b]["unidades"].values())
+             L.append(f"| {s} | {r['C_identidade']['taxonomia_igual_ordenada']} | {r['C_identidade']['indice_igual']} | "
+-                     f"{r['CTRL_MAIOR_LIMPO']['verificacao']['aprovado']} | {'/'.join(str(r[b]['verificacao']['aprovado']) for b in K.SEMENTES)} | {dict(est)} |")
++                     f"{r[K.CTRL_MAIOR]['verificacao']['aprovado']} | {'/'.join(str(r[b]['verificacao']['aprovado']) for b in K.SEMENTES)} | {dict(est)} |")
+     if "P4" in R:
+         p = R["P4"]
+-        L += ["", "## P4", "", f"- CRU_LIMPO ({p['origem']}): problemas de estrutura {len(p['problemas_estrutura'])}, divergências {p['n_divergencias']}, "
++        L += ["", "## P4", "", f"- {K.CRU} ({p['origem']}): problemas de estrutura {len(p['problemas_estrutura'])}, divergências {p['n_divergencias']}, "
+               f"chamados {p['chamados']}, não chamados por motivo {p['nao_chamados_por_motivo']}."]
+         L += ["", "Não chamados do CRU (motivo do harness; `nao_identificado` = sem evidência suficiente para outro motivo):", ""]
+         L += [f"- {x['curso']}/{x['id']}: {x['motivo']}; final unidade={x['final']['unidade']!r}, sub={x['final']['sub']!r}, "
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/comum.py ./comum.py
+--- ../../vocab_limpo_26-09/comum.py	2026-09-26 01:34:17.778796600 -0300
++++ ./comum.py	2026-09-29 00:38:22.515243600 -0300
+@@ -1,7 +1,8 @@
+-"""Rodada VOCAB_LIMPO (26/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/ nem módulos de avaliação.
++"""Harness genérico (validação externa, 29/09): peças comuns da captura e do avaliador. Só stdlib; não importa src/.
+ 
+-Protocolo: docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md. Cópia do comum.py congelado da Fase 1
+-(../wad5_25-09/, 04a535b6…) com SÓ nomes de braços, mapa de manuais, liberação e esquemas trocados.
++Cópia do comum.py da rodada VOCAB_LIMPO (../../vocab_limpo_26-09/comum.py) com SÓ o bloco de constantes da rodada
++(esquemas, cursos, braços, sementes, manuais, liberação, inventário, denominadores e referência do CRU) trocado por
++valores da configuração da rodada (`rodada.py`, JSON em RODADA_CONFIG) e o literal do braço CRU trocado pelo papel.
+ Testado só com dados sintéticos (test_wad4.py, test_defeitos_v4.py); nada lê gold.
+ 
+ Hashes (procedimento declarado):
+@@ -24,39 +25,29 @@
+ import time
+ from pathlib import Path
+ 
+-ESQUEMA_CAPTURA = "vl-captura-1"
+-ESQUEMA_CONGELAMENTO = "vl-congelamento-1"
+-NOMES = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
+-         "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "CG": "Computacao-Grafica-Tutor",
+-         "FR": "Fundamentos-de-Redes-Tutor"}
+-BRACOS = ("CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")
+-SEMENTES = {"CTRL_ALEAT_LIMPO_1": 1, "CTRL_ALEAT_LIMPO_2": 2, "CTRL_ALEAT_LIMPO_3": 3}
+-MANUAL_ESPERADO = {b: {s: False for s in NOMES} for b in BRACOS}   # rodada limpa: nenhum manual em nenhum braço
+-# Gate 1 de 26/09 (rodada limpa): captura dos seis braços da rodada; NÃO libera gold nem avaliação.
+-# Mudar isto é mudança de código e de congelamento.
+-CAPTURA_LIBERADA = frozenset({"CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2",
+-                              "CTRL_ALEAT_LIMPO_3"})
+-INVENTARIO_ESPERADO = 350
+-DENOMINADORES = {"bloco": 237, "unidade": 284, "sub_primaria": 251}
+-# Denominadores e referência do CRU por curso: tabela do relatório 2026-09-24-teto-regime-cru.md §1 (documentação já
+-# publicada; nenhum gold lido para obtê-los). FR sem bloco nem unidade avaliados.
+-DENOM_POR_CURSO = {
+-    "MF": {"bloco": 66, "unidade": 66, "sub_primaria": 58}, "SO": {"bloco": 39, "unidade": 37, "sub_primaria": 15},
+-    "IA": {"bloco": 42, "unidade": 42, "sub_primaria": 39}, "ES2": {"bloco": 28, "unidade": 28, "sub_primaria": 28},
+-    "TCC": {"bloco": 27, "unidade": 18, "sub_primaria": 11}, "CG": {"bloco": 35, "unidade": 93, "sub_primaria": 82},
+-    "FR": {"bloco": 0, "unidade": 0, "sub_primaria": 18}}
+-REFERENCIA_CRU = {
+-    "MF": {"bloco": 60, "unidade": 63, "sub_primaria": 25}, "SO": {"bloco": 36, "unidade": 30, "sub_primaria": 7},
+-    "IA": {"bloco": 41, "unidade": 39, "sub_primaria": 4}, "ES2": {"bloco": 27, "unidade": 26, "sub_primaria": 7},
+-    "TCC": {"bloco": 26, "unidade": 17, "sub_primaria": 7}, "CG": {"bloco": 33, "unidade": 74, "sub_primaria": 30},
+-    "FR": {"bloco": 0, "unidade": 0, "sub_primaria": 6}}
++import rodada as R  # noqa: E402  (configuração da rodada; só stdlib)
++
++ESQUEMA_CAPTURA = R.CFG["esquemas"]["captura"]
++ESQUEMA_CONGELAMENTO = R.CFG["esquemas"]["congelamento"]
++NOMES = dict(R.NOMES)
++CRU, CANDIDATO, CTRL_MAIOR, CTRL_ALEAT = R.CRU, R.CANDIDATO, R.CTRL_MAIOR, R.CTRL_ALEAT
++BRACOS = R.BRACOS
++SEMENTES = dict(R.SEMENTES)
++MANUAL_ESPERADO = {b: {s: False for s in NOMES} for b in BRACOS}   # nenhum manual em nenhum braço
++# Captura liberada = os braços da rodada; NÃO libera gold nem avaliação. Mudar isto é mudança de configuração congelada.
++CAPTURA_LIBERADA = frozenset(BRACOS)
++INVENTARIO_ESPERADO = R.CFG["inventario_esperado"]
++DENOMINADORES = dict(R.DENOMINADORES)
++# Denominadores por curso e referência do CRU: da configuração da rodada (referência vazia = curso sem placar publicado).
++DENOM_POR_CURSO = {s: dict(v) for s, v in R.DENOM_POR_CURSO.items()}
++REFERENCIA_CRU = {s: dict(v) for s, v in R.REFERENCIA_CRU.items()}
+ GOLD_PADROES = ("wx_gold_v2_final", "gold_units_", "material_gt_", "subunit_gt_", "coverage_gt_", "herancas_",
+                 "ground_truth", "regua_historica", "_gt_")
+ # Ambiente dos processos: montado do zero. Parâmetros declarados (não secretos) + variáveis de sistema do Windows
+ # necessárias ao intérprete (só os NOMES são registrados). Todo o resto do terminal é descartado, inclusive credenciais.
+ ENV_DECLARADO = {"PYTHONHASHSEED": "0", "TUTOR_NO_VOCAB_COMPILE": "1", "TUTOR_NO_CODE_SYNTH": "1",
+                  "UNIT_GENERIC_MODE": "df", "PYTHONIOENCODING": "utf-8", "PYTHONDONTWRITEBYTECODE": "1",
+-                 "PYTHONNOUSERSITE": "1"}
++                 "PYTHONNOUSERSITE": "1", "RODADA_CONFIG": str(R.CAMINHO)}   # a configuração congelada segue para os filhos
+ ENV_SISTEMA_HERDAVEL = frozenset({"SYSTEMROOT", "WINDIR", "SYSTEMDRIVE", "TEMP", "TMP", "PATH", "PATHEXT", "COMSPEC",
+                                   "USERPROFILE", "HOMEDRIVE", "HOMEPATH", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA",
+                                   "PROGRAMFILES", "PROGRAMFILES(X86)", "PROGRAMW6432", "COMMONPROGRAMFILES",
+@@ -619,7 +610,7 @@
+             prob.append("manual efetivamente carregado != mapa congelado")
+         if "temporais" in norm and ver.get("artefatos_temporais_sha") != norm["temporais"]:
+             prob.append("artefatos temporais != referência congelada")
+-        if braco != "CRU_LIMPO" and ver.get("taxonomia_congelada_lida") != []:
++        if braco != CRU and ver.get("taxonomia_congelada_lida") != []:
+             prob.append("braço não-CRU leu a taxonomia congelada (ou campo ausente)")
+     dec = cap.get("decisoes")
+     if modo == "carga":
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/equivalencia.py ./equivalencia.py
+--- ../../vocab_limpo_26-09/equivalencia.py	1969-12-31 21:00:00.000000000 -0300
++++ ./equivalencia.py	2026-09-29 00:36:36.883575900 -0300
+@@ -0,0 +1,51 @@
++"""Equivalência de semântica das métricas: roda `avalia` de uma pasta de harness (rodada VOCAB_LIMPO ou genérico) sobre o
++cenário sintético da suíte herdada (`test_wad4.py`, idêntico nas duas pastas) e imprime a saída canônica com os braços
++renomeados para papéis (CRU, CAND, MAIOR, ALEAT_n). Uso: python equivalencia.py <pasta> [invariancia|bloco_mudou]."""
++import json
++import sys
++from pathlib import Path
++
++PASTA = Path(sys.argv[1]).resolve()
++MODO = sys.argv[2] if len(sys.argv) > 2 else "padrao"
++sys.path.insert(0, str(PASTA))
++import avaliador as AV  # noqa: E402
++import comum as K  # noqa: E402
++import test_wad4 as T  # noqa: E402
++
++K.INVENTARIO_ESPERADO = 8
++K.DENOMINADORES = {"bloco": 0, "unidade": 0, "sub_primaria": 9}
++K.DENOM_POR_CURSO = {"S": {"bloco": 0, "unidade": 0, "sub_primaria": 9}}
++K.REFERENCIA_CRU = {"S": {"bloco": 0, "unidade": 0, "sub_primaria": 3}}
++cru, cand = K.BRACOS[0], K.BRACOS[1]
++papel = {cru: "CRU", cand: "CAND", K.BRACOS[2]: "MAIOR", **{b: f"ALEAT_{i}" for i, b in enumerate(K.BRACOS[3:], 1)}}
++cong = T.congelamento(T.INV8)
++if MODO == "padrao":
++    subs_cand = T.SUB_LLM
++else:   # candidato só com correções (B sem violação); em "bloco_mudou" um bloco muda por ID
++    subs_cand = dict(T.SUB_CRU, e2="t2")
++caps = {b: T.captura(cong, b, T.decisoes_de(T.SUB_CRU)) for b in K.BRACOS}
++dec = T.decisoes_de(subs_cand)
++if MODO == "bloco_mudou":
++    dec["S"]["e5"]["final"]["bloco"] = "b2"
++caps[cand] = T.captura(cong, cand, dec)
++tax = T.tax_de([("u1", [(f"t{i}", []) for i in range(1, 10)])])
++r = K.canon(AV.avalia(caps, cong, T.REGUA, {b: {"S": tax} for b in K.BRACOS}))
++r.pop("proveniencia")   # hashes de código e de insumos diferem por construção entre as pastas
++
++
++def renomeia(o):
++    if isinstance(o, dict):
++        out = {}
++        for k, v in o.items():
++            k2 = papel.get(k, k)
++            if k.startswith("C_meta_"):
++                k2 = "C_meta_" + papel.get(k[len("C_meta_"):], k[len("C_meta_"):])
++            out[k2] = renomeia(v)
++        return out
++    if isinstance(o, list):
++        return [renomeia(x) for x in o]
++    return papel.get(o, o) if isinstance(o, str) else o
++
++
++sys.stdout.reconfigure(encoding="utf-8")
++print(json.dumps(renomeia(r), ensure_ascii=False, sort_keys=True))
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/gold_externo.py ./gold_externo.py
+--- ../../vocab_limpo_26-09/gold_externo.py	1969-12-31 21:00:00.000000000 -0300
++++ ./gold_externo.py	2026-09-29 00:34:54.834375000 -0300
+@@ -0,0 +1,138 @@
++"""Gold externo (`gold-externo-1`): leitura estrita, validação, ligação com as entries e tradução para a régua do
++avaliador (contrato da rodada VOCAB_LIMPO). Só stdlib; nunca lê saída do motor.
++
++Régua: lista de linhas {"gold_id", "eid", "bloco", "unidade", "sub_primaria", "sub_aceita"} por curso; None = eixo não
++avaliado; {""} = o vazio é a resposta certa; eid None = material ausente (conta como erro). Bloco é sempre None (não é
++rotulado nos cursos novos).
++"""
++import csv
++import io
++import re
++
++CAMPOS = ["material_id", "status", "unidade", "sub_primaria", "sub_aceita", "observacao"]
++STATUS = ("avaliado", "meta", "excluido")
++ID_MATERIAL = re.compile(r"^m[0-9a-f]{12}$")
++CAMPOS_ENTRY_PERMITIDOS = ("id", "sha256")   # únicos campos de entry usados na ligação
++
++
++class GoldInvalido(ValueError):
++    pass
++
++
++def le_csv(dados):
++    """Bytes UTF-8 sem BOM, LF, cabeçalho exato. Devolve a lista de linhas (dicts com as 6 colunas)."""
++    if dados.startswith(b"\xef\xbb\xbf"):
++        raise GoldInvalido("BOM não permitido")
++    if b"\r" in dados:
++        raise GoldInvalido("fim de linha CRLF não permitido (LF)")
++    texto = dados.decode("utf-8")
++    leitor = csv.reader(io.StringIO(texto, newline=""))
++    linhas = list(leitor)
++    if not linhas or linhas[0] != CAMPOS:
++        raise GoldInvalido(f"cabeçalho != {CAMPOS}")
++    out = []
++    for i, ln in enumerate(linhas[1:], 2):
++        if len(ln) != len(CAMPOS):
++            raise GoldInvalido(f"linha {i}: {len(ln)} colunas")
++        out.append(dict(zip(CAMPOS, ln)))
++    return out
++
++
++def _ids(celula):
++    return [] if celula in ("", "-") else celula.split("|")
++
++
++def valida(linhas, adjudicaveis, rotulos):
++    """Todas as regras do schema. `adjudicaveis`: material_ids do pacote; `rotulos`: conteúdo de rotulos.json."""
++    prob = []
++    unidades = {u["id"] for u in rotulos["unidades"]}
++    topico_unidade = {t["id"]: t["unidade"] for t in rotulos["topicos"]}
++    vistos = [ln["material_id"] for ln in linhas]
++    if len(set(vistos)) != len(vistos):
++        prob.append("material_id repetido")
++    if set(vistos) != set(adjudicaveis):
++        prob.append(f"material_id diferente dos adjudicáveis: faltam {sorted(set(adjudicaveis) - set(vistos))[:3]}, "
++                    f"sobram {sorted(set(vistos) - set(adjudicaveis))[:3]}")
++    for ln in linhas:
++        mid, st = ln["material_id"], ln["status"]
++        onde = f"{mid}"
++        if not ID_MATERIAL.match(mid):
++            prob.append(f"{onde}: material_id inválido")
++        if st not in STATUS:
++            prob.append(f"{onde}: status inválido {st!r}")
++            continue
++        for campo in ("unidade", "sub_primaria", "sub_aceita"):
++            v = ln[campo]
++            if v != v.strip() or any(x != x.strip() or not x for x in _ids(v)) or len(set(_ids(v))) != len(_ids(v)):
++                prob.append(f"{onde}: {campo} com espaço, vazio interno ou repetição")
++        if st == "excluido":
++            if any(ln[c] for c in ("unidade", "sub_primaria", "sub_aceita")):
++                prob.append(f"{onde}: excluido exige unidade e subunidade vazias")
++            continue
++        if not ln["unidade"]:
++            prob.append(f"{onde}: unidade obrigatória")
++        us = _ids(ln["unidade"])
++        prob += [f"{onde}: unidade desconhecida {u}" for u in us if u not in unidades]
++        if st == "meta":
++            if ln["sub_primaria"] or ln["sub_aceita"]:
++                prob.append(f"{onde}: meta exige subunidade vazia")
++            continue
++        if not ln["sub_primaria"] or not ln["sub_aceita"]:
++            prob.append(f"{onde}: sub_primaria e sub_aceita obrigatórias")
++            continue
++        pri, ace = _ids(ln["sub_primaria"]), _ids(ln["sub_aceita"])
++        if (ln["sub_primaria"] == "-") != (ln["sub_aceita"] == "-"):
++            prob.append(f"{onde}: '-' em só uma das subunidades")
++        if ln["unidade"] == "-" and ln["sub_primaria"] != "-":
++            prob.append(f"{onde}: unidade '-' exige subunidade '-'")
++        prob += [f"{onde}: tópico desconhecido {t}" for t in pri + ace if t not in topico_unidade]
++        prob += [f"{onde}: tópico {t} fora das unidades da linha" for t in pri + ace
++                 if t in topico_unidade and topico_unidade[t] not in us]
++        if not set(pri) <= set(ace):
++            prob.append(f"{onde}: sub_primaria não contida em sub_aceita")
++    return prob
++
++
++def mapa_por_hash(materiais, entradas):
++    """material_id -> lista ordenada de eids com os mesmos bytes brutos. `entradas`: [{"id", "sha256"}] (só esses campos)."""
++    for e in entradas:
++        if set(e) != set(CAMPOS_ENTRY_PERMITIDOS):
++            raise GoldInvalido(f"entry com campos além de {CAMPOS_ENTRY_PERMITIDOS}: {sorted(e)}")
++    por_sha = {}
++    for e in entradas:
++        por_sha.setdefault(e["sha256"], []).append(str(e["id"]))
++    return {m["material_id"]: sorted(por_sha.get(m["sha256"], [])) for m in materiais if m["adjudicavel"]}
++
++
++def regua(linhas, rotulos, mapa):
++    """Tradução para a régua. Linha replicada para cada entry com os mesmos bytes (gold_id = material@eid); sem entry =
++    uma linha com eid None (material ausente). `excluido` não gera linha."""
++    slug_u = {u["id"]: u["slug"] for u in rotulos["unidades"]}
++    slug_t = {t["id"]: t["slug"] for t in rotulos["topicos"]}
++
++    def conj(celula, slugs):
++        return {""} if celula == "-" else {slugs[x] for x in celula.split("|")}
++
++    out, resumo = [], {"linhas_gold": len(linhas), "excluidos": 0, "ausentes": 0, "replicados": 0}
++    for ln in linhas:
++        if ln["status"] == "excluido":
++            resumo["excluidos"] += 1
++            continue
++        uni = conj(ln["unidade"], slug_u)
++        pri = conj(ln["sub_primaria"], slug_t) if ln["status"] == "avaliado" else None
++        ace = conj(ln["sub_aceita"], slug_t) if ln["status"] == "avaliado" else None
++        eids = mapa.get(ln["material_id"]) or []
++        if not eids:
++            resumo["ausentes"] += 1
++        if len(eids) > 1:
++            resumo["replicados"] += len(eids) - 1
++        for eid in eids or [None]:
++            gid = ln["material_id"] if len(eids) <= 1 else f"{ln['material_id']}@{eid}"
++            out.append({"gold_id": gid, "eid": eid, "bloco": None, "unidade": set(uni),
++                        "sub_primaria": None if pri is None else set(pri), "sub_aceita": None if ace is None else set(ace)})
++    return out, resumo
++
++
++def denominadores(linhas_regua):
++    return {"bloco": 0, "unidade": sum(1 for r in linhas_regua if r["unidade"] is not None),
++            "sub_primaria": sum(1 for r in linhas_regua if r["sub_primaria"] is not None)}
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/limpo.py ./limpo.py
+--- ../../vocab_limpo_26-09/limpo.py	2026-09-26 01:24:34.477513200 -0300
++++ ./limpo.py	2026-09-29 00:48:37.929959900 -0300
+@@ -1,7 +1,10 @@
+-"""Regime VOCAB — recompilação limpa (VOCAB_LIMPO), 26/09. Pré-registro: docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md.
++"""Harness genérico (validação externa, 29/09): recompilação única do candidato. Cópia de ../../vocab_limpo_26-09/limpo.py
++com SÓ: cursos, pasta da recompilação, protocolo, proibições e FONTE DO STAGING (congelamento, entradas e captura CRU
++de origem, com o comum que a produziu) lidos da configuração da rodada (`rodada.py`); comum genérico no lugar do da
++Fase 1. Nas rodadas de cursos novos a fonte do staging é a captura CRU da própria rodada.
+ 
+ Subcomandos (sempre no ambiente controlado, via roda_controlado.py; nunca lê régua/gold — travas instaladas):
+-  --staging    área isolada por curso a partir dos insumos congelados da Fase 1 + unidades do CRU (sem rede)
++  --staging    área isolada por curso a partir dos insumos congelados da fonte + unidades do CRU (sem rede)
+   --ensaio     executa o compilador ATUAL com cliente falso (sem rede) em cópias do staging, 2x: inventário exato das
+                chamadas (bundle de cada unidade) e prova de determinismo
+   --congelar   congelamento da recompilação (código, SDK, modelo, config da chamada, staging, inventário, protocolo)
+@@ -27,18 +30,22 @@
+ from pathlib import Path
+ 
+ AQUI = Path(__file__).resolve().parent
+-DATA = AQUI.parents[4]
+-W5 = AQUI.parent / "wad5_25-09"
+-sys.path.insert(0, str(W5))      # comum.py congelado da Fase 1 (só leitura; hash aprovado 04a535b6…)
++DATA = AQUI.parents[5]   # o genérico fica um nível abaixo de c1-3
++sys.path.insert(0, str(AQUI))    # comum.py genérico (configuração da rodada em RODADA_CONFIG)
+ sys.path.insert(1, str(DATA))    # src/ (import tardio, depois das travas)
+ import comum as K  # noqa: E402
+ 
+-BASE = DATA / ".frzero/vocab_limpo_26-09"
++BASE = DATA / K.R.CFG["recompilacao"]
+ STAGING, ENSAIO, CHAMADAS = BASE / "staging", BASE / "ensaio", BASE / "chamadas"
+-CONG5 = DATA / ".frzero/wad5_25-09/congelamento.json"
+-ENTR5 = DATA / ".frzero/wad5_25-09/congelamento_entradas.json"
+-MANCAP5 = W5 / "manifesto_capturas_v5.json"
+-PROTOCOLO = DATA / "docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md"
++FONTE = K.R.CFG["staging_fonte"]   # de onde vêm as unidades do staging (tipo declarado na configuração)
++_DA_CAPTURA = FONTE["tipo"] == "captura_cru"
++CONG5 = DATA / FONTE["congelamento"] if _DA_CAPTURA else None
++ENTR5 = DATA / FONTE["entradas"] if _DA_CAPTURA else None
++MANCAP5 = DATA / FONTE["manifesto_capturas"] if _DA_CAPTURA else None
++CAPS5 = DATA / FONTE["capturas_dir"] if _DA_CAPTURA else None
++COMUM5 = DATA / FONTE["comum_da_fonte"] if _DA_CAPTURA else AQUI
++BRACO_CRU5 = FONTE["braco_cru"] if _DA_CAPTURA else None
++PROTOCOLO = DATA / K.R.CFG["protocolo"]
+ CONG_LIMPO = BASE / "congelamento_recompilacao.json"
+ INVENTARIO = BASE / "inventario_chamadas.json"
+ STAGING_MAN = BASE / "staging_manifesto.json"
+@@ -46,8 +53,18 @@
+ HOSTS_PERMITIDOS = frozenset({"generativelanguage.googleapis.com"})
+ MD_CHAVES = ("approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown")
+ LLM_VOCAB, MANUAL_VOCAB = ".glossary_curation.llm.json", ".glossary_curation.json"
+-ID5 = "3fe5d1ff97258644b3148860cbe235aa3e16acfac91e9a291ea3c3e63a8e355d"
+-CODIGO_SCRIPTS = {"limpo.py": AQUI / "limpo.py", "roda_controlado.py": AQUI / "roda_controlado.py", "comum.py (W5)": W5 / "comum.py"}
++ID5 = FONTE["id_comum"] if _DA_CAPTURA else None
++CODIGO_SCRIPTS = {"limpo.py": AQUI / "limpo.py", "roda_controlado.py": AQUI / "roda_controlado.py", "comum.py": AQUI / "comum.py",
++                  "rodada.py": AQUI / "rodada.py", "rodada_config.json": K.R.CAMINHO, "comum.py (fonte)": COMUM5 / "comum.py"}
++
++
++def comum_da_fonte():
++    """Comum que produziu a captura CRU de origem (pode ser outro módulo, ex.: o da Fase 1), carregado à parte."""
++    import importlib.util
++    spec = importlib.util.spec_from_file_location("comum_da_fonte", COMUM5 / "comum.py")
++    mod = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(mod)
++    return mod
+ 
+ 
+ def exige(cond, msg):
+@@ -56,7 +73,12 @@
+ 
+ 
+ def rel(p):
+-    return Path(p).resolve().relative_to(DATA).as_posix()
++    """Caminho relativo à raiz do repositório; absoluto (posix) quando está fora dela (ex.: pacotes de teste)."""
++    p = Path(p).resolve()
++    try:
++        return p.relative_to(DATA).as_posix()
++    except ValueError:
++        return p.as_posix()
+ 
+ 
+ def agora():
+@@ -67,7 +89,7 @@
+     """Travas do processo: código só leitura; gold proibido; .env e a config do usuário negados (a chave é lida ANTES
+     de instalar, só em --compilar); tutores vivos proibidos."""
+     t = K.Travas(papel)
+-    raizes = [DATA / "src", AQUI, W5, Path(sys.base_prefix), Path(sys.prefix)]
++    raizes = [DATA / "src", AQUI, COMUM5, Path(sys.base_prefix), Path(sys.prefix)]
+     import site
+     raizes += [Path(p) for p in site.getsitepackages()]
+     t.permite("codigo", *raizes, somente_leitura=True)
+@@ -75,55 +97,80 @@
+     t.nega(CONFIG_USUARIO, "config do usuário (contém a chave da API)")
+     for nome in K.NOMES.values():
+         t.proibe(DATA.parent / nome, "tutor vivo")
+-    t.proibe(AQUI.parent / "wad5_avaliacao_26-09", "resultados da avaliação da Fase 1 (por ID)")
+-    t.proibe(DATA / ".frzero/wad5_avaliacao_26-09", "espelho da régua da Fase 1")
+-    t.proibe(DATA / "docs/reports/pendencias.md", "tracker (contém IDs das perdas da Fase 1)")
++    for alvo, motivo in K.R.CFG["proibidos"].items():
++        t.proibe(DATA / alvo, motivo)
++    for nome in K.R.CFG["tutores_proibidos"]:
++        t.proibe(DATA.parent / nome, "tutor vivo")
+     return t
+ 
+ 
+ def carrega_fase1():
+     """Congelamento W-AD5, entradas e captura CRU, conferidos contra os hashes aprovados."""
++    KF = comum_da_fonte()
+     cong = K.carrega_json_estrito(CONG5)
+-    exige(cong["id_comum"] == ID5 and not K.valida_congelamento(cong), "congelamento da Fase 1 divergente")
++    exige(cong["id_comum"] == ID5 and not KF.valida_congelamento(cong), "congelamento da fonte divergente")
+     entradas = K.carrega_json_estrito(ENTR5)
+-    exige(K.sha_json(entradas) == cong["normativo"]["entradas_arquivo_sha"], "entradas da Fase 1 divergentes")
++    exige(K.sha_json(entradas) == cong["normativo"]["entradas_arquivo_sha"], "entradas da fonte divergentes")
+     man = K.carrega_json_estrito(MANCAP5)
+-    c = man["capturas"]["CRU"]
+-    exige(K.sha_arq(DATA / c["arquivo"]) == c["sha256"], "captura CRU da Fase 1 divergente do manifesto")
++    c = man["capturas"][BRACO_CRU5]
++    exige(K.sha_arq(DATA / c["arquivo"]) == c["sha256"], "captura CRU da fonte divergente do manifesto")
+     cru = K.carrega_json_estrito(DATA / c["arquivo"])
+-    exige(not K.valida_historica(cru, cong, braco="CRU"), "captura CRU da Fase 1 não valida")
++    exige(not KF.valida_historica(cru, cong, braco=BRACO_CRU5), "captura CRU da fonte não valida")
+     return cong, entradas, cru, c
+ 
+ 
+ # ------------------------------------------------------------------------------------------- staging
+-def staging():
+-    t = travas_base("staging")
++def fonte_staging(t):
++    """Raízes, entradas congeladas, unidade por entry, taxonomia esperada e registro da fonte, pelo tipo declarado em
++    `staging_fonte.tipo`: `captura_cru` (unidades da captura CRU de outra rodada, como na VOCAB_LIMPO) ou
++    `manifesto_do_build` (cursos novos: unidades do build congelado, feito com o compilador desligado)."""
++    if not _DA_CAPTURA:
++        raizes = {c["sigla"]: DATA / c["raiz_pacote"] for c in K.R.CFG["cursos"]}
++        t.permite("comum", *raizes.values(), somente_leitura=True)
++        t.permite("saida", BASE)
++        t.instala()
++        # hash pelo abridor original (sem interpretar), conferido contra o congelado ANTES de liberar a leitura
++        entradas = {s: K.arvore(root, t._abrir_original) for s, root in raizes.items()}
++        exige(set(FONTE["arvores"]) == set(raizes)
++              and all(K.sha_json(entradas[s]) == FONTE["arvores"][s] for s in raizes), "pacote do build != árvore congelada")
++        for s, root in raizes.items():
++            t.congela(root, entradas[s])
++        unidades = {s: {str(e["id"]): str(e.get("computed_unit_slug") or "")
++                        for e in K.carrega_json_estrito(root / "manifest.json")["entries"]} for s, root in raizes.items()}
++        return raizes, entradas, unidades, {s: None for s in raizes}, {"tipo": "manifesto_do_build", "arvores": FONTE["arvores"]}
+     cong0 = K.carrega_json_estrito(CONG5)
+     raizes = {s: DATA / e["raiz"] for s, e in cong0["normativo"]["entradas_comuns"].items()}
+     t.permite("comum", *raizes.values(), somente_leitura=True)
+-    t.permite("referencia", CONG5, ENTR5, MANCAP5, DATA / ".frzero/wad5_25-09/capturas", somente_leitura=True)
++    t.permite("referencia", CONG5, ENTR5, MANCAP5, CAPS5, somente_leitura=True)
+     t.permite("saida", BASE)
+     t.instala()
+-    exige(not STAGING.exists(), "staging já existe: não sobrescrevo")
+     cong, entradas, cru, c = carrega_fase1()
++    unidades = {s: {e: d["final"]["unidade"] for e, d in cru["decisoes"][s].items()} for s in raizes}
++    tax = {s: cong["insumos"][BRACO_CRU5][s]["taxonomia_sha"] for s in raizes}
++    return raizes, entradas, unidades, tax, {"congelamento_fonte": ID5, "captura_cru": {"arquivo": c["arquivo"], "sha256": c["sha256"]}}
++
++
++def staging():
++    t = travas_base("staging")
++    raizes, entradas, unidades, tax_esperada, fonte = fonte_staging(t)
++    exige(not STAGING.exists(), "staging já existe: não sobrescrevo")
+     for s, root in raizes.items():
+         t.congela(root, entradas[s])
+-    registro = {"fonte": {"congelamento_fase1": ID5, "captura_cru": {"arquivo": c["arquivo"], "sha256": c["sha256"]}},
+-                "cursos": {}}
++    registro = {"fonte": fonte, "cursos": {}}
+     for s, nome in K.NOMES.items():
+         root, dest = raizes[s], STAGING / nome
+         man = K.carrega_json_estrito(root / "manifest.json")
+         tax_bytes = (root / "course/.content_taxonomy.json").read_bytes()
+         exige(K.sha_bytes(tax_bytes) == entradas[s]["course/.content_taxonomy.json"], f"{s}: taxonomia != congelada")
+-        exige(K.sha_json(json.loads(tax_bytes.decode("utf-8"))) == cong["insumos"]["CRU"][s]["taxonomia_sha"],
++        exige(tax_esperada[s] is None or K.sha_json(json.loads(tax_bytes.decode("utf-8"))) == tax_esperada[s],
+               f"{s}: taxonomia != snapshot CRU")
+-        dec = cru["decisoes"][s]
++        dec = unidades[s]
+         entries = man["entries"]
+-        exige(sorted(str(e["id"]) for e in entries) == sorted(dec), f"{s}: entries != inventário do CRU")
++        exige(sorted(str(e["id"]) for e in entries) == sorted(dec), f"{s}: entries != inventário da fonte")
+         novas, mudou = [], 0
+         for e in entries:
+             e2 = copy.deepcopy(e)
+-            u = dec[str(e["id"])]["final"]["unidade"]
++            u = dec[str(e["id"])]
+             mudou += str(e2.get("computed_unit_slug") or "") != u
+             e2["computed_unit_slug"] = u
+             novas.append(e2)
+@@ -306,7 +353,7 @@
+                                            "identidade com outra unidade/tópico, só genéricos df, rótulos meta)",
+             "bundle": "vocabulary_compile._bundle (título, label Moodle, até 24 headings de 60 caracteres, nomes-base dos "
+                       "membros extraídos; corte em MAX_BUNDLE_CHARS=24000)"},
+-        "entradas": {"congelamento_fase1": ID5, "captura_cru": reg["fonte"]["captura_cru"],
++        "entradas": {"congelamento_fonte": ID5, "captura_cru": reg["fonte"]["captura_cru"],
+                      "staging_registro_sha256": K.sha_arq(STAGING_MAN), "staging_arvore_sha": reg["arvore_sha"],
+                      "unidade_substituida_pelo_cru": {s: v["unidade_substituida_pelo_cru"] for s, v in reg["cursos"].items()}},
+         "inventario": {"arquivo": rel(INVENTARIO), "sha256": K.sha_arq(INVENTARIO), "total_chamadas": inv["total_chamadas"],
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/roda_controlado.py ./roda_controlado.py
+--- ../../vocab_limpo_26-09/roda_controlado.py	2026-09-26 01:16:58.334827300 -0300
++++ ./roda_controlado.py	2026-09-29 00:38:22.515243600 -0300
+@@ -8,10 +8,10 @@
+ from pathlib import Path
+ 
+ AQUI = Path(__file__).resolve().parent
+-sys.path.insert(0, str(AQUI.parent / "wad5_25-09"))
++sys.path.insert(0, str(AQUI))   # comum genérico (RODADA_CONFIG entra no ambiente declarado)
+ import comum as K  # noqa: E402
+ 
+-PYCACHE = AQUI.parents[4] / ".frzero/vocab_limpo_26-09/pycache_vazio"
++PYCACHE = AQUI.parents[5] / K.R.CFG["recompilacao"] / "pycache_vazio"
+ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+ log, args = Path(sys.argv[1]), sys.argv[2:]
+ PYCACHE.mkdir(parents=True, exist_ok=True)
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/rodada.py ./rodada.py
+--- ../../vocab_limpo_26-09/rodada.py	1969-12-31 21:00:00.000000000 -0300
++++ ./rodada.py	2026-09-29 00:47:30.264966200 -0300
+@@ -0,0 +1,96 @@
++"""Configuração de rodada do harness genérico (versão `rodada-generica-1`). Só stdlib.
++
++Cursos, caminhos, braços, sementes, denominadores, régua e referências vêm de um JSON de rodada. Nenhum código do
++harness genérico contém regra por nome de curso. O arquivo é escolhido pela variável de ambiente `RODADA_CONFIG`
++(caminho absoluto ou relativo a esta pasta); sem ela, o import falha: não existe rodada implícita.
++"""
++import json
++import os
++import re
++from pathlib import Path
++
++AQUI = Path(__file__).resolve().parent
++ESQUEMA = "rodada-generica-1"
++SIGLA = re.compile(r"^[A-Z][A-Z0-9]{0,9}$")
++BRACO = re.compile(r"^[A-Z][A-Z0-9_]{1,39}$")
++EIXOS = ("bloco", "unidade", "sub_primaria")
++
++
++class ConfigInvalida(ValueError):
++    pass
++
++
++def _exige(cond, msg):
++    if not cond:
++        raise ConfigInvalida(msg)
++
++
++def valida(cfg):
++    """Validação estrutural completa; devolve o próprio cfg. Qualquer desvio é erro (sem valor padrão silencioso)."""
++    _exige(cfg.get("esquema") == ESQUEMA, f"esquema != {ESQUEMA}")
++    cursos = cfg.get("cursos")
++    _exige(isinstance(cursos, list) and cursos, "cursos: lista não vazia")
++    siglas = [c.get("sigla") for c in cursos]
++    _exige(all(isinstance(s, str) and SIGLA.match(s) for s in siglas) and len(set(siglas)) == len(siglas), "siglas inválidas ou repetidas")
++    for c in cursos:
++        _exige(set(c) == {"sigla", "tutor", "raiz_pacote", "eixos", "denominadores"}, f"{c.get('sigla')}: campos do curso")
++        _exige(set(c["eixos"]) <= set(EIXOS) and "sub_primaria" in c["eixos"], f"{c['sigla']}: eixos")
++        _exige(set(c["denominadores"]) == set(EIXOS) and all(isinstance(v, int) and v >= 0 for v in c["denominadores"].values()),
++               f"{c['sigla']}: denominadores")
++        _exige(all(c["denominadores"][e] == 0 for e in EIXOS if e not in c["eixos"]), f"{c['sigla']}: denominador de eixo não avaliado")
++    b = cfg.get("bracos") or {}
++    _exige(set(b) == {"cru", "candidato", "controle_maior", "controles_aleatorios"}, "bracos: papéis")
++    nomes = [b["cru"], b["candidato"], b["controle_maior"], *[x["nome"] for x in b["controles_aleatorios"]]]
++    _exige(all(BRACO.match(n) for n in nomes) and len(set(nomes)) == len(nomes), "bracos: nomes inválidos ou repetidos")
++    sementes = [x["semente"] for x in b["controles_aleatorios"]]
++    _exige(b["controles_aleatorios"] and all(isinstance(s, int) for s in sementes) and len(set(sementes)) == len(sementes),
++           "bracos: sementes inteiras e distintas")
++    _exige(isinstance(cfg.get("inventario_esperado"), int) and cfg["inventario_esperado"] > 0, "inventario_esperado")
++    ref = cfg.get("referencia_cru")
++    _exige(ref is None or (set(ref) == {"arquivo", "placar"} and set(ref["placar"]) == set(siglas)), "referencia_cru")
++    r = cfg.get("regua") or {}
++    _exige(r.get("tipo") in ("historica", "gold_externo"), "regua.tipo")
++    _exige(set(r) == {"tipo", "arquivos", "manifestos", "codigo", "invariancia_bloco"}, "regua: campos")
++    _exige(isinstance(r["invariancia_bloco"], bool), "regua.invariancia_bloco")
++    for papel, m in r["arquivos"].items():
++        _exige(set(m) <= set(siglas), f"regua.arquivos.{papel}: curso fora da rodada")
++    if r["tipo"] == "gold_externo":
++        _exige(set(r["arquivos"]) == {"gold", "rotulos", "mapa"} and all(set(r["arquivos"][p]) == set(siglas) for p in r["arquivos"]),
++               "gold_externo: papéis gold, rotulos e mapa para todos os cursos")
++        _exige(not any("bloco" in c["eixos"] for c in cursos), "gold_externo: bloco não é rotulado (pré-registro §6.3)")
++        _exige(r["invariancia_bloco"] is True, "gold_externo: invariância de bloco obrigatória")
++    for k in ("protocolo", "base_produto", "saida_base", "recompilacao", "sufixo"):
++        _exige(isinstance(cfg.get(k), str) and cfg[k], k)
++    _exige(isinstance(cfg.get("tutores_proibidos"), list) and isinstance(cfg.get("proibidos"), dict), "proibições")
++    _exige(isinstance(cfg.get("esquemas"), dict) and set(cfg["esquemas"]) == {"captura", "congelamento"}, "esquemas")
++    f = cfg.get("staging_fonte")
++    _exige(isinstance(f, dict) and f.get("tipo") in ("captura_cru", "manifesto_do_build"), "staging_fonte.tipo")
++    if f["tipo"] == "captura_cru":
++        base = {"tipo", "congelamento", "entradas", "manifesto_capturas", "capturas_dir", "id_comum", "braco_cru", "comum_da_fonte"}
++        _exige(base <= set(f) <= base | {"historico_sidecars"}, "staging_fonte (captura_cru): campos")
++    else:
++        _exige(set(f) == {"tipo", "arvores"} and set(f["arvores"]) == set(siglas), "staging_fonte (manifesto_do_build): arvores por curso")
++    return cfg
++
++
++def carrega(caminho=None):
++    caminho = caminho or os.environ.get("RODADA_CONFIG")
++    _exige(bool(caminho), "RODADA_CONFIG não definida: não existe rodada implícita")
++    p = Path(caminho)
++    p = p if p.is_absolute() else AQUI / p
++    cfg = json.loads(p.read_text(encoding="utf-8"))
++    return valida(cfg), p
++
++
++CFG, CAMINHO = carrega()
++NOMES = {c["sigla"]: c["tutor"] for c in CFG["cursos"]}
++CRU = CFG["bracos"]["cru"]
++CANDIDATO = CFG["bracos"]["candidato"]
++CTRL_MAIOR = CFG["bracos"]["controle_maior"]
++CTRL_ALEAT = tuple(x["nome"] for x in CFG["bracos"]["controles_aleatorios"])
++SEMENTES = {x["nome"]: x["semente"] for x in CFG["bracos"]["controles_aleatorios"]}
++BRACOS = (CRU, CANDIDATO, CTRL_MAIOR, *CTRL_ALEAT)
++DENOM_POR_CURSO = {c["sigla"]: dict(c["denominadores"]) for c in CFG["cursos"]}
++DENOMINADORES = {e: sum(d[e] for d in DENOM_POR_CURSO.values()) for e in EIXOS}
++UNI = frozenset(c["sigla"] for c in CFG["cursos"] if "unidade" in c["eixos"])
++REFERENCIA_CRU = (CFG["referencia_cru"] or {}).get("placar") or {}
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/sanidade.py ./sanidade.py
+--- ../../vocab_limpo_26-09/sanidade.py	2026-09-26 01:26:32.959122300 -0300
++++ ./sanidade.py	2026-09-29 00:38:22.514244400 -0300
+@@ -1,4 +1,5 @@
+-"""VOCAB_LIMPO — sanidade SEM GOLD do sidecar gerado + comparação descritiva com o VOCAB_LLM histórico (pré-registro R6).
++"""Harness genérico — sanidade SEM GOLD do sidecar gerado (cópia de ../../vocab_limpo_26-09/sanidade.py). A comparação
++descritiva com um sidecar histórico só roda quando a configuração declara `staging_fonte.historico_sidecars`.
+ 
+ Descritivo: nada aqui decide continuar/parar pela semântica dos termos; só integridade (parse, chaves, tópicos, contagens).
+ Também copia os sidecars para o namespace da rodada (`.frzero/vocab_limpo_26-09/sidecars/<curso>/`), com hash.
+@@ -15,13 +16,13 @@
+ 
+ K, DATA, BASE = L.K, L.DATA, L.BASE
+ SIDECARS = BASE / "sidecars"
+-HIST = DATA / ".frzero/wad5_25-09/palcos/VOCAB_LLM"   # sidecars LLM históricos copiados na Fase 1 (não são régua)
++HIST = DATA / K.R.CFG["staging_fonte"]["historico_sidecars"] if K.R.CFG["staging_fonte"].get("historico_sidecars") else None
+ 
+ 
+ def main():
+     t = L.travas_base("sanidade")
+-    t.permite("referencia", L.STAGING, L.CONG_LIMPO, L.INVENTARIO, BASE / "compilacao.json", HIST, somente_leitura=True)
+-    t.permite("saida", SIDECARS, BASE / "sanidade.json", AQUI / "sanidade_vocab_limpo.md", BASE)
++    t.permite("referencia", L.STAGING, L.CONG_LIMPO, L.INVENTARIO, BASE / "compilacao.json", *([HIST] if HIST else []), somente_leitura=True)
++    t.permite("saida", SIDECARS, BASE / "sanidade.json", AQUI / f"sanidade_{K.R.CFG['sufixo']}.md", BASE)
+     t.instala()
+     exige = L.exige
+     exige(not SIDECARS.exists(), "sidecars da rodada já copiados: não sobrescrevo")
+@@ -81,20 +82,20 @@
+         destino.parent.mkdir(parents=True, exist_ok=True)
+         destino.write_bytes(p.read_bytes())
+         exige(K.sha_arq(destino) == K.sha_arq(p), f"{s}: cópia do sidecar divergente")
+-        # comparação descritiva com o histórico (não é critério nem alvo)
+-        h = K.carrega_json_estrito(HIST / nome / "course" / L.LLM_VOCAB)
+-        ht = {k: {VC._norm(x) for x in v.get("synonyms") or []} for k, v in h.items() if not k.startswith("_") and isinstance(v, dict)}
+-        lt = {k: {VC._norm(x) for x in v.get("synonyms") or []} for k, v in topicos.items()}
+-        hs, ls_ = set().union(*ht.values()) if ht else set(), set().union(*lt.values()) if lt else set()
+-        jac = {k: round(len(ht.get(k, set()) & lt.get(k, set())) / len(ht.get(k, set()) | lt.get(k, set())), 3)
+-               for k in sorted(set(ht) | set(lt)) if ht.get(k, set()) | lt.get(k, set())}
+-        comparacao[s] = {"topicos_hist": len(ht), "topicos_limpo": len(lt), "topicos_em_ambos": len(set(ht) & set(lt)),
+-                         "termos_hist": len(hs), "termos_limpo": len(ls_), "termos_em_ambos": len(hs & ls_),
+-                         "surgiram": len(ls_ - hs), "sumiram": len(hs - ls_),
+-                         "jaccard_medio_por_topico": round(sum(jac.values()) / len(jac), 3) if jac else None,
+-                         "aliases_por_topico_hist": round(len(hs) / len(ht), 2) if ht else None,
+-                         "aliases_por_topico_limpo": round(len(ls_) / len(lt), 2) if lt else None,
+-                         "hist_sha256": K.sha_arq(HIST / nome / "course" / L.LLM_VOCAB)}
++        if HIST:   # comparação descritiva com um histórico declarado (não é critério nem alvo)
++            h = K.carrega_json_estrito(HIST / nome / "course" / L.LLM_VOCAB)
++            ht = {k: {VC._norm(x) for x in v.get("synonyms") or []} for k, v in h.items() if not k.startswith("_") and isinstance(v, dict)}
++            lt = {k: {VC._norm(x) for x in v.get("synonyms") or []} for k, v in topicos.items()}
++            hs, ls_ = set().union(*ht.values()) if ht else set(), set().union(*lt.values()) if lt else set()
++            jac = {k: round(len(ht.get(k, set()) & lt.get(k, set())) / len(ht.get(k, set()) | lt.get(k, set())), 3)
++                   for k in sorted(set(ht) | set(lt)) if ht.get(k, set()) | lt.get(k, set())}
++            comparacao[s] = {"topicos_hist": len(ht), "topicos_limpo": len(lt), "topicos_em_ambos": len(set(ht) & set(lt)),
++                             "termos_hist": len(hs), "termos_limpo": len(ls_), "termos_em_ambos": len(hs & ls_),
++                             "surgiram": len(ls_ - hs), "sumiram": len(hs - ls_),
++                             "jaccard_medio_por_topico": round(sum(jac.values()) / len(jac), 3) if jac else None,
++                             "aliases_por_topico_hist": round(len(hs) / len(ht), 2) if ht else None,
++                             "aliases_por_topico_limpo": round(len(ls_) / len(lt), 2) if lt else None,
++                             "hist_sha256": K.sha_arq(HIST / nome / "course" / L.LLM_VOCAB)}
+         v = R["cursos"][s]
+         linhas.append(f"| {s} | {v['topicos_taxonomia']} | {v['topicos_com_termo']} | {v['termos_totais']} | {v['termos_unicos']} | "
+                       f"{v['chamadas']} | {v['retries']} | {len(v['falhas'] or [])} | {'; '.join(prob) or '—'} |")
+@@ -103,16 +104,16 @@
+                      for s, n in K.NOMES.items() if (SIDECARS / n / L.LLM_VOCAB).exists()}
+     R["aprovado"] = comp["completa"] and len(R["sidecars"]) == len(K.NOMES) and not any(v["problemas"] for v in R["cursos"].values())
+     K.grava_atomico(BASE / "sanidade.json", R)
+-    md = ["# VOCAB_LIMPO — sanidade sem gold", "", f"Recompilação `{cong['id_recompilacao']}`. Aprovado: **{R['aprovado']}**.", "",
++    md = [f"# {K.R.CFG['sufixo']} — sanidade sem gold", "", f"Recompilação `{cong['id_recompilacao']}`. Aprovado: **{R['aprovado']}**.", "",
+           "| curso | tópicos na taxonomia | tópicos com termo | termos | termos únicos | chamadas | retries | falhas | problemas |",
+           "|---|---:|---:|---:|---:|---:|---:|---:|---|", *linhas, "",
+-          "## Comparação descritiva com o VOCAB_LLM histórico (não é critério nem alvo)", "",
++          "## Comparação descritiva com o histórico declarado (não é critério nem alvo)", "",
+           "| curso | tópicos hist/limpo/ambos | termos hist/limpo/ambos | surgiram | sumiram | Jaccard médio por tópico | aliases por tópico hist → limpo |",
+           "|---|---|---|---:|---:|---:|---|"]
+     md += [f"| {s} | {c['topicos_hist']}/{c['topicos_limpo']}/{c['topicos_em_ambos']} | {c['termos_hist']}/{c['termos_limpo']}/{c['termos_em_ambos']} | "
+            f"{c['surgiram']} | {c['sumiram']} | {c['jaccard_medio_por_topico']} | {c['aliases_por_topico_hist']} → {c['aliases_por_topico_limpo']} |"
+            for s, c in comparacao.items()]
+-    with t._abrir_original(AQUI / "sanidade_vocab_limpo.md", "w", encoding="utf-8") as fh:
++    with t._abrir_original(AQUI / f"sanidade_{K.R.CFG['sufixo']}.md", "w", encoding="utf-8") as fh:
+         fh.write("\n".join(md) + "\n")
+     t.rehash_leituras()
+     print("SANIDADE", "APROVADA" if R["aprovado"] else "REPROVADA", flush=True)
+diff -u --strip-trailing-cr -r -N -x __pycache__ -x '*.json' -x '*.md' -x '*.txt' -x '*.patch' -x preparo_v0 -x adapta_rodada.py -x test_rodada_limpa.py ../../vocab_limpo_26-09/test_generico.py ./test_generico.py
+--- ../../vocab_limpo_26-09/test_generico.py	1969-12-31 21:00:00.000000000 -0300
++++ ./test_generico.py	2026-09-29 00:49:42.729794500 -0300
+@@ -0,0 +1,364 @@
++"""Testes do harness genérico (validação externa, 29/09). Só dados sintéticos; nenhum curso real, gold, rede ou LLM.
++
++Rodar: RODADA_CONFIG=rodada_vl_equivalente.json python -B -m pytest . -q -p no:cacheprovider
++A suíte herdada (test_wad4, test_defeitos_v4, test_ajustes_v5) é idêntica byte a byte à da rodada VOCAB_LIMPO.
++"""
++import ast
++import copy
++import io
++import json
++import os
++import re
++import subprocess
++import sys
++import tokenize
++from pathlib import Path
++
++import pytest
++
++HERE = Path(__file__).resolve().parent
++VL = HERE.parents[1] / "vocab_limpo_26-09"
++sys.path.insert(0, str(HERE))
++import avaliador as AV  # noqa: E402
++import captura as CP  # noqa: E402
++import comum as K  # noqa: E402
++import gold_externo as GE  # noqa: E402
++import rodada as RD  # noqa: E402
++import test_wad4 as T  # noqa: E402
++
++CODIGO_GENERICO = ["comum.py", "captura.py", "avaliador.py", "gold_externo.py", "rodada.py", "limpo.py", "sanidade.py",
++                   "roda_controlado.py", "equivalencia.py"]
++CURSOS_CONHECIDOS = ["MF", "SO", "IA", "ES2", "TCC", "CG", "FR", "LR", "LSO", "UX"]
++BRACOS_VL = ["CRU_LIMPO", "VOCAB_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO", "VOCAB_LLM", "CTRL_ALEAT_1"]
++
++
++def config_sintetica(tmp, tipo="gold_externo", invariancia=True, **muda):
++    cursos = [{"sigla": s, "tutor": f"Curso-{s}-Tutor", "raiz_pacote": f".frzero/pacotes/{s}",
++               "eixos": ["unidade", "sub_primaria"], "denominadores": {"bloco": 0, "unidade": 5, "sub_primaria": 4}}
++              for s in ("C1", "C2")]
++    arquivos = ({p: {s: f"gold/{p}_{s}" for s in ("C1", "C2")} for p in ("gold", "rotulos", "mapa")} if tipo == "gold_externo"
++                else {"subunit_gt": {"C1": "x.csv"}})
++    cfg = {"esquema": RD.ESQUEMA, "esquemas": {"captura": "ge-captura-1", "congelamento": "ge-congelamento-1"},
++           "cursos": cursos, "tutores_proibidos": [],
++           "bracos": {"cru": "CRU_X", "candidato": "VOCAB_X", "controle_maior": "CTRL_MAIOR_X",
++                      "controles_aleatorios": [{"nome": f"CTRL_ALEAT_X_{i}", "semente": i} for i in (1, 2, 3)]},
++           "inventario_esperado": 10, "referencia_cru": None,
++           "regua": {"tipo": tipo, "arquivos": arquivos, "manifestos": {}, "codigo": {}, "invariancia_bloco": invariancia},
++           "protocolo": "docs/x.md", "base_produto": "0" * 40, "saida_base": ".frzero/x/captura", "recompilacao": ".frzero/x",
++           "sufixo": "x", "proibidos": {}, "staging_fonte": {"tipo": "manifesto_do_build", "arvores": {"C1": "0" * 64, "C2": "0" * 64}}}
++    cfg.update(muda)
++    p = tmp / "rodada.json"
++    p.write_text(json.dumps(cfg), encoding="utf-8")
++    return p, cfg
++
++
++def roda_equivalencia(pasta, cfg, modo="padrao"):
++    env = {k: v for k, v in os.environ.items() if k != "RODADA_CONFIG"}
++    if cfg:
++        env["RODADA_CONFIG"] = str(cfg)
++    r = subprocess.run([sys.executable, "-B", str(HERE / "equivalencia.py"), str(pasta), modo], capture_output=True,
++                       text=True, encoding="utf-8", env=env)
++    assert r.returncode == 0, r.stderr[-2000:]
++    return r.stdout
++
++
++# ------------------------------------------------------------------------------------------- semântica das métricas
++def test_metricas_identicas_ao_vocab_limpo_com_qualquer_nome_de_braco(tmp_path):
++    """Mesmo cenário: avaliador da rodada VOCAB_LIMPO, genérico com a config equivalente e genérico com outros nomes."""
++    vl = roda_equivalencia(VL, None)
++    gen = roda_equivalencia(HERE, HERE / "rodada_vl_equivalente.json")
++    sint, _ = config_sintetica(tmp_path, tipo="historica", invariancia=False)
++    outro = roda_equivalencia(HERE, sint)
++    assert vl == gen == outro
++    r = json.loads(vl)
++    assert r["placar"]["CAND"]["TOTAL"]["sub_primaria"] == {"acertos": 4, "n": 9}   # conferência mínima do cenário
++
++
++def _funcoes(caminho):
++    """Fonte de cada função/classe por nome qualificado (funções internas homônimas não colidem)."""
++    texto = Path(caminho).read_text(encoding="utf-8")
++    out = {}
++
++    def visita(no, prefixo):
++        for filho in ast.iter_child_nodes(no):
++            if isinstance(filho, (ast.FunctionDef, ast.ClassDef)):
++                nome = prefixo + filho.name
++                out[nome] = ast.get_source_segment(texto, filho)
++                visita(filho, nome + ".")
++            else:
++                visita(filho, prefixo)
++
++    visita(ast.parse(texto), "")
++    return out
++
++
++REVERTE = [("(K.CRU, K.CTRL_MAIOR, *K.CTRL_ALEAT)",
++            '("CRU_LIMPO", "CTRL_MAIOR_LIMPO", "CTRL_ALEAT_LIMPO_1", "CTRL_ALEAT_LIMPO_2", "CTRL_ALEAT_LIMPO_3")'),
++           ('f"C_meta_{K.CANDIDATO}"', '"C_meta_VOCAB_LIMPO"'), ("{K.CANDIDATO}", "VOCAB_LIMPO"), ("{K.CTRL_MAIOR}", "CTRL_MAIOR_LIMPO"),
++           ("{K.CRU}", "CRU_LIMPO"), ("e[K.CANDIDATO]", "e['VOCAB_LIMPO']"), ("r[K.CTRL_MAIOR]", "r['CTRL_MAIOR_LIMPO']"),
++           ("K.CANDIDATO", '"VOCAB_LIMPO"'), ("K.CTRL_MAIOR", '"CTRL_MAIOR_LIMPO"'), ("K.CRU", '"CRU_LIMPO"'),
++           ("veredictos_rodada(pl, comp, regua, capturas)", "veredictos(pl, comp, regua)"),
++           ("relações efetivas do candidato", "relações efetivas do VOCAB_LLM"),
++           ('f"# Rodada {SUF} — captura dos braços, sem gold"', '"# Rodada VOCAB_LIMPO — captura dos seis braços, sem gold (26/09)"'),
++           ('f"# Rodada {SUF} — preflight sem gold"', '"# Rodada VOCAB_LIMPO — preflight sem gold (26/09)"'),
++           ('"| curso | A | B candidato só ordem | +candidato | -candidato |"', '"| curso | A | B LIMPO só ordem | +LIMPO | -LIMPO |"')]
++
++
++def reverte(fonte):
++    for a, b in REVERTE:
++        fonte = fonte.replace(a, b)
++    return fonte
++
++
++@pytest.mark.parametrize("arquivo, mudadas_esperadas", [
++    ("avaliador.py", {"veredictos", "avalia", "main"}),
++    ("comum.py", {"valida_captura"}),
++    ("captura.py", {"travas_principal", "preflight", "capturar_bracos", "executa", "sidecar_de", "escreve_md"}),
++])
++def test_so_as_funcoes_declaradas_mudam(arquivo, mudadas_esperadas):
++    """Toda função/classe que existe nas duas versões é idêntica, exceto as declaradas (nomes de braço e rodada)."""
++    vl, gen = _funcoes(VL / arquivo), _funcoes(HERE / arquivo)
++    mudadas = {n for n in set(vl) & set(gen) if vl[n] != gen[n]}
++    assert mudadas <= mudadas_esperadas, sorted(mudadas - mudadas_esperadas)
++    assert set(vl) <= set(gen), sorted(set(vl) - set(gen))
++
++
++@pytest.mark.parametrize("arquivo, nomes", [("avaliador.py", ("veredictos", "avalia")),
++                                            ("captura.py", ("executa", "sidecar_de", "escreve_md"))])
++def test_funcoes_mudadas_so_por_nome_de_braco_ou_rotulo(arquivo, nomes):
++    """Revertendo só nomes de braço e rótulos, a função volta a ser byte a byte a da rodada VOCAB_LIMPO."""
++    vl, gen = _funcoes(VL / arquivo), _funcoes(HERE / arquivo)
++    for nome in nomes:
++        assert reverte(gen[nome]) == vl[nome], nome
++
++
++def test_sem_literal_de_curso_nem_de_braco_da_rodada_anterior():
++    for arq in CODIGO_GENERICO:
++        texto = (HERE / arq).read_text(encoding="utf-8")
++        for t in tokenize.generate_tokens(io.StringIO(texto).readline):
++            if t.type != tokenize.STRING or t.string.startswith(('"""', "'''")):
++                continue
++            for s in CURSOS_CONHECIDOS:
++                assert not re.search(rf"(?<![\w-]){s}(?![\w-])", t.string), (arq, t.start[0], t.string[:80])
++            assert "-Tutor" not in t.string and not any(b in t.string for b in BRACOS_VL), (arq, t.start[0], t.string[:80])
++
++
++def test_codigo_congelado_inclui_configuracao_e_gold_externo():
++    assert {"rodada.py", "rodada_config.json", "gold_externo.py", "test_generico.py"} <= set(CP.CODIGO)
++    assert CP.CODIGO["rodada_config.json"] == RD.CAMINHO
++    assert K.ENV_DECLARADO["RODADA_CONFIG"] == str(RD.CAMINHO)
++    assert not K.verifica_ambiente(K.ambiente_controlado({"PATH": "x"}))
++
++
++# ------------------------------------------------------------------------------------------- invariância de bloco
++def test_invariancia_de_bloco_so_quando_configurada(tmp_path):
++    sint, _ = config_sintetica(tmp_path)
++    ok = json.loads(roda_equivalencia(HERE, sint, "invariancia"))["veredictos"]
++    mudou = json.loads(roda_equivalencia(HERE, sint, "bloco_mudou"))["veredictos"]
++    assert ok["B_integracao"].startswith("sem violação") and ok["B_rodada"] is True and ok["B_mudancas_bloco_por_id"] == []
++    assert mudou["B_integracao"].startswith("sem violação") and mudou["B_rodada"] is False
++    assert mudou["B_mudancas_bloco_por_id"] == ["S/e5"]
++    vl = json.loads(roda_equivalencia(HERE, HERE / "rodada_vl_equivalente.json", "bloco_mudou"))["veredictos"]
++    assert "B_rodada" not in vl and "B_mudancas_bloco_por_id" not in vl
++
++
++# ------------------------------------------------------------------------------------------- configuração
++def test_configuracao_invalida_e_recusada(tmp_path):
++    _, cfg = config_sintetica(tmp_path)
++    RD.valida(copy.deepcopy(cfg))
++    ruins = []
++    c = copy.deepcopy(cfg); c["cursos"][1]["sigla"] = "C1"; ruins.append(c)
++    c = copy.deepcopy(cfg); c["cursos"][0]["denominadores"]["bloco"] = 3; ruins.append(c)
++    c = copy.deepcopy(cfg); c["cursos"][0]["eixos"].append("bloco"); ruins.append(c)
++    c = copy.deepcopy(cfg); c["regua"]["invariancia_bloco"] = False; ruins.append(c)
++    c = copy.deepcopy(cfg); c["bracos"]["controles_aleatorios"][1]["semente"] = 1; ruins.append(c)
++    c = copy.deepcopy(cfg); c["bracos"]["candidato"] = "CRU_X"; ruins.append(c)
++    c = copy.deepcopy(cfg); del c["regua"]["arquivos"]["mapa"]; ruins.append(c)
++    c = copy.deepcopy(cfg); c["extra"] = 1; c["esquema"] = "outro"; ruins.append(c)
++    for ruim in ruins:
++        with pytest.raises(RD.ConfigInvalida):
++            RD.valida(ruim)
++
++
++def test_sem_configuracao_nao_existe_rodada():
++    env = {k: v for k, v in os.environ.items() if k != "RODADA_CONFIG"}
++    r = subprocess.run([sys.executable, "-B", "-c", "import rodada"], cwd=HERE, capture_output=True, text=True, env=env)
++    assert r.returncode != 0 and "RODADA_CONFIG" in r.stderr
++
++
++# ------------------------------------------------------------------------------------------- gold externo
++ROT = {"unidades": [{"id": "U01", "slug": "u-um"}, {"id": "U02", "slug": "u-dois"}],
++       "topicos": [{"id": "U01.T01", "unidade": "U01", "slug": "t-a"}, {"id": "U01.T02", "unidade": "U01", "slug": "t-b"},
++                   {"id": "U02.T01", "unidade": "U02", "slug": "t-c"}]}
++IDS = ["m000000000001", "m000000000002", "m000000000003", "m000000000004", "m000000000005"]
++
++
++def csv_gold(linhas):
++    return ("\n".join([",".join(GE.CAMPOS)] + [",".join(ln) for ln in linhas]) + "\n").encode("utf-8")
++
++
++GOLD_OK = [[IDS[0], "avaliado", "U01", "U01.T01", "U01.T01|U01.T02", ""],
++           [IDS[1], "avaliado", "U01|U02", "U02.T01", "U02.T01", ""],
++           [IDS[2], "meta", "-", "", "", "plano"],
++           [IDS[3], "avaliado", "-", "-", "-", ""],
++           [IDS[4], "excluido", "", "", "", "ilegível"]]
++
++
++def test_gold_valido_e_traducao_para_a_regua():
++    linhas = GE.le_csv(csv_gold(GOLD_OK))
++    assert GE.valida(linhas, IDS, ROT) == []
++    mapa = {IDS[0]: ["e1"], IDS[1]: ["e2", "e2b"], IDS[2]: ["e3"], IDS[3]: [], IDS[4]: ["e5"]}
++    regua, resumo = GE.regua(linhas, ROT, mapa)
++    por = {r["gold_id"]: r for r in regua}
++    assert por[IDS[0]] == {"gold_id": IDS[0], "eid": "e1", "bloco": None, "unidade": {"u-um"}, "sub_primaria": {"t-a"},
++                           "sub_aceita": {"t-a", "t-b"}}
++    assert {f"{IDS[1]}@e2", f"{IDS[1]}@e2b"} <= set(por) and por[f"{IDS[1]}@e2"]["unidade"] == {"u-um", "u-dois"}
++    assert por[IDS[2]]["sub_primaria"] is None and por[IDS[2]]["unidade"] == {""}
++    assert por[IDS[3]]["eid"] is None and por[IDS[3]]["sub_primaria"] == {""}
++    assert IDS[4] not in por
++    assert resumo == {"linhas_gold": 5, "excluidos": 1, "ausentes": 1, "replicados": 1}
++    assert GE.denominadores(regua) == {"bloco": 0, "unidade": 5, "sub_primaria": 4}
++    # a régua traduzida segue o contrato do avaliador (denominadores da config sintética à parte):
++    prob = [p for p in AV.valida_regua({"C1": regua}, {"C1": ["e1", "e2", "e2b", "e3", "e5"]})
++            if "denominador" not in p and "cursos divergentes" not in p]
++    assert prob == []
++
++
++@pytest.mark.parametrize("mexe, trecho", [
++    (lambda g: g[0].__setitem__(3, "U02.T01"), "fora das unidades"),
++    (lambda g: g[0].__setitem__(4, "U01.T02"), "não contida"),
++    (lambda g: g[0].__setitem__(2, "U09"), "unidade desconhecida"),
++    (lambda g: g[2].__setitem__(3, "U01.T01"), "meta exige"),
++    (lambda g: g[4].__setitem__(2, "U01"), "excluido exige"),
++    (lambda g: g[0].__setitem__(1, "talvez"), "status inválido"),
++    (lambda g: g[3].__setitem__(4, "U01.T01"), "'-' em só uma"),
++    (lambda g: g.pop(), "diferente dos adjudicáveis"),
++    (lambda g: g.append(list(g[0])), "repetido"),
++    (lambda g: g[0].__setitem__(4, "U01.T01|U01.T01"), "repetição"),
++])
++def test_gold_invalido_e_recusado(mexe, trecho):
++    g = copy.deepcopy(GOLD_OK)
++    mexe(g)
++    prob = GE.valida(GE.le_csv(csv_gold(g)), IDS, ROT)
++    assert any(trecho in p for p in prob), prob
++
++
++def test_csv_com_bom_crlf_ou_cabecalho_errado_e_recusado():
++    with pytest.raises(GE.GoldInvalido):
++        GE.le_csv(b"\xef\xbb\xbf" + csv_gold(GOLD_OK))
++    with pytest.raises(GE.GoldInvalido):
++        GE.le_csv(csv_gold(GOLD_OK).replace(b"\n", b"\r\n"))
++    with pytest.raises(GE.GoldInvalido):
++        GE.le_csv(b"material_id,status\n")
++
++
++def test_ligacao_por_hash_usa_so_campos_permitidos():
++    materiais = [{"material_id": IDS[0], "sha256": "a", "adjudicavel": True},
++                 {"material_id": IDS[1], "sha256": "b", "adjudicavel": True},
++                 {"material_id": IDS[2], "sha256": None, "adjudicavel": False}]
++    entradas = [{"id": "e1", "sha256": "a"}, {"id": "e2", "sha256": "a"}]
++    assert GE.mapa_por_hash(materiais, entradas) == {IDS[0]: ["e1", "e2"], IDS[1]: []}
++    with pytest.raises(GE.GoldInvalido):
++        GE.mapa_por_hash(materiais, [{"id": "e1", "sha256": "a", "computed_unit_slug": "u-um"}])
++
++
++# ------------------------------------------------------------------------------------------- determinismo do CRU
++def test_recaptura_do_cru_exige_decisoes_identicas():
++    cong = T.congelamento(T.INV8)
++    a = T.captura(cong, K.CRU, T.decisoes_de(T.SUB_CRU))
++    assert CP.confere_determinismo_cru(a, copy.deepcopy(a)) == []
++    b = copy.deepcopy(a)
++    b["decisoes"]["S"]["e3"]["final"]["sub"] = "t4"
++    assert CP.confere_determinismo_cru(a, b) == ["S/e3: decisão diferente"]
++    c = copy.deepcopy(a)
++    del c["decisoes"]["S"]["e8"]
++    assert "S: IDs diferentes" in CP.confere_determinismo_cru(a, c)
++
++
++
++# ------------------------------------------------------------------------------------------- geração (limpo)
++FILHO_GRAVADOR = """
++import hashlib, sys
++sys.path.insert(0, sys.argv[1])
++import limpo as L
++chamou = []
++inv = {"C1": [{"bundle_sha256": hashlib.sha256(b"bundle certo").hexdigest(), "unidade": "u"}], "_schema_sha256": "s"}
++g = L.Gravador(lambda **kw: chamou.append(kw), inv, "modelo-congelado")
++for contents, modelo in (("bundle errado", "modelo-congelado"), ("bundle certo", "outro-modelo")):
++    g.iniciar("C1")
++    try:
++        g(model=modelo, contents=contents, config=None)
++        print("SEM-ABORTO")
++    except L.Aborto:
++        print("ABORTO")
++print("CHAMADAS", len(chamou))
++"""
++
++
++def test_gravador_recusa_request_fora_do_inventario_e_modelo_divergente_antes_da_rede(tmp_path):
++    """Com configuração sintética (recompilação em pasta temporária): o gravador aborta ANTES de chamar o SDK."""
++    fonte = {"tipo": "captura_cru", "congelamento": "x", "entradas": "x", "manifesto_capturas": "x", "capturas_dir": "x", "id_comum": "0" * 64,
++             "braco_cru": "CRU_X", "comum_da_fonte": HERE.relative_to(HERE.parents[5]).as_posix()}
++    cfg, _ = config_sintetica(tmp_path, recompilacao=str(tmp_path / "rec"), staging_fonte=fonte)
++    filho = tmp_path / "filho.py"
++    filho.write_text(FILHO_GRAVADOR, encoding="utf-8")
++    env = {**{k: v for k, v in os.environ.items() if k != "RODADA_CONFIG"}, "RODADA_CONFIG": str(cfg)}
++    r = subprocess.run([sys.executable, "-B", str(filho), str(HERE)], capture_output=True, text=True, env=env)
++    assert r.returncode == 0, r.stderr[-1500:]
++    assert r.stdout.split() == ["ABORTO", "ABORTO", "CHAMADAS", "0"]
++    assert not (tmp_path / "rec").exists()   # nada gravado
++
++
++def _pacote_sintetico(raiz):
++    for rel, dados in {"manifest.json": json.dumps({"entries": [
++                           {"id": "e1", "computed_unit_slug": "u-um", "approved_markdown": "content/e1.md"},
++                           {"id": "e2", "computed_unit_slug": "u-dois", "approved_markdown": "content/e2.md"}]}),
++                       "content/e1.md": "# Aula 1\n", "content/e2.md": "# Aula 2\n",
++                       "course/.content_taxonomy.json": json.dumps({"version": 1, "units": []})}.items():
++        (raiz / rel).parent.mkdir(parents=True, exist_ok=True)
++        (raiz / rel).write_text(dados, encoding="utf-8")
++
++
++def _roda_staging(tmp_path, arvores):
++    cursos = [{"sigla": s, "tutor": f"Curso-{s}-Tutor", "raiz_pacote": str(tmp_path / "pacotes" / s),
++               "eixos": ["unidade", "sub_primaria"], "denominadores": {"bloco": 0, "unidade": 2, "sub_primaria": 2}}
++              for s in ("C1", "C2")]
++    cfg, _ = config_sintetica(tmp_path, cursos=cursos, recompilacao=str(tmp_path / "rec"),
++                              staging_fonte={"tipo": "manifesto_do_build", "arvores": arvores})
++    env = {**{k: v for k, v in os.environ.items() if k != "RODADA_CONFIG"}, "RODADA_CONFIG": str(cfg), "PYTHONIOENCODING": "utf-8"}
++    return subprocess.run([sys.executable, "-B", str(HERE / "limpo.py"), "--staging"], capture_output=True, text=True,
++                          encoding="utf-8", errors="replace", env=env)
++
++
++def test_staging_de_cursos_novos_usa_o_manifesto_do_build_congelado(tmp_path):
++    for s in ("C1", "C2"):
++        _pacote_sintetico(tmp_path / "pacotes" / s)
++    arvores = {s: K.sha_json(K.arvore(tmp_path / "pacotes" / s)) for s in ("C1", "C2")}
++    r = _roda_staging(tmp_path, arvores)
++    assert r.returncode == 0, (r.stdout[-800:], r.stderr[-800:])
++    reg = json.loads((tmp_path / "rec/staging_manifesto.json").read_text(encoding="utf-8"))
++    assert reg["fonte"] == {"tipo": "manifesto_do_build", "arvores": arvores}
++    assert {s: (v["entries"], v["unidade_substituida_pelo_cru"], v["markdown_copiados"]) for s, v in reg["cursos"].items()} == \
++        {"C1": (2, 0, 2), "C2": (2, 0, 2)}
++    novas = json.loads((tmp_path / "rec/staging/Curso-C1-Tutor/manifest_staging.json").read_text(encoding="utf-8"))["entries"]
++    assert [e["computed_unit_slug"] for e in novas] == ["u-um", "u-dois"]
++
++
++def test_staging_recusa_pacote_alterado_depois_do_congelamento(tmp_path):
++    for s in ("C1", "C2"):
++        _pacote_sintetico(tmp_path / "pacotes" / s)
++    arvores = {s: K.sha_json(K.arvore(tmp_path / "pacotes" / s)) for s in ("C1", "C2")}
++    (tmp_path / "pacotes/C2/content/e2.md").write_text("# Aula 2 alterada\n", encoding="utf-8")
++    r = _roda_staging(tmp_path, arvores)
++    assert r.returncode != 0 and "árvore congelada" in (r.stdout + r.stderr)
++    assert not (tmp_path / "rec/staging").exists()
++
++
++def test_modelo_da_rodada_externa_fixa_as_escolhas_do_pre_registro():
++    cfg = RD.valida(json.loads((HERE / "rodada_modelo_validacao_externa.json").read_text(encoding="utf-8")))
++    assert cfg["bracos"] == {"cru": "CRU_NOVO", "candidato": "VOCAB_NOVO", "controle_maior": "CTRL_MAIOR_NOVO",
++                             "controles_aleatorios": [{"nome": f"CTRL_ALEAT_NOVO_{i}", "semente": i} for i in (1, 2, 3)]}
++    assert cfg["regua"]["tipo"] == "gold_externo" and cfg["regua"]["invariancia_bloco"] is True
++    assert cfg["referencia_cru"] is None and cfg["staging_fonte"]["tipo"] == "manifesto_do_build"
++    assert all("bloco" not in c["eixos"] for c in cfg["cursos"])
++    assert cfg["protocolo"] == "docs/reports/2026-09-29-regime-vocab-validacao-externa-preregistro.md"

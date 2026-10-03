@@ -1,0 +1,362 @@
+diff --git a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+index 947c438..b44e136 100644
+--- a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py
++++ b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+@@ -1,4 +1,19 @@
+-"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-3` (etapa 3, 29/09).
++"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-4` (correções pós-revisão da etapa 3, 29/09).
++
++Correções da v4 sobre a v3 (../../../validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py):
++8. **XML como XML:** membros XML de documentos lidos pelo expat (codificação pela declaração/BOM, entidades resolvidas,
++   DTD e <!ENTITY> recusados); texto, atributos, comentários e instruções varridos. Texto solto: BOM/UTF-16 reconhecidos
++   e entidades HTML resolvidas antes da varredura;
++9. **membros por classe:** XML, imagem (assinatura), `mimetype` ODF e contêiner/PDF/texto aninhados; qualquer outro
++   membro de documento (binário opaco, `printerSettings`, fonte, EMF/WMF, `.bin`, desconhecido) é recusado; em ZIP
++   simples valem a allowlist do arquivo solto, os binários opacos (`doc/ppt/xls/mp4`) são recusados e as negações de
++   caminho do `Leitor` (`motivo_caminho`) valem para os membros;
++10. **PDF por estrutura (PyMuPDF):** anexos (árvore de nomes, objetos `/EmbeddedFile`/`/Filespec`, anotação de anexo)
++    detectados à parte da inspeção de texto (texto das páginas, metadados, anotações, links). Página sem camada de
++    texto fica registrada (`paginas_sem_texto`): esse texto não é examinado (sem OCR). PDF que não abre = recusa;
++11. **proveniência:** o inventário exige `inventario_sha256` esperado (identidade do inventário congelado; não prova a
++    verdade de um vínculo errado já congelado); com inventário, arquivo fora dele não vira material; sem inventário, a
++    ligação por nome+tamanho fica marcada `proveniencia_confirmada: false`; anexo de página na árvore não vira sobra.
+ 
+ Correções da v3 sobre a v2 (../../../validacao_externa_etapa2_29-09/correcoes/pacote_cego/gera_pacote_cego.py):
+ 5. **plano:** arquivo e texto do plano passam por `verifica_material`; recusa = pacote não gerado (`PlanoRecusado`);
+@@ -24,8 +39,10 @@ O resto (leitor restrito, rótulos só do plano, allowlist de chaves, regeneraç
+ Uso:
+   python gera_pacote_cego.py gerar <fonte.json> <destino>     (recusa destino existente)
+   python gera_pacote_cego.py auditar <fonte.json> <pacote>    (saída 0 = aprovado)
+-`fonte.json`: {"sigla", "nome", "moodle_dir", "plano_arquivo", "plano_texto"[, "inventario", "curso_id"]} (caminhos absolutos).
++`fonte.json`: {"sigla", "nome", "moodle_dir", "plano_arquivo", "plano_texto"[, "inventario", "curso_id",
++              "inventario_sha256"]} (caminhos absolutos; com inventário, o sha256 esperado é obrigatório).
+ """
++import codecs
+ import csv
+ import hashlib
+ import html
+@@ -37,10 +54,11 @@ import sys
+ import tempfile
+ import unicodedata
+ import urllib.parse
++import xml.parsers.expat
+ import zipfile
+ from pathlib import Path
+ 
+-VERSAO = "pacote-cego-3"
++VERSAO = "pacote-cego-4"
+ AQUI = Path(__file__).resolve().parent
+ REPO = next(p for p in AQUI.parents if (p / ".git").exists())
+ INSTRUCOES = REPO / "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/gold/instrucoes_adjudicador.md"
+@@ -82,7 +100,10 @@ EXT_MATERIAL = set(MAGIC) | TEXTO | MIDIA
+ # ---------------------------------------------------------------- v3: política de contêineres (membros)
+ CONTEINER_DOCUMENTO = {"docx", "pptx", "xlsx", "odt", "odp", "ods"}
+ CONTEINER_ZIP = CONTEINER_DOCUMENTO | {"zip"}
+-TEXTO_MEMBRO = {"xml", "rels", "json", "svg", "vml"}
++XML_MEMBRO = {"xml", "rels", "svg", "vml", "rdf"}   # v4: lidos pelo expat, texto e atributos
++IMAGEM = {"png", "jpg", "jpeg", "gif"}   # v4: mídia da allowlist; só assinatura (pixels não examinados, sem OCR)
++OPACO_EM_CONTEINER = {"doc", "ppt", "xls", "mp4"}   # v4: aceitos soltos (pendente), recusados como membro
++MIMETYPE_ODF = re.compile(rb"application/vnd\.oasis\.opendocument\.[a-z.\-]+")
+ EXT_EXECUTAVEL = {"exe", "dll", "bat", "cmd", "ps1", "sh", "vbs", "jar", "msi", "scr", "com", "app", "apk", "so", "dylib",
+                   "docm", "pptm", "xlsm", "dotm"}
+ DESCOMPACTADO_MAX, RAZAO_MAX, MEMBROS_MAX, PROFUNDIDADE_MAX = 500_000_000, 200, 5000, 2
+@@ -99,7 +120,8 @@ CHAVES_OK = {
+     "rotulos.json": {"versao", "sigla", "origem", "unidades", "topicos", "id", "slug", "titulo", "unidade", "rotulo", "codigo"},
+     "pacote_manifesto.json": {"versao", "sigla", "gerador_sha256", "instrucoes_sha256", "arquivos", "sha256", "origem",
+                               "tipo", "fonte", "fonte_sha256", "funcao", "entradas", "fontes_lidas", "papel",
+-                              "fontes_nao_usadas", "motivo", "python", "ligacao"},
++                              "fontes_nao_usadas", "motivo", "python", "ligacao", "proveniencia_confirmada",
++                              "paginas_sem_texto"},
+ }
+ GERADOS = ("materiais.json", "moodle_estrutura.json", "rotulos.json", "gold_modelo.csv", "INSTRUCOES.md",
+            "declaracao_cegamento.md")
+@@ -125,6 +147,23 @@ def sha_b(b):
+     return hashlib.sha256(b).hexdigest()
+ 
+ 
++def motivo_caminho(partes):
++    """Negações de caminho do Leitor, como função pura (v4: valem também para membros de ZIP). None = permitido."""
++    partes = [x for x in partes if x not in ("", ".")]
++    if not partes:
++        return "caminho vazio"
++    rel, nome = "/".join(partes), partes[-1]
++    if any(RAIZ_NEGADA.fullmatch(x) for x in partes):
++        return "repositório de tutor ou do gerador"
++    if set(partes[:-1]) & PARTE_SEGREDO or NOME_SEGREDO.match(nome):
++        return "configuração ou credencial"
++    if "raw" in partes:
++        return None if PERMITIDO_RAW.search(rel) else "arquivo bruto não permitido"
++    if set(partes[:-1]) & PARTE_NEGADA or NOME_NEGADO.match(nome):
++        return "gerado pelo produto ou saída do motor"
++    return None
++
++
+ class Leitor:
+     """Única porta de leitura. Registra cada arquivo lido (caminho absoluto + sha256)."""
+ 
+@@ -144,14 +183,9 @@ class Leitor:
+         raiz, rel = self.rel(p)
+         if any(RAIZ_NEGADA.fullmatch(parte) for parte in p.parts):
+             raise AcessoNegado(f"repositório de tutor ou do gerador: {p}")
+-        partes = Path(rel).parts
+-        if set(partes[:-1]) & PARTE_SEGREDO or NOME_SEGREDO.match(p.name):
+-            raise AcessoNegado(f"configuração ou credencial: {rel}")
+-        if "raw" in partes:
+-            if not PERMITIDO_RAW.search(rel):
+-                raise AcessoNegado(f"arquivo bruto não permitido: {rel}")
+-        elif set(partes[:-1]) & PARTE_NEGADA or NOME_NEGADO.match(p.name):
+-            raise AcessoNegado(f"gerado pelo produto ou saída do motor: {rel}")
++        motivo = motivo_caminho(Path(rel).parts)
++        if motivo:
++            raise AcessoNegado(f"{motivo}: {rel}")
+         return raiz, rel
+ 
+     def le(self, p):
+@@ -205,33 +239,119 @@ def pasta_da_secao(rel):
+ 
+ 
+ def _varre_texto(texto):
+-    if PADRAO_PREDICAO.search(texto):
+-        return "texto com assinatura de saída do motor"
+-    if PADRAO_SEGREDO.search(texto):
+-        return "texto com credencial ou segredo"
++    """Assinaturas do motor e de segredo no texto e na forma com entidades HTML resolvidas (v4)."""
++    for t in (texto, html.unescape(texto)):
++        if PADRAO_PREDICAO.search(t):
++            return "texto com assinatura de saída do motor"
++        if PADRAO_SEGREDO.search(t):
++            return "texto com credencial ou segredo"
+     return None
+ 
+ 
+ def _decodifica(dados):
++    """v4: BOM (UTF-8/16/32) e UTF-16 sem BOM (muitos NUL) reconhecidos; senão UTF-8 e, na falha, latin-1."""
++    for bom, cod in ((codecs.BOM_UTF32_LE, "utf-32"), (codecs.BOM_UTF32_BE, "utf-32"), (codecs.BOM_UTF8, "utf-8-sig"),
++                     (codecs.BOM_UTF16_LE, "utf-16"), (codecs.BOM_UTF16_BE, "utf-16")):
++        if dados.startswith(bom):
++            return dados.decode(cod, errors="replace")
++    amostra = dados[:4096]
++    if amostra and amostra.count(0) * 4 > len(amostra):
++        pares, impares = amostra[0::2].count(0), amostra[1::2].count(0)
++        return dados.decode("utf-16-be" if pares > impares else "utf-16-le", errors="replace")
+     try:
+         return dados.decode("utf-8")
+     except UnicodeDecodeError:
+         return dados.decode("latin-1")
+ 
+ 
++class XMLRecusado(ValueError):
++    pass
++
++
++def _varre_xml(dados):
++    """XML pelo expat: codificação pela declaração/BOM, entidades resolvidas; DTD e <!ENTITY> recusados (evita expansão
++    e entidade externa). Varre o texto concatenado (runs), cada atributo, comentários e instruções."""
++    texto, soltos = [], []
++
++    def recusa(*_):
++        raise XMLRecusado("XML com DTD ou declaração de entidade")
++
++    p = xml.parsers.expat.ParserCreate()
++    p.StartDoctypeDeclHandler = recusa
++    p.EntityDeclHandler = recusa
++    p.CharacterDataHandler = texto.append
++    p.StartElementHandler = lambda _nome, attrs: soltos.extend(attrs.values())
++    p.CommentHandler = soltos.append
++    p.ProcessingInstructionHandler = lambda alvo, dado: soltos.append(dado)
++    try:
++        p.Parse(dados, True)
++    except XMLRecusado as exc:
++        return str(exc)
++    except (xml.parsers.expat.ExpatError, ValueError, LookupError) as exc:
++        return f"XML ilegível ({type(exc).__name__})"
++    for t in ["".join(texto)] + soltos:
++        motivo = _varre_texto(t)
++        if motivo:
++            return motivo
++    return None
++
++
+ def verifica_pdf(dados):
+-    """Membro embutido em PDF (anexo) = recusa. Busca por bytes: objeto em stream comprimido não é visto (limitação)."""
+-    return "PDF com arquivo embutido" if b"/EmbeddedFile" in dados else None
++    """v4, PyMuPDF (dependência declarada do produto). Estrutural e textual são verificações separadas:
++    1. estrutura: árvore de arquivos embutidos, qualquer objeto /EmbeddedFile ou /Filespec com /EF, anotação de anexo;
++    2. texto: texto das páginas, metadados, conteúdo de anotações e URIs de links. Texto só em imagem NÃO é examinado
++       (sem OCR); `paginas_sem_texto` registra quantas páginas ficaram assim."""
++    import fitz   # lazy: só quando há PDF
++    fitz.TOOLS.mupdf_display_errors(False)
++    try:
++        doc = fitz.open(stream=dados, filetype="pdf")
++    except Exception:   # noqa: BLE001  qualquer falha de abertura = não inspecionável
++        return "PDF ilegível"
++    with doc:
++        if doc.needs_pass or doc.is_encrypted:
++            return "PDF cifrado"
++        if doc.page_count < 1:
++            return "PDF ilegível (sem páginas)"
++        if doc.embfile_count():
++            return "PDF com arquivo embutido"
++        for x in range(1, doc.xref_length()):
++            tipo = doc.xref_get_key(x, "Type")[1]
++            if tipo == "/EmbeddedFile" or (tipo == "/Filespec" and doc.xref_get_key(x, "EF")[0] != "null"):
++                return "PDF com arquivo embutido"
++        textos = [str(v) for v in (doc.metadata or {}).values() if v]
++        for pagina in doc:
++            for a in pagina.annots() or []:
++                if a.type[1] == "FileAttachment":
++                    return "PDF com arquivo embutido (anotação)"
++                textos.append(str((a.info or {}).get("content") or ""))
++            textos += [str(ln.get("uri") or "") for ln in pagina.get_links()]
++            textos.append(pagina.get_text())
++    return _varre_texto("\n".join(textos))
++
++
++def paginas_sem_texto(dados):
++    """Páginas sem camada de texto extraível (texto nelas não é examinado)."""
++    import fitz
++    fitz.TOOLS.mupdf_display_errors(False)
++    with fitz.open(stream=dados, filetype="pdf") as doc:
++        return sum(1 for pagina in doc if not pagina.get_text().strip())
+ 
+ 
+ def verifica_conteiner(nome, dados, profundidade=0):
+     """Política explícita de membros para ZIP, OOXML e ODF. None = aceito; senão o motivo da recusa.
+ 
+-    ZIP simples: cada membro passa por `verifica_material` (mesma allowlist, assinatura e varredura do arquivo solto).
+-    Documento (docx/pptx/xlsx/odt/odp/ods): XML e texto varridos sem as tags; PDF, imagem e contêiner aninhados passam
+-    por `verifica_material`; objeto OLE (.bin), macro e executável recusados. Em ambos: caminho inseguro, membro
+-    cifrado, nome de configuração/credencial, excesso de membros, tamanho ou aninhamento = recusa."""
++    Em todos: caminho absoluto ou `..`, membro cifrado, negações de caminho do Leitor (`motivo_caminho`), executável,
++    excesso de membros, tamanho ou aninhamento = recusa.
++    ZIP simples: cada membro passa por `verifica_material` (allowlist, assinatura, varredura); binário opaco
++    (`doc/ppt/xls/mp4`) recusado.
++    Documento (docx/pptx/xlsx/odt/odp/ods), por classe de membro:
++    - XML (`xml/rels/svg/vml/rdf`): expat, texto e atributos (`_varre_xml`);
++    - imagem da allowlist: assinatura; pixels não examinados (limite declarado, igual à imagem solta);
++    - `mimetype` ODF: valor exato;
++    - PDF, texto e contêiner aninhados: `verifica_material`;
++    - qualquer outro (printerSettings, fonte, EMF/WMF, `.bin`, `.dat`, sem extensão...): binário opaco, recusado."""
+     ext = Path(nome).suffix.lower().lstrip(".")
++    documento = ext in CONTEINER_DOCUMENTO
+     if profundidade >= PROFUNDIDADE_MAX:
+         return f"contêiner aninhado além da profundidade {PROFUNDIDADE_MAX}"
+     try:
+@@ -254,30 +374,37 @@ def verifica_conteiner(nome, dados, profundidade=0):
+         if i.is_dir():
+             continue
+         base = partes[-1] if partes else n
+-        mext = Path(base).suffix.lower().lstrip(".")
+-        if NOME_SEGREDO.match(base) or set(partes[:-1]) & PARTE_SEGREDO:
+-            return f"membro de configuração ou credencial: {base[:60]}"
++        mext = base.rsplit(".", 1)[1].lower() if "." in base else ""   # ".rels" tem extensão rels
++        motivo = motivo_caminho(partes)
++        if motivo:
++            return f"membro {n[:60]}: {motivo}"
+         if mext in EXT_EXECUTAVEL or base.lower() == "vbaproject.bin":
+             return f"membro executável ou macro: {base[:60]}"
+-        if ext in CONTEINER_DOCUMENTO and mext == "bin" and not re.fullmatch(r"printerSettings\d*\.bin", base):
+-            return f"objeto embutido não examinável: {base[:60]}"
+         try:
+             conteudo = z.read(i)
+         except (zipfile.BadZipFile, RuntimeError, ValueError, OSError, NotImplementedError) as exc:
+             return f"membro ilegível: {base[:40]} ({type(exc).__name__})"
+-        if ext not in CONTEINER_DOCUMENTO or mext in EXT_MATERIAL:
++        if not documento:
++            motivo = (f"binário opaco (.{mext})" if mext in OPACO_EM_CONTEINER
++                      else verifica_material(base, conteudo, profundidade + 1))
++        elif mext in XML_MEMBRO:
++            motivo = _varre_xml(conteudo)
++        elif mext in IMAGEM:
++            motivo = verifica_material(base, conteudo, profundidade + 1)
++        elif base == "mimetype" and len(partes) == 1:
++            motivo = None if MIMETYPE_ODF.fullmatch(conteudo.strip()) else "mimetype ODF inesperado"
++        elif mext in EXT_MATERIAL and mext not in OPACO_EM_CONTEINER:
+             motivo = verifica_material(base, conteudo, profundidade + 1)
+-        elif mext in TEXTO_MEMBRO:
+-            motivo = _varre_texto(re.sub(r"<[^>]+>", "", _decodifica(conteudo)))   # texto de documento vem em runs
+         else:
+-            motivo = None   # fonte, EMF/WMF, mimetype: estrutura do documento, sem texto examinável
++            motivo = f"binário opaco ou membro desconhecido (.{mext or 'sem extensão'})"
+         if motivo:
+             return f"membro {n[:60]}: {motivo}"
+     return None
+ 
+ 
+ def verifica_material(nome, dados, profundidade=0):
+-    """None = aceito; senão, o motivo da recusa (extensão, assinatura, membros de contêiner, saída do motor, segredo)."""
++    """None = aceito; senão, o motivo da recusa (extensão, assinatura, membros de contêiner, PDF, saída do motor,
++    segredo). Soltos, `doc/ppt/xls/mp4` e imagens só têm a assinatura verificada (conteúdo não examinado; pendente)."""
+     ext = Path(nome).suffix.lower().lstrip(".")
+     if ext not in EXT_MATERIAL:
+         return f"extensão fora da allowlist: .{ext or '(nenhuma)'}"
+@@ -353,9 +480,14 @@ def carrega_inventario(fonte):
+     if not fonte.get("inventario"):
+         return None, None
+     dados = Path(fonte["inventario"]).read_bytes()
++    if not fonte.get("inventario_sha256"):   # v4: identidade do inventário congelado (não a verdade dos vínculos)
++        raise DivergenciaProveniencia("inventário sem sha256 esperado na fonte (inventario_sha256)")
++    if sha_b(dados) != fonte["inventario_sha256"]:
++        raise DivergenciaProveniencia("sha256 do inventário difere do esperado (inventário congelado)")
+     inv = json.loads(dados.decode("utf-8"))
+     cursos = [c for c in inv.get("cursos") or [] if str(c.get("id")) == str(fonte.get("curso_id"))]
+-    if inv.get("esquema") not in ("inventario-downloads-1", "inventario-downloads-2") or len(cursos) != 1:
++    esquemas = ("inventario-downloads-1", "inventario-downloads-2", "inventario-downloads-3")
++    if inv.get("esquema") not in esquemas or len(cursos) != 1:
+         raise DivergenciaProveniencia(f"inventário sem esquema conhecido ou sem o curso {fonte.get('curso_id')!r}")
+     if inv.get("concluido") is False:
+         raise DivergenciaProveniencia("inventário parcial (aquisição interrompida)")
+@@ -414,7 +546,7 @@ def descobre(leitor, fonte):
+         por_nome.setdefault((a["nome"], a["tamanho"]), []).append(a)
+     inv, inv_sha = carrega_inventario(fonte)
+     materiais, estrutura = {}, {"formato": None, "secoes": [], "rotulos": [], "modulos": []}
+-    usados = set()
++    usados, anexos_pagina = set(), set()
+ 
+     def acrescenta(chave, reg, ocorr, ligacao=None):
+         m = materiais.setdefault(chave, {**reg, "ocorrencias": [], "ligacoes": set()})
+@@ -470,6 +602,7 @@ def descobre(leitor, fonte):
+                                    "pagina_do_modulo" if inv is None else "inventario_aquisicao")
+                     for c in arquivos_mod:   # anexo de página: registrado, não entregue (fora da fonte do pacote)
+                         if c not in htmls:
++                            anexos_pagina.add((c["filename"], c["filesize"]))
+                             sem_arquivo("anexo_de_pagina", f"anexo:{mod['id']}/{c['filename']}", c, ocorr,
+                                         "anexo de página não entregue ao adjudicador")
+                 elif modname in ("resource", "folder", "assign"):
+@@ -493,11 +626,19 @@ def descobre(leitor, fonte):
+                         usados.add(a["rel"])
+                         acrescenta("arq:" + a["sha"], {"tipo": "arquivo", "fonte": a, "nome_original": c["filename"]}, ocorr,
+                                    ligacao)
++        for a in locais:   # v4: arquivo local igual (nome, tamanho) a anexo de página nunca reentra como sobra
++            if a["rel"] not in usados and (a["nome"], a["tamanho"]) in anexos_pagina:
++                nao_usados[a["rel"]] = "anexo de página: não entregue ao adjudicador"
++                usados.add(a["rel"])
+         for a in locais:   # mesmo nome e bytes de um arquivo usado: cópia redundante, registrada
+             if a["rel"] not in usados and ("arq:" + a["sha"]) in materiais:
+                 nao_usados[a["rel"]] = "cópia idêntica de material já incluído"
+                 usados.add(a["rel"])
+         sobras = [a for a in locais if a["rel"] not in usados]
++        if inv is not None:   # v4: com inventário, só entra o que a aquisição registrou
++            for a in sobras:
++                nao_usados[a["rel"]] = "fora do inventário da aquisição: não entregue"
++            sobras = []
+     else:
+         estrutura["formato"] = "pastas"
+         sobras = locais
+@@ -550,9 +691,13 @@ def monta(fonte, destino):
+                "ocorrencias": sorted(m["ocorrencias"], key=lambda o: (o["secao"], o["modulo"], o["modname"]))}
+         if "fonte" in m:
+             dados = leitor.le(m["fonte"]["caminho"])
+-            motivo = verifica_material(m["nome_original"] if m["tipo"] != "pagina" else m["fonte"]["nome"], dados)
+-            fontes_lidas["moodle:" + m["fonte"]["rel"]] = {"sha256": sha_b(dados), "papel": m["tipo"] if not motivo else "recusado",
+-                                                          "ligacao": sorted(m["ligacoes"])}
++            nome_verif = m["nome_original"] if m["tipo"] != "pagina" else m["fonte"]["nome"]
++            motivo = verifica_material(nome_verif, dados)
++            lida = {"sha256": sha_b(dados), "papel": m["tipo"] if not motivo else "recusado", "ligacao": sorted(m["ligacoes"]),
++                    "proveniencia_confirmada": m["ligacoes"] == {"inventario_aquisicao"}}
++            if not motivo and nome_verif.lower().endswith(".pdf"):
++                lida["paginas_sem_texto"] = paginas_sem_texto(dados)   # texto dessas páginas não foi examinado
++            fontes_lidas["moodle:" + m["fonte"]["rel"]] = lida
+             if motivo:   # recusado: não é copiado, fica visível e não adjudicável
+                 reg.update(tipo="recusado", adjudicavel=False, arquivo=None, sha256=sha_b(dados), tamanho=len(dados), url=None,
+                            motivo=motivo)

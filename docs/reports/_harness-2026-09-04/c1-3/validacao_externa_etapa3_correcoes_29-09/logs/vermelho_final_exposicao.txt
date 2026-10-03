@@ -1,0 +1,7 @@
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP08_cor_do_git_nao_vira_zero
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP06_saida_nao_interpretada_e_indeterminado
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP09_todos_os_matches_da_linha
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP01_caminho_acentuado_sem_aspas
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP05_categorias_e_motivo_de_omissao
+FAILED exposicao\test_verifica_exposicao_v2.py::test_EXP03_fonte_de_pastas_ausente_e_indeterminado
+6 failed in 2.53s

@@ -1,0 +1,78 @@
+# pytest da etapa 3 (python -B -m pytest ... -p no:cacheprovider), 29/09/2026
+correcoes\pacote_cego\test_pacote_cego.py::test_gera_audita_e_so_contem_fonte_bruta_permitida PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_rotulos_sao_so_do_plano_e_sem_alias PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_deterministico PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_leitor_recusa_saidas_do_motor_e_gerados_do_produto PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_chave_proibida_injetada PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_predicao_renomeada_em_campo_permitido PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_padrao_de_motor_em_valor PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_arquivo_extra_e_bruto_adulterado PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_plano_sem_unidades_recusa PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_destino_existente_recusa PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_formato_de_pastas_sem_api PASSED
+correcoes\pacote_cego\test_pacote_cego.py::test_trava_de_repositorio_e_por_componente_do_caminho PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_pastas_recusa_configuracao_segredo_e_saida_renomeada PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_api_segredo_em_pagina_e_url_com_token PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_correspondencia_por_nome_e_tamanho_resolvida_pela_secao PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_correspondencia_ambigua_falha_a_geracao PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_candidatos_so_em_pastas_de_outras_secoes_nao_sao_ligados PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_procedencia_completa_e_auditada PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_reproduz_o_bypass_da_revisao_e_nao_copia PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.pdf-%PDF-1.7 ok-None] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.pdf-{"x": 1}-assinatura] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.docx-PK\x03\x04ok-ileg\xedvel] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.docx-%PDF-assinatura] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.exe-MZ-extens\xe3o] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.txt-texto comum-None] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.txt-x = 'AIzaBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'-credencial] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.md-winner_score=3.2-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.mp4-\x00\x00\x00\x18ftypmp42-None] PASSED
+correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.mp4-not a video-assinatura] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_plano_com_predicao_ou_segredo_nao_gera_pacote[texto-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_plano_com_predicao_ou_segredo_nao_gera_pacote[texto-credencial] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_plano_com_predicao_ou_segredo_nao_gera_pacote[arquivo-renomeado] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_auditoria_verifica_o_plano_entregue PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[00-a.zip-aceito] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[01-a.zip-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[02-a.zip-configura\xe7\xe3o] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[03-a.zip-inseguro] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[04-a.zip-inseguro] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[05-a.zip-execut\xe1vel] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[06-a.zip-assinatura] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[07-a.zip-allowlist] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[08-a.zip-cifrado] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[09-a.zip-bomba] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[10-a.zip-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[11-a.zip-profundidade] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[12-a.docx-aceito] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[13-a.docx-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[14-a.docx-embutido] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[15-a.docx-macro] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[16-a.xlsx-credencial] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[17-a.pptx-motor] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[18-a.odt-aceito] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_politica_de_membros[19-a.pdf-embutido] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_zip_real_com_conteudo_proibido_nao_e_entregue PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_candidato_unico_em_outra_secao_nao_e_ligado PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_sem_inventario_nome_e_tamanho_ficam_ambiguos PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_proveniencia_da_aquisicao_decide_a_ligacao PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_divergencia_de_proveniencia_falha_a_geracao[sha-divergente] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_divergencia_de_proveniencia_falha_a_geracao[sem-registro] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_divergencia_de_proveniencia_falha_a_geracao[sem-curso] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_divergencia_de_proveniencia_falha_a_geracao[parcial] PASSED
+correcoes\pacote_cego\test_pacote_cego_v3.py::test_divergencia_de_proveniencia_falha_a_geracao[base-errada] PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_anexo_de_pagina_fora_da_raiz_tem_referencia_valida PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_limite_por_arquivo_vale_para_bytes_reais PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_orcamento_total_vale_para_bytes_reais PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_falha_local_de_um_arquivo_e_registrada_e_o_curso_continua PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_falha_posterior_preserva_registros_ja_processados PASSED
+correcoes\aquisicao\test_adquire_v3.py::test_interrupcao_deixa_inventario_parcial_marcado PASSED
+exposicao\test_verifica_exposicao.py::test_categorias_termo_trecho_e_omissao PASSED
+exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[0000000000000000000000000000000000000000-raizes0-x] PASSED
+exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes1-x] PASSED
+exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes2-((] PASSED
+exposicao\test_verifica_exposicao.py::test_subpasta_nao_e_raiz PASSED
+============================= 73 passed in 8.22s ==============================
+
+# etapa 2 inalterada
+45 passed in 8.16s

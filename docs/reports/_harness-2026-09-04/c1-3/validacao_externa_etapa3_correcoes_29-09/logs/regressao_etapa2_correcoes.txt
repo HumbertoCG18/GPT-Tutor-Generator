@@ -1,0 +1,46 @@
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_gera_audita_e_so_contem_fonte_bruta_permitida
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_rotulos_sao_so_do_plano_e_sem_alias
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_deterministico
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_leitor_recusa_saidas_do_motor_e_gerados_do_produto
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_chave_proibida_injetada
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_predicao_renomeada_em_campo_permitido
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_padrao_de_motor_em_valor
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_auditoria_pega_arquivo_extra_e_bruto_adulterado
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_plano_sem_unidades_recusa
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_destino_existente_recusa
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_formato_de_pastas_sem_api
+PASSED correcoes\pacote_cego\test_pacote_cego.py::test_trava_de_repositorio_e_por_componente_do_caminho
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_pastas_recusa_configuracao_segredo_e_saida_renomeada
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_api_segredo_em_pagina_e_url_com_token
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_correspondencia_por_nome_e_tamanho_resolvida_pela_secao
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_correspondencia_ambigua_falha_a_geracao
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_procedencia_completa_e_auditada
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_reproduz_o_bypass_da_revisao_e_nao_copia
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.pdf-%PDF-1.7 ok-None]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.pdf-{"x": 1}-assinatura]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.docx-PK\x03\x04ok-None]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.docx-%PDF-assinatura]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.exe-MZ-extens\xe3o]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.txt-texto comum-None]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.txt-x = 'AIzaBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'-credencial]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.md-winner_score=3.2-motor]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.mp4-\x00\x00\x00\x18ftypmp42-None]
+PASSED correcoes\pacote_cego\test_pacote_cego_v2.py::test_verifica_material[a.mp4-not a video-assinatura]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_exposto_vira_n1_e_nao_exposto_n0
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[commit_inexistente]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[nao_e_repositorio]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[padrao_invalido]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[git_ausente]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[raiz_ausente]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_falha_da_busca_vira_indeterminado_nunca_n0[subpasta_do_repositorio]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_indeterminado_nunca_entra_em_populacao
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[1800-2001-False]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[1801-2001-True]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[9-10-True]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[899-1000-False]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[0-0-False]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_e4_exato_sem_arredondamento[21-28-False]
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_candidatos_sao_dados_validados
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_algoritmo_nao_contem_nenhum_candidato
+PASSED correcoes\populacao\test_enumera_candidatos.py::test_estrutura_devolve_fracao_inteira
+45 passed in 7.65s

@@ -1,0 +1,41 @@
+{
+ "esquema": "manifesto-aquisicao-1",
+ "fixado_em": "2026-09-29, antes de qualquer consulta de rede ao catálogo e de qualquer download",
+ "conta": {
+  "descricao": "conta Moodle do próprio usuário já configurada no produto (MOODLE_TOKEN presente; valor nunca lido pelo executor nem impresso), a mesma usada nos downloads de Desktop/Moodle",
+  "instancia": "https://moodle.pucrs.br (URL padrão do código do produto; a configurada é igual à padrão)",
+  "acesso": "só webservice com o token da conta: core_webservice_get_site_info (userid, só em memória), core_enrol_get_users_courses, core_course_get_contents e download dos arquivos desses conteúdos"
+ },
+ "universo": {
+  "definicao": "todos os cursos devolvidos por core_enrol_get_users_courses para a própria conta no momento da consulta",
+  "periodo": "todos os semestres devolvidos",
+  "disciplina": "curso cujo fullname contém semestre no formato AAAA/S (parse_moodle_course do produto); os demais são listados como 'nao_disciplina' e ficam fora"
+ },
+ "campos_permitidos_do_catalogo": ["id", "shortname", "codigo", "nome", "turma", "semestre", "startdate", "enddate", "category", "visible", "format"],
+ "campos_proibidos": ["professor", "summary", "overviewfiles", "contacts", "lastaccess", "progress", "completed", "marker", "isfavourite", "hidden", "enrolledusercount", "courseimage", "fullname bruto"],
+ "exclusoes_antes_da_ordem": {
+  "desenvolvimento_e_LR": "curso que corresponde a MF, SO, IA, ES2, TCC, CG, FR ou LR (por id conhecido ou nome normalizado) -> fora (N3/N2)",
+  "ja_classificados_N1": "curso que corresponde a LSO ou UX -> só piloto, não baixado nesta etapa",
+  "exposicao": "busca no commit fixo bf46d51f (git grep PCRE, raízes docs/tests/src/scripts/.mex/.workflow) pelo id Moodle como palavra, pelo nome normalizado e pelo código; qualquer menção -> N1 (não baixado); falha da busca -> INDETERMINADO (não baixado); ambos listados com a evidência",
+  "download_anterior": "curso com pasta correspondente em Desktop/Moodle ou tutor no GitHub -> N1/N2 (não baixado)"
+ },
+ "ordem": "sha256('vocab-validacao-externa-2026-09-29|moodle:' + id), crescente, entre as disciplinas N0",
+ "orcamento": {"cursos_baixados_max": 10, "bytes_totais_max": 2000000000, "bytes_por_arquivo_max": 200000000},
+ "parada": [
+  "6 cursos baixados que passam em E2, E3 e E4 (regra v2, mesmos limiares), ou",
+  "10 cursos baixados, ou",
+  "orçamento de bytes atingido, ou",
+  "fim das disciplinas N0 do catálogo, ou",
+  "3 cursos seguidos com falha de autenticação ou HTTP (parada por erro, relatada)"
+ ],
+ "download": {
+  "o_que": "arquivos dos módulos resource, folder, assign e page devolvidos por core_course_get_contents; módulos url só listados (conteúdo externo não baixado)",
+  "onde": ".frzero/validacao_externa_aquisicao_29-09/<id>/ (ignorado pelo git; nunca publicado)",
+  "leiaute": "raw/moodle/contents.json (resposta da API, sem parâmetros de autenticação); stash/<seção saneada>/<arquivo>; páginas em raw/moodle/pages/<id do módulo>-<arquivo>",
+  "verificacao": "content-type não HTML/JSON e assinatura (magic bytes) compatível com a extensão, pela função do produto looks_like_expected",
+  "registro": "todo arquivo listado pela API aparece no inventário com status: ok, falha_http, tipo_inesperado, assinatura_invalida, acima_do_limite, colisao, link_externo; nenhuma falha é descartada",
+  "sem": "LLM, sidecars, busca externa, pipeline de ingestão ou de atribuição do produto, upload, impressão de URL autenticada, token, cookie ou credencial"
+ },
+ "congelamento": "árvore sha256 por curso + sha256 do inventário, gravados antes de aplicar a regra da população",
+ "regra_da_populacao": "enumera_candidatos v2 (correcoes/populacao/), sem mudança de limiar; LR e os sete cursos continuam fora da população principal"
+}

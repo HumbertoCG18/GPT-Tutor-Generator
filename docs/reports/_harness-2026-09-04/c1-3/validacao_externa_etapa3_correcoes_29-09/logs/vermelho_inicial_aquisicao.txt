@@ -1,0 +1,12 @@
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_truncated_http_body_regression
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_path_traversal - Assertio...
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_rejected_transfer_budget
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_probe_respects_remaining_budget
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_partial_write - Assertion...
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_interrupt_after_write[escrita_do_parcial]
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_interrupt_after_write[publicacao_do_arquivo]
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_baixar_interrupt_after_write
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_inventory_write_interruption[escrita_do_temporario]
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_inventory_write_interruption[publicacao]
+FAILED correcoes\aquisicao\test_adquire_v4.py::test_metadata_outside_budget
+11 failed in 2.18s

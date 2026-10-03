@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.326" timestamp="2026-09-29T13:09:06.577373-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.conferencia.test_confere_fontes" name="test_controle_integridade_global_verdadeira" time="0.083"><failure message="KeyError: 'integridade_global'">lote = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2734/test_controle_integridade_glob0/e2')...ndowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2734/test_controle_integridade_glob0/saida'))
+
+    def test_controle_integridade_global_verdadeira(lote):
+        _, saida = lote
+        C.main()
+&gt;       assert resumo(saida)["integridade_global"] is True
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'integridade_global'
+
+conferencia\test_confere_fontes.py:45: KeyError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.conferencia.test_confere_fontes" name="test_CONF01_inventario_alterado_derruba_o_resultado_global" time="0.015"><failure message="KeyError: 'integridade_global'">lote = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2734/test_CONF01_inventario_alterad0/e2')...ndowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2734/test_CONF01_inventario_alterad0/saida'))
+
+    def test_CONF01_inventario_alterado_derruba_o_resultado_global(lote):
+        e2, saida = lote
+        inv = json.loads((e2 / "inventario_downloads.json").read_text(encoding="utf-8"))
+        inv["parada"] = "alterada depois do congelamento"   # só metadado; bytes e registros continuam certos
+        (e2 / "inventario_downloads.json").write_text(json.dumps(inv), encoding="utf-8")
+        C.main()
+        r = resumo(saida)
+        assert r["bytes_conferem"] is True and r["inventario_completo"] is True
+&gt;       assert r["integridade_global"] is False and r["inventario_confere_com_congelamento"] is False
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'integridade_global'
+
+conferencia\test_confere_fontes.py:56: KeyError</failure></testcase></testsuite></testsuites>

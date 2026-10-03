@@ -1,0 +1,106 @@
+{
+ "arquivos": {
+  "INSTRUCOES.md": {
+   "origem": {
+    "fonte": "protocolo:instrucoes_adjudicador.md",
+    "fonte_sha256": "16612dfbd5668bb98614d00b60140a8831b8c14919f88f737290a0b0435d84e0",
+    "tipo": "bruto"
+   },
+   "sha256": "16612dfbd5668bb98614d00b60140a8831b8c14919f88f737290a0b0435d84e0"
+  },
+  "declaracao_cegamento.md": {
+   "origem": {
+    "entradas": [
+     "protocolo:instrucoes_adjudicador.md"
+    ],
+    "funcao": "monta",
+    "tipo": "derivado"
+   },
+   "sha256": "dad0c1ebc9cf528279290d0b2e52caa20762226d19359b2a1530637b9983ca39"
+  },
+  "gold_modelo.csv": {
+   "origem": {
+    "entradas": [
+     "materiais.json"
+    ],
+    "funcao": "monta",
+    "tipo": "derivado"
+   },
+   "sha256": "ab50cf6cfa90b54026cd3fff9ba86d186580be3c4fd58577429756007cf0df15"
+  },
+  "materiais.json": {
+   "origem": {
+    "entradas": [
+     "moodle"
+    ],
+    "funcao": "descobre",
+    "tipo": "derivado"
+   },
+   "sha256": "cdf6a30c9d23b43dd572fbd5160ed6d2b0a20e11ff63cb5c23b77bb2673800be"
+  },
+  "materiais/m2d90fb98a677__501-tutorial.html": {
+   "origem": {
+    "fonte": "moodle:raw/moodle/pages/501-tutorial.html",
+    "fonte_sha256": "a73fedf1b7afc429225646f302b418a6e89eed62a3a62bea4f8693c1ceba8e2a",
+    "tipo": "bruto"
+   },
+   "sha256": "a73fedf1b7afc429225646f302b418a6e89eed62a3a62bea4f8693c1ceba8e2a"
+  },
+  "materiais/m49ff8e4f1225__lista1.pdf": {
+   "origem": {
+    "fonte": "moodle:stash/Unidade 1/lista1.pdf",
+    "fonte_sha256": "45d6ce488699f9d4d4fedd464ce031156db139b28d97dd326eff511cc2c7767e",
+    "tipo": "bruto"
+   },
+   "sha256": "45d6ce488699f9d4d4fedd464ce031156db139b28d97dd326eff511cc2c7767e"
+  },
+  "materiais/m9542df43c81c__aula1.pdf": {
+   "origem": {
+    "fonte": "moodle:stash/Geral/aula1.pdf",
+    "fonte_sha256": "9826c55473a921769a1d66810a9be01dd70b38195f50cd7f64617e6abd7c0bc7",
+    "tipo": "bruto"
+   },
+   "sha256": "9826c55473a921769a1d66810a9be01dd70b38195f50cd7f64617e6abd7c0bc7"
+  },
+  "moodle_estrutura.json": {
+   "origem": {
+    "entradas": [
+     "moodle:raw/moodle/contents.json"
+    ],
+    "funcao": "descobre",
+    "tipo": "derivado"
+   },
+   "sha256": "41d95d7bf688a3923666ddb56ed9153ceca930b8d04dac1babbc9669538d8e8b"
+  },
+  "plano/plano.pdf": {
+   "origem": {
+    "fonte": "plano:plano.pdf",
+    "fonte_sha256": "a88afd60de8ee598351203de410f4df9a638117c86b6ff8f73c380071b4d8eae",
+    "tipo": "bruto"
+   },
+   "sha256": "a88afd60de8ee598351203de410f4df9a638117c86b6ff8f73c380071b4d8eae"
+  },
+  "plano/plano_texto.md": {
+   "origem": {
+    "fonte": "plano:plano.md",
+    "fonte_sha256": "e9d41a8028b2f16e4e24aca4d51c32a110c98042d217d9612d9458b0748ed86b",
+    "tipo": "bruto"
+   },
+   "sha256": "e9d41a8028b2f16e4e24aca4d51c32a110c98042d217d9612d9458b0748ed86b"
+  },
+  "rotulos.json": {
+   "origem": {
+    "entradas": [
+     "plano:plano.md"
+    ],
+    "funcao": "rotulos_do_plano",
+    "tipo": "derivado"
+   },
+   "sha256": "eb1f6556ac98ef8dfdfaa811d1b7799304013d38a5b2096c53e11fccabc7093e"
+  }
+ },
+ "gerador_sha256": "640049aac9327e87708c1406ce5c20f32957986bc05441dd263b9e0e22350e99",
+ "instrucoes_sha256": "16612dfbd5668bb98614d00b60140a8831b8c14919f88f737290a0b0435d84e0",
+ "sigla": "SIN",
+ "versao": "pacote-cego-1"
+}

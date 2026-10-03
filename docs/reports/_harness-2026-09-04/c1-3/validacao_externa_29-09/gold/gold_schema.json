@@ -1,0 +1,30 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "gold-externo-1",
+ "title": "Linha do gold da validação externa do regime VOCAB (forma JSON equivalente a uma linha do CSV)",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["material_id", "status", "unidade", "sub_primaria", "sub_aceita", "observacao"],
+ "properties": {
+  "material_id": {"type": "string", "pattern": "^m[0-9a-f]{12}$"},
+  "status": {"enum": ["avaliado", "meta", "excluido"]},
+  "unidade": {"type": "string", "pattern": "^(|-|U[0-9]{2}(\\|U[0-9]{2})*)$"},
+  "sub_primaria": {"type": "string", "pattern": "^(|-|U[0-9]{2}\\.T[0-9]{2}(\\|U[0-9]{2}\\.T[0-9]{2})*)$"},
+  "sub_aceita": {"type": "string", "pattern": "^(|-|U[0-9]{2}\\.T[0-9]{2}(\\|U[0-9]{2}\\.T[0-9]{2})*)$"},
+  "observacao": {"type": "string"}
+ },
+ "allOf": [
+  {"if": {"properties": {"status": {"const": "avaliado"}}},
+   "then": {"properties": {"unidade": {"minLength": 1}, "sub_primaria": {"minLength": 1}, "sub_aceita": {"minLength": 1}}}},
+  {"if": {"properties": {"status": {"const": "meta"}}},
+   "then": {"properties": {"unidade": {"minLength": 1}, "sub_primaria": {"const": ""}, "sub_aceita": {"const": ""}}}},
+  {"if": {"properties": {"status": {"const": "excluido"}}},
+   "then": {"properties": {"unidade": {"const": ""}, "sub_primaria": {"const": ""}, "sub_aceita": {"const": ""}}}}
+ ],
+ "x-regras-entre-campos": [
+  "todo tópico pertence a uma das unidades da linha",
+  "sub_primaria ⊆ sub_aceita",
+  "unidade '-' implica sub_primaria e sub_aceita '-' quando status = avaliado",
+  "conjunto de material_id = materiais adjudicáveis do pacote, sem repetição"
+ ]
+}

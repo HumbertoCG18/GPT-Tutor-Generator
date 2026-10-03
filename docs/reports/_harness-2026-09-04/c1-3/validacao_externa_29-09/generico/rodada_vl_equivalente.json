@@ -1,0 +1,270 @@
+{
+ "esquema": "rodada-generica-1",
+ "descricao": "Equivalente à rodada VOCAB_LIMPO (26/09): só para provar, com a suíte sintética herdada, que o harness genérico preserva o comportamento. Não executa nada real.",
+ "esquemas": {
+  "captura": "vl-captura-1",
+  "congelamento": "vl-congelamento-1"
+ },
+ "cursos": [
+  {
+   "sigla": "MF",
+   "tutor": "Metodos-Formais-Tutor",
+   "raiz_pacote": ".frzero/wv_importacao_22-09/Metodos-Formais-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 66,
+    "unidade": 66,
+    "sub_primaria": 58
+   }
+  },
+  {
+   "sigla": "SO",
+   "tutor": "Sistemas-Operacionais-Tutor",
+   "raiz_pacote": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 39,
+    "unidade": 37,
+    "sub_primaria": 15
+   }
+  },
+  {
+   "sigla": "IA",
+   "tutor": "Inteligencia-Artifical-Tutor",
+   "raiz_pacote": ".frzero/wv_importacao_22-09/Inteligencia-Artifical-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 42,
+    "unidade": 42,
+    "sub_primaria": 39
+   }
+  },
+  {
+   "sigla": "ES2",
+   "tutor": "Engenharia-Software-2-Tutor",
+   "raiz_pacote": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 28,
+    "unidade": 28,
+    "sub_primaria": 28
+   }
+  },
+  {
+   "sigla": "TCC",
+   "tutor": "TCC-Tutor",
+   "raiz_pacote": ".frzero/pacote_fontes_15-09/TCC-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 27,
+    "unidade": 18,
+    "sub_primaria": 11
+   }
+  },
+  {
+   "sigla": "CG",
+   "tutor": "Computacao-Grafica-Tutor",
+   "raiz_pacote": ".frzero/wv_importacao_22-09/Computacao-Grafica-Tutor",
+   "eixos": [
+    "bloco",
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 35,
+    "unidade": 93,
+    "sub_primaria": 82
+   }
+  },
+  {
+   "sigla": "FR",
+   "tutor": "Fundamentos-de-Redes-Tutor",
+   "raiz_pacote": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor",
+   "eixos": [
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 0,
+    "unidade": 0,
+    "sub_primaria": 18
+   }
+  }
+ ],
+ "tutores_proibidos": [
+  "Laboratorio-de-Redes-Tutor"
+ ],
+ "bracos": {
+  "cru": "CRU_LIMPO",
+  "candidato": "VOCAB_LIMPO",
+  "controle_maior": "CTRL_MAIOR_LIMPO",
+  "controles_aleatorios": [
+   {
+    "nome": "CTRL_ALEAT_LIMPO_1",
+    "semente": 1
+   },
+   {
+    "nome": "CTRL_ALEAT_LIMPO_2",
+    "semente": 2
+   },
+   {
+    "nome": "CTRL_ALEAT_LIMPO_3",
+    "semente": 3
+   }
+  ]
+ },
+ "inventario_esperado": 350,
+ "referencia_cru": {
+  "arquivo": ".frzero/wab_captura_bracos_24-09.json",
+  "placar": {
+   "MF": {
+    "bloco": 60,
+    "unidade": 63,
+    "sub_primaria": 25
+   },
+   "SO": {
+    "bloco": 36,
+    "unidade": 30,
+    "sub_primaria": 7
+   },
+   "IA": {
+    "bloco": 41,
+    "unidade": 39,
+    "sub_primaria": 4
+   },
+   "ES2": {
+    "bloco": 27,
+    "unidade": 26,
+    "sub_primaria": 7
+   },
+   "TCC": {
+    "bloco": 26,
+    "unidade": 17,
+    "sub_primaria": 7
+   },
+   "CG": {
+    "bloco": 33,
+    "unidade": 74,
+    "sub_primaria": 30
+   },
+   "FR": {
+    "bloco": 0,
+    "unidade": 0,
+    "sub_primaria": 6
+   }
+  }
+ },
+ "regua": {
+  "tipo": "historica",
+  "arquivos": {
+   "ground_truth": {
+    "MF": "docs/reports/ground_truth_MF.csv",
+    "SO": "docs/reports/ground_truth_SO.csv",
+    "IA": "docs/reports/ground_truth_IA.csv",
+    "ES2": "docs/reports/ground_truth_ES2.csv",
+    "TCC": "docs/reports/ground_truth_TCC.csv",
+    "CG": "docs/reports/ground_truth_CG.csv"
+   },
+   "material_gt": {
+    "MF": "docs/reports/material_gt_MF.csv",
+    "SO": "docs/reports/material_gt_SO.csv",
+    "IA": "docs/reports/material_gt_IA.csv",
+    "ES2": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+    "TCC": "docs/reports/material_gt_TCC.csv",
+    "CG": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_CG.csv"
+   },
+   "subunit_gt": {
+    "MF": "docs/reports/subunit_gt_MF.csv",
+    "SO": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/subunit_gt_SO.csv",
+    "IA": "docs/reports/subunit_gt_IA.csv",
+    "ES2": "docs/reports/subunit_gt_ES2.csv",
+    "TCC": "docs/reports/subunit_gt_TCC.csv",
+    "CG": "docs/reports/subunit_gt_CG.csv",
+    "FR": "docs/reports/subunit_gt_FR.csv"
+   },
+   "gold_units": {
+    "MF": "tests/fixtures/eval/gold_units_MF.csv",
+    "SO": "tests/fixtures/eval/gold_units_SO.csv",
+    "IA": "tests/fixtures/eval/gold_units_IA.csv",
+    "ES2": "tests/fixtures/eval/gold_units_ES2.csv",
+    "TCC": "tests/fixtures/eval/gold_units_TCC.csv"
+   },
+   "herancas_csv": {
+    "MF": "docs/reports/_harness-2026-09-04/c1-3/herancas_MF_15-09.csv",
+    "SO": "docs/reports/_harness-2026-09-04/c1-3/herancas_SO_15-09.csv",
+    "IA": "docs/reports/_harness-2026-09-04/c1-3/herancas_IA_15-09.csv",
+    "ES2": "docs/reports/_harness-2026-09-04/c1-3/herancas_ES2_15-09.csv",
+    "TCC": "docs/reports/_harness-2026-09-04/c1-3/herancas_TCC_15-09.csv",
+    "CG": "docs/reports/_harness-2026-09-04/c1-3/herancas_CG_15-09.csv",
+    "FR": "docs/reports/_harness-2026-09-04/c1-3/herancas_FR_15-09.csv"
+   },
+   "herancas_json": {
+    "MF": "docs/reports/_harness-2026-09-04/c1-3/herancas_MF_15-09.json",
+    "SO": "docs/reports/_harness-2026-09-04/c1-3/herancas_SO_15-09.json",
+    "IA": "docs/reports/_harness-2026-09-04/c1-3/herancas_IA_15-09.json",
+    "ES2": "docs/reports/_harness-2026-09-04/c1-3/herancas_ES2_15-09.json",
+    "TCC": "docs/reports/_harness-2026-09-04/c1-3/herancas_TCC_15-09.json",
+    "CG": "docs/reports/_harness-2026-09-04/c1-3/herancas_CG_15-09.json",
+    "FR": "docs/reports/_harness-2026-09-04/c1-3/herancas_FR_15-09.json"
+   }
+  },
+  "manifestos": {
+   "MF": ".frzero/pacote_fontes_15-09/Metodos-Formais-Tutor/manifest.json",
+   "SO": ".frzero/pacote_fontes_15-09/Sistemas-Operacionais-Tutor/manifest.json",
+   "IA": ".frzero/pacote_fontes_15-09/Inteligencia-Artifical-Tutor/manifest.json",
+   "ES2": ".frzero/pacote_fontes_15-09/Engenharia-Software-2-Tutor/manifest.json",
+   "TCC": ".frzero/pacote_fontes_15-09/TCC-Tutor/manifest.json",
+   "CG": ".frzero/pacote_fontes_15-09/Computacao-Grafica-Tutor/manifest.json",
+   "FR": ".frzero/pacote_fontes_15-09/Fundamentos-de-Redes-Tutor/manifest.json"
+  },
+  "codigo": {
+   "compara_herancas_15-09.py": "docs/reports/_harness-2026-09-04/c1-3/compara_herancas_15-09.py",
+   "mede_3eixos_12-09.py": "docs/reports/_harness-2026-09-04/c1-3/mede_3eixos_12-09.py",
+   "wx_regua_corrigida_22-09.py": "docs/reports/_harness-2026-09-04/c1-3/wx_regua_corrigida_22-09.py",
+   "wz_bloco_cobertura_22-09.py": "docs/reports/_harness-2026-09-04/c1-3/wz_bloco_cobertura_22-09.py",
+   "scripts/eval_ground_truth.py": "scripts/eval_ground_truth.py",
+   "scripts/eval_entry_unit.py": "scripts/eval_entry_unit.py"
+  },
+  "invariancia_bloco": false
+ },
+ "protocolo": "docs/reports/2026-09-26-regime-vocab-recompilacao-limpa.md",
+ "base_produto": "2589ed5a95ab8dd841de384bd219d80ee27d2cbf",
+ "saida_base": ".frzero/vocab_limpo_26-09/captura",
+ "recompilacao": ".frzero/vocab_limpo_26-09",
+ "sufixo": "vl",
+ "proibidos": {
+  "docs/reports/_harness-2026-09-04/c1-3/wad5_avaliacao_26-09": "resultados da avaliação da Fase 1 (por ID)",
+  ".frzero/wad5_avaliacao_26-09": "espelho da régua da Fase 1",
+  "docs/reports/pendencias.md": "tracker (contém IDs das perdas da Fase 1)"
+ },
+ "staging_fonte": {
+  "tipo": "captura_cru",
+  "congelamento": ".frzero/wad5_25-09/congelamento.json",
+  "entradas": ".frzero/wad5_25-09/congelamento_entradas.json",
+  "manifesto_capturas": "docs/reports/_harness-2026-09-04/c1-3/wad5_25-09/manifesto_capturas_v5.json",
+  "capturas_dir": ".frzero/wad5_25-09/capturas",
+  "id_comum": "3fe5d1ff97258644b3148860cbe235aa3e16acfac91e9a291ea3c3e63a8e355d",
+  "braco_cru": "CRU",
+  "comum_da_fonte": "docs/reports/_harness-2026-09-04/c1-3/wad5_25-09",
+  "historico_sidecars": ".frzero/wad5_25-09/palcos/VOCAB_LLM"
+ }
+}

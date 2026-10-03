@@ -1,0 +1,145 @@
+diff --git a/tests/test_moodle.py b/tests/test_moodle.py
+index f5f479d5..40146bb7 100644
+--- a/tests/test_moodle.py
++++ b/tests/test_moodle.py
+@@ -539,3 +539,140 @@ def test_sanitize_preserves_date_slash_as_dot():
+ ])
+ def test_sanitize_folder_name_date_padding(raw, expected):
+     assert sanitize_folder_name(raw) == expected
++
++
++# --- Orçamento de bytes do webservice (R-META, 29/09): bytes dos CORPOS HTTP lidos pela aplicação ---------------------
++# Transporte falso: http.client.HTTPResponse real sobre BytesIO; nenhuma rede.
++
++class _SocketFalso:
++    def __init__(self, bruto):
++        self.bruto = bruto
++
++    def makefile(self, modo):
++        import io
++        return io.BytesIO(self.bruto)
++
++
++def _resposta_http(corpo, content_length=True):
++    import http.client
++    cab = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
++    if content_length is True:
++        cab += f"Content-Length: {len(corpo)}\r\n"
++    elif content_length:
++        cab += f"Content-Length: {content_length}\r\n"
++    else:
++        cab += "Connection: close\r\n"
++    r = http.client.HTTPResponse(_SocketFalso(cab.encode() + b"\r\n" + corpo))
++    r.begin()
++    return r
++
++
++def _cliente_com_respostas(monkeypatch, respostas, limite=None):
++    from src.builder.sources import moodle
++    chamadas = []
++
++    def fake_urlopen(req, timeout=0):
++        chamadas.append(req)
++        return respostas.pop(0)
++
++    monkeypatch.setattr(moodle.urllib.request, "urlopen", fake_urlopen)
++    c = moodle.MoodleClient("https://m", "tok")
++    c.limite_bytes = limite
++    return c, chamadas
++
++
++def test_call_conta_bytes_do_corpo_e_mantem_resultado_sem_limite(monkeypatch):
++    import json
++    a = json.dumps({"userid": 7, "siteurl": "https://m"}, indent=3).encode()   # indentado: != tamanho reserializado
++    b = json.dumps([{"id": 1, "fullname": "X"}]).encode()
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(a), _resposta_http(b, content_length=False)])
++    assert c.site_info() == {"userid": 7, "siteurl": "https://m"}
++    assert c.get_users_courses(7) == [{"id": 1, "fullname": "X"}]
++    assert c.bytes_recebidos == len(a) + len(b)
++
++
++def test_call_corpo_exatamente_no_limite_com_termino_confirmado(monkeypatch):
++    corpo = b'{"ok": [1, 2, 3]}'
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(corpo)], limite=len(corpo))
++    assert c.get_course_contents(1) == {"ok": [1, 2, 3]}
++    assert c.bytes_recebidos == len(corpo)
++
++
++@pytest.mark.parametrize("tamanho", [20, 30], ids=["exato-sem-content-length", "maior-sem-content-length"])
++def test_call_termino_nao_confirmado_nao_ultrapassa_o_orcamento(monkeypatch, tamanho):
++    from src.builder.sources import moodle
++    corpo = b"[" + b"1," * ((tamanho - 3) // 2) + b"1]"
++    corpo = corpo + b" " * (tamanho - len(corpo))
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(corpo, content_length=False)], limite=20)
++    with pytest.raises(moodle.OrcamentoExcedido) as exc:
++        c.get_course_contents(1)
++    assert c.bytes_recebidos == 20 and exc.value.parcial == corpo[:20]
++
++
++def test_call_content_length_acima_do_orcamento_nao_le_o_corpo(monkeypatch):
++    from src.builder.sources import moodle
++    corpo = b"x" * 30
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(corpo)], limite=20)
++    with pytest.raises(moodle.OrcamentoExcedido):
++        c.get_course_contents(1)
++    assert c.bytes_recebidos == 0
++
++
++@pytest.mark.parametrize("limite", [None, 100], ids=["sem-limite", "com-limite"])
++def test_call_corpo_truncado_conta_e_preserva_o_parcial(monkeypatch, limite):
++    import http.client
++    corpo = b'{"trunc'
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(corpo, content_length=30)], limite=limite)
++    with pytest.raises(http.client.IncompleteRead) as exc:
++        c.get_course_contents(1)
++    assert c.bytes_recebidos == len(corpo) and exc.value.partial == corpo and c.ultimo_corpo == corpo
++
++
++def test_call_orcamento_esgotado_nao_abre_a_requisicao(monkeypatch):
++    from src.builder.sources import moodle
++    c, chamadas = _cliente_com_respostas(monkeypatch, [], limite=10)
++    c.bytes_recebidos = 10
++    with pytest.raises(moodle.OrcamentoExcedido):
++        c.site_info()
++    assert chamadas == []
++
++
++def test_call_json_invalido_e_erro_da_api_contam_bytes(monkeypatch):
++    import json
++    ruim = b"{nao e json"
++    erro = json.dumps({"exception": "x", "errorcode": "invalidtoken", "message": "m"}).encode()
++    c, _ = _cliente_com_respostas(monkeypatch, [_resposta_http(ruim), _resposta_http(erro)])
++    with pytest.raises(ValueError):
++        c.site_info()
++    assert c.bytes_recebidos == len(ruim) and c.ultimo_corpo == ruim
++    with pytest.raises(RuntimeError, match="invalidtoken"):
++        c.site_info()
++    assert c.bytes_recebidos == len(ruim) + len(erro)
++
++
++def test_call_interrupcao_preserva_a_contagem_dos_blocos_lidos(monkeypatch):
++    from src.builder.sources import moodle
++
++    class _Interrompe:
++        headers = {}
++
++        def __init__(self):
++            self.leituras = 0
++
++        def __enter__(self):
++            return self
++
++        def __exit__(self, *a):
++            return False
++
++        def read(self, amt=-1):
++            self.leituras += 1
++            if self.leituras == 2:
++                raise KeyboardInterrupt
++            return b"abcd"[:amt]
++
++    monkeypatch.setattr(moodle, "_BLOCO_LEITURA", 4)
++    c, _ = _cliente_com_respostas(monkeypatch, [_Interrompe()])
++    with pytest.raises(KeyboardInterrupt):
++        c.site_info()
++    assert c.bytes_recebidos == 4 and c.ultimo_corpo == b"abcd"

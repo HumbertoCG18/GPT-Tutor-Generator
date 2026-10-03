@@ -1,0 +1,107 @@
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/gera_pacote_cego.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+index b44e1365..99e144fe 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/gera_pacote_cego.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+@@ -1,4 +1,11 @@
+-"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-4` (correções pós-revisão da etapa 3, 29/09).
++"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-5` (Gate 1 parcial de 29/09: R-PAGE).
++
++Correção da v5 sobre a v4 (../../../validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/):
++12. **R-PAGE (regra operacional provisória):** HTML principal de `page` = conteúdo `index.html` com `filepath "/"` e
++    `filesize 0`, exatamente um; zero ou vários = `pagina_sem_html_principal` (não adjudicável, visível); sem
++    inventário, só `raw/moodle/pages/<id>-index.html`; anexo `.html` nunca é HTML principal; arquivo da pasta de páginas
++    não vinculado não vira sobra. Inferida das respostas locais (inclusive o lote), não é contrato confirmado do Moodle.
++R-VIS NÃO foi aprovada: nenhuma liberação visual; o pacote não está liberado para uso real.
+ 
+ Correções da v4 sobre a v3 (../../../validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py):
+ 8. **XML como XML:** membros XML de documentos lidos pelo expat (codificação pela declaração/BOM, entidades resolvidas,
+@@ -58,7 +65,7 @@ import xml.parsers.expat
+ import zipfile
+ from pathlib import Path
+ 
+-VERSAO = "pacote-cego-4"
++VERSAO = "pacote-cego-5"
+ AQUI = Path(__file__).resolve().parent
+ REPO = next(p for p in AQUI.parents if (p / ".git").exists())
+ INSTRUCOES = REPO / "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/gold/instrucoes_adjudicador.md"
+@@ -497,9 +504,18 @@ def carrega_inventario(fonte):
+     return idx, sha_b(dados)
+ 
+ 
+-def liga_por_inventario(inv, mod_id, c, por_rel):
+-    """(arquivo local, None) pela proveniência da aquisição, conferindo caminho e sha256; (None, status) se não adquirido."""
++def eh_html_principal(c):
++    """R-PAGE (v5, regra operacional provisória inferida das respostas locais, inclusive o lote; não é contrato
++    confirmado do Moodle): `index.html` com `filepath "/"` e `filesize 0`. Campo ausente = não é candidato."""
++    return c.get("filename") == "index.html" and c.get("filepath") == "/" and c.get("filesize") == 0
++
++
++def liga_por_inventario(inv, mod_id, c, por_rel, papel=None):
++    """(arquivo local, None) pela proveniência da aquisição, conferindo caminho e sha256; (None, status) se não adquirido.
++    v5: com `papel`, registros que o declaram são filtrados por ele (HTML principal × anexo de mesmo nome)."""
+     regs = inv.get((str(mod_id), str(c["filename"])), [])
++    if papel and any("papel" in r for r in regs):
++        regs = [r for r in regs if r.get("papel") == papel]
+     if c.get("filepath") and any("filepath" in r for r in regs):
+         regs = [r for r in regs if r.get("filepath") == c["filepath"]]
+     if len(regs) != 1:
+@@ -580,28 +596,30 @@ def descobre(leitor, fonte):
+                     url = url_sem_autenticacao(mod["url"])
+                     acrescenta("url:" + url, {"tipo": "link_externo", "adjudicavel": False, "arquivo": None,
+                                               "nome_original": nome_mod, "sha256": None, "tamanho": None, "url": url}, ocorr)
+-                elif modname == "page":
+-                    htmls = [c for c in arquivos_mod if str(c["filename"]).lower().endswith((".html", ".htm"))]
+-                    if inv is None:
+-                        paginas = sorted((x for x in locais if x["rel"].startswith(f"raw/moodle/pages/{mod['id']}-")),
+-                                         key=lambda x: x["rel"])
++                elif modname == "page":   # v5, R-PAGE: exatamente um HTML principal (index.html, "/", 0)
++                    cands = [c for c in arquivos_mod if eh_html_principal(c)]
++                    a = None
++                    if len(cands) != 1:
++                        sem_arquivo("pagina_sem_html_principal", f"paginasemhtml:{mod['id']}",
++                                    {"filename": "index.html", "filesize": None}, ocorr,
++                                    f"{len(cands)} candidatos a HTML principal (R-PAGE): ocorrência não coberta")
++                    elif inv is not None:
++                        a, status = liga_por_inventario(inv, mod["id"], cands[0], por_rel, papel="html_principal")
++                        if a is None:
++                            sem_arquivo("arquivo_nao_adquirido", f"naoadquirido:{mod['id']}/index.html", cands[0], ocorr,
++                                        "aquisição: " + status)
+                     else:
+-                        paginas = []
+-                        for c in htmls:
+-                            a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
+-                            if a is None:
+-                                sem_arquivo("arquivo_nao_adquirido", f"naoadquirido:{mod['id']}/{c['filename']}", c, ocorr,
+-                                            "aquisição: " + status)
+-                            else:
+-                                paginas.append(a)
+-                    if len(paginas) > 1:
+-                        raise AmbiguidadeOrigem(f"página {mod['id']}: {[x['rel'] for x in paginas]}")
+-                    for a in paginas:
++                        a = por_rel.get(f"raw/moodle/pages/{mod['id']}-index.html")
++                        if a is None:
++                            sem_arquivo("pagina_sem_fonte_local", f"paginasemfonte:{mod['id']}", cands[0], ocorr,
++                                        "HTML principal sem arquivo local")
++                    if a is not None:
+                         usados.add(a["rel"])
+                         acrescenta("arq:" + a["sha"], {"tipo": "pagina", "fonte": a, "nome_original": a["nome"]}, ocorr,
+                                    "pagina_do_modulo" if inv is None else "inventario_aquisicao")
+-                    for c in arquivos_mod:   # anexo de página: registrado, não entregue (fora da fonte do pacote)
+-                        if c not in htmls:
++                    principal = cands[0] if len(cands) == 1 else None
++                    for c in arquivos_mod:   # anexo de página (inclusive .html): registrado, não entregue
++                        if c is not principal:
+                             anexos_pagina.add((c["filename"], c["filesize"]))
+                             sem_arquivo("anexo_de_pagina", f"anexo:{mod['id']}/{c['filename']}", c, ocorr,
+                                         "anexo de página não entregue ao adjudicador")
+@@ -626,6 +644,10 @@ def descobre(leitor, fonte):
+                         usados.add(a["rel"])
+                         acrescenta("arq:" + a["sha"], {"tipo": "arquivo", "fonte": a, "nome_original": c["filename"]}, ocorr,
+                                    ligacao)
++        for a in locais:   # v5: arquivo da pasta de páginas que não é o HTML principal vinculado nunca vira sobra
++            if a["rel"] not in usados and a["rel"].startswith("raw/moodle/pages/"):
++                nao_usados[a["rel"]] = "arquivo de página não vinculado ao HTML principal (R-PAGE): não entregue"
++                usados.add(a["rel"])
+         for a in locais:   # v4: arquivo local igual (nome, tamanho) a anexo de página nunca reentra como sobra
+             if a["rel"] not in usados and (a["nome"], a["tamanho"]) in anexos_pagina:
+                 nao_usados[a["rel"]] = "anexo de página: não entregue ao adjudicador"

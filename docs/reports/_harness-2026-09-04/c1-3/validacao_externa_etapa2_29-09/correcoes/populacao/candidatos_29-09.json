@@ -1,0 +1,134 @@
+{
+ "esquema": "candidatos-1",
+ "descricao": "Os 16 candidatos da preparação de 29/09, extraídos da v1 sem mudança.",
+ "candidatos": [
+  {
+   "sigla": "MF",
+   "nome": "Métodos Formais para Computação",
+   "fonte": "~/Desktop/Moodle/metodos-formais-para-computacao",
+   "padrao": "Metodos-Formais|M[ée]todos Formais",
+   "tutor": "Metodos-Formais-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "SO",
+   "nome": "Sistemas Operacionais",
+   "fonte": "~/Desktop/Moodle/sistemas-operacionais",
+   "padrao": "Sistemas-Operacionais-Tutor",
+   "tutor": "Sistemas-Operacionais-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "IA",
+   "nome": "Inteligência Artificial",
+   "fonte": "~/Desktop/Moodle/inteligencia-artificial",
+   "padrao": "Inteligencia-Artifical",
+   "tutor": "Inteligencia-Artifical-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "ES2",
+   "nome": "Engenharia de Software II",
+   "fonte": "~/Desktop/Moodle/engenharia-de-software-ii",
+   "padrao": "Engenharia-Software-2",
+   "tutor": "Engenharia-Software-2-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "TCC",
+   "nome": "Teoria da Computabilidade e Complexidade",
+   "fonte": "~/Desktop/Moodle/teoria-da-computabilidade-e-complexidade",
+   "padrao": "TCC-Tutor",
+   "tutor": "TCC-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "CG",
+   "nome": "Computação Gráfica",
+   "fonte": "~/Desktop/Moodle/computacao-grafica",
+   "padrao": "Computacao-Grafica",
+   "tutor": "Computacao-Grafica-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "FR",
+   "nome": "Fundamentos de Redes de Computadores",
+   "fonte": "~/Desktop/Moodle/fundamentos-de-redes-de-computadores",
+   "padrao": "Fundamentos-de-Redes",
+   "tutor": "Fundamentos-de-Redes-Tutor",
+   "desenvolvimento": true,
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "LR",
+   "nome": "Laboratório de Redes de Computadores",
+   "fonte": "~/Desktop/Moodle/laboratorio-de-redes-de-computadores",
+   "padrao": "Laboratorio-de-Redes|Lab(oratório)? (de )?Redes|\\bLR\\b",
+   "tutor": "Laboratorio-de-Redes-Tutor",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "LSO",
+   "nome": "Laboratório de Sistemas Operacionais",
+   "fonte": "~/Desktop/Moodle/laboratorio-de-sistemas-operacionais",
+   "padrao": "laboratorio-de-sistemas-operacionais|Laborat[oó]rio de Sistemas Operacionais|\\blab-so\\b|\\bLab SO\\b|95227|4646I",
+   "plano_externo": "~/Desktop/claude-tutor/lab-so.pdf",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "UX",
+   "nome": "Experiência do Usuário",
+   "fonte": "~/Desktop/Moodle/experiencia-do-usuario",
+   "padrao": "experiencia-do-usuario|Experi[eê]ncia do Usu[aá]rio|\\bIHC\\b|92619",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "CALC1",
+   "nome": "Cálculo 1 (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Calculo 1",
+   "padrao": "C[aá]lculo[ -]?1\\b",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "FP",
+   "nome": "Fundamentos da Programação (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Fundamentos-da-Programacao",
+   "padrao": "Fundamentos[- ]da[- ]Programa[cç][aã]o",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "IC",
+   "nome": "Introdução à Computação (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Introdução a Computação",
+   "padrao": "Introdu[cç][aã]o [àa] Computa[cç][aã]o",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "MD",
+   "nome": "Matemática Discreta (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Matemática Discreta",
+   "padrao": "Matem[aá]tica Discreta",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "MC",
+   "nome": "Metodologia Científica (pasta do aluno)",
+   "fonte": "~/OneDrive/Aulas-PUCRS/Metodologia Cientifica",
+   "padrao": "Metodologia Cient[ií]fica",
+   "origem": "universo local de 29/09 (v1)"
+  },
+  {
+   "sigla": "MSA",
+   "nome": "Modelagem, Simulação e Métodos Analíticos (projeto do aluno)",
+   "fonte": "~/Desktop/MetodosAnaliticos",
+   "padrao": "M[ée]todos Anal[ií]ticos|MetodosAnaliticos|Filas em Tandem",
+   "origem": "universo local de 29/09 (v1)"
+  }
+ ]
+}

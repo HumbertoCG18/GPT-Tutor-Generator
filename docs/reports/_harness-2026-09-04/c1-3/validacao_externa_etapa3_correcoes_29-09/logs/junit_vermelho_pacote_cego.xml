@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="30" skipped="0" tests="39" time="3.185" timestamp="2026-09-29T13:08:56.608396-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC06-odt-atributo]" time="0.060"><failure message="AssertionError: None&#10;assert False">caso = 'PC06-odt-atributo'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC07-ods-atributo]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'PC07-ods-atributo'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC08-odp-atributo]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'PC08-odp-atributo'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC09-docx-membro-dat]" time="0.141"><failure message="AssertionError: None&#10;assert False">caso = 'PC09-docx-membro-dat'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC10-docx-printerSettings]" time="0.049"><failure message="AssertionError: None&#10;assert False">caso = 'PC10-docx-printerSettings'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC11-zip-manual-review]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'PC11-zip-manual-review'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC12-zip-course-map]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'PC12-zip-course-map'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC13-zip-aninhado-docx-atributo]" time="0.038"><failure message="AssertionError: None&#10;assert False">caso = 'PC13-zip-aninhado-docx-atributo'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC19-pdf-anexo-literal]" time="0.000" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC20-pdf-anexo-escapado]" time="0.000"><failure message="AssertionError: None&#10;assert False">caso = 'PC20-pdf-anexo-escapado'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC21-pdf-texto-motor]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'PC21-pdf-texto-motor'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC27-docx-entidade]" time="0.045"><failure message="AssertionError: None&#10;assert False">caso = 'PC27-docx-entidade'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC28-xlsx-entidade]" time="0.274"><failure message="AssertionError: None&#10;assert False">caso = 'PC28-xlsx-entidade'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC29-pptx-utf16]" time="0.109"><failure message="AssertionError: None&#10;assert False">caso = 'PC29-pptx-utf16'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC30-docx-hiperlink-token]" time="0.036"><failure message="AssertionError: None&#10;assert False">caso = 'PC30-docx-hiperlink-token'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[PC31-pdf-comentario-apos-eof]" time="0.001"><failure message="AssertionError: PDF com arquivo embutido&#10;assert False">caso = 'PC31-pdf-comentario-apos-eof'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: PDF com arquivo embutido
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[controle-docx-limpo]" time="0.036" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[controle-odt-limpo]" time="0.001" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[controle-pdf-limpo]" time="0.000" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[controle-xlsx-limpo]" time="0.007" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[controle-zip-limpo]" time="0.001" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[docx-dtd-entidade]" time="0.041"><failure message="AssertionError: None&#10;assert False">caso = 'docx-dtd-entidade'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[docx-emf]" time="0.039"><failure message="AssertionError: None&#10;assert False">caso = 'docx-emf'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[docx-fonte-embutida]" time="0.049"><failure message="AssertionError: None&#10;assert False">caso = 'docx-fonte-embutida'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[html-entidade-motor]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'html-entidade-motor'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[pdf-anexo-orfao]" time="0.000" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[pdf-anexo-por-anotacao]" time="0.000" /><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[pdf-invalido]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'pdf-invalido'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[pptx-padrao-printerSettings-recusado]" time="0.015"><failure message="AssertionError: None&#10;assert False">caso = 'pptx-padrao-printerSettings-recusado'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[txt-utf16-motor]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'txt-utf16-motor'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_verifica_material_v4[zip-com-doc-ole]" time="0.001"><failure message="AssertionError: None&#10;assert False">caso = 'zip-com-doc-ole'
+
+    @pytest.mark.parametrize("caso", sorted(CASOS))
+    def test_verifica_material_v4(caso):
+        nome, gera, recusa = CASOS[caso]
+        motivo = G.verifica_material(nome, gera())
+&gt;       assert (motivo is None) if recusa is None else (motivo is not None and recusa in motivo), motivo
+E       AssertionError: None
+E       assert False
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:163: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_PC27_plano_docx_com_entidade_nao_gera_pacote" time="1.209"><failure message="Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.PlanoRecusado'&gt;">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_PC27_plano_docx_com_entid0')
+
+    def test_PC27_plano_docx_com_entidade_nao_gera_pacote(tmp_path):
+        fonte = fixture(tmp_path)
+        escreve(tmp_path / "plano/plano.docx", rezip(docx_bytes(MOTOR), {"word/document.xml": entidade}))
+        fonte["plano_arquivo"] = str(tmp_path / "plano/plano.docx")
+&gt;       with pytest.raises(G.PlanoRecusado, match="motor"):
+E       Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.PlanoRecusado'&gt;
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:170: Failed</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_PC26_anexo_de_pagina_na_arvore_nao_vira_sobra" time="0.115"><failure message="AssertionError: assert [('anexo_de_p...quivo', True)] == [('anexo_de_pagina', False)]&#10;  &#10;  Left contains one more item: ('arquivo', True)&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_PC26_anexo_de_pagina_na_a0')
+
+    def test_PC26_anexo_de_pagina_na_arvore_nao_vira_sobra(tmp_path):
+        fonte = fixture(tmp_path)
+        raiz = Path(fonte["moodle_dir"])
+        figura = b"\x89PNG\r\n\x1a\nfigura"
+        escreve(raiz / "raw/moodle/pages/501-anexos/figura.png", figura)
+        escreve(raiz / "stash/Unidade 1/figura.png", figura)
+        api = carrega(raiz / "raw/moodle/contents.json")
+        api[1]["modules"][2]["contents"] = [{"type": "file", "filename": "figura.png", "filepath": "/", "filesize": len(figura)}]
+        escreve(raiz / "raw/moodle/contents.json", json.dumps(api))
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+        figs = [m for m in carrega(p / "materiais.json")["materiais"] if m["nome_original"] == "figura.png"]
+&gt;       assert [(m["tipo"], m["adjudicavel"]) for m in figs] == [("anexo_de_pagina", False)]
+E       AssertionError: assert [('anexo_de_p...quivo', True)] == [('anexo_de_pagina', False)]
+E         
+E         Left contains one more item: ('arquivo', True)
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:187: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_PC25_ligacao_sem_inventario_nao_confirma_proveniencia" time="0.036"><failure message="KeyError: 'proveniencia_confirmada'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_PC25_ligacao_sem_inventar0')
+
+    def test_PC25_ligacao_sem_inventario_nao_confirma_proveniencia(tmp_path):
+        fonte = fixture(tmp_path)
+        G.monta(fonte, tmp_path / "sem")
+        lidas = carrega(tmp_path / "sem/pacote_manifesto.json")["fontes_lidas"]
+&gt;       assert lidas["moodle:stash/Geral/aula1.pdf"]["proveniencia_confirmada"] is False
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'proveniencia_confirmada'
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:197: KeyError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_inventario_exige_sha_esperado[sem-sha-esperado]" time="0.049"><failure message="Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.DivergenciaProveniencia'&gt;">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_inventario_exige_sha_espe0')
+esperado = None, erro = 'sem sha256 esperado'
+
+    @pytest.mark.parametrize("esperado, erro", [(None, "sem sha256 esperado"), ("0" * 64, "sha256 do inventário")],
+                             ids=["sem-sha-esperado", "sha-divergente"])
+    def test_inventario_exige_sha_esperado(tmp_path, esperado, erro):
+        fonte, inv = fixture_inventario(tmp_path)
+        fonte.update(inv)
+        if esperado:
+            fonte["inventario_sha256"] = esperado
+&gt;       with pytest.raises(G.DivergenciaProveniencia, match=erro):
+E       Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.DivergenciaProveniencia'&gt;
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:212: Failed</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_inventario_exige_sha_esperado[sha-divergente]" time="0.043"><failure message="Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.DivergenciaProveniencia'&gt;">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_inventario_exige_sha_espe1')
+esperado = '0000000000000000000000000000000000000000000000000000000000000000'
+erro = 'sha256 do inventário'
+
+    @pytest.mark.parametrize("esperado, erro", [(None, "sem sha256 esperado"), ("0" * 64, "sha256 do inventário")],
+                             ids=["sem-sha-esperado", "sha-divergente"])
+    def test_inventario_exige_sha_esperado(tmp_path, esperado, erro):
+        fonte, inv = fixture_inventario(tmp_path)
+        fonte.update(inv)
+        if esperado:
+            fonte["inventario_sha256"] = esperado
+&gt;       with pytest.raises(G.DivergenciaProveniencia, match=erro):
+E       Failed: DID NOT RAISE &lt;class 'gera_pacote_cego.DivergenciaProveniencia'&gt;
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:212: Failed</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_com_inventario_arquivo_fora_do_inventario_nao_e_entregue" time="0.102"><failure message="AssertionError: assert 'extra.pdf' not in {'501-tutorial.html', 'Site do livro', 'aula1.pdf', 'enunciado.pdf', 'extra.pdf', 'figura.png', ...}">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_com_inventario_arquivo_fo0')
+
+    def test_com_inventario_arquivo_fora_do_inventario_nao_e_entregue(tmp_path):
+        fonte, inv = fixture_inventario(tmp_path)
+        fonte.update(inv, inventario_sha256=G.sha_b(Path(inv["inventario"]).read_bytes()))
+        escreve(Path(fonte["moodle_dir"]) / "stash/Geral/extra.pdf", pdf_valido("extra"))
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+&gt;       assert "extra.pdf" not in {m["nome_original"] for m in carrega(p / "materiais.json")["materiais"]}
+E       AssertionError: assert 'extra.pdf' not in {'501-tutorial.html', 'Site do livro', 'aula1.pdf', 'enunciado.pdf', 'extra.pdf', 'figura.png', ...}
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:223: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_pdf_sem_camada_de_texto_fica_registrado" time="0.032"><failure message="KeyError: 'paginas_sem_texto'">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2731/test_pdf_sem_camada_de_texto_f0')
+
+    def test_pdf_sem_camada_de_texto_fica_registrado(tmp_path):
+        fonte = fixture(tmp_path, formato="pastas")
+        escreve(Path(fonte["moodle_dir"]) / "Unidade 1/figura.pdf", pdf_caso(conteudo=b"0 0 m 100 100 l S"))
+        G.monta(fonte, tmp_path / "pacote")
+        lidas = carrega(tmp_path / "pacote/pacote_manifesto.json")["fontes_lidas"]
+&gt;       assert lidas["moodle:Unidade 1/figura.pdf"]["paginas_sem_texto"] == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'paginas_sem_texto'
+
+correcoes\pacote_cego\test_pacote_cego_v4.py:233: KeyError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.correcoes.pacote_cego.test_pacote_cego_v4" name="test_documentos_completos_reabrem_nas_bibliotecas_consumidoras" time="0.147" /></testsuite></testsuites>

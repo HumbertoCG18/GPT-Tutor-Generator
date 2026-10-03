@@ -1,0 +1,436 @@
+diff --git a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/gera_pacote_cego.py b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+index b567d74..947c438 100644
+--- a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/gera_pacote_cego.py
++++ b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/gera_pacote_cego.py
+@@ -1,6 +1,15 @@
+-"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-2` (etapa restrita de 29/09).
+-
+-Correções da revisão independente sobre a v1 (../../../validacao_externa_29-09/pacote_cego/gera_pacote_cego.py):
++"""Gerador e auditor do pacote cego de adjudicação, versão `pacote-cego-3` (etapa 3, 29/09).
++
++Correções da v3 sobre a v2 (../../../validacao_externa_etapa2_29-09/correcoes/pacote_cego/gera_pacote_cego.py):
++5. **plano:** arquivo e texto do plano passam por `verifica_material`; recusa = pacote não gerado (`PlanoRecusado`);
++   a auditoria também verifica `plano/`;
++6. **contêineres:** política explícita de membros para ZIP, OOXML e ODF e de anexos em PDF (`verifica_conteiner`);
++7. **proveniência primeiro:** com `inventario` + `curso_id` na fonte, recurso -> arquivo sai do registro da aquisição
++   (módulo, arquivo, caminho, sha256 conferido); item não adquirido fica visível e não adjudicável. Sem inventário,
++   nome + tamanho só ligam dentro da pasta da seção do módulo (candidato só em outra seção = `origem_nao_confirmada`);
++   o método de ligação de cada fonte fica no manifesto (`ligacao`); anexos de página são registrados, não entregues.
++
++Correções da v2 sobre a v1 (../../../validacao_externa_29-09/pacote_cego/gera_pacote_cego.py):
+ 1. **sem configurações nem segredos:** arquivos de configuração/credencial recusados por nome, extensão e conteúdo
+    (`.env`, `*.ini/.toml/.pem/.key`, `config*.json`, nomes com token/segredo/senha/cookie; textos com chave de API,
+    `MOODLE_TOKEN=`, chave privada etc.); URLs sem parâmetros de autenticação;
+@@ -15,7 +24,7 @@ O resto (leitor restrito, rótulos só do plano, allowlist de chaves, regeneraç
+ Uso:
+   python gera_pacote_cego.py gerar <fonte.json> <destino>     (recusa destino existente)
+   python gera_pacote_cego.py auditar <fonte.json> <pacote>    (saída 0 = aprovado)
+-`fonte.json`: {"sigla", "nome", "moodle_dir", "plano_arquivo", "plano_texto"} (caminhos absolutos).
++`fonte.json`: {"sigla", "nome", "moodle_dir", "plano_arquivo", "plano_texto"[, "inventario", "curso_id"]} (caminhos absolutos).
+ """
+ import csv
+ import hashlib
+@@ -28,9 +37,10 @@ import sys
+ import tempfile
+ import unicodedata
+ import urllib.parse
++import zipfile
+ from pathlib import Path
+ 
+-VERSAO = "pacote-cego-2"
++VERSAO = "pacote-cego-3"
+ AQUI = Path(__file__).resolve().parent
+ REPO = next(p for p in AQUI.parents if (p / ".git").exists())
+ INSTRUCOES = REPO / "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/gold/instrucoes_adjudicador.md"
+@@ -69,6 +79,13 @@ MAGIC = {"pdf": (b"%PDF",), "docx": (b"PK\x03\x04",), "pptx": (b"PK\x03\x04",),
+ TEXTO = {"txt", "md", "csv", "html", "htm", "ipynb", "py", "java", "c", "h", "cpp", "js", "ts", "sql"}
+ MIDIA = {"mp4"}   # assinatura "ftyp" no byte 4
+ EXT_MATERIAL = set(MAGIC) | TEXTO | MIDIA
++# ---------------------------------------------------------------- v3: política de contêineres (membros)
++CONTEINER_DOCUMENTO = {"docx", "pptx", "xlsx", "odt", "odp", "ods"}
++CONTEINER_ZIP = CONTEINER_DOCUMENTO | {"zip"}
++TEXTO_MEMBRO = {"xml", "rels", "json", "svg", "vml"}
++EXT_EXECUTAVEL = {"exe", "dll", "bat", "cmd", "ps1", "sh", "vbs", "jar", "msi", "scr", "com", "app", "apk", "so", "dylib",
++                  "docm", "pptm", "xlsm", "dotm"}
++DESCOMPACTADO_MAX, RAZAO_MAX, MEMBROS_MAX, PROFUNDIDADE_MAX = 500_000_000, 200, 5000, 2
+ 
+ SECAO_OK = ("section", "name", "summary")
+ MODULO_OK = ("id", "name", "modname", "description", "url", "contents")
+@@ -82,7 +99,7 @@ CHAVES_OK = {
+     "rotulos.json": {"versao", "sigla", "origem", "unidades", "topicos", "id", "slug", "titulo", "unidade", "rotulo", "codigo"},
+     "pacote_manifesto.json": {"versao", "sigla", "gerador_sha256", "instrucoes_sha256", "arquivos", "sha256", "origem",
+                               "tipo", "fonte", "fonte_sha256", "funcao", "entradas", "fontes_lidas", "papel",
+-                              "fontes_nao_usadas", "motivo", "python"},
++                              "fontes_nao_usadas", "motivo", "python", "ligacao"},
+ }
+ GERADOS = ("materiais.json", "moodle_estrutura.json", "rotulos.json", "gold_modelo.csv", "INSTRUCOES.md",
+            "declaracao_cegamento.md")
+@@ -96,6 +113,14 @@ class AmbiguidadeOrigem(RuntimeError):
+     pass
+ 
+ 
++class DivergenciaProveniencia(RuntimeError):
++    pass
++
++
++class PlanoRecusado(RuntimeError):
++    pass
++
++
+ def sha_b(b):
+     return hashlib.sha256(b).hexdigest()
+ 
+@@ -179,8 +204,80 @@ def pasta_da_secao(rel):
+     return partes[0] if len(partes) > 1 else ""
+ 
+ 
+-def verifica_material(nome, dados):
+-    """None = aceito; senão, o motivo da recusa (extensão, assinatura, saída do motor, segredo)."""
++def _varre_texto(texto):
++    if PADRAO_PREDICAO.search(texto):
++        return "texto com assinatura de saída do motor"
++    if PADRAO_SEGREDO.search(texto):
++        return "texto com credencial ou segredo"
++    return None
++
++
++def _decodifica(dados):
++    try:
++        return dados.decode("utf-8")
++    except UnicodeDecodeError:
++        return dados.decode("latin-1")
++
++
++def verifica_pdf(dados):
++    """Membro embutido em PDF (anexo) = recusa. Busca por bytes: objeto em stream comprimido não é visto (limitação)."""
++    return "PDF com arquivo embutido" if b"/EmbeddedFile" in dados else None
++
++
++def verifica_conteiner(nome, dados, profundidade=0):
++    """Política explícita de membros para ZIP, OOXML e ODF. None = aceito; senão o motivo da recusa.
++
++    ZIP simples: cada membro passa por `verifica_material` (mesma allowlist, assinatura e varredura do arquivo solto).
++    Documento (docx/pptx/xlsx/odt/odp/ods): XML e texto varridos sem as tags; PDF, imagem e contêiner aninhados passam
++    por `verifica_material`; objeto OLE (.bin), macro e executável recusados. Em ambos: caminho inseguro, membro
++    cifrado, nome de configuração/credencial, excesso de membros, tamanho ou aninhamento = recusa."""
++    ext = Path(nome).suffix.lower().lstrip(".")
++    if profundidade >= PROFUNDIDADE_MAX:
++        return f"contêiner aninhado além da profundidade {PROFUNDIDADE_MAX}"
++    try:
++        z = zipfile.ZipFile(io.BytesIO(dados))
++        infos = z.infolist()
++    except (zipfile.BadZipFile, ValueError, OSError):
++        return f"contêiner .{ext} ilegível"
++    if len(infos) > MEMBROS_MAX:
++        return f"contêiner com mais de {MEMBROS_MAX} membros"
++    total = sum(i.file_size for i in infos)
++    if total > DESCOMPACTADO_MAX or total > RAZAO_MAX * max(len(dados), 1):
++        return "contêiner com tamanho descompactado acima do limite (possível bomba)"
++    for i in infos:
++        n = i.filename
++        partes = [x for x in re.split(r"[\\/]", n) if x]
++        if n.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:", n) or ".." in partes:
++            return f"membro com caminho inseguro: {n[:60]}"
++        if i.flag_bits & 0x1:
++            return f"membro cifrado: {n[:60]}"
++        if i.is_dir():
++            continue
++        base = partes[-1] if partes else n
++        mext = Path(base).suffix.lower().lstrip(".")
++        if NOME_SEGREDO.match(base) or set(partes[:-1]) & PARTE_SEGREDO:
++            return f"membro de configuração ou credencial: {base[:60]}"
++        if mext in EXT_EXECUTAVEL or base.lower() == "vbaproject.bin":
++            return f"membro executável ou macro: {base[:60]}"
++        if ext in CONTEINER_DOCUMENTO and mext == "bin" and not re.fullmatch(r"printerSettings\d*\.bin", base):
++            return f"objeto embutido não examinável: {base[:60]}"
++        try:
++            conteudo = z.read(i)
++        except (zipfile.BadZipFile, RuntimeError, ValueError, OSError, NotImplementedError) as exc:
++            return f"membro ilegível: {base[:40]} ({type(exc).__name__})"
++        if ext not in CONTEINER_DOCUMENTO or mext in EXT_MATERIAL:
++            motivo = verifica_material(base, conteudo, profundidade + 1)
++        elif mext in TEXTO_MEMBRO:
++            motivo = _varre_texto(re.sub(r"<[^>]+>", "", _decodifica(conteudo)))   # texto de documento vem em runs
++        else:
++            motivo = None   # fonte, EMF/WMF, mimetype: estrutura do documento, sem texto examinável
++        if motivo:
++            return f"membro {n[:60]}: {motivo}"
++    return None
++
++
++def verifica_material(nome, dados, profundidade=0):
++    """None = aceito; senão, o motivo da recusa (extensão, assinatura, membros de contêiner, saída do motor, segredo)."""
+     ext = Path(nome).suffix.lower().lstrip(".")
+     if ext not in EXT_MATERIAL:
+         return f"extensão fora da allowlist: .{ext or '(nenhuma)'}"
+@@ -188,15 +285,12 @@ def verifica_material(nome, dados):
+         return f"assinatura não corresponde a .{ext} (arquivo renomeado?)"
+     if ext in MIDIA and dados[4:8] != b"ftyp":
+         return f"assinatura não corresponde a .{ext}"
++    if ext in CONTEINER_ZIP:
++        return verifica_conteiner(nome, dados, profundidade)
++    if ext == "pdf":
++        return verifica_pdf(dados)
+     if ext in TEXTO:
+-        try:
+-            texto = dados.decode("utf-8")
+-        except UnicodeDecodeError:
+-            texto = dados.decode("latin-1")
+-        if PADRAO_PREDICAO.search(texto):
+-            return "texto com assinatura de saída do motor"
+-        if PADRAO_SEGREDO.search(texto):
+-            return "texto com credencial ou segredo"
++        return _varre_texto(_decodifica(dados))
+     return None
+ 
+ 
+@@ -252,36 +346,87 @@ def rotulos_do_plano(texto_plano):
+     return unidades, topicos
+ 
+ 
++def carrega_inventario(fonte):
++    """Inventário da aquisição do curso: {(modulo_id, arquivo): [registros]} e o sha256 do arquivo; (None, None) sem ele.
++
++    Lido fora do Leitor (documento do protocolo, como as instruções): nunca é copiado para o pacote."""
++    if not fonte.get("inventario"):
++        return None, None
++    dados = Path(fonte["inventario"]).read_bytes()
++    inv = json.loads(dados.decode("utf-8"))
++    cursos = [c for c in inv.get("cursos") or [] if str(c.get("id")) == str(fonte.get("curso_id"))]
++    if inv.get("esquema") not in ("inventario-downloads-1", "inventario-downloads-2") or len(cursos) != 1:
++        raise DivergenciaProveniencia(f"inventário sem esquema conhecido ou sem o curso {fonte.get('curso_id')!r}")
++    if inv.get("concluido") is False:
++        raise DivergenciaProveniencia("inventário parcial (aquisição interrompida)")
++    idx = {}
++    for r in cursos[0]["arquivos"]:
++        idx.setdefault((str(r["modulo_id"]), str(r["arquivo"])), []).append(r)
++    return idx, sha_b(dados)
++
++
++def liga_por_inventario(inv, mod_id, c, por_rel):
++    """(arquivo local, None) pela proveniência da aquisição, conferindo caminho e sha256; (None, status) se não adquirido."""
++    regs = inv.get((str(mod_id), str(c["filename"])), [])
++    if c.get("filepath") and any("filepath" in r for r in regs):
++        regs = [r for r in regs if r.get("filepath") == c["filepath"]]
++    if len(regs) != 1:
++        raise DivergenciaProveniencia(f"módulo {mod_id}, {c['filename']!r}: {len(regs)} registros no inventário")
++    r = regs[0]
++    if r["status"] != "ok":
++        return None, r["status"]
++    a = por_rel.get(r.get("caminho")) if r.get("base", "curso") == "curso" else None
++    if a is None or a["sha"] != r.get("sha256"):
++        raise DivergenciaProveniencia(f"{r.get('caminho')}: ausente na fonte ou sha256 diferente do inventário")
++    return a, None
++
++
+ def resolve_origem(c, secao, por_nome):
+-    """Arquivo local de um conteúdo do Moodle: nome + tamanho; bytes diferentes só se decidem pela pasta da seção."""
++    """Sem inventário: nome + tamanho, confirmados pela pasta da seção do módulo. Retorna (arquivo, ligação).
++
++    Candidato só em pasta de OUTRA seção nunca é ligado: (None, "origem_nao_confirmada"). Arquivo fora de pasta de
++    seção (leiaute sem seções) só vale se não houver candidato em outra seção."""
+     cand = por_nome.get((c["filename"], c["filesize"]), [])
+     if not cand:
+-        return None
+-    if len({a["sha"] for a in cand}) == 1:
+-        return sorted(cand, key=lambda a: a["rel"])[0]
++        return None, None
+     na_secao = [a for a in cand if chave_secao(pasta_da_secao(a["rel"])) == chave_secao(secao)]
+-    if len({a["sha"] for a in na_secao}) == 1:
+-        return sorted(na_secao, key=lambda a: a["rel"])[0]
+-    raise AmbiguidadeOrigem(f"{c['filename']} ({c['filesize']} bytes) na seção {secao!r}: candidatos "
+-                            f"{sorted(a['rel'] for a in cand)}")
++    fora = [a for a in cand if a not in na_secao and pasta_da_secao(a["rel"])]
++    alvo, ligacao = (na_secao, "nome_tamanho_secao") if na_secao else ([], None) if fora else (cand, "nome_tamanho_sem_secao")
++    if not alvo:
++        return None, "origem_nao_confirmada"
++    if len({a["sha"] for a in alvo}) > 1:
++        raise AmbiguidadeOrigem(f"{c['filename']} ({c['filesize']} bytes) na seção {secao!r}: candidatos "
++                                f"{sorted(a['rel'] for a in alvo)}")
++    return sorted(alvo, key=lambda a: a["rel"])[0], ligacao
+ 
+ 
+ def descobre(leitor, fonte):
+-    """Materiais, estrutura do Moodle e arquivos não usados (com motivo), só de fontes brutas permitidas."""
++    """Materiais, estrutura do Moodle, arquivos não usados (com motivo) e sha256 do inventário, só de fontes permitidas.
++
++    Com inventário da aquisição, recurso -> arquivo sai da proveniência (módulo, arquivo, caminho, sha256); sem ele,
++    de nome + tamanho confirmados pela seção. Item não adquirido ou sem origem confirmada fica visível e não adjudicável."""
+     moodle = Path(fonte["moodle_dir"])
+     locais, nao_usados = arquivos_locais(leitor, moodle)
+     for a in locais:
+         a["sha"] = sha_b(leitor.le(a["caminho"]))
+-    por_nome = {}
++    por_nome, por_rel = {}, {a["rel"]: a for a in locais}
+     for a in locais:
+         por_nome.setdefault((a["nome"], a["tamanho"]), []).append(a)
++    inv, inv_sha = carrega_inventario(fonte)
+     materiais, estrutura = {}, {"formato": None, "secoes": [], "rotulos": [], "modulos": []}
+     usados = set()
+ 
+-    def acrescenta(chave, reg, ocorr):
+-        m = materiais.setdefault(chave, {**reg, "ocorrencias": []})
++    def acrescenta(chave, reg, ocorr, ligacao=None):
++        m = materiais.setdefault(chave, {**reg, "ocorrencias": [], "ligacoes": set()})
+         if ocorr not in m["ocorrencias"]:
+             m["ocorrencias"].append(ocorr)
++        if ligacao:
++            m["ligacoes"].add(ligacao)
++
++    def sem_arquivo(tipo, chave, c, ocorr, motivo=None):
++        reg = {"tipo": tipo, "adjudicavel": False, "arquivo": None, "nome_original": c["filename"], "sha256": None,
++               "tamanho": c["filesize"], "url": None}
++        acrescenta(chave, {**reg, "motivo": motivo} if motivo else reg, ocorr)
+ 
+     cj = moodle / "raw/moodle/contents.json"
+     if cj.is_file():
+@@ -295,6 +440,8 @@ def descobre(leitor, fonte):
+                 modname, nome_mod = str(mod["modname"]), str(mod["name"] or "")
+                 estrutura["modulos"].append({"secao": nome_sec, "nome": nome_mod, "modname": modname})
+                 ocorr = {"secao": nome_sec, "modulo": nome_mod, "modname": modname}
++                arquivos_mod = [c for c in ({k: x.get(k) for k in CONTEUDO_OK} for x in mod["contents"] or [])
++                                if c["type"] == "file"]
+                 if modname == "label":
+                     estrutura["rotulos"].append({"secao": nome_sec, "texto": texto_html(mod["description"])})
+                 elif modname == "url":
+@@ -302,26 +449,50 @@ def descobre(leitor, fonte):
+                     acrescenta("url:" + url, {"tipo": "link_externo", "adjudicavel": False, "arquivo": None,
+                                               "nome_original": nome_mod, "sha256": None, "tamanho": None, "url": url}, ocorr)
+                 elif modname == "page":
+-                    paginas = sorted((x for x in locais if x["rel"].startswith(f"raw/moodle/pages/{mod['id']}-")),
+-                                     key=lambda x: x["rel"])
++                    htmls = [c for c in arquivos_mod if str(c["filename"]).lower().endswith((".html", ".htm"))]
++                    if inv is None:
++                        paginas = sorted((x for x in locais if x["rel"].startswith(f"raw/moodle/pages/{mod['id']}-")),
++                                         key=lambda x: x["rel"])
++                    else:
++                        paginas = []
++                        for c in htmls:
++                            a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
++                            if a is None:
++                                sem_arquivo("arquivo_nao_adquirido", f"naoadquirido:{mod['id']}/{c['filename']}", c, ocorr,
++                                            "aquisição: " + status)
++                            else:
++                                paginas.append(a)
+                     if len(paginas) > 1:
+                         raise AmbiguidadeOrigem(f"página {mod['id']}: {[x['rel'] for x in paginas]}")
+                     for a in paginas:
+                         usados.add(a["rel"])
+-                        acrescenta("arq:" + a["sha"], {"tipo": "pagina", "fonte": a, "nome_original": a["nome"]}, ocorr)
++                        acrescenta("arq:" + a["sha"], {"tipo": "pagina", "fonte": a, "nome_original": a["nome"]}, ocorr,
++                                   "pagina_do_modulo" if inv is None else "inventario_aquisicao")
++                    for c in arquivos_mod:   # anexo de página: registrado, não entregue (fora da fonte do pacote)
++                        if c not in htmls:
++                            sem_arquivo("anexo_de_pagina", f"anexo:{mod['id']}/{c['filename']}", c, ocorr,
++                                        "anexo de página não entregue ao adjudicador")
+                 elif modname in ("resource", "folder", "assign"):
+-                    for c in mod["contents"] or []:
+-                        c = {k: c.get(k) for k in CONTEUDO_OK}
+-                        if c["type"] != "file":
+-                            continue
+-                        a = resolve_origem(c, nome_sec, por_nome)
+-                        if a is None:
+-                            acrescenta("semfonte:" + str(c["filename"]), {"tipo": "arquivo_sem_fonte_local", "adjudicavel": False,
+-                                                                         "arquivo": None, "nome_original": c["filename"],
+-                                                                         "sha256": None, "tamanho": c["filesize"], "url": None}, ocorr)
+-                            continue
++                    for c in arquivos_mod:
++                        if inv is not None:
++                            a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
++                            if a is None:
++                                sem_arquivo("arquivo_nao_adquirido", f"naoadquirido:{mod['id']}/{c['filename']}", c, ocorr,
++                                            "aquisição: " + status)
++                                continue
++                            ligacao = "inventario_aquisicao"
++                        else:
++                            a, ligacao = resolve_origem(c, nome_sec, por_nome)
++                            if ligacao == "origem_nao_confirmada":
++                                sem_arquivo("origem_nao_confirmada", f"naoconfirmada:{mod['id']}/{c['filename']}", c, ocorr,
++                                            "arquivo de mesmo nome e tamanho só na pasta de outra seção; não ligado")
++                                continue
++                            if a is None:
++                                sem_arquivo("arquivo_sem_fonte_local", "semfonte:" + str(c["filename"]), c, ocorr)
++                                continue
+                         usados.add(a["rel"])
+-                        acrescenta("arq:" + a["sha"], {"tipo": "arquivo", "fonte": a, "nome_original": c["filename"]}, ocorr)
++                        acrescenta("arq:" + a["sha"], {"tipo": "arquivo", "fonte": a, "nome_original": c["filename"]}, ocorr,
++                                   ligacao)
+         for a in locais:   # mesmo nome e bytes de um arquivo usado: cópia redundante, registrada
+             if a["rel"] not in usados and ("arq:" + a["sha"]) in materiais:
+                 nao_usados[a["rel"]] = "cópia idêntica de material já incluído"
+@@ -330,17 +501,17 @@ def descobre(leitor, fonte):
+     else:
+         estrutura["formato"] = "pastas"
+         sobras = locais
+-    for a in sobras:   # arquivos locais sem módulo correspondente: seção = pasta de primeiro nível
+-        secao = a["rel"].split("/", 1)[0] if "/" in a["rel"] else ""
++    for a in sobras:   # arquivos locais sem módulo correspondente: seção = pasta de seção (sob stash/, se houver)
++        secao = pasta_da_secao(a["rel"])
+         if estrutura["formato"] == "pastas" and secao and secao not in [s["nome"] for s in estrutura["secoes"]]:
+             estrutura["secoes"].append({"numero": None, "nome": secao, "resumo": ""})
+         acrescenta("arq:" + a["sha"], {"tipo": "arquivo", "fonte": a, "nome_original": a["nome"]},
+-                   {"secao": secao, "modulo": "", "modname": ""})
++                   {"secao": secao, "modulo": "", "modname": ""}, "sem_modulo")
+     escolhidos = {m["fonte"]["rel"] for m in materiais.values() if "fonte" in m}
+     for a in locais:   # cópia com os mesmos bytes de um material já incluído: registrada, nunca some
+         if a["rel"] not in escolhidos and a["rel"] not in nao_usados:
+             nao_usados[a["rel"]] = "cópia idêntica de material já incluído"
+-    return materiais, estrutura, nao_usados
++    return materiais, estrutura, nao_usados, inv_sha
+ 
+ 
+ def json_bytes(obj):
+@@ -355,9 +526,15 @@ def monta(fonte, destino):
+     moodle = Path(fonte["moodle_dir"])
+     plano_arq, plano_txt = Path(fonte["plano_arquivo"]), Path(fonte["plano_texto"])
+     leitor = Leitor([moodle, plano_arq, plano_txt])   # instruções = documento do protocolo, lido à parte
+-    materiais, estrutura, nao_usados = descobre(leitor, fonte)
++    materiais, estrutura, nao_usados, inv_sha = descobre(leitor, fonte)
++    for p in (plano_arq, plano_txt):   # o plano é entregue e gera os rótulos: mesma política de cegamento dos materiais
++        motivo = verifica_material(p.name, leitor.le(p))
++        if motivo:
++            raise PlanoRecusado(f"{p.name}: {motivo}; pacote não gerado")
+     unidades, topicos = rotulos_do_plano(leitor.le(plano_txt).decode("utf-8"))
+     arquivos, lista, fontes_lidas = {}, [], {}
++    if inv_sha:
++        fontes_lidas["aquisicao:" + Path(fonte["inventario"]).name] = {"sha256": inv_sha, "papel": "inventario_aquisicao"}
+     destino.mkdir(parents=True)
+ 
+     def grava(rel, dados, origem):
+@@ -374,7 +551,8 @@ def monta(fonte, destino):
+         if "fonte" in m:
+             dados = leitor.le(m["fonte"]["caminho"])
+             motivo = verifica_material(m["nome_original"] if m["tipo"] != "pagina" else m["fonte"]["nome"], dados)
+-            fontes_lidas["moodle:" + m["fonte"]["rel"]] = {"sha256": sha_b(dados), "papel": m["tipo"] if not motivo else "recusado"}
++            fontes_lidas["moodle:" + m["fonte"]["rel"]] = {"sha256": sha_b(dados), "papel": m["tipo"] if not motivo else "recusado",
++                                                          "ligacao": sorted(m["ligacoes"])}
+             if motivo:   # recusado: não é copiado, fica visível e não adjudicável
+                 reg.update(tipo="recusado", adjudicavel=False, arquivo=None, sha256=sha_b(dados), tamanho=len(dados), url=None,
+                            motivo=motivo)
+@@ -384,6 +562,8 @@ def monta(fonte, destino):
+                 reg.update(adjudicavel=True, arquivo=rel, sha256=sha_b(dados), tamanho=len(dados), url=None)
+         else:
+             reg.update(adjudicavel=m["adjudicavel"], arquivo=None, sha256=m["sha256"], tamanho=m["tamanho"], url=m["url"])
++            if m.get("motivo"):
++                reg["motivo"] = m["motivo"]
+         lista.append(reg)
+     cj = moodle / "raw/moodle/contents.json"
+     if cj.is_file():
+@@ -398,7 +578,7 @@ def monta(fonte, destino):
+     def ent(*chaves):
+         return [{"fonte": k, "sha256": fontes_lidas[k]["sha256"]} for k in sorted(chaves)]
+ 
+-    moodle_ents = [k for k in fontes_lidas if k.startswith("moodle:")]
++    moodle_ents = [k for k in fontes_lidas if k.startswith(("moodle:", "aquisicao:"))]
+     grava("materiais.json", json_bytes({**base, "materiais": lista}),
+           {"tipo": "derivado", "funcao": "descobre", "entradas": ent(*moodle_ents)})
+     grava("moodle_estrutura.json", json_bytes({**base, **estrutura}),
+@@ -452,7 +632,7 @@ def audita(fonte, pacote):
+             prob.append(f"{rel}: cópia bruta difere da fonte declarada")
+         if not (rel.startswith(("materiais/", "plano/")) or rel in GERADOS):
+             prob.append(f"{rel}: arquivo fora do leiaute permitido")
+-        if rel.startswith("materiais/") and p.is_file():
++        if rel.startswith(("materiais/", "plano/")) and p.is_file():
+             motivo = verifica_material(rel.split("__", 1)[-1], p.read_bytes())
+             if motivo:
+                 prob.append(f"{rel}: {motivo}")

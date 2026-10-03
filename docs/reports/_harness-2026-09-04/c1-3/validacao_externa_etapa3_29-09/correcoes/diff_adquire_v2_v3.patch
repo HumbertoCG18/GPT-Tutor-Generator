@@ -1,0 +1,307 @@
+diff --git a/validacao_externa_etapa2_29-09/aquisicao/adquire.py b/validacao_externa_etapa3_29-09/correcoes/aquisicao/adquire.py
+index 281e07d..34d7309 100644
+--- a/validacao_externa_etapa2_29-09/aquisicao/adquire.py
++++ b/validacao_externa_etapa3_29-09/correcoes/aquisicao/adquire.py
+@@ -6,6 +6,13 @@ webservice), `parse_moodle_course`, `sanitize_folder_name` e `looks_like_expecte
+ atribuição, LLM ou sidecar. Nunca imprime nem grava URL com parâmetro de autenticação, token, cookie ou credencial;
+ erros de rede são registrados só pelo tipo (a mensagem pode conter a URL autenticada).
+ 
++v3 (etapa 3, sem rede; ../../../validacao_externa_etapa2_29-09/aquisicao/adquire.py é a versão executada em 29/09):
++- anexo de página fora da raiz do curso tem referência válida (`base` + `caminho` relativo a ela) e é congelado;
++- limites por arquivo e total valem para os bytes REAIS (leitura cortada em limite + 1), além do `filesize` declarado;
++- falha de um arquivo vira status `falha_local:<Tipo>` e o curso continua; os registros vão para a lista do chamador
++  na hora e o inventário é gravado a cada curso e no `finally` (`concluido: false` se interrompido);
++- `filepath` do Moodle registrado; nenhum arquivo sobrescrito; `congelar` recusa inventário parcial.
++
+ Modos (em ordem):
+   python adquire.py --catalogo    catálogo (campos permitidos) + triagem (exclusões, exposição, ordem)
+   python adquire.py --baixar      baixa as disciplinas N0 em ordem, sob orçamento e regra de parada
+@@ -29,7 +36,9 @@ logging.disable(logging.CRITICAL)
+ AQUI = Path(__file__).resolve().parent
+ REPO = next(p for p in AQUI.parents if (p / ".git").is_dir())
+ HOME = Path.home()
+-MAN = json.loads((AQUI / "manifesto_aquisicao.json").read_text(encoding="utf-8"))
++ETAPA2 = AQUI.parents[2] / "validacao_externa_etapa2_29-09"   # v3: manifesto, enumerador e candidatos da etapa 2
++MAN_P = ETAPA2 / "aquisicao/manifesto_aquisicao.json"
++MAN = json.loads(MAN_P.read_text(encoding="utf-8"))
+ DESTINO = REPO / ".frzero/validacao_externa_aquisicao_29-09"
+ SAL = "vocab-validacao-externa-2026-09-29"
+ ORC = MAN["orcamento"]
+@@ -40,7 +49,7 @@ IDS_CONHECIDOS = {"95473": "LR", "95227": "LSO", "92619": "UX"}   # ids citados
+ sys.path.insert(0, str(REPO))
+ from src.builder.sources import moodle as M  # noqa: E402  (só funções de webservice, nomes e assinatura)
+ 
+-_spec = importlib.util.spec_from_file_location("enum_v2", AQUI.parent / "correcoes/populacao/enumera_candidatos.py")
++_spec = importlib.util.spec_from_file_location("enum_v2", ETAPA2 / "correcoes/populacao/enumera_candidatos.py")
+ EV2 = importlib.util.module_from_spec(_spec)
+ _spec.loader.exec_module(EV2)
+ 
+@@ -84,7 +93,7 @@ def cliente():
+ 
+ 
+ def conhecidos():
+-    dados = json.loads((AQUI.parent / "correcoes/populacao/candidatos_29-09.json").read_text(encoding="utf-8"))
++    dados = json.loads((ETAPA2 / "correcoes/populacao/candidatos_29-09.json").read_text(encoding="utf-8"))
+     return {chave(re.sub(r"\s*\(.*?\)\s*$", "", c["nome"])): c["sigla"] for c in dados["candidatos"]}
+ 
+ 
+@@ -139,7 +148,7 @@ def catalogo():
+     grava_json(AQUI / "catalogo.json", {"esquema": "catalogo-1", "host_confere_com_a_conta": host_ok,
+                                         "n": len(linhas), "cursos": sorted(linhas, key=lambda x: int(x["id"]))})
+     ordem = sorted((t for t in triagem if t["classe"] == "N0"), key=lambda t: t["ordem"])
+-    grava_json(AQUI / "triagem.json", {"esquema": "triagem-1", "manifesto_sha256": sha((AQUI / "manifesto_aquisicao.json").read_bytes()),
++    grava_json(AQUI / "triagem.json", {"esquema": "triagem-1", "manifesto_sha256": sha(MAN_P.read_bytes()),
+                                        "cursos": sorted(triagem, key=lambda t: int(t["id"])),
+                                        "ordem_de_download": [t["id"] for t in ordem]})
+     contagem = {}
+@@ -149,65 +158,87 @@ def catalogo():
+ 
+ 
+ # ------------------------------------------------------------------------------------------- download
+-def baixa_arquivo(cli, fileurl, nome):
++def baixa_arquivo(cli, fileurl, nome, limite_arquivo, restante):
++    """(bytes, status, bytes lidos). Lê no máximo o menor limite + 1 byte: o limite vale para os bytes REAIS."""
++    teto = max(0, min(limite_arquivo, restante))
+     try:
+         with urllib.request.urlopen(cli._download_url(fileurl), timeout=120) as r:
+             ctype = (r.headers.get("content-type") or "").lower()
+-            dados = r.read()
++            dados = r.read(teto + 1)
+     except urllib.error.HTTPError as exc:
+-        return None, f"falha_http:{exc.code}"
++        return None, f"falha_http:{exc.code}", 0
+     except Exception as exc:   # noqa: BLE001  (só o tipo: a mensagem pode conter a URL autenticada)
+-        return None, f"falha_http:{type(exc).__name__}"
++        return None, f"falha_http:{type(exc).__name__}", 0
++    if len(dados) > teto:
++        return None, "acima_do_limite_real" if len(dados) > limite_arquivo else "nao_baixado_orcamento_real", len(dados)
+     if ctype.startswith(("text/html", "application/json")) and not nome.lower().endswith((".html", ".htm", ".json")):
+-        return None, "tipo_inesperado"
++        return None, "tipo_inesperado", len(dados)
+     if not M.looks_like_expected(nome, dados):
+-        return None, "assinatura_invalida"
+-    return dados, "ok"
++        return None, "assinatura_invalida", len(dados)
++    return dados, "ok", len(dados)
++
++
++def nao_sobrescreve(alvo):
++    stem, suf, k = alvo.stem, alvo.suffix, 2
++    while alvo.exists():
++        alvo, k = alvo.with_name(f"{stem} ({k}){suf}"), k + 1
++    return alvo
++
+ 
++def baixa_curso(cli, cid, raiz, orcamento, arquivos):
++    """Acrescenta em `arquivos` (lista do chamador) um registro por item, na hora: falha posterior não apaga os anteriores.
+ 
+-def baixa_curso(cli, cid, raiz, orcamento):
++    `caminho` é relativo à `base`: "curso" (a raiz do curso) ou "anexos_de_pagina" (`<id>_anexos_de_pagina`, ao lado)."""
+     contents = cli.get_course_contents(cid)
+     grava_json(raiz / "raw/moodle/contents.json", limpa_contents(contents))
+-    arquivos = []
++    anexos = raiz.parent / f"{raiz.name}_anexos_de_pagina"
+     for sec in contents or []:
+         secao = M.sanitize_folder_name(str(sec.get("name") or ""))
+         for mod in sec.get("modules") or []:
+             modname, mid = str(mod.get("modname")), str(mod.get("id"))
+             for c in mod.get("contents") or []:
+                 nome = str(c.get("filename") or "")
+-                reg = {"secao": secao, "modulo_id": mid, "modname": modname, "arquivo": nome, "tamanho_api": c.get("filesize")}
++                reg = {"secao": secao, "modulo_id": mid, "modname": modname, "arquivo": nome, "filepath": c.get("filepath"),
++                       "tamanho_api": c.get("filesize")}
+                 if c.get("type") == "url" or modname == "url":
+                     arquivos.append({**reg, "status": "link_externo"})
+                     continue
+                 if c.get("type") != "file" or not nome or not c.get("fileurl"):
+                     arquivos.append({**reg, "status": "sem_arquivo"})
+                     continue
+-                if modname == "page" and nome.lower().endswith((".html", ".htm")):
+-                    alvo = raiz / "raw/moodle/pages" / f"{mid}-{nome}"
+-                elif modname == "page":   # anexo de página: fora da raiz do curso (não conta nas contagens nem vira material)
+-                    alvo = raiz.parent / f"{raiz.name}_anexos_de_pagina" / f"{mid}-{nome}"
+-                else:
+-                    alvo = raiz / "stash" / secao / nome
+-                    if alvo.exists():   # colisão de nome na seção: pasta do módulo (+ subpasta do Moodle), nunca sobrescreve
+-                        sub = [x for x in str(c.get("filepath") or "").strip("/").split("/") if x]
+-                        alvo, k = raiz / "stash" / secao / f"_mod{mid}" / Path(*sub, nome), 2
+-                        while alvo.exists():
+-                            alvo, k = alvo.with_name(f"{Path(nome).stem} ({k}){Path(nome).suffix}"), k + 1
+-                        reg["colisao"] = True
+-                if (c.get("filesize") or 0) > ORC["bytes_por_arquivo_max"]:
+-                    arquivos.append({**reg, "status": "acima_do_limite"})
+-                    continue
+-                if orcamento["bytes"] + (c.get("filesize") or 0) > ORC["bytes_totais_max"]:
+-                    arquivos.append({**reg, "status": "nao_baixado_orcamento"})
+-                    continue
+-                dados, status = baixa_arquivo(cli, c["fileurl"], nome)
+-                if dados is not None:
+-                    alvo.parent.mkdir(parents=True, exist_ok=True)
+-                    alvo.write_bytes(dados)
+-                    orcamento["bytes"] += len(dados)
+-                    reg.update(caminho=alvo.relative_to(raiz).as_posix(), sha256=sha(dados), bytes=len(dados))
++                try:
++                    base, base_dir = "curso", raiz
++                    if modname == "page" and nome.lower().endswith((".html", ".htm")):
++                        alvo = nao_sobrescreve(raiz / "raw/moodle/pages" / f"{mid}-{nome}")
++                    elif modname == "page":   # anexo de página: fora da raiz do curso, com referência própria
++                        base, base_dir = "anexos_de_pagina", anexos
++                        alvo = nao_sobrescreve(anexos / f"{mid}-{nome}")
++                    else:
++                        alvo = raiz / "stash" / secao / nome
++                        if alvo.exists():   # colisão de nome na seção: pasta do módulo (+ subpasta do Moodle), nunca sobrescreve
++                            sub = [x for x in str(c.get("filepath") or "").strip("/").split("/") if x]
++                            alvo = nao_sobrescreve(raiz / "stash" / secao / f"_mod{mid}" / Path(*sub, nome))
++                            reg["colisao"] = True
++                    if (c.get("filesize") or 0) > ORC["bytes_por_arquivo_max"]:
++                        arquivos.append({**reg, "status": "acima_do_limite"})
++                        continue
++                    if orcamento["bytes"] + (c.get("filesize") or 0) > ORC["bytes_totais_max"]:
++                        arquivos.append({**reg, "status": "nao_baixado_orcamento"})
++                        continue
++                    dados, status, lidos = baixa_arquivo(cli, c["fileurl"], nome, ORC["bytes_por_arquivo_max"],
++                                                         ORC["bytes_totais_max"] - orcamento["bytes"])
++                    if dados is None and lidos:
++                        reg["bytes_lidos"] = lidos
++                    if dados is not None:
++                        reg.update(base=base, caminho=alvo.relative_to(base_dir).as_posix(), sha256=sha(dados), bytes=len(dados))
++                        alvo.parent.mkdir(parents=True, exist_ok=True)
++                        alvo.write_bytes(dados)
++                        orcamento["bytes"] += len(dados)
++                except Exception as exc:   # noqa: BLE001  falha local de um arquivo: registrada, o curso continua
++                    status = f"falha_local:{type(exc).__name__}"
++                    for k in ("base", "caminho", "sha256", "bytes"):
++                        reg.pop(k, None)
+                 arquivos.append({**reg, "status": status})
+-    return arquivos
+ 
+ 
+ def baixar():
+@@ -217,63 +248,80 @@ def baixar():
+     cli, _ = cliente()
+     orcamento, cursos, elegiveis, falhas_seguidas, parada = {"bytes": 0}, [], 0, 0, "fim das disciplinas N0 do catálogo"
+     nomes = {t["id"]: t for t in tri["cursos"]}
+-    for n, cid in enumerate(tri["ordem_de_download"], 1):
+-        if len(cursos) >= ORC["cursos_baixados_max"]:
+-            parada = "10 cursos baixados"
+-            break
+-        if elegiveis >= MAX_ELEGIVEIS:
+-            parada = "6 cursos elegíveis (E2, E3, E4)"
+-            break
+-        if orcamento["bytes"] >= ORC["bytes_totais_max"]:
+-            parada = "orçamento de bytes atingido"
+-            break
+-        raiz = DESTINO / cid
+-        t0 = time.time()
+-        try:
+-            arquivos = baixa_curso(cli, cid, raiz, orcamento)
+-            erro = None
+-        except urllib.error.HTTPError as exc:
+-            arquivos, erro = [], f"falha_http:{exc.code}"
+-        except Exception as exc:   # noqa: BLE001
+-            arquivos, erro = [], f"falha:{type(exc).__name__}"
+-        falhas_seguidas = falhas_seguidas + 1 if erro else 0
+-        est = EV2.estrutura(raiz) if raiz.is_dir() else {"potencialmente_adjudicaveis": 0, "com_fonte_local": 0}
+-        pl = EV2.plano({"fonte": str(raiz)}) if raiz.is_dir() else {"disponivel": False}
+-        e2, e3, e4 = pl["disponivel"], est.get("potencialmente_adjudicaveis", 0) >= EV2.MIN_ADJUDICAVEIS_CURSO, EV2.e4(est)
+-        elegiveis += bool(e2 and e3 and e4)
+-        status = {}
+-        for a in arquivos:
+-            status[a["status"]] = status.get(a["status"], 0) + 1
+-        cursos.append({"id": cid, "nome": nomes[cid]["nome"], "semestre": nomes[cid]["semestre"], "ordem": n, "erro": erro,
+-                       "segundos": round(time.time() - t0, 1), "status_arquivos": status, "arquivos": arquivos,
+-                       "E2": e2, "E3": e3, "E4": e4})
+-        print(f"  {n}. curso {cid}: {status} erro={erro} E2={e2} E3={e3} E4={e4}", flush=True)
+-        if falhas_seguidas >= MAX_FALHAS_SEGUIDAS:
+-            parada = "3 cursos seguidos com falha (parada por erro)"
+-            break
++    concluido = False
++    try:
++        for n, cid in enumerate(tri["ordem_de_download"], 1):
++            if len(cursos) >= ORC["cursos_baixados_max"]:
++                parada = "10 cursos baixados"
++                break
++            if elegiveis >= MAX_ELEGIVEIS:
++                parada = "6 cursos elegíveis (E2, E3, E4)"
++                break
++            if orcamento["bytes"] >= ORC["bytes_totais_max"]:
++                parada = "orçamento de bytes atingido"
++                break
++            raiz = DESTINO / cid
++            t0 = time.time()
++            curso = {"id": cid, "nome": nomes[cid]["nome"], "semestre": nomes[cid]["semestre"], "ordem": n,
++                     "erro": "interrompido", "arquivos": []}
++            cursos.append(curso)   # antes do download: interrupção ainda deixa o parcial no inventário
++            try:
++                baixa_curso(cli, cid, raiz, orcamento, curso["arquivos"])
++                erro = None
++            except urllib.error.HTTPError as exc:
++                erro = f"falha_http:{exc.code}"
++            except Exception as exc:   # noqa: BLE001
++                erro = f"falha:{type(exc).__name__}"
++            falhas_seguidas = falhas_seguidas + 1 if erro else 0
++            est = EV2.estrutura(raiz) if raiz.is_dir() else {"potencialmente_adjudicaveis": 0, "com_fonte_local": 0}
++            pl = EV2.plano({"fonte": str(raiz)}) if raiz.is_dir() else {"disponivel": False}
++            e2, e3, e4 = pl["disponivel"], est.get("potencialmente_adjudicaveis", 0) >= EV2.MIN_ADJUDICAVEIS_CURSO, EV2.e4(est)
++            elegiveis += bool(e2 and e3 and e4)
++            status = {}
++            for a in curso["arquivos"]:
++                status[a["status"]] = status.get(a["status"], 0) + 1
++            curso.update(erro=erro, segundos=round(time.time() - t0, 1), status_arquivos=status, E2=e2, E3=e3, E4=e4)
++            print(f"  {n}. curso {cid}: {status} erro={erro} E2={e2} E3={e3} E4={e4}", flush=True)
++            grava_inventario(parada, orcamento, cursos, tri, concluido=False)   # parcial a cada curso
++            if falhas_seguidas >= MAX_FALHAS_SEGUIDAS:
++                parada = "3 cursos seguidos com falha (parada por erro)"
++                break
++        concluido = True
++    finally:
++        grava_inventario(parada if concluido else "interrompido", orcamento, cursos, tri, concluido)
++    print("parada:", parada, "| cursos baixados:", len(cursos), "| elegíveis:", elegiveis, "| bytes:", orcamento["bytes"])
++
++
++def grava_inventario(parada, orcamento, cursos, tri, concluido):
+     nao_baixados = [c for c in tri["ordem_de_download"] if c not in {x["id"] for x in cursos}]
+-    grava_json(AQUI / "inventario_downloads.json", {"esquema": "inventario-downloads-1", "parada": parada,
+-                                                    "bytes_baixados": orcamento["bytes"], "cursos": cursos,
++    grava_json(AQUI / "inventario_downloads.json", {"esquema": "inventario-downloads-2", "concluido": concluido,
++                                                    "parada": parada, "bytes_baixados": orcamento["bytes"], "cursos": cursos,
+                                                     "n0_nao_baixados_por_parada": nao_baixados})
+-    print("parada:", parada, "| cursos baixados:", len(cursos), "| elegíveis:", elegiveis, "| bytes:", orcamento["bytes"])
+ 
+ 
+ def congelar():
+     inv_p = AQUI / "inventario_downloads.json"
+     inv = json.loads(inv_p.read_text(encoding="utf-8"))
++    if not inv.get("concluido", True):
++        sys.exit("inventário parcial (download interrompido): não congelo")
++
++    def arvore_de(d):
++        return {p.relative_to(d).as_posix(): sha(p.read_bytes()) for p in sorted(d.rglob("*")) if p.is_file()} if d.is_dir() else {}
++
+     cursos = {}
+     for c in inv["cursos"]:
+-        raiz = DESTINO / c["id"]
+-        arvore = {p.relative_to(raiz).as_posix(): sha(p.read_bytes()) for p in sorted(raiz.rglob("*")) if p.is_file()} if raiz.is_dir() else {}
+-        esperado = {a["caminho"]: a["sha256"] for a in c["arquivos"] if a.get("caminho")}
+-        cursos[c["id"]] = {"arvore": arvore, "arvore_sha": sha(json.dumps(arvore, sort_keys=True).encode()),
+-                           "arquivos_ok_conferem": all(arvore.get(k) == v for k, v in esperado.items()),
+-                           "extras_alem_dos_downloads": sorted(set(arvore) - set(esperado) - {"raw/moodle/contents.json"})}
+-    grava_json(AQUI / "fontes_congeladas.json", {"esquema": "fontes-congeladas-1", "inventario_sha256": sha(inv_p.read_bytes()),
++        arvores = {"curso": arvore_de(DESTINO / c["id"]), "anexos_de_pagina": arvore_de(DESTINO / f"{c['id']}_anexos_de_pagina")}
++        esperado = {(a.get("base", "curso"), a["caminho"]): a["sha256"] for a in c["arquivos"] if a.get("caminho")}
++        cursos[c["id"]] = {"arvore": arvores["curso"], "arvore_anexos_de_pagina": arvores["anexos_de_pagina"],
++                           "arvore_sha": sha(json.dumps(arvores, sort_keys=True).encode()),
++                           "arquivos_ok_conferem": all(arvores[b].get(k) == v for (b, k), v in esperado.items()),
++                           "extras_alem_dos_downloads": sorted(f"{b}:{k}" for b, arv in arvores.items() for k in arv
++                                                               if (b, k) not in esperado and (b, k) != ("curso", "raw/moodle/contents.json"))}
++    grava_json(AQUI / "fontes_congeladas.json", {"esquema": "fontes-congeladas-2", "inventario_sha256": sha(inv_p.read_bytes()),
+                                                  "raiz": DESTINO.relative_to(REPO).as_posix(), "cursos": cursos})
+-    print("congelado:", {k: (len(v["arvore"]), v["arquivos_ok_conferem"]) for k, v in cursos.items()})
++    print("congelado:", {k: (len(v["arvore"]) + len(v["arvore_anexos_de_pagina"]), v["arquivos_ok_conferem"]) for k, v in cursos.items()})
+ 
+ 
+ if __name__ == "__main__":
+-    {"--catalogo": catalogo, "--baixar": baixar, "--congelar": congelar}.get(
+-        sys.argv[1] if len(sys.argv) > 1 else "", lambda: sys.exit("modo: --catalogo | --baixar | --congelar"))()
++    sys.exit("adquire v3 (etapa 3): correção sem rede, testada só com cliente falso. Nova aquisição exige manifesto novo, "
++             "pasta própria e Gate de rede específico.")

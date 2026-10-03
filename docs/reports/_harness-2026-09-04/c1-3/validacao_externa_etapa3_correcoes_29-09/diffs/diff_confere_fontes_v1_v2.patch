@@ -1,0 +1,22 @@
+diff --git a/validacao_externa_etapa3_29-09/conferencia/confere_fontes.py b/validacao_externa_etapa3_correcoes_29-09/conferencia/confere_fontes.py
+index 97074ab..a1bf260 100644
+--- a/validacao_externa_etapa3_29-09/conferencia/confere_fontes.py
++++ b/validacao_externa_etapa3_correcoes_29-09/conferencia/confere_fontes.py
+@@ -1,4 +1,5 @@
+ """Conferência física local e READ-ONLY das fontes adquiridas na etapa 2 (29/09). Sem rede, sem escrita nas fontes.
++v2 (CONF01): o resumo traz `integridade_global` = bytes conferem E inventário completo E selo do inventário confere.
+ 
+ 1. bytes em disco x árvore congelada (`fontes_congeladas.json`) e x sha256 do inventário; divergências só listadas;
+ 2. inventário x `contents.json` congelado de cada curso, item a item (módulo, arquivo, multiplicidade);
+@@ -90,7 +91,10 @@ def main():
+                    for r in out["cursos"].values())
+     ok_inv = all(not (r["inventario_x_contents"]["sem_registro"] or r["inventario_x_contents"]["registro_sem_item_na_api"])
+                  and r["inventario_x_contents"]["todos_os_registros_com_status_conhecido"] for r in out["cursos"].values())
+-    out["resumo"] = {"bytes_conferem": ok_bytes, "inventario_completo": ok_inv, "status_total": dict(sorted(tot.items())),
++    selo = out["entradas"]["inventario_confere_com_congelamento"]
++    out["resumo"] = {"integridade_global": ok_bytes and ok_inv and selo,   # v2 (CONF01): inclui o selo do inventário
++                     "inventario_confere_com_congelamento": selo,
++                     "bytes_conferem": ok_bytes, "inventario_completo": ok_inv, "status_total": dict(sorted(tot.items())),
+                      "falhas": sum(len(r["falhas"]) for r in out["cursos"].values()),
+                      "duplicatas_no_curso": sum(len(r["duplicatas_no_curso"]) for r in out["cursos"].values()),
+                      "colisoes_de_nome": sum(len(r["colisoes_de_nome"]) for r in out["cursos"].values()),

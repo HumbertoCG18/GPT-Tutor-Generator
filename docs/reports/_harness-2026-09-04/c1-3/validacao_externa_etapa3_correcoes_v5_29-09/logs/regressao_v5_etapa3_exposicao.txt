@@ -1,0 +1,6 @@
+PASSED exposicao\test_verifica_exposicao.py::test_categorias_termo_trecho_e_omissao
+PASSED exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[0000000000000000000000000000000000000000-raizes0-x]
+PASSED exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes1-x]
+PASSED exposicao\test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes2-((]
+PASSED exposicao\test_verifica_exposicao.py::test_subpasta_nao_e_raiz
+5 passed in 1.56s

@@ -1,0 +1,4 @@
+tests\test_caracterizacao_blocos_atual.py:113: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+1 failed, 2458 passed, 4 skipped in 39.95s

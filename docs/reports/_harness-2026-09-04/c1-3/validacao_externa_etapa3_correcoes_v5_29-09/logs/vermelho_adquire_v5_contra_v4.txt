@@ -1,0 +1,14 @@
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_metadados_contados_pelo_corpo_recebido_nao_pelo_json_reserializado
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_metadados_acima_do_orcamento[com-content-length]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_metadados_acima_do_orcamento[sem-content-length]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_metadados_contados_no_caminho_de_falha[json-invalido]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_metadados_contados_no_caminho_de_falha[erro-da-api]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_catalogo_conta_site_info_e_get_users_courses
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_triagem_sem_contagem_do_catalogo_registra_impedimento
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_anexo_html_nao_vira_html_principal
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_colisao_com_index_html_de_anexo
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[dois-candidatos]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filepath]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filesize]
+FAILED correcoes\aquisicao\test_adquire_v5.py::test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-conteudos]
+13 failed in 1.66s

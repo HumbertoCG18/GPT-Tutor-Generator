@@ -1,0 +1,365 @@
+{
+ "esquema": "triagem-1",
+ "manifesto_sha256": "e0c541cc33661eae5009298d2765f3d933131956b4cfe1d2d2bde9a3ea958535",
+ "cursos": [
+  {
+   "id": "56102",
+   "nome": "Curso de Ciência da Computação",
+   "semestre": "",
+   "classe": "nao_disciplina",
+   "motivo": "fullname sem semestre AAAA/S",
+   "ordem": "7b542403390e774ae682e157ae0b125f40aa0a853b240cf1a8f5d6220c3438c4"
+  },
+  {
+   "id": "57823",
+   "nome": "Alunos Politécnica",
+   "semestre": "",
+   "classe": "nao_disciplina",
+   "motivo": "fullname sem semestre AAAA/S",
+   "ordem": "e47195054523116bf21cb026ff500210240c2591015e121ff9fe3231ddd5661a"
+  },
+  {
+   "id": "64677",
+   "nome": "PUCRS Carreiras",
+   "semestre": "",
+   "classe": "nao_disciplina",
+   "motivo": "fullname sem semestre AAAA/S",
+   "ordem": "002ae2acdc9da047a891f005e316b1a5833eaff034b4e00de002645af5a377ce"
+  },
+  {
+   "id": "73425",
+   "nome": "Fundamentos de D. de Software",
+   "semestre": "2025/1",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 1,
+    "exemplos": [
+     "docs/reports/_harness-2026-09-04/c1-3/pdf_identidade_hash_21-09.json"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "bab7f43706131f2261ab148e7adce974973629780f5c73270286fdb037395a53"
+  },
+  {
+   "id": "80922",
+   "nome": "Organização e A. de Processadores",
+   "semestre": "2025/1",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "c9a8cc089f1b568d54651bc0f5f377df9d45d39872876bd6946e8b87bb8aac8f"
+  },
+  {
+   "id": "81476",
+   "nome": "Álgebra Linear e Geometria Analítica",
+   "semestre": "2025/1",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "6606e5ec3ac30ca41e516fd0c703848d814bc746b4b0e17494c52bfc9386c4ff"
+  },
+  {
+   "id": "82154",
+   "nome": "LÓGICA PARA COMPUTAÇÃO",
+   "semestre": "2025/1",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 2,
+    "exemplos": [
+     "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "docs/reports/_harness-2026-09-02/moodle_sections/MF.json"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "9f6c0d203f3a351760b49acef2c263703f12b84d71fdf5caf89ba898b79e8fb9"
+  },
+  {
+   "id": "82667",
+   "nome": "Programação de Baixo Nível",
+   "semestre": "2025/1",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "7390240e47c587cb99fed35da88b309aff232011e46aff068f499d63adc30fa2"
+  },
+  {
+   "id": "84490",
+   "nome": "Infraestrutura para Gestão de Dados",
+   "semestre": "2025/1",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 1,
+    "exemplos": [
+     "tests/test_moodle.py"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "7a643b59ba00dd4be657a37cb0636ac90e7af6a99741c6fb6617223265c327d2"
+  },
+  {
+   "id": "88738",
+   "nome": "Fundamentos de P. P. e Distribuído",
+   "semestre": "2025/2",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "340e3142249d50c6037278bbb62a3448129bb23180646548933f29a7e744d01e"
+  },
+  {
+   "id": "89045",
+   "nome": "Engenharia de Software I",
+   "semestre": "2025/2",
+   "classe": "excluido_correspondencia_parcial",
+   "siglas": [
+    "ES2"
+   ],
+   "motivo": "nome contém ou está contido no de um curso conhecido: excluído por cautela",
+   "ordem": "58cbf8d418f07b675a3dca1e7f4c9d2c8fdcc40bfb50f1bf82a44fa2ef8165e7"
+  },
+  {
+   "id": "89100",
+   "nome": "Programação Funcional",
+   "semestre": "2025/2",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "9d8a9f1b929cd4c220a48949d3807ba62398d3944ae6c70c487ba34fb13b5d60"
+  },
+  {
+   "id": "89447",
+   "nome": "Métodos Numéricos",
+   "semestre": "2025/2",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "8b58208b72fb9e9170c9a439051ebd78e1e979e5e86ec4701aa71cf9802ea895"
+  },
+  {
+   "id": "90231",
+   "nome": "Laboratório de Games e N. Gráficas",
+   "semestre": "2025/2",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "0eebc9c9467452bdd9db90e5316aee6932b89b30fceee562b8bec7866d41b0ef"
+  },
+  {
+   "id": "90572",
+   "nome": "Projeto e Otimização de Algoritmos",
+   "semestre": "2025/2",
+   "classe": "N0",
+   "exposicao": {
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "nenhuma exposição encontrada",
+   "ordem": "9ab9dc6f206de3dc5947025cb26fc2dab4ac71b15631c0a9182cb3fd94b17734"
+  },
+  {
+   "id": "92619",
+   "nome": "Experiência do Usuário",
+   "semestre": "2026/1",
+   "classe": "N1_conhecido",
+   "sigla": "UX",
+   "motivo": "já classificado N1 em 29/09: só piloto, não baixado",
+   "ordem": "1cd39e1e64ec86a2e60b138618d19391bec68b06c700fb4cb3269f8ac6a3c179"
+  },
+  {
+   "id": "92714",
+   "nome": "Engenharia de Software II",
+   "semestre": "2026/1",
+   "classe": "excluido_conhecido",
+   "sigla": "ES2",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "7921c8baf84489ec55f79de7e6c1fe5f09be912a45a4fe66b87d6961a425bc9c"
+  },
+  {
+   "id": "92717",
+   "nome": "Métodos Formais para Computação",
+   "semestre": "2026/1",
+   "classe": "excluido_conhecido",
+   "sigla": "MF",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "5cefde4a52fc81eaa5b09c5c617623601940c9c70ccfbe747885a9627f04c5d1"
+  },
+  {
+   "id": "92854",
+   "nome": "Sistemas Operacionais",
+   "semestre": "2026/1",
+   "classe": "excluido_conhecido",
+   "sigla": "SO",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "edb6a7578634fce89bc7dae0d20ff16754e102bd42a27efeaeb9c6c21a0c650c"
+  },
+  {
+   "id": "93156",
+   "nome": "Inteligência Artificial",
+   "semestre": "2026/1",
+   "classe": "excluido_conhecido",
+   "sigla": "IA",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "e487b9c4edd6854abd1bcc7100b2874aed04d996825ac88dcf8be21c94682b5a"
+  },
+  {
+   "id": "93728",
+   "nome": "Teoria da Computabilidade e Complexidade",
+   "semestre": "2026/1",
+   "classe": "excluido_conhecido",
+   "sigla": "TCC",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "1134999ad9f2144a052826ae1efd65b5d0ca71375776d67ce3a9e6a1d671cb3e"
+  },
+  {
+   "id": "93730",
+   "nome": "Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Soraia R Musse - Gabriel F Silva - Tiago C Ferreto",
+   "semestre": "2026/1",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 2,
+    "exemplos": [
+     "docs/reports/_archive/2026-06-18-s0-substrato-medicao-cross-curso.md",
+     "tests/test_moodle.py"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "bf91fe588ab20f6584597083b399083b7f05a7b2201c7f43fe2cca094195e43c"
+  },
+  {
+   "id": "94492",
+   "nome": "Simulação e Métodos Analíticos - 2026/2 - Modalidade Online",
+   "semestre": "2026/2",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 1,
+    "exemplos": [
+     "docs/reports/_workflow-audit-2026-09-15/skills-inventory.csv"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "14d90feac07f73100c5854202efd1c75361ba698312c1091d86656898ed6e1f7"
+  },
+  {
+   "id": "95106",
+   "nome": "Computação Gráfica",
+   "semestre": "2026/2",
+   "classe": "excluido_conhecido",
+   "sigla": "CG",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "7511134dd027fb20f6ae0047cc0950c8ae1720f087c8ba53f5b6957fe4f2ae4b"
+  },
+  {
+   "id": "95139",
+   "nome": "Fundamentos de Redes de Computadores",
+   "semestre": "2026/2",
+   "classe": "excluido_conhecido",
+   "sigla": "FR",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "85bd4fda12cc4086d63df00af3958381f0ba11e37f68008cb7b0f302a2bb8a2b"
+  },
+  {
+   "id": "95227",
+   "nome": "Laboratório de Sistemas Operacionais",
+   "semestre": "2026/2",
+   "classe": "N1_conhecido",
+   "sigla": "LSO",
+   "motivo": "já classificado N1 em 29/09: só piloto, não baixado",
+   "ordem": "32e8c0506a80dd2e53bcf023983a76326b5e1cd003e73f083550bf7fb2d00ee3"
+  },
+  {
+   "id": "95473",
+   "nome": "Laboratório de Redes de Computadores",
+   "semestre": "2026/2",
+   "classe": "excluido_conhecido",
+   "sigla": "LR",
+   "motivo": "desenvolvimento ou LR: fora da população principal",
+   "ordem": "27d185137d287b1058059b81af7aee94a619439055b3f5f96790d0c0aa76374f"
+  },
+  {
+   "id": "95864",
+   "nome": "Língua Inglesa IV",
+   "semestre": "2026/2",
+   "classe": "N1",
+   "exposicao": {
+    "mencoes_repo": 1,
+    "exemplos": [
+     "docs/reports/_archive/pendencias-historico-ate-2026-09-02.md"
+    ],
+    "commits": [],
+    "falhas_da_busca": [],
+    "download_anterior": false
+   },
+   "motivo": "exposição no repositório ou download anterior",
+   "ordem": "828c536e1110281356b7505d7b3793d95b66e49a69ae8ec2e9c2bc5bd42ae611"
+  }
+ ],
+ "ordem_de_download": [
+  "90231",
+  "88738",
+  "81476",
+  "82667",
+  "89447",
+  "90572",
+  "89100",
+  "80922"
+ ]
+}

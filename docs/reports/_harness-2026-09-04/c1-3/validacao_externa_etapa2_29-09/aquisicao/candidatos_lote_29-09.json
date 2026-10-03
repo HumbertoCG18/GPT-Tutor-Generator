@@ -1,0 +1,62 @@
+{
+ "esquema": "candidatos-1",
+ "descricao": "Lote adquirido em 29/09 (disciplinas N0 do catálogo, na ordem de download).",
+ "candidatos": [
+  {
+   "sigla": "M90231",
+   "nome": "Laboratório de Games e N. Gráficas",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/90231",
+   "padrao": "(?<!\\d)90231(?!\\d)|Laboratório\\ de\\ Games\\ e\\ N\\.\\ Gráficas|12297\\-04",
+   "origem": "aquisição 29/09, Moodle 90231, 2025/2"
+  },
+  {
+   "sigla": "M88738",
+   "nome": "Fundamentos de P. P. e Distribuído",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/88738",
+   "padrao": "(?<!\\d)88738(?!\\d)|Fundamentos\\ de\\ P\\.\\ P\\.\\ e\\ Distribuído|98713\\-04",
+   "origem": "aquisição 29/09, Moodle 88738, 2025/2"
+  },
+  {
+   "sigla": "M81476",
+   "nome": "Álgebra Linear e Geometria Analítica",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/81476",
+   "padrao": "(?<!\\d)81476(?!\\d)|Álgebra\\ Linear\\ e\\ Geometria\\ Analítica|95302\\-04",
+   "origem": "aquisição 29/09, Moodle 81476, 2025/1"
+  },
+  {
+   "sigla": "M82667",
+   "nome": "Programação de Baixo Nível",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/82667",
+   "padrao": "(?<!\\d)82667(?!\\d)|Programação\\ de\\ Baixo\\ Nível|98701\\-04",
+   "origem": "aquisição 29/09, Moodle 82667, 2025/1"
+  },
+  {
+   "sigla": "M89447",
+   "nome": "Métodos Numéricos",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/89447",
+   "padrao": "(?<!\\d)89447(?!\\d)|Métodos\\ Numéricos|4646N\\-04",
+   "origem": "aquisição 29/09, Moodle 89447, 2025/2"
+  },
+  {
+   "sigla": "M90572",
+   "nome": "Projeto e Otimização de Algoritmos",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/90572",
+   "padrao": "(?<!\\d)90572(?!\\d)|Projeto\\ e\\ Otimização\\ de\\ Algoritmos|4646Z\\-04",
+   "origem": "aquisição 29/09, Moodle 90572, 2025/2"
+  },
+  {
+   "sigla": "M89100",
+   "nome": "Programação Funcional",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/89100",
+   "padrao": "(?<!\\d)89100(?!\\d)|Programação\\ Funcional|98703\\-02",
+   "origem": "aquisição 29/09, Moodle 89100, 2025/2"
+  },
+  {
+   "sigla": "M80922",
+   "nome": "Organização e A. de Processadores",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/80922",
+   "padrao": "(?<!\\d)80922(?!\\d)|Organização\\ e\\ A\\.\\ de\\ Processadores|98G03\\-04",
+   "origem": "aquisição 29/09, Moodle 80922, 2025/1"
+  }
+ ]
+}

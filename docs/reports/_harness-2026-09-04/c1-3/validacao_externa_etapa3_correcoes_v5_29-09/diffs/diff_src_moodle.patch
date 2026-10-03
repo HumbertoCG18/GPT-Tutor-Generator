@@ -1,0 +1,86 @@
+diff --git a/src/builder/sources/moodle.py b/src/builder/sources/moodle.py
+index 67cf1302..e930b640 100644
+--- a/src/builder/sources/moodle.py
++++ b/src/builder/sources/moodle.py
+@@ -8,6 +8,7 @@ Só stdlib.
+ """
+ from __future__ import annotations
+ 
++import http.client
+ import json
+ import logging
+ import re
+@@ -406,18 +407,72 @@ def backfill_source_section_from_api(manifest_entries, contents):
+     return assignments, unmatched, ambiguous
+ 
+ 
++_BLOCO_LEITURA = 65536   # leitura do corpo em blocos: cada bloco é contado ao chegar
++
++
++class OrcamentoExcedido(RuntimeError):
++    """Orçamento de bytes de corpo do webservice esgotado ou insuficiente; `parcial` = corpo lido nesta chamada."""
++
++    def __init__(self, mensagem: str, parcial: bytes = b""):
++        super().__init__(mensagem)
++        self.parcial = parcial
++
++
+ class MoodleClient:
+     def __init__(self, base_url: str, token: str):
+         self.base = str(base_url).rstrip("/")
+         self._token = token
++        # Orçamento opcional (None = sem limite, comportamento anterior). Conta só os bytes dos CORPOS HTTP das
++        # respostas do webservice lidos por esta instância; não inclui cabeçalhos, TLS nem outro tráfego de rede.
++        self.bytes_recebidos = 0
++        self.limite_bytes = None
++        self._ultimo = []
++
++    @property
++    def ultimo_corpo(self) -> bytes:
++        """Corpo (ou parcial) da última resposta lida, preservado mesmo quando a chamada falha."""
++        return b"".join(self._ultimo)
++
++    def _le_resposta(self, r) -> bytes:
++        """Lê o corpo em blocos contando cada um. Com limite, nunca lê além do orçamento: Content-Length acima dele não
++        é lido; sem Content-Length, corpo que enche o orçamento sem fim confirmado é recusado (sem sondar)."""
++        self._ultimo = []
++        declarado = str(r.headers.get("content-length") or "").strip()
++        esperado = int(declarado) if declarado.isdigit() else None
++        teto = None if self.limite_bytes is None else self.limite_bytes - self.bytes_recebidos
++        if teto is not None and esperado is not None and esperado > teto:
++            raise OrcamentoExcedido(f"Content-Length {esperado} acima do orçamento restante {teto}")
++        lido = 0
++        while True:
++            pedir = _BLOCO_LEITURA if teto is None else min(_BLOCO_LEITURA, teto - lido)
++            if pedir <= 0:
++                break
++            try:
++                bloco = r.read(pedir)
++            except http.client.IncompleteRead as exc:   # corpo chunked interrompido: conta o que chegou
++                self._ultimo.append(exc.partial)
++                self.bytes_recebidos += len(exc.partial)
++                raise http.client.IncompleteRead(self.ultimo_corpo, exc.expected) from None
++            if not bloco:
++                break
++            self._ultimo.append(bloco)
++            self.bytes_recebidos += len(bloco)
++            lido += len(bloco)
++        if esperado is not None and lido < esperado:
++            raise http.client.IncompleteRead(self.ultimo_corpo, esperado - lido)
++        if teto is not None and lido == teto and esperado is None:
++            raise OrcamentoExcedido("corpo sem Content-Length encheu o orçamento sem fim confirmado", self.ultimo_corpo)
++        return self.ultimo_corpo
+ 
+     def _call(self, wsfunction: str, **params):
++        if self.limite_bytes is not None and self.bytes_recebidos >= self.limite_bytes:
++            raise OrcamentoExcedido("orçamento de bytes esgotado antes da requisição")
+         url = self.base + "/webservice/rest/server.php"
+         data = {"wstoken": self._token, "wsfunction": wsfunction,
+                 "moodlewsrestformat": "json", **{k: str(v) for k, v in params.items()}}
+         req = urllib.request.Request(url, data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
+         with urllib.request.urlopen(req, timeout=30) as r:
+-            payload = json.loads(r.read().decode("utf-8"))
++            payload = json.loads(self._le_resposta(r).decode("utf-8"))
+         if isinstance(payload, dict) and payload.get("exception"):
+             raise RuntimeError(f"Moodle [{payload.get('errorcode')}]: {payload.get('message')}")
+         return payload

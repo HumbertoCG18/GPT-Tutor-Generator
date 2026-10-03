@@ -1,0 +1,3321 @@
+{
+ "esquema": "exposicao-local-1",
+ "entrada": {
+  "descricao": "Entrada da verificação local de exposição. Fora: os 7 cursos de desenvolvimento, LR, LSO e UX (autorização da etapa 3), por id do catálogo e por sigla dos candidatos locais de 29/09.",
+  "base": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+  "raizes": [
+   "docs",
+   "tests",
+   "src",
+   "scripts",
+   ".mex",
+   ".workflow"
+  ],
+  "exclui_caminho": "_codegraph-benchmark|graphify-out|__pycache__|\\.(exe|zip|pyc|png|jpg|pdf)$",
+  "catalogo": "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/aquisicao/catalogo.json",
+  "candidatos_locais": "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/correcoes/populacao/candidatos_29-09.json",
+  "pastas_anteriores": "~/Desktop/Moodle",
+  "fora_ids": [
+   "92714",
+   "92717",
+   "92854",
+   "93156",
+   "93728",
+   "95106",
+   "95139",
+   "95473",
+   "95227",
+   "92619"
+  ],
+  "fora_siglas": [
+   "ES2",
+   "MF",
+   "SO",
+   "IA",
+   "TCC",
+   "CG",
+   "FR",
+   "LR",
+   "LSO",
+   "UX"
+  ]
+ },
+ "fontes_pesquisadas": {
+  "git": "commit bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1 (git grep -n -I -P -i nas raízes; git log --grep)",
+  "raizes": [
+   "docs",
+   "tests",
+   "src",
+   "scripts",
+   ".mex",
+   ".workflow"
+  ],
+  "exclusoes_de_caminho": "_codegraph-benchmark|graphify-out|__pycache__|\\.(exe|zip|pyc|png|jpg|pdf)$",
+  "nomes_de_pasta": "~/Desktop/Moodle (11 pastas, só nomes)"
+ },
+ "nao_pesquisado": [
+  "outras branches",
+  "worktrees",
+  "stashes",
+  "memória de sessões",
+  "conversas",
+  "conteúdo das pastas locais"
+ ],
+ "candidatos": [
+  {
+   "id": "moodle:73425",
+   "nome": "Fundamentos de D. de Software",
+   "padrao": "(?<!\\d)73425(?!\\d)|Fundamentos\\ de\\ D\\.\\ de\\ Software|4636H\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 1,
+    "ocorrencias": 2,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 1,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "73425": 2
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/pdf_identidade_hash_21-09.json",
+     "linha": 512,
+     "categoria": "dados_json_csv",
+     "termo": "73425",
+     "vizinhanca": {
+      "antes": "d0f",
+      "depois": "\","
+     },
+     "trecho": "…\"sha256\": \"7f63cb6b2620b1d7045d4c201606b0aac9f0c3e3d4e4c5114b10a750d0f73425\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/pdf_identidade_hash_21-09.json",
+     "linha": 1431,
+     "categoria": "dados_json_csv",
+     "termo": "73425",
+     "vizinhanca": {
+      "antes": "d0f",
+      "depois": "\","
+     },
+     "trecho": "…\"sha256\": \"7f63cb6b2620b1d7045d4c201606b0aac9f0c3e3d4e4c5114b10a750d0f73425\","
+    }
+   ]
+  },
+  {
+   "id": "moodle:80922",
+   "nome": "Organização e A. de Processadores",
+   "padrao": "(?<!\\d)80922(?!\\d)|Organização\\ e\\ A\\.\\ de\\ Processadores|98G03\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:81476",
+   "nome": "Álgebra Linear e Geometria Analítica",
+   "padrao": "(?<!\\d)81476(?!\\d)|Álgebra\\ Linear\\ e\\ Geometria\\ Analítica|95302\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:82154",
+   "nome": "LÓGICA PARA COMPUTAÇÃO",
+   "padrao": "(?<!\\d)82154(?!\\d)|LÓGICA\\ PARA\\ COMPUTAÇÃO|4611E\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 2,
+    "ocorrencias": 4,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 2
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 2,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "Lógica para computação": 4
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "linha": 1504,
+     "categoria": "dados_json_csv",
+     "termo": "Lógica para computação",
+     "vizinhanca": {
+      "antes": "e. ",
+      "depois": ". 2"
+     },
+     "trecho": "…tyle=\\\"font-size: 0.9375rem;\\\">SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Capítulos 1, 2.3, 4.2, 4.3, 4.4. Disp…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "linha": 3842,
+     "categoria": "dados_json_csv",
+     "termo": "Lógica para computação",
+     "vizinhanca": {
+      "antes": "e. ",
+      "depois": ". 2"
+     },
+     "trecho": "…9-7\\\">on-line</a>)</li>\\r\\n<li>SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Disponível on-line (repositório Minha…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_sections/MF.json",
+     "linha": 54,
+     "categoria": "dados_json_csv",
+     "termo": "Lógica para computação",
+     "vizinhanca": {
+      "antes": "e. ",
+      "depois": ". 2"
+     },
+     "trecho": "…kman, 2013. Capítulos 3, 4, 5. SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Capítulos 1, 2.3, 4.2, 4.3, 4.4. Disp…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_sections/MF.json",
+     "linha": 90,
+     "categoria": "dados_json_csv",
+     "termo": "Lógica para computação",
+     "vizinhanca": {
+      "antes": "e. ",
+      "depois": ". 2"
+     },
+     "trecho": "…783–802. (disponível on-line ) SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Disponível on-line (repositório Minha…"
+    }
+   ]
+  },
+  {
+   "id": "moodle:82667",
+   "nome": "Programação de Baixo Nível",
+   "padrao": "(?<!\\d)82667(?!\\d)|Programação\\ de\\ Baixo\\ Nível|98701\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:84490",
+   "nome": "Infraestrutura para Gestão de Dados",
+   "padrao": "(?<!\\d)84490(?!\\d)|Infraestrutura\\ para\\ Gestão\\ de\\ Dados|98H00\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 1,
+    "ocorrencias": 1,
+    "arquivos_por_categoria": {
+     "codigo": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 1,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "98H00-04": 1
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "tests/test_moodle.py",
+     "linha": 153,
+     "categoria": "codigo",
+     "termo": "98H00-04",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": " - "
+     },
+     "trecho": "c = {\"id\": 5, \"fullname\": \"98H00-04 - Lógica - Fundamentos - Aplicações - Turma 031 - 2026/1 - Prof. X\"}"
+    }
+   ]
+  },
+  {
+   "id": "moodle:88738",
+   "nome": "Fundamentos de P. P. e Distribuído",
+   "padrao": "(?<!\\d)88738(?!\\d)|Fundamentos\\ de\\ P\\.\\ P\\.\\ e\\ Distribuído|98713\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:89045",
+   "nome": "Engenharia de Software I",
+   "padrao": "(?<!\\d)89045(?!\\d)|Engenharia\\ de\\ Software\\ I|98801\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 127,
+    "ocorrencias": 221,
+    "arquivos_por_categoria": {
+     "codigo": 5,
+     "dados_json_csv": 4,
+     "plano_ou_spec": 2,
+     "relatorio_ou_handoff": 109,
+     "resultado_do_motor": 7
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 16,
+    "commits": 1,
+    "download_anterior": [],
+    "termos": {
+     "Engenharia de Software I": 162,
+     "ENGENHARIA DE SOFTWARE I": 57,
+     "engenharia de software i": 2
+    }
+   },
+   "commits": [
+    "e4af4a93 feat(matcher): desempate do DP por sinal concentrado (U1b) — bloco-16 MF destravado"
+   ],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/plans/Feitos/2026-08-06-gerador-indice-unico.md",
+     "linha": 637,
+     "categoria": "plano_ou_spec",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "','",
+      "depois": "I']"
+     },
+     "trecho": "…Artificial','Teoria da Computabilidade e Complexidade','Sistemas Operacionais','Engenharia de Software II']:"
+    },
+    {
+     "arquivo": "docs/reports/Feitos/2026-06-12-catalogo-formatos-labels-moodle.md",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "), ",
+      "depois": "I"
+     },
+     "trecho": "**Cadeiras:** Métodos Formais para Computação (92717), Engenharia de Software II"
+    },
+    {
+     "arquivo": "docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md",
+     "linha": 400,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "",
+      "depois": "I  "
+     },
+     "trecho": "Engenharia de Software II                  teaching_plan_len=4693"
+    },
+    {
+     "arquivo": "docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md",
+     "linha": 55,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "m `",
+      "depois": "I -"
+     },
+     "trecho": "headings coletados do ES2 incluem `ENGENHARIA DE SOFTWARE II ---` — o cabeçalho institucional de"
+    },
+    {
+     "arquivo": "docs/reports/Feitos/2026-08-18-medicao-fix-taxonomia.md",
+     "linha": 56,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "nal",
+      "depois": "I`."
+     },
+     "trecho": "TODO slide do curso — e `Trabalho FinalEngenharia de Software II`. Ambos viraram alias do tópico"
+    },
+    {
+     "arquivo": "docs/reports/_archive/2026-08-18-handoff-cobertura-taxonomia.md",
+     "linha": 68,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " (`",
+      "depois": "I`)"
+     },
+     "trecho": "Apareceu três vezes: heading institucional (`ENGENHARIA DE SOFTWARE II`) virando alias no ES2;"
+    },
+    {
+     "arquivo": "docs/reports/_archive/pendencias-historico-ate-2026-09-02.md",
+     "linha": 4138,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " (`",
+      "depois": "I -"
+     },
+     "trecho": "que abre TODO material do curso (`ENGENHARIA DE SOFTWARE II ---`, `Trabalho FinalEngenharia de"
+    },
+    {
+     "arquivo": "docs/reports/_archive/scripts-2026-09-04/artefato_razao/dados_artefato.py",
+     "linha": 7,
+     "categoria": "codigo",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": ", \"",
+      "depois": "I\")"
+     },
+     "trecho": "…cal-Tutor\", \"Inteligência Artificial\"), \"ES2\": (\"Engenharia-Software-2-Tutor\", \"Engenharia de Software II\"), \"TCC\": (\"TCC-Tutor\", \"Teoria da Computação\"), \"CG\": (\"Computacao-Grafica-Tu…"
+    },
+    {
+     "arquivo": "docs/reports/_archive/scripts-2026-09-04/measure_flip.py",
+     "linha": 42,
+     "categoria": "codigo",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"ES2\": \"Engenharia de Software II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/_tmp_regua.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/ablate_curadoria_gold.log",
+     "linha": 10,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/ablate_descricoes.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/ablate_descricoes.log",
+     "linha": 52,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/audit_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/auto_prop_puro5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/auto_puro5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/auto_rf_puro5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_antes_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_higiene_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_prop_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_rf_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_semvocab_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_semvocab_semprop_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_title2_puro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/b_title_puro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoC_baseline_14-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoC_baseline_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoC_restauracao_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoC_restauracao_limpa_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoC_restauracao_raiz_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/bracoR_7cursos_14-09.log",
+     "linha": 19,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/braco_A_7cursos_14-09.log",
+     "linha": 23,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/braco_C_7cursos_14-09.log",
+     "linha": 24,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/braco_V_13-09.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/braco_estrito_7cursos_14-09.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_com_puro_b.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_com_puro_c.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_com_puro_vocabantigo.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ2_puro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ2_puro_b.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ_puro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ_puro_c.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ_puro_d.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_determ_puro_e.log",
+     "linha": 22,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_sem_puro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_sem_puro_b.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/codigo_sem_puro_b2.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/corrige_curadoria_es2.log",
+     "linha": 3,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/decomp2_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/decomp2_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/decomp_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/decomp_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_decomp.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_decomp.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_explicita.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_explicita.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_higiene.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_higiene.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_janela.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_janela.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_prop.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_prop.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_rf.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_rf.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_secao.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_secao.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_titulo.log",
+     "linha": 16,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/determinismo_titulo.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 46,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | MICROSSERVIÇOS --- | Decomposição de Sistemas | Sistemas na Nuvem | Esca…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 76,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | DEVOPS | Dev | Ops | DevOps | DevOps | DevOps | Principais práticas | Co…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 91,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | KUBERNETES --- | O que é Kubernetes? | Como o Kubernetes Funciona | Como…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 106,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | MICROSSERVIÇOS --- | Decisões Arquiteturais | Padrões de Projeto | Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 121,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | MICROSSERVIÇOS --- | Decisões Arquiteturais | Padrões de Projeto | Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 196,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I -"
+     },
+     "trecho": "HEADINGS: Sumário | ENGENHARIA DE SOFTWARE II --- | AUTENTICAÇÃO E AUTORIZAÇÃO | Segurança | Segurança | Segurança | Conceit…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/dossie_erros_subunidade_13-09/ES2.md",
+     "linha": 211,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": " | ",
+      "depois": "I |"
+     },
+     "trecho": "HEADINGS: Sumário | Engenharia de Software II | Microserviços | Roteiro 8: Autenticação e Autorização | Introdução | Passo 1…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/explicita_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/explicita_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/fluxo_base_limpa_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/fluxo_direto_7cursos_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/gold6_auto5.log",
+     "linha": 12,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/gold6_puro.log",
+     "linha": 12,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/implementacao_taxonomia_15-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/janela2_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/janela2_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/janela_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/janela_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_contribuicao_llm.log",
+     "linha": 3,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_contribuicao_llm.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_contribuicao_llm.log",
+     "linha": 38,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_filtro_descricao.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_filtro_descricao.log",
+     "linha": 48,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_piso_grade.log",
+     "linha": 7,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_piso_grade.log",
+     "linha": 20,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_piso_grade.log",
+     "linha": 33,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_piso_grade.log",
+     "linha": 46,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_piso_grade.log",
+     "linha": 59,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_salas.py",
+     "linha": 27,
+     "categoria": "codigo",
+     "termo": "engenharia de software i",
+     "vizinhanca": {
+      "antes": ", \"",
+      "depois": "i\")"
+     },
+     "trecho": "…cal-Tutor\", \"inteligencia artificial\"), \"ES2\": (\"Engenharia-Software-2-Tutor\", \"engenharia de software ii\"),"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_sem_voto_llm.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_sem_voto_llm.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_sidecar_professor.log",
+     "linha": 46,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/mede_sidecar_professor.log",
+     "linha": 49,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_conjunto_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_controle_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_controle_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_datas_cards_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_datas_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_ordem_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/metadados_rotulos_integral_ES2_15-09.log",
+     "linha": 1,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_12-09.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_12-09.log",
+     "linha": 67,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_12-09.log",
+     "linha": 116,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_produto_12-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_regua_12-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_regua_vetofonte_12-09.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_v2_12-09.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_v2_12-09.log",
+     "linha": 67,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/motor_3eixos_v2_12-09.log",
+     "linha": 116,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/placar_100_runs.log",
+     "linha": 13,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/placar_100_runs.log",
+     "linha": 58,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 3,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "14,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos2,microsservicos2,material-de-aula,Microsserviços,2026-02-18,16014,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 4,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "36,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos3,microsservicos3,material-de-aula,Microsserviços,2026-02-18,20236,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 6,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "59,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos5,microsservicos5,material-de-aula,Microsserviços,2026-02-18,26159,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 7,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "77,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos7,microsservicos7,material-de-aula,Microsserviços,2026-02-18,27277,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 16,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "37,",
+      "depois": "I ·"
+     },
+     "trecho": "…eiro8_autenticacao_autorizacao,material-de-aula,Microsserviços,2026-06-13,14337,Engenharia de Software II · Microserviços · Roteiro 8: Autenticação e Autorização · Introdução · Passo 1…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/regua_historica_22-09/material_gt_ES2.csv",
+     "linha": 18,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "56,",
+      "depois": "I -"
+     },
+     "trecho": "microsservicos4,microsservicos4,material-de-aula,Microsserviços,,13656,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_decomp.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_explicita.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_filtro.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_janela.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_revisar.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_secao.log",
+     "linha": 21,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_taxonomia.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/reprocess_8_titulo.log",
+     "linha": 17,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 2274,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "17: [profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 2315,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "17: [profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 2356,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "17: [profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 2401,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "21: [profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 5213,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " (\"",
+      "depois": "I -"
+     },
+     "trecho": "593:     # Heading institucional (\"ENGENHARIA DE SOFTWARE II ---\", \"Trabalho"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/resposta_codex_astra_camada3.md",
+     "linha": 5214,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "nal",
+      "depois": "I\")"
+     },
+     "trecho": "594:     # FinalEngenharia de Software II\") aparece no cabecalho de TODO material e,"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/rollout_camada3_cg_es2_v2.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/rollout_camada3_resto.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/rollout_camada3_resto_v3.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/secao_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/secao_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/sem_curadoria_benchmark_13-09.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/sem_curadoria_benchmark_13-09.log",
+     "linha": 76,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/sem_curadoria_benchmark_13-09.log",
+     "linha": 133,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/sempropag_7cursos_13-09.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/simula_aprovacao.log",
+     "linha": 18,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/sync_copias_produto_11-09.log",
+     "linha": 3,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/titulo_auto5.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/titulo_puro.log",
+     "linha": 12,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 207748,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 209738,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 210333,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 210496,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 211192,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 212003,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 212384,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 213118,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 214118,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 215088,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 217633,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 219411,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 222126,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 223336,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 224792,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 225198,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 226348,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 226586,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "\"**",
+      "depois": "I**"
+     },
+     "trecho": "\"trecho\": \"**Engenharia de Software II**\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 227246,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wp1_inventario_matriz_22-09.json",
+     "linha": 229234,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "I\","
+     },
+     "trecho": "\"trecho\": \"ENGENHARIA DE SOFTWARE II\","
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 3,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "14,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 4,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "36,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 6,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "59,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 7,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "77,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 16,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "37,",
+      "depois": "I ·"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_22-09/material_gt_ES2.csv",
+     "linha": 18,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "56,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 3,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "14,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 4,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "36,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 6,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "59,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 7,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "77,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 16,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "37,",
+      "depois": "I ·"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/wx_gold_v2_final_22-09/material_gt_ES2.csv",
+     "linha": 18,
+     "categoria": "resultado_do_motor",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "56,",
+      "depois": "I -"
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_base.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_check0.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_formatacao.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_plano.log",
+     "linha": 10,
+     "categoria": "plano_ou_spec",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_rotulos.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_tierA1.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_tierA2.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_tierB.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/zero_diff_tierC.log",
+     "linha": 10,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "l '",
+      "depois": "I' "
+     },
+     "trecho": "[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'c…"
+    },
+    {
+     "arquivo": "docs/reports/gold_templates/PLANOS_DE_ENSINO.md",
+     "linha": 6,
+     "categoria": "resultado_do_motor",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": " — ",
+      "depois": "I ("
+     },
+     "trecho": "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 3,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "14,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos2,microsservicos2,material-de-aula,Microsserviços,2026-02-18,16014,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 4,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "36,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos3,microsservicos3,material-de-aula,Microsserviços,2026-02-18,20236,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 6,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "59,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos5,microsservicos5,material-de-aula,Microsserviços,2026-02-18,26159,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 7,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "77,",
+      "depois": "I -"
+     },
+     "trecho": "…icrosservicos7,microsservicos7,material-de-aula,Microsserviços,2026-02-18,27277,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 16,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "37,",
+      "depois": "I ·"
+     },
+     "trecho": "…eiro8_autenticacao_autorizacao,material-de-aula,Microsserviços,2026-06-13,14337,Engenharia de Software II · Microserviços · Roteiro 8: Autenticação e Autorização · Introdução · Passo 1…"
+    },
+    {
+     "arquivo": "docs/reports/material_gt_ES2.csv",
+     "linha": 18,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "56,",
+      "depois": "I -"
+     },
+     "trecho": "microsservicos4,microsservicos4,material-de-aula,Microsserviços,,13656,ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · PADRÕ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 2,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…aterial-de-aula,2026-02-18,unidade-01-arquitetura-de-software,Revisão,Sumário · ENGENHARIA DE SOFTWARE II --- · ARQUITETURA DE SOFTWARE --- · Sistemas de Software · Aplicações Corporat…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 3,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…aterial-de-aula,2026-02-18,unidade-01-arquitetura-de-software,Revisão,Sumário · ENGENHARIA DE SOFTWARE II --- · ARQUITETURA ORIENTADA A SERVIÇOS --- · Arquitetura orientada a serviços…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 4,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…aterial-de-aula,2026-02-18,unidade-01-arquitetura-de-software,Revisão,Sumário · ENGENHARIA DE SOFTWARE II --- · ARQUITETURA DE SISTEMAS WEB --- · Evolução das aplicações WEB · Evolução…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 5,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…-de-aula,2026-02-18,unidade-01-arquitetura-de-software,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decomposição de Sistemas · Sistemas na Nuvem · Esca…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 10,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…-18,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,DevOps,Sumário · ENGENHARIA DE SOFTWARE II --- · DEVOPS · Dev · Ops · DevOps · DevOps · DevOps · Principais práticas · Co…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 11,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…-18,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,DevOps,Sumário · ENGENHARIA DE SOFTWARE II --- · KUBERNETES --- · O que é Kubernetes? · Como o Kubernetes Funciona · Como…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 12,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 13,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 14,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 15,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 30,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "nal",
+      "depois": "I ·"
+     },
+     "trecho": "…vimento-e-operacao-devops,TDE Trabalho Discente Efetivo,Sumário · Trabalho FinalEngenharia de Software II · Organização: · Objetivos: · Título · Descrição · Justificativa · Visão de Ne…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 31,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · AUTENTICAÇÃO E AUTORIZAÇÃO · Segurança · Segurança · Segurança · Conceit…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 32,
+     "categoria": "dados_json_csv",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I -"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · ENGENHARIA DE SOFTWARE II --- · MICROSSERVIÇOS --- · Decisões Arquiteturais · Padrões de Projeto · Padrõ…"
+    },
+    {
+     "arquivo": "docs/reports/subunit_gt_ES2.csv",
+     "linha": 34,
+     "categoria": "dados_json_csv",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": " · ",
+      "depois": "I ·"
+     },
+     "trecho": "…ade-02-integracao-de-desenvolvimento-e-operacao-devops,Microsserviços,Sumário · Engenharia de Software II · Microserviços · Roteiro 8: Autenticação e Autorização · Introdução · Passo 1…"
+    },
+    {
+     "arquivo": "src/builder/extraction/content_taxonomy.py",
+     "linha": 595,
+     "categoria": "codigo",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": " (\"",
+      "depois": "I -"
+     },
+     "trecho": "# Heading institucional (\"ENGENHARIA DE SOFTWARE II ---\", \"Trabalho"
+    },
+    {
+     "arquivo": "src/builder/extraction/content_taxonomy.py",
+     "linha": 596,
+     "categoria": "codigo",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "nal",
+      "depois": "I\")"
+     },
+     "trecho": "# FinalEngenharia de Software II\") aparece no cabecalho de TODO material e,"
+    },
+    {
+     "arquivo": "tests/test_taxonomy_topic_loss.py",
+     "linha": 5,
+     "categoria": "codigo",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": ", \"",
+      "depois": "I\" "
+     },
+     "trecho": "\"Teoria da Computabilidade e Complexidade\", \"Engenharia de Software II\" e"
+    },
+    {
+     "arquivo": "tests/test_taxonomy_topic_loss.py",
+     "linha": 116,
+     "categoria": "codigo",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "\"\"\"",
+      "depois": "I\" "
+     },
+     "trecho": "\"\"\"\"ENGENHARIA DE SOFTWARE II\" encabeca TODO slide do curso; como alias ele"
+    },
+    {
+     "arquivo": "tests/test_taxonomy_topic_loss.py",
+     "linha": 131,
+     "categoria": "codigo",
+     "termo": "ENGENHARIA DE SOFTWARE I",
+     "vizinhanca": {
+      "antes": "=[\"",
+      "depois": "I -"
+     },
+     "trecho": "strong_headings=[\"ENGENHARIA DE SOFTWARE II ---\","
+    },
+    {
+     "arquivo": "tests/test_taxonomy_topic_loss.py",
+     "linha": 132,
+     "categoria": "codigo",
+     "termo": "Engenharia de Software I",
+     "vizinhanca": {
+      "antes": "nal",
+      "depois": "I\","
+     },
+     "trecho": "\"Trabalho FinalEngenharia de Software II\","
+    },
+    {
+     "arquivo": "tests/test_taxonomy_topic_loss.py",
+     "linha": 139,
+     "categoria": "codigo",
+     "termo": "engenharia de software i",
+     "vizinhanca": {
+      "antes": "y(\"",
+      "depois": "i\" "
+     },
+     "trecho": "assert not any(\"engenharia de software ii\" in a for a in aliases), aliases"
+    }
+   ]
+  },
+  {
+   "id": "moodle:89100",
+   "nome": "Programação Funcional",
+   "padrao": "(?<!\\d)89100(?!\\d)|Programação\\ Funcional|98703\\-02",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:89447",
+   "nome": "Métodos Numéricos",
+   "padrao": "(?<!\\d)89447(?!\\d)|Métodos\\ Numéricos|4646N\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:90231",
+   "nome": "Laboratório de Games e N. Gráficas",
+   "padrao": "(?<!\\d)90231(?!\\d)|Laboratório\\ de\\ Games\\ e\\ N\\.\\ Gráficas|12297\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:90572",
+   "nome": "Projeto e Otimização de Algoritmos",
+   "padrao": "(?<!\\d)90572(?!\\d)|Projeto\\ e\\ Otimização\\ de\\ Algoritmos|4646Z\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "moodle:93730",
+   "nome": "Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Soraia R Musse - Gabriel F Silva - Tiago C Ferreto",
+   "padrao": "(?<!\\d)93730(?!\\d)|Prática\\ em\\ Pesquisa\\ \\-\\ Turmas\\ 010\\ \\-\\ 011\\ \\-\\ 012\\ \\-\\ 2026/1\\ \\-\\ Profs\\.\\ Soraia\\ R\\ Musse\\ \\-\\ Gabriel\\ F\\ Silva\\ \\-\\ Tiago\\ C\\ Ferreto|98702\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 2,
+    "ocorrencias": 2,
+    "arquivos_por_categoria": {
+     "codigo": 1,
+     "relatorio_ou_handoff": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 1,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "98702-04": 2
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_archive/2026-06-18-s0-substrato-medicao-cross-curso.md",
+     "linha": 270,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "98702-04",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": " - "
+     },
+     "trecho": "c = {\"id\": 2, \"fullname\": \"98702-04 - Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Y\"}"
+    },
+    {
+     "arquivo": "tests/test_moodle.py",
+     "linha": 512,
+     "categoria": "codigo",
+     "termo": "98702-04",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": " - "
+     },
+     "trecho": "c = {\"id\": 2, \"fullname\": \"98702-04 - Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Y\"}"
+    }
+   ]
+  },
+  {
+   "id": "moodle:94492",
+   "nome": "Simulação e Métodos Analíticos - 2026/2 - Modalidade Online",
+   "padrao": "(?<!\\d)94492(?!\\d)|Simulação\\ e\\ Métodos\\ Analíticos\\ \\-\\ 2026/2\\ \\-\\ Modalidade\\ Online|4611G\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 1,
+    "ocorrencias": 3,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 1,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "94492": 3
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_workflow-audit-2026-09-15/skills-inventory.csv",
+     "linha": 293,
+     "categoria": "dados_json_csv",
+     "termo": "94492",
+     "vizinhanca": {
+      "antes": "1bc",
+      "depois": "da0"
+     },
+     "trecho": "…造化オンボーディングガイドを生成します。新しいプロジェクトに参加するか、リポでClaude Codeを初めてセットアップする場合に使用します。,1be561bc94492da0d727e9cd1a25a2766cdfbb1317400280691686c5d119a972,2288,False,user-invocable-on…"
+    },
+    {
+     "arquivo": "docs/reports/_workflow-audit-2026-09-15/skills-inventory.csv",
+     "linha": 1229,
+     "categoria": "dados_json_csv",
+     "termo": "94492",
+     "vizinhanca": {
+      "antes": "1bc",
+      "depois": "da0"
+     },
+     "trecho": "…造化オンボーディングガイドを生成します。新しいプロジェクトに参加するか、リポでClaude Codeを初めてセットアップする場合に使用します。,1be561bc94492da0d727e9cd1a25a2766cdfbb1317400280691686c5d119a972,2288,False,,False"
+    },
+    {
+     "arquivo": "docs/reports/_workflow-audit-2026-09-15/skills-inventory.csv",
+     "linha": 1951,
+     "categoria": "dados_json_csv",
+     "termo": "94492",
+     "vizinhanca": {
+      "antes": "1bc",
+      "depois": "da0"
+     },
+     "trecho": "…造化オンボーディングガイドを生成します。新しいプロジェクトに参加するか、リポでClaude Codeを初めてセットアップする場合に使用します。,1be561bc94492da0d727e9cd1a25a2766cdfbb1317400280691686c5d119a972,2288,False,,False"
+    }
+   ]
+  },
+  {
+   "id": "moodle:95864",
+   "nome": "Língua Inglesa IV",
+   "padrao": "(?<!\\d)95864(?!\\d)|Língua\\ Inglesa\\ IV|125AB\\-04",
+   "origem": "catálogo 29/09",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 1,
+    "ocorrencias": 1,
+    "arquivos_por_categoria": {
+     "relatorio_ou_handoff": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "125AB-04": 1
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_archive/pendencias-historico-ate-2026-09-02.md",
+     "linha": 525,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "125AB-04",
+     "vizinhanca": {
+      "antes": "  (",
+      "depois": " T2"
+     },
+     "trecho": "(125AB-04 T2, E-E1) + Lab Redes (98710-02 T340, LM); Ter = CG (98716-04 T310, JK) + Fund.…"
+    }
+   ]
+  },
+  {
+   "id": "local:CALC1",
+   "nome": "Cálculo 1 (pasta do aluno)",
+   "padrao": "C[aá]lculo[ -]?1\\b",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "local:FP",
+   "nome": "Fundamentos da Programação (pasta do aluno)",
+   "padrao": "Fundamentos[- ]da[- ]Programa[cç][aã]o",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "local:IC",
+   "nome": "Introdução à Computação (pasta do aluno)",
+   "padrao": "Introdu[cç][aã]o [àa] Computa[cç][aã]o",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 4,
+    "ocorrencias": 8,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 3,
+     "relatorio_ou_handoff": 1
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 3,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "Introdução a Computação": 8
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c0-12/travessia_12_CG.log",
+     "linha": 49,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "e: ",
+      "depois": " Gr"
+     },
+     "trecho": "LLM disse: Introdução a Computação Gráfica 3D e Transformações com PyOpenGL | Modelagem, Projeções e Texturização…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c0-12/travessia_12_CG.log",
+     "linha": 80,
+     "categoria": "relatorio_ou_handoff",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "e: ",
+      "depois": " Gr"
+     },
+     "trecho": "LLM disse: Introdução a Computação Gráfica 3D e Transformações com PyOpenGL | Fundamentos de Computação Gráfica 2D…"
+    },
+    {
+     "arquivo": "docs/reports/_travessia_cache/CG.json",
+     "linha": 360,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\","
+    },
+    {
+     "arquivo": "docs/reports/_travessia_cache/CG.json",
+     "linha": 481,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\","
+    },
+    {
+     "arquivo": "docs/reports/_travessia_cache/CG.json",
+     "linha": 611,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\""
+    },
+    {
+     "arquivo": "docs/reports/_travessia_cache/CG.json",
+     "linha": 740,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\""
+    },
+    {
+     "arquivo": "docs/reports/travessia_result_CG_llm-completo.json",
+     "linha": 377,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\""
+    },
+    {
+     "arquivo": "docs/reports/travessia_result_CG_llm.json",
+     "linha": 375,
+     "categoria": "dados_json_csv",
+     "termo": "Introdução a Computação",
+     "vizinhanca": {
+      "antes": "  \"",
+      "depois": " Gr"
+     },
+     "trecho": "\"Introdução a Computação Gráfica 3D e Transformações com PyOpenGL\""
+    }
+   ]
+  },
+  {
+   "id": "local:MD",
+   "nome": "Matemática Discreta (pasta do aluno)",
+   "padrao": "Matem[aá]tica Discreta",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 3,
+    "ocorrencias": 5,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 3
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 3,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "Matemática Discreta": 3,
+     "matemática discreta": 2
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "linha": 1504,
+     "categoria": "dados_json_csv",
+     "termo": "Matemática Discreta",
+     "vizinhanca": {
+      "antes": "B. ",
+      "depois": " pa"
+     },
+     "trecho": "…estudo:</p>\\r\\n<ul>\\r\\n<li><span style=\\\"font-size: 0.9375rem;\\\">MENEZES, P. B. Matemática Discreta para Computação e Informática. 4. ed. Porto Alegre: Bookman, 2013. Capítulos 3,…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_contents/MF.json",
+     "linha": 1998,
+     "categoria": "dados_json_csv",
+     "termo": "matemática discreta",
+     "vizinhanca": {
+      "antes": "o: ",
+      "depois": " e "
+     },
+     "trecho": "….9375rem;\\\">GERSTING, J. L. Fundamentos Matemáticos para Ciência da Computação: matemática discreta e suas aplicações. 7 ed. Rio de Janeiro: LTC, 2017. Disponível </span><a style=…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_sections/MF.json",
+     "linha": 54,
+     "categoria": "dados_json_csv",
+     "termo": "Matemática Discreta",
+     "vizinhanca": {
+      "antes": "B. ",
+      "depois": " pa"
+     },
+     "trecho": "\"Material de estudo: MENEZES, P. B. Matemática Discreta para Computação e Informática. 4. ed. Porto Alegre: Bookman, 2013. Capítulos 3,…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-02/moodle_sections/MF.json",
+     "linha": 65,
+     "categoria": "dados_json_csv",
+     "termo": "matemática discreta",
+     "vizinhanca": {
+      "antes": "o: ",
+      "depois": " e "
+     },
+     "trecho": "…l on-line . GERSTING, J. L. Fundamentos Matemáticos para Ciência da Computação: matemática discreta e suas aplicações. 7 ed. Rio de Janeiro: LTC, 2017. Disponível on-line . Capítu…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 215,
+     "categoria": "dados_json_csv",
+     "termo": "Matemática Discreta",
+     "vizinhanca": {
+      "antes": "na ",
+      "depois": "\", "
+     },
+     "trecho": "…\"Ela deve possuir uma fundamentação lógico-matemática, em geral na Lógica e na Matemática Discreta\", \"padrao\": \"subtitulo_lista\", \"arquivo\": \"C:\\\\Users\\\\Humberto\\\\Documents\\\\GitH…"
+    }
+   ]
+  },
+  {
+   "id": "local:MC",
+   "nome": "Metodologia Científica (pasta do aluno)",
+   "padrao": "Metodologia Cient[ií]fica",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 0,
+    "ocorrencias": 0,
+    "arquivos_por_categoria": {},
+    "arquivos_codigo_teste_dados_ou_resultado": 0,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {}
+   },
+   "commits": [],
+   "ocorrencias": []
+  },
+  {
+   "id": "local:MSA",
+   "nome": "Modelagem, Simulação e Métodos Analíticos (projeto do aluno)",
+   "padrao": "M[ée]todos Anal[ií]ticos|MetodosAnaliticos|Filas em Tandem",
+   "origem": "universo local de 29/09 (v1)",
+   "status_da_busca": "ok",
+   "falhas": [],
+   "sinais": {
+    "arquivos": 2,
+    "ocorrencias": 7,
+    "arquivos_por_categoria": {
+     "dados_json_csv": 2
+    },
+    "arquivos_codigo_teste_dados_ou_resultado": 2,
+    "commits": 0,
+    "download_anterior": [],
+    "termos": {
+     "Métodos Analíticos": 6,
+     "MetodosAnaliticos": 1
+    }
+   },
+   "commits": [],
+   "ocorrencias": [
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5513,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"Os métodos analíticos utili…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5514,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"requerem funções com deriva…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5515,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"além disso\", \"padrao\": \"cat…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5516,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"quando existe grande número…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5517,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"analiticamente\", \"padrao\":…"
+    },
+    {
+     "arquivo": "docs/reports/_harness-2026-09-04/c1-3/inventario_relacoes_14-09.jsonl",
+     "linha": 5518,
+     "categoria": "dados_json_csv",
+     "termo": "Métodos Analíticos",
+     "vizinhanca": {
+      "antes": ": \"",
+      "depois": "\", "
+     },
+     "trecho": "{\"curso\": \"IA\", \"categoria\": \"Métodos Analíticos\", \"categoria_norm\": \"metodos analiticos\", \"termo\": \"todos os pontos de mínimo e…"
+    },
+    {
+     "arquivo": "docs/reports/_workflow-audit-2026-09-15/inventory-summary.json",
+     "linha": 11,
+     "categoria": "dados_json_csv",
+     "termo": "MetodosAnaliticos",
+     "vizinhanca": {
+      "antes": "b\\\\",
+      "depois": "\","
+     },
+     "trecho": "\"C:\\\\Users\\\\Humberto\\\\Documents\\\\GitHub\\\\MetodosAnaliticos\","
+    }
+   ]
+  }
+ ]
+}

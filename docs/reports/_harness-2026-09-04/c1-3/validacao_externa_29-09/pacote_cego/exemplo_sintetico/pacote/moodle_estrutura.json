@@ -1,0 +1,65 @@
+{
+ "formato": "api",
+ "modulos": [
+  {
+   "modname": "label",
+   "nome": "Aviso",
+   "secao": "Geral"
+  },
+  {
+   "modname": "resource",
+   "nome": "Aula 1",
+   "secao": "Geral"
+  },
+  {
+   "modname": "url",
+   "nome": "Site do livro",
+   "secao": "Geral"
+  },
+  {
+   "modname": "forum",
+   "nome": "Fórum",
+   "secao": "Geral"
+  },
+  {
+   "modname": "resource",
+   "nome": "Aula 1 (de novo)",
+   "secao": "Unidade 1"
+  },
+  {
+   "modname": "resource",
+   "nome": "Lista 1",
+   "secao": "Unidade 1"
+  },
+  {
+   "modname": "page",
+   "nome": "Tutorial",
+   "secao": "Unidade 1"
+  },
+  {
+   "modname": "assign",
+   "nome": "Trabalho",
+   "secao": "Unidade 1"
+  }
+ ],
+ "rotulos": [
+  {
+   "secao": "Geral",
+   "texto": "Aula 1 - 05/03"
+  }
+ ],
+ "secoes": [
+  {
+   "nome": "Geral",
+   "numero": 0,
+   "resumo": "G1 = (TP1+TP2)/2"
+  },
+  {
+   "nome": "Unidade 1",
+   "numero": 1,
+   "resumo": ""
+  }
+ ],
+ "sigla": "SIN",
+ "versao": "pacote-cego-1"
+}

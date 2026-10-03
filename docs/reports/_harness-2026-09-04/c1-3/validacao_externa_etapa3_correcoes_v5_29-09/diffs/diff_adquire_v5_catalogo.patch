@@ -1,0 +1,76 @@
+diff --git a/C:/Users/Humberto/AppData/Local/Temp/claude/C--Users-Humberto-Documents-GitHub-GPT-Tutor-Generator/fb245229-ca92-41a0-91ae-5fd730454183/scratchpad/adquire_v5_antes_catalogo.py b/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/adquire.py
+index c542d48..bbe2d58 100644
+--- a/C:/Users/Humberto/AppData/Local/Temp/claude/C--Users-Humberto-Documents-GitHub-GPT-Tutor-Generator/fb245229-ca92-41a0-91ae-5fd730454183/scratchpad/adquire_v5_antes_catalogo.py
++++ b/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/adquire.py
+@@ -126,9 +126,33 @@ def pastas_anteriores():
+ 
+ 
+ # ------------------------------------------------------------------------------------------- catálogo e triagem
++class RegistroIlegivel(RuntimeError):
++    """Registro persistido de consumo ilegível ou inconsistente: nunca é tomado como consumo zero."""
++
++
++def le_consumo_catalogo():
++    """(registro, bytes_total) de `metadados_catalogo.json`; (None, None) se ausente. Ilegível ou inconsistente
++    (total != soma, bytes negativos ou não inteiros) = RegistroIlegivel."""
++    reg_p = AQUI / "metadados_catalogo.json"
++    if not reg_p.exists():
++        return None, None
++    try:
++        reg = json.loads(reg_p.read_text(encoding="utf-8"))
++        parcelas = [e["bytes"] for e in reg["execucoes"]]
++        valido = all(type(b) is int and b >= 0 for b in parcelas) and reg["bytes_total"] == sum(parcelas)
++    except (ValueError, KeyError, TypeError) as exc:
++        raise RegistroIlegivel(f"registro de consumo do catálogo ilegível ({type(exc).__name__}): não assumo zero") from None
++    if not valido:
++        raise RegistroIlegivel("registro de consumo do catálogo inconsistente: não assumo zero")
++    return reg, reg["bytes_total"]
++
++
+ def catalogo():
++    reg_cat, consumido = le_consumo_catalogo()   # v5: lido ANTES de qualquer requisição
++    reg_cat = reg_cat or {"execucoes": []}
+     cli, url = cliente()
+-    cli.limite_bytes = ORC["bytes_totais_max"]   # v5: o catálogo entra no orçamento comum
++    cli.limite_bytes = max(0, ORC["bytes_totais_max"] - (consumido or 0))   # só o que resta do orçamento comum
++    erro = "interrompido"   # vale se uma interrupção (BaseException) escapar das chamadas
+     try:
+         site = cli.site_info()
+         host_ok = urllib.parse.urlsplit(str(site.get("siteurl") or "")).netloc == urllib.parse.urlsplit(url).netloc
+@@ -138,12 +162,10 @@ def catalogo():
+     except Exception as exc:   # noqa: BLE001
+         erro = f"falha:{type(exc).__name__}"
+         raise
+-    finally:   # os bytes do catálogo ficam registrados também na falha, acumulados entre execuções
+-        reg_p = AQUI / "metadados_catalogo.json"
+-        reg_cat = json.loads(reg_p.read_text(encoding="utf-8")) if reg_p.exists() else {"execucoes": []}
++    finally:   # bytes registrados em sucesso, falha ou interrupção; a exceção original propaga
+         reg_cat["execucoes"].append({"bytes": cli.bytes_recebidos, "erro": erro})
+         reg_cat["bytes_total"] = sum(e["bytes"] for e in reg_cat["execucoes"])
+-        grava_json(reg_p, reg_cat)
++        grava_json(AQUI / "metadados_catalogo.json", reg_cat)
+     known, anteriores = conhecidos(), pastas_anteriores()
+     linhas, triagem = [], []
+     for c in cursos:
+@@ -338,11 +360,17 @@ def baixar():
+     tri = json.loads((AQUI / "triagem.json").read_text(encoding="utf-8"))
+     if (AQUI / "inventario_downloads.json").exists() or DESTINO.exists():
+         sys.exit("download já executado: não repito nem sobrescrevo")
++    _, catalogo_bytes = le_consumo_catalogo()   # o registro vale sobre a triagem (que pode ser anterior a tentativas)
++    na_triagem = tri.get("bytes_metadados_catalogo")
++    impedimentos = []
++    if catalogo_bytes is None:
++        catalogo_bytes = na_triagem or 0
++        impedimentos.append("registro de consumo do catálogo ausente: consumo do catálogo "
++                            + ("tomado da triagem (limite inferior)" if na_triagem is not None else "não contado"))
++    elif na_triagem is not None and na_triagem > catalogo_bytes:
++        raise RegistroIlegivel("triagem registra mais consumo do catálogo que o registro persistido: inconsistente")
+     cli, _ = cliente()
+-    catalogo_bytes = tri.get("bytes_metadados_catalogo")
+-    impedimentos = [] if catalogo_bytes is not None else [
+-        "metadados do catálogo não contados: triagem sem bytes_metadados_catalogo (gerada antes da v5)"]
+-    orcamento = {"transferidos": catalogo_bytes or 0, "aceitos": 0, "metadados": catalogo_bytes or 0}
++    orcamento = {"transferidos": catalogo_bytes, "aceitos": 0, "metadados": catalogo_bytes}
+     cursos, elegiveis, falhas_seguidas, parada = [], 0, 0, "fim das disciplinas N0 do catálogo"
+     nomes = {t["id"]: t for t in tri["cursos"]}
+     concluido = False

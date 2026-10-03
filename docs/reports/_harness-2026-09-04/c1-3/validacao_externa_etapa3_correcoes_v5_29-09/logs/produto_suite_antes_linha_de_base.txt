@@ -1,0 +1,19 @@
+E       assert '[\n  {\n    ...lace"\n  }\n]' == '[\n  {\n    ...sico"\n  }\n]'
+E         
+E         Skipping 1121 identical leading characters in diff, use -v to show
+E         - topico": "P1 — unidades 01 a 03 e unidade 04 até a aula de 17/09 (ICMPv4)"
+E         + topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-04-nivel-de-rede"
+E             },
+E             {
+E               "id": "bloco-12",...
+E         
+E         ...Full output truncated (116 lines hidden), use '-vv' to show
+
+tests\test_caracterizacao_blocos_atual.py:113: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+1 failed, 2448 passed, 4 skipped in 69.30s (0:01:09)
+
+real	1m11.851s
+user	0m0.045s
+sys	0m0.061s

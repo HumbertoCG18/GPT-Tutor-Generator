@@ -1,0 +1,99 @@
+{
+ "metodo": "fixtures sintéticas, cliente e urlopen falsos; nenhuma rede, gold, build ou motor",
+ "casos": {
+  "plano_com_predicao": {
+   "v2": {
+    "auditoria": [],
+    "conteudo_copiado": true
+   },
+   "v3": {
+    "excecao": "PlanoRecusado",
+    "mensagem": "plano.md: texto com assinatura de saída do motor; pacote não gerado"
+   }
+  },
+  "zip_real_conteudo_nao_examinado": {
+   "v2": {
+    "auditoria": [],
+    "tipo": "arquivo",
+    "adjudicavel": true,
+    "bytes_copiados": true
+   },
+   "v3": {
+    "auditoria": [],
+    "tipo": "recusado",
+    "adjudicavel": false,
+    "bytes_copiados": false
+   }
+  },
+  "origem_unico_candidato_outra_secao": {
+   "v2": {
+    "pasta_pedida": "Secao B",
+    "retornado": {
+     "rel": "stash/Secao A/slides.pdf",
+     "sha": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "nome": "slides.pdf",
+     "tamanho": 15
+    }
+   },
+   "v3": {
+    "pasta_pedida": "Secao B",
+    "retornado": [
+     null,
+     "origem_nao_confirmada"
+    ]
+   }
+  },
+  "anexo_page_fora_da_raiz": {
+   "v2": {
+    "erro": {
+     "excecao": "ValueError",
+     "mensagem": "'<tmp>\\\\downloads\\\\curso_anexos_de_pagina\\\\2-imagem.png' is not in the subpath of '<tmp>\\\\downloads\\\\curso' OR one path is relative and the other is absolute."
+    },
+    "retornou_inventario": false,
+    "arquivos_escritos": [
+     "downloads/curso/raw/moodle/contents.json",
+     "downloads/curso/stash/Geral/a.txt",
+     "downloads/curso_anexos_de_pagina/2-imagem.png"
+    ]
+   },
+   "v3": {
+    "retornou_inventario": true,
+    "registros": [
+     {
+      "arquivo": "a.txt",
+      "status": "ok",
+      "base": "curso",
+      "caminho": "stash/Geral/a.txt"
+     },
+     {
+      "arquivo": "imagem.png",
+      "status": "ok",
+      "base": "anexos_de_pagina",
+      "caminho": "2-imagem.png"
+     }
+    ],
+    "arquivos_escritos": [
+     "downloads/curso/raw/moodle/contents.json",
+     "downloads/curso/stash/Geral/a.txt",
+     "downloads/curso_anexos_de_pagina/2-imagem.png"
+    ]
+   }
+  },
+  "limite_confiado_ao_filesize": {
+   "v2": {
+    "limite_arquivo": 5,
+    "limite_total": 5,
+    "bytes_enviados": 7,
+    "status": "ok",
+    "bytes_contados": 7
+   },
+   "v3": {
+    "limite_arquivo": 5,
+    "limite_total": 5,
+    "bytes_enviados": 7,
+    "status": "acima_do_limite_real",
+    "bytes_contados": 0
+   }
+  }
+ }
+}

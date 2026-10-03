@@ -1,0 +1,44 @@
+{
+ "esquema": "manifesto-etapa3-1",
+ "base_evidencia": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+ "entradas_preservadas": {
+  "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/manifesto_etapa2.json": "3911a9756f844e3ba43312ce0c9f67bdca72bf2c36ef2ce9c2061728330c9f5a",
+  "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/aquisicao/manifesto_aquisicao.json": "e0c541cc33661eae5009298d2765f3d933131956b4cfe1d2d2bde9a3ea958535",
+  "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/aquisicao/inventario_downloads.json": "d5098196eac9b7bc4e51040ff3746f479e9e55b5e741819a1e9fe916a8a1d6a3",
+  "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/aquisicao/fontes_congeladas.json": "cfc255e296d0aea2136aabdeedbfe8e68ad5f6f1e18e39d353a88c109de08762",
+  "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/manifesto_preparacao.json": "e54b184be23b2ea5248653763c9dbbd035571e61ca16e5a49dc3fe31a350de71"
+ },
+ "arquivos": {
+  "conferencia/confere_fontes.py": "be35381e53ad1fa925631f3624bbeeb1772767ae8fa105bb593cd1e54053d383",
+  "conferencia/conferencia_fontes.json": "96da28dec0b88a0842c84edf291edb669d0fd47be915a67f28f6b530ede70dca",
+  "conferencia/conferencia_fontes.md": "8e0d6b2aee21b253fa11f7f7bc0d8433926249be3166717c46aa3105b1a938cc",
+  "correcoes/aquisicao/adquire.py": "139509ec34f439342d47536305624941e927336d491b5ad703d092d551f371f2",
+  "correcoes/aquisicao/test_adquire_v3.py": "c4522d21922a6b4caf96e206279e5a2b097bcd13c070c768b561fc123f02a16b",
+  "correcoes/diff_adquire_v2_v3.patch": "3849511427bddfd998bfaecacd12faae8b358501291aaedf41745f2fcc5abf71",
+  "correcoes/diff_gerador_v2_v3.patch": "265409c5c783c36409becb9ea827328923aa837be48849ae654306a5e6602bdb",
+  "correcoes/diff_testes_herdados_v2_v3.patch": "67f0cb7c9759becacdb6b3009c2e12363512d5901a140db5a8bce45786f55cd4",
+  "correcoes/pacote_cego/gera_pacote_cego.py": "66a8bdabd65bc7b38f1b4c95dd260429557c8a5812206c8600a26455cef17633",
+  "correcoes/pacote_cego/test_pacote_cego.py": "0b97471b1c37c151b6c4a816f836ea17f3a649a958fc71fe296d18ab697bf3a1",
+  "correcoes/pacote_cego/test_pacote_cego_v2.py": "20f64af3d2f1e4f64941d9e54a6b18615c3828aadae8178bb9d3138348172dd4",
+  "correcoes/pacote_cego/test_pacote_cego_v3.py": "7f36dceb0b004573d934b76c49b9ade86fd71a16fac69037fdd90982edd69186",
+  "correcoes/reprodutores_v2_v3.json": "022a9a43c2365b9a245057164a8f437f2df4cba46267e9ff6de43d9cb1d38116",
+  "correcoes/reproduz_casos_revisao.py": "bc70b009de8bc920b666d0206dea564c2bf549400af11263c80d5b7bbd5703ec",
+  "exposicao/entrada_exposicao.json": "c90d92ba0ccb6543cf6e5c339c0373b2ac45067231d4402d67723ae76f513ca8",
+  "exposicao/exposicao_local.json": "034cbbfbedaebd5f35c1343b7fa2c37036f5f4b60e71dbeacbb221fd423a0a7a",
+  "exposicao/exposicao_local_divulgacao.json": "2000da3e6def515761e733cf0dda4d2168a45c5db22043698cfecdef9173916e",
+  "exposicao/resumo_exposicao.md": "5f8534305255e54ec39dc16163efa41ec541fff9248c5f2fc9e58f7709ecbb8d",
+  "exposicao/test_verifica_exposicao.py": "d1c3ce5bce92e3663feb8b1f99be0fc95d864dd7aa25dabfd2f05566a88ab21f",
+  "exposicao/verifica_exposicao.py": "d668bfac174df93f2b75cd9e5f607d364dcaea20d3160e74ed1ba69c3440de7c",
+  "log_testes_etapa3.txt": "59abf7b92f57ca938b61d67386b1c0a35d3cd63d14b34b30ac39aa26e5c9c8a1",
+  "manifesto_etapa3.py": "591882da4535b2f12631ea495ffc41850ed9a87084ab17dd2718baba90c96b96",
+  "proposta_normativa_populacao.md": "7b7ae86034dd2fdac8b5f13064f7f39e2626ff2df07465e7d570043830c73167",
+  "registro/catalogo_divulgacao.json": "387380e8e8ea303f31b9fb6ce3f593cb25bb998364857ab63ae3710fd378f5e0",
+  "registro/nota_registro_29-09.md": "6c5a6f6d7f7417339a87cb1a2767fea8c8b44efdec66a5f46dfde53f025f0377",
+  "registro/redige_divulgacao.py": "8d6529395df641db949003bd1a81d46824261627bdbc6a800e8097d278bc2fd2",
+  "registro/triagem_divulgacao.json": "7d051a2036933e81e73cf989c669c229e33ec685d8712d806adeb42d08102162",
+  "relatorio_etapa3.md": "930d05b1c9a1d62a5738cfd57be0a2a69eaf49a551660e3da27438b9cddb1085"
+ },
+ "fora_da_entrega": {
+  "exposicao/exposicao_local.json": "nome de curso com texto excedente (nomes de professores); vai a cópia redigida"
+ }
+}

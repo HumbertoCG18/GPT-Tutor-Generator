@@ -1,0 +1,49 @@
+diff --git a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/test_pacote_cego.py b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego.py
+index 5fbcd64..836dcdd 100644
+--- a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/test_pacote_cego.py
++++ b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego.py
+@@ -37,6 +37,7 @@ def fixture(tmp, formato="api"):
+     aula1, lista1, pagina = b"%PDF-1.4 aula 1 bytes", b"%PDF-1.4 lista 1 bytes", b"<html><body>Tutorial</body></html>"
+     if formato == "api":
+         escreve(raiz / "stash/Geral/aula1.pdf", aula1)
++        escreve(raiz / "stash/Unidade 1/aula1.pdf", aula1)   # v3: cada módulo baixado na pasta da sua seção
+         escreve(raiz / "stash/Unidade 1/lista1.pdf", lista1)
+         escreve(raiz / "raw/moodle/pages/501-tutorial.html", pagina)
+         conteudo = lambda nome, n: {"type": "file", "filename": nome, "filepath": "/", "filesize": n, "fileurl": "x",
+diff --git a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+index ebaa1cf..2ab135f 100644
+--- a/validacao_externa_etapa2_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
++++ b/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+@@ -87,11 +87,22 @@ def test_correspondencia_por_nome_e_tamanho_resolvida_pela_secao(tmp_path):
+ 
+ 
+ def test_correspondencia_ambigua_falha_a_geracao(tmp_path):
+-    fonte = fixture_mesmo_nome(tmp_path, ("Pasta X", "Pasta Y"))
++    fonte = fixture_mesmo_nome(tmp_path, ("Geral", "Geral/sub"))   # v3: bytes diferentes na MESMA pasta de seção
+     with pytest.raises(G.AmbiguidadeOrigem):
+         G.monta(fonte, tmp_path / "pacote")
+ 
+ 
++def test_candidatos_so_em_pastas_de_outras_secoes_nao_sao_ligados(tmp_path):
++    """v3: o caso de 29/09 (pastas que não são seções) deixou de falhar: nada é ligado e nada some."""
++    fonte = fixture_mesmo_nome(tmp_path, ("Pasta X", "Pasta Y"))
++    G.monta(fonte, tmp_path / "pacote")
++    assert G.audita(fonte, tmp_path / "pacote") == []
++    mats = carrega(tmp_path / "pacote/materiais.json")["materiais"]
++    slides = sorted(((m["tipo"], m["adjudicavel"], m["ocorrencias"][0]["secao"]) for m in mats if m["nome_original"] == "slides.pdf"))
++    assert slides == [("arquivo", True, "Pasta X"), ("arquivo", True, "Pasta Y"),
++                      ("origem_nao_confirmada", False, "Geral"), ("origem_nao_confirmada", False, "Unidade 1")]
++
++
+ def test_procedencia_completa_e_auditada(pacote):
+     fonte, p = pacote
+     man = carrega(p / "pacote_manifesto.json")
+@@ -119,7 +130,7 @@ def test_reproduz_o_bypass_da_revisao_e_nao_copia(tmp_path):
+ 
+ 
+ @pytest.mark.parametrize("nome, dados, recusa", [
+-    ("a.pdf", b"%PDF-1.7 ok", None), ("a.pdf", b'{"x": 1}', "assinatura"), ("a.docx", b"PK\x03\x04ok", None),
++    ("a.pdf", b"%PDF-1.7 ok", None), ("a.pdf", b'{"x": 1}', "assinatura"), ("a.docx", b"PK\x03\x04ok", "ilegível"),
+     ("a.docx", b"%PDF", "assinatura"), ("a.exe", b"MZ", "extensão"), ("a.txt", b"texto comum", None),
+     ("a.txt", b"x = 'AIza" + b"B" * 35 + b"'", "credencial"), ("a.md", b"winner_score=3.2", "motor"),
+     ("a.mp4", b"\x00\x00\x00\x18ftypmp42", None), ("a.mp4", b"not a video", "assinatura"),

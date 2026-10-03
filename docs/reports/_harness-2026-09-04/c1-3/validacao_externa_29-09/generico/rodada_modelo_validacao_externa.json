@@ -1,0 +1,91 @@
+{
+ "esquema": "rodada-generica-1",
+ "descricao": "MODELO da rodada de validação externa (pré-registro de 29/09). Valores fixos: esquemas, braços, sementes, régua gold_externo com invariância de bloco, sem referência do CRU, staging pelo manifesto do build. Campos marcados <...> só são preenchidos depois do gold congelado e do build (pré-registro §7), sem mudar os fixos.",
+ "esquemas": {
+  "captura": "ve-captura-1",
+  "congelamento": "ve-congelamento-1"
+ },
+ "cursos": [
+  {
+   "sigla": "NOVO1",
+   "tutor": "<Tutor do curso novo>",
+   "raiz_pacote": ".frzero/validacao_externa/pacotes/<Tutor>",
+   "eixos": [
+    "unidade",
+    "sub_primaria"
+   ],
+   "denominadores": {
+    "bloco": 0,
+    "unidade": 0,
+    "sub_primaria": 0
+   }
+  }
+ ],
+ "tutores_proibidos": [
+  "Laboratorio-de-Redes-Tutor",
+  "Metodos-Formais-Tutor",
+  "Sistemas-Operacionais-Tutor",
+  "Inteligencia-Artifical-Tutor",
+  "Engenharia-Software-2-Tutor",
+  "TCC-Tutor",
+  "Computacao-Grafica-Tutor",
+  "Fundamentos-de-Redes-Tutor"
+ ],
+ "bracos": {
+  "cru": "CRU_NOVO",
+  "candidato": "VOCAB_NOVO",
+  "controle_maior": "CTRL_MAIOR_NOVO",
+  "controles_aleatorios": [
+   {
+    "nome": "CTRL_ALEAT_NOVO_1",
+    "semente": 1
+   },
+   {
+    "nome": "CTRL_ALEAT_NOVO_2",
+    "semente": 2
+   },
+   {
+    "nome": "CTRL_ALEAT_NOVO_3",
+    "semente": 3
+   }
+  ]
+ },
+ "inventario_esperado": 1,
+ "referencia_cru": null,
+ "regua": {
+  "tipo": "gold_externo",
+  "arquivos": {
+   "gold": {
+    "NOVO1": "docs/reports/validacao_externa/gold_NOVO1.csv"
+   },
+   "rotulos": {
+    "NOVO1": "docs/reports/validacao_externa/rotulos_NOVO1.json"
+   },
+   "mapa": {
+    "NOVO1": "docs/reports/validacao_externa/mapa_NOVO1.json"
+   }
+  },
+  "manifestos": {},
+  "codigo": {},
+  "invariancia_bloco": true
+ },
+ "protocolo": "docs/reports/2026-09-29-regime-vocab-validacao-externa-preregistro.md",
+ "base_produto": "<HEAD do build, com src/ = c2c4fe30…>",
+ "saida_base": ".frzero/validacao_externa/captura",
+ "recompilacao": ".frzero/validacao_externa",
+ "sufixo": "ve",
+ "proibidos": {
+  "docs/reports/_harness-2026-09-04/c1-3/wad5_avaliacao_26-09": "resultados da Fase 1 por ID",
+  "docs/reports/_harness-2026-09-04/c1-3/vocab_limpo_avaliacao_26-09": "resultados da rodada limpa por ID",
+  "docs/reports/_harness-2026-09-04/c1-3/vocab_limpo_diag_perdas_27-09": "diagnóstico pós-gold",
+  ".frzero/wad5_avaliacao_26-09": "espelho da régua da Fase 1",
+  ".frzero/vocab_limpo_avaliacao_26-09": "espelho da régua da rodada limpa",
+  "docs/reports/pendencias.md": "tracker (IDs de perdas)"
+ },
+ "staging_fonte": {
+  "tipo": "manifesto_do_build",
+  "arvores": {
+   "NOVO1": "<sha_json da árvore do pacote congelado>"
+  }
+ }
+}

@@ -1,0 +1,448 @@
+{
+ "regra": {
+  "versao": 2,
+  "sal": "vocab-validacao-externa-2026-09-29",
+  "K_MAX": 6,
+  "MIN_CURSOS_GERAL": 3,
+  "MIN_ADJUDICAVEIS_GERAL": 100,
+  "MIN_ADJUDICAVEIS_CURSO": 10,
+  "MIN_PERCENT_LOCAL": 90,
+  "script_sha256": "7b99f60918bbb4ae277dea44edfd1655a901f2ebbd28cba033f17b71a0cd8a3b",
+  "base_evidencia": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+  "candidatos_arquivo": "candidatos_lote_29-09.json",
+  "candidatos_sha256": "0ee9f9f1108c0e98c33a511d27cba806db4d549bf30528f14d1efe0f80b655a0"
+ },
+ "candidatos": [
+  {
+   "sigla": "M90231",
+   "nome": "Laboratório de Games e N. Gráficas",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/90231",
+   "origem": "aquisição 29/09, Moodle 90231, 2025/2",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 37,
+    "materiais_unicos_por_hash": 33,
+    "extensoes": {
+     "doc": 2,
+     "docx": 10,
+     "jpg": 4,
+     "pdf": 16,
+     "png": 1
+    },
+    "modulos_moodle": {
+     "assign": 1,
+     "forum": 1,
+     "label": 21,
+     "resource": 36,
+     "url": 47
+    },
+    "links_moodle": 47,
+    "entries_brutas": 80,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 80,
+    "com_fonte_local": 33,
+    "fracao_com_fonte_local": {
+     "num": 33,
+     "den": 80
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 90% com fonte local (exato)",
+   "ordem_deterministica": "2f932e100671885e4d1a1c83f824c323ea6205db9d04c00092baeeb028ca1fc1"
+  },
+  {
+   "sigla": "M88738",
+   "nome": "Fundamentos de P. P. e Distribuído",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/88738",
+   "origem": "aquisição 29/09, Moodle 88738, 2025/2",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 83,
+    "materiais_unicos_por_hash": 45,
+    "extensoes": {
+     "html": 1,
+     "java": 6,
+     "pdf": 35,
+     "zip": 3
+    },
+    "modulos_moodle": {
+     "assign": 3,
+     "board": 1,
+     "folder": 26,
+     "forum": 1,
+     "groupselect": 1,
+     "label": 42,
+     "resource": 7,
+     "url": 15
+    },
+    "links_moodle": 15,
+    "entries_brutas": 60,
+    "meta_por_nome": 3,
+    "potencialmente_adjudicaveis": 57,
+    "com_fonte_local": 42,
+    "fracao_com_fonte_local": {
+     "num": 42,
+     "den": 57
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\validacao_externa_aquisicao_29-09\\88738\\stash\\Plano de Ensino\\2025-Plano-FUNDAMENTOS DE PROCESSAMENTO PARALELO E DISTRIBUIDO.pdf",
+    "sha256": "a61d1210b39dfae0d025f85c09c0b681832cb593f0aca4ec26ac34578309cd56"
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 90% com fonte local (exato)",
+   "ordem_deterministica": "aee2a19c50d4c1a64ec753a8761e81d2dede8ecafac754b4b4e852980bcedded"
+  },
+  {
+   "sigla": "M81476",
+   "nome": "Álgebra Linear e Geometria Analítica",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/81476",
+   "origem": "aquisição 29/09, Moodle 81476, 2025/1",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 9,
+    "materiais_unicos_por_hash": 8,
+    "extensoes": {
+     "pdf": 8
+    },
+    "modulos_moodle": {
+     "board": 1,
+     "forum": 2,
+     "label": 3,
+     "resource": 8
+    },
+    "links_moodle": 0,
+    "entries_brutas": 8,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 7,
+    "com_fonte_local": 7,
+    "fracao_com_fonte_local": {
+     "num": 7,
+     "den": 7
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\validacao_externa_aquisicao_29-09\\81476\\stash\\Plano de Ensino\\00_Plano_Ensino_ALGA_20251_T31_JK.pdf",
+    "sha256": "83894f51b5292ae8c3b8936b6abb5848b901341a13ae5e8628bbb85ff867d478"
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": false,
+   "E4_fonte_local": true,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 10 adjudicáveis",
+   "ordem_deterministica": "dfc6b20ac45232d239ef8a04d9fc4136025a57f0fb40672f7a65fce6aedab2e5"
+  },
+  {
+   "sigla": "M82667",
+   "nome": "Programação de Baixo Nível",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/82667",
+   "origem": "aquisição 29/09, Moodle 82667, 2025/1",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 35,
+    "materiais_unicos_por_hash": 29,
+    "extensoes": {
+     "c": 10,
+     "html": 4,
+     "pdf": 12,
+     "zip": 3
+    },
+    "modulos_moodle": {
+     "board": 1,
+     "folder": 1,
+     "forum": 7,
+     "label": 20,
+     "page": 4,
+     "resource": 22,
+     "url": 48
+    },
+    "links_moodle": 48,
+    "entries_brutas": 77,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 76,
+    "com_fonte_local": 28,
+    "fracao_com_fonte_local": {
+     "num": 28,
+     "den": 76
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\validacao_externa_aquisicao_29-09\\82667\\stash\\Plano de Ensino\\mangan-pbn-plano-de-ensino.pdf",
+    "sha256": "3f2d2bdab62927f6087267aae87a770390e3df320741d979aabebf87269f731b"
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 90% com fonte local (exato)",
+   "ordem_deterministica": "c3fed4c3353c05ce7dd7664e2aa888e1003934a6df5dda942d0d37204d8a0494"
+  },
+  {
+   "sigla": "M89447",
+   "nome": "Métodos Numéricos",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/89447",
+   "origem": "aquisição 29/09, Moodle 89447, 2025/2",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 21,
+    "materiais_unicos_por_hash": 20,
+    "extensoes": {
+     "pdf": 20
+    },
+    "modulos_moodle": {
+     "assign": 2,
+     "folder": 1,
+     "forum": 1,
+     "label": 1,
+     "resource": 15,
+     "url": 35
+    },
+    "links_moodle": 35,
+    "entries_brutas": 55,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 55,
+    "com_fonte_local": 20,
+    "fracao_com_fonte_local": {
+     "num": 20,
+     "den": 55
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 90% com fonte local (exato)",
+   "ordem_deterministica": "5a9fffa8cb024d85b6843a10e48e53b753d81b03d4f3b7546f867f32810d79fc"
+  },
+  {
+   "sigla": "M90572",
+   "nome": "Projeto e Otimização de Algoritmos",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/90572",
+   "origem": "aquisição 29/09, Moodle 90572, 2025/2",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 26,
+    "materiais_unicos_por_hash": 25,
+    "extensoes": {
+     "pdf": 23,
+     "txt": 2
+    },
+    "modulos_moodle": {
+     "assign": 2,
+     "folder": 1,
+     "forum": 2,
+     "label": 7,
+     "resource": 22,
+     "url": 8
+    },
+    "links_moodle": 8,
+    "entries_brutas": 33,
+    "meta_por_nome": 0,
+    "potencialmente_adjudicaveis": 33,
+    "com_fonte_local": 25,
+    "fracao_com_fonte_local": {
+     "num": 25,
+     "den": 33
+    }
+   },
+   "plano": {
+    "disponivel": false,
+    "arquivo": null,
+    "sha256": null
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": false,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: plano, >= 90% com fonte local (exato)",
+   "ordem_deterministica": "317919c103b348499d5129482ad9e1dc11ad98aae813ba828030ab67a05b0aa8"
+  },
+  {
+   "sigla": "M89100",
+   "nome": "Programação Funcional",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/89100",
+   "origem": "aquisição 29/09, Moodle 89100, 2025/2",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 22,
+    "materiais_unicos_por_hash": 21,
+    "extensoes": {
+     "html": 1,
+     "pdf": 16,
+     "txt": 3,
+     "zip": 1
+    },
+    "modulos_moodle": {
+     "board": 1,
+     "forum": 6,
+     "groupselect": 2,
+     "label": 28,
+     "page": 1,
+     "quiz": 3,
+     "resource": 43,
+     "url": 12
+    },
+    "links_moodle": 12,
+    "entries_brutas": 33,
+    "meta_por_nome": 1,
+    "potencialmente_adjudicaveis": 32,
+    "com_fonte_local": 20,
+    "fracao_com_fonte_local": {
+     "num": 20,
+     "den": 32
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\validacao_externa_aquisicao_29-09\\89100\\stash\\Plano de Ensino\\progfunc-32-plano-de-ensino-252.pdf",
+    "sha256": "4edcf7c303bba6c41325d5335e12c9b7fd3d9c0f39592eb9632169a8f9843d2e"
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 90% com fonte local (exato)",
+   "ordem_deterministica": "d862388cea4742965f299f10bb8d72cecbd40c665f92a5781503b3b5f6ab46d2"
+  },
+  {
+   "sigla": "M80922",
+   "nome": "Organização e A. de Processadores",
+   "fonte": "~/Documents/GitHub/GPT-Tutor-Generator/.frzero/validacao_externa_aquisicao_29-09/80922",
+   "origem": "aquisição 29/09, Moodle 80922, 2025/1",
+   "estrutura": {
+    "existe": true,
+    "arquivos_total": 42,
+    "materiais_unicos_por_hash": 30,
+    "extensoes": {
+     "docx": 2,
+     "gif": 1,
+     "pdf": 22,
+     "pptx": 2,
+     "zip": 3
+    },
+    "modulos_moodle": {
+     "assign": 1,
+     "board": 1,
+     "forum": 1,
+     "groupselect": 1,
+     "label": 11,
+     "resource": 41,
+     "url": 6
+    },
+    "links_moodle": 6,
+    "entries_brutas": 36,
+    "meta_por_nome": 2,
+    "potencialmente_adjudicaveis": 34,
+    "com_fonte_local": 28,
+    "fracao_com_fonte_local": {
+     "num": 28,
+     "den": 34
+    }
+   },
+   "plano": {
+    "disponivel": true,
+    "arquivo": "~\\Documents\\GitHub\\GPT-Tutor-Generator\\.frzero\\validacao_externa_aquisicao_29-09\\80922\\stash\\Plano de Ensino\\98G03-04_Prog-Plano-OAP_2023_2 (NOVO).pdf",
+    "sha256": "b884c675ed2268210d86b7f1d231c613706e9d5e13893787e87bf0e5a1e90abc"
+   },
+   "exposicao": {
+    "nivel": "N0",
+    "tutor_construido": false,
+    "falhas_da_busca": [],
+    "mencoes_repo": 0,
+    "exemplos": [],
+    "commits": []
+   },
+   "E2_plano": true,
+   "E3_tamanho": true,
+   "E4_fonte_local": false,
+   "populacao": "inelegivel",
+   "motivo": "falta: >= 90% com fonte local (exato)",
+   "ordem_deterministica": "737039bbf539145517c05c1b2a288367ed5eed944f4b86dcca803d56b2e23ae1"
+  }
+ ],
+ "proposta": {
+  "generalizacao": [],
+  "generalizacao_fora_do_orcamento": [],
+  "piloto_externo": [],
+  "piloto_fora_do_orcamento": [],
+  "smoke_descritivo": [],
+  "indeterminados": [],
+  "adjudicaveis_generalizacao": 0,
+  "minimo_generalizacao_atingido": false
+ }
+}

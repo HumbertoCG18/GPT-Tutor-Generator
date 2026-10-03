@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="6" time="2.530" timestamp="2026-09-29T13:09:03.308129-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP08_cor_do_git_nao_vira_zero" time="0.532"><failure message="AssertionError: assert ('ok' == 'ok'&#10;  &#10;    ok and 0 == 4)">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP08_cor_do_git_nao_vira0'), 'e716636628b00ea4cd02918c5321c5a90364022b')
+
+    def test_EXP08_cor_do_git_nao_vira_zero(repo):
+        raiz, base = repo
+        git(raiz, "config", "color.grep", "always")
+        git(raiz, "config", "color.ui", "always")
+        r = gamma(raiz, base)
+&gt;       assert r["status_da_busca"] == "ok" and r["sinais"]["ocorrencias"] == 4
+E       AssertionError: assert ('ok' == 'ok'
+E         
+E           ok and 0 == 4)
+
+exposicao\test_verifica_exposicao_v2.py:46: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP06_saida_nao_interpretada_e_indeterminado" time="0.329"><failure message="AssertionError: assert 'ok' == 'INDETERMINADO'&#10;  &#10;  - INDETERMINADO&#10;  + ok">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP06_saida_nao_interpret0'), 'd541ba3e2e8573cd0146f036e0d8b502c1e2e668')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001A3BEDD1410&gt;
+
+    def test_EXP06_saida_nao_interpretada_e_indeterminado(repo, monkeypatch):
+        raiz, base = repo
+        original = V.git
+    
+        def git_falso(repo_, *args):
+            if "grep" in args:
+                return 0, "linha fora do formato esperado\n"
+            return original(repo_, *args)
+    
+        monkeypatch.setattr(V, "git", git_falso)
+&gt;       assert gamma(raiz, base)["status_da_busca"] == "INDETERMINADO"
+E       AssertionError: assert 'ok' == 'INDETERMINADO'
+E         
+E         - INDETERMINADO
+E         + ok
+
+exposicao\test_verifica_exposicao_v2.py:59: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP09_todos_os_matches_da_linha" time="0.310"><failure message="AssertionError: assert ['I'] == ['I', ' ']&#10;  &#10;  Right contains one more item: ' '&#10;  Use -v to get more diff">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP09_todos_os_matches_da0'), 'd541ba3e2e8573cd0146f036e0d8b502c1e2e668')
+
+    def test_EXP09_todos_os_matches_da_linha(repo):
+        raiz, base = repo
+        r = V.verifica({"id": "x", "nome": "ES I", "padrao": "Engenharia de Software I"}, raiz, base, ["docs"], EXCLUI, [])
+        ocs = [o for o in r["ocorrencias"] if o["arquivo"] == "docs/uma_linha.json"]
+&gt;       assert [o["vizinhanca"]["depois"][:1] for o in ocs] == ["I", " "]
+E       AssertionError: assert ['I'] == ['I', ' ']
+E         
+E         Right contains one more item: ' '
+E         Use -v to get more diff
+
+exposicao\test_verifica_exposicao_v2.py:66: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP01_caminho_acentuado_sem_aspas" time="0.385"><failure message="assert 'docs/ação.md' in {'&quot;docs/a\\303\\247\\303\\243o.md&quot;', 'docs/reports/placar_x.json', 'docs/resumo_curso.md', 'tests/test_curso.py'}">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP01_caminho_acentuado_s0'), 'd541ba3e2e8573cd0146f036e0d8b502c1e2e668')
+
+    def test_EXP01_caminho_acentuado_sem_aspas(repo):
+        raiz, base = repo
+        arquivos = {o["arquivo"] for o in gamma(raiz, base)["ocorrencias"]}
+&gt;       assert "docs/ação.md" in arquivos
+E       assert 'docs/ação.md' in {'"docs/a\\303\\247\\303\\243o.md"', 'docs/reports/placar_x.json', 'docs/resumo_curso.md', 'tests/test_curso.py'}
+
+exposicao\test_verifica_exposicao_v2.py:73: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP05_categorias_e_motivo_de_omissao" time="0.380"><failure message="AssertionError: assert 'codigo' == 'teste_ou_fixture'&#10;  &#10;  - teste_ou_fixture&#10;  + codigo">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP05_categorias_e_motivo0'), 'db0e0a7bc41beb64ddc0006c45c87d697fbf3f88')
+
+    def test_EXP05_categorias_e_motivo_de_omissao(repo):
+        raiz, base = repo
+        por = {o["arquivo"]: o for o in gamma(raiz, base)["ocorrencias"]}
+&gt;       assert por["tests/test_curso.py"]["categoria"] == "teste_ou_fixture"
+E       AssertionError: assert 'codigo' == 'teste_ou_fixture'
+E         
+E         - teste_ou_fixture
+E         + codigo
+
+exposicao\test_verifica_exposicao_v2.py:79: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_tmp.exposicao.test_verifica_exposicao_v2" name="test_EXP03_fonte_de_pastas_ausente_e_indeterminado" time="0.302"><failure message="AssertionError: assert ['ok'] == ['INDETERMINADO']&#10;  &#10;  At index 0 diff: 'ok' != 'INDETERMINADO'&#10;  Use -v to get more diff">repo = (WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP03_fonte_de_pastas_aus0'), 'db0e0a7bc41beb64ddc0006c45c87d697fbf3f88')
+tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2733/test_EXP03_fonte_de_pastas_aus0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001A3BEDF8C10&gt;
+
+    def test_EXP03_fonte_de_pastas_ausente_e_indeterminado(repo, tmp_path, monkeypatch):
+        raiz, base = repo
+        entrada = {"base": base, "raizes": ["docs"], "exclui_caminho": r"\.pdf$", "catalogo": "x", "candidatos_locais": "x",
+                   "pastas_anteriores": str(tmp_path / "nao_existe"), "fora_ids": [], "fora_siglas": []}
+        (tmp_path / "entrada.json").write_text(json.dumps(entrada), encoding="utf-8")
+        monkeypatch.setattr(V, "REPO", raiz)
+        monkeypatch.setattr(V, "candidatos", lambda e: [{"id": "x", "nome": "Curso Gamma", "padrao": "Curso Gamma", "origem": "t"}])
+        monkeypatch.setattr(sys, "argv", ["v", str(tmp_path / "entrada.json"), str(tmp_path / "saida.json")])
+        V.main()
+        saida = json.loads((tmp_path / "saida.json").read_text(encoding="utf-8"))
+&gt;       assert [c["status_da_busca"] for c in saida["candidatos"]] == ["INDETERMINADO"]
+E       AssertionError: assert ['ok'] == ['INDETERMINADO']
+E         
+E         At index 0 diff: 'ok' != 'INDETERMINADO'
+E         Use -v to get more diff
+
+exposicao\test_verifica_exposicao_v2.py:95: AssertionError</failure></testcase></testsuite></testsuites>

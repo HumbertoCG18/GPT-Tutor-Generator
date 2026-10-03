@@ -1,0 +1,4637 @@
+{
+ "esquema": "inventario-downloads-1",
+ "parada": "fim das disciplinas N0 do catálogo",
+ "bytes_baixados": 300727760,
+ "cursos": [
+  {
+   "id": "90231",
+   "nome": "Laboratório de Games e N. Gráficas",
+   "semestre": "2025/2",
+   "ordem": 1,
+   "erro": null,
+   "segundos": 16.0,
+   "status_arquivos": {
+    "ok": 36,
+    "link_externo": 47
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3427481",
+     "modname": "resource",
+     "arquivo": "programa games e comics 2025-2.doc",
+     "tamanho_api": 805888,
+     "caminho": "stash/Plano de Ensino/programa games e comics 2025-2.doc",
+     "sha256": "84a844161e849884717c5481720c361d82b5320eea3c875a092108391ac5ef77",
+     "bytes": 805888,
+     "status": "ok"
+    },
+    {
+     "secao": "Grupos",
+     "modulo_id": "3435239",
+     "modname": "resource",
+     "arquivo": "GRUPOS LAB GAMES 25-1.pdf",
+     "tamanho_api": 1141783,
+     "caminho": "stash/Grupos/GRUPOS LAB GAMES 25-1.pdf",
+     "sha256": "33029b9ca47daaf3777ca3498ab3392e5ba51424e9029cb639f56636cfa44dab",
+     "bytes": 1141783,
+     "status": "ok"
+    },
+    {
+     "secao": "Logos",
+     "modulo_id": "3420369",
+     "modname": "url",
+     "arquivo": "LINK - Canva - Logos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Leaderboard",
+     "modulo_id": "3420366",
+     "modname": "url",
+     "arquivo": "LEADERBOARD UMC 20252",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 1 - 01.08 - Introdução",
+     "modulo_id": "3420371",
+     "modname": "url",
+     "arquivo": "SLIDES - Introdução Games e Narrativas Gráficas",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 1 - 01.08 - Introdução",
+     "modulo_id": "3434582",
+     "modname": "url",
+     "arquivo": "VIDEO - Stanton - As pistas para uma grande história",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 2 - 08.08 - Homo Ludens e Prototipagem",
+     "modulo_id": "3420381",
+     "modname": "resource",
+     "arquivo": "[pdf] huizinga - homo ludens - cap 1.pdf",
+     "tamanho_api": 45962421,
+     "caminho": "stash/Aula 2 - 08.08 - Homo Ludens e Prototipagem/[pdf] huizinga - homo ludens - cap 1.pdf",
+     "sha256": "de636f337fc2f2539df8567a7ab362013d3fe3cc9565becac05441b2c21c90a4",
+     "bytes": 45962421,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 2 - 08.08 - Homo Ludens e Prototipagem",
+     "modulo_id": "3447832",
+     "modname": "url",
+     "arquivo": "CANVA - Sobre Homo Ludens",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 2 - 08.08 - Homo Ludens e Prototipagem",
+     "modulo_id": "3420379",
+     "modname": "url",
+     "arquivo": "VIDEO - Tennis for Two (1958)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 2 - 08.08 - Homo Ludens e Prototipagem",
+     "modulo_id": "3447773",
+     "modname": "url",
+     "arquivo": "LINK - Encho - Discutindo Literatura de Jogos Homo Ludens",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 3 - 15.08 - Teorias da Diversão e Prototipagem",
+     "modulo_id": "3420383",
+     "modname": "resource",
+     "arquivo": "4_keys_poster.jpg",
+     "tamanho_api": 282514,
+     "caminho": "stash/Aula 3 - 15.08 - Teorias da Diversão e Prototipagem/4_keys_poster.jpg",
+     "sha256": "7b74e083a0eeb8f78394d94958a1aec0959d512e9f26e243d9ba2bd2b46b7857",
+     "bytes": 282514,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 3 - 15.08 - Teorias da Diversão e Prototipagem",
+     "modulo_id": "3453994",
+     "modname": "url",
+     "arquivo": "GAME - Flappy Bird",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 3 - 15.08 - Teorias da Diversão e Prototipagem",
+     "modulo_id": "3420385",
+     "modname": "url",
+     "arquivo": "LINK - Dal Molin - As cores do Game Design",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 3 - 15.08 - Teorias da Diversão e Prototipagem",
+     "modulo_id": "3420386",
+     "modname": "url",
+     "arquivo": "LINK - Dal Molin - The colors of game design",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 3 - 15.08 - Teorias da Diversão e Prototipagem",
+     "modulo_id": "3454005",
+     "modname": "url",
+     "arquivo": "video - Lazarro - What makes games fun?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 4 - 22.08 - Playtesting",
+     "modulo_id": "3459076",
+     "modname": "url",
+     "arquivo": "VIDEO - How to think like a game designer",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 5 - 28.08 - Narrativa Textual e Visual",
+     "modulo_id": "3459054",
+     "modname": "resource",
+     "arquivo": "MDA.pdf",
+     "tamanho_api": 279913,
+     "caminho": "stash/Aula 5 - 28.08 - Narrativa Textual e Visual/MDA.pdf",
+     "sha256": "f024c53fde7d44d340fc34a29edb96c1524d806dd56d74449f9e33ae28251773",
+     "bytes": 279913,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 5 - 28.08 - Narrativa Textual e Visual",
+     "modulo_id": "3459056",
+     "modname": "resource",
+     "arquivo": "ARTIGO MDA - traduzido.docx",
+     "tamanho_api": 154152,
+     "caminho": "stash/Aula 5 - 28.08 - Narrativa Textual e Visual/ARTIGO MDA - traduzido.docx",
+     "sha256": "742ea51b02709f3df3b3fdd2531b97be75681f977c64d21d47380cb05319ec3a",
+     "bytes": 154152,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 5 - 28.08 - Narrativa Textual e Visual",
+     "modulo_id": "3463125",
+     "modname": "resource",
+     "arquivo": "NARRATIVA UMA PAGINA.pdf",
+     "tamanho_api": 134984,
+     "caminho": "stash/Aula 5 - 28.08 - Narrativa Textual e Visual/NARRATIVA UMA PAGINA.pdf",
+     "sha256": "360a1100d6a2df5b6468b26f4cbcb121abb4a11ba0865c706e876741acba4106",
+     "bytes": 134984,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 6 - 05.09 - História dos Quadrinhos e Character Design",
+     "modulo_id": "3463120",
+     "modname": "url",
+     "arquivo": "VIDEO - Scott McCloud sobre Quadrinhos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 6 - 05.09 - História dos Quadrinhos e Character Design",
+     "modulo_id": "3466728",
+     "modname": "url",
+     "arquivo": "CANVA - História das HQs",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 6 - 05.09 - História dos Quadrinhos e Character Design",
+     "modulo_id": "3463122",
+     "modname": "resource",
+     "arquivo": "PAGINA QUADRINHOS.pdf",
+     "tamanho_api": 73804,
+     "caminho": "stash/Aula 6 - 05.09 - História dos Quadrinhos e Character Design/PAGINA QUADRINHOS.pdf",
+     "sha256": "181b5e2d8729df14c2df8af157718c0c98b034811d68f558e5bba65b1c8a1bd4",
+     "bytes": 73804,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 6 - 05.09 - História dos Quadrinhos e Character Design",
+     "modulo_id": "3466732",
+     "modname": "resource",
+     "arquivo": "Character Design Sheet 25.docx",
+     "tamanho_api": 23995,
+     "caminho": "stash/Aula 6 - 05.09 - História dos Quadrinhos e Character Design/Character Design Sheet 25.docx",
+     "sha256": "cae3db84a41faf25f5e88b6abf4bb468c894bca086918dcc122c132e6272b1dd",
+     "bytes": 23995,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 7 - 12.09 - TAREFA de Roteiro de HQ",
+     "modulo_id": "3420403",
+     "modname": "resource",
+     "arquivo": "ROTEIRO HQs.doc",
+     "tamanho_api": 45056,
+     "caminho": "stash/Aula 7 - 12.09 - TAREFA de Roteiro de HQ/ROTEIRO HQs.doc",
+     "sha256": "b8dc464280dec61ad4f475e885e123ed87480a834f0790c3794d5385646d8e31",
+     "bytes": 45056,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 7 - 12.09 - TAREFA de Roteiro de HQ",
+     "modulo_id": "3420404",
+     "modname": "resource",
+     "arquivo": "monica-exemplo.jpg",
+     "tamanho_api": 131826,
+     "caminho": "stash/Aula 7 - 12.09 - TAREFA de Roteiro de HQ/monica-exemplo.jpg",
+     "sha256": "a9322dfbcb0e594ae35bd2eaecd39e97a55fb6f48951cff9339cdb8ab2436038",
+     "bytes": 131826,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 9 - 25.09 - RPGs de mesa e narrativas sistêmicas",
+     "modulo_id": "3478819",
+     "modname": "url",
+     "arquivo": "CANVA - RPG",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482457",
+     "modname": "url",
+     "arquivo": "CANVA - ISEKAI (mini) DUNGEON",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482467",
+     "modname": "resource",
+     "arquivo": "isekai mini dungeon.docx",
+     "tamanho_api": 20952,
+     "caminho": "stash/Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1/isekai mini dungeon.docx",
+     "sha256": "7d5de0fb774b28419398b521e6a4eb15b69bf40425989ad25eb1e499b279f389",
+     "bytes": 20952,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482466",
+     "modname": "resource",
+     "arquivo": "isekai ficha.docx",
+     "tamanho_api": 23442,
+     "caminho": "stash/Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1/isekai ficha.docx",
+     "sha256": "82730c7376f739351b145e23037531f1b41934ceb6d0ac28da14d96bb43bf0b8",
+     "bytes": 23442,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482468",
+     "modname": "resource",
+     "arquivo": "isekai ficha dupla.pdf",
+     "tamanho_api": 27518,
+     "caminho": "stash/Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1/isekai ficha dupla.pdf",
+     "sha256": "b49a75368df9810dbdc3c19e79e08779f06e9ab8201d0499bc95ca9a28e4b139",
+     "bytes": 27518,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482261",
+     "modname": "url",
+     "arquivo": "LINK - Swords amp; Sorcery",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 10 - 03.10 - ISEKAI (mini) DUNGEON e QUIZ 1",
+     "modulo_id": "3482262",
+     "modname": "url",
+     "arquivo": "LINK - Lasers amp; Feelings",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Pesquisa sobre Gráficos Realistas ou Estilizados",
+     "modulo_id": "3480453",
+     "modname": "url",
+     "arquivo": "QR Code da Pesquisa - Artur Ledur",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Gamer Motivation Model",
+     "modulo_id": "3420410",
+     "modname": "url",
+     "arquivo": "LINK - Gamer Motivation - Pesquisa",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Gamer Motivation Model",
+     "modulo_id": "3420411",
+     "modname": "url",
+     "arquivo": "PDF - Quantic Foundry - Gamer Motivation Model",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420574",
+     "modname": "url",
+     "arquivo": "PPT - Origens do Mangá",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420575",
+     "modname": "resource",
+     "arquivo": "PASSEIO PELAS ORIGENS DO MANGÁ.docx",
+     "tamanho_api": 15008,
+     "caminho": "stash/Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos/PASSEIO PELAS ORIGENS DO MANGÁ.docx",
+     "sha256": "3c4a1830993d5ee6d9a87537efd4aaaa2d8adf48163fdeefe24ec3db2019201b",
+     "bytes": 15008,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420576",
+     "modname": "resource",
+     "arquivo": "10.png",
+     "tamanho_api": 1118455,
+     "caminho": "stash/Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos/10.png",
+     "sha256": "ad9c06fa37ba7d88189ec7f3221731819770b8200d4709724cdb2be851eab63d",
+     "bytes": 1118455,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420577",
+     "modname": "resource",
+     "arquivo": "pdf - mccloud - oriente e ocidente.pdf",
+     "tamanho_api": 1078435,
+     "caminho": "stash/Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos/pdf - mccloud - oriente e ocidente.pdf",
+     "sha256": "1c68e5c451ae026ee4b584510c1556056f9b417355b1ac4a1eeddd2defeef8c5",
+     "bytes": 1078435,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420578",
+     "modname": "resource",
+     "arquivo": "mccloud - cap 9 juntando tudo.pdf",
+     "tamanho_api": 5139591,
+     "caminho": "stash/Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos/mccloud - cap 9 juntando tudo.pdf",
+     "sha256": "ad10858351e8f1cd78764fe00807b2298b47e4ffc713015788ea9b3a48eb2868",
+     "bytes": 5139591,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420587",
+     "modname": "url",
+     "arquivo": "LINK - Fundação Japão - Kamishibai, a arte japonesa de contar histórias",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420588",
+     "modname": "url",
+     "arquivo": "VIDEO - Takarazuka Revue - The Fascination!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 11 - 10.10 - Origens do Mangá e Oficina de Diálogos",
+     "modulo_id": "3420596",
+     "modname": "url",
+     "arquivo": "VIDEO - Yoshitsune - Kabuki",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document",
+     "modulo_id": "3485353",
+     "modname": "resource",
+     "arquivo": "árvore de diálogo - modelo.docx",
+     "tamanho_api": 35835,
+     "caminho": "stash/Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document/árvore de diálogo - modelo.docx",
+     "sha256": "2e0bf134307e3a4bd66f70cac8638366f36da1a97029828aa213ae966a5e18ef",
+     "bytes": 35835,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document",
+     "modulo_id": "3485351",
+     "modname": "url",
+     "arquivo": "VIDEO - Encontros e Desencontros",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document",
+     "modulo_id": "3485349",
+     "modname": "resource",
+     "arquivo": "diálogo - encontros e desencontros - em branco.docx",
+     "tamanho_api": 15335,
+     "caminho": "stash/Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document/diálogo - encontros e desencontros - em branco.docx",
+     "sha256": "37bf47f56083e709a29924a43813e51f7441c073249de4cb2d9ec485ff95c64b",
+     "bytes": 15335,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 12 - 17.10 - Exercícios de Diálogo e o Game Design Document",
+     "modulo_id": "3487771",
+     "modname": "url",
+     "arquivo": "CANVA - Resultados Diálogos A+B",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3487789",
+     "modname": "resource",
+     "arquivo": "GDD 1-pager-ptbr.pdf",
+     "tamanho_api": 24040,
+     "caminho": "stash/Modelo de GDD/GDD 1-pager-ptbr.pdf",
+     "sha256": "97da51a1e991a8eb44ff77979d35f2d987cc2ddadcafc7bdff61fab5a0a2a1ad",
+     "bytes": 24040,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3487784",
+     "modname": "resource",
+     "arquivo": "GDD 1-pager-ptbr.docx",
+     "tamanho_api": 21833,
+     "caminho": "stash/Modelo de GDD/GDD 1-pager-ptbr.docx",
+     "sha256": "353d37a229317f8fb56b46b350e9b563ff87243b2794c8c85d3249b64e29fb07",
+     "bytes": 21833,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420419",
+     "modname": "url",
+     "arquivo": "LINK - Lu Gossian - 1 Page Template",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420418",
+     "modname": "resource",
+     "arquivo": "GDD 1-pager.pdf",
+     "tamanho_api": 62293,
+     "caminho": "stash/Modelo de GDD/GDD 1-pager.pdf",
+     "sha256": "372f99f5fb33eab6ec453161734c33d62e28781ee2179aa54385d9d0f4df004a",
+     "bytes": 62293,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420431",
+     "modname": "url",
+     "arquivo": "LINK - Charlie Cleveland - Game Pillars",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420436",
+     "modname": "resource",
+     "arquivo": "GEDD EXEMPLO - FLAME.pdf",
+     "tamanho_api": 1131381,
+     "caminho": "stash/Modelo de GDD/GEDD EXEMPLO - FLAME.pdf",
+     "sha256": "dd8bfaa9e0d5d64b74542d3b784f8cc8f50e1d0c3e38f5aff67c01879b13aa38",
+     "bytes": 1131381,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420437",
+     "modname": "resource",
+     "arquivo": "GDD EXEMPLO - TRANSFORMERS.pdf",
+     "tamanho_api": 53466733,
+     "caminho": "stash/Modelo de GDD/GDD EXEMPLO - TRANSFORMERS.pdf",
+     "sha256": "abf51d1b9e9468b419334917acd77dee8432567e71eb80d3c8eca43e378f0038",
+     "bytes": 53466733,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420435",
+     "modname": "resource",
+     "arquivo": "GDD EXEMPLO - BALLET.pdf",
+     "tamanho_api": 489889,
+     "caminho": "stash/Modelo de GDD/GDD EXEMPLO - BALLET.pdf",
+     "sha256": "55053d6349a881ae3577abdda5803f3269197b57f7453fb91d9dadeeeced88d1",
+     "bytes": 489889,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420427",
+     "modname": "url",
+     "arquivo": "LINK - GDD - Fallout Brotherhood",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420428",
+     "modname": "resource",
+     "arquivo": "silent-hill-design-document.pdf",
+     "tamanho_api": 7871024,
+     "caminho": "stash/Modelo de GDD/silent-hill-design-document.pdf",
+     "sha256": "703df45f01bf46d0467cac3f500b99c50f1f5bba3787335d7abf41ebac14893a",
+     "bytes": 7871024,
+     "status": "ok"
+    },
+    {
+     "secao": "Modelo de GDD",
+     "modulo_id": "3420429",
+     "modname": "resource",
+     "arquivo": "grand-theft-auto.pdf",
+     "tamanho_api": 926278,
+     "caminho": "stash/Modelo de GDD/grand-theft-auto.pdf",
+     "sha256": "ab76ca4c5e3440ee752829c45fdc50970b452fc72f17b9717ea381b2e8ddc579",
+     "bytes": 926278,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 14 - 31.10 - Pilares do Jogo e Projeto Extensionista",
+     "modulo_id": "3493898",
+     "modname": "url",
+     "arquivo": "CANVA - Avisos Importantes",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 14 - 31.10 - Pilares do Jogo e Projeto Extensionista",
+     "modulo_id": "3420430",
+     "modname": "resource",
+     "arquivo": "Cleveland - Pilares e Valores de um Jogo.docx",
+     "tamanho_api": 18563,
+     "caminho": "stash/Aula 14 - 31.10 - Pilares do Jogo e Projeto Extensionista/Cleveland - Pilares e Valores de um Jogo.docx",
+     "sha256": "9e3f3c2e9221ba403b34ebefbbbe3e98b0a55737da272735a61d052c5f556d14",
+     "bytes": 18563,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 14 - 31.10 - Pilares do Jogo e Projeto Extensionista",
+     "modulo_id": "3493899",
+     "modname": "url",
+     "arquivo": "VIDEO - Subnautica - Gameplay Trailer",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420406",
+     "modname": "url",
+     "arquivo": "CANVA - O processo criativo de Brian Lee OMalley",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420407",
+     "modname": "url",
+     "arquivo": "VIDEO - Scott Pilgrim - Trailer do filme",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420408",
+     "modname": "url",
+     "arquivo": "VIDEO - Scott Pilgrim - Animação",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420409",
+     "modname": "url",
+     "arquivo": "VIDEO - Scott Pilgrim - Gameplay do Jogo",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420784",
+     "modname": "resource",
+     "arquivo": "Scott Pilgrim - Exemplo 1.jpg",
+     "tamanho_api": 715625,
+     "caminho": "stash/Aula 15 - 07.11 - HQ, Roteiro e Adaptação/Scott Pilgrim - Exemplo 1.jpg",
+     "sha256": "f4a681dd8f42fb383a7904600029bf9b5690e954862d78adbcd59292d601d969",
+     "bytes": 715625,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 15 - 07.11 - HQ, Roteiro e Adaptação",
+     "modulo_id": "3420785",
+     "modname": "resource",
+     "arquivo": "Scott Pilgrim - Exemplo de Roteiro.pdf",
+     "tamanho_api": 95685,
+     "caminho": "stash/Aula 15 - 07.11 - HQ, Roteiro e Adaptação/Scott Pilgrim - Exemplo de Roteiro.pdf",
+     "sha256": "dd5a159a6309cdf241ce119dd5bc7078e571fcbf4b4edb23b5e38fb9fd43804e",
+     "bytes": 95685,
+     "status": "ok"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420466",
+     "modname": "url",
+     "arquivo": "VIDEO - Lord of the Rings - Women Edit",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420467",
+     "modname": "url",
+     "arquivo": "PPT - Representatividade em Games",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420468",
+     "modname": "resource",
+     "arquivo": "main-qimg-d1fd39a857ac5ac30621a6cd84ca2133-pjlq.jpg",
+     "tamanho_api": 87025,
+     "caminho": "stash/Sobre Representatividade e Diversidade/main-qimg-d1fd39a857ac5ac30621a6cd84ca2133-pjlq.jpg",
+     "sha256": "7fc1dd2faa3ac435342af135131053877688c56df6799648b2cb0597698b53eb",
+     "bytes": 87025,
+     "status": "ok"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420469",
+     "modname": "resource",
+     "arquivo": "Explorando o Problema de igualdade e inclusão.docx",
+     "tamanho_api": 96003,
+     "caminho": "stash/Sobre Representatividade e Diversidade/Explorando o Problema de igualdade e inclusão.docx",
+     "sha256": "c73265a5e7d628ef19491804d6f92cc06f4a3b2f14de5f1f6afb04a04e7faa37",
+     "bytes": 96003,
+     "status": "ok"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420470",
+     "modname": "url",
+     "arquivo": "VIDEO - Feminist Frequency - Damsel in Distress",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420471",
+     "modname": "url",
+     "arquivo": "VIDEO - Tchia - Trailer",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sobre Representatividade e Diversidade",
+     "modulo_id": "3420472",
+     "modname": "url",
+     "arquivo": "VIDEO - Tchia - Making Of",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "21.11 - Avaliação - Game Design Document - GDD",
+     "modulo_id": "3420456",
+     "modname": "resource",
+     "arquivo": "GDD EXEMPLO - BALLET.pdf",
+     "tamanho_api": 489889,
+     "caminho": "stash/21.11 - Avaliação - Game Design Document - GDD/GDD EXEMPLO - BALLET.pdf",
+     "sha256": "55053d6349a881ae3577abdda5803f3269197b57f7453fb91d9dadeeeced88d1",
+     "bytes": 489889,
+     "status": "ok"
+    },
+    {
+     "secao": "21.11 - Avaliação - Game Design Document - GDD",
+     "modulo_id": "3420457",
+     "modname": "resource",
+     "arquivo": "GEDD EXEMPLO - FLAME.pdf",
+     "tamanho_api": 1131381,
+     "caminho": "stash/21.11 - Avaliação - Game Design Document - GDD/GEDD EXEMPLO - FLAME.pdf",
+     "sha256": "dd8bfaa9e0d5d64b74542d3b784f8cc8f50e1d0c3e38f5aff67c01879b13aa38",
+     "bytes": 1131381,
+     "status": "ok"
+    },
+    {
+     "secao": "21.11 - Avaliação - Game Design Document - GDD",
+     "modulo_id": "3420458",
+     "modname": "resource",
+     "arquivo": "GDD EXEMPLO - TRANSFORMERS.pdf",
+     "tamanho_api": 53466733,
+     "caminho": "stash/21.11 - Avaliação - Game Design Document - GDD/GDD EXEMPLO - TRANSFORMERS.pdf",
+     "sha256": "abf51d1b9e9468b419334917acd77dee8432567e71eb80d3c8eca43e378f0038",
+     "bytes": 53466733,
+     "status": "ok"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420526",
+     "modname": "url",
+     "arquivo": "LINK - Matheus Cunegato - Instagram",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420527",
+     "modname": "url",
+     "arquivo": "LINK - Steam - Islets Tower Defense Demo",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420528",
+     "modname": "url",
+     "arquivo": "VÍDEO - Horizon Chase 2 - Trailer",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420529",
+     "modname": "url",
+     "arquivo": "LINK - Matheus Cunegato - LinkedIn",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420530",
+     "modname": "url",
+     "arquivo": "LINK - Matheus Cunegato - Twitter",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Aula 17 - 28.11 - CANCELADO Q&amp;A com Matheus Cunegato - Mas a PREMIAÇÃO continua",
+     "modulo_id": "3420531",
+     "modname": "url",
+     "arquivo": "LINK - Aquiris Game Studio",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    }
+   ],
+   "E2": false,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "88738",
+   "nome": "Fundamentos de P. P. e Distribuído",
+   "semestre": "2025/2",
+   "ordem": 2,
+   "erro": null,
+   "segundos": 19.4,
+   "status_arquivos": {
+    "ok": 82,
+    "link_externo": 15
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3384794",
+     "modname": "resource",
+     "arquivo": "2025-Plano-FUNDAMENTOS DE PROCESSAMENTO PARALELO E DISTRIBUIDO.pdf",
+     "tamanho_api": 71067,
+     "caminho": "stash/Plano de Ensino/2025-Plano-FUNDAMENTOS DE PROCESSAMENTO PARALELO E DISTRIBUIDO.pdf",
+     "sha256": "a61d1210b39dfae0d025f85c09c0b681832cb593f0aca4ec26ac34578309cd56",
+     "bytes": 71067,
+     "status": "ok"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3384795",
+     "modname": "resource",
+     "arquivo": "cronograma (39).html",
+     "tamanho_api": 43939,
+     "caminho": "stash/Plano de Ensino/cronograma (39).html",
+     "sha256": "45fa06a684722f7baf25e0ac46367a2cf92b8639b53620006a5a3c8cabb8e758",
+     "bytes": 43939,
+     "status": "ok"
+    },
+    {
+     "secao": "Material Auxiliar para Aprendizado de Golang",
+     "modulo_id": "3384806",
+     "modname": "url",
+     "arquivo": "Dicas sobre Go - básico (sem concorrência)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Material Auxiliar para Aprendizado de Golang",
+     "modulo_id": "3384807",
+     "modname": "resource",
+     "arquivo": "GoBootcamp.pdf",
+     "tamanho_api": 483297,
+     "caminho": "stash/Material Auxiliar para Aprendizado de Golang/GoBootcamp.pdf",
+     "sha256": "0290ada487b768fbe6bfbb4dadc8a907cc3f54b24b3a33122b0520d0a35e2c0f",
+     "bytes": 483297,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384814",
+     "modname": "folder",
+     "arquivo": "Ex1-Independentes.go",
+     "tamanho_api": 739,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/Ex1-Independentes.go",
+     "sha256": "2a04feae8fcbb47cfc532d64d314599f4c7ebaddcebc97404838260e5c0cff49",
+     "bytes": 739,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384814",
+     "modname": "folder",
+     "arquivo": "Ex2-helloWorldNoWait.go",
+     "tamanho_api": 284,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/Ex2-helloWorldNoWait.go",
+     "sha256": "a8d56efdc5955b046f4f6a4372c763daffb697c596764d9f0f9ab3e39fcb43b3",
+     "bytes": 284,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384814",
+     "modname": "folder",
+     "arquivo": "Ex4-helloWorldWaitChan.go",
+     "tamanho_api": 636,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/Ex4-helloWorldWaitChan.go",
+     "sha256": "d782d4dc307562c073477e39001c4d8dca95d7762209904153a9d58a9c42e7a7",
+     "bytes": 636,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384814",
+     "modname": "folder",
+     "arquivo": "Ex3-helloWorldWaitSyncGroup.go",
+     "tamanho_api": 755,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/Ex3-helloWorldWaitSyncGroup.go",
+     "sha256": "b730ad5c03d749c0f330d0ca4658a7db7945c85d452c79c681471945ca089cd6",
+     "bytes": 755,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384815",
+     "modname": "folder",
+     "arquivo": "M-1-C-Exercícios1-Processos-DiagramasDeEstado.pdf",
+     "tamanho_api": 103191,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-C-Exercícios1-Processos-DiagramasDeEstado.pdf",
+     "sha256": "ab4c4b805938a94237e871f5e847b172d3b1b348675f11a750a129eb3f0deac7",
+     "bytes": 103191,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384815",
+     "modname": "folder",
+     "arquivo": "M-1-C-Exercícios2-ConcorrenciaProcessos-compl-Go-semCanais.pdf",
+     "tamanho_api": 321773,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-C-Exercícios2-ConcorrenciaProcessos-compl-Go-semCanais.pdf",
+     "sha256": "96ef57c7c4b99752b88c47a6d22d9c8395a9a92956d6f5457dc34515f1381e5a",
+     "bytes": 321773,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384816",
+     "modname": "folder",
+     "arquivo": "M-1-B-RevisãoSistemasSequenciais.pdf",
+     "tamanho_api": 370310,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-B-RevisãoSistemasSequenciais.pdf",
+     "sha256": "8187f560d81e365885181e323e78585b5ff2f74fb1605ad907031da18c2f6357",
+     "bytes": 370310,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384816",
+     "modname": "folder",
+     "arquivo": "M-1-B-ConcorrenciaProcessos.pdf",
+     "tamanho_api": 1745789,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-B-ConcorrenciaProcessos.pdf",
+     "sha256": "74a14e3957cae2d5af1414979d8b8e72029c8511ab201c38d4309923448aa5f5",
+     "bytes": 1745789,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384816",
+     "modname": "folder",
+     "arquivo": "M-1-D-Concorrência-ConceitosVSImplementacoes.pdf",
+     "tamanho_api": 684141,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-D-Concorrência-ConceitosVSImplementacoes.pdf",
+     "sha256": "099f8b5cbe95a1ae2b81f6452afed325281f81547047ab55c86bd6b152d17c05",
+     "bytes": 684141,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384816",
+     "modname": "folder",
+     "arquivo": "M-1-A-IntroducaoADisciplina(rev).pdf",
+     "tamanho_api": 14436559,
+     "caminho": "stash/M1 - Introdução à disciplina e aos conceitos de concorrência/M-1-A-IntroducaoADisciplina(rev).pdf",
+     "sha256": "3064ce873f31122008c62ebca4fdb120e51b6c78202959f9f1c0fdb5885bfb9d",
+     "bytes": 14436559,
+     "status": "ok"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384817",
+     "modname": "url",
+     "arquivo": "Vídeo aula relacionada Introdução, exemplos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384818",
+     "modname": "url",
+     "arquivo": "Vídeo aula relacionada Conceitos Básicos de Concorrência",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M1 - Introdução à disciplina e aos conceitos de concorrência",
+     "modulo_id": "3384819",
+     "modname": "url",
+     "arquivo": "Vídeo aula relacionada - Concorrência em Go - processos independentes",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384826",
+     "modname": "folder",
+     "arquivo": "M-2-A-Canais.pdf",
+     "tamanho_api": 1426532,
+     "caminho": "stash/M2 - Concorrência. Canais/M-2-A-Canais.pdf",
+     "sha256": "ace583759096474e1d04fe99ce1e4e9421d140e82a7b6869ec3ce6db9855313a",
+     "bytes": 1426532,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384827",
+     "modname": "folder",
+     "arquivo": "M-2-A-Exercícios-1-ProcessosECanais-DiagramasDeEstado.pdf",
+     "tamanho_api": 99349,
+     "caminho": "stash/M2 - Concorrência. Canais/M-2-A-Exercícios-1-ProcessosECanais-DiagramasDeEstado.pdf",
+     "sha256": "58fd7752799efaf64337237542cf96e2bb1b1f0a325ef5d202d6a72a8cbf5d0b",
+     "bytes": 99349,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384831",
+     "modname": "folder",
+     "arquivo": "M-2-B-Canais-CasosParaApresentar-v2.pdf",
+     "tamanho_api": 2484232,
+     "caminho": "stash/M2 - Concorrência. Canais/M-2-B-Canais-CasosParaApresentar-v2.pdf",
+     "sha256": "72fd980b9d46d7fc89bbc1263220fef72a78bd2629cd3506d5f8b9aef7ba47e2",
+     "bytes": 2484232,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "05-somaVetores.go",
+     "tamanho_api": 317,
+     "caminho": "stash/M2 - Concorrência. Canais/05-somaVetores.go",
+     "sha256": "a05221f4670d9c3a4e66b3bd59ea63e664e5fe642d8084dac2c7531f24f98a51",
+     "bytes": 317,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "06-flow.go",
+     "tamanho_api": 1659,
+     "caminho": "stash/M2 - Concorrência. Canais/06-flow.go",
+     "sha256": "f3a8372f0545c6a4d384426159ed3f8bba66336991752624cb9972fdb81beb96",
+     "bytes": 1659,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "07-AchaPrimos.go",
+     "tamanho_api": 2619,
+     "caminho": "stash/M2 - Concorrência. Canais/07-AchaPrimos.go",
+     "sha256": "d7a943aa01175cd8159aee45d51eb94247f98ab5c2154389a5c7b780d9264f74",
+     "bytes": 2619,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "08-PipeSort.go",
+     "tamanho_api": 3431,
+     "caminho": "stash/M2 - Concorrência. Canais/08-PipeSort.go",
+     "sha256": "82bc649a943260aeca1bb09f1338f5ac35ed49ba104bfc8a9dd2985ff70f1457",
+     "bytes": 3431,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "09-MergeSort-Conc.go",
+     "tamanho_api": 3674,
+     "caminho": "stash/M2 - Concorrência. Canais/09-MergeSort-Conc.go",
+     "sha256": "4c2fa5d36bed70c66595e17a14afe0e76ce67211626d801146636f8400aa0a57",
+     "bytes": 3674,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "10-ArvoreSOMA.go",
+     "tamanho_api": 2050,
+     "caminho": "stash/M2 - Concorrência. Canais/10-ArvoreSOMA.go",
+     "sha256": "3656327aeaba3694dd61c5c36a162f4202d2e51932417ddfd983748d8ef38c2c",
+     "bytes": 2050,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "01-exclusaoMutuaArq.go",
+     "tamanho_api": 753,
+     "caminho": "stash/M2 - Concorrência. Canais/01-exclusaoMutuaArq.go",
+     "sha256": "0595fbe507c9e0f83a432edd5a0ffb66afeef86e6b9fbc9ef9a3e7180251f7bf",
+     "bytes": 753,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "02-padraoAB.go",
+     "tamanho_api": 598,
+     "caminho": "stash/M2 - Concorrência. Canais/02-padraoAB.go",
+     "sha256": "98d68e3a5e9a20674e02a2439cb2649fcff5a480b1b56e88ba0f0e4170b08a15",
+     "bytes": 598,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "03-coordABC.go",
+     "tamanho_api": 950,
+     "caminho": "stash/M2 - Concorrência. Canais/03-coordABC.go",
+     "sha256": "a11bad158df81043b215f7171cfc29511eb0f420c42793c15ba261231c0b515b",
+     "bytes": 950,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384832",
+     "modname": "folder",
+     "arquivo": "04-barreiraChan.go",
+     "tamanho_api": 1037,
+     "caminho": "stash/M2 - Concorrência. Canais/04-barreiraChan.go",
+     "sha256": "0e120c5818f3a0793e527811fae5708b397848885d2995ca25d8a2ed4520eca2",
+     "bytes": 1037,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384833",
+     "modname": "folder",
+     "arquivo": "fibonacci.go",
+     "tamanho_api": 454,
+     "caminho": "stash/M2 - Concorrência. Canais/fibonacci.go",
+     "sha256": "a21216db8bdb01e0009078d9b2cf850872393c55ca2c9f9dfe14a89604797ed7",
+     "bytes": 454,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384833",
+     "modname": "folder",
+     "arquivo": "tickBoom.go",
+     "tamanho_api": 435,
+     "caminho": "stash/M2 - Concorrência. Canais/tickBoom.go",
+     "sha256": "ccde23939e2a2f94fc2ff453565288749e0f7774cebb8d2dc8af27400584b821",
+     "bytes": 435,
+     "status": "ok"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384836",
+     "modname": "url",
+     "arquivo": "Video aula relacionada Canais",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M2 - Concorrência. Canais",
+     "modulo_id": "3384837",
+     "modname": "url",
+     "arquivo": "Video aula relacionada canais em Go",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M3 - Deadlock, Livelock, Starvation",
+     "modulo_id": "3384843",
+     "modname": "folder",
+     "arquivo": "M-3-A-Deadlock.pdf",
+     "tamanho_api": 1984770,
+     "caminho": "stash/M3 - Deadlock, Livelock, Starvation/M-3-A-Deadlock.pdf",
+     "sha256": "5a7ce47c2ce608eba8cbbdc26fbc615a60b767161e009e3cac2f607caa1fe276",
+     "bytes": 1984770,
+     "status": "ok"
+    },
+    {
+     "secao": "M3 - Deadlock, Livelock, Starvation",
+     "modulo_id": "3384844",
+     "modname": "url",
+     "arquivo": "Video Aula - Deadlock",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M3 - Deadlock, Livelock, Starvation",
+     "modulo_id": "3384845",
+     "modname": "folder",
+     "arquivo": "SendAck.go",
+     "tamanho_api": 1045,
+     "caminho": "stash/M3 - Deadlock, Livelock, Starvation/SendAck.go",
+     "sha256": "5c9c94ff91030697e1a8d45e4a4aa3c8b6f639a3adce30d34d729f9089093717",
+     "bytes": 1045,
+     "status": "ok"
+    },
+    {
+     "secao": "M3 - Deadlock, Livelock, Starvation",
+     "modulo_id": "3384845",
+     "modname": "folder",
+     "arquivo": "philosofosEmGo-GarfosCanais-DL.go",
+     "tamanho_api": 951,
+     "caminho": "stash/M3 - Deadlock, Livelock, Starvation/philosofosEmGo-GarfosCanais-DL.go",
+     "sha256": "2342cc457fc7fc878f3497fbdee00774ef9f38cf4d29df0e2eb1ea9a3e6bec0c",
+     "bytes": 951,
+     "status": "ok"
+    },
+    {
+     "secao": "M3 - Deadlock, Livelock, Starvation",
+     "modulo_id": "3384845",
+     "modname": "folder",
+     "arquivo": "DL-2procs.go",
+     "tamanho_api": 445,
+     "caminho": "stash/M3 - Deadlock, Livelock, Starvation/DL-2procs.go",
+     "sha256": "02942526a5c253aa28e08b9ee1d35d399c39b7e57eac8c3ae361d4ed6d1e5a2c",
+     "bytes": 445,
+     "status": "ok"
+    },
+    {
+     "secao": "M4 - Estudo Prático Dirigido",
+     "modulo_id": "3384850",
+     "modname": "resource",
+     "arquivo": "EstudoPraticoDirigidoFPPD-Prof-Dotti.zip",
+     "tamanho_api": 749231,
+     "caminho": "stash/M4 - Estudo Prático Dirigido/EstudoPraticoDirigidoFPPD-Prof-Dotti.zip",
+     "sha256": "106d32d82850fd704db157e1bf0bd0ef79a618deddce9da9e672ced1d661a687",
+     "bytes": 749231,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384900",
+     "modname": "url",
+     "arquivo": "Vídeo Aula Introdução a memória compartilhada",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384903",
+     "modname": "url",
+     "arquivo": "Vídeo Aula Algoritmo de Peterson, modelagem, raciocínio, implementação",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384906",
+     "modname": "folder",
+     "arquivo": "race.go",
+     "tamanho_api": 522,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/race.go",
+     "sha256": "d5ecdca06f12a03dae4167f5d2d735eec80d27cc81fe70a857c8b25b9cd5ee88",
+     "bytes": 522,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384906",
+     "modname": "folder",
+     "arquivo": "SCPeterson.go",
+     "tamanho_api": 2333,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/SCPeterson.go",
+     "sha256": "e32b6a2415e7c0e1dad202aa2198bb633372108b49664a9fc60f680e7c68b1cf",
+     "bytes": 2333,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384907",
+     "modname": "folder",
+     "arquivo": "SCPeterson.java",
+     "tamanho_api": 3159,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/SCPeterson.java",
+     "sha256": "48a39ce244dbde085ad8b1df9606c6ed7b442e8e2bf5b9324e3bfe034f186f0d",
+     "bytes": 3159,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384907",
+     "modname": "folder",
+     "arquivo": "Count.java",
+     "tamanho_api": 496,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/Count.java",
+     "sha256": "80f44024fb98500e01b94d7a13012df8a1399aaaa1d91290a5dc9f962fc5a97c",
+     "bytes": 496,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-C-Monitores.pdf",
+     "tamanho_api": 791986,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-C-Monitores.pdf",
+     "sha256": "b9cd6025c53985921acbddaf66b08bd3da8f17a364accdef6b0f102a3e210940",
+     "bytes": 791986,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-7-Semaforos-ReadersAndWriters.pdf",
+     "tamanho_api": 364637,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-7-Semaforos-ReadersAndWriters.pdf",
+     "sha256": "fa015c0f1b6fa4ecf7159f5e9b2d3cabcdbd41267ce148d74094f2c910cefd9e",
+     "bytes": 364637,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-6-Semaforos-Barreiras.pdf",
+     "tamanho_api": 611992,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-6-Semaforos-Barreiras.pdf",
+     "sha256": "34519963758f2e22309a8108663bc8ed8b9c108ed09b2343b5ed0e1c4269de6f",
+     "bytes": 611992,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-5-Semaforos-Filosofos.pdf",
+     "tamanho_api": 428305,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-5-Semaforos-Filosofos.pdf",
+     "sha256": "210e55ad2907e573c9164264bfc14ab1036835f2aa66e45834d3263783377643",
+     "bytes": 428305,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-4-Semaforos-ProdutorConsumidor.pdf",
+     "tamanho_api": 415388,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-4-Semaforos-ProdutorConsumidor.pdf",
+     "sha256": "ca690bc7c7e1ee8c54436add2fbe1f4bbd33b12ce9425794c353dbe81b3481d6",
+     "bytes": 415388,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-3-SecaoCriticaSemaforos.pdf",
+     "tamanho_api": 848983,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-3-SecaoCriticaSemaforos.pdf",
+     "sha256": "655991ed105adca819d4628d5ca620d536562ebfeb75111f6541ddef24d520df",
+     "bytes": 848983,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-1-SecaoCriticaporSWeHW.pdf",
+     "tamanho_api": 2911087,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-1-SecaoCriticaporSWeHW.pdf",
+     "sha256": "74b4863e1d7701aa0c3bad3980be4e27279da13577744d879cd80f4927015270",
+     "bytes": 2911087,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-A-MemoriaCompartilhada-ProblemaDaSC.pdf",
+     "tamanho_api": 658368,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-A-MemoriaCompartilhada-ProblemaDaSC.pdf",
+     "sha256": "cdda765786871e4fb41f61c9c06abbe4728f3f557f80d87adcafa79ee0d78d70",
+     "bytes": 658368,
+     "status": "ok"
+    },
+    {
+     "secao": "M5 - Memória Compartilhada - Conceitos",
+     "modulo_id": "3384908",
+     "modname": "folder",
+     "arquivo": "M-5-B-2-ExercicioPetersonDiagrama.pdf",
+     "tamanho_api": 812351,
+     "caminho": "stash/M5 - Memória Compartilhada - Conceitos/M-5-B-2-ExercicioPetersonDiagrama.pdf",
+     "sha256": "70fae575291430e922a7f7b675f58fda941b1e880b588e2df306fb29a1cfae0e",
+     "bytes": 812351,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384911",
+     "modname": "folder",
+     "arquivo": "FPPDSemaforo.go",
+     "tamanho_api": 1718,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/FPPDSemaforo.go",
+     "sha256": "f86102cbd95e6076318b73d9b02892cb73587aa19cde3854c92aa14cea46f800",
+     "bytes": 1718,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384911",
+     "modname": "folder",
+     "arquivo": "SC-semaforo-1.go",
+     "tamanho_api": 1338,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SC-semaforo-1.go",
+     "sha256": "f0929b843c6942f685034e9e40d62fd7a82893878f87632e19398988178201af",
+     "bytes": 1338,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384911",
+     "modname": "folder",
+     "arquivo": "go.mod",
+     "tamanho_api": 28,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/go.mod",
+     "sha256": "c23f0ef3e448f8ced02efb8642f71056dba7ec3ff221e1dc49e0de07913bc3ad",
+     "bytes": 28,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "FPPDSemaforo.go",
+     "tamanho_api": 1718,
+     "colisao": true,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/FPPDSemaforo/FPPDSemaforo.go",
+     "sha256": "f86102cbd95e6076318b73d9b02892cb73587aa19cde3854c92aa14cea46f800",
+     "bytes": 1718,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "SC-semaforo-1.go",
+     "tamanho_api": 1338,
+     "colisao": true,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/_mod3384913/SC-semaforo-1.go",
+     "sha256": "f0929b843c6942f685034e9e40d62fd7a82893878f87632e19398988178201af",
+     "bytes": 1338,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "ProdCons-semaforo.go",
+     "tamanho_api": 1427,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/ProdCons-semaforo.go",
+     "sha256": "172d51e66448fe947ed9de524f7a929b45e26b635f20977c2d33110b3a5b1b88",
+     "bytes": 1427,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "SoBarrier.go",
+     "tamanho_api": 3686,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SoBarrier.go",
+     "sha256": "c65b0020b2e2c43b38e577d5f76328cc29aa2b9b704145ac6f6964662b5e3bf1",
+     "bytes": 3686,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "SemaFromChan1.go",
+     "tamanho_api": 1073,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SemaFromChan1.go",
+     "sha256": "dcc07a07ae7630241fa93a1f40874e0f1b612d42bab6c70f86e639a081e04d98",
+     "bytes": 1073,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384913",
+     "modname": "folder",
+     "arquivo": "SemaFromChan2.go",
+     "tamanho_api": 2282,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SemaFromChan2.go",
+     "sha256": "038a75356d2e33c115ecde7e717fdf22bd68f1f5e8b3c35ce09cc750da713ae5",
+     "bytes": 2282,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384914",
+     "modname": "folder",
+     "arquivo": "ProdCons.java",
+     "tamanho_api": 3174,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/ProdCons.java",
+     "sha256": "a217f0485e599a028e035c779635e0065f22717ecd195f99e898b4f40c905ffc",
+     "bytes": 3174,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384914",
+     "modname": "folder",
+     "arquivo": "SoBarrier.java",
+     "tamanho_api": 1612,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SoBarrier.java",
+     "sha256": "af68ab40a3046dcd25810eabbf628b1a3de944f605c5484e679caec256472c1e",
+     "bytes": 1612,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384914",
+     "modname": "folder",
+     "arquivo": "CountSemaphore.java",
+     "tamanho_api": 2364,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/CountSemaphore.java",
+     "sha256": "59460e736d915c3f3936ffb6233ab34fbc32c5b10e07e3e4e99cc676ab36c458",
+     "bytes": 2364,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384914",
+     "modname": "folder",
+     "arquivo": "Count.java",
+     "tamanho_api": 496,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/Count.java",
+     "sha256": "80f44024fb98500e01b94d7a13012df8a1399aaaa1d91290a5dc9f962fc5a97c",
+     "bytes": 496,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384914",
+     "modname": "folder",
+     "arquivo": "SCPeterson.java",
+     "tamanho_api": 3159,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SCPeterson.java",
+     "sha256": "48a39ce244dbde085ad8b1df9606c6ed7b442e8e2bf5b9324e3bfe034f186f0d",
+     "bytes": 3159,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384915",
+     "modname": "folder",
+     "arquivo": "SharedList.go",
+     "tamanho_api": 1503,
+     "caminho": "stash/M6 - Memória Compartilhada - Semáforos/SharedList.go",
+     "sha256": "3e63c529d5801779de520d999e7d2fdf2ebdffbd23f7ac51f2c2dd1bfa0f78e8",
+     "bytes": 1503,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384917",
+     "modname": "url",
+     "arquivo": "Video Aula - Implementação Peterson - Busy Wait -Semáforos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384918",
+     "modname": "url",
+     "arquivo": "Video Aula - Semáforos - Casos - Leitores e Escritores",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Semáforos",
+     "modulo_id": "3384919",
+     "modname": "url",
+     "arquivo": "Video Aula - Semáforos - Casos - Barreiras",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Problemas usando semáforos",
+     "modulo_id": "3384921",
+     "modname": "resource",
+     "arquivo": "downey08semaphores.pdf",
+     "tamanho_api": 1002917,
+     "caminho": "stash/M6 - Memória Compartilhada - Problemas usando semáforos/downey08semaphores.pdf",
+     "sha256": "2710ab51ed83dcc6a0e2aff6488386c8fb07c5217a38b80ad93c9616c6e3c935",
+     "bytes": 1002917,
+     "status": "ok"
+    },
+    {
+     "secao": "M6 - Memória Compartilhada - Problemas usando semáforos",
+     "modulo_id": "3384925",
+     "modname": "resource",
+     "arquivo": "ExerciciosLista-MC-23-1.pdf",
+     "tamanho_api": 420941,
+     "caminho": "stash/M6 - Memória Compartilhada - Problemas usando semáforos/ExerciciosLista-MC-23-1.pdf",
+     "sha256": "df72df9f763c6506dc0234c610285030e4349303509729d6d62115b9d2530524",
+     "bytes": 420941,
+     "status": "ok"
+    },
+    {
+     "secao": "M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados",
+     "modulo_id": "3384928",
+     "modname": "folder",
+     "arquivo": "MonitorEmJava.java",
+     "tamanho_api": 2229,
+     "caminho": "stash/M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados/MonitorEmJava.java",
+     "sha256": "24fbf38f5b4562f310155ae2314436f2d24a74c4ad4279a9e3d0074f5a03526a",
+     "bytes": 2229,
+     "status": "ok"
+    },
+    {
+     "secao": "M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados",
+     "modulo_id": "3384928",
+     "modname": "folder",
+     "arquivo": "MonitorEmGo.go",
+     "tamanho_api": 3595,
+     "caminho": "stash/M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados/MonitorEmGo.go",
+     "sha256": "646711d225aa467191c910797cdeee17518e576cfffa66709da5328de3bf169d",
+     "bytes": 3595,
+     "status": "ok"
+    },
+    {
+     "secao": "M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados",
+     "modulo_id": "3384928",
+     "modname": "folder",
+     "arquivo": "M-5-C-Monitores.pdf",
+     "tamanho_api": 845542,
+     "caminho": "stash/M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados/M-5-C-Monitores.pdf",
+     "sha256": "2a4c292555bf6fe319c463ca92642386d0ff11a12f7a90a237ca7953de9236b7",
+     "bytes": 845542,
+     "status": "ok"
+    },
+    {
+     "secao": "M7 - Memória Compartilhada - Monitores - Recursos on-line para interessados",
+     "modulo_id": "3384929",
+     "modname": "url",
+     "arquivo": "Video Aula - Monitores",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "M8 - Sistemas Distribuídos",
+     "modulo_id": "3384968",
+     "modname": "folder",
+     "arquivo": "M-8-B-CategorizaçãoComunicação.pdf",
+     "tamanho_api": 214138,
+     "caminho": "stash/M8 - Sistemas Distribuídos/M-8-B-CategorizaçãoComunicação.pdf",
+     "sha256": "d2f5c2d51548ba4a10495490390129ebeb83afa4cf9560c48c0b6f582806f928",
+     "bytes": 214138,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Sistemas Distribuídos",
+     "modulo_id": "3384968",
+     "modname": "folder",
+     "arquivo": "M-8-C-ModulosConstrucao.pdf",
+     "tamanho_api": 1019841,
+     "caminho": "stash/M8 - Sistemas Distribuídos/M-8-C-ModulosConstrucao.pdf",
+     "sha256": "987fc92d3680e55ec178c3f1b7f2ab182b972eb5dd8cfc859a9274e4040b5d4c",
+     "bytes": 1019841,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Sistemas Distribuídos",
+     "modulo_id": "3384968",
+     "modname": "folder",
+     "arquivo": "M-8-D-AbstracoesSD-Difusoes.pdf",
+     "tamanho_api": 3209569,
+     "caminho": "stash/M8 - Sistemas Distribuídos/M-8-D-AbstracoesSD-Difusoes.pdf",
+     "sha256": "2ccdc8b95acdfd5be3a0a3e389dd62897b4e567899fb45326ad512b07ca1150b",
+     "bytes": 3209569,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Sistemas Distribuídos",
+     "modulo_id": "3384968",
+     "modname": "folder",
+     "arquivo": "M-8-A-Concorrencia-TiposDeSistemas-SistemasDistribuídos.pdf",
+     "tamanho_api": 2447053,
+     "caminho": "stash/M8 - Sistemas Distribuídos/M-8-A-Concorrencia-TiposDeSistemas-SistemasDistribuídos.pdf",
+     "sha256": "cca559d374b2021f662d7f0ce4023a6f83935c110ff969dc6b170a06a8f025c9",
+     "bytes": 2447053,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Sistemas Distribuídos",
+     "modulo_id": "3384970",
+     "modname": "folder",
+     "arquivo": "SD.zip",
+     "tamanho_api": 12642,
+     "caminho": "stash/M8 - Sistemas Distribuídos/SD.zip",
+     "sha256": "d8f4f058a566901127b71d4b48aff1e29bebd25366ce45ca13acce174321b76e",
+     "bytes": 12642,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Algoritmo Distribuído como Exercício Prático",
+     "modulo_id": "3384972",
+     "modname": "folder",
+     "arquivo": "M-8-F-ModulosConstrucaoExercicioExMd.pdf",
+     "tamanho_api": 1421549,
+     "caminho": "stash/M8 - Algoritmo Distribuído como Exercício Prático/M-8-F-ModulosConstrucaoExercicioExMd.pdf",
+     "sha256": "0d0550e6885ba7b1902b1890b1d107c9c7ed3b25e62d14d67c02d863bab70891",
+     "bytes": 1421549,
+     "status": "ok"
+    },
+    {
+     "secao": "M8 - Algoritmo Distribuído como Exercício Prático",
+     "modulo_id": "3384976",
+     "modname": "folder",
+     "arquivo": "SD.zip",
+     "tamanho_api": 12470,
+     "caminho": "stash/M8 - Algoritmo Distribuído como Exercício Prático/SD.zip",
+     "sha256": "1c008b1309123842589736b3649d1c18fee6863a86ae4e80494cb65d03e82d75",
+     "bytes": 12470,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384984",
+     "modname": "folder",
+     "arquivo": "M-9-C-SistemasPararlelos.pdf",
+     "tamanho_api": 963065,
+     "caminho": "stash/M9 - Paralelismo/M-9-C-SistemasPararlelos.pdf",
+     "sha256": "a35492b3fbb84893165affa2572c31702dabc35b048a3b7bd8353ac1f50e9364",
+     "bytes": 963065,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384984",
+     "modname": "folder",
+     "arquivo": "M-7-B-SistemasPararlelos.pdf",
+     "tamanho_api": 445085,
+     "caminho": "stash/M9 - Paralelismo/M-7-B-SistemasPararlelos.pdf",
+     "sha256": "eef7209f673706dceecdabc09265b91ffad61b3cada6331300a9cc52294c13a0",
+     "bytes": 445085,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384984",
+     "modname": "folder",
+     "arquivo": "M-7-A-SistemasPararlelos.pdf",
+     "tamanho_api": 757309,
+     "caminho": "stash/M9 - Paralelismo/M-7-A-SistemasPararlelos.pdf",
+     "sha256": "1a5c231c45e0edc56ba2c867cb1631d508a1cb924926ca819eea58d61f2de1cf",
+     "bytes": 757309,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384985",
+     "modname": "folder",
+     "arquivo": "TempoGeraPrimo.go",
+     "tamanho_api": 1805,
+     "caminho": "stash/M9 - Paralelismo/TempoGeraPrimo.go",
+     "sha256": "58c7fb871385c48f782947d45ce33e1895199f6485717c78e0f7769763f1695a",
+     "bytes": 1805,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384985",
+     "modname": "folder",
+     "arquivo": "InsertSortTempos.go",
+     "tamanho_api": 2752,
+     "caminho": "stash/M9 - Paralelismo/InsertSortTempos.go",
+     "sha256": "d81545a5c88cb7f611b2e2e540486d95e4412806c326138c3ab82fbabdd5b120",
+     "bytes": 2752,
+     "status": "ok"
+    },
+    {
+     "secao": "M9 - Paralelismo",
+     "modulo_id": "3384986",
+     "modname": "folder",
+     "arquivo": "M-9-C-SistemasPararlelosExercícios-v2.pdf",
+     "tamanho_api": 228892,
+     "caminho": "stash/M9 - Paralelismo/M-9-C-SistemasPararlelosExercícios-v2.pdf",
+     "sha256": "9ccf97750a677713105b45d198219996a1e6899c91dca185c48ffc2a9661ea6e",
+     "bytes": 228892,
+     "status": "ok"
+    },
+    {
+     "secao": "FINAL DE SEMESTRE",
+     "modulo_id": "3384989",
+     "modname": "folder",
+     "arquivo": "Exercicios-1raParte.pdf",
+     "tamanho_api": 470438,
+     "caminho": "stash/FINAL DE SEMESTRE/Exercicios-1raParte.pdf",
+     "sha256": "e26bcd2ce63c35270333642ea8a601d4956b84174a871ee82b44148137252e72",
+     "bytes": 470438,
+     "status": "ok"
+    },
+    {
+     "secao": "FINAL DE SEMESTRE",
+     "modulo_id": "3384989",
+     "modname": "folder",
+     "arquivo": "Exercicios-2aParte.pdf",
+     "tamanho_api": 216278,
+     "caminho": "stash/FINAL DE SEMESTRE/Exercicios-2aParte.pdf",
+     "sha256": "cc47d6a566b5332f5761b444c5bd7c4c46cd039f838548740ed0cc008d9f425a",
+     "bytes": 216278,
+     "status": "ok"
+    },
+    {
+     "secao": "Referencias",
+     "modulo_id": "3384993",
+     "modname": "url",
+     "arquivo": "Material relacionado ao livro",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Referencias",
+     "modulo_id": "3384994",
+     "modname": "url",
+     "arquivo": "Way to Go",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Referencias",
+     "modulo_id": "3384995",
+     "modname": "resource",
+     "arquivo": "GoBootcamp.pdf",
+     "tamanho_api": 483297,
+     "caminho": "stash/Referencias/GoBootcamp.pdf",
+     "sha256": "0290ada487b768fbe6bfbb4dadc8a907cc3f54b24b3a33122b0520d0a35e2c0f",
+     "bytes": 483297,
+     "status": "ok"
+    }
+   ],
+   "E2": true,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "81476",
+   "nome": "Álgebra Linear e Geometria Analítica",
+   "semestre": "2025/1",
+   "ordem": 3,
+   "erro": null,
+   "segundos": 2.6,
+   "status_arquivos": {
+    "ok": 8
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "2847049",
+     "modname": "resource",
+     "arquivo": "00_Plano_Ensino_ALGA_20251_T31_JK.pdf",
+     "tamanho_api": 4139362,
+     "caminho": "stash/Plano de Ensino/00_Plano_Ensino_ALGA_20251_T31_JK.pdf",
+     "sha256": "83894f51b5292ae8c3b8936b6abb5848b901341a13ae5e8628bbb85ff867d478",
+     "bytes": 4139362,
+     "status": "ok"
+    },
+    {
+     "secao": "Folhas de Consulta",
+     "modulo_id": "2847057",
+     "modname": "resource",
+     "arquivo": "folha de consulta P1.pdf",
+     "tamanho_api": 164595,
+     "caminho": "stash/Folhas de Consulta/folha de consulta P1.pdf",
+     "sha256": "4ea312c5058370c590f21652c574ee11a5c0850c56a53408ae1607813e967a76",
+     "bytes": 164595,
+     "status": "ok"
+    },
+    {
+     "secao": "Folhas de Consulta",
+     "modulo_id": "2847058",
+     "modname": "resource",
+     "arquivo": "folha de consulta P2.pdf",
+     "tamanho_api": 194533,
+     "caminho": "stash/Folhas de Consulta/folha de consulta P2.pdf",
+     "sha256": "3c2380b62b52ae1db834a2d2b8a97155428509c5d5be927dfbd3c269ff9922d8",
+     "bytes": 194533,
+     "status": "ok"
+    },
+    {
+     "secao": "Folhas de Consulta",
+     "modulo_id": "3151449",
+     "modname": "resource",
+     "arquivo": "folha de consulta P3.pdf",
+     "tamanho_api": 279264,
+     "caminho": "stash/Folhas de Consulta/folha de consulta P3.pdf",
+     "sha256": "9abf76643a09cb92b870d49aad68cc089b68742e33c609dd9eaaf3401c3c8379",
+     "bytes": 279264,
+     "status": "ok"
+    },
+    {
+     "secao": "Tópico 1 - Cônicas",
+     "modulo_id": "3126365",
+     "modname": "resource",
+     "arquivo": "Topico1_ALGA_conicas_aula.pdf",
+     "tamanho_api": 726189,
+     "caminho": "stash/Tópico 1 - Cônicas/Topico1_ALGA_conicas_aula.pdf",
+     "sha256": "031806d214f6af964f204d858b8cdd49984752299ad7981944ef061e3e48f0c2",
+     "bytes": 726189,
+     "status": "ok"
+    },
+    {
+     "secao": "Uso do Octave (ou Matlab)",
+     "modulo_id": "2847074",
+     "modname": "resource",
+     "arquivo": "08_Comandos básicos para trabalhar com matrizes no Octave.pdf",
+     "tamanho_api": 121694,
+     "caminho": "stash/Uso do Octave (ou Matlab)/08_Comandos básicos para trabalhar com matrizes no Octave.pdf",
+     "sha256": "fbb33e99cf5871435fa55adc3e6545ad5dbeb1c7304c5fb5793c92a43bad5791",
+     "bytes": 121694,
+     "status": "ok"
+    },
+    {
+     "secao": "Uso do Octave (ou Matlab)",
+     "modulo_id": "3164114",
+     "modname": "resource",
+     "arquivo": "09_TL_Figuras.pdf",
+     "tamanho_api": 277803,
+     "caminho": "stash/Uso do Octave (ou Matlab)/09_TL_Figuras.pdf",
+     "sha256": "ab326f2ca17917df10616689f4f23e97eedb870d895fc3192eb1ed42851d208e",
+     "bytes": 277803,
+     "status": "ok"
+    },
+    {
+     "secao": "Galeria a céu aberto painel no 32",
+     "modulo_id": "3165285",
+     "modname": "resource",
+     "arquivo": "mural predio 32.pdf",
+     "tamanho_api": 1939917,
+     "caminho": "stash/Galeria a céu aberto painel no 32/mural predio 32.pdf",
+     "sha256": "6563700541b05ed9dff4bcedba7368ec18aa9f4779bdc20fa2e2d63ed48b1ced",
+     "bytes": 1939917,
+     "status": "ok"
+    }
+   ],
+   "E2": true,
+   "E3": false,
+   "E4": true
+  },
+  {
+   "id": "82667",
+   "nome": "Programação de Baixo Nível",
+   "semestre": "2025/1",
+   "ordem": 4,
+   "erro": null,
+   "segundos": 7.9,
+   "status_arquivos": {
+    "ok": 34,
+    "link_externo": 48
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "2970302",
+     "modname": "resource",
+     "arquivo": "mangan-pbn-plano-de-ensino.pdf",
+     "tamanho_api": 144349,
+     "caminho": "stash/Plano de Ensino/mangan-pbn-plano-de-ensino.pdf",
+     "sha256": "3f2d2bdab62927f6087267aae87a770390e3df320741d979aabebf87269f731b",
+     "bytes": 144349,
+     "status": "ok"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3205312",
+     "modname": "url",
+     "arquivo": "Cronograma",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3216550",
+     "modname": "url",
+     "arquivo": "Área no GitHub para exemplos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953805",
+     "modname": "url",
+     "arquivo": "Introdução à programação em C (apresentação)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3210902",
+     "modname": "url",
+     "arquivo": "Kamp;R. The C Programming Language.",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953806",
+     "modname": "resource",
+     "arquivo": "compilacao.pdf",
+     "tamanho_api": 17124,
+     "caminho": "stash/Semana 1/compilacao.pdf",
+     "sha256": "4e419d8e8afd20c3e91c4e3bc7fde19e5b2a2118717e1de64b88c920fe4f09d7",
+     "bytes": 17124,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953810",
+     "modname": "url",
+     "arquivo": "Guia de referência C",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953811",
+     "modname": "url",
+     "arquivo": "The definitive C book list (Stack Overflow)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3210895",
+     "modname": "url",
+     "arquivo": "ATamp;T Archives The UNIX Operating System",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953813",
+     "modname": "url",
+     "arquivo": "Learning the shell - Linux",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953814",
+     "modname": "url",
+     "arquivo": "Learn the Command Line (CodeAcademy.com)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953815",
+     "modname": "url",
+     "arquivo": "A Command Line Crash Course",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953816",
+     "modname": "resource",
+     "arquivo": "The_One_Page_Linux_Manual.pdf",
+     "tamanho_api": 96538,
+     "caminho": "stash/Semana 1/The_One_Page_Linux_Manual.pdf",
+     "sha256": "ce451c08eb4dd7a329ff7b34025ca2251496e89ad889684acaa5493e145fb911",
+     "bytes": 96538,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953817",
+     "modname": "resource",
+     "arquivo": "fwunixref.pdf",
+     "tamanho_api": 70752,
+     "caminho": "stash/Semana 1/fwunixref.pdf",
+     "sha256": "a8b0890ebff50438894a4d07e2cfdd77748a0242168e0a23dc9c4249ebc5dae3",
+     "bytes": 70752,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953818",
+     "modname": "resource",
+     "arquivo": "ch02_6spp.pdf",
+     "tamanho_api": 1128039,
+     "caminho": "stash/Semana 1/ch02_6spp.pdf",
+     "sha256": "0dabd850819d80f1fe9cc7df9a29902f8757b554e93be2f41f838022bfc0c2f0",
+     "bytes": 1128039,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2977584",
+     "modname": "url",
+     "arquivo": "COREUTILS. Código-fonte do utilitário echo.",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953824",
+     "modname": "url",
+     "arquivo": "Programming Languages Beacon",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953825",
+     "modname": "url",
+     "arquivo": "IEEE Spectrum - The 2023 Top Programming Languages",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953826",
+     "modname": "url",
+     "arquivo": "The Computer Language Benchmarks Game",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953833",
+     "modname": "resource",
+     "arquivo": "listafunc.pdf",
+     "tamanho_api": 93746,
+     "caminho": "stash/Semana 1/listafunc.pdf",
+     "sha256": "4bb9d5af2b4417f63c4b832f4910f8cf6e181e185bf2e68123246d92bfdc5c3a",
+     "bytes": 93746,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953863",
+     "modname": "url",
+     "arquivo": "Lista de exercícios para a P1",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "2953898",
+     "modname": "page",
+     "arquivo": "index.html",
+     "tamanho_api": 0,
+     "caminho": "raw/moodle/pages/2953898-index.html",
+     "sha256": "1c8209dd5646323dd7fb5f4ea427564e2478debc3b47f66529bce5d204e12251",
+     "bytes": 3902,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3224224",
+     "modname": "url",
+     "arquivo": "Deitel e Deitel. C como Programar",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 4",
+     "modulo_id": "2953840",
+     "modname": "url",
+     "arquivo": "Ponteiros em C (apresentação)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 4",
+     "modulo_id": "2953832",
+     "modname": "url",
+     "arquivo": "Passagem de Parâmetros em C (apresentação)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 4",
+     "modulo_id": "2953853",
+     "modname": "resource",
+     "arquivo": "ch13_strings-6up.pdf",
+     "tamanho_api": 375976,
+     "caminho": "stash/Semana 4/ch13_strings-6up.pdf",
+     "sha256": "bf446e7c6fd6062d79c4288cb4df7ecde1a95ce6ff52f52c21824b3d9b6498f0",
+     "bytes": 375976,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 4",
+     "modulo_id": "3230185",
+     "modname": "url",
+     "arquivo": "Código-fonte de um programa em C echo.c",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 5",
+     "modulo_id": "3230171",
+     "modname": "resource",
+     "arquivo": "ch16_6spp.pdf",
+     "tamanho_api": 1808933,
+     "caminho": "stash/Semana 5/ch16_6spp.pdf",
+     "sha256": "7ba06240d866f976d7a162b84b282417e0c2aba70c5bda6d9168948b7a2b69fd",
+     "bytes": 1808933,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 6",
+     "modulo_id": "3237599",
+     "modname": "resource",
+     "arquivo": "example1.c",
+     "tamanho_api": 573,
+     "caminho": "stash/Semana 6/example1.c",
+     "sha256": "b588dddac4d122c9eb682f54d9b7a4477874e8d6ae037a6d0dc986cfa79fb5a8",
+     "bytes": 573,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q1",
+     "tamanho_api": 16016,
+     "caminho": "stash/Semana 9/q1",
+     "sha256": "ff997bf278b3bada9c29a604b8826178b9675268ead03778ac41bbe333c61588",
+     "bytes": 16016,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q1.c",
+     "tamanho_api": 379,
+     "caminho": "stash/Semana 9/q1.c",
+     "sha256": "826023db930daa2377441540f12e9d3a93b9a58772dbf8bc27a8c54f9a416f23",
+     "bytes": 379,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q2",
+     "tamanho_api": 16008,
+     "caminho": "stash/Semana 9/q2",
+     "sha256": "7106cecdc35a4eacb0499cc603c214c19d870a78437c47864f2f613007d530c9",
+     "bytes": 16008,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q2.c",
+     "tamanho_api": 267,
+     "caminho": "stash/Semana 9/q2.c",
+     "sha256": "c6b812f4cfb7dd1a882f44779ff129fc3f80283a2b47d5db778038834a007669",
+     "bytes": 267,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q3",
+     "tamanho_api": 15984,
+     "caminho": "stash/Semana 9/q3",
+     "sha256": "6c0c4a80fcc5f273fd04a29d1d362bf6114e38fecdebf0fdb1e304c447d63ac4",
+     "bytes": 15984,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q3.c",
+     "tamanho_api": 145,
+     "caminho": "stash/Semana 9/q3.c",
+     "sha256": "5802558b833021488db064d4f4a4d7a5976b06193af293e99e0142680abec25f",
+     "bytes": 145,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q7",
+     "tamanho_api": 16016,
+     "caminho": "stash/Semana 9/q7",
+     "sha256": "3f4cdce4795deb5d7e1af6883364d3a40195681d4a46cf0f306f9101d5e06eff",
+     "bytes": 16016,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3251175",
+     "modname": "folder",
+     "arquivo": "q7.c",
+     "tamanho_api": 250,
+     "caminho": "stash/Semana 9/q7.c",
+     "sha256": "2ce37172cd686585a783af76d1b252d91554f1117568705b7517d30c9144cdde",
+     "bytes": 250,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3252135",
+     "modname": "url",
+     "arquivo": "Alocação dinâmica de memória (apresentação)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3252150",
+     "modname": "resource",
+     "arquivo": "pbn_alocacao_dinamica.pdf",
+     "tamanho_api": 84724,
+     "caminho": "stash/Semana 9/pbn_alocacao_dinamica.pdf",
+     "sha256": "5226620b291fb893a0de06032cb0dc53eba20df2eb6a9e5d57d64a256d40874c",
+     "bytes": 84724,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3252136",
+     "modname": "resource",
+     "arquivo": "malloc.zip",
+     "tamanho_api": 2140,
+     "caminho": "stash/Semana 9/malloc.zip",
+     "sha256": "78e93d9388a5c8c90f8ba11cec522282e25cbce8073e6263185c7f2495719780",
+     "bytes": 2140,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3252483",
+     "modname": "resource",
+     "arquivo": "exemplo.c",
+     "tamanho_api": 249,
+     "caminho": "stash/Semana 9/exemplo.c",
+     "sha256": "6dfe4c084688bc1b8a289cc86900a9cbb412294fb63ec7f50d30fdead6f2f9f1",
+     "bytes": 249,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3261191",
+     "modname": "resource",
+     "arquivo": "main.c",
+     "tamanho_api": 655,
+     "caminho": "stash/Semana 10/main.c",
+     "sha256": "2fc25082825dd2ad4445b67253e44b5b41be7126aa7816de466f52782d9dbfd6",
+     "bytes": 655,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3261192",
+     "modname": "resource",
+     "arquivo": "Makefile",
+     "tamanho_api": 21,
+     "caminho": "stash/Semana 10/Makefile",
+     "sha256": "776de6a188cc0fcf09fb69af97672fbf0a26be4ee74a576522bedbaf944cb541",
+     "bytes": 21,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3264508",
+     "modname": "url",
+     "arquivo": "Modularização e Makefiles",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3266432",
+     "modname": "url",
+     "arquivo": "Arquivos em linguagem C (FILES)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3266435",
+     "modname": "page",
+     "arquivo": "index.html",
+     "tamanho_api": 0,
+     "caminho": "raw/moodle/pages/3266435-index.html",
+     "sha256": "2970ea4cfc3a657a55738f113d949b0e3c698d1e428bdca805b31598755650d2",
+     "bytes": 2828,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3267124",
+     "modname": "resource",
+     "arquivo": "wc2.c",
+     "tamanho_api": 353,
+     "caminho": "stash/Semana 11/wc2.c",
+     "sha256": "cc6ef1008e83d914f653b81a67e022153445dc0ffe39075ebe4b7fc6c3ac8e7f",
+     "bytes": 353,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3268734",
+     "modname": "url",
+     "arquivo": "MICHIGAN. Libraries",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3268732",
+     "modname": "url",
+     "arquivo": "Criando bibliotecas estáticas e dinâmicas em C",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3268733",
+     "modname": "url",
+     "arquivo": "OPENSOURCE. How dynamic linking for modular libraries works on Linux",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3268735",
+     "modname": "url",
+     "arquivo": "Prática em laboratório criando e utilizando bibliotecas",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270229",
+     "modname": "url",
+     "arquivo": "DUKE. The Unix Shell Writing Shell Scripts.",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270231",
+     "modname": "url",
+     "arquivo": "UCLA. How to Write a Basic Shell Script",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270233",
+     "modname": "url",
+     "arquivo": "CMU. The Shell and Shell Scripting",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270234",
+     "modname": "url",
+     "arquivo": "MIT. Writing Safe Shell Scripts.",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270235",
+     "modname": "url",
+     "arquivo": "Exemplo de script para o Astah",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270272",
+     "modname": "url",
+     "arquivo": "RED HAT. Resources for learning to write better Bash code",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3270296",
+     "modname": "url",
+     "arquivo": "Script do Maven",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3272037",
+     "modname": "url",
+     "arquivo": "Ponteiros para Funções (tutorial Ted Jensen, traduzido)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3272038",
+     "modname": "resource",
+     "arquivo": "pointer2func.zip",
+     "tamanho_api": 15929,
+     "caminho": "stash/Semana 13/pointer2func.zip",
+     "sha256": "c11b32e61493665b15b36d2d0c938d261dd55abc9f57c747b6025362befd5229",
+     "bytes": 15929,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3272039",
+     "modname": "resource",
+     "arquivo": "bubble.zip",
+     "tamanho_api": 5594,
+     "caminho": "stash/Semana 13/bubble.zip",
+     "sha256": "f4ed65047d4d5cd4b9ac71546a9b7d2acc3d392e78389fbe128714905f0f681c",
+     "bytes": 5594,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3272040",
+     "modname": "resource",
+     "arquivo": "main.c",
+     "tamanho_api": 466,
+     "caminho": "stash/Semana 13/main.c",
+     "sha256": "670e08deda4c849c079d2b4d7e84fc0e3a36ca60b3bdee71be5aa1d6db50de31",
+     "bytes": 466,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3273697",
+     "modname": "url",
+     "arquivo": "Manipulação de Bits",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3273698",
+     "modname": "url",
+     "arquivo": "VISUALGO. Bitmask",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3273699",
+     "modname": "url",
+     "arquivo": "Bit manipulation - Wikipedia",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3273701",
+     "modname": "url",
+     "arquivo": "Bit masking - Wikipedia",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3273702",
+     "modname": "url",
+     "arquivo": "Bit Twiddling Hacks - diversas dicas para manipulação de bits",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3060710",
+     "modname": "url",
+     "arquivo": "Prática profiling e otimização",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3060711",
+     "modname": "url",
+     "arquivo": "C++ Optimization Strategies and Techniques",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3060712",
+     "modname": "url",
+     "arquivo": "Optimizing software in C++ An optimization guide for Windows, Linux and Mac (advanced, 165 pages)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3060714",
+     "modname": "url",
+     "arquivo": "SONAR SOURCE. How to Scan C  C++ Code with SonarQube  C- Family Analysis",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3062380",
+     "modname": "url",
+     "arquivo": "Tutorial de uso do GDB",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3062381",
+     "modname": "resource",
+     "arquivo": "GDB Cheat Sheet.pdf",
+     "tamanho_api": 73935,
+     "caminho": "stash/Semana 15/GDB Cheat Sheet.pdf",
+     "sha256": "45f962adbe15587c9358d709e34a03a4fdbf7790c0cb79d5dbf05f2c08ea5041",
+     "bytes": 73935,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3062387",
+     "modname": "url",
+     "arquivo": "RED HAT DEVELOPERS. The GDB developers GNU Debugger tutorial",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3062454",
+     "modname": "url",
+     "arquivo": "BAELDUNG. Segmentation Faults",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3062455",
+     "modname": "url",
+     "arquivo": "LINUX CONFIG. GDB debugging tutorial for beginners",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 16",
+     "modulo_id": "3062431",
+     "modname": "url",
+     "arquivo": "Prova P2 de semestre anterior para estudo",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 16",
+     "modulo_id": "3064626",
+     "modname": "resource",
+     "arquivo": "ListaDeExercicios2-2016-2.pdf",
+     "tamanho_api": 789091,
+     "caminho": "stash/Semana 16/ListaDeExercicios2-2016-2.pdf",
+     "sha256": "208bdb2db285e8f70f568971a8406216e68736769149d431abf8f8fb06335322",
+     "bytes": 789091,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 16",
+     "modulo_id": "3065886",
+     "modname": "resource",
+     "arquivo": "main.c",
+     "tamanho_api": 724,
+     "caminho": "stash/Semana 16/main.c",
+     "sha256": "bdbbf4ee7a1746998bbcf53311f2c1c18377d76c08ac3816d911df09eb2a2443",
+     "bytes": 724,
+     "status": "ok"
+    },
+    {
+     "secao": "Trabalho T1",
+     "modulo_id": "3008008",
+     "modname": "page",
+     "arquivo": "index.html",
+     "tamanho_api": 0,
+     "caminho": "raw/moodle/pages/3008008-index.html",
+     "sha256": "18e5e8cafec6595b353ce232d21ec6331a632442e23b568abf66f8523dff9662",
+     "bytes": 7306,
+     "status": "ok"
+    },
+    {
+     "secao": "Trabalho T1",
+     "modulo_id": "3008009",
+     "modname": "resource",
+     "arquivo": "modelo_pbn-2024-1.pdf",
+     "tamanho_api": 337249,
+     "caminho": "stash/Trabalho T1/modelo_pbn-2024-1.pdf",
+     "sha256": "7876e0545674d92bfc6567b5631508614e51c8353dcc11a43882627c3d62e4f6",
+     "bytes": 337249,
+     "status": "ok"
+    },
+    {
+     "secao": "Trabalho T2",
+     "modulo_id": "3060904",
+     "modname": "page",
+     "arquivo": "index.html",
+     "tamanho_api": 0,
+     "caminho": "raw/moodle/pages/3060904-index.html",
+     "sha256": "3542d0f11da46936031a56cf26a12ce2556aae2bb4b951f833a2cbf1f01208d0",
+     "bytes": 2326,
+     "status": "ok"
+    }
+   ],
+   "E2": true,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "89447",
+   "nome": "Métodos Numéricos",
+   "semestre": "2025/2",
+   "ordem": 5,
+   "erro": null,
+   "segundos": 6.3,
+   "status_arquivos": {
+    "link_externo": 35,
+    "ok": 20
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331218",
+     "modname": "url",
+     "arquivo": "PlanoEmentaNota G1BibliografiaMateriais Variados",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331219",
+     "modname": "url",
+     "arquivo": "Objetivos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331220",
+     "modname": "url",
+     "arquivo": "Ementa",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331221",
+     "modname": "url",
+     "arquivo": "Programa da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331222",
+     "modname": "url",
+     "arquivo": "Formula do G1",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331223",
+     "modname": "url",
+     "arquivo": "Materiais da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331224",
+     "modname": "url",
+     "arquivo": "Livros da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3331225",
+     "modname": "url",
+     "arquivo": "Cronograma",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Padrão IEEE",
+     "modulo_id": "3331337",
+     "modname": "url",
+     "arquivo": "Experimente!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Padrão IEEE",
+     "modulo_id": "3331339",
+     "modname": "url",
+     "arquivo": "Apresentação detalhada!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Padrão IEEE",
+     "modulo_id": "3331340",
+     "modname": "url",
+     "arquivo": "Em português!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Padrão IEEE",
+     "modulo_id": "3478457",
+     "modname": "resource",
+     "arquivo": "Aula1-Métodos-numéricos.pdf",
+     "tamanho_api": 1993201,
+     "caminho": "stash/Padrão IEEE/Aula1-Métodos-numéricos.pdf",
+     "sha256": "c14a83c0665127dd4714a1ca250f038d08f1e2d4db27f42fda5086f62717b02f",
+     "bytes": 1993201,
+     "status": "ok"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331341",
+     "modname": "url",
+     "arquivo": "Dúvidas sobre polinômios?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3478458",
+     "modname": "resource",
+     "arquivo": "Aula 2-Métodos-Numéricos.pdf",
+     "tamanho_api": 1473600,
+     "caminho": "stash/Solução de equações/Aula 2-Métodos-Numéricos.pdf",
+     "sha256": "8fb7b2928ff7ab12007a57f2e3225aae5ce64833e6b381e20ef967a45bbd5a36",
+     "bytes": 1473600,
+     "status": "ok"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331386",
+     "modname": "url",
+     "arquivo": "Propriedades das raizes de polinômios",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331388",
+     "modname": "url",
+     "arquivo": "Algoritmos para encontrar raizes",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331389",
+     "modname": "url",
+     "arquivo": "Método da bissecção",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331390",
+     "modname": "url",
+     "arquivo": "Método da secante",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Solução de equações",
+     "modulo_id": "3331550",
+     "modname": "url",
+     "arquivo": "Método de Newton",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3478459",
+     "modname": "resource",
+     "arquivo": "Aula3-métodos-numéricos.pdf",
+     "tamanho_api": 1168397,
+     "caminho": "stash/Sistemas lineares/Aula3-métodos-numéricos.pdf",
+     "sha256": "effd17a08272deb0e983a00c1354546a042ab171f542e278903d5b28a561559d",
+     "bytes": 1168397,
+     "status": "ok"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3331625",
+     "modname": "url",
+     "arquivo": "Detalhes de um sistema de equações lineares",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3331626",
+     "modname": "url",
+     "arquivo": "Eliminação de Gauss",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3331627",
+     "modname": "url",
+     "arquivo": "Gauss-Jacobi e Gauss-Seidel",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3331628",
+     "modname": "url",
+     "arquivo": "Decomposição LU",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas lineares",
+     "modulo_id": "3478461",
+     "modname": "resource",
+     "arquivo": "Aula 5 – Ajuste de Funções - Critério dos Mínimos Quadrados.pdf",
+     "tamanho_api": 2198752,
+     "caminho": "stash/Sistemas lineares/Aula 5 – Ajuste de Funções - Critério dos Mínimos Quadrados.pdf",
+     "sha256": "64bfec7cca19c86ff78160f4780b111e066722e2e2806c5c058ed3140161ae17",
+     "bytes": 2198752,
+     "status": "ok"
+    },
+    {
+     "secao": "Cadeias de Markov",
+     "modulo_id": "3478466",
+     "modname": "resource",
+     "arquivo": "Aula 9-Cadeias de Markov.pdf",
+     "tamanho_api": 363711,
+     "caminho": "stash/Cadeias de Markov/Aula 9-Cadeias de Markov.pdf",
+     "sha256": "3139914e9f1ee48b0d4e5e95d5d11014ee0a931599cdafddecbb45a19eeb4465",
+     "bytes": 363711,
+     "status": "ok"
+    },
+    {
+     "secao": "Cadeias de Markov",
+     "modulo_id": "3331629",
+     "modname": "url",
+     "arquivo": "O que são cadeias de Markov?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Cadeias de Markov",
+     "modulo_id": "3331630",
+     "modname": "url",
+     "arquivo": "O que são mesmo? (Com editor de cadeias!)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Cadeias de Markov",
+     "modulo_id": "3331631",
+     "modname": "url",
+     "arquivo": "Modelando fenômenos com cadeias de Markov",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Interpolação",
+     "modulo_id": "3331632",
+     "modname": "url",
+     "arquivo": "Introdução o que queremos?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Interpolação",
+     "modulo_id": "3331715",
+     "modname": "url",
+     "arquivo": "Interpolando com polinômios",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Interpolação",
+     "modulo_id": "3331716",
+     "modname": "url",
+     "arquivo": "Wolfram Alpha também faz isso!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Interpolação",
+     "modulo_id": "3478460",
+     "modname": "resource",
+     "arquivo": "Aula4-Métodos-numéricos- INTERPOLAÇÃO.pdf",
+     "tamanho_api": 1311308,
+     "caminho": "stash/Interpolação/Aula4-Métodos-numéricos- INTERPOLAÇÃO.pdf",
+     "sha256": "7627d05b19e652d3d86d8fce0b49959f279f709473f9e3b8775c330ba5e0b7e6",
+     "bytes": 1311308,
+     "status": "ok"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3478463",
+     "modname": "resource",
+     "arquivo": "Gradiente descendente.pdf",
+     "tamanho_api": 226886,
+     "caminho": "stash/Otimização e Diferenciação/Gradiente descendente.pdf",
+     "sha256": "b1b27f3ada38d0a6bc344d54434e4ef4dc76002c8985640a65bf495cbb9a37fb",
+     "bytes": 226886,
+     "status": "ok"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3331733",
+     "modname": "url",
+     "arquivo": "Usando otimização com IA",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3331759",
+     "modname": "url",
+     "arquivo": "Automatic differentiation is a subtle and central tool...",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3497902",
+     "modname": "resource",
+     "arquivo": "apres.pdf",
+     "tamanho_api": 134183,
+     "caminho": "stash/Otimização e Diferenciação/apres.pdf",
+     "sha256": "11651dbc960dbd3d7666f7c19ea8dd40f526673e88fe43f0bb485f48aed18248",
+     "bytes": 134183,
+     "status": "ok"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3478462",
+     "modname": "resource",
+     "arquivo": "Aula 6 - Métodos Numéricos –diferenciação-automática.pdf",
+     "tamanho_api": 455649,
+     "caminho": "stash/Otimização e Diferenciação/Aula 6 - Métodos Numéricos –diferenciação-automática.pdf",
+     "sha256": "a1b6cfa17507c88705ff6e7a96a329b2f1cb96aa3aeb84da9ff746e177da62ec",
+     "bytes": 455649,
+     "status": "ok"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3331766",
+     "modname": "url",
+     "arquivo": "Para a frente!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Otimização e Diferenciação",
+     "modulo_id": "3331767",
+     "modname": "url",
+     "arquivo": "Volta tudo!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas dinâmicos",
+     "modulo_id": "3331717",
+     "modname": "url",
+     "arquivo": "O que eles são?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas dinâmicos",
+     "modulo_id": "3331718",
+     "modname": "url",
+     "arquivo": "Ou em video?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas dinâmicos",
+     "modulo_id": "3331731",
+     "modname": "url",
+     "arquivo": "E no mundo real?",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Sistemas dinâmicos",
+     "modulo_id": "3331732",
+     "modname": "url",
+     "arquivo": "A anatomia de um sistema dinâmico",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478468",
+     "modname": "resource",
+     "arquivo": "Lista 1 de exercícios Métodos numéricos.pdf",
+     "tamanho_api": 154476,
+     "caminho": "stash/Listas de exercícios/Lista 1 de exercícios Métodos numéricos.pdf",
+     "sha256": "1b1a91dcff22faf880cc2352d2e3746316e493dcc04bf8fe1f09471f3e5663a8",
+     "bytes": 154476,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478469",
+     "modname": "resource",
+     "arquivo": "lista2-métodos-numéricos-nova.pdf",
+     "tamanho_api": 204640,
+     "caminho": "stash/Listas de exercícios/lista2-métodos-numéricos-nova.pdf",
+     "sha256": "ca3673e80e3fd5f396832cd7bc3887eedd9a89ddfd43dc86b267ff1b664f590c",
+     "bytes": 204640,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478470",
+     "modname": "resource",
+     "arquivo": "Lista-3-métodos-numéricos-sistemas lineares.pdf",
+     "tamanho_api": 557220,
+     "caminho": "stash/Listas de exercícios/Lista-3-métodos-numéricos-sistemas lineares.pdf",
+     "sha256": "0534d2ab5b3f196838938492be80d4e3cd2297f34d53b8725529e6b57402ce52",
+     "bytes": 557220,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478471",
+     "modname": "resource",
+     "arquivo": "Lista-4-Métodos-Numéricos-Interpolação.pdf",
+     "tamanho_api": 348237,
+     "caminho": "stash/Listas de exercícios/Lista-4-Métodos-Numéricos-Interpolação.pdf",
+     "sha256": "281b5f5847665d5eb86ce64a614e40cea557d1dada0695e794d458cec2c643d6",
+     "bytes": 348237,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478472",
+     "modname": "resource",
+     "arquivo": "Lista 5- CMQ-Ajuste-de-funções.pdf",
+     "tamanho_api": 357666,
+     "caminho": "stash/Listas de exercícios/Lista 5- CMQ-Ajuste-de-funções.pdf",
+     "sha256": "208c5e00ae1152a468bdbb616f9d4babcbe04a700810762896cb4478d3463375",
+     "bytes": 357666,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3478473",
+     "modname": "resource",
+     "arquivo": "Exercícios de Métodos Numéricos - Diferenciação e integração.pdf",
+     "tamanho_api": 119230,
+     "caminho": "stash/Listas de exercícios/Exercícios de Métodos Numéricos - Diferenciação e integração.pdf",
+     "sha256": "cf7326bbc73ce6b95ce181223b0155d76d9482f3ed813f04d3a49e3f92788b53",
+     "bytes": 119230,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3369284",
+     "modname": "folder",
+     "arquivo": "exlab2.pdf",
+     "tamanho_api": 42137,
+     "caminho": "stash/Listas de exercícios/exlab2.pdf",
+     "sha256": "c8fc120a2af4bd451c3aa424a81a1a4e3b3bbd6b32cb04ad4e17663bc5f1f76e",
+     "bytes": 42137,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3369284",
+     "modname": "folder",
+     "arquivo": "exlab3.pdf",
+     "tamanho_api": 63556,
+     "caminho": "stash/Listas de exercícios/exlab3.pdf",
+     "sha256": "4cd97c53e3aef3094e0ca2dd6c431a2bf613c262a5e3fc43c938579b0be6b19a",
+     "bytes": 63556,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3369284",
+     "modname": "folder",
+     "arquivo": "exlab4.pdf",
+     "tamanho_api": 50728,
+     "caminho": "stash/Listas de exercícios/exlab4.pdf",
+     "sha256": "4173866a5b8e4dda9763145b294db4bee55953ecaa717f51ebc1704b0bc7dd4e",
+     "bytes": 50728,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3369284",
+     "modname": "folder",
+     "arquivo": "exlab1.pdf",
+     "tamanho_api": 69315,
+     "caminho": "stash/Listas de exercícios/exlab1.pdf",
+     "sha256": "a7d8c2d51e096b09a9a6166881a474b988d40826932dbf350ecf8d634446ed4f",
+     "bytes": 69315,
+     "status": "ok"
+    },
+    {
+     "secao": "Listas de exercícios",
+     "modulo_id": "3369284",
+     "modname": "folder",
+     "arquivo": "lista.pdf",
+     "tamanho_api": 170575,
+     "caminho": "stash/Listas de exercícios/lista.pdf",
+     "sha256": "efc44d5974be513b4a51f3f1db752f251a4e15afd175c068549935f3865c1978",
+     "bytes": 170575,
+     "status": "ok"
+    }
+   ],
+   "E2": false,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "90572",
+   "nome": "Projeto e Otimização de Algoritmos",
+   "semestre": "2025/2",
+   "ordem": 6,
+   "erro": null,
+   "segundos": 7.5,
+   "status_arquivos": {
+    "link_externo": 8,
+    "ok": 25
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413331",
+     "modname": "url",
+     "arquivo": "PlanoEmentaNota G1BibliografiaMateriais Variados",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413332",
+     "modname": "url",
+     "arquivo": "Objetivos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413333",
+     "modname": "url",
+     "arquivo": "Ementa",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413334",
+     "modname": "url",
+     "arquivo": "Programa da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413335",
+     "modname": "url",
+     "arquivo": "Formula do G1",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413336",
+     "modname": "url",
+     "arquivo": "Materiais da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413337",
+     "modname": "url",
+     "arquivo": "Livros da disciplina",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino e MATERIAIS variados",
+     "modulo_id": "3413338",
+     "modname": "url",
+     "arquivo": "Cronograma",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "TDE Trabalho Discente Efetivo",
+     "modulo_id": "3427449",
+     "modname": "folder",
+     "arquivo": "data.txt",
+     "tamanho_api": 46656,
+     "caminho": "stash/TDE Trabalho Discente Efetivo/data.txt",
+     "sha256": "d3599983efc8265eb531ce5e799980456860da3659f7a23cf15c84aede18a539",
+     "bytes": 46656,
+     "status": "ok"
+    },
+    {
+     "secao": "TDE Trabalho Discente Efetivo",
+     "modulo_id": "3427449",
+     "modname": "folder",
+     "arquivo": "extsp.pdf",
+     "tamanho_api": 26652,
+     "caminho": "stash/TDE Trabalho Discente Efetivo/extsp.pdf",
+     "sha256": "a10a1836b05727b4167fc62cae379bcf6c980db8c09a6f4c0573a1a92101947c",
+     "bytes": 26652,
+     "status": "ok"
+    },
+    {
+     "secao": "TDE Trabalho Discente Efetivo",
+     "modulo_id": "3427449",
+     "modname": "folder",
+     "arquivo": "data2.txt",
+     "tamanho_api": 145811,
+     "caminho": "stash/TDE Trabalho Discente Efetivo/data2.txt",
+     "sha256": "104e83e648817f6d63239fd688040d666738e1f380d2f756aecb2c63856ebd1f",
+     "bytes": 145811,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Gulosos",
+     "modulo_id": "3427454",
+     "modname": "resource",
+     "arquivo": "Greedy - Parte 1.pdf",
+     "tamanho_api": 1415012,
+     "caminho": "stash/Algoritmos Gulosos/Greedy - Parte 1.pdf",
+     "sha256": "cec510046bc9937ff7544950673e62ee6071480c6000d5ec4becd38a4ac0b3c7",
+     "bytes": 1415012,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Gulosos",
+     "modulo_id": "3427455",
+     "modname": "resource",
+     "arquivo": "Greedy - Parte 2.pdf",
+     "tamanho_api": 1966198,
+     "caminho": "stash/Algoritmos Gulosos/Greedy - Parte 2.pdf",
+     "sha256": "113b38357d835bf8a572e8378f5dca75d40b6916545d52f7609c3d334b13bfc8",
+     "bytes": 1966198,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Gulosos",
+     "modulo_id": "3427456",
+     "modname": "resource",
+     "arquivo": "Greedy - Parte 3.pdf",
+     "tamanho_api": 1045672,
+     "caminho": "stash/Algoritmos Gulosos/Greedy - Parte 3.pdf",
+     "sha256": "e2e2a42bad79fb13cd50dd480412b91bb22312282c79751e8c874b8960ab48ee",
+     "bytes": 1045672,
+     "status": "ok"
+    },
+    {
+     "secao": "Divisão e Conquista",
+     "modulo_id": "3427458",
+     "modname": "resource",
+     "arquivo": "Divide and Conquer - Part 1.pdf",
+     "tamanho_api": 2578758,
+     "caminho": "stash/Divisão e Conquista/Divide and Conquer - Part 1.pdf",
+     "sha256": "62602f7fbf7b10d68b915a69a00bb5a7ac25f28d702ac7d2c453f2393da3444c",
+     "bytes": 2578758,
+     "status": "ok"
+    },
+    {
+     "secao": "Divisão e Conquista",
+     "modulo_id": "3427459",
+     "modname": "resource",
+     "arquivo": "Divide and Conquer - Part 2.pdf",
+     "tamanho_api": 1371373,
+     "caminho": "stash/Divisão e Conquista/Divide and Conquer - Part 2.pdf",
+     "sha256": "84c7753ef24345b0723a60e1db3ede24a822bc8ca247c753ae2ec37b9bcf6b8a",
+     "bytes": 1371373,
+     "status": "ok"
+    },
+    {
+     "secao": "Divisão e Conquista",
+     "modulo_id": "3427460",
+     "modname": "resource",
+     "arquivo": "Divide and Conquer - Part 3.pdf",
+     "tamanho_api": 1602936,
+     "caminho": "stash/Divisão e Conquista/Divide and Conquer - Part 3.pdf",
+     "sha256": "85a38ce99fedee7fb19a466fd21282e08d3b9e77e088420c83d46abf62d8d9f9",
+     "bytes": 1602936,
+     "status": "ok"
+    },
+    {
+     "secao": "Divisão e Conquista",
+     "modulo_id": "3427461",
+     "modname": "resource",
+     "arquivo": "Divide and Conquer - Part 4.pdf",
+     "tamanho_api": 617660,
+     "caminho": "stash/Divisão e Conquista/Divide and Conquer - Part 4.pdf",
+     "sha256": "d94943a30664e07eda367e63de544e518490de585bf81d62d8e2080346d57bcd",
+     "bytes": 617660,
+     "status": "ok"
+    },
+    {
+     "secao": "Programação Dinâmica",
+     "modulo_id": "3427463",
+     "modname": "resource",
+     "arquivo": "Dynamic Programming - Parte I.pdf",
+     "tamanho_api": 1160484,
+     "caminho": "stash/Programação Dinâmica/Dynamic Programming - Parte I.pdf",
+     "sha256": "c63b94de73e8802030442c3056af87e0e2ca559dfe3a0f77e012702ea8c34a64",
+     "bytes": 1160484,
+     "status": "ok"
+    },
+    {
+     "secao": "Programação Dinâmica",
+     "modulo_id": "3427464",
+     "modname": "resource",
+     "arquivo": "Dynamic Programming - Parte II.pdf",
+     "tamanho_api": 941076,
+     "caminho": "stash/Programação Dinâmica/Dynamic Programming - Parte II.pdf",
+     "sha256": "a1ad0c5d595108496a3ff17634a50f4c28d4033680a6f0c21a7086992f85d78f",
+     "bytes": 941076,
+     "status": "ok"
+    },
+    {
+     "secao": "Programação Dinâmica",
+     "modulo_id": "3427465",
+     "modname": "resource",
+     "arquivo": "Dynamic Programming - Parte III.pdf",
+     "tamanho_api": 869678,
+     "caminho": "stash/Programação Dinâmica/Dynamic Programming - Parte III.pdf",
+     "sha256": "989cd78310c4187112afd3b4d147474c7a5fa5e0aad9e1103a6239cbc6c47b3a",
+     "bytes": 869678,
+     "status": "ok"
+    },
+    {
+     "secao": "Programação Dinâmica",
+     "modulo_id": "3466239",
+     "modname": "resource",
+     "arquivo": "recorr.pdf",
+     "tamanho_api": 382856,
+     "caminho": "stash/Programação Dinâmica/recorr.pdf",
+     "sha256": "85b2c852f68db4e17c4721381e7c2f055b9b613ee487ba611a977df5c9db209f",
+     "bytes": 382856,
+     "status": "ok"
+    },
+    {
+     "secao": "Backtracking",
+     "modulo_id": "3427467",
+     "modname": "resource",
+     "arquivo": "Backtracking - Parte I.pdf",
+     "tamanho_api": 1414151,
+     "caminho": "stash/Backtracking/Backtracking - Parte I.pdf",
+     "sha256": "87b0fc61d4f79640dc5a297c56218bf741c37d4531853a23abcf135a6a576780",
+     "bytes": 1414151,
+     "status": "ok"
+    },
+    {
+     "secao": "Backtracking",
+     "modulo_id": "3427468",
+     "modname": "resource",
+     "arquivo": "Backtracking - Parte II.pdf",
+     "tamanho_api": 534772,
+     "caminho": "stash/Backtracking/Backtracking - Parte II.pdf",
+     "sha256": "4aa55294367b18b7976d876c56307974155c6e4db06cf5e0c6ed5122ba3db288",
+     "bytes": 534772,
+     "status": "ok"
+    },
+    {
+     "secao": "Backtracking",
+     "modulo_id": "3427469",
+     "modname": "resource",
+     "arquivo": "Backtracking - Parte III.pdf",
+     "tamanho_api": 1095853,
+     "caminho": "stash/Backtracking/Backtracking - Parte III.pdf",
+     "sha256": "e270fec0e0cbc6dab265440ddb1cc7fcbf481f06f1e8db7d91f2546d7b7d74b7",
+     "bytes": 1095853,
+     "status": "ok"
+    },
+    {
+     "secao": "Branch and Bound",
+     "modulo_id": "3427471",
+     "modname": "resource",
+     "arquivo": "Branch-and-Bound - Parte I.pdf",
+     "tamanho_api": 1271031,
+     "caminho": "stash/Branch and Bound/Branch-and-Bound - Parte I.pdf",
+     "sha256": "29ce821105b3add85aa0291afd7371697f66f72f1906c7267bfb79dae4f79a02",
+     "bytes": 1271031,
+     "status": "ok"
+    },
+    {
+     "secao": "Branch and Bound",
+     "modulo_id": "3427473",
+     "modname": "resource",
+     "arquivo": "Branch-and-Bound - Parte II.pdf",
+     "tamanho_api": 1068648,
+     "caminho": "stash/Branch and Bound/Branch-and-Bound - Parte II.pdf",
+     "sha256": "fb70e14eafb0386a3298eb3d2a5c4f699b4c59e571395a13bef3e32e17441ae9",
+     "bytes": 1068648,
+     "status": "ok"
+    },
+    {
+     "secao": "Branch and Bound",
+     "modulo_id": "3427474",
+     "modname": "resource",
+     "arquivo": "  Branch and Bound - Part 3.pdf",
+     "tamanho_api": 705263,
+     "caminho": "stash/Branch and Bound/  Branch and Bound - Part 3.pdf",
+     "sha256": "46d77f190c5ae7660babe670504a8614df7d2b4f59c19ff7fbf7885b22fbda49",
+     "bytes": 705263,
+     "status": "ok"
+    },
+    {
+     "secao": "Branch and Bound",
+     "modulo_id": "3427475",
+     "modname": "resource",
+     "arquivo": "Branch-and-Bound - Parte IV.pdf",
+     "tamanho_api": 697358,
+     "caminho": "stash/Branch and Bound/Branch-and-Bound - Parte IV.pdf",
+     "sha256": "16e5bc8298ebd63255703c3c79fca990f2507e6e3a661d757d19be37a6d7d52d",
+     "bytes": 697358,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Genéticos",
+     "modulo_id": "3427477",
+     "modname": "resource",
+     "arquivo": "Algoritmos genéticos - Parte I.pdf",
+     "tamanho_api": 1354413,
+     "caminho": "stash/Algoritmos Genéticos/Algoritmos genéticos - Parte I.pdf",
+     "sha256": "256c35f2b043ca7965c18abcb65413d77de28c862ecaf99a6b1277154f3ef06d",
+     "bytes": 1354413,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Genéticos",
+     "modulo_id": "3427478",
+     "modname": "resource",
+     "arquivo": "Algoritmos genéticos - Parte II.pdf",
+     "tamanho_api": 706986,
+     "caminho": "stash/Algoritmos Genéticos/Algoritmos genéticos - Parte II.pdf",
+     "sha256": "33f1ca172809ccdbbb41e2071e962f063a2facb7e508879975611e54fffaae78",
+     "bytes": 706986,
+     "status": "ok"
+    },
+    {
+     "secao": "Algoritmos Genéticos",
+     "modulo_id": "3427479",
+     "modname": "resource",
+     "arquivo": "Algoritmos genéticos - Parte III.pdf",
+     "tamanho_api": 776216,
+     "caminho": "stash/Algoritmos Genéticos/Algoritmos genéticos - Parte III.pdf",
+     "sha256": "6315f9ca15da47f6c2c12bcc4d7187d77277f24185a844e62558d9110546d2bb",
+     "bytes": 776216,
+     "status": "ok"
+    },
+    {
+     "secao": "Lista de exercícios",
+     "modulo_id": "3427480",
+     "modname": "resource",
+     "arquivo": "lista.pdf",
+     "tamanho_api": 108245,
+     "caminho": "stash/Lista de exercícios/lista.pdf",
+     "sha256": "b41b59606523a452c1a60320b0368f0df88535d39e1e87a1f880a1391e0c6a8e",
+     "bytes": 108245,
+     "status": "ok"
+    }
+   ],
+   "E2": false,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "89100",
+   "nome": "Programação Funcional",
+   "semestre": "2025/2",
+   "ordem": 7,
+   "erro": null,
+   "segundos": 10.5,
+   "status_arquivos": {
+    "ok": 21,
+    "link_externo": 12,
+    "tipo_inesperado": 23
+   },
+   "arquivos": [
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3433692",
+     "modname": "resource",
+     "arquivo": "progfunc-32-plano-de-ensino-252.pdf",
+     "tamanho_api": 156458,
+     "caminho": "stash/Plano de Ensino/progfunc-32-plano-de-ensino-252.pdf",
+     "sha256": "4edcf7c303bba6c41325d5335e12c9b7fd3d9c0f39592eb9632169a8f9843d2e",
+     "bytes": 156458,
+     "status": "ok"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3417743",
+     "modname": "url",
+     "arquivo": "Cronograma para 2025II",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433530",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0-3.pdf",
+     "tamanho_api": 749510,
+     "caminho": "stash/Semana 1/pf_cc_aula0-3.pdf",
+     "sha256": "59c4e39e7bd0a8e24a391f84536780385cb73b4d6cd997c2b3ab3cbc4f63a508",
+     "bytes": 749510,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433531",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0.pdf",
+     "tamanho_api": 1091690,
+     "caminho": "stash/Semana 1/pf_cc_aula0.pdf",
+     "sha256": "b474b5d905945a1394541f66dd9db9c69a895a20e623617641d55bb744fd194a",
+     "bytes": 1091690,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433462",
+     "modname": "resource",
+     "arquivo": "haskell-codespaces-2025-2.pdf",
+     "tamanho_api": 3886378,
+     "caminho": "stash/Semana 1/haskell-codespaces-2025-2.pdf",
+     "sha256": "f4d4e4a289bb0e1803e7335260d62cadf364f825b955fd438ae1e28dd398b0bc",
+     "bytes": 3886378,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433463",
+     "modname": "resource",
+     "arquivo": "ch2_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433532",
+     "modname": "resource",
+     "arquivo": "exercicios_lambda.pdf",
+     "tamanho_api": 119081,
+     "caminho": "stash/Semana 1/exercicios_lambda.pdf",
+     "sha256": "d42e91adaf7b64783a88ebbc6e1e608b2cfbbd7afd97f5f6561e0c110ed4145e",
+     "bytes": 119081,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433533",
+     "modname": "resource",
+     "arquivo": "lambda-solucoes.pdf",
+     "tamanho_api": 46624,
+     "caminho": "stash/Semana 1/lambda-solucoes.pdf",
+     "sha256": "938053c53efb86f0c955ca329c2257d58f660a923ffd235c1f8a4874f3a36550",
+     "bytes": 46624,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433460",
+     "modname": "url",
+     "arquivo": "1.A Haskell - site oficial",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433465",
+     "modname": "url",
+     "arquivo": "1.B Alguns comandos em Haskell!",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433459",
+     "modname": "url",
+     "arquivo": "1.C Functional Programming amp; Haskell - Computerphile (YouTube)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 1",
+     "modulo_id": "3433464",
+     "modname": "resource",
+     "arquivo": "ch1_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3453468",
+     "modname": "resource",
+     "arquivo": "ch3_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3453470",
+     "modname": "resource",
+     "arquivo": "ch4_respostas.hs",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3453469",
+     "modname": "resource",
+     "arquivo": "ch4_br.pdf",
+     "tamanho_api": 196656,
+     "caminho": "stash/Semana 3/ch4_br.pdf",
+     "sha256": "b815d69558a80e74b63ad1b4a953ff4a159f25200a7db3feadfb1ebcdaf9b172",
+     "bytes": 196656,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3453471",
+     "modname": "resource",
+     "arquivo": "ch3_respostas.hs",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3453473",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0-8.pdf",
+     "tamanho_api": 290277,
+     "caminho": "stash/Semana 3/pf_cc_aula0-8.pdf",
+     "sha256": "8b10d33d7eb41fb256beaa25281113520c258aad522bdde5fa8c2c4164b20a98",
+     "bytes": 290277,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3463080",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0-7.pdf",
+     "tamanho_api": 109404,
+     "caminho": "stash/Semana 3/pf_cc_aula0-7.pdf",
+     "sha256": "02aab1599e7aacf1791e0c0e8b8b0ab334ff97e8be9935fc260d6f687d2cead7",
+     "bytes": 109404,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 3",
+     "modulo_id": "3463083",
+     "modname": "url",
+     "arquivo": "Lipovaca, Guards, Guards!(NOVO!)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468097",
+     "modname": "resource",
+     "arquivo": "ch5_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468099",
+     "modname": "resource",
+     "arquivo": "exemplos_listas.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468101",
+     "modname": "resource",
+     "arquivo": "ch5_respostas.hs",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468103",
+     "modname": "resource",
+     "arquivo": "ch6_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468105",
+     "modname": "resource",
+     "arquivo": "exemplos_listas_recursao.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 7",
+     "modulo_id": "3468106",
+     "modname": "resource",
+     "arquivo": "ch6_respostas.hs",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 8",
+     "modulo_id": "3475673",
+     "modname": "resource",
+     "arquivo": "ch7_br.pdf",
+     "tamanho_api": 164394,
+     "caminho": "stash/Semana 8/ch7_br.pdf",
+     "sha256": "9a810667177f2a67d71ef5374fb6ac97c17ca0da4e7434f14f8d8d5dd0ddb339",
+     "bytes": 164394,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 8",
+     "modulo_id": "3475674",
+     "modname": "resource",
+     "arquivo": "exemplos_funcoesaltaordem.zip",
+     "tamanho_api": 2998,
+     "caminho": "stash/Semana 8/exemplos_funcoesaltaordem.zip",
+     "sha256": "a57581cb2106131ee4b5d13e32f9c448278b04fa311af450c28c4ffb34cfd177",
+     "bytes": 2998,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 8",
+     "modulo_id": "3475675",
+     "modname": "resource",
+     "arquivo": "ch7_respostas.hs",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3478737",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0-15.pdf",
+     "tamanho_api": 254011,
+     "caminho": "stash/Semana 9/pf_cc_aula0-15.pdf",
+     "sha256": "7deda22fa0e26c3235bce8c1a1ba3e33e8ad695843aca9e8719f3cb1fd8f3bb8",
+     "bytes": 254011,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3478739",
+     "modname": "resource",
+     "arquivo": "ch8_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 9",
+     "modulo_id": "3478741",
+     "modname": "resource",
+     "arquivo": "exemplos_tipos_classes.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3482402",
+     "modname": "resource",
+     "arquivo": "ch10_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3482403",
+     "modname": "resource",
+     "arquivo": "exemplos_entrada_saida.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3482404",
+     "modname": "resource",
+     "arquivo": "hangman2.txt",
+     "tamanho_api": 2096,
+     "caminho": "stash/Semana 10/hangman2.txt",
+     "sha256": "8d0f67454fb36208cd7219600ac99a0aca695baf4e2e378e54fd27fef72b3442",
+     "bytes": 2096,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 10",
+     "modulo_id": "3482405",
+     "modname": "resource",
+     "arquivo": "nim.txt",
+     "tamanho_api": 1732,
+     "caminho": "stash/Semana 10/nim.txt",
+     "sha256": "9c0fb8ff0dbd1d50cf1faddd804ecaed922eb5b3e53f1da534a0926bb84fb0be",
+     "bytes": 1732,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485116",
+     "modname": "resource",
+     "arquivo": "pf_cc_aula0-17.pdf",
+     "tamanho_api": 156571,
+     "caminho": "stash/Semana 11/pf_cc_aula0-17.pdf",
+     "sha256": "034eebbaafb3c59479cf731736bbf37e28b380ccf7d8e6a811f617cba4f17dff",
+     "bytes": 156571,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485117",
+     "modname": "resource",
+     "arquivo": "ch12_br.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485118",
+     "modname": "resource",
+     "arquivo": "funtores2.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485119",
+     "modname": "resource",
+     "arquivo": "exemplos_funtores.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485120",
+     "modname": "resource",
+     "arquivo": "exercicios_funtores.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485121",
+     "modname": "resource",
+     "arquivo": "exemplos_monadas.zip",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485122",
+     "modname": "url",
+     "arquivo": "What is a Monad? (YouTube)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 11",
+     "modulo_id": "3485123",
+     "modname": "url",
+     "arquivo": "The Absolute Best Intro to Monads For Software Engineers (YouTube)",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3487697",
+     "modname": "url",
+     "arquivo": "Exercícios no CodeWars",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3487700",
+     "modname": "url",
+     "arquivo": "Learn You a Little Haskell",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3487701",
+     "modname": "url",
+     "arquivo": "Functional Programming in Haskell",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3487758",
+     "modname": "url",
+     "arquivo": "Strudel programa em Haskell",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 12",
+     "modulo_id": "3487772",
+     "modname": "url",
+     "arquivo": "Programador no YouTube, inclui Haskell",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3491191",
+     "modname": "resource",
+     "arquivo": "exercicios_revisao.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3491193",
+     "modname": "resource",
+     "arquivo": "exercicios_revisao2.pdf",
+     "tamanho_api": 0,
+     "status": "tipo_inesperado"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3491196",
+     "modname": "resource",
+     "arquivo": "simulado_gaba.pdf",
+     "tamanho_api": 121912,
+     "caminho": "stash/Semana 13/simulado_gaba.pdf",
+     "sha256": "7c037d7f92b4f75932e09b04ac37a03f81e9274995d9111a28b0e8c41cfa6d7a",
+     "bytes": 121912,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 13",
+     "modulo_id": "3491198",
+     "modname": "resource",
+     "arquivo": "prova_2022_1_gabarito.pdf",
+     "tamanho_api": 140639,
+     "caminho": "stash/Semana 13/prova_2022_1_gabarito.pdf",
+     "sha256": "5ce6110b6a01b9c12a853a134d75694c60202de769d74f7108d686e3ac388a4a",
+     "bytes": 140639,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 15",
+     "modulo_id": "3497705",
+     "modname": "resource",
+     "arquivo": "mangan-pf-p1-2024-2.pdf",
+     "tamanho_api": 33207,
+     "caminho": "stash/Semana 15/mangan-pf-p1-2024-2.pdf",
+     "sha256": "35fd14b061ff4cbd2feadaf9662800a1fc055498807594815024cb9f5e373ec9",
+     "bytes": 33207,
+     "status": "ok"
+    },
+    {
+     "secao": "Semana 18",
+     "modulo_id": "3504642",
+     "modname": "resource",
+     "arquivo": "gabaritos-programacao-funcional-2025-2.txt",
+     "tamanho_api": 1777,
+     "caminho": "stash/Semana 18/gabaritos-programacao-funcional-2025-2.txt",
+     "sha256": "f19e2994c7a04fd2fb3aa957adbde04ba9b0d84c2fc37ddd52ce2cd872ff4b9c",
+     "bytes": 1777,
+     "status": "ok"
+    },
+    {
+     "secao": "Trabalhos",
+     "modulo_id": "3466730",
+     "modname": "page",
+     "arquivo": "index.html",
+     "tamanho_api": 0,
+     "caminho": "raw/moodle/pages/3466730-index.html",
+     "sha256": "1b7b277c04dcccdb9961f789eecedc20c7d03c58e940affe1cb6428d94a0bd7d",
+     "bytes": 4879,
+     "status": "ok"
+    },
+    {
+     "secao": "Trabalhos",
+     "modulo_id": "3491210",
+     "modname": "resource",
+     "arquivo": "mangan-pf-t2-2025-2.pdf",
+     "tamanho_api": 53412,
+     "caminho": "stash/Trabalhos/mangan-pf-t2-2025-2.pdf",
+     "sha256": "9043e5c3e0f6b2ba9ef3e5e10ce93a5acd4553b623ce1c2ecf851b9303204d88",
+     "bytes": 53412,
+     "status": "ok"
+    }
+   ],
+   "E2": true,
+   "E3": true,
+   "E4": false
+  },
+  {
+   "id": "80922",
+   "nome": "Organização e A. de Processadores",
+   "semestre": "2025/1",
+   "ordem": 8,
+   "erro": null,
+   "segundos": 11.8,
+   "status_arquivos": {
+    "link_externo": 6,
+    "ok": 41
+   },
+   "arquivos": [
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2883115",
+     "modname": "url",
+     "arquivo": "Book Organização e Projeto de Computadores",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2883114",
+     "modname": "url",
+     "arquivo": "Book Computer Organization and Design, Revised Fourth Edition",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2917652",
+     "modname": "url",
+     "arquivo": "Template para Trabalhos",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2896301",
+     "modname": "resource",
+     "arquivo": "P1_OAC_Exercícios.docx",
+     "tamanho_api": 848829,
+     "caminho": "stash/sem-secao/P1_OAC_Exercícios.docx",
+     "sha256": "e32d7bf945be1c31bd66d228f54c7463551ac61ae145c5126fdb8d8e76d3d45c",
+     "bytes": 848829,
+     "status": "ok"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2896302",
+     "modname": "resource",
+     "arquivo": "P1_OAC_Exercícios - Gabarito.docx",
+     "tamanho_api": 928909,
+     "caminho": "stash/sem-secao/P1_OAC_Exercícios - Gabarito.docx",
+     "sha256": "69be2c80d5f94940ff905fc3b9bbf830d443693c58ff25b7c0493b93bf62eb70",
+     "bytes": 928909,
+     "status": "ok"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2883116",
+     "modname": "resource",
+     "arquivo": "P2_OAP_Exercícios_mx.pdf",
+     "tamanho_api": 95436,
+     "caminho": "stash/sem-secao/P2_OAP_Exercícios_mx.pdf",
+     "sha256": "1a52504c9898bc6fdfcbc0553f2ddb33093e7cc6b9205417d50b09c37d3fdd74",
+     "bytes": 95436,
+     "status": "ok"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2883117",
+     "modname": "resource",
+     "arquivo": "P2_OAP_Exercícios_mx - Gabarito.pdf",
+     "tamanho_api": 143203,
+     "caminho": "stash/sem-secao/P2_OAP_Exercícios_mx - Gabarito.pdf",
+     "sha256": "89b231afaea147d01ea1dcc88728a79c673f3de4b70ebde9f128a74a249f654f",
+     "bytes": 143203,
+     "status": "ok"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "2883120",
+     "modname": "resource",
+     "arquivo": "P2_OAP - C - Gabarito.pdf",
+     "tamanho_api": 99741,
+     "caminho": "stash/sem-secao/P2_OAP - C - Gabarito.pdf",
+     "sha256": "b42876a557cd0e64c76e2d8fe7d57955035d9a8dc512c9a562d4ff102631b280",
+     "bytes": 99741,
+     "status": "ok"
+    },
+    {
+     "secao": "sem-secao",
+     "modulo_id": "3285953",
+     "modname": "resource",
+     "arquivo": "P2_OAP - C - Gabarito.pdf",
+     "tamanho_api": 99741,
+     "colisao": true,
+     "caminho": "stash/sem-secao/_mod3285953/P2_OAP - C - Gabarito.pdf",
+     "sha256": "b42876a557cd0e64c76e2d8fe7d57955035d9a8dc512c9a562d4ff102631b280",
+     "bytes": 99741,
+     "status": "ok"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3229299",
+     "modname": "resource",
+     "arquivo": "98G03-04_Prog-Plano-OAP_2023_2 (NOVO).pdf",
+     "tamanho_api": 88335,
+     "caminho": "stash/Plano de Ensino/98G03-04_Prog-Plano-OAP_2023_2 (NOVO).pdf",
+     "sha256": "b884c675ed2268210d86b7f1d231c613706e9d5e13893787e87bf0e5a1e90abc",
+     "bytes": 88335,
+     "status": "ok"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "2860393",
+     "modname": "url",
+     "arquivo": "Cronograma",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Plano de Ensino",
+     "modulo_id": "3208965",
+     "modname": "resource",
+     "arquivo": "Organização e Arquitetura de Processadores - Apresentação da Disciplina.pdf",
+     "tamanho_api": 173162,
+     "caminho": "stash/Plano de Ensino/Organização e Arquitetura de Processadores - Apresentação da Disciplina.pdf",
+     "sha256": "f3262275b5a330e7a5cc975711b6b506ca6cb30dd0fc9bb8b7ece1f9138e5e6e",
+     "bytes": 173162,
+     "status": "ok"
+    },
+    {
+     "secao": "Introdução e Fundamentos",
+     "modulo_id": "2872876",
+     "modname": "resource",
+     "arquivo": "01_Introdução a OAP.pdf",
+     "tamanho_api": 1191976,
+     "caminho": "stash/Introdução e Fundamentos/01_Introdução a OAP.pdf",
+     "sha256": "e6a7fb02f10ec5c499fba968364a7774e5dd5f1283bd06fcd9c304a9466cd472",
+     "bytes": 1191976,
+     "status": "ok"
+    },
+    {
+     "secao": "Introdução e Fundamentos",
+     "modulo_id": "2874919",
+     "modname": "resource",
+     "arquivo": "02_Processador x Modelos de Memória.pdf",
+     "tamanho_api": 1356685,
+     "caminho": "stash/Introdução e Fundamentos/02_Processador x Modelos de Memória.pdf",
+     "sha256": "0513ebde7921d54691bde37e6b0a14cd3d9983b1b02dcc91d2d4e2fc38802e30",
+     "bytes": 1356685,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2878729",
+     "modname": "resource",
+     "arquivo": "03_Introdução à Arquitetura do MIPS.pdf",
+     "tamanho_api": 533386,
+     "caminho": "stash/Arquitetura de Processadores/03_Introdução à Arquitetura do MIPS.pdf",
+     "sha256": "e60165395d5dc173c90c00d2b30ec1d54713073a3b77f75a3d721cea6a0d6328",
+     "bytes": 533386,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883141",
+     "modname": "resource",
+     "arquivo": "aula 3 - Introdução MIPS_mx.pdf",
+     "tamanho_api": 265891,
+     "caminho": "stash/Arquitetura de Processadores/aula 3 - Introdução MIPS_mx.pdf",
+     "sha256": "7e0f41aeaed4cadb671cbb1ceb1de9937a47684d9e30bc56cd0bbfa8b9cf93c9",
+     "bytes": 265891,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883151",
+     "modname": "resource",
+     "arquivo": "MARS45.jar",
+     "tamanho_api": 4169142,
+     "caminho": "stash/Arquitetura de Processadores/MARS45.jar",
+     "sha256": "ac340b676ba2b62246b9df77e62f81ad4447bcfd329ab539716bcd09950b7096",
+     "bytes": 4169142,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883142",
+     "modname": "resource",
+     "arquivo": "Arq_MIPS_Multiciclo_Spec.pdf",
+     "tamanho_api": 717886,
+     "caminho": "stash/Arquitetura de Processadores/Arq_MIPS_Multiciclo_Spec.pdf",
+     "sha256": "618aa8537ee264264617b33ed55bd275ac5ba1c500ffb7991de955e1f7dd6479",
+     "bytes": 717886,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883144",
+     "modname": "resource",
+     "arquivo": "Manual de Referência para Programação no MIPS.pdf",
+     "tamanho_api": 1816816,
+     "caminho": "stash/Arquitetura de Processadores/Manual de Referência para Programação no MIPS.pdf",
+     "sha256": "f5b8e41aa873fbfeca3acc5a9bb25f8c8663dfaa64458b333b136517beb0c770",
+     "bytes": 1816816,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883143",
+     "modname": "resource",
+     "arquivo": "MIPS_S-Diagrama-de-Blocos.pdf",
+     "tamanho_api": 543038,
+     "caminho": "stash/Arquitetura de Processadores/MIPS_S-Diagrama-de-Blocos.pdf",
+     "sha256": "df3854629697d49ece324e9838cbd6493ad7271bf1c2ff5dbb3dc4fc79205e48",
+     "bytes": 543038,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883149",
+     "modname": "url",
+     "arquivo": "Site com descrição de Formatos Básicos de Instrução do MIPS",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883150",
+     "modname": "url",
+     "arquivo": "Tutorial Programação em Linguagem de Montagem MIPS",
+     "tamanho_api": 0,
+     "status": "link_externo"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883153",
+     "modname": "resource",
+     "arquivo": "Ex1ASM.zip",
+     "tamanho_api": 3166,
+     "caminho": "stash/Arquitetura de Processadores/Ex1ASM.zip",
+     "sha256": "4afe87340ddeb1d9863676d137e3ed458270f277705fd821bb803976a3e329be",
+     "bytes": 3166,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883155",
+     "modname": "resource",
+     "arquivo": "soma_cte.asm",
+     "tamanho_api": 2335,
+     "caminho": "stash/Arquitetura de Processadores/soma_cte.asm",
+     "sha256": "356684cdad737c1b1e6c1e62d136e7458b504388d23be8d0d3117bcb5ac6791c",
+     "bytes": 2335,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883156",
+     "modname": "resource",
+     "arquivo": "TaskLab1.asm",
+     "tamanho_api": 2475,
+     "caminho": "stash/Arquitetura de Processadores/TaskLab1.asm",
+     "sha256": "d51cc5d07bd35feac352d8ec9f0452f2d08f1175ddbcaca221d97e550af80cb0",
+     "bytes": 2475,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883157",
+     "modname": "resource",
+     "arquivo": "Exercicios LAB.zip",
+     "tamanho_api": 4536,
+     "caminho": "stash/Arquitetura de Processadores/Exercicios LAB.zip",
+     "sha256": "ab9a248a64a4016e6547e40acf66ac4dd91d6b4563e73c3a11046b112fa5a3c8",
+     "bytes": 4536,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883159",
+     "modname": "resource",
+     "arquivo": "toupper.asm",
+     "tamanho_api": 1559,
+     "caminho": "stash/Arquitetura de Processadores/toupper.asm",
+     "sha256": "47c7cf790d586e3f22b33ee64778c979170a69cce1ea81665a03928fc779f5e6",
+     "bytes": 1559,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883160",
+     "modname": "resource",
+     "arquivo": "tolower.asm",
+     "tamanho_api": 5467,
+     "caminho": "stash/Arquitetura de Processadores/tolower.asm",
+     "sha256": "95fda292fb2aedc1b20d525dce1ecc2a584a0c05afbe14f0f5afc0f8e070a7c3",
+     "bytes": 5467,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883162",
+     "modname": "resource",
+     "arquivo": "04_Assembly MIPS - MacrosFunções, ÍndicePonteiros 1 - mx.pdf",
+     "tamanho_api": 412096,
+     "caminho": "stash/Arquitetura de Processadores/04_Assembly MIPS - MacrosFunções, ÍndicePonteiros 1 - mx.pdf",
+     "sha256": "b2a7b42454a726e6d50640f5ae7444d3920c8a4c5cd8086698a33a66d024c3a1",
+     "bytes": 412096,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883163",
+     "modname": "resource",
+     "arquivo": "ex_func_cal.asm",
+     "tamanho_api": 2806,
+     "caminho": "stash/Arquitetura de Processadores/ex_func_cal.asm",
+     "sha256": "c1f2395c96a0358e96cd4cd46816b073cc0ac5ba2edf4d03ff27ff9798aeb45e",
+     "bytes": 2806,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883165",
+     "modname": "resource",
+     "arquivo": "06_Assembly MIPS - Uso da pilha - mx.pdf",
+     "tamanho_api": 288760,
+     "caminho": "stash/Arquitetura de Processadores/06_Assembly MIPS - Uso da pilha - mx.pdf",
+     "sha256": "4e3ef4a3e06f1939ef0ecae051278b83134b94875e58c3f6dbce9a26dbc9a405",
+     "bytes": 288760,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883166",
+     "modname": "resource",
+     "arquivo": "Subrotinas alinhadas com uso de pilha.asm",
+     "tamanho_api": 4368,
+     "caminho": "stash/Arquitetura de Processadores/Subrotinas alinhadas com uso de pilha.asm",
+     "sha256": "5ec99c39151eac07db9152f53e666c5e9eb34fe7b5774a6f6b43f930a1f7fba5",
+     "bytes": 4368,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "3230878",
+     "modname": "resource",
+     "arquivo": "07_Assembly MIPS - Recursividade.pdf",
+     "tamanho_api": 164434,
+     "caminho": "stash/Arquitetura de Processadores/07_Assembly MIPS - Recursividade.pdf",
+     "sha256": "140320bdefca1ede3306c0ee8b29245845760ce42dd94e1e345177cb7e16f18b",
+     "bytes": 164434,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883167",
+     "modname": "resource",
+     "arquivo": "fatorial.asm",
+     "tamanho_api": 2677,
+     "caminho": "stash/Arquitetura de Processadores/fatorial.asm",
+     "sha256": "25a57acde4fd0d535fb7b03a43828e9aa4b51d3bcfa5ad715e020a829c926d9f",
+     "bytes": 2677,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883168",
+     "modname": "resource",
+     "arquivo": "div_por2_recursiva.asm",
+     "tamanho_api": 398,
+     "caminho": "stash/Arquitetura de Processadores/div_por2_recursiva.asm",
+     "sha256": "a044281429348f0383f6d8f6f1bb2e49c252b9f84d2ddceb2bad9a4213119f2a",
+     "bytes": 398,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "2883169",
+     "modname": "resource",
+     "arquivo": "div_por2_recursiva.asm",
+     "tamanho_api": 2894,
+     "colisao": true,
+     "caminho": "stash/Arquitetura de Processadores/_mod2883169/div_por2_recursiva.asm",
+     "sha256": "5fe4acfe329be7963e0a703e08000b3ab0a586e1c27ed9b572e2527762b0c778",
+     "bytes": 2894,
+     "status": "ok"
+    },
+    {
+     "secao": "Arquitetura de Processadores",
+     "modulo_id": "3233125",
+     "modname": "resource",
+     "arquivo": "08_Assembly MIPS - Formato de Instrução e Modo de Endereçamento 1.pdf",
+     "tamanho_api": 961357,
+     "caminho": "stash/Arquitetura de Processadores/08_Assembly MIPS - Formato de Instrução e Modo de Endereçamento 1.pdf",
+     "sha256": "7d379d1431df323eb600ff66381951b938a5ae181048b5b1005200636fc1a418",
+     "bytes": 961357,
+     "status": "ok"
+    },
+    {
+     "secao": "Organização de Processadores",
+     "modulo_id": "2883176",
+     "modname": "resource",
+     "arquivo": "10_Organização do MIPS Monociclo.pdf",
+     "tamanho_api": 1399053,
+     "caminho": "stash/Organização de Processadores/10_Organização do MIPS Monociclo.pdf",
+     "sha256": "779a8a7f4bd39dc5cde15355713d93400fdef916f861797a5c7ad9c97f418e69",
+     "bytes": 1399053,
+     "status": "ok"
+    },
+    {
+     "secao": "Organização de Processadores",
+     "modulo_id": "2883177",
+     "modname": "resource",
+     "arquivo": "11_Organização do MIPS Multiciclo.pdf",
+     "tamanho_api": 1171485,
+     "caminho": "stash/Organização de Processadores/11_Organização do MIPS Multiciclo.pdf",
+     "sha256": "c49c3dfcf857bc01278a93fe1bf431323894e5c756b92c97dc04d5e1d065d327",
+     "bytes": 1171485,
+     "status": "ok"
+    },
+    {
+     "secao": "Organização de Processadores",
+     "modulo_id": "3262103",
+     "modname": "resource",
+     "arquivo": "68747470733a2f2f7777772e636973652e75666c2e6564752f7e6d73737a2f436f6d704f72672f466967342e32322d4d4950532d4653432d436f6d706f736974652e676966.gif",
+     "tamanho_api": 13474,
+     "caminho": "stash/Organização de Processadores/68747470733a2f2f7777772e636973652e75666c2e6564752f7e6d73737a2f436f6d704f72672f466967342e32322d4d4950532d4653432d436f6d706f736974652e676966.gif",
+     "sha256": "ecb295ebe29a8d908c41acc4d8c5dc17e87cd15c26275ec816b6e27e94f3dc82",
+     "bytes": 13474,
+     "status": "ok"
+    },
+    {
+     "secao": "Organização de Processadores",
+     "modulo_id": "2883178",
+     "modname": "resource",
+     "arquivo": "12_Organização do MIPS Pipeline.pdf",
+     "tamanho_api": 989519,
+     "caminho": "stash/Organização de Processadores/12_Organização do MIPS Pipeline.pdf",
+     "sha256": "009aa8b302b2f7e9647aa3b8d16d7c85ea28b10fde0da2b4e8ad932778e788d5",
+     "bytes": 989519,
+     "status": "ok"
+    },
+    {
+     "secao": "Entrada e Saída em Processadores",
+     "modulo_id": "2883179",
+     "modname": "resource",
+     "arquivo": "23-26_Entrada e Saída - mx.pdf",
+     "tamanho_api": 1277620,
+     "caminho": "stash/Entrada e Saída em Processadores/23-26_Entrada e Saída - mx.pdf",
+     "sha256": "c91d900c90eaf96d8553c8734882eb5f416c3c529587c2c4c6983759321f8659",
+     "bytes": 1277620,
+     "status": "ok"
+    },
+    {
+     "secao": "Entrada e Saída em Processadores",
+     "modulo_id": "2917660",
+     "modname": "resource",
+     "arquivo": "Exercícios Polling.pdf",
+     "tamanho_api": 107277,
+     "caminho": "stash/Entrada e Saída em Processadores/Exercícios Polling.pdf",
+     "sha256": "d814d66001958e49cfb378474cb8af65dd7dd74dbc36f29d618615d7a43128f9",
+     "bytes": 107277,
+     "status": "ok"
+    },
+    {
+     "secao": "Entrada e Saída em Processadores",
+     "modulo_id": "3278417",
+     "modname": "resource",
+     "arquivo": "io.zip",
+     "tamanho_api": 3005,
+     "caminho": "stash/Entrada e Saída em Processadores/io.zip",
+     "sha256": "f0e044ff3211f0309f4f120439c9a612fe450b4fe037f195b8f7ddfa3f698208",
+     "bytes": 3005,
+     "status": "ok"
+    },
+    {
+     "secao": "Hierarquia de Memória em Processadores",
+     "modulo_id": "3281599",
+     "modname": "resource",
+     "arquivo": "16_Hierarquia de Memória - Introdução.pdf",
+     "tamanho_api": 209027,
+     "caminho": "stash/Hierarquia de Memória em Processadores/16_Hierarquia de Memória - Introdução.pdf",
+     "sha256": "c288751c940629994f045c59573440225b820a6c54b0d2aad3c7da51654e125e",
+     "bytes": 209027,
+     "status": "ok"
+    },
+    {
+     "secao": "Hierarquia de Memória em Processadores",
+     "modulo_id": "3281600",
+     "modname": "resource",
+     "arquivo": "17_Hierarquia de Memória - Mapeamento de Endereços em Cache.pptx",
+     "tamanho_api": 346147,
+     "caminho": "stash/Hierarquia de Memória em Processadores/17_Hierarquia de Memória - Mapeamento de Endereços em Cache.pptx",
+     "sha256": "e1e64beb00812920a9c9f9fc68d089d13f25a3f6ae5fb16cdb9d80104c6a26e9",
+     "bytes": 346147,
+     "status": "ok"
+    },
+    {
+     "secao": "Hierarquia de Memória em Processadores",
+     "modulo_id": "3281601",
+     "modname": "resource",
+     "arquivo": "18_Hierarquia de Memória - Integridade e Coerência de Cache.pptx",
+     "tamanho_api": 666550,
+     "caminho": "stash/Hierarquia de Memória em Processadores/18_Hierarquia de Memória - Integridade e Coerência de Cache.pptx",
+     "sha256": "dfea969f1ffa079186010bfde2f8b7e6ba79a191af1c568392bb0ee02bf9165d",
+     "bytes": 666550,
+     "status": "ok"
+    }
+   ],
+   "E2": true,
+   "E3": true,
+   "E4": false
+  }
+ ],
+ "n0_nao_baixados_por_parada": []
+}

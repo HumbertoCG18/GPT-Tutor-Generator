@@ -1,0 +1,6 @@
+{
+ "versao": "pacote-cego-1",
+ "gerados": [],
+ "motivo": "nenhum curso proposto pela regra de selecao (generalizacao e piloto vazios em 29/09); nenhum pacote real foi montado",
+ "exemplo_sintetico": "pacote_cego/exemplo_sintetico/ (fonte com armadilhas, pacote e auditoria aprovada)"
+}

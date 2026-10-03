@@ -1,0 +1,47 @@
+{
+ "origem": "content_taxonomy.build_content_taxonomy(texto do plano, '', '', None)",
+ "sigla": "SIN",
+ "topicos": [
+  {
+   "codigo": "1.1",
+   "id": "U01.T01",
+   "rotulo": "Conceitos básicos de sistemas embarcados",
+   "slug": "conceitos-basicos-de-sistemas-embarcados",
+   "unidade": "U01"
+  },
+  {
+   "codigo": "1.2",
+   "id": "U01.T02",
+   "rotulo": "Ferramentas de desenvolvimento cruzado",
+   "slug": "ferramentas-de-desenvolvimento-cruzado",
+   "unidade": "U01"
+  },
+  {
+   "codigo": "2.1",
+   "id": "U02.T01",
+   "rotulo": "Interface entre núcleo e dispositivo",
+   "slug": "interface-entre-nucleo-e-dispositivo",
+   "unidade": "U02"
+  },
+  {
+   "codigo": "2.2",
+   "id": "U02.T02",
+   "rotulo": "Módulos carregáveis do núcleo",
+   "slug": "modulos-carregaveis-do-nucleo",
+   "unidade": "U02"
+  }
+ ],
+ "unidades": [
+  {
+   "id": "U01",
+   "slug": "unidade-01-fundamentos-de-sistemas-embarcados",
+   "titulo": "Unidade 01 — Fundamentos de sistemas embarcados"
+  },
+  {
+   "id": "U02",
+   "slug": "unidade-02-acionadores-de-dispositivos",
+   "titulo": "Unidade 02 — Acionadores de dispositivos"
+  }
+ ],
+ "versao": "pacote-cego-1"
+}

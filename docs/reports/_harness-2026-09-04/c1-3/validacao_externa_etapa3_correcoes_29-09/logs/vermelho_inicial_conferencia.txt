@@ -1,0 +1,5 @@
+E       KeyError: 'integridade_global'
+E       KeyError: 'integridade_global'
+FAILED conferencia\test_confere_fontes.py::test_controle_integridade_global_verdadeira
+FAILED conferencia\test_confere_fontes.py::test_CONF01_inventario_alterado_derruba_o_resultado_global
+2 failed in 0.46s

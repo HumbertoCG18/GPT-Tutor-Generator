@@ -1,0 +1,96 @@
+{
+ "materiais": [
+  {
+   "adjudicavel": true,
+   "arquivo": "materiais/m2d90fb98a677__501-tutorial.html",
+   "material_id": "m2d90fb98a677",
+   "nome_original": "501-tutorial.html",
+   "ocorrencias": [
+    {
+     "modname": "page",
+     "modulo": "Tutorial",
+     "secao": "Unidade 1"
+    }
+   ],
+   "sha256": "a73fedf1b7afc429225646f302b418a6e89eed62a3a62bea4f8693c1ceba8e2a",
+   "tamanho": 34,
+   "tipo": "pagina",
+   "url": null
+  },
+  {
+   "adjudicavel": true,
+   "arquivo": "materiais/m49ff8e4f1225__lista1.pdf",
+   "material_id": "m49ff8e4f1225",
+   "nome_original": "lista1.pdf",
+   "ocorrencias": [
+    {
+     "modname": "resource",
+     "modulo": "Lista 1",
+     "secao": "Unidade 1"
+    }
+   ],
+   "sha256": "45d6ce488699f9d4d4fedd464ce031156db139b28d97dd326eff511cc2c7767e",
+   "tamanho": 22,
+   "tipo": "arquivo",
+   "url": null
+  },
+  {
+   "adjudicavel": false,
+   "arquivo": null,
+   "material_id": "m6e4d1ea94f6a",
+   "nome_original": "enunciado.pdf",
+   "ocorrencias": [
+    {
+     "modname": "assign",
+     "modulo": "Trabalho",
+     "secao": "Unidade 1"
+    }
+   ],
+   "sha256": null,
+   "tamanho": 999,
+   "tipo": "arquivo_sem_fonte_local",
+   "url": null
+  },
+  {
+   "adjudicavel": false,
+   "arquivo": null,
+   "material_id": "m7c57098c725a",
+   "nome_original": "Site do livro",
+   "ocorrencias": [
+    {
+     "modname": "url",
+     "modulo": "Site do livro",
+     "secao": "Geral"
+    }
+   ],
+   "sha256": null,
+   "tamanho": null,
+   "tipo": "link_externo",
+   "url": "https://exemplo.org/livro"
+  },
+  {
+   "adjudicavel": true,
+   "arquivo": "materiais/m9542df43c81c__aula1.pdf",
+   "material_id": "m9542df43c81c",
+   "nome_original": "aula1.pdf",
+   "ocorrencias": [
+    {
+     "modname": "resource",
+     "modulo": "Aula 1",
+     "secao": "Geral"
+    },
+    {
+     "modname": "resource",
+     "modulo": "Aula 1 (de novo)",
+     "secao": "Unidade 1"
+    }
+   ],
+   "sha256": "9826c55473a921769a1d66810a9be01dd70b38195f50cd7f64617e6abd7c0bc7",
+   "tamanho": 21,
+   "tipo": "arquivo",
+   "url": null
+  }
+ ],
+ "sigla": "SIN",
+ "versao": "pacote-cego-1"
+}

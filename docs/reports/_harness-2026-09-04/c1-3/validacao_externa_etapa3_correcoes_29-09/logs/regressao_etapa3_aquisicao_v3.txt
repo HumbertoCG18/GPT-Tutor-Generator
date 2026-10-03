@@ -1,0 +1,7 @@
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_anexo_de_pagina_fora_da_raiz_tem_referencia_valida
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_limite_por_arquivo_vale_para_bytes_reais
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_orcamento_total_vale_para_bytes_reais
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_falha_local_de_um_arquivo_e_registrada_e_o_curso_continua
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_falha_posterior_preserva_registros_ja_processados
+PASSED correcoes\aquisicao\test_adquire_v3.py::test_interrupcao_deixa_inventario_parcial_marcado
+6 passed in 1.64s

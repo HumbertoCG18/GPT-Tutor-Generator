@@ -1,0 +1,55 @@
+PASSED tests/test_moodle.py::test_sanitize_removes_invalid_windows_chars
+PASSED tests/test_moodle.py::test_iter_section_files_extracts_files_by_section
+PASSED tests/test_moodle.py::test_download_url_appends_token
+PASSED tests/test_moodle.py::test_save_load_token_roundtrip_preserves_url
+PASSED tests/test_moodle.py::test_save_token_creates_file_when_missing
+PASSED tests/test_moodle.py::test_additive_sets_posting_and_label_not_section
+PASSED tests/test_moodle.py::test_additive_does_not_write_card_block_map
+PASSED tests/test_moodle.py::test_consumed_overwrites_section
+PASSED tests/test_moodle.py::test_login_posts_credentials_and_returns_token
+PASSED tests/test_moodle.py::test_login_raises_on_error
+PASSED tests/test_moodle.py::test_parse_moodle_course_full_pattern
+PASSED tests/test_moodle.py::test_parse_moodle_course_name_with_dashes
+PASSED tests/test_moodle.py::test_parse_moodle_course_degraded_no_prof
+PASSED tests/test_moodle.py::test_import_moodle_courses_upserts_and_downloads
+PASSED tests/test_moodle.py::test_latest_semester_picks_most_recent
+PASSED tests/test_moodle.py::test_latest_semester_empty_when_none
+PASSED tests/test_moodle.py::test_filter_courses_by_semester
+PASSED tests/test_moodle.py::test_section_file_index_maps_filename_to_section
+PASSED tests/test_moodle.py::test_backfill_source_section_from_api_matches_by_basename
+PASSED tests/test_moodle.py::test_backfill_moodle_label_from_api_matches_by_basename
+PASSED tests/test_moodle.py::test_iter_section_files_disambiguates_by_module_name
+PASSED tests/test_moodle.py::test_download_course_no_silent_collision_loss
+PASSED tests/test_moodle.py::test_download_course_skips_html_and_json_error_responses
+PASSED tests/test_moodle.py::test_download_course_rejects_wrong_magic_bytes_despite_content_type
+PASSED tests/test_moodle.py::test_build_card_structure_creates_folders_and_listing
+PASSED tests/test_moodle.py::test_import_moodle_courses_builds_structure_and_backfills
+PASSED tests/test_moodle.py::test_import_links_existing_subject_by_slug_keeping_repo
+PASSED tests/test_moodle.py::test_iter_section_files_captures_timestamps
+PASSED tests/test_moodle.py::test_posting_date_iso_utc
+PASSED tests/test_moodle.py::test_backfill_posting_date_unique_match
+PASSED tests/test_moodle.py::test_backfill_posting_date_skips_ambiguous_basename
+PASSED tests/test_moodle.py::test_parse_turma_single
+PASSED tests/test_moodle.py::test_parse_turma_multiple
+PASSED tests/test_moodle.py::test_parse_turma_absent
+PASSED tests/test_moodle.py::test_sanitize_preserves_date_slash_as_dot
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[20/04 a 24/4-20.04 a 24.04]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[24/4-24.04]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[06/12/2026-06.12.2026]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[18/06-18.06]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[1/2-01.02]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[12/2025-12.2025]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[versao 1.2-versao 1.2]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[2.10.1-2.10.1]
+PASSED tests/test_moodle.py::test_sanitize_folder_name_date_padding[Se\xe7\xe3o A/B-Se\xe7\xe3o A B]
+PASSED tests/test_moodle.py::test_call_conta_bytes_do_corpo_e_mantem_resultado_sem_limite
+PASSED tests/test_moodle.py::test_call_corpo_exatamente_no_limite_com_termino_confirmado
+PASSED tests/test_moodle.py::test_call_termino_nao_confirmado_nao_ultrapassa_o_orcamento[exato-sem-content-length]
+PASSED tests/test_moodle.py::test_call_termino_nao_confirmado_nao_ultrapassa_o_orcamento[maior-sem-content-length]
+PASSED tests/test_moodle.py::test_call_content_length_acima_do_orcamento_nao_le_o_corpo
+PASSED tests/test_moodle.py::test_call_corpo_truncado_conta_e_preserva_o_parcial[sem-limite]
+PASSED tests/test_moodle.py::test_call_corpo_truncado_conta_e_preserva_o_parcial[com-limite]
+PASSED tests/test_moodle.py::test_call_orcamento_esgotado_nao_abre_a_requisicao
+PASSED tests/test_moodle.py::test_call_json_invalido_e_erro_da_api_contam_bytes
+PASSED tests/test_moodle.py::test_call_interrupcao_preserva_a_contagem_dos_blocos_lidos
+54 passed in 1.64s

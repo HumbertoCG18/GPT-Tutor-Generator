@@ -1,0 +1,147 @@
+diff --git a/validacao_externa_etapa3_29-09/exposicao/verifica_exposicao.py b/validacao_externa_etapa3_correcoes_29-09/exposicao/verifica_exposicao.py
+index c2f2fc0..42618a6 100644
+--- a/validacao_externa_etapa3_29-09/exposicao/verifica_exposicao.py
++++ b/validacao_externa_etapa3_correcoes_29-09/exposicao/verifica_exposicao.py
+@@ -1,4 +1,10 @@
+-"""Verificação local e limitada de exposição (etapa 3, 29/09). Read-only: git grep/log no commit base + nomes de pastas.
++"""Verificação local e limitada de exposição, v2 (correções pós-revisão da etapa 3, 29/09). Read-only: git grep/log no
++commit base + nomes de pastas.
++
++v2: fonte requisitada ausente ou saída do git não interpretada = INDETERMINADO; git sem cor e sem aspas em caminho
++(`-c color.*=never -c core.quotePath=false`, `grep -z --no-color`); TODOS os matches de cada linha, com intervalo e
++motivo específico de omissão; linha achada pelo git sem match no regex Python = INDETERMINADO; categoria: `tests/`
++antes de código e "resultado do motor" só para artefato de dados/log. Categoria é do arquivo, não prova uso.
+ 
+ Para cada candidato: fontes pesquisadas, padrão, termo exato que casou, arquivo/linha, categoria do arquivo e um trecho
+ curto, para distinguir menção incidental de uso em desenvolvimento. NÃO atribui nível (N0/N1/...) nem lê níveis:
+@@ -20,14 +26,14 @@ from pathlib import Path
+ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+ AQUI = Path(__file__).resolve().parent
+ REPO = next(p for p in AQUI.parents if (p / ".git").exists())
+-_spec = importlib.util.spec_from_file_location("pacote_v3", AQUI.parent / "correcoes/pacote_cego/gera_pacote_cego.py")
++_spec = importlib.util.spec_from_file_location("pacote_v4", AQUI.parent / "correcoes/pacote_cego/gera_pacote_cego.py")
+ PC = importlib.util.module_from_spec(_spec)
+ _spec.loader.exec_module(PC)   # só PADRAO_PREDICAO e PADRAO_SEGREDO
+ 
+ CATEGORIAS = [   # primeira que casa com o caminho; a ordem importa
+-    ("codigo", re.compile(r"^(src|scripts)/|\.(py|js|ts)$")),
+     ("teste_ou_fixture", re.compile(r"^tests/")),
+-    ("resultado_do_motor", re.compile(r"captur|placar|avaliac|gold|resumo|manifest|atribui|assignment|curation", re.I)),
++    ("codigo", re.compile(r"^(src|scripts)/|\.(py|js|ts)$")),
++    ("resultado_do_motor", re.compile(r"(captur|placar|avaliac|gold|resumo|manifest|atribui|assignment|curation)[^/]*\.(json|jsonl|csv|log|txt)$", re.I)),
+     ("dados_json_csv", re.compile(r"\.(json|jsonl|csv)$", re.I)),
+     ("contexto_de_agente", re.compile(r"^\.(mex|workflow)/")),
+     ("plano_ou_spec", re.compile(r"(^|/)(plans?|specs?)/|plano|spec", re.I)),
+@@ -39,7 +45,8 @@ TRECHO = 80
+ 
+ def git(repo, *args):
+     try:
+-        r = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, encoding="utf-8", errors="replace")
++        r = subprocess.run(["git", "--no-pager", "-c", "color.ui=never", "-c", "color.grep=never", "-c",
++                            "core.quotePath=false", *args], cwd=repo, capture_output=True, text=True, encoding="utf-8", errors="replace")
+     except OSError:
+         return None, ""
+     return r.returncode, r.stdout
+@@ -73,15 +80,22 @@ def candidatos(entrada):
+     return out
+ 
+ 
+-def trecho(linha, rx):
+-    """(termo, 3 caracteres antes/depois, trecho curto). A vizinhança mostra "Software I" dentro de "Software II" ou um id
+-    dentro de um hash mesmo quando o trecho é omitido."""
+-    m = rx.search(linha)
+-    if not m:
+-        return None, None, None
++def trecho(linha, m):
++    """(3 caracteres antes/depois, trecho curto) de um match. A vizinhança mostra "Software I" dentro de "Software II" ou
++    um id dentro de um hash mesmo quando o trecho é omitido."""
+     ini, fim = max(0, m.start() - TRECHO), min(len(linha), m.end() + TRECHO)
+     viz = {"antes": linha[max(0, m.start() - 3):m.start()], "depois": linha[m.end():m.end() + 3]}
+-    return m.group(0), viz, ("…" if ini else "") + linha[ini:fim].strip() + ("…" if fim < len(linha) else "")
++    return viz, ("…" if ini else "") + linha[ini:fim].strip() + ("…" if fim < len(linha) else "")
++
++
++def motivo_omissao(categoria_arquivo, txt):
++    if categoria_arquivo == "resultado_do_motor":
++        return "arquivo de resultado do motor"
++    if PC.PADRAO_PREDICAO.search(txt):
++        return "assinatura de saída do motor no trecho"
++    if PC.PADRAO_SEGREDO.search(txt):
++        return "credencial ou segredo no trecho"
++    return None
+ 
+ 
+ def verifica(c, repo, base, raizes, exclui, pastas_anteriores):
+@@ -98,28 +112,43 @@ def verifica(c, repo, base, raizes, exclui, pastas_anteriores):
+         rx = re.compile(c["padrao"], re.I)
+     except re.error as exc:
+         rx, _ = None, falhas.append(f"padrão inválido: {exc}")
+-    rc_g, saida = git(repo, "grep", "-n", "-I", "-P", "-i", "-e", c["padrao"], base, "--", *raizes)
++    if pastas_anteriores is None:
++        falhas.append("fonte de pastas anteriores ausente")
++    rc_g, saida = git(repo, "grep", "-z", "-n", "-I", "-P", "-i", "--no-color", "-e", c["padrao"], base, "--", *raizes)
+     if rc_g not in (0, 1):
+         falhas.append(f"git grep falhou (saiu {rc_g})")
+-    rc_l, log = git(repo, "log", base, "--format=%h %s", "-i", "--perl-regexp", f"--grep={c['padrao']}")
++    rc_l, log = git(repo, "log", "--no-color", base, "--format=%h %s", "-i", "--perl-regexp", f"--grep={c['padrao']}")
+     if rc_l != 0:
+         falhas.append(f"git log falhou (saiu {rc_l})")
+-    ocorrencias = []
+-    for ln in saida.splitlines() if rc_g == 0 and rx else []:
+-        m = re.match(rf"^{re.escape(base)}:(.+?):(\d+):(.*)$", ln)
+-        if not m or exclui.search(m.group(1)):
++    ocorrencias, nao_interpretadas, sem_match = [], 0, 0
++    for ln in saida.split("\n") if rc_g == 0 and rx else []:
++        if not ln:
++            continue
++        m = re.fullmatch(rf"{re.escape(base)}:([^\0]+)\0(\d+)\0(.*)", ln, re.S)
++        if not m:
++            nao_interpretadas += 1
+             continue
+         cam, num, linha = m.group(1), int(m.group(2)), m.group(3)
+-        termo, viz, txt = trecho(linha, rx)
++        if exclui.search(cam):
++            continue
++        matches = list(rx.finditer(linha))
++        sem_match += not matches
+         cat = categoria(cam)
+-        if cat == "resultado_do_motor" or (txt and (PC.PADRAO_PREDICAO.search(txt) or PC.PADRAO_SEGREDO.search(txt))):
+-            txt = "[trecho omitido: resultado do motor, saída de classificação ou segredo]"
+-        ocorrencias.append({"arquivo": cam, "linha": num, "categoria": cat, "termo": termo, "vizinhanca": viz, "trecho": txt})
++        for mt in matches:   # todos os matches da linha, não só o primeiro
++            viz, txt = trecho(linha, mt)
++            motivo = motivo_omissao(cat, txt)
++            ocorrencias.append({"arquivo": cam, "linha": num, "categoria": cat, "termo": mt.group(0),
++                                "intervalo": [mt.start(), mt.end()], "vizinhanca": viz,
++                                "trecho": "[omitido]" if motivo else txt, "motivo_omissao": motivo})
++    if nao_interpretadas:
++        falhas.append(f"saída do git grep não interpretada ({nao_interpretadas} linhas)")
++    if sem_match:
++        falhas.append(f"linhas achadas pelo git sem match no regex Python ({sem_match}; PCRE x re)")
+     por_arquivo = collections.defaultdict(list)
+     for o in ocorrencias:
+         por_arquivo[o["arquivo"]].append(o)
+     cats = collections.Counter(categoria(a) for a in por_arquivo)
+-    anterior = sorted(p for p in pastas_anteriores if chave(c["nome"]) and chave(p) == chave(c["nome"]))
++    anterior = sorted(p for p in pastas_anteriores or [] if chave(c["nome"]) and chave(p) == chave(c["nome"]))
+     return {**c, "status_da_busca": "INDETERMINADO" if falhas else "ok", "falhas": falhas,
+             "sinais": {"arquivos": len(por_arquivo), "ocorrencias": len(ocorrencias), "arquivos_por_categoria": dict(sorted(cats.items())),
+                        "arquivos_codigo_teste_dados_ou_resultado": sum(n for k, n in cats.items() if k in NAO_DOCUMENTAL),
+@@ -133,12 +162,13 @@ def main():
+     saida_p = Path(sys.argv[2]) if len(sys.argv) > 2 else AQUI / "exposicao_local.json"
+     e = json.loads(entrada_p.read_text(encoding="utf-8"))
+     base_downloads = Path(e["pastas_anteriores"]).expanduser()
+-    pastas = [p.name for p in base_downloads.iterdir() if p.is_dir()] if base_downloads.is_dir() else []
++    pastas = [p.name for p in base_downloads.iterdir() if p.is_dir()] if base_downloads.is_dir() else None   # None = ausente
+     exclui = re.compile(e["exclui_caminho"])
+     res = [verifica(c, REPO, e["base"], e["raizes"], exclui, pastas) for c in candidatos(e)]
+-    out = {"esquema": "exposicao-local-1", "entrada": e, "fontes_pesquisadas": {
+-        "git": f"commit {e['base']} (git grep -n -I -P -i nas raízes; git log --grep)", "raizes": e["raizes"],
+-        "exclusoes_de_caminho": e["exclui_caminho"], "nomes_de_pasta": f"{e['pastas_anteriores']} ({len(pastas)} pastas, só nomes)"},
++    out = {"esquema": "exposicao-local-2", "entrada": e, "fontes_pesquisadas": {
++        "git": f"commit {e['base']} (git grep -z -n -I -P -i --no-color nas raízes; git log --grep; sem cor, quotePath=false)",
++        "raizes": e["raizes"], "exclusoes_de_caminho": e["exclui_caminho"],
++        "nomes_de_pasta": f"{e['pastas_anteriores']} ({'AUSENTE' if pastas is None else len(pastas)} pastas, só nomes)"},
+         "nao_pesquisado": ["outras branches", "worktrees", "stashes", "memória de sessões", "conversas", "conteúdo das pastas locais"],
+         "candidatos": res}
+     saida_p.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")

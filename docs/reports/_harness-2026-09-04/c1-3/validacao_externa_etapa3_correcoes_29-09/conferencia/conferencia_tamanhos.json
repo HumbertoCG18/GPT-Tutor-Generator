@@ -1,0 +1,77 @@
+{
+ "resumo": {
+  "registros_ok_conferidos": 267,
+  "iguais": 262,
+  "sem_declaracao": 5,
+  "divergentes": 0
+ },
+ "cursos": {
+  "90231": {
+   "iguais": 36,
+   "sem_declaracao": [],
+   "divergentes": []
+  },
+  "88738": {
+   "iguais": 82,
+   "sem_declaracao": [],
+   "divergentes": []
+  },
+  "81476": {
+   "iguais": 8,
+   "sem_declaracao": [],
+   "divergentes": []
+  },
+  "82667": {
+   "iguais": 30,
+   "sem_declaracao": [
+    {
+     "caminho": "raw/moodle/pages/2953898-index.html",
+     "api": 0,
+     "real": 3902
+    },
+    {
+     "caminho": "raw/moodle/pages/3266435-index.html",
+     "api": 0,
+     "real": 2828
+    },
+    {
+     "caminho": "raw/moodle/pages/3008008-index.html",
+     "api": 0,
+     "real": 7306
+    },
+    {
+     "caminho": "raw/moodle/pages/3060904-index.html",
+     "api": 0,
+     "real": 2326
+    }
+   ],
+   "divergentes": []
+  },
+  "89447": {
+   "iguais": 20,
+   "sem_declaracao": [],
+   "divergentes": []
+  },
+  "90572": {
+   "iguais": 25,
+   "sem_declaracao": [],
+   "divergentes": []
+  },
+  "89100": {
+   "iguais": 20,
+   "sem_declaracao": [
+    {
+     "caminho": "raw/moodle/pages/3466730-index.html",
+     "api": 0,
+     "real": 4879
+    }
+   ],
+   "divergentes": []
+  },
+  "80922": {
+   "iguais": 41,
+   "sem_declaracao": [],
+   "divergentes": []
+  }
+ }
+}

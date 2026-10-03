@@ -1,0 +1,130 @@
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v3.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v3.py
+index 0e7aad62..09d3ecc2 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v3.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v3.py
+@@ -27,6 +27,8 @@ class Resposta:
+ 
+ 
+ class Cliente:
++    bytes_recebidos, limite_bytes = 0, None   # v5: interface de contagem do MoodleClient (falso: 0 bytes)
++
+     def __init__(self, contents):
+         self.contents = contents
+ 
+@@ -73,7 +75,7 @@ def test_anexo_de_pagina_fora_da_raiz_tem_referencia_valida(tmp_path, rede):
+     """Caso da revisão: ValueError em relative_to e inventário não devolvido."""
+     rede.update({"u/a": b"texto a", "u/idx": b"<html>pagina</html>", "u/img": PNG})
+     cli = Cliente({"curso": [secao("Geral", modulo(1, "resource", conteudo("a.txt", "u/a")),
+-                                   modulo(2, "page", conteudo("index.html", "u/idx"), conteudo("imagem.png", "u/img")))]})
++                                   modulo(2, "page", conteudo("index.html", "u/idx", 0), conteudo("imagem.png", "u/img")))]})
+     raiz, arquivos = tmp_path / "downloads/curso", []
+     A.baixa_curso(cli, "curso", raiz, {"transferidos": 0, "aceitos": 0}, arquivos)   # v4: contadores separados
+     assert [a["status"] for a in arquivos] == ["ok", "ok", "ok"]
+@@ -94,7 +96,7 @@ def test_limite_por_arquivo_vale_para_bytes_reais(tmp_path, rede, monkeypatch):
+     # v4: com orçamento total 5, o byte de sondagem não cabe: lê 5 e recusa por orçamento (limite por arquivo real
+     # testado em test_adquire_v4::test_rejected_transfer_budget)
+     assert arquivos[0]["status"] == "nao_baixado_orcamento_real" and arquivos[0]["bytes_lidos"] == 5
+-    assert "caminho" not in arquivos[0] and orc == {"transferidos": 5, "aceitos": 0}
++    assert "caminho" not in arquivos[0] and (orc["transferidos"], orc["aceitos"]) == (5, 0)   # v5: orc também tem "metadados"
+     assert not (tmp_path / "c/stash/S/x.txt").exists()
+ 
+ 
+@@ -104,7 +106,7 @@ def test_orcamento_total_vale_para_bytes_reais(tmp_path, rede, monkeypatch):
+     orc, arquivos = {"transferidos": 0, "aceitos": 0}, []
+     cli = Cliente({"c": [secao("S", modulo(1, "resource", conteudo("1.txt", "u/1")), modulo(2, "resource", conteudo("2.txt", "u/2")))]})
+     A.baixa_curso(cli, "c", tmp_path / "c", orc, arquivos)
+-    assert [a["status"] for a in arquivos] == ["ok", "nao_baixado_orcamento_real"] and orc == {"transferidos": 12, "aceitos": 8}
++    assert [a["status"] for a in arquivos] == ["ok", "nao_baixado_orcamento_real"] and (orc["transferidos"], orc["aceitos"]) == (12, 8)
+ 
+ 
+ def test_falha_local_de_um_arquivo_e_registrada_e_o_curso_continua(tmp_path, rede, monkeypatch):
+@@ -140,7 +142,7 @@ def test_falha_posterior_preserva_registros_ja_processados(tmp_path, rede, monke
+     rede.update({"u/a": b"a", "u/b": b"b", "u/idx": b"<html>p</html>", "u/img": PNG})
+     contents = {"1": [secao("S", modulo(1, "resource", conteudo("a.txt", "u/a")), {"id": 2, "modname": "folder", "contents": 5})],
+                 "2": [secao("S", modulo(3, "resource", conteudo("b.txt", "u/b")),
+-                            modulo(4, "page", conteudo("index.html", "u/idx"), conteudo("imagem.png", "u/img")))]}
++                            modulo(4, "page", conteudo("index.html", "u/idx", 0), conteudo("imagem.png", "u/img")))]}
+     saida = prepara_baixar(tmp_path, monkeypatch, contents, ["1", "2"])
+     A.baixar()
+     inv = json.loads((saida / "inventario_downloads.json").read_text(encoding="utf-8"))
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v4.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v4.py
+index db973f45..a019f0e2 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v4.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v4.py
+@@ -174,5 +174,7 @@ def test_metadata_outside_budget(tmp_path, rede, monkeypatch):
+     saida = prepara_baixar(tmp_path, monkeypatch, {"1": [secao("S", modulo(1, "resource", conteudo("a.txt", "u/a")))]}, ["1"])
+     A.baixar()
+     inv = json.loads((saida / "inventario_downloads.json").read_text(encoding="utf-8"))
+-    assert (inv["bytes_transferidos"], inv["bytes_aceitos"], inv["bytes_metadados"]) == (1, 1, None)
+-    assert any("metadados" in i for i in inv["impedimentos"])
++    # v5: o cliente mede os metadados (o falso mede 0); o impedimento que resta é o da triagem pré-v5 sem a contagem
++    # do catálogo. A medição real é testada em test_adquire_v5 com o MoodleClient verdadeiro.
++    assert (inv["bytes_transferidos"], inv["bytes_aceitos"], inv["bytes_metadados"]) == (1, 1, 0)
++    assert any("catálogo" in i for i in inv["impedimentos"])
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego.py
+index c566d419..bbc6aa46 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego.py
+@@ -61,7 +61,7 @@ def fixture(tmp, formato="api"):
+         escreve(raiz / "stash/Geral/aula1.pdf", aula1)
+         escreve(raiz / "stash/Unidade 1/aula1.pdf", aula1)   # v3: cada módulo baixado na pasta da sua seção
+         escreve(raiz / "stash/Unidade 1/lista1.pdf", lista1)
+-        escreve(raiz / "raw/moodle/pages/501-tutorial.html", pagina)
++        escreve(raiz / "raw/moodle/pages/501-index.html", pagina)   # v5: layout da aquisição (R-PAGE)
+         conteudo = lambda nome, n: {"type": "file", "filename": nome, "filepath": "/", "filesize": n, "fileurl": "x",
+                                     "author": "Professor Fulano", "userid": 42, "license": "allrightsreserved"}
+         api = [
+@@ -73,7 +73,8 @@ def fixture(tmp, formato="api"):
+             {"section": 1, "name": "Unidade 1", "summary": "", "modules": [
+                 {"id": 405, "name": "Aula 1 (de novo)", "modname": "resource", "contents": [conteudo("aula1.pdf", len(aula1))]},
+                 {"id": 406, "name": "Lista 1", "modname": "resource", "contents": [conteudo("lista1.pdf", len(lista1))]},
+-                {"id": 501, "name": "Tutorial", "modname": "page"},
++                {"id": 501, "name": "Tutorial", "modname": "page",   # v5: página real traz o index.html gerado
++                 "contents": [{"type": "file", "filename": "index.html", "filepath": "/", "filesize": 0}]},
+                 {"id": 407, "name": "Trabalho", "modname": "assign", "contents": [conteudo("enunciado.pdf", 999)]}]}]
+         escreve(raiz / "raw/moodle/contents.json", json.dumps(api, ensure_ascii=False))
+         # gerados pelo produto (com campos de predição): nunca podem entrar
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+index 8cb6d6a3..2ae83087 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+@@ -46,7 +46,7 @@ def test_pastas_recusa_configuracao_segredo_e_saida_renomeada(tmp_path):
+ def test_api_segredo_em_pagina_e_url_com_token(tmp_path):
+     fonte = fixture(tmp_path)
+     raiz = Path(fonte["moodle_dir"])
+-    escreve(raiz / "raw/moodle/pages/501-tutorial.html", "<p>use MOODLE_TOKEN=" + "f00d" * 8 + " no script</p>")
++    escreve(raiz / "raw/moodle/pages/501-index.html", "<p>use MOODLE_TOKEN=" + "f00d" * 8 + " no script</p>")
+     api = carrega(raiz / "raw/moodle/contents.json")
+     api[0]["modules"][2]["url"] = "https://moodle.exemplo/mod/url/view.php?id=403&token=" + "beef" * 8 + "&x=1"
+     escreve(raiz / "raw/moodle/contents.json", json.dumps(api))
+@@ -54,7 +54,7 @@ def test_api_segredo_em_pagina_e_url_com_token(tmp_path):
+     p = tmp_path / "pacote"
+     assert G.audita(fonte, p) == []
+     mats = carrega(p / "materiais.json")["materiais"]
+-    pagina = next(m for m in mats if m["nome_original"] == "501-tutorial.html")
++    pagina = next(m for m in mats if m["nome_original"] == "501-index.html")
+     assert pagina["tipo"] == "recusado" and "credencial" in pagina["motivo"]
+     link = next(m for m in mats if m["tipo"] == "link_externo")
+     assert link["url"] == "https://moodle.exemplo/mod/url/view.php?id=403&x=1"
+diff --git a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
+index a6b252a7..7125dd70 100644
+--- a/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
++++ b/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
+@@ -135,7 +135,7 @@ def fixture_inventario(tmp):
+     raiz = Path(fonte["moodle_dir"])
+     escreve(raiz / "stash/Unidade 1/405/aula1.pdf", pdf_valido("aula 1 BYTES"))   # colisão gravada na pasta do módulo
+     api = carrega(raiz / "raw/moodle/contents.json")
+-    api[1]["modules"][2]["contents"] = [{"type": "file", "filename": "tutorial.html", "filepath": "/", "filesize": 0},
++    api[1]["modules"][2]["contents"] = [{"type": "file", "filename": "index.html", "filepath": "/", "filesize": 0},
+                                         {"type": "file", "filename": "figura.png", "filepath": "/", "filesize": 10}]
+     escreve(raiz / "raw/moodle/contents.json", json.dumps(api))
+ 
+@@ -152,7 +152,7 @@ def fixture_inventario(tmp):
+         reg(405, "resource", "aula1.pdf", "stash/Unidade 1/405/aula1.pdf"),
+         reg(406, "resource", "lista1.pdf", "stash/Unidade 1/lista1.pdf"),
+         reg(407, "assign", "enunciado.pdf", status="tipo_inesperado"),
+-        reg(501, "page", "tutorial.html", "raw/moodle/pages/501-tutorial.html"),
++        reg(501, "page", "index.html", "raw/moodle/pages/501-index.html"),
+         {**reg(501, "page", "figura.png"), "base": "anexos_de_pagina", "caminho": "501-figura.png", "status": "ok"}]}]}
+     escreve(tmp / "aquisicao/inventario_downloads.json", json.dumps(inv))
+     return fonte, {"inventario": str(tmp / "aquisicao/inventario_downloads.json"), "curso_id": "999"}

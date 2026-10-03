@@ -1,0 +1,263 @@
+diff --git a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego.py b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego.py
+index 836dcdd..c566d41 100644
+--- a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego.py
++++ b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego.py
+@@ -32,9 +32,31 @@ def escreve(p, dados):
+     p.write_bytes(dados if isinstance(dados, bytes) else dados.encode("utf-8"))
+ 
+ 
++def pdf_objetos(objetos, depois=b""):
++    """v4: PDF com xref correto (corpos dos objetos 1..n; raiz = 1). O v4 recusa PDF que não abre."""
++    out, offs = bytearray(b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n"), []
++    for i, corpo in enumerate(objetos, 1):
++        offs.append(len(out))
++        out += b"%d 0 obj\n" % i + corpo + b"\nendobj\n"
++    x = len(out)
++    out += b"xref\n0 %d\n0000000000 65535 f \n" % (len(objetos) + 1) + b"".join(b"%010d 00000 n \n" % o for o in offs)
++    out += b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (len(objetos) + 1, x)
++    return bytes(out) + depois
++
++
++def pdf_valido(texto):
++    """v4: PDF de uma página com o texto (textos de mesmo tamanho dão PDFs de mesmo tamanho)."""
++    stream = b"BT /F1 12 Tf 72 700 Td (%s) Tj ET" % texto.encode("latin-1")
++    return pdf_objetos([b"<< /Type /Catalog /Pages 2 0 R >>", b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
++                        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R "
++                        b"/Resources << /Font << /F1 5 0 R >> >> >>",
++                        b"<< /Length %d >>\nstream\n%s\nendstream" % (len(stream), stream),
++                        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"])
++
++
+ def fixture(tmp, formato="api"):
+     raiz = tmp / "Moodle" / "curso-sintetico"
+-    aula1, lista1, pagina = b"%PDF-1.4 aula 1 bytes", b"%PDF-1.4 lista 1 bytes", b"<html><body>Tutorial</body></html>"
++    aula1, lista1, pagina = pdf_valido("aula 1 bytes"), pdf_valido("lista 1 bytes"), b"<html><body>Tutorial</body></html>"
+     if formato == "api":
+         escreve(raiz / "stash/Geral/aula1.pdf", aula1)
+         escreve(raiz / "stash/Unidade 1/aula1.pdf", aula1)   # v3: cada módulo baixado na pasta da sua seção
+@@ -65,7 +87,7 @@ def fixture(tmp, formato="api"):
+         escreve(raiz / "Unidade 2/lista1.pdf", lista1)
+     # tutor vizinho com saídas do motor
+     escreve(tmp / "Curso-Sintetico-Tutor/manifest.json", json.dumps({"entries": [{"id": "aula1", **PROIBIDO}]}))
+-    escreve(tmp / "plano/plano.pdf", b"%PDF-1.4 plano")
++    escreve(tmp / "plano/plano.pdf", pdf_valido("plano"))
+     escreve(tmp / "plano/plano.md", PLANO)
+     return {"sigla": "SIN", "nome": "Curso Sintético", "moodle_dir": str(raiz), "plano_arquivo": str(tmp / "plano/plano.pdf"),
+             "plano_texto": str(tmp / "plano/plano.md")}
+diff --git a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+index 2ab135f..8cb6d6a 100644
+--- a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
++++ b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v2.py
+@@ -7,7 +7,7 @@ import pytest
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ import gera_pacote_cego as G  # noqa: E402
+-from test_pacote_cego import carrega, escreve, fixture, pacote  # noqa: E402,F401
++from test_pacote_cego import carrega, escreve, fixture, pacote, pdf_valido  # noqa: E402,F401
+ 
+ TOKEN_FALSO = "a1b2c3d4" * 4
+ 
+@@ -20,7 +20,7 @@ def fixture_pastas_com_armadilhas(tmp):
+     escreve(raiz / "Unidade 1/anotacoes.txt", "aula1 -> computed_unit_slug: unidade-01\n")
+     escreve(raiz / "Unidade 1/slides.pdf", json.dumps({"computed_block_id": "bloco-03"}))   # saída renomeada
+     escreve(raiz / "Unidade 2/aula.txt", "Resumo da aula sobre escalonamento.\n")
+-    escreve(raiz / "Unidade 2/Token Ring e Cookies.pdf", b"%PDF-1.4 token ring")          # nome sensível, arquivo legítimo
++    escreve(raiz / "Unidade 2/Token Ring e Cookies.pdf", pdf_valido("token ring"))          # nome sensível, arquivo legítimo
+     return fonte
+ 
+ 
+@@ -65,7 +65,7 @@ def test_api_segredo_em_pagina_e_url_com_token(tmp_path):
+ def fixture_mesmo_nome(tmp, pastas):
+     fonte = fixture(tmp)
+     raiz = Path(fonte["moodle_dir"])
+-    a, b = b"%PDF-1.4 conteudo A", b"%PDF-1.4 conteudo B"
++    a, b = pdf_valido("conteudo A"), pdf_valido("conteudo B")
+     escreve(raiz / f"stash/{pastas[0]}/slides.pdf", a)
+     escreve(raiz / f"stash/{pastas[1]}/slides.pdf", b)
+     api = carrega(raiz / "raw/moodle/contents.json")
+@@ -83,7 +83,7 @@ def test_correspondencia_por_nome_e_tamanho_resolvida_pela_secao(tmp_path):
+     slides = [m for m in carrega(tmp_path / "pacote/materiais.json")["materiais"] if m["nome_original"] == "slides.pdf"]
+     assert sorted((m["ocorrencias"][0]["secao"], len(m["ocorrencias"])) for m in slides) == [("Geral", 1), ("Unidade 1", 1)]
+     geral = next(m for m in slides if m["ocorrencias"][0]["secao"] == "Geral")
+-    assert (tmp_path / "pacote" / geral["arquivo"]).read_bytes() == b"%PDF-1.4 conteudo A"
++    assert (tmp_path / "pacote" / geral["arquivo"]).read_bytes() == pdf_valido("conteudo A")
+ 
+ 
+ def test_correspondencia_ambigua_falha_a_geracao(tmp_path):
+@@ -130,7 +130,7 @@ def test_reproduz_o_bypass_da_revisao_e_nao_copia(tmp_path):
+ 
+ 
+ @pytest.mark.parametrize("nome, dados, recusa", [
+-    ("a.pdf", b"%PDF-1.7 ok", None), ("a.pdf", b'{"x": 1}', "assinatura"), ("a.docx", b"PK\x03\x04ok", "ilegível"),
++    ("a.pdf", pdf_valido("ok"), None), ("a.pdf", b'{"x": 1}', "assinatura"), ("a.docx", b"PK\x03\x04ok", "ilegível"),
+     ("a.docx", b"%PDF", "assinatura"), ("a.exe", b"MZ", "extensão"), ("a.txt", b"texto comum", None),
+     ("a.txt", b"x = 'AIza" + b"B" * 35 + b"'", "credencial"), ("a.md", b"winner_score=3.2", "motor"),
+     ("a.mp4", b"\x00\x00\x00\x18ftypmp42", None), ("a.mp4", b"not a video", "assinatura"),
+diff --git a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
+index 4ba7b5c..a6b252a 100644
+--- a/validacao_externa_etapa3_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
++++ b/validacao_externa_etapa3_correcoes_29-09/correcoes/pacote_cego/test_pacote_cego_v3.py
+@@ -9,7 +9,7 @@ import pytest
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent))
+ import gera_pacote_cego as G  # noqa: E402
+-from test_pacote_cego import carrega, escreve, fixture, regrava_manifesto  # noqa: E402
++from test_pacote_cego import carrega, escreve, fixture, pdf_valido, regrava_manifesto  # noqa: E402
+ 
+ 
+ def zip_bytes(membros, cifrado=False):
+@@ -27,7 +27,7 @@ def zip_bytes(membros, cifrado=False):
+ 
+ DOCX_OK = {"[Content_Types].xml": "<Types/>", "_rels/.rels": "<Relationships/>", "word/media/image1.png": b"\x89PNG img",
+            "word/document.xml": "<w:document><w:t>Escalonamento de processos</w:t></w:document>",
+-           "docProps/core.xml": "<cp:coreProperties/>", "word/fonts/font1.odttf": b"\x00\x01"}
++           "docProps/core.xml": "<cp:coreProperties/>"}   # v4: fonte embutida é binário opaco (recusa no teste v4)
+ 
+ 
+ # ---------------------------------------------------------------- (a) plano passa pela política de cegamento
+@@ -56,7 +56,7 @@ def test_auditoria_verifica_o_plano_entregue(tmp_path):
+ 
+ # ---------------------------------------------------------------- (b) política de membros de contêineres
+ CASOS_MEMBROS = [
+-    ("a.zip", zip_bytes({"aula.pdf": b"%PDF-1.4 ok", "notas/lista.txt": "Exercícios"}), None),
++    ("a.zip", zip_bytes({"aula.pdf": pdf_valido("ok"), "notas/lista.txt": "Exercícios"}), None),
+     ("a.zip", zip_bytes({"anotacoes.txt": "aula1 -> computed_unit_slug: u01"}), "motor"),
+     ("a.zip", zip_bytes({"proj/.env": "X=1"}), "configuração"),
+     ("a.zip", zip_bytes({"../fora.txt": "x"}), "inseguro"),
+@@ -69,13 +69,14 @@ CASOS_MEMBROS = [
+     ("a.zip", zip_bytes({"in.zip": zip_bytes({"x.md": "subunit_match=1"})}), "motor"),
+     ("a.zip", zip_bytes({"in.zip": zip_bytes({"in2.zip": zip_bytes({"x.txt": "ok"})})}), "profundidade"),
+     ("a.docx", zip_bytes(DOCX_OK), None),
+-    ("a.docx", zip_bytes({**DOCX_OK, "word/document.xml": "<w:t>computed_</w:t><w:t>unit_slug</w:t>"}), "motor"),
+-    ("a.docx", zip_bytes({**DOCX_OK, "word/embeddings/oleObject1.bin": b"\xd0\xcf"}), "embutido"),
++    ("a.docx", zip_bytes({**DOCX_OK, "word/document.xml":   # v4: XML bem formado (duas raízes = "XML ilegível")
++                          "<w:document><w:t>computed_</w:t><w:t>unit_slug</w:t></w:document>"}), "motor"),
++    ("a.docx", zip_bytes({**DOCX_OK, "word/embeddings/oleObject1.bin": b"\xd0\xcf"}), "opaco"),   # v4: binário opaco
+     ("a.docx", zip_bytes({**DOCX_OK, "word/vbaProject.bin": b"\xd0\xcf"}), "macro"),
+     ("a.xlsx", zip_bytes({"xl/sharedStrings.xml": "<t>GEMINI_API_KEY=abc</t>"}), "credencial"),
+     ("a.pptx", zip_bytes({"ppt/embeddings/p.xlsx": zip_bytes({"xl/x.xml": "<t>winner_score</t>"})}), "motor"),
+     ("a.odt", zip_bytes({"mimetype": "application/vnd.oasis.opendocument.text", "content.xml": "<text:p>Aula</text:p>"}), None),
+-    ("a.pdf", b"%PDF-1.7 << /Type /EmbeddedFile >>", "embutido"),
++    ("a.pdf", b"%PDF-1.7 << /Type /EmbeddedFile >>", "ilegível"),   # v4: não abre; anexo real em test_pacote_cego_v4
+ ]
+ 
+ 
+@@ -108,7 +109,7 @@ def test_candidato_unico_em_outra_secao_nao_e_ligado(tmp_path):
+     """Caso da revisão: pasta pedida "Secao B", devolvido stash/Secao A/slides.pdf."""
+     fonte = fixture(tmp_path)
+     raiz = Path(fonte["moodle_dir"])
+-    slides = b"%PDF-1.4 slides"
++    slides = pdf_valido("slides")
+     escreve(raiz / "stash/Secao A/slides.pdf", slides)
+     api = carrega(raiz / "raw/moodle/contents.json")
+     api.append({"section": 2, "name": "Secao B", "summary": "", "modules": [
+@@ -132,7 +133,7 @@ def fixture_inventario(tmp):
+     """API + inventário da aquisição; o módulo 405 tem arquivo de mesmo nome e tamanho, bytes diferentes, na mesma seção."""
+     fonte = fixture(tmp)
+     raiz = Path(fonte["moodle_dir"])
+-    escreve(raiz / "stash/Unidade 1/405/aula1.pdf", b"%PDF-1.4 aula 1 BYTES")   # colisão gravada na pasta do módulo
++    escreve(raiz / "stash/Unidade 1/405/aula1.pdf", pdf_valido("aula 1 BYTES"))   # colisão gravada na pasta do módulo
+     api = carrega(raiz / "raw/moodle/contents.json")
+     api[1]["modules"][2]["contents"] = [{"type": "file", "filename": "tutorial.html", "filepath": "/", "filesize": 0},
+                                         {"type": "file", "filename": "figura.png", "filepath": "/", "filesize": 10}]
+@@ -165,14 +166,14 @@ def test_sem_inventario_nome_e_tamanho_ficam_ambiguos(tmp_path):
+ 
+ def test_proveniencia_da_aquisicao_decide_a_ligacao(tmp_path):
+     fonte, inv = fixture_inventario(tmp_path)
+-    fonte.update(inv)
++    fonte.update(inv, inventario_sha256=G.sha_b(Path(inv["inventario"]).read_bytes()))   # v4: sha esperado
+     G.monta(fonte, tmp_path / "pacote")
+     p = tmp_path / "pacote"
+     assert G.audita(fonte, p) == []
+     mats = carrega(p / "materiais.json")["materiais"]
+     por_ocorr = {(m["ocorrencias"][0]["modulo"], m["tipo"]): m for m in mats}
+-    assert (p / por_ocorr[("Aula 1 (de novo)", "arquivo")]["arquivo"]).read_bytes() == b"%PDF-1.4 aula 1 BYTES"
+-    assert (p / por_ocorr[("Aula 1", "arquivo")]["arquivo"]).read_bytes() == b"%PDF-1.4 aula 1 bytes"
++    assert (p / por_ocorr[("Aula 1 (de novo)", "arquivo")]["arquivo"]).read_bytes() == pdf_valido("aula 1 BYTES")
++    assert (p / por_ocorr[("Aula 1", "arquivo")]["arquivo"]).read_bytes() == pdf_valido("aula 1 bytes")
+     enunciado = por_ocorr[("Trabalho", "arquivo_nao_adquirido")]
+     assert not enunciado["adjudicavel"] and enunciado["motivo"] == "aquisição: tipo_inesperado"
+     anexo = por_ocorr[("Tutorial", "anexo_de_pagina")]
+@@ -186,7 +187,7 @@ def test_proveniencia_da_aquisicao_decide_a_ligacao(tmp_path):
+ 
+ 
+ @pytest.mark.parametrize("adultera, erro", [
+-    (lambda raiz, inv: escreve(raiz / "stash/Unidade 1/lista1.pdf", b"%PDF-1.4 lista 1 BYTES"), "sha256 diferente"),
++    (lambda raiz, inv: escreve(raiz / "stash/Unidade 1/lista1.pdf", pdf_valido("lista 1 BYTES")), "sha256 diferente"),
+     (lambda raiz, inv: inv["cursos"][0]["arquivos"].pop(3), "0 registros"),
+     (lambda raiz, inv: inv["cursos"][0].update(id="000"), "sem o curso"),
+     (lambda raiz, inv: inv.update(esquema="inventario-downloads-2", concluido=False), "parcial"),
+@@ -198,5 +199,6 @@ def test_divergencia_de_proveniencia_falha_a_geracao(tmp_path, adultera, erro):
+     inv = carrega(inv_ref["inventario"])
+     adultera(Path(fonte["moodle_dir"]), inv)
+     escreve(Path(inv_ref["inventario"]), json.dumps(inv))
++    fonte["inventario_sha256"] = G.sha_b(Path(inv_ref["inventario"]).read_bytes())   # v4: isola a checagem do caso
+     with pytest.raises(G.DivergenciaProveniencia, match=erro):
+         G.monta(fonte, tmp_path / "pacote")
+diff --git a/validacao_externa_etapa3_29-09/correcoes/aquisicao/test_adquire_v3.py b/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v3.py
+index 472f3a2..0e7aad6 100644
+--- a/validacao_externa_etapa3_29-09/correcoes/aquisicao/test_adquire_v3.py
++++ b/validacao_externa_etapa3_correcoes_29-09/correcoes/aquisicao/test_adquire_v3.py
+@@ -75,7 +75,7 @@ def test_anexo_de_pagina_fora_da_raiz_tem_referencia_valida(tmp_path, rede):
+     cli = Cliente({"curso": [secao("Geral", modulo(1, "resource", conteudo("a.txt", "u/a")),
+                                    modulo(2, "page", conteudo("index.html", "u/idx"), conteudo("imagem.png", "u/img")))]})
+     raiz, arquivos = tmp_path / "downloads/curso", []
+-    A.baixa_curso(cli, "curso", raiz, {"bytes": 0}, arquivos)
++    A.baixa_curso(cli, "curso", raiz, {"transferidos": 0, "aceitos": 0}, arquivos)   # v4: contadores separados
+     assert [a["status"] for a in arquivos] == ["ok", "ok", "ok"]
+     anexo = next(a for a in arquivos if a["arquivo"] == "imagem.png")
+     assert (anexo["base"], anexo["caminho"]) == ("anexos_de_pagina", "2-imagem.png")
+@@ -89,19 +89,22 @@ def test_limite_por_arquivo_vale_para_bytes_reais(tmp_path, rede, monkeypatch):
+     """Caso da revisão: filesize declarado 1, 7 bytes recebidos, limite 5, status ok."""
+     monkeypatch.setattr(A, "ORC", {"bytes_por_arquivo_max": 5, "bytes_totais_max": 5, "cursos_baixados_max": 10})
+     rede["u/x"] = b"1234567"
+-    orc, arquivos = {"bytes": 0}, []
++    orc, arquivos = {"transferidos": 0, "aceitos": 0}, []
+     A.baixa_curso(Cliente({"c": [secao("S", modulo(1, "resource", conteudo("x.txt", "u/x", 1)))]}), "c", tmp_path / "c", orc, arquivos)
+-    assert arquivos[0]["status"] == "acima_do_limite_real" and arquivos[0]["bytes_lidos"] == 6
+-    assert "caminho" not in arquivos[0] and orc["bytes"] == 0 and not (tmp_path / "c/stash/S/x.txt").exists()
++    # v4: com orçamento total 5, o byte de sondagem não cabe: lê 5 e recusa por orçamento (limite por arquivo real
++    # testado em test_adquire_v4::test_rejected_transfer_budget)
++    assert arquivos[0]["status"] == "nao_baixado_orcamento_real" and arquivos[0]["bytes_lidos"] == 5
++    assert "caminho" not in arquivos[0] and orc == {"transferidos": 5, "aceitos": 0}
++    assert not (tmp_path / "c/stash/S/x.txt").exists()
+ 
+ 
+ def test_orcamento_total_vale_para_bytes_reais(tmp_path, rede, monkeypatch):
+     monkeypatch.setattr(A, "ORC", {"bytes_por_arquivo_max": 10, "bytes_totais_max": 12, "cursos_baixados_max": 10})
+     rede.update({"u/1": b"8 bytes!", "u/2": b"8 bytes?"})
+-    orc, arquivos = {"bytes": 0}, []
++    orc, arquivos = {"transferidos": 0, "aceitos": 0}, []
+     cli = Cliente({"c": [secao("S", modulo(1, "resource", conteudo("1.txt", "u/1")), modulo(2, "resource", conteudo("2.txt", "u/2")))]})
+     A.baixa_curso(cli, "c", tmp_path / "c", orc, arquivos)
+-    assert [a["status"] for a in arquivos] == ["ok", "nao_baixado_orcamento_real"] and orc["bytes"] == 8
++    assert [a["status"] for a in arquivos] == ["ok", "nao_baixado_orcamento_real"] and orc == {"transferidos": 12, "aceitos": 8}
+ 
+ 
+ def test_falha_local_de_um_arquivo_e_registrada_e_o_curso_continua(tmp_path, rede, monkeypatch):
+@@ -109,14 +112,14 @@ def test_falha_local_de_um_arquivo_e_registrada_e_o_curso_continua(tmp_path, red
+     escreve = Path.write_bytes
+ 
+     def write_bytes(self, dados):
+-        if self.name == "b.txt":
++        if self.name.startswith("b.txt"):   # v4 grava em b.txt.parcial
+             raise OSError("caminho longo demais")
+         return escreve(self, dados)
+ 
+     monkeypatch.setattr(Path, "write_bytes", write_bytes)
+     cli = Cliente({"c": [secao("S", *(modulo(i, "resource", conteudo(f"{n}.txt", f"u/{n}")) for i, n in enumerate("abcd")))]})
+     arquivos = []
+-    A.baixa_curso(cli, "c", tmp_path / "c", {"bytes": 0}, arquivos)
++    A.baixa_curso(cli, "c", tmp_path / "c", {"transferidos": 0, "aceitos": 0}, arquivos)
+     assert [a["status"] for a in arquivos] == ["ok", "falha_local:OSError", "ok", "falha_http:ConnectionResetError"]
+     assert "caminho" not in arquivos[1] and "segredo" not in json.dumps(arquivos)
+ 
+@@ -141,7 +144,7 @@ def test_falha_posterior_preserva_registros_ja_processados(tmp_path, rede, monke
+     saida = prepara_baixar(tmp_path, monkeypatch, contents, ["1", "2"])
+     A.baixar()
+     inv = json.loads((saida / "inventario_downloads.json").read_text(encoding="utf-8"))
+-    assert inv["concluido"] is True and inv["esquema"] == "inventario-downloads-2"
++    assert inv["concluido"] is True and inv["esquema"] == "inventario-downloads-3"
+     c1, c2 = inv["cursos"]
+     assert c1["erro"] == "falha:TypeError" and [(a["arquivo"], a["status"]) for a in c1["arquivos"]] == [("a.txt", "ok")]
+     assert c2["erro"] is None and len(c2["arquivos"]) == 3

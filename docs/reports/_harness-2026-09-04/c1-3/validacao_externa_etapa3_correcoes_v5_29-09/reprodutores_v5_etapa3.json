@@ -1,0 +1,233 @@
+{
+ "esquema": "reprodutores-v5-etapa3-1",
+ "autorizacao": "Gate 1 parcial de 29/09: R-META (inclusive src/) e R-PAGE",
+ "restricoes": {
+  "rede": false,
+  "gold": false,
+  "adjudicacao": false,
+  "motor": false,
+  "build_replay": false,
+  "aquisicao_real": false,
+  "P3_P31_aplicada": false,
+  "elegibilidade": false,
+  "R_VIS_implementada": false
+ },
+ "definicao_orcamento": "bytes dos corpos HTTP lidos pela aplicação (webservice e downloads); não é todo o tráfego de rede",
+ "vermelho_src": "logs/vermelho_src_test_moodle.txt (10 falhas antes da alteração; 44 existentes verdes)",
+ "linha_de_base_produto": "logs/produto_suite_antes_linha_de_base.txt",
+ "execucao": {
+  "aquisicao": {
+   "v4_sha256": "ceca5f52f392f3dcc33e37ef35428fd24349166107e2f136da767d1c83abee25",
+   "v5_sha256": "c06a63f5c0087da492ba96479e0eed67383a91fb97fd7d720d00e41674888d28",
+   "vermelho": "13 failed in 1.79s",
+   "verde_novos": "13 passed in 2.48s",
+   "verde_pasta": "30 passed in 2.67s"
+  },
+  "pacote_cego": {
+   "v4_sha256": "ca04561583fa578cc7f4d128a85b0382e65baec28416038b2a75a9206999762e",
+   "v5_sha256": "a88336eb489ebf66775f4bb8ae19ee04575f226f89ea4f5f2cd64e3e7b9fc26a",
+   "vermelho": "8 failed in 2.25s",
+   "verde_novos": "8 passed in 2.47s",
+   "verde_pasta": "109 passed in 7.14s"
+  }
+ },
+ "produto": {
+  "src_sha256": "244301234d671b4ebb990499c96d4f2a6257348d614abcc15ee3e987c12b319b",
+  "test_moodle": "54 passed in 1.62s",
+  "suite_completa": "1 failed, 2458 passed, 4 skipped in 40.36s"
+ },
+ "regressao": {
+  "v4_pacote_cego": "101 passed in 5.73s",
+  "v4_aquisicao": "17 passed in 1.84s",
+  "v4_exposicao": "11 passed in 3.61s",
+  "v4_conferencia": "2 passed in 0.26s",
+  "etapa3_pacote_cego": "62 passed in 3.83s",
+  "etapa3_aquisicao": "6 passed in 1.58s",
+  "etapa3_exposicao": "5 passed in 1.56s",
+  "etapa2_correcoes": "45 passed in 6.43s"
+ },
+ "casos_anteriores_v5": {
+  "versao": "v5",
+  "gerador_sha256": "a88336eb489ebf66775f4bb8ae19ee04575f226f89ea4f5f2cd64e3e7b9fc26a",
+  "adquire_sha256": "c06a63f5c0087da492ba96479e0eed67383a91fb97fd7d720d00e41674888d28",
+  "plano_com_predicao": {
+   "excecao": "PlanoRecusado",
+   "mensagem": "plano.md: texto com assinatura de saída do motor; pacote não gerado"
+  },
+  "zip_real_conteudo_nao_examinado": {
+   "auditoria": [],
+   "tipo": "recusado",
+   "adjudicavel": false,
+   "bytes_copiados": false
+  },
+  "origem_unico_candidato_outra_secao": {
+   "pasta_pedida": "Secao B",
+   "retornado": [
+    null,
+    "origem_nao_confirmada"
+   ]
+  },
+  "anexo_page_fora_da_raiz": {
+   "retornou_inventario": true,
+   "registros": [
+    {
+     "arquivo": "a.txt",
+     "status": "ok",
+     "base": "curso",
+     "caminho": "stash/Geral/a.txt"
+    },
+    {
+     "arquivo": "index.html",
+     "status": "html_principal_ausente",
+     "base": null,
+     "caminho": null
+    },
+    {
+     "arquivo": "imagem.png",
+     "status": "ok",
+     "base": "anexos_de_pagina",
+     "caminho": "2-imagem.png"
+    }
+   ]
+  },
+  "limite_confiado_ao_filesize": {
+   "limite_arquivo": 5,
+   "limite_total": 5,
+   "bytes_enviados": 7,
+   "status": "nao_baixado_orcamento_real",
+   "orcamento": {
+    "transferidos": 5,
+    "aceitos": 0,
+    "metadados": 0
+   }
+  }
+ },
+ "casos": [
+  {
+   "area": "aquisicao",
+   "teste": "test_anexo_html_nao_vira_html_principal",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_catalogo_conta_site_info_e_get_users_courses",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_colisao_com_index_html_de_anexo",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadados_acima_do_orcamento[com-content-length]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadados_acima_do_orcamento[sem-content-length]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadados_contados_no_caminho_de_falha[erro-da-api]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadados_contados_no_caminho_de_falha[json-invalido]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_metadados_contados_pelo_corpo_recebido_nao_pelo_json_reserializado",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_triagem_sem_contagem_do_catalogo_registra_impedimento",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[dois-candidatos]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-conteudos]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filepath]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "aquisicao",
+   "teste": "test_zero_ou_varios_candidatos_nao_cobertos_e_no_denominador[sem-filesize]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_com_inventario_anexo_html_nao_e_o_html_principal",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_com_inventario_colisao_com_index_html_de_anexo",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_html_principal_unico_fica_nao_coberto[dois-candidatos]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_html_principal_unico_fica_nao_coberto[sem-conteudos]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_html_principal_unico_fica_nao_coberto[sem-filepath]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_html_principal_unico_fica_nao_coberto[sem-filesize]",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_inventario_arquivo_de_anexo_html_na_pasta_de_paginas_nao_vira_sobra",
+   "v4": "falhou",
+   "v5": "passou"
+  },
+  {
+   "area": "pacote_cego",
+   "teste": "test_sem_inventario_candidato_unico_sem_arquivo_local",
+   "v4": "falhou",
+   "v5": "passou"
+  }
+ ]
+}

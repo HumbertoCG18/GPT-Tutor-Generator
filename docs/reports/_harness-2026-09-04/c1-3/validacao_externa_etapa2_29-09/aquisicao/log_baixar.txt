@@ -1,0 +1,10 @@
+  1. curso 90231: {'ok': 36, 'link_externo': 47} erro=None E2=False E3=True E4=False
+  2. curso 88738: {'ok': 82, 'link_externo': 15} erro=None E2=True E3=True E4=False
+  3. curso 81476: {'ok': 8} erro=None E2=True E3=False E4=True
+  4. curso 82667: {'ok': 34, 'link_externo': 48} erro=None E2=True E3=True E4=False
+  5. curso 89447: {'link_externo': 35, 'ok': 20} erro=None E2=False E3=True E4=False
+  6. curso 90572: {'link_externo': 8, 'ok': 25} erro=None E2=False E3=True E4=False
+  7. curso 89100: {'ok': 21, 'link_externo': 12, 'tipo_inesperado': 23} erro=None E2=True E3=True E4=False
+  8. curso 80922: {'link_externo': 6, 'ok': 41} erro=None E2=True E3=True E4=False
+parada: fim das disciplinas N0 do catálogo | cursos baixados: 8 | elegíveis: 0 | bytes: 300727760
+exit=0

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="8" skipped="0" tests="8" time="2.249" timestamp="2026-09-29T16:38:44.266416-03:00" hostname="NTBK-HCG"><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_com_inventario_anexo_html_nao_e_o_html_principal" time="0.089"><failure message="gera_pacote_cego.DivergenciaProveniencia: 501-notas.html: ausente na fonte ou sha256 diferente do inventário">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_com_inventario_anexo_html0')
+
+    def test_com_inventario_anexo_html_nao_e_o_html_principal(tmp_path):
+        fonte = com_pagina(tmp_path, [{"type": "file", "filename": "notas.html", "filepath": "/", "filesize": 12}, idx()],
+                           inventario=True)
+&gt;       G.monta(fonte, tmp_path / "pacote")
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+correcoes\pacote_cego\gera_pacote_cego.py:670: in monta
+    materiais, estrutura, nao_usados, inv_sha = descobre(leitor, fonte)
+                                                ^^^^^^^^^^^^^^^^^^^^^^^
+correcoes\pacote_cego\gera_pacote_cego.py:591: in descobre
+    a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+inv = {('402', 'aula1.pdf'): [{'arquivo': 'aula1.pdf', 'bytes': 593, 'caminho': 'stash/Geral/aula1.pdf', 'modname': 'resourc...): [{'arquivo': 'lista1.pdf', 'bytes': 594, 'caminho': 'stash/Unidade 1/lista1.pdf', 'modname': 'resource', ...}], ...}
+mod_id = 501
+c = {'filename': 'notas.html', 'filepath': '/', 'filesize': 12, 'type': 'file'}
+por_rel = {'raw/moodle/pages/501-index.html': {'caminho': WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/p..., 'rel': 'stash/Unidade 1/lista1.pdf', 'sha': '51424608c892772f636a47fd8496b9debca61caf47265f0d63b69073b738ff3f', ...}}
+
+    def liga_por_inventario(inv, mod_id, c, por_rel):
+        """(arquivo local, None) pela proveniência da aquisição, conferindo caminho e sha256; (None, status) se não adquirido."""
+        regs = inv.get((str(mod_id), str(c["filename"])), [])
+        if c.get("filepath") and any("filepath" in r for r in regs):
+            regs = [r for r in regs if r.get("filepath") == c["filepath"]]
+        if len(regs) != 1:
+            raise DivergenciaProveniencia(f"módulo {mod_id}, {c['filename']!r}: {len(regs)} registros no inventário")
+        r = regs[0]
+        if r["status"] != "ok":
+            return None, r["status"]
+        a = por_rel.get(r.get("caminho")) if r.get("base", "curso") == "curso" else None
+        if a is None or a["sha"] != r.get("sha256"):
+&gt;           raise DivergenciaProveniencia(f"{r.get('caminho')}: ausente na fonte ou sha256 diferente do inventário")
+E           gera_pacote_cego.DivergenciaProveniencia: 501-notas.html: ausente na fonte ou sha256 diferente do inventário
+
+correcoes\pacote_cego\gera_pacote_cego.py:512: DivergenciaProveniencia</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_com_inventario_colisao_com_index_html_de_anexo" time="0.031"><failure message="gera_pacote_cego.DivergenciaProveniencia: módulo 501, 'index.html': 2 registros no inventário">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_com_inventario_colisao_co0')
+
+    def test_com_inventario_colisao_com_index_html_de_anexo(tmp_path):
+        fonte = com_pagina(tmp_path, [idx(filesize=26), idx()], inventario=True)
+&gt;       G.monta(fonte, tmp_path / "pacote")
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+correcoes\pacote_cego\gera_pacote_cego.py:670: in monta
+    materiais, estrutura, nao_usados, inv_sha = descobre(leitor, fonte)
+                                                ^^^^^^^^^^^^^^^^^^^^^^^
+correcoes\pacote_cego\gera_pacote_cego.py:591: in descobre
+    a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+inv = {('402', 'aula1.pdf'): [{'arquivo': 'aula1.pdf', 'bytes': 593, 'caminho': 'stash/Geral/aula1.pdf', 'modname': 'resourc...): [{'arquivo': 'lista1.pdf', 'bytes': 594, 'caminho': 'stash/Unidade 1/lista1.pdf', 'modname': 'resource', ...}], ...}
+mod_id = 501
+c = {'filename': 'index.html', 'filepath': '/', 'filesize': 26, 'type': 'file'}
+por_rel = {'raw/moodle/pages/501-index.html': {'caminho': WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/p..., 'rel': 'stash/Unidade 1/lista1.pdf', 'sha': '51424608c892772f636a47fd8496b9debca61caf47265f0d63b69073b738ff3f', ...}}
+
+    def liga_por_inventario(inv, mod_id, c, por_rel):
+        """(arquivo local, None) pela proveniência da aquisição, conferindo caminho e sha256; (None, status) se não adquirido."""
+        regs = inv.get((str(mod_id), str(c["filename"])), [])
+        if c.get("filepath") and any("filepath" in r for r in regs):
+            regs = [r for r in regs if r.get("filepath") == c["filepath"]]
+        if len(regs) != 1:
+&gt;           raise DivergenciaProveniencia(f"módulo {mod_id}, {c['filename']!r}: {len(regs)} registros no inventário")
+E           gera_pacote_cego.DivergenciaProveniencia: módulo 501, 'index.html': 2 registros no inventário
+
+correcoes\pacote_cego\gera_pacote_cego.py:506: DivergenciaProveniencia</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_html_principal_unico_fica_nao_coberto[sem-conteudos]" time="1.355"><failure message="AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]&#10;  &#10;  At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_html_principal_unico_0')
+conteudos = []
+
+    @pytest.mark.parametrize("conteudos", [[], [idx(filepath=None)], [idx(filesize=None)], [idx(), idx()]],
+                             ids=["sem-conteudos", "sem-filepath", "sem-filesize", "dois-candidatos"])
+    def test_sem_html_principal_unico_fica_nao_coberto(tmp_path, conteudos):
+        fonte = com_pagina(tmp_path, conteudos)
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+        tipos = [t for t in mats_pagina(p) if t[0] != "anexo_de_pagina"]
+&gt;       assert tipos == [("pagina_sem_html_principal", False, "index.html")]
+E       AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]
+E         
+E         At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:83: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_html_principal_unico_fica_nao_coberto[sem-filepath]" time="0.101"><failure message="AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]&#10;  &#10;  At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_html_principal_unico_1')
+conteudos = [{'filename': 'index.html', 'filesize': 0, 'type': 'file'}]
+
+    @pytest.mark.parametrize("conteudos", [[], [idx(filepath=None)], [idx(filesize=None)], [idx(), idx()]],
+                             ids=["sem-conteudos", "sem-filepath", "sem-filesize", "dois-candidatos"])
+    def test_sem_html_principal_unico_fica_nao_coberto(tmp_path, conteudos):
+        fonte = com_pagina(tmp_path, conteudos)
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+        tipos = [t for t in mats_pagina(p) if t[0] != "anexo_de_pagina"]
+&gt;       assert tipos == [("pagina_sem_html_principal", False, "index.html")]
+E       AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]
+E         
+E         At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:83: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_html_principal_unico_fica_nao_coberto[sem-filesize]" time="0.093"><failure message="AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]&#10;  &#10;  At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_html_principal_unico_2')
+conteudos = [{'filename': 'index.html', 'filepath': '/', 'type': 'file'}]
+
+    @pytest.mark.parametrize("conteudos", [[], [idx(filepath=None)], [idx(filesize=None)], [idx(), idx()]],
+                             ids=["sem-conteudos", "sem-filepath", "sem-filesize", "dois-candidatos"])
+    def test_sem_html_principal_unico_fica_nao_coberto(tmp_path, conteudos):
+        fonte = com_pagina(tmp_path, conteudos)
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+        tipos = [t for t in mats_pagina(p) if t[0] != "anexo_de_pagina"]
+&gt;       assert tipos == [("pagina_sem_html_principal", False, "index.html")]
+E       AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]
+E         
+E         At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:83: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_html_principal_unico_fica_nao_coberto[dois-candidatos]" time="0.109"><failure message="AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]&#10;  &#10;  At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_html_principal_unico_3')
+conteudos = [{'filename': 'index.html', 'filepath': '/', 'filesize': 0, 'type': 'file'}, {'filename': 'index.html', 'filepath': '/', 'filesize': 0, 'type': 'file'}]
+
+    @pytest.mark.parametrize("conteudos", [[], [idx(filepath=None)], [idx(filesize=None)], [idx(), idx()]],
+                             ids=["sem-conteudos", "sem-filepath", "sem-filesize", "dois-candidatos"])
+    def test_sem_html_principal_unico_fica_nao_coberto(tmp_path, conteudos):
+        fonte = com_pagina(tmp_path, conteudos)
+        G.monta(fonte, tmp_path / "pacote")
+        p = tmp_path / "pacote"
+        assert G.audita(fonte, p) == []
+        tipos = [t for t in mats_pagina(p) if t[0] != "anexo_de_pagina"]
+&gt;       assert tipos == [("pagina_sem_html_principal", False, "index.html")]
+E       AssertionError: assert [('pagina', T...-index.html')] == [('pagina_sem...'index.html')]
+E         
+E         At index 0 diff: ('pagina', True, '501-index.html') != ('pagina_sem_html_principal', False, 'index.html')
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:83: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_inventario_candidato_unico_sem_arquivo_local" time="0.042"><failure message="AssertionError: assert [] == [('pagina_sem...'index.html')]&#10;  &#10;  Right contains one more item: ('pagina_sem_fonte_local', False, 'index.html')&#10;  Use -v to get more diff">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_inventario_candidato_0')
+
+    def test_sem_inventario_candidato_unico_sem_arquivo_local(tmp_path):
+        fonte = com_pagina(tmp_path, [idx()], arquivos_pagina=())
+        G.monta(fonte, tmp_path / "pacote")
+&gt;       assert mats_pagina(tmp_path / "pacote") == [("pagina_sem_fonte_local", False, "index.html")]
+E       AssertionError: assert [] == [('pagina_sem...'index.html')]
+E         
+E         Right contains one more item: ('pagina_sem_fonte_local', False, 'index.html')
+E         Use -v to get more diff
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:91: AssertionError</failure></testcase><testcase classname="docs.reports._harness-2026-09-04.c1-3._replay_vermelho_v5_tmp.correcoes.pacote_cego.test_pacote_cego_v5" name="test_sem_inventario_arquivo_de_anexo_html_na_pasta_de_paginas_nao_vira_sobra" time="0.029"><failure message="gera_pacote_cego.AmbiguidadeOrigem: página 501: ['raw/moodle/pages/501-index.html', 'raw/moodle/pages/501-notas.html']">tmp_path = WindowsPath('C:/Users/Humberto/AppData/Local/Temp/pytest-of-Humberto/pytest-2763/test_sem_inventario_arquivo_de0')
+
+    def test_sem_inventario_arquivo_de_anexo_html_na_pasta_de_paginas_nao_vira_sobra(tmp_path):
+        fonte = com_pagina(tmp_path, [{"type": "file", "filename": "notas.html", "filepath": "/", "filesize": 12}, idx()],
+                           arquivos_pagina=("index.html", "notas.html"))
+&gt;       G.monta(fonte, tmp_path / "pacote")
+
+correcoes\pacote_cego\test_pacote_cego_v5.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+correcoes\pacote_cego\gera_pacote_cego.py:670: in monta
+    materiais, estrutura, nao_usados, inv_sha = descobre(leitor, fonte)
+                                                ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+leitor = &lt;gera_pacote_cego.Leitor object at 0x000001E543D7E790&gt;
+fonte = {'moodle_dir': 'C:\\Users\\Humberto\\AppData\\Local\\Temp\\pytest-of-Humberto\\pytest-2763\\test_sem_inventario_arquiv...umberto\\AppData\\Local\\Temp\\pytest-of-Humberto\\pytest-2763\\test_sem_inventario_arquivo_de0\\plano\\plano.md', ...}
+
+    def descobre(leitor, fonte):
+        """Materiais, estrutura do Moodle, arquivos não usados (com motivo) e sha256 do inventário, só de fontes permitidas.
+    
+        Com inventário da aquisição, recurso -&gt; arquivo sai da proveniência (módulo, arquivo, caminho, sha256); sem ele,
+        de nome + tamanho confirmados pela seção. Item não adquirido ou sem origem confirmada fica visível e não adjudicável."""
+        moodle = Path(fonte["moodle_dir"])
+        locais, nao_usados = arquivos_locais(leitor, moodle)
+        for a in locais:
+            a["sha"] = sha_b(leitor.le(a["caminho"]))
+        por_nome, por_rel = {}, {a["rel"]: a for a in locais}
+        for a in locais:
+            por_nome.setdefault((a["nome"], a["tamanho"]), []).append(a)
+        inv, inv_sha = carrega_inventario(fonte)
+        materiais, estrutura = {}, {"formato": None, "secoes": [], "rotulos": [], "modulos": []}
+        usados, anexos_pagina = set(), set()
+    
+        def acrescenta(chave, reg, ocorr, ligacao=None):
+            m = materiais.setdefault(chave, {**reg, "ocorrencias": [], "ligacoes": set()})
+            if ocorr not in m["ocorrencias"]:
+                m["ocorrencias"].append(ocorr)
+            if ligacao:
+                m["ligacoes"].add(ligacao)
+    
+        def sem_arquivo(tipo, chave, c, ocorr, motivo=None):
+            reg = {"tipo": tipo, "adjudicavel": False, "arquivo": None, "nome_original": c["filename"], "sha256": None,
+                   "tamanho": c["filesize"], "url": None}
+            acrescenta(chave, {**reg, "motivo": motivo} if motivo else reg, ocorr)
+    
+        cj = moodle / "raw/moodle/contents.json"
+        if cj.is_file():
+            estrutura["formato"] = "api"
+            for sec_api in json.loads(leitor.le(cj).decode("utf-8")):
+                sec = {k: sec_api.get(k) for k in SECAO_OK}
+                num, nome_sec = sec["section"], str(sec["name"] or "")
+                estrutura["secoes"].append({"numero": num, "nome": nome_sec, "resumo": texto_html(sec["summary"])})
+                for mod_api in sec_api.get("modules") or []:
+                    mod = {k: mod_api.get(k) for k in MODULO_OK}
+                    modname, nome_mod = str(mod["modname"]), str(mod["name"] or "")
+                    estrutura["modulos"].append({"secao": nome_sec, "nome": nome_mod, "modname": modname})
+                    ocorr = {"secao": nome_sec, "modulo": nome_mod, "modname": modname}
+                    arquivos_mod = [c for c in ({k: x.get(k) for k in CONTEUDO_OK} for x in mod["contents"] or [])
+                                    if c["type"] == "file"]
+                    if modname == "label":
+                        estrutura["rotulos"].append({"secao": nome_sec, "texto": texto_html(mod["description"])})
+                    elif modname == "url":
+                        url = url_sem_autenticacao(mod["url"])
+                        acrescenta("url:" + url, {"tipo": "link_externo", "adjudicavel": False, "arquivo": None,
+                                                  "nome_original": nome_mod, "sha256": None, "tamanho": None, "url": url}, ocorr)
+                    elif modname == "page":
+                        htmls = [c for c in arquivos_mod if str(c["filename"]).lower().endswith((".html", ".htm"))]
+                        if inv is None:
+                            paginas = sorted((x for x in locais if x["rel"].startswith(f"raw/moodle/pages/{mod['id']}-")),
+                                             key=lambda x: x["rel"])
+                        else:
+                            paginas = []
+                            for c in htmls:
+                                a, status = liga_por_inventario(inv, mod["id"], c, por_rel)
+                                if a is None:
+                                    sem_arquivo("arquivo_nao_adquirido", f"naoadquirido:{mod['id']}/{c['filename']}", c, ocorr,
+                                                "aquisição: " + status)
+                                else:
+                                    paginas.append(a)
+                        if len(paginas) &gt; 1:
+&gt;                           raise AmbiguidadeOrigem(f"página {mod['id']}: {[x['rel'] for x in paginas]}")
+E                           gera_pacote_cego.AmbiguidadeOrigem: página 501: ['raw/moodle/pages/501-index.html', 'raw/moodle/pages/501-notas.html']
+
+correcoes\pacote_cego\gera_pacote_cego.py:598: AmbiguidadeOrigem</failure></testcase></testsuite></testsuites>

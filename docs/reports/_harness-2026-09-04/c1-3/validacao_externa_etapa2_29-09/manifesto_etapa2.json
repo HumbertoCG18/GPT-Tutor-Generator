@@ -1,0 +1,52 @@
+{
+ "esquema": "etapa2-validacao-externa-1",
+ "data": "2026-09-29",
+ "head": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+ "preservados_29-09": {
+  "zip_sha256": "e5de322d6a8c1bdd51a2fd8d627443a9775c3dcf81d0eb2d55d6b789245231a2",
+  "manifesto_preparacao_sha256": "e54b184be23b2ea5248653763c9dbbd035571e61ca16e5a49dc3fe31a350de71"
+ },
+ "manifesto_aquisicao_sha256": "e0c541cc33661eae5009298d2765f3d933131956b4cfe1d2d2bde9a3ea958535",
+ "fontes_congeladas": {
+  "90231": "2cafb98866bf31c471334f0ca2e4fdf59f6eb6ee74b63f6c3d517eb73acd1a50",
+  "88738": "c7d713d979bf55aefa10428ee627348dc76fa645821493a4cd4c42f33db2c65a",
+  "81476": "dd1e4eed74b49974faaadc45cfe39d4702805b0d3927ad65208f16da665bd3bf",
+  "82667": "9e77d46dfb0fcd43929643397887649ab32eaa19f8d7343852c836409b5ec404",
+  "89447": "ea5937f8c5e6423eae296271bb035498ed7b27eaba2668b51db19a77fefc44b9",
+  "90572": "7f33c1b1224511e898c82eb1c234adb60d47e0599cbecfa99952d2964472d8a0",
+  "89100": "7a4fce8c7adde1bd983af99fe8b835bac3047c3e97d5a898048be1869560cca0",
+  "80922": "3683f92c3ca55f47d67f84742b143a8ed97a5c5d8c017cdc1f6d8c5c12b2a700"
+ },
+ "testes": {
+  "enumerador_v2": "17 passed",
+  "pacote_cego_v2": "28 passed"
+ },
+ "arquivos": {
+  "aquisicao/adquire.py": "6c850c12185056aa368c6c5cdd6e33c54ac807420c4afa0ba8ad6b44f010eae5",
+  "aquisicao/candidatos_lote_29-09.json": "0ee9f9f1108c0e98c33a511d27cba806db4d549bf30528f14d1efe0f80b655a0",
+  "aquisicao/catalogo.json": "7f7e79ffe34747ffb19ab9be509a15426a42e7544ab3b6960424f2750ceb0871",
+  "aquisicao/fontes_congeladas.json": "cfc255e296d0aea2136aabdeedbfe8e68ad5f6f1e18e39d353a88c109de08762",
+  "aquisicao/inventario_downloads.json": "d5098196eac9b7bc4e51040ff3746f479e9e55b5e741819a1e9fe916a8a1d6a3",
+  "aquisicao/log_baixar.txt": "1802b1c26f795169421374420f27d5477528a69f0f7a2a83a005133eb8dbe4dc",
+  "aquisicao/manifesto_aquisicao.json": "e0c541cc33661eae5009298d2765f3d933131956b4cfe1d2d2bde9a3ea958535",
+  "aquisicao/populacao_candidatos_lote_29-09.json": "905756542278323396730a70a8dfb6f1296c849eb5f5f978a87d71d18a23a168",
+  "aquisicao/populacao_candidatos_lote_29-09.md": "786ce9603c4816174441cf5841e92bce48d5781b292a3a2c8343d55148bd6692",
+  "aquisicao/triagem.json": "88306e61f6c4c6250d38cda3a821917004360ec6b5f7ea3e909311be6c0bc43a",
+  "correcoes/pacote_cego/diff_gerador_v1_v2.patch": "ef11d1498a69e510249936b6fd6693ffe7d0bf3138a361493a0a83623e428184",
+  "correcoes/pacote_cego/diff_testes_herdados_v1_v2.patch": "d0096213064d7dabb1a575fb7060f72ec07a908abb7830d3f2fecec6f2efc65f",
+  "correcoes/pacote_cego/gera_pacote_cego.py": "e2fe9b0743acb37ecd33c6acd62ce16569bda9ad0fff295604d545b2c00645b9",
+  "correcoes/pacote_cego/log_testes.txt": "68ebfd222082717bc82b053b15fce3c9ab5719af93082ad6b98d0690e486a410",
+  "correcoes/pacote_cego/test_pacote_cego.py": "aef9f193c9bc7197999a6aa1ebaf1c2f93bf60a8210ed8bbd0bd5f1327a585f8",
+  "correcoes/pacote_cego/test_pacote_cego_v2.py": "799456f175399365e0b3213c9c90a43d9c2beef14c1bd7e5dc25abd9408112b6",
+  "correcoes/populacao/candidatos_29-09.json": "846a6fb34600e3275543cea61262ff8dc3ba92e318ec8fa7f6a7b82c286b419e",
+  "correcoes/populacao/diff_enumera_v1_v2.patch": "6a6a543cabfc781ef86783c24a31a67064b42969708ea3c1bf11640189b9e9f1",
+  "correcoes/populacao/enumera_candidatos.py": "7b99f60918bbb4ae277dea44edfd1655a901f2ebbd28cba033f17b71a0cd8a3b",
+  "correcoes/populacao/log_testes.txt": "26009eb8b68eacd7f6184cfd810b86a947c6cddf55e098c9db089279eef379ed",
+  "correcoes/populacao/populacao_candidatos_29-09.json": "ee09dd7ebc013207bb553651ed6ee7933f5319e56c7c2d3a83604f46fe21d473",
+  "correcoes/populacao/populacao_candidatos_29-09.md": "c8d90477ffb2a8e43f6492a550ec0cd6d207e10a7f5b13a8a54204e290e5b76e",
+  "correcoes/populacao/test_enumera_candidatos.py": "600c183427abdf385f9a6f9b00317a24399d29acdf1209dcc65d095badc906d8",
+  "decisoes_pendentes.md": "fd99f0152048e5b8da8e07234ea0db178ba1526f6b1bfa6fcaf2ccb998701839",
+  "errata_relatorio_preparacao_29-09.md": "e1a7cbf91544aa815b6199f6fe71858f8484a70d4bf069bcf1f692ecbc6611c7",
+  "relatorio_etapa2.md": "0874fd3f2368ce7229f6c8f58cdcbab8ecee0048bce7436e005c557808bf6730"
+ }
+}

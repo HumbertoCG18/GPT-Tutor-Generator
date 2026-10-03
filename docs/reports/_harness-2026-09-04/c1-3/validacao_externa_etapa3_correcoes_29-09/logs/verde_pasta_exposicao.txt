@@ -1,0 +1,12 @@
+PASSED test_verifica_exposicao.py::test_categorias_termo_trecho_e_omissao
+PASSED test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[0000000000000000000000000000000000000000-raizes0-x]
+PASSED test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes1-x]
+PASSED test_verifica_exposicao.py::test_falha_de_busca_e_indeterminado[None-raizes2-((]
+PASSED test_verifica_exposicao.py::test_subpasta_nao_e_raiz
+PASSED test_verifica_exposicao_v2.py::test_EXP08_cor_do_git_nao_vira_zero
+PASSED test_verifica_exposicao_v2.py::test_EXP06_saida_nao_interpretada_e_indeterminado
+PASSED test_verifica_exposicao_v2.py::test_EXP09_todos_os_matches_da_linha
+PASSED test_verifica_exposicao_v2.py::test_EXP01_caminho_acentuado_sem_aspas
+PASSED test_verifica_exposicao_v2.py::test_EXP05_categorias_e_motivo_de_omissao
+PASSED test_verifica_exposicao_v2.py::test_EXP03_fonte_de_pastas_ausente_e_indeterminado
+11 passed in 3.58s

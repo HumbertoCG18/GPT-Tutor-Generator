@@ -1,0 +1,11 @@
+{
+ "descricao": "Entrada da verificação local de exposição. Fora: os 7 cursos de desenvolvimento, LR, LSO e UX (autorização da etapa 3), por id do catálogo e por sigla dos candidatos locais de 29/09.",
+ "base": "bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1",
+ "raizes": ["docs", "tests", "src", "scripts", ".mex", ".workflow"],
+ "exclui_caminho": "_codegraph-benchmark|graphify-out|__pycache__|\\.(exe|zip|pyc|png|jpg|pdf)$",
+ "catalogo": "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/aquisicao/catalogo.json",
+ "candidatos_locais": "docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/correcoes/populacao/candidatos_29-09.json",
+ "pastas_anteriores": "~/Desktop/Moodle",
+ "fora_ids": ["92714", "92717", "92854", "93156", "93728", "95106", "95139", "95473", "95227", "92619"],
+ "fora_siglas": ["ES2", "MF", "SO", "IA", "TCC", "CG", "FR", "LR", "LSO", "UX"]
+}
