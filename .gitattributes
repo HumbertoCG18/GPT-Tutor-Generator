@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Referência de medição (MOTOR-00): bytes fixos; o sha256 e024d396 é a identidade citada nos pré-registros
+docs/reports/2026-10-01-cru05-cru03/replay_base.json -text
