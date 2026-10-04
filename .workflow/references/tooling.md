@@ -83,3 +83,6 @@ compartilhado por sessões, worktrees e subagentes. Instalador (`tauri build`, r
 `D:\cargo-target\alethe`. Não criar pasta de saída por tarefa (cada uma custa 6 GB). `cargo fmt`
 no crate inteiro é proibido; usar `rustfmt --check --edition 2021` só nos arquivos tocados.
 Briefs de subagente que rodam cargo citam essas pastas.
+Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update` (build de origin/dev
++ instalação por cima com `/P /UPDATE /R`); `build` e `install` separados. Espera o usuário sair
+pelo app; nunca fecha o Alethe Dev.
