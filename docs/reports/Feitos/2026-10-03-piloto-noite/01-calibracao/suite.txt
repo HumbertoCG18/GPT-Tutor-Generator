@@ -1,0 +1,46 @@
+comando: python -m pytest tests -q -p no:cacheprovider
+tentativa: 2 (a 1 parou sem linha-resumo; ver suite-tentativa1-interrompida.txt)
+inicio: 2026-10-03 05:14:32 -0300
+fim: 2026-10-03 05:15:36 -0300
+exit: 1
+--- Ãºltimas 40 linhas ---
+                "n_sessoes": len(b.get("sessions") or []),
+                "span_dias": _span_dias(b),
+                "topico": _topico(b),
+            }
+            for b in _blocks(timeline)
+        ]
+>       _snapshot(f"{repo.name}__divisao_blocos", divisao)
+
+tests\test_caracterizacao_blocos_atual.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'Fundamentos-de-Redes-Tutor__divisao_blocos'
+data = [{'id': 'bloco-01', 'n_sessoes': 1, 'span_dias': 0, 'topico': 'disciplina'}, {'id': 'bloco-02', 'n_sessoes': 2, 'span_...pico': 'protocolos aplicacao'}, {'id': 'bloco-06', 'n_sessoes': 2, 'span_dias': 5, 'topico': 'camada transporte'}, ...]
+
+    def _snapshot(name: str, data) -> None:
+        path = GOLDEN / f"{name}.json"
+        payload = json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True)
+        if not path.exists():
+            path.write_text(payload, encoding="utf-8")
+            pytest.skip(f"baseline criado: _golden/{path.name} (revise e versione)")
+>       assert path.read_text(encoding="utf-8") == payload, (
+            f"comportamento atual mudou vs baseline _golden/{path.name} — revise o diff "
+            f"(se a mudança for esperada pela fase do refactor, atualize o baseline de propósito)"
+        )
+E       AssertionError: comportamento atual mudou vs baseline _golden/Fundamentos-de-Redes-Tutor__divisao_blocos.json — revise o diff (se a mudança for esperada pela fase do refactor, atualize o baseline de propósito)
+E       assert '[\n  {\n    ...lace"\n  }\n]' == '[\n  {\n    ...sico"\n  }\n]'
+E         
+E         Skipping 1121 identical leading characters in diff, use -v to show
+E         - topico": "P1 — unidades 01 a 03 e unidade 04 até a aula de 17/09 (ICMPv4)"
+E         + topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-04-nivel-de-rede"
+E             },
+E             {
+E               "id": "bloco-12",...
+E         
+E         ...Full output truncated (116 lines hidden), use '-vv' to show
+
+tests\test_caracterizacao_blocos_atual.py:113: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+1 failed, 2448 passed, 4 skipped in 58.50s
