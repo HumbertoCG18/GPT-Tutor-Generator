@@ -75,3 +75,11 @@ Memória, revisão e noite mantêm contratos e contadores próprios. Não remove
 runtime noturno nem liberar scheduler/noite antes da equivalência validada e dos
 preflights de #42 no projeto correspondente. Não iniciar segundo servidor standalone
 para duplicar o painel. Operação: delegation.md; continuidade: resume.md.
+
+## Build do Alethe (pastas de saída do cargo)
+
+Teste Rust (`cargo test`, debug): `CARGO_TARGET_DIR=D:\cargo-target\alethe-test`, cache único
+compartilhado por sessões, worktrees e subagentes. Instalador (`tauri build`, release):
+`D:\cargo-target\alethe`. Não criar pasta de saída por tarefa (cada uma custa 6 GB). `cargo fmt`
+no crate inteiro é proibido; usar `rustfmt --check --edition 2021` só nos arquivos tocados.
+Briefs de subagente que rodam cargo citam essas pastas.
