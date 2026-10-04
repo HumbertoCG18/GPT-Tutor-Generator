@@ -86,3 +86,5 @@ Briefs de subagente que rodam cargo citam essas pastas.
 Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update` (build de origin/dev
 + instalação por cima com `/P /UPDATE /R`); `build` e `install` separados. Espera o usuário sair
 pelo app; nunca fecha o Alethe Dev.
+Antes de merge com mudança em Rust: `cargo check --bins --lib` (o `orchestrator_core.rs` também
+entra no binário `alethe-orchestrator-mcp`; `cargo test --lib` não compila os binários, #58→#59).

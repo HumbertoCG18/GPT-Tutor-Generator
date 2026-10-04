@@ -20,7 +20,8 @@ Gates e contrato [delegation.md](delegation.md). Escolha explícita do usuário 
 Ler [review.md](review.md) antes de chamar revisor; não usar planejamento para renovar revisão.
 Se o host já é Codex, planejar nele; não chamar outro Codex para repetir orquestração.
 Se o host é Claude, conservar o terminal como interface; receber o plano e conduzir sua execução.
-Se o host é AGY, limitar-se à auditoria/pesquisa/achados; devolver implementação ao coordenador.
+Se o host é AGY, só orquestrar quando escolhido (último na prioridade, routing.md › Orquestradores),
+com planejador e revisor Opus 5.5; senão, limitar-se à auditoria/pesquisa/achados.
 Documentação/configuração simples pode ser concluída pelo agente ativo conforme escolha explícita.
 Não delegar de volta ao chamador nem criar cadeia recursiva. Sem troca por quota.
 

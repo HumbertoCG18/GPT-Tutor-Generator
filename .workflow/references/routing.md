@@ -6,7 +6,7 @@ Aplicar sem exigir pedido explícito de delegação. Ler uma vez por tarefa; esc
 - Código: Claude Code executa conforme nível investigado abaixo.
 - Arquitetura, múltiplos componentes ou aceite ambíguo: Codex planeja/orquestra; Claude Code implementa.
 - Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md.
-- Auditoria/corpus/pesquisa/achados: AGY, fontes e arquivos de saída delimitados.
+- Auditoria/corpus/pesquisa/achados: AGY (papel principal), fontes e arquivos de saída delimitados.
 
 ## Investigador e níveis (aprovado em 21/09/2026)
 
@@ -36,23 +36,34 @@ investigador confirma/revisa antes da próxima fase. Reclassificar com evidênci
 nunca como fallback por quota/recusa. Tarefa pequena pode ser T3; longa pode ser T1.
 Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 
+## AGY: pesquisador e orquestrador de último recurso
+
+Papel principal do AGY: pesquisador e derivados (pesquisa, auditoria, corpus, achados),
+só leitura com saída delimitada. Padrão inicial, não medido: Sonnet 5.5
+(claude-sonnet-5-5-medium) para pesquisa de rotina; Opus 5.5 (claude-opus-5-5-high) para
+auditoria ou pesquisa ampla. Workers AGY na Orquestração do Alethe (campanha AGY, ainda não
+implementado) seguem esse papel; código fica com os executores Claude/Codex.
+Orquestradores, prioridade fixa: Claude Code, Codex, AGY (o último). AGY orquestra só por
+escolha explícita, nunca como fallback automático; então planejador e revisor Opus 5.5
+(medium em T1/T2, high em T3). Revisão segue review.md (revisor independente).
+
 ## Perfis adicionais AGY
 
 - gemini-3.1-pro-high: candidato T3 para contexto amplo, dependências e arquitetura.
-- claude-sonnet-4-6: candidato T1/T2 de código/documentação, variante Thinking.
-- claude-opus-4-6-thinking: candidato T3 de código, variante Thinking.
+- claude-sonnet-5-5-{low,medium,high}: candidato T1/T2 de código/documentação.
+- claude-opus-5-5-{low,medium,high}: candidato T2/T3 de código, orquestração e revisão.
 - Investigador pode escolher esses perfis aprovados com justificativa; superioridade
   ainda não medida. Não chamar vários para a mesma auditoria sem avaliação delimitada
   e autorizada. Não substituem a revisão do revisor.
-- Gemini: escolher ID da variante, sem inventar variantes. Sonnet/Opus Thinking no AGY:
-  esforço individual não anunciado; omitir --effort e registrar não informado. Não
-  transferir parâmetros ou supor mesma assinatura/quota do Claude Code.
-- Modelos do AGY (agy models, 30/09/2026): gemini-3.8/3.7/3.6-flash-{low,medium,high},
-  gemini-3.1-pro-{low,high}, claude-sonnet-4-6 (Thinking), claude-opus-4-6-thinking e
-  gpt-oss-120b-medium.
-- Pendente para o worker AGY no Alethe: o CLI aceita --effort low|medium|high|max, mas
-  nem todo modelo muda de esforço. Gemini Flash tem low/medium/high; Gemini 3.1 Pro só
-  low/high; Sonnet 4.6, Opus 4.6 (Thinking) e GPT-OSS 120B (Medium) têm esforço fixo.
+- Gemini, Sonnet 5.5 e Opus 5.5: escolher o ID da variante (o esforço vem no ID), sem
+  inventar variantes nem repassar --effort. Não transferir parâmetros ou supor mesma
+  assinatura/quota do Claude Code.
+- Modelos do AGY (agy models, AGY 1.2.16, 04/10/2026): gemini-3.8/3.7/3.6-flash-{low,medium,high},
+  gemini-3.1-pro-{low,high}, claude-opus-5-5-{low,medium,high},
+  claude-sonnet-5-5-{low,medium,high} e gpt-oss-120b-medium.
+- Pendente para o worker AGY no Alethe: o CLI aceita --effort low|medium|high|xhigh|max, mas
+  nem todo modelo muda de esforço. Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no
+  ID; Gemini 3.1 Pro só low/high; GPT-OSS 120B (Medium) tem esforço fixo.
   O papel/worker AGY só deve oferecer os esforços de cada modelo e não repassar
   --effort aos fixos; medir antes se o CLI recusa ou ignora --effort nesses casos.
 
