@@ -1,0 +1,125 @@
+........................................................................ [  2%]
+........................................................................ [  5%]
+..............................F.............sss.s....................... [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 35%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+........................................................................ [ 67%]
+........................................................................ [ 70%]
+........................................................................ [ 73%]
+........................................................................ [ 76%]
+........................................................................ [ 79%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+.....                                                                    [100%]
+================================== FAILURES ===================================
+__________ test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor] ___________
+
+repo = WindowsPath('C:/Users/Humberto/Documents/GitHub/Fundamentos-de-Redes-Tutor')
+
+    @needs_repos
+    @pytest.mark.parametrize("repo", ROOTS, ids=_repo_id)
+    def test_divisao_de_blocos_atual(repo: Path):
+        """Snapshot da divisão ATUAL. É aqui que o over-merge aparece (IA deve ter um
+        bloco bem largo, ~9 sessões / ~28 dias). Este snapshot DEVE mudar na Fase 3
+        (split do over-merge) — o diff é a prova de que a fronteira foi corrigida."""
+        _, timeline = _load(repo)
+        divisao = [
+            {
+                "id": str(b.get("id") or ""),
+                "n_sessoes": len(b.get("sessions") or []),
+                "span_dias": _span_dias(b),
+                "topico": _topico(b),
+            }
+            for b in _blocks(timeline)
+        ]
+>       _snapshot(f"{repo.name}__divisao_blocos", divisao)
+
+tests\test_caracterizacao_blocos_atual.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'Fundamentos-de-Redes-Tutor__divisao_blocos'
+data = [{'id': 'bloco-01', 'n_sessoes': 1, 'span_dias': 0, 'topico': 'disciplina'}, {'id': 'bloco-02', 'n_sessoes': 2, 'span_...pico': 'protocolos aplicacao'}, {'id': 'bloco-06', 'n_sessoes': 2, 'span_dias': 5, 'topico': 'camada transporte'}, ...]
+
+    def _snapshot(name: str, data) -> None:
+        path = GOLDEN / f"{name}.json"
+        payload = json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True)
+        if not path.exists():
+            path.write_text(payload, encoding="utf-8")
+            pytest.skip(f"baseline criado: _golden/{path.name} (revise e versione)")
+>       assert path.read_text(encoding="utf-8") == payload, (
+            f"comportamento atual mudou vs baseline _golden/{path.name} — revise o diff "
+            f"(se a mudança for esperada pela fase do refactor, atualize o baseline de propósito)"
+        )
+E       AssertionError: comportamento atual mudou vs baseline _golden/Fundamentos-de-Redes-Tutor__divisao_blocos.json — revise o diff (se a mudança for esperada pela fase do refactor, atualize o baseline de propósito)
+E       assert '[\n  {\n    ...lace"\n  }\n]' == '[\n  {\n    ...sico"\n  }\n]'
+E         
+E         Skipping 1121 identical leading characters in diff, use -v to show
+E         - topico": "P1 — unidades 01 a 03 e unidade 04 até a aula de 17/09 (ICMPv4)"
+E         + topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-04-nivel-de-rede"
+E             },
+E             {
+E               "id": "bloco-12",...
+E         
+E         ...Full output truncated (116 lines hidden), use '-vv' to show
+
+tests\test_caracterizacao_blocos_atual.py:113: AssertionError
+============================== warnings summary ===============================
+tests\test_moodle_sync.py:234
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_moodle_sync.py:234: DeprecationWarning: invalid escape sequence '\T'
+    ents = [_ent("transformacoesgl", "TransformacoesGL\TransformacoesGL.html", "html", "Página sobre Transformações"),
+
+tests\test_moodle_sync.py:264
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_moodle_sync.py:264: DeprecationWarning: invalid escape sequence '\G'
+    ents = [_ent("geomcomp", "GeomComp\GeomComp.htm", "html", "Página sobre Geometria Computacional", sec),
+
+tests\test_moodle_sync.py:265
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_moodle_sync.py:265: DeprecationWarning: invalid escape sequence '\S'
+    _ent("slab", "Slab\Slab.html", "html", "Página sobre Geometria Computacional", sec),
+
+tests\test_moodle_sync.py:266
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_moodle_sync.py:266: DeprecationWarning: invalid escape sequence '\D'
+    _ent("domina", "Domina\Domina.html", "html", "Página sobre Geometria Computacional", sec)]
+
+tests\test_vocabulary_compile.py:380
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_vocabulary_compile.py:380: DeprecationWarning: invalid escape sequence '\s'
+    {"title": "JavaThread\src\javathread\JavaThread.java", "base_markdown": "code/professor/javathread.md"},
+
+tests\test_vocabulary_compile.py:381
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_vocabulary_compile.py:381: DeprecationWarning: invalid escape sequence '\s'
+    {"title": "JavaThread\src\javathread\MyFirstThread.java", "base_markdown": "code/professor/myfirstthread.md"},
+
+tests\test_vocabulary_compile.py:382
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_vocabulary_compile.py:382: DeprecationWarning: invalid escape sequence '\j'
+    {"title": "JavaThread\test\javathread\JavaThread.java", "base_markdown": "code/professor/javathread-2.md"},
+
+tests\test_vocabulary_compile.py:388
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-ap1-base\tests\test_vocabulary_compile.py:388: DeprecationWarning: invalid escape sequence '\s'
+    assert "JavaThread\src" not in b2                 # nome-base, nao o caminho
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+1 failed, 2448 passed, 4 skipped, 8 warnings in 169.71s (0:02:49)
+exit=1 segundos=179

@@ -181,6 +181,7 @@ def auto_map_entry_subtopic(
     iter_content_taxonomy_topics: Callable[[dict], List[dict]],
     score_entry_against_taxonomy_topic: Callable[[dict, dict], float],
     topic_match_result_factory,
+    divisores_de_frase: Optional[Callable[[List[dict]], dict]] = None,
 ):
     topic_index = iter_content_taxonomy_topics(taxonomy)
     if winning_unit_slug:
@@ -196,7 +197,12 @@ def auto_map_entry_subtopic(
         )
 
     signals = collect_entry_unit_signals(entry, markdown_text)
-    scored = [(topic, score_entry_against_taxonomy_topic(signals, topic)) for topic in topic_index]
+    if divisores_de_frase is None:
+        scored = [(topic, score_entry_against_taxonomy_topic(signals, topic)) for topic in topic_index]
+    else:   # P1 (#90, desligado por padrao): divisores dos concorrentes DESTA chamada (1a ou 2a passada)
+        divisores = divisores_de_frase(topic_index)
+        scored = [(topic, score_entry_against_taxonomy_topic(signals, topic, divisores_frase=divisores))
+                  for topic in topic_index]
     scored.sort(key=lambda item: item[1], reverse=True)
 
     winner, winner_score = scored[0]

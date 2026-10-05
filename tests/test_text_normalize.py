@@ -44,3 +44,19 @@ def test_modules_match_canonical(mod, attr):
     fn = getattr(m, attr)
     for s in ["Lógica de Predicados", "P1 - Prova!!", "Hierarquia de Chomsky", "propocional", ""]:
         assert fn(s) == canon(s), f"{mod}.{attr} diverge em {s!r}"
+
+
+@pytest.mark.parametrize("bruto, esperado", [
+    ("Comput´aveis", "computaveis"),        # PDF do LaTeX do TCC (CRU-05, #89)
+    ("An´alise", "analise"),
+    ("Defini¸c˜ao", "definicao"),
+    ("Func¸˜oes", "funcoes"),
+    ("ˆangulo", "angulo"),
+    ("Mu¨ller", "muller"),
+])
+def test_diacritico_espacador_nao_parte_a_palavra(bruto, esperado):
+    assert normalize_match_text(bruto) == esperado
+
+
+def test_circunflexo_e_til_ascii_continuam_separadores():
+    assert normalize_match_text("x^2 ~ y`z") == "x 2 y z"

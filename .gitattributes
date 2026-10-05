@@ -3,3 +3,6 @@
 
 # Referência de medição (MOTOR-00): bytes fixos; o sha256 e024d396 é a identidade citada nos pré-registros
 docs/reports/2026-10-01-cru05-cru03/replay_base.json -text
+
+# Integração A+P1 (#89/#90): referência 87 e replays da verificação com bytes fixos (sha256 citados no relatório)
+docs/reports/2026-10-04-integracao-ap1/*.json -text
