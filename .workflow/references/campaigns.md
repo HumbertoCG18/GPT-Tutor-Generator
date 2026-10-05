@@ -6,10 +6,10 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 
 ## Registro
 
-- Ferramenta: `bin/campanhas.py` — `listar [--noite] [--curto]`, `validar`, `estado ID NOVO [--evidencia T] [--resultado T]`, `tarefa`, `noite`, `achado`, `achados`, `triar`. `--registro CAMINHO` substitui o local. O hook SessionStart (hooks/README.md) injeta `listar --curto`.
+- Ferramenta: `bin/campanhas.py` — `listar [--noite] [--curto]`, `validar`, `estado ID NOVO [--evidencia T] [--resultado T]`, `tarefa`, `passo`, `noite`, `achado`, `achados`, `triar`. `--registro CAMINHO` substitui o local. O hook SessionStart (hooks/README.md) injeta `listar --curto`.
 - Diário da noite: `noite TAREFA --resultado ok|aguarda-voce|falhou|parou --resumo T [--evidencia T]` acrescenta uma entrada em `.workflow/local/noites/<AAAA-MM-DD>.json` do checkout principal (data em que a noite começou: antes de 12:00, ontem); resumo até 120 caracteres; não muda o estado da tarefa. `listar --curto` resume o diário mais recente em "Noite de DD/MM: …".
 - Campanha: `id`, `titulo`, `prioridade`, `janela`, `depende_de`, `worktrees`, `handoff`, `atualizado_em`, `decomposta`, `tarefas`.
-- Tarefa: `id`, `titulo`, `nivel`, `estado`, `depende_de`, `janela`, `eixo`, `nota`, `motivo`, `origem`, `evidencia`, `resultado`, `recorrente`.
+- Tarefa: `id`, `titulo`, `nivel`, `estado`, `depende_de`, `janela`, `eixo`, `nota`, `motivo`, `origem`, `evidencia`, `resultado`, `recorrente`, `passos` (`[{texto, feito}]`; o atual é o primeiro não feito).
 - Estados: proposta · pronta · em execução · bloqueada · reservada · concluída. Janelas: assistida · noite · qualquer. `depende_de` aceita IDs de tarefa ou de campanha.
 - Mudar estado só por `estado`: grava escrita atômica e atualiza `atualizado_em`. Narrativa longa vai ao arquivo `handoff` da campanha, não ao registro. Rodar `validar` após edição manual.
 - Criar tarefa só por `tarefa CAMPANHA "título" [--nivel] [--estado proposta|pronta] [--depende ID ...] [--origem USER|CODE|DECISION]`: imprime o id novo `<CAMPANHA>-NN` (maior sufixo numérico da campanha + 1, mín. 2 dígitos, nunca reusa; colisão no registro incrementa). A Todo List do Alethe usa a mesma regra, o mesmo lock e a mesma escrita atômica.
@@ -26,6 +26,12 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 3. Delegar com `task: <ID>` igual a `tarefa`. Com registro, o delegate-gate.py bloqueia delegação, revisão ou validação sem tarefa aberta e dá o comando de criação.
 4. Revisar; o Gate 2 é do usuário (`gate_2: aprovado…`).
 5. `concluido` com Gate 2 aprovado e `evidencia_de_aceite` preenchida vira `concluída` (o hook espelha; o Stop fecha-tarefa.py cobra se faltar). Sem Gate 2 ou sem evidência, fica `bloqueada` com o motivo em `resultado`; `concluída` nunca reabre sozinha.
+
+## Passos de aceite
+
+- Ao iniciar uma tarefa, o coordenador dela (o agente que executa, inclusive o da noite) define de 3 a 7 passos de aceite com `passo TAREFA --definir "…" "…"` e marca cada um com `--feito N` assim que estiver verificavelmente feito (`--desfazer N` volta atrás; `passo TAREFA` sem opção imprime `feitos/total · passo atual`).
+- Os passos são o progresso da tarefa que o dono vê no Alethe (linha, detalhe e título do terminal). Revisor e sessão read-only não escrevem passos: propõem o delta ao coordenador.
+- `passo` não muda o estado da tarefa; o Gate 2 do dono não muda. Tarefa concluída recusa; `--definir` sobre passo já feito exige `--forcar`.
 
 ## Seleção e confirmação
 

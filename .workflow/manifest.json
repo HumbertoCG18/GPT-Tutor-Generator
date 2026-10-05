@@ -9,7 +9,7 @@
   "evals/research-output.schema.json": "379a6db0ce2bfa97179127690fb1e2d4b4968d493643d8885b3282a1e12f6480",
   "HANDOFF.md": "6ce960bdbab1a77c7d217795603977a7db4973ea963b52dce6c749aece59b7c6",
   "README.md": "f79432da71bb5cb9c034027122b5e24615ff8d36705c7f209e99df3085037806",
-  "references/campaigns.md": "670571e28e07fcf735880abf6adf8ac2c10988983cac3a582392ea7e07b4d421",
+  "references/campaigns.md": "bb0d32dfaa5354cdf45128f934a655942e97debac5015e12cba61a77dc662a7f",
   "references/capabilities.md": "df94f71923f631619268e422541b973b3864b55c78689fd673a739f029c6906f",
   "references/delegation.md": "8346caab404a7251e4ae60267bc5010b46f3e38c3f3f77303d6f2327d3f6ddd4",
   "references/delivery.md": "5839c8628493aba8927c8de340b12d32c1ebf0d15fee606e95c6ca26bd48b75e",
@@ -20,7 +20,7 @@
   "references/routing-details.md": "99961369f434414acf4ce75fb48d520fa5010e22be2ad2f6d6f48d6b9ca53c8b",
   "references/routing.md": "1dacbb769974fe9c02b18c95ff58abe5abe07cce4a2d1cf019719f1c00b7d28e",
   "references/services.md": "ef308ed758f539ff7515b49546f153a4bf278fad56de6713bf0ac7fb6e11b086",
-  "references/tooling.md": "553025a40db797f54314e5820704130b204102bca2e1ae5cde55ddaac239fab3",
+  "references/tooling.md": "b6f4163c2c7d96f6dbe0c8b470a446f02e0ea234045caf6aa2fbb6b9505596a3",
   "task-state.template.md": "85a794881c54028c3392c78ef8d1144b29ee4ea056ec08784b77f8992073279d",
   "workflow.md": "d3bab8338cebaa23cb25a6b4e9ad9795313522dddadc04a0d6387a7e127c6fac"
 }
