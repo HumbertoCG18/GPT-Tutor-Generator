@@ -74,29 +74,30 @@
         "GPT-Tutor-Generator-p1",
         "GPT-Tutor-Generator-cru05"
       ],
-      "handoff": "docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md",
-      "atualizado_em": "2026-10-03",
+      "handoff": "docs/reports/2026-10-02-handoff-motor-p1-moodle-claude.md",
+      "atualizado_em": "2026-10-05",
       "tarefas": [
         {
           "id": "MOTOR-00",
           "titulo": "Versionar a referência de medição replay_base.json (e024d396…), hoje só na worktree cru05",
           "nivel": "T1",
-          "estado": "pronta",
+          "estado": "concluída",
           "depende_de": [],
-          "nota": "antes de qualquer limpeza de worktree"
+          "nota": "antes de qualquer limpeza de worktree",
+          "evidencia": "dev f8e7406e (PR #93: aa2e4239+f3edbc65), blob e024d396; docs/reports/Feitos/2026-10-03-piloto-noite/02-motor-00/verificacao.md"
         },
         {
           "id": "MOTOR-01",
           "eixo": "subunidade",
           "titulo": "Proposta P1: termos pouco discriminantes (frases compartilhadas)",
           "nivel": "T2",
-          "estado": "bloqueada",
+          "estado": "concluída",
           "depende_de": [],
           "nota": "02/10: avaliação congelada §5 v2 e rodada noturna Alethe autorizadas explicitamente pelo usuário; sem integração/commit, nova revisão ou ajustes. MOTOR-00 continua pronta: versionamento obrigatório antes de limpeza da worktree; não é precondição técnica da avaliação com referência selada e preservada. Removida dependência administrativa dessa fase; referência não será limpa.",
           "origem": "CRU-02, CRU-05",
           "janela": "noite",
-          "evidencia": "P1/docs/reports/2026-10-02-p1-avaliacao/plano-integracao-acentos-p1.md; relatorio-avaliacao-final.md; tentativa2/verificacao-coordenador.json",
-          "resultado": "A+P1 escolhido explicitamente pelo usuário em 02/10: 87/251 primária,+1/0 contra base,bloco/unidade invariantes;suíte comparável2469pass/4skip/1falha antiga,0nova. Plano preparado com ativação nas duas passadas,reversão conjunta,referências86/87 distintas. Gate de integração/ativação não concedido;commit não autorizado;referência vigente86 preservada."
+          "evidencia": "PR #96, merge f404c6de; replay dev pós-merge 350/350 = 87 (0 mudanças × 6299edfd), ap1/docs/reports/2026-10-04-integracao-ap1/replay_dev_pos_merge.json (207830ef)",
+          "resultado": "A+P1 integrado na dev: subunidade primária 86 → 87/251, bloco 223/237 e unidade 249/284 iguais, zero perda por ID"
         },
         {
           "id": "MOTOR-02",
@@ -121,19 +122,23 @@
           "eixo": "unidade",
           "titulo": "M1 reconcile_unit_with_block: Gate 2",
           "nivel": "T2",
-          "estado": "bloqueada",
+          "estado": "concluída",
           "motivo": "Gate 2; situação real do working tree a conferir",
-          "origem": "W-AB, l.634"
+          "origem": "W-AB, l.634",
+          "evidencia": "dev eebc698c (M1 texto vence o bloco do resolvedor antigo); pendencias.md W-AB",
+          "resultado": "registro saneado em 04/10: M1 já integrado na dev"
         },
         {
           "id": "MOTOR-05",
           "eixo": "unidade",
           "titulo": "M2 (registrado, não implementado)",
           "nivel": "T2",
-          "estado": "proposta",
+          "estado": "bloqueada",
           "depende_de": [
             "MOTOR-04"
-          ]
+          ],
+          "evidencia": "pendencias.md W-AB (24/09): M2 unidade +1/−0 (TCC aula-11), n=1",
+          "resultado": "estacionada pelo usuário 05/10: n=1 e pares de subtópico do plano; desbloqueia com curso independente com gold (ex.: N0 do VOCAB) e remedição na base vigente 223/249/87"
         },
         {
           "id": "MOTOR-06",
@@ -148,26 +153,32 @@
           "eixo": "bloco",
           "titulo": "#49: Gate 2 (217/237, sem commit registrado)",
           "nivel": "T2",
-          "estado": "bloqueada",
+          "estado": "concluída",
           "motivo": "Gate 2 desde 22/09; conferir working tree",
-          "origem": "CRU-04"
+          "origem": "CRU-04",
+          "evidencia": "dev 410592d8 (#49 _score do desempate)",
+          "resultado": "registro saneado em 04/10: #49 já integrada na dev"
         },
         {
           "id": "MOTOR-08",
           "eixo": "bloco",
           "titulo": "#52 etapa 2 (src/): Gate 1 não aberto",
           "nivel": "T2",
-          "estado": "proposta",
+          "estado": "bloqueada",
           "depende_de": [
             "MOTOR-07"
-          ]
+          ],
+          "evidencia": "docs/reports/_harness-2026-09-04/c1-3/wy2_kind_por_linha_05-10.{py,json,md} (json c7180849); pendencias.md 'Medido: W-Y v2'",
+          "resultado": "W-Y v2 reprovado 05/10: P1adjH 217/253/88/111 × controle 223/249/87/110; TCC bloco −6 pela adjudicação (2); FR desloca 4 sem gold pela (3); aguarda decisão do usuário"
         },
         {
           "id": "MOTOR-09",
           "titulo": "Gate 2 documental dos artefatos W-Z2, W-AA, KE e wz_*; encerrar o piloto KE",
           "nivel": "T1",
-          "estado": "pronta",
-          "depende_de": []
+          "estado": "concluída",
+          "depende_de": [],
+          "evidencia": "dev 9cfdf2c7, 14f0e08d (W-Z2, W-AA, wz_*), f79ba7bd (piloto KE encerrado)",
+          "resultado": "registro saneado em 04/10: artefatos já versionados; KE concluído"
         }
       ]
     },
@@ -225,21 +236,25 @@
         "GPT-Tutor-Generator"
       ],
       "handoff": "docs/reports/2026-09-26-handoff-regime-vocab-claude.md",
-      "atualizado_em": "2026-10-01",
+      "atualizado_em": "2026-10-05",
       "tarefas": [
         {
           "id": "VOCAB-01",
           "titulo": "Versionar os relatórios de validação externa de 29/09 (não versionados na principal)",
           "nivel": "T1",
-          "estado": "pronta",
-          "depende_de": []
+          "estado": "concluída",
+          "depende_de": [],
+          "evidencia": "dev a4bceda2 (+0ad895d7)",
+          "resultado": "relatórios de 29/09 versionados na dev (PILOTO-03)"
         },
         {
           "id": "VOCAB-02",
           "titulo": "Decisões D1–D9 da validação externa",
           "nivel": "T2",
-          "estado": "pronta",
-          "nota": "decisão sua"
+          "estado": "concluída",
+          "nota": "decisão sua",
+          "evidencia": "dev a28afffe (PR #98, issue #97)",
+          "resultado": "D1–D9, R-CC e R-VIS decididas; D4, D9 e R-VIS a implementar (VOCAB-05)"
         },
         {
           "id": "VOCAB-03",
@@ -249,7 +264,8 @@
           "janela": "noite",
           "depende_de": [
             "VOCAB-02",
-            "MOODLE-V1-04"
+            "MOODLE-V1-04",
+            "VOCAB-05"
           ]
         },
         {
@@ -260,6 +276,16 @@
           "depende_de": [
             "VOCAB-03"
           ]
+        },
+        {
+          "id": "VOCAB-05",
+          "titulo": "Implementar D4, D9 e R-VIS (gerador v5), criar arquivos da R-CC e congelar P3.1 por hash",
+          "nivel": "T2",
+          "estado": "pronta",
+          "depende_de": [
+            "VOCAB-02"
+          ],
+          "origem": "DECISION"
         }
       ]
     },
@@ -622,6 +648,51 @@
             "VOCAB-01",
             "NOITE-01"
           ]
+        }
+      ]
+    },
+    {
+      "id": "PILOTO",
+      "titulo": "Piloto do agente noturno: observar o ciclo e adiantar MOTOR-00 e VOCAB-01",
+      "prioridade": 13,
+      "janela": "noite",
+      "regra": "sem commit; escrita só na worktree, fora o que o CLI e os hooks gravam; a noite termina em aguarda você",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-noite"
+      ],
+      "handoff": "GPT-Tutor-Generator-noite/docs/reports/Feitos/2026-10-03-piloto-noite/handoff.md",
+      "atualizado_em": "2026-10-05",
+      "tarefas": [
+        {
+          "id": "PILOTO-01",
+          "titulo": "Calibração: suíte de testes na worktree noite e relatório",
+          "nivel": "T0",
+          "estado": "concluída",
+          "depende_de": [],
+          "origem": "USER",
+          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/01-calibracao (PR #95)",
+          "resultado": "suíte: 1 failed da base, 2448 passed, 4 skipped; 0 novas"
+        },
+        {
+          "id": "PILOTO-02",
+          "titulo": "MOTOR-00 preparo: copiar replay_base.json (e024d396) para a worktree noite e verificar",
+          "nivel": "T1",
+          "estado": "concluída",
+          "depende_de": [],
+          "origem": "USER",
+          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/02-motor-00 (PR #95); dev f8e7406e (PR #93)",
+          "resultado": "replay_base.json versionado em noite/piloto; blob e024d396"
+        },
+        {
+          "id": "PILOTO-03",
+          "titulo": "VOCAB-01 preparo: manifesto dos relatórios de validação externa de 29/09 não versionados",
+          "nivel": "T1",
+          "estado": "concluída",
+          "depende_de": [],
+          "origem": "USER",
+          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/03-vocab-01 (PR #95); dev a4bceda2",
+          "resultado": "252 arquivos versionados na dev; gitleaks: falsos positivos com exceção"
         }
       ]
     }
