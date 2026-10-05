@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import partial
 
 from src.builder.routing.file_map import plan_only_unit_specs
+from src.builder.timeline.index import _divisores_de_frase
 
 
 def build_file_map_aliases(
@@ -103,6 +104,7 @@ def build_file_map_aliases(
         iter_content_taxonomy_topics=iter_content_taxonomy_topics,
         score_entry_against_taxonomy_topic=score_entry_against_taxonomy_topic,
         topic_match_result_factory=topic_match_result_factory,
+        divisores_de_frase=_divisores_de_frase,  # P1 (#90): frases compartilhadas, nas duas passadas
     )
 
     score_entry_against_unit = partial(

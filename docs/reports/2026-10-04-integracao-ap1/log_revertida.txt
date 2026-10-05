@@ -1,0 +1,10 @@
+  replay base MF 70 95 s
+  replay base SO 42 113 s
+  replay base IA 63 182 s
+  replay base ES2 35 198 s
+  replay base TCC 27 217 s
+  replay base CG 93 254 s
+  replay base FR 20 256 s
+revertida | ids: 350 | mudanças por ID (sem gold): 0 | src fora: nenhum | callback: ['collect_entry_unit_signals', 'iter_content_taxonomy_topics', 'score_entry_against_taxonomy_topic', 'topic_match_result_factory']
+placar: {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 86, 'sub_aceita': 109} | segundos: 257
+exit=0
