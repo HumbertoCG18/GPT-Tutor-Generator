@@ -168,8 +168,8 @@
           "depende_de": [
             "MOTOR-07"
           ],
-          "evidencia": "docs/reports/_harness-2026-09-04/c1-3/wy2_kind_por_linha_05-10.{py,json,md} (json c7180849); pendencias.md 'Medido: W-Y v2'",
-          "resultado": "W-Y v2 reprovado 05/10: P1adjH 217/253/88/111 × controle 223/249/87/110; TCC bloco −6 pela adjudicação (2); FR desloca 4 sem gold pela (3); aguarda decisão do usuário"
+          "evidencia": "c1-3/wy3_kind_por_linha_05-10.{py,json,md} (json 8ca8d5ea; congelado a2c84ae2); pendencias.md 'Medido: W-Y v3'",
+          "resultado": "W-Y v3 aprovado no aceite 05/10: P1adjH 223/252/88/111, 0 perda; aguarda revisão da tabela A e Gate 1 de implementação"
         },
         {
           "id": "MOTOR-09",
@@ -179,6 +179,15 @@
           "depende_de": [],
           "evidencia": "dev 9cfdf2c7, 14f0e08d (W-Z2, W-AA, wz_*), f79ba7bd (piloto KE encerrado)",
           "resultado": "registro saneado em 04/10: artefatos já versionados; KE concluído"
+        },
+        {
+          "id": "MOTOR-10",
+          "titulo": "Versionar o handoff de 02/10 (motor-p1-moodle) e os artefatos wy2_kind_por_linha_05-10",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE",
+          "achado": "ACH-0001"
         }
       ]
     },
@@ -622,7 +631,7 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-10-02",
+      "atualizado_em": "2026-10-05",
       "tarefas": [
         {
           "id": "LIMPEZA-01",
@@ -642,12 +651,22 @@
           "id": "LIMPEZA-03",
           "titulo": "Apagar as worktrees de trabalho depois que a evidência estiver versionada",
           "nivel": "T1",
-          "estado": "bloqueada",
+          "estado": "pronta",
           "depende_de": [
             "MOTOR-00",
             "VOCAB-01",
             "NOITE-01"
-          ]
+          ],
+          "resultado": "dependências MOTOR-00, VOCAB-01 e NOITE-01 concluídas; apagar exige autorização"
+        },
+        {
+          "id": "LIMPEZA-04",
+          "titulo": "Triar os 7 achados do gitleaks em docs/ da principal (fora do VOCAB-01)",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE",
+          "achado": "ACH-0004"
         }
       ]
     },
