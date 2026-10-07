@@ -168,8 +168,8 @@
           "depende_de": [
             "MOTOR-07"
           ],
-          "evidencia": "c1-3/wy3_kind_por_linha_05-10.{py,json,md} (json 8ca8d5ea; congelado a2c84ae2); pendencias.md 'Medido: W-Y v3'",
-          "resultado": "W-Y v3 aprovado no aceite 05/10: P1adjH 223/252/88/111, 0 perda; aguarda revisão da tabela A e Gate 1 de implementação"
+          "evidencia": "worktree GPT-Tutor-Generator-52 (fix/52-tipo-por-linha, sem commit); c1-3/verifica_52_05-10.json ca463009",
+          "resultado": "etapa 2 implementada 05/10: produto = congelado P1adjH por ID (223/252/88/111), suíte 2482/4/1 FR; aguarda Gate 2"
         },
         {
           "id": "MOTOR-09",

@@ -1,0 +1,65 @@
+{
+  "versao": 1,
+  "achados": [
+    {
+      "id": "ACH-0001",
+      "data": "2026-10-03",
+      "tipo": "divida",
+      "titulo": "Registro: handoff do MOTOR aponta para 23/09; o vigente de 02/10 não está versionado",
+      "origem": "PILOTO-01",
+      "detalhe": "campanhas.json MOTOR.handoff = docs/reports/2026-09-23-handoff-motor-wz-waa-claude.md; vigente docs/reports/2026-10-02-handoff-motor-p1-moodle-claude.md (?? na principal)",
+      "estado": "virou-tarefa",
+      "destino": "MOTOR-10"
+    },
+    {
+      "id": "ACH-0002",
+      "data": "2026-10-03",
+      "tipo": "risco",
+      "titulo": "Base da suíte desatualizada: test_respect_actualtext passou na worktree noite (163f779d)",
+      "origem": "PILOTO-01",
+      "detalhe": "Documentado como falha da base; passou 2x. docs/reports/2026-10-03-piloto-noite/01-calibracao/relatorio.md",
+      "estado": "descartado",
+      "motivo": "test_respect_actualtext passa na dev a28afffe (medido 05/10: 1 passed); falha da base já não existe"
+    },
+    {
+      "id": "ACH-0003",
+      "data": "2026-10-03",
+      "tipo": "bug",
+      "titulo": "git-lock.py bloqueia comandos cujo texto literal (heredoc, argumento) cita subcomando de escrita",
+      "origem": "PILOTO-02",
+      "detalhe": "Falsos positivos em heredoc e em argumento de campanhas.py; ver 02-motor-00/verificacao.md",
+      "estado": "descartado",
+      "motivo": "transferido para a caixa do laboratório (ACH-0001)"
+    },
+    {
+      "id": "ACH-0004",
+      "data": "2026-10-03",
+      "tipo": "risco",
+      "titulo": "gitleaks dir docs/ na PRINCIPAL acusa 7 vazamentos fora do VOCAB-01 (config do repo)",
+      "origem": "PILOTO-03",
+      "detalhe": "Contagem só; arquivos não abertos; pode incluir ignorados no disco",
+      "estado": "virou-tarefa",
+      "destino": "LIMPEZA-04"
+    },
+    {
+      "id": "ACH-0005",
+      "data": "2026-10-03",
+      "tipo": "risco",
+      "titulo": "CRU05: replay_base.json não trackeado colide com MOTOR-00 (add/add LF x CRLF ou checkout abortado)",
+      "origem": "MOTOR-00",
+      "detalhe": "Ao commitar docs/reports/2026-10-01-cru05-cru03/ na CRU05: trazer MOTOR-00 (-text) antes e tirar a cópia idêntica (e024d396) do caminho, ou excluí-la do commit. Revisão job-32 Q1",
+      "estado": "descartado",
+      "motivo": "coberto pela LIMPEZA-03; conferir replay_base.json da cru05 (b9a41a12 x dev b5a6c8ff) antes de apagar"
+    },
+    {
+      "id": "ACH-0006",
+      "data": "2026-10-03",
+      "tipo": "risco",
+      "titulo": "P1: .codex/hooks.json não trackeado difere do arquivo já versionado na dev 163f779d",
+      "origem": "MOTOR-00",
+      "detalhe": "Colisão herdada (não é dos commits do piloto); reconciliar antes de integrar a P1. Revisão job-32 Q1",
+      "estado": "descartado",
+      "motivo": "coberto pela LIMPEZA-03; conferir .codex/hooks.json da p1 (difere da dev) antes de apagar"
+    }
+  ]
+}

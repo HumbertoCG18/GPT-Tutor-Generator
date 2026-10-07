@@ -1,0 +1,31 @@
+{
+ "congelado_sha256_decisoes": "a2c84ae275748c19cff974abf2f97854d27dbd62f155aeb38a69cb84bfdf06d5",
+ "decisoes_P1adjH_iguais_ao_congelado": true,
+ "leituras_do_indice_por_chamador": {
+  "compara_herancas_15-09.py:22:read": 350
+ },
+ "leituras_fora_do_comparador": {},
+ "skip_H": {
+  "CG": [
+   "bloco-09",
+   "bloco-22",
+   "bloco-27"
+  ],
+  "ES2": [],
+  "FR": [
+   "bloco-10"
+  ],
+  "IA": [
+   "bloco-22"
+  ],
+  "MF": [],
+  "SO": [
+   "bloco-10",
+   "bloco-11"
+  ],
+  "TCC": [
+   "bloco-34"
+  ]
+ },
+ "wy3_sha256": "e72ab1137b44a9e87f759b4a306e9039bbc5b2391f1f4c383e0d5f17a42b94a5"
+}
