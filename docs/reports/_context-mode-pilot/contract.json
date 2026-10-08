@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "issue": 18,
+  "upstream": {
+    "repository": "mksglu/context-mode",
+    "commit": "c127f2fe8496fefc36e0ebef36ded92d4fa8f570",
+    "version": "1.0.169",
+    "entrypoint": "server.bundle.mjs"
+  },
+  "isolation": {
+    "entrypoint_must_be_direct_bundle": true,
+    "global_cli_configs_must_be_unchanged": true,
+    "hooks_must_remain_disabled": true,
+    "child_environment_allowlisted": true,
+    "sandboxed_home_data_project_temp": true,
+    "network_monitoring": "not_measured"
+  },
+  "fixtures": {
+    "error": {"expected_exit_code": 7, "expected_is_error": true},
+    "unicode": {"expected": "ação|漢字|🎉|é"},
+    "json": {"expected": {"curso": "IA", "ok": true, "valor": 17}},
+    "truncation": {"rows": 120, "payload_chars": 96, "line_ending": "LF", "must_be_indexed": true},
+    "synthetic_secret": {"generated_at_runtime": true, "allowed_location": "sandbox/project/secret-fixture.txt"}
+  },
+  "adoption_gate": {
+    "all_fixtures_pass": true,
+    "raw_recovery_exact": "recompose complete fixture rows returned by ctx_search, ordered by row number, then compare bytes",
+    "command_exit_code_preserved": true,
+    "server_exit_code_preserved": true,
+    "synthetic_secret_leaks": 0
+  }
+}

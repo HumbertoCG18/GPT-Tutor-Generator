@@ -1,0 +1,64 @@
+name: Security
+
+# Incidente de 24/09 (#81, #82): barra credencial nova em PR e em push na main.
+# A) versionado que o .gitignore manda ignorar; B) caminho de credencial, independente do .gitignore;
+# C) gitleaks fixado em cada commit novo, inclusive intermediarios; D) testes das protecoes.
+# O historico antigo e investigacao separada (gitleaks_scan.py history), sem excecao ampla aqui. Sem artefatos.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar gitleaks fixado (SHA-256 conferido)
+        run: |
+          python scripts/security/gitleaks_scan.py install --dest "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Intervalo de commits novos
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.event.after }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then base=$PR_BASE; head=$PR_HEAD; else base=$PUSH_BEFORE; head=$PUSH_AFTER; fi
+          # Base desconhecida (branch nova, force-push): falha em vez de varrer menos ou o historico inteiro.
+          if ! git cat-file -e "${base}^{commit}" 2>/dev/null || ! git cat-file -e "${head}^{commit}" 2>/dev/null; then
+            echo "::error::base ou head ausente (${base:-vazio}..${head:-vazio}); verificacao manual necessaria"
+            exit 1
+          fi
+          echo "range=${base}..${head}" >> "$GITHUB_OUTPUT"
+      - name: A e B) arvore sem versionado-ignorado nem caminho de credencial
+        run: python scripts/security/check_repo_hygiene.py tree
+      - name: B) caminho de credencial em algum commit novo
+        env:
+          RANGE: ${{ steps.range.outputs.range }}
+        run: python scripts/security/check_repo_hygiene.py range "$RANGE"
+      - name: C) gitleaks em cada commit novo
+        env:
+          RANGE: ${{ steps.range.outputs.range }}
+        run: python scripts/security/gitleaks_scan.py range "$RANGE"
+      - run: python -m pip install -e ".[dev]"
+      - name: D) testes das protecoes
+        env:
+          REQUIRE_GITLEAKS: "1"
+        run: python -m pytest tests/test_security_guards.py tests/test_credential_store.py tests/test_m365.py -q -p no:cacheprovider

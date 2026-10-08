@@ -11,6 +11,7 @@ Lookup table for all pattern files in this directory. Check here before starting
 | [agent-skills-adapted.md](agent-skills-adapted.md) | Aplicar baseline/ratchet, checkpoint de contexto ou observabilidade orientada a perguntas sem instalar a coleção Agent Skills |
 | [propagar-workflow.md](propagar-workflow.md) | Levar o pacote do workflow (.workflow, .mex, instruções, hooks) de uma branch integrada para as outras, sem perder conteúdo do destino |
 | [workflow-tres-clis.md](workflow-tres-clis.md) | Alterar skills, MCPs e hooks em Claude Code, Codex e AGY, com validação de descoberta e drift |
+| [agente-noturno.md](agente-noturno.md) | Selecionar goals, conferir preflight, quota, isolamento, retomada e suspensão opcional |
 | [benchmark-codegraph.md](benchmark-codegraph.md) | Comparar índices de código com corpus congelado, gabarito independente e custos medidos |
 | [codegraph-fallback.md](codegraph-fallback.md) | Consultar Graphify primeiro e CBM como fallback, sem sincronização entre índices |
 | [add-build-artifact.md](add-build-artifact.md) | Adding a new generated file to the output repository |
