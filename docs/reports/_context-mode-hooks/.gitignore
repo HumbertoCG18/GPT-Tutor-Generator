@@ -1,0 +1,4 @@
+_runs/
+_shim/
+*.full.json
+__pycache__/

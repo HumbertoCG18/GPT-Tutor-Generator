@@ -2,6 +2,17 @@
 [extend]
 useDefault = true
 
+# Incidente de 24/09 (#81): as regras padrao nao reconhecem o refresh token opaco do Microsoft Entra salvo em JSON.
+# Casa refresh/access token atribuido a valor literal longo entre aspas (JSON, YAML, atribuicao, varias linhas),
+# sem prefixo fixo. Entropia minima descarta marcadores como "xxxx..."; valor sem aspas (variavel) nao casa.
+[[rules]]
+id = "oauth-refresh-access-token"
+description = "refresh_token/access_token OAuth com valor literal"
+regex = '''(?i)["']?(?:refresh|access)[_-]?token["']?\s*[:=]\s*["']([^"'\s]{20,})["']'''
+secretGroup = 1
+entropy = 3.5
+keywords = ["refresh_token", "refresh-token", "refreshtoken", "access_token", "access-token", "accesstoken"]
+
 # Relatorios citam SHAs de commit git (40 hex), que casam com o formato legado
 # de token do Sourcegraph. O projeto nao usa Sourcegraph; so esse formato exato e ignorado.
 [[allowlists]]
@@ -29,3 +40,13 @@ condition = "AND"
 regexTarget = "match"
 regexes = ['''\.\w+"\s*:\s*"[0-9a-f]{64}"''']
 paths = ['''^docs/reports/_harness-2026-09-04/''']
+
+# O piloto do Context Mode (18/09) registra o sha256 de um segredo sintetico, nao o segredo, e a chave casa a regra
+# generic-api-key. So essa chave exata (+ 64 hex), nesse resultado, e ignorada.
+[[allowlists]]
+description = "sha256 do segredo sintetico do piloto do Context Mode"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+regexes = ['''synthetic_secret_sha256"\s*:\s*"[0-9a-f]{64}''']
+paths = ['''^docs/reports/_context-mode-pilot/result\.json$''']

@@ -223,6 +223,8 @@ __marimo__/
 *.pdf
 # Exemplo sintético do pacote cego (VOCAB-01): stubs PDF versionados de propósito (#82)
 !docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/pacote_cego/exemplo_sintetico/**/*.pdf
+# Export SARC da fixture de cronograma (61cd4b04): versionado de proposito.
+!tests/fixtures/cg/Cronograma2026-2.pdf
 
 # LLM context dirs (ferramentas internas, não commitadas)
 graphify-out/

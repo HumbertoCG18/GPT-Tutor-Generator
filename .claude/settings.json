@@ -21,6 +21,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/security/setup_nuvem.sh\"",
+            "timeout": 180
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {}

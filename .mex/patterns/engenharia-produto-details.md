@@ -85,7 +85,7 @@ CI deve usar permissões mínimas e dados sintéticos/revisados, sem material pr
 - [#11 — UI](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/11): inventário de jornadas e plano de adequação.
 - [#12 — observabilidade](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/12): desenho e escolha de backend.
 - [#13 — qualidade Python](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/13): baseline e CI incremental.
-- [#14 — qualidade web](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): gates da campanha C6.
+- [#14 — qualidade web](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/14): contrato documental em [qualidade C6](../../docs/reports/2026-09-19-contrato-qualidade-c6.md); ativação dos checks na primeira fatia pela [#41](https://github.com/HumbertoCG18/GPT-Tutor-Generator/issues/41).
 
 Fontes oficiais: [OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/),
 [ArchContract](https://github.com/leofmarciano/arch-contract), [Biome](https://biomejs.dev/),

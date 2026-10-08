@@ -1,0 +1,279 @@
+{
+  "issue": 19,
+  "upstream_sha": "c127f2fe8496fefc36e0ebef36ded92d4fa8f570",
+  "upstream_version": "1.0.169",
+  "runs": 15,
+  "inventory": {
+    "claude-code": {
+      "active_events": [
+        "PreToolUse",
+        "SessionStart"
+      ],
+      "context_mode_events": 6,
+      "overlap": 2
+    },
+    "codex": {
+      "active_events": [
+        "PreToolUse",
+        "SessionStart"
+      ],
+      "context_mode_events": 6,
+      "overlap": 2
+    },
+    "antigravity-cli": {
+      "active_events": [
+        "ECC imported",
+        "claude-mem imported"
+      ],
+      "context_mode_events": 3,
+      "overlap": "capture semantics"
+    }
+  },
+  "platforms": {
+    "claude-code": {
+      "events": {
+        "pretooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 768,
+          "stderr_bytes": 0,
+          "latency_ms": 74.84
+        },
+        "posttooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 0,
+          "stderr_bytes": 169,
+          "latency_ms": 146.659
+        },
+        "userpromptsubmit": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 0,
+          "stderr_bytes": 169,
+          "latency_ms": 86.732
+        },
+        "precompact": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 3,
+          "stderr_bytes": 169,
+          "latency_ms": 83.992
+        },
+        "sessionstart": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 4801,
+          "stderr_bytes": 169,
+          "latency_ms": 94.9
+        },
+        "stop": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 3,
+          "stderr_bytes": 168,
+          "latency_ms": 81.04
+        }
+      },
+      "latency": {
+        "samples": 15,
+        "p50_ms": 68.269,
+        "p95_ms": 89.439
+      },
+      "context": {
+        "response_bytes": 5575,
+        "heuristic_tokens_bytes_div_3": 1859
+      },
+      "response_contains_synthetic_secret": false,
+      "malformed_input_fail_open": true,
+      "timeout_contained": true,
+      "storage": {
+        "database_count": 1,
+        "row_count": 12,
+        "duplicate_groups": 0,
+        "synthetic_secret_file_count": 1,
+        "synthetic_secret_events": [
+          {
+            "type": "rule_content",
+            "category": "rule",
+            "source_hook": "SessionStart"
+          },
+          {
+            "type": "turn_end",
+            "category": "session",
+            "source_hook": "Stop"
+          },
+          {
+            "type": "user_prompt",
+            "category": "user-prompt",
+            "source_hook": "UserPromptSubmit"
+          }
+        ],
+        "schema_errors": []
+      }
+    },
+    "codex": {
+      "events": {
+        "pretooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 651,
+          "stderr_bytes": 0,
+          "latency_ms": 131.339
+        },
+        "posttooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 78,
+          "stderr_bytes": 169,
+          "latency_ms": 192.35
+        },
+        "userpromptsubmit": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 83,
+          "stderr_bytes": 169,
+          "latency_ms": 105.743
+        },
+        "precompact": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 3,
+          "stderr_bytes": 169,
+          "latency_ms": 108.252
+        },
+        "sessionstart": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 4255,
+          "stderr_bytes": 169,
+          "latency_ms": 103.961
+        },
+        "stop": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 3,
+          "stderr_bytes": 169,
+          "latency_ms": 101.462
+        }
+      },
+      "latency": {
+        "samples": 15,
+        "p50_ms": 88.598,
+        "p95_ms": 101.294
+      },
+      "context": {
+        "response_bytes": 5073,
+        "heuristic_tokens_bytes_div_3": 1691
+      },
+      "response_contains_synthetic_secret": false,
+      "malformed_input_fail_open": false,
+      "timeout_contained": true,
+      "storage": {
+        "database_count": 1,
+        "row_count": 10,
+        "duplicate_groups": 0,
+        "synthetic_secret_file_count": 1,
+        "synthetic_secret_events": [
+          {
+            "type": "rule_content",
+            "category": "rule",
+            "source_hook": "PostToolUse"
+          },
+          {
+            "type": "turn_end",
+            "category": "session",
+            "source_hook": "Stop"
+          },
+          {
+            "type": "user_prompt",
+            "category": "user-prompt",
+            "source_hook": "UserPromptSubmit"
+          }
+        ],
+        "schema_errors": []
+      }
+    },
+    "antigravity-cli": {
+      "events": {
+        "pretooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 655,
+          "stderr_bytes": 0,
+          "latency_ms": 92.661
+        },
+        "posttooluse": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 0,
+          "stderr_bytes": 169,
+          "latency_ms": 164.058
+        },
+        "stop": {
+          "exit_code": 0,
+          "timeout": false,
+          "stdout_bytes": 0,
+          "stderr_bytes": 169,
+          "latency_ms": 98.509
+        }
+      },
+      "latency": {
+        "samples": 15,
+        "p50_ms": 87.24,
+        "p95_ms": 99.281
+      },
+      "context": {
+        "response_bytes": 655,
+        "heuristic_tokens_bytes_div_3": 219
+      },
+      "response_contains_synthetic_secret": false,
+      "malformed_input_fail_open": true,
+      "timeout_contained": true,
+      "storage": {
+        "database_count": 1,
+        "row_count": 5,
+        "duplicate_groups": 0,
+        "synthetic_secret_file_count": 0,
+        "synthetic_secret_events": [],
+        "schema_errors": []
+      }
+    }
+  },
+  "config_hashes_before": {
+    "claude_settings": "0536496025b8318dbb3f452d0a740c1ef6c615330a933c47ae54bb68cee5a0f8",
+    "codex_config": "ac765485aaf777694648b8db6c81418e98fa8c949bac35ddbc87ca7493be9168",
+    "codex_hooks": "71e057c31c9b199bd7edf4e3576c81edf6050e73805f39a68f429f0067d7258b",
+    "gemini_settings": "ecd869d37c6326f2ed2c896e618b6ed4c4dca3a8db7f7ee68326fdffaced20f8",
+    "agy_hooks": "b7451d9a98c4c96f6720115527d8d919d82ff56ba7a1d4b2f1f49e01c1fdaf54",
+    "agy_mcp": "2f80d6278a68b9a19037dd8cdcf87d96ec69ab36c1d919ae69c48279d83ba165"
+  },
+  "config_hashes_after": {
+    "claude_settings": "0536496025b8318dbb3f452d0a740c1ef6c615330a933c47ae54bb68cee5a0f8",
+    "codex_config": "ac765485aaf777694648b8db6c81418e98fa8c949bac35ddbc87ca7493be9168",
+    "codex_hooks": "71e057c31c9b199bd7edf4e3576c81edf6050e73805f39a68f429f0067d7258b",
+    "gemini_settings": "ecd869d37c6326f2ed2c896e618b6ed4c4dca3a8db7f7ee68326fdffaced20f8",
+    "agy_hooks": "b7451d9a98c4c96f6720115527d8d919d82ff56ba7a1d4b2f1f49e01c1fdaf54",
+    "agy_mcp": "2f80d6278a68b9a19037dd8cdcf87d96ec69ab36c1d919ae69c48279d83ba165"
+  },
+  "checks": {
+    "upstream_pinned": true,
+    "all_events_exit_zero": true,
+    "global_configs_unchanged": true,
+    "no_response_secret": true,
+    "no_persisted_secret": false,
+    "no_duplicate_records_by_content_key": true,
+    "no_hook_stderr": false,
+    "malformed_input_fail_open": false,
+    "harness_timeout_enforced": true,
+    "byte_exact_backup_restore": true
+  },
+  "passed": 7,
+  "total": 10,
+  "activation_recommendation": {
+    "overall": "reject full hook activation",
+    "claude-code": "reject: secret persistence, stderr, RTK and SessionStart overlap",
+    "codex": "reject: secret persistence, stderr, malformed-input crash and Graphify overlap",
+    "antigravity-cli": "reject: stderr, pytest denial and unverified payload fields"
+  }
+}

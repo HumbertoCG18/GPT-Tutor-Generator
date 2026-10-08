@@ -13,6 +13,7 @@ dependencies = [
     "pymupdf4llm>=0.0.10",
     "pdfplumber>=0.10.0",
     "jsonschema>=4.0.0",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
@@ -39,3 +40,9 @@ target-version = "py311"
 # Comeco conservador: erro real, nao estilo. 108k LOC sem lint ate hoje —
 # ligar regra de estilo agora produziria milhares de achados e zero sinal.
 select = ["E9", "F", "B"]
+
+[tool.coverage.run]
+omit = [
+    "src/__main__.py",
+    "src/ui/*",
+]
