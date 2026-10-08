@@ -15,7 +15,7 @@
   reservado ao desenvolvimento do GPT-Tutor-Generator. O loop não troca modelos por quota.
 
 Comparação Fable/Astra concluída: ambos 23/23 no parser e 12/12 no roteamento, sem retries.
-Relatório: ../docs/reports/Feitos/workflow-medicao-fable-astra_16-09.md. Amostra pequena,
+Relatório: ../docs/reports/_archive/workflow-medicao-fable-astra_16-09.md. Amostra pequena,
 contextos distintos; não comprova economia de quota ou superioridade de Astra na revisão.
 Fable executa; Astra revisa por preferência aprovada, uma chamada automática por tarefa
 relevante. Fable corrige os achados. Nenhuma troca automática de executor por quota.

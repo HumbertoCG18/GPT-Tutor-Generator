@@ -69,4 +69,4 @@ Não ampliar permissões de shell. `-p` e stdin não se combinam.
 Para `/quota`, preferir PowerShell: MSYS no Bash pode converter o comando em caminho.
 Não executar consultas de modelo como teste de instalação.
 
-Medição sem LLM: [auditoria 17/09](../../docs/reports/2026-09-17-auditoria-delegacao-leituras.md).
+Medição sem LLM: [auditoria 17/09](../../docs/reports/_archive/2026-09-17-auditoria-delegacao-leituras.md).

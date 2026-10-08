@@ -9,7 +9,7 @@ retomada no Alethe e também no terminal; ainda não confirmou teste em conversa
 
 ## Estado verificado
 
-- Implementação autorizada nas três CLIs registrada em workflow-implantacao_15-09.md.
+- Implementação autorizada nas três CLIs registrada em _archive/workflow-implantacao_15-09.md.
 - Laboratório: C:/Users/Humberto/Documents/GitHub/agent-workflow-lab.
 - verify.py passou: 75 arquivos pessoais sem drift; instruções pessoais idênticas.
 - Instância nova do Codex e app-server novo: 24 skills pessoais/sistema habilitadas.
@@ -53,4 +53,4 @@ Skillfile não promovido após falha no piloto local. claude-mem não grava por 
 não reiniciar worker. Fontes pessoais comuns no laboratório, distribuição por hashes.
 Não alterar fontes do GPT Tutor nem trabalhos de atribuição paralelos por esta tarefa.
 
-Tracker vivo: pendencias.md. Relatório: workflow-implantacao_15-09.md.
+Tracker vivo: pendencias.md. Relatório: _archive/workflow-implantacao_15-09.md.

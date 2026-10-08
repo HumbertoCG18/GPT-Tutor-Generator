@@ -13,7 +13,7 @@ reconstruído dos artefatos da sessão (tracker, relatórios `Feitos/*_15-09.md`
 4. Estado vivo: `docs/reports/pendencias.md`, sete blocos "(15/09)" no topo.
 
 Artefato citado sem pasta mora em `docs/reports/_harness-2026-09-04/c1-3/` (`c1-3/`). Relatório citado sem pasta mora em
-`docs/reports/Feitos/`.
+`docs/reports/_archive/`.
 
 ## 1. Em uma frase
 

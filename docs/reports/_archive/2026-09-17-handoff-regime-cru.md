@@ -32,7 +32,7 @@ pronto na §5: falta só a aprovação do usuário para escrever o teste vermelh
 
 ## 3. O que 17/09 estabeleceu (medido)
 
-1. **4.2 em build real**: relatório `../Feitos/categoria-prova-copia_17-09.md`, JSON `c1-3/verificacao_pacote_categoria_MF_IA_17-09.json`.
+1. **4.2 em build real**: relatório `../_archive/categoria-prova-copia_17-09.md`, JSON `c1-3/verificacao_pacote_categoria_MF_IA_17-09.json`.
    MF: 3 categorias alteradas (só os alvos `ProvasIndutivas_EspecificaçõesRecursivas{,_Arvores,_Listas}.pdf`,
    `provas` → `material-de-aula`), bloco 50 → 53/66, unidade 61/66, sub 29/58 e 25/58 sem perda, 0 previsões alteradas
    fora dos alvos, controles `revisao-p1` e `revisao-p1-gabarito` invariantes. IA: 0 alterações, 38/42, 39/42, 5/39, 4/39

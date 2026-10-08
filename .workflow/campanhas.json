@@ -84,7 +84,7 @@
           "estado": "concluída",
           "depende_de": [],
           "nota": "antes de qualquer limpeza de worktree",
-          "evidencia": "dev f8e7406e (PR #93: aa2e4239+f3edbc65), blob e024d396; docs/reports/Feitos/2026-10-03-piloto-noite/02-motor-00/verificacao.md"
+          "evidencia": "dev f8e7406e (PR #93: aa2e4239+f3edbc65), blob e024d396; docs/reports/_archive/2026-10-03-piloto-noite/02-motor-00/verificacao.md"
         },
         {
           "id": "MOTOR-01",
@@ -680,7 +680,7 @@
       "worktrees": [
         "GPT-Tutor-Generator-noite"
       ],
-      "handoff": "GPT-Tutor-Generator-noite/docs/reports/Feitos/2026-10-03-piloto-noite/handoff.md",
+      "handoff": "GPT-Tutor-Generator-noite/docs/reports/_archive/2026-10-03-piloto-noite/handoff.md",
       "atualizado_em": "2026-10-05",
       "tarefas": [
         {
@@ -690,7 +690,7 @@
           "estado": "concluída",
           "depende_de": [],
           "origem": "USER",
-          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/01-calibracao (PR #95)",
+          "evidencia": "docs/reports/_archive/2026-10-03-piloto-noite/01-calibracao (PR #95)",
           "resultado": "suíte: 1 failed da base, 2448 passed, 4 skipped; 0 novas"
         },
         {
@@ -700,7 +700,7 @@
           "estado": "concluída",
           "depende_de": [],
           "origem": "USER",
-          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/02-motor-00 (PR #95); dev f8e7406e (PR #93)",
+          "evidencia": "docs/reports/_archive/2026-10-03-piloto-noite/02-motor-00 (PR #95); dev f8e7406e (PR #93)",
           "resultado": "replay_base.json versionado em noite/piloto; blob e024d396"
         },
         {
@@ -710,7 +710,7 @@
           "estado": "concluída",
           "depende_de": [],
           "origem": "USER",
-          "evidencia": "docs/reports/Feitos/2026-10-03-piloto-noite/03-vocab-01 (PR #95); dev a4bceda2",
+          "evidencia": "docs/reports/_archive/2026-10-03-piloto-noite/03-vocab-01 (PR #95); dev a4bceda2",
           "resultado": "252 arquivos versionados na dev; gitleaks: falsos positivos com exceção"
         }
       ]

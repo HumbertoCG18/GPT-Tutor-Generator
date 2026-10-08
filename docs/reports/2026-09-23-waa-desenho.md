@@ -6,7 +6,7 @@
 Pedido: texto colado pelo usuário em 23/09, depois do W-Z2 (reformular o W-AA antes de executar; entregar primeiro o
 desenho, as diferenças para o que já foi medido e as conferências pontuais). **Nada do W-AA foi executado.** Nada em
 `src/`, régua, defaults ou legado foi alterado; sem commit. Base de referência: W-Z2
-(`Feitos/2026-09-23-diagnostico-causal-tres-eixos.md`; capturas congeladas `.frzero/wz2_captura_*`).
+(`_archive/2026-09-23-diagnostico-causal-tres-eixos.md`; capturas congeladas `.frzero/wz2_captura_*`).
 
 ## Conclusão
 

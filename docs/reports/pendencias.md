@@ -53,7 +53,7 @@ Catálogo em branch não integrada; referência por texto: issue #42 e handoff `
 
 ### WF-44 [classe C2] — modelos, roteamento e validação · origem USER · prioridade: suporte ao motor · janela assistida
 Integração Alethe21/09: correções locais MCP/representação de hooks/SessionEnd aplicadas; protocolo initialize+tools/list(9) passou sem workers. Fonte e snapshot tooling alinhados,sem segunda fila. Relatório docs/reports/2026-09-21-alethe-interface.md. Persistência da ponte gerada/patch de cache e carregamento/confiança em sessão nova ainda pendentes; orquestração nativa não homologada. Gate2 pendente,estado motor/reviews preservados.
-- WF-44-01 [T2] medir3casos×4perfis AGY. estado: concluída tecnicamente; Gate2 da campanha pendente. aceite cumprido:12/12chamadas,4perfis com3/3acertos,sem promoção global. evidência: docs/reports/2026-09-21-medicao-agy-campanhas.md e lab/private/agy-benchmark-20260921. dep: —; confiança alta no escopo,baixa na generalização.
+- WF-44-01 [T2] medir3casos×4perfis AGY. estado: concluída tecnicamente; Gate2 da campanha pendente. aceite cumprido:12/12chamadas,4perfis com3/3acertos,sem promoção global. evidência: docs/reports/_archive/2026-09-21-medicao-agy-campanhas.md e lab/private/agy-benchmark-20260921. dep: —; confiança alta no escopo,baixa na generalização.
 - WF-44-02 [T2] validar classificação pelo investigador e perfil escolhido em tarefa delimitada. estado: proposta. aceite: justificativa/modelo solicitado vs observado e resultado; prova anterior Claude→AGY não certifica todos os perfis. dep: WF-44-01.
 - WF-44-03 [T2 provisório] resolver divergência Codex Companion em verify.py. estado: proposta. aceite: uso real inventariado,decisão de política explícita e verificação; não remover plugin para apenas deixar verde. dep: —.
 - WF-44-04 [T1] conferir diff/Gate2/entrega da consolidação. estado: bloqueada. aceite: artefatos coerentes,aprovações e integração rastreáveis. dep: WF-44-02,WF-44-03; sem commit autorizado.
@@ -154,7 +154,7 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
 
 - Bootstrap consolidado e distribuído: 11.648 → 3.450 tokens na régua o200k_base; cenário de planejamento 5.982. Não representa quota nem contexto total da CLI.
 - Hooks de roteamento configurados nas três CLIs, 3/3 comandos locais válidos. [USER] Confiar a nova definição em /hooks no Codex; [CODE] verificar carregamento e delegação em sessão nova. Gates/contadores #42/#43 preservados; agente noturno ainda bloqueado.
-- Evidência e rollback: [relatório #44](2026-09-20-contexto-workflow-44.md). Gate 2 pendente; verify.py mantém o erro anterior sobre Codex Companion.
+- Evidência e rollback: [relatório #44](_archive/2026-09-20-contexto-workflow-44.md). Gate 2 pendente; verify.py mantém o erro anterior sobre Codex Companion.
 
 ## Medido: sync do tutor de FR para a P1 de 24/09 (20/09)
 
@@ -573,7 +573,7 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
 - 14 arquivos movidos com `git mv` (renames no index, sem commit):
   - 11 para `_archive/`: handoffs substituídos (regime-cru 15, 16 e 17/09; motor-90 21/09; motor-49/cru02/fr-regua
     22/09; nuvem-ambiente 1 e 2) e artefatos de agosto (baseline 08/08, patch 18/08);
-  - 3 para `Feitos/`: W-Z2 (diagnóstico causal), piloto KE e categoria-prova.
+  - 3 para `_archive/`: W-Z2 (diagnóstico causal), piloto KE e categoria-prova.
 - Referências atualizadas em `.mex` (ROUTER, setup, navigation-history), `.workflow/HANDOFF.md`, tracker e 6 relatórios;
   links conferidos.
 - Ficaram, de propósito:
@@ -709,7 +709,7 @@ Cobertura: issues abertas11,12,14,41,42,43,44,45,46; PRs abertas9,39,40. Status 
 
 ## Medido: piloto de conhecimento externo (ConceptNet 5.7.0, regime experimental) — reprovado, recomendação encerrar (23/09)
 
-Relatório `docs/reports/Feitos/2026-09-23-piloto-ke-resultado.md`; estado `.workflow/local/piloto-ke-20260923.md`. Pré-registro antes da aquisição; congelamento antes do gold; execução local sem rede (0 tentativas). Sub primária 86 → 77/251 (+7/−16); bloco e unidade idênticos por ID; gold nos candidatos 136 → 145, escolhido quando candidato 56,6 % → 49,7 %; MF, ES2 e FR regridem; IA sem geração nova (`modelos-preditivos`/`descritivos` sem alias). ACM CCS em pendência de termos; Wikidata não usada. Resultado experimental, não melhoria; nenhuma variante iniciada. Artefatos c1-3/piloto_ke_* aguardam Gate 2 documental.
+Relatório `docs/reports/_archive/2026-09-23-piloto-ke-resultado.md`; estado `.workflow/local/piloto-ke-20260923.md`. Pré-registro antes da aquisição; congelamento antes do gold; execução local sem rede (0 tentativas). Sub primária 86 → 77/251 (+7/−16); bloco e unidade idênticos por ID; gold nos candidatos 136 → 145, escolhido quando candidato 56,6 % → 49,7 %; MF, ES2 e FR regridem; IA sem geração nova (`modelos-preditivos`/`descritivos` sem alias). ACM CCS em pendência de termos; Wikidata não usada. Resultado experimental, não melhoria; nenhuma variante iniciada. Artefatos c1-3/piloto_ke_* aguardam Gate 2 documental.
 
 ## Commitado (Gate 2, local): #65 D9 explícito em matéria nova (`844c61b7`); diagnósticos e propostas documentados (`fc4a9466`) (23/09)
 
@@ -786,7 +786,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 - Pedido do usuário 23/09 (texto colado; registro literal `c1-3/wz2_pedido_usuario_23-09.md`): completar o diagnóstico sem
   refazer o W-Z, sem R5, 0 src; medições só para as lacunas registradas antes (Q1–Q6 em
   `.workflow/local/wz2-diagnostico-causal-20260923.md`). Relatório principal:
-  **`docs/reports/Feitos/2026-09-23-diagnostico-causal-tres-eixos.md`**; dados `c1-3/wz2_diagnostico_causal_23-09.{py,json}` +
+  **`docs/reports/_archive/2026-09-23-diagnostico-causal-tres-eixos.md`**; dados `c1-3/wz2_diagnostico_causal_23-09.{py,json}` +
   `_anexo.md`; capturas congeladas antes do gold em `.frzero/wz2_captura_*`. Fidelidade: base = congelamento do W-Z por ID;
   DP recomputado = gravado em 125/125 blocos; índice documental reproduz o sha do W-U (`c17786ef…`). Executor: agente ativo
   (claude-opus-5-5, effort xhigh por escolha do usuário), sem worker; 1ª rodada interrompida por mim antes do gold (desligar
@@ -1697,7 +1697,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   testes cobrem os 2 pontos removidos, poda de órfãos não toca `.deeptutor/`, brief dizia +25
   (é +14). Cópia em `c1-3/astra_revisao_deeptutor_17-09.md`.
 - Não tocado: `.deeptutor/` antigo nos 8 tutores e nas cópias `.frzero`; citações históricas em
-  `Feitos/`, `_archive/` e benchmark. `docs/deeptutor-soul-template.md` fica como referência de
+  `_archive/`, `_archive/` e benchmark. `docs/deeptutor-soul-template.md` fica como referência de
   persona para o ambiente web.
 
 ## Concluído: categoria prova em cópia nova (17/09)
@@ -1713,7 +1713,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   de hashes protegidos nenhum (86 arquivos).
 - Astra revisou o plano, read-only (`01a0ad85`, APROVAR COM AJUSTES, 8 ajustes, 0 bloqueios);
   todos incorporados no driver e no scorer. Única chamada Astra da tarefa.
-- Relatório `Feitos/categoria-prova-copia_17-09.md`; JSON
+- Relatório `_archive/categoria-prova-copia_17-09.md`; JSON
   `c1-3/verificacao_pacote_categoria_MF_IA_17-09.json`; builds MF 2.054 s e IA 3.371 s em
   paralelo com `OMP/OPENBLAS/MKL_NUM_THREADS=1` (15/09: 3.981 s e 3.502 s).
 - Limites: 3 positivos sem holdout; 2 cursos (SO/ES2/TCC/CG/FR, 210 entradas, fora; ~110 min
@@ -1744,7 +1744,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 
 - Raiz reduzida de 51 para 9 Markdown: somente tracker, handoffs/planos vivos,
   gold canônico e campanhas ainda abertas.
-- 36 entregas encerradas movidas para `Feitos/` (34 rastreadas com `git mv`);
+- 36 entregas encerradas movidas para `_archive/` (34 rastreadas com `git mv`);
   seis estados, planos ou handoffs substituídos movidos para `_archive/`.
 - Referências diretas e relativas atualizadas; zero caminho antigo restante.
 - Verificação: 29 testes passaram, 26 arquivos compilaram, JSON válido,
@@ -1768,7 +1768,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 - Concluído (16/09, 23:38): piloto Fable/Astra medium, quatro invocações principais,
   sem retries. Ambos: parser 23/23 e roteamento 12/12; Fable 40,422 s, Astra 44,406 s.
   Contextos/cache distintos; não mede economia de quota nem delegação autônoma.
-  Fable disponível nas duas chamadas. [Medição](Feitos/workflow-medicao-fable-astra_16-09.md).
+  Fable disponível nas duas chamadas. [Medição](_archive/workflow-medicao-fable-astra_16-09.md).
 - [CODE] Primeira escalada/retomada real ainda não validada. Codex emitiu aviso de
   claude-mem antes do JSON final nos dois braços; consumidor deve usar a mensagem final,
   sem concatenar eventos. Manter política vigente; amostra pequena não autoriza expansão.
@@ -1780,9 +1780,9 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   [Resultado integrado](Feitos/workflow-validacao-integrada_16-09.md).
 - Concluído: piloto AGY de síntese com fonte fornecida (3/3 fatos) e edição documental
   isolada (somente parágrafo autorizado, original preservado). Quatro chamadas incluindo
-  controle e pesquisa bloqueada; [resultados e limites](Feitos/workflow-validacao-agy_16-09.md).
+  controle e pesquisa bloqueada; [resultados e limites](_archive/workflow-validacao-agy_16-09.md).
 - Concluído: permissão Context7 validada no projeto AGY isolado com duas ferramentas
-  explicitamente autorizadas; nenhuma ampliação global. [Piloto](Feitos/workflow-context7-piloto_16-09.md).
+  explicitamente autorizadas; nenhuma ampliação global. [Piloto](_archive/workflow-context7-piloto_16-09.md).
 - Concluído: usuário substituiu chave Context7 no AGY; autenticação validada. Piloto encerrou
   com 2/3 pesquisas úteis, 5/5 fatos corretos nas respostas úteis e 6/20 tentativas acumuladas
   conservadoramente. Nova chave ausente dos 15 arquivos de saída/log/trajetória examinados.
@@ -1795,7 +1795,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   Definição nativa docs-lookup não comprovada; contratos usados inline.
   Google Docs/Sheets/Drive excluídos pelo usuário desta validação.
 - Implementação autorizada aplicada nas três CLIs. Relatório e limites:
-  [workflow-implantacao_15-09.md](workflow-implantacao_15-09.md).
+  [_archive/workflow-implantacao_15-09.md](_archive/workflow-implantacao_15-09.md).
   Plano: [workflow-tres-clis](../superpowers/plans/2026-09-15-workflow-tres-clis.md).
 - Concluído: curadoria Codex, skills pessoais comuns, CBM nas três configurações,
   RTK explícito para pytest, verificador de drift e instruções pessoais idênticas.
@@ -1850,7 +1850,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   auto_index=false e auto_watch=true. CBM registrado somente no Codex.
 - Limites: Graphify exige update antes de consultar mudanças sem commit;
   o watcher CBM testado exigia sessão MCP ativa na raiz correta; política atual
-  sob demanda registrada acima. Relatório: Feitos/codegraph-fallback_15-09.md.
+  sob demanda registrada acima. Relatório: _archive/codegraph-fallback_15-09.md.
 
 ## Concluído: piloto Graphify × codebase-memory-mcp (15/09)
 
@@ -1861,7 +1861,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   roteamento; adoção posterior como fallback registrada acima.
 - Ambos passaram na adição/remoção de chamada em cópia isolada. Sem fontes vivos
   alterados. Harness e fontes congeladas em `docs/reports/_codegraph-benchmark/`.
-- Relatório: `Feitos/benchmark-codegraph_15-09.md`. Limite: recuperação fixa com
+- Relatório: `_archive/benchmark-codegraph_15-09.md`. Limite: recuperação fixa com
   leitura de fonte, não agente autônomo nem validação de todas as arestas.
 
 ## Concluído: verificação de categoria prova matemática (15/09)
@@ -1873,7 +1873,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   de revisão/resolução e uma imagem preservados; seis nomes sintéticos com
   marcadores P1/Prova1 mantidos como provas. 56 hashes de artefatos inalterados.
 - Zero LLM; sem src/tutores regravados. Relatório
-  `Feitos/categoria-prova-verificacao_15-09.md`; evidência no harness:
+  `_archive/categoria-prova-verificacao_15-09.md`; evidência no harness:
   verificacao_categoria_prova_verificada_15-09.json.
 - [DECISION] Antes de promover: reconstrução em cópia com categoria na entrada
   e medição de unidade/subtemas. Replay temporal não valida esses eixos.
@@ -1882,7 +1882,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 ## Concluído: reconstrução com pacote completo (15/09)
 
 - Usuário autorizou documentos originais + payload Moodle local + plano/SARC,
-  sem transplante de decisões. Protocolo `Feitos/protocolo-pacote-fontes_15-09.md`.
+  sem transplante de decisões. Protocolo `_archive/protocolo-pacote-fontes_15-09.md`.
 - Destinos novos em .frzero/pacote_fontes_15-09; captura validada por hash,
   parsers/backfills existentes, zero LLM. Regime documental local mantido.
 - Sete cursos: blocos169→210/237 (+47/-6), unidades234→239/284 (+9/-4),
@@ -1894,7 +1894,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   categoria provas pela heurística de nome; janela [05]→[05,06,07] causa abstenção
   com lexical=False/sem voter. Probe lexical=True recupera 05 nos três; retirar
   só datas de cards não recupera. Evidência replay_abstencoes_pacote_raiz_15-09.json.
-- Relatório `Feitos/pacote-fontes_15-09.md`; placar verificacao_pacote_7cursos_15-09.json.
+- Relatório `_archive/pacote-fontes_15-09.md`; placar verificacao_pacote_7cursos_15-09.json.
 - [DECISION] Próximo teste proposto: categoria de prova matemática versus avaliação,
   preservando o comportamento de provas reais. Não habilitar lexical globalmente.
   Nenhuma promoção/correção em src autorizada nesta etapa; régua intacta.
@@ -1909,7 +1909,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   23 sem match. Datas/formato iguais em 23/24 cards; TDE ES2 diverge 03/07 vs 06/07.
 - Unidade inferida do bloco gold concorda com currículo em 203/220, diverge em17.
   Controles confirmam sinais úteis e perdas: não remover metadados nem trocar
-  precedência global. Relatório `Feitos/raiz-cadeia-metadados_15-09.md`.
+  precedência global. Relatório `_archive/raiz-cadeia-metadados_15-09.md`.
 - [DECISION] Próximo: reconstrução com pacote completo de fontes locais e parsing,
   sem transplantar derivados. Não requer recaptura remota neste ponto. Depois
   avaliar granularidade/incerteza entre seção, arquivo, bloco e unidade curricular.
@@ -1924,7 +1924,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 - Causas: card inferido exclui acerto e substitui decisão ainda incerta (MF/SO);
   datas de seção ampliam competição lexical (ES2/IA); unidade do bloco sobrepõe
   ou preenche unidade curricular (ES2/SO). Datalab não foi fator deste contraste.
-- Relatório: `Feitos/diagnostico-perdas-metadados_15-09.md`; evidência no harness:
+- Relatório: `_archive/diagnostico-perdas-metadados_15-09.md`; evidência no harness:
   `diagnostico_perdas_metadados_verificado_15-09.json`.
 - [DECISION] Próximo teste proposto: SO, alternativa com dois scores zero substitui
   acerto anterior. Não promover correção nem reabrir precedência global sem medida.
@@ -1939,7 +1939,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   Não somar braços; combinação não medida. Nenhum aprovado para produto.
 - 22 rodadas válidas, sete controles idênticos; texto, taxonomia e entradas
   invariantes; zero chamadas LLM/rede registradas e zero mudanças manual/pinned.
-  Controle inicial sem ZIPs inválido preservado. Relatório: `Feitos/metadados-blocos_15-09.md`.
+  Controle inicial sem ZIPs inválido preservado. Relatório: `_archive/metadados-blocos_15-09.md`.
 - [DECISION] Ingestão original: payloads locais encontrados na auditoria da cadeia
   acima; próximo contraste deve rederivar metadados deles. Transplante histórico
   mediu dependência, não aquisição autônoma. Sem correção em src nesta medição.
@@ -1969,8 +1969,8 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 - Sete rodadas finais: zero tentativas de rede e zero falhas de importação.
   Sete PDFs marcados `scanned-pages`; importação não garante qualidade de texto.
   CG original teve tentativas Datalab bloqueadas, foi interrompido e não avaliado.
-- Relatório e protocolo em `Feitos/herancas-cru_15-09.md` e
-  `Feitos/protocolo-herancas-cru_15-09.md`. Evidência consolidada:
+- Relatório e protocolo em `_archive/herancas-cru_15-09.md` e
+  `_archive/protocolo-herancas-cru_15-09.md`. Evidência consolidada:
   `_harness-2026-09-04/c1-3/auditoria_herancas_15-09.json` e `.log`.
   Sem correção em src nesta medição, sem commit/push; `.motor3eixos` preservada.
 
@@ -1978,8 +1978,8 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
 
 - Gate 1 aprovado e implementação verificada: destino experimental novo,
   produtor estruturado único e consumidores independentes do glossário renderizado.
-  Plano e evidências em `Feitos/plano-taxonomia-direta_15-09.md` e
-  `Feitos/taxonomia-direta-implementacao_15-09.md`.
+  Plano e evidências em `_archive/plano-taxonomia-direta_15-09.md` e
+  `_archive/taxonomia-direta-implementacao_15-09.md`.
 - Suite: 2357 passed, 4 skipped. Implementação: 316 materiais, 0 ganhos/0 perdas;
   CG 59/59 tópicos com alias. Tags, perfil semântico e atribuições preservados.
   Motor: 0 tentativas de rede. Sem commit/push.
@@ -3989,7 +3989,7 @@ flag 14 (igual) · curada 198/199 conf-err 0 · 191/191 · 55/57 (igual) · sent
 determinismo pos-higiene: **8/8, 0 arquivos nao deterministicos** (`c1-3/determinismo_higiene.log`, tripwire; 0 chamadas nos originais e nas copias).
 **Gold de subunidade v2 (proposto, aguarda aprovacao):** CG 93 materiais, **82 pontuaveis** (1 unidade errada + 2 bloco errado + 8 meta), produto acerta
 49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
-`docs/reports/Feitos/2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
+`docs/reports/_archive/2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
 
 ## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **APROVADO PELO USER EM 06/09**, ver secao acima) + BUG: ZIPS DO MF COLIDEM
 **Arquivos:** `docs/reports/subunit_gt_CG.csv` (93 materiais, **63 pontuaveis**, 22 com UNIDADE computada errada -> `scorable=no` com a unidade
