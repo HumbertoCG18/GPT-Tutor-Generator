@@ -31,8 +31,8 @@ O inventario descreve o checkout principal observado em 22/09, incluindo alterac
 
 ## Material para lotes posteriores
 
-- plans/: 6 arquivos. ROADMAP.md ainda referencia code-summarization-gemini.md e material-agnostic-refactor.md. Checkboxes e estados discordam; verificar tracker/aceites antes de mover para Feitos/.
-- docs/superpowers/plans/: 13 arquivos no topo e 54 em Feitos/. specs/: 9 no topo e 46 em Feitos/. Preservar links; eventual mudanca de nome em lote proprio.
+- plans/: 6 arquivos. ROADMAP.md ainda referencia code-summarization-gemini.md e material-agnostic-refactor.md. Checkboxes e estados discordam; verificar tracker/aceites antes de mover para _archive/.
+- docs/superpowers/plans/: 13 arquivos no topo e 54 em _archive/. specs/: 9 no topo e 46 em _archive/. Preservar links; eventual mudanca de nome em lote proprio.
 - .superpowers/: 260 arquivos, 5.286.480 bytes no inventario, 7 rastreados. Separar provas SDD de estado operacional de brainstorm; nao apagar em bloco.
 - .claude/: 3 backups locais; .claude/skills e .claude/worktrees vazias no inventario. Nenhuma pasta artificial criada.
 - %SystemDrive%/: 4 arquivos de cache Windows; origem ainda nao confirmada. Relatorio com caminho malformado na raiz tambem exige triagem.

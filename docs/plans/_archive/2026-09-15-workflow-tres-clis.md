@@ -1,6 +1,6 @@
 # Plano de implementação: workflow comum para Claude Code, Codex e AGY
 
-**Estado:** aprovado e implantado nas três CLIs; aceite final pelo Alethe pendente. Execução e desvios medidos em `docs/reports/workflow-implantacao_15-09.md`; estado vivo no tracker.
+**Estado:** aprovado e implantado nas três CLIs; aceite final pelo Alethe pendente. Execução e desvios medidos em `docs/reports/_archive/workflow-implantacao_15-09.md`; estado vivo no tracker.
 **Objetivo:** reduzir contexto inicial e conflitos, tornar a seleção de skills reproduzível e testar economia de saída sem acrescentar API paga.
 **Arquitetura:** Alethe cuida das sessões; ECC do processo; um conjunto pequeno de skills comuns e pacotes por projeto. Um único gestor escreve cada destino. Instalação de skills não implica portabilidade de hooks, agentes ou autenticação.
 **Execução:** seguir os donos definidos no AGENTS.md do usuário. A aprovação deste plano autoriza apenas as fases selecionadas; nenhum commit, publicação ou remoção destrutiva implícita.

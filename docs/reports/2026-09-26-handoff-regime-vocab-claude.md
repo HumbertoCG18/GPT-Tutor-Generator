@@ -61,7 +61,7 @@ W-AD5 sem necessidade: os manifestos dizem o que existe.
    - A primeira execução parou por integridade: a régua na cópia de trabalho tem CRLF e o blob congelado tem LF.
    - O usuário autorizou o **espelho endereçado por conteúdo**, e o avaliador rodou byte-idêntico.
    - Resultado válido com ressalvas (§3). Errata final com três correções de redação.
-5. **Limpeza de `docs/reports`:** 14 arquivos movidos com `git mv` (11 para `_archive/`, 3 para `Feitos/`), referências
+5. **Limpeza de `docs/reports`:** 14 arquivos movidos com `git mv` (11 para `_archive/`, 3 para `_archive/`), referências
    atualizadas, renames só staged (§7). Criada a convenção `Desktop\para-gpt\`.
 6. **Rodada VOCAB_LIMPO** (`c1-3/vocab_limpo_26-09/`): recompilação limpa única e seis braços capturados SEM GOLD (§4).
 7. **Estado final:** prompt de revisão da rodada entregue (`para-gpt\prompt_revisao_vocab_limpo.md` +

@@ -15,6 +15,6 @@ Usar quando avaliar substituição ou combinação de índices de código.
    remoção e adição de uma relação em cópia isolada.
 
 Harness reproduzível: `docs/reports/_codegraph-benchmark/PROTOCOL.md`.
-Medições e decisão: relatório em `docs/reports/Feitos/benchmark-codegraph_15-09.md`.
+Medições e decisão: relatório em `docs/reports/_archive/benchmark-codegraph_15-09.md`.
 Índices maiores não provam qualidade; leitura de fonte pode equalizar resultados.
 Piloto sem perguntas inéditas não demonstra superioridade geral.

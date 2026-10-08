@@ -19,7 +19,7 @@ Próxima instalação continua bloqueada até existir gap concreto, candidato au
 
 ## Método e cobertura
 
-O script [`audit_usage.py`](_capability-usage-audit/audit_usage.py) lê apenas os campos estruturados de chamadas. Texto de prompts, definições de ferramentas e nomes encontrados em documentação não contam como uso. Os argumentos servem somente para reconhecer leitura de `SKILL.md`, invocação `gh` e a ferramenta filha do invólucro; nenhum argumento ou segredo entra no resultado.
+O script [`audit_usage.py`](../_capability-usage-audit/audit_usage.py) lê apenas os campos estruturados de chamadas. Texto de prompts, definições de ferramentas e nomes encontrados em documentação não contam como uso. Os argumentos servem somente para reconhecer leitura de `SKILL.md`, invocação `gh` e a ferramenta filha do invólucro; nenhum argumento ou segredo entra no resultado.
 
 | Fonte | Arquivos | Linhas JSON válidas | Inválidas | Intervalo | Chamadas estruturadas |
 |---|---:|---:|---:|---|---:|

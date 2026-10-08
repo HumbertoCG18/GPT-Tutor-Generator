@@ -71,7 +71,7 @@ if __name__=='__main__':
            '- Harness: [protocolo](../_codegraph-benchmark/PROTOCOL.md), [perguntas](../_codegraph-benchmark/questions.json), [gabarito](../_codegraph-benchmark/gold.json), [placar CSV](../_codegraph-benchmark/scores.csv), [resumo JSON](../_codegraph-benchmark/summary.json).',
            '- Com Python311, `score.py` regenera placar; `verify.py` confere hashes, respostas atuais, parser, atualização e instalação. `evaluate.py` só repete respostas ausentes, falhas ou pacotes com hash diferente; consome cota do Codex.',
            '- Para outro corpus, usar diretório de rodada novo; prepare.py recusa sobrescrever um gabarito congelado. Não reutilizar o gabarito se as fontes mudarem.','']
-    path=BASE.parent/'Feitos/benchmark-codegraph_15-09.md'
+    path=BASE.parent/'_archive/benchmark-codegraph_15-09.md'
     path.write_text('\n'.join(text),encoding='utf-8')
     usages=[]
     for p in (BASE/'answers').glob('*.json'):

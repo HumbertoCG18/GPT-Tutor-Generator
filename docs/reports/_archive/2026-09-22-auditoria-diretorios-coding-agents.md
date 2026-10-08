@@ -52,9 +52,9 @@ GPT-Tutor-Generator/
 ├── scripts/hooks/              # uma implementação dos guardas para as três CLIs
 └── docs/
     ├── plans/                   # destino futuro dos planos hoje dispersos
-    │   └── Feitos/
+    │   └── _archive/
     ├── specs/                   # destino futuro das especificações
-    │   └── Feitos/
+    │   └── _archive/
     └── reports/                 # auditorias, evidências e handoffs existentes
 ```
 
@@ -79,8 +79,8 @@ Não copiar plugins/caches do home ao repositório. Não mover bancos, auth, mem
 
 | Origem | Proposta | Condição antes de executar |
 |---|---|---|
-| plans/ + docs/superpowers/plans/ | Consolidar em docs/plans/, preservando Feitos/ | Mapear referências e conflitos de nome; verificar conclusão real, não idade/checklist isolado |
-| docs/superpowers/specs/ | Consolidar em docs/specs/, preservando Feitos/ | Corrigir links relativos e referências do tracker/handoffs |
+| plans/ + docs/superpowers/plans/ | Consolidar em docs/plans/, preservando _archive/ | Mapear referências e conflitos de nome; verificar conclusão real, não idade/checklist isolado |
+| docs/superpowers/specs/ | Consolidar em docs/specs/, preservando _archive/ | Corrigir links relativos e referências do tracker/handoffs |
 | docs/superpowers/BACKLOG.md | Reconciliar pendências com o tracker existente; preservar história no arquivo de decisões/relatórios | Não copiar indiscriminadamente para a fila-campanhas nem perder decisões antigas |
 | .superpowers/brainstorm e sdd | Classificar estado temporário, evidência concluída e trabalho aberto; arquivar apenas evidência concluída no local documental escolhido | Conferir referências e conclusão; sessões abertas ficam no lugar; não apagar todo o diretório |
 | .claude/workflows/auditoria-enxame.js | Manter na localização nativa; revisar portabilidade e rota operacional | Caminho ROOT absoluto na linha 11; chamadas agent/pipeline/parallel nas linhas 66–90. Não executar nesta auditoria |
@@ -112,7 +112,7 @@ Não foi executado smoke de worker, nem confirmada uma correção upstream do MC
 ## Plano mínimo e aceites antes de migrar
 
 - Lote A: aprovar/entregar o piloto existente; conferir o que deve ser compartilhado além da allowlist inicial. Gate 2 continua pendente.
-- Lote B: reconciliar instruções conflitantes e mover planos/specs com tabela arquivo-origem/destino, atualização de links e Feitos/ preservado. src/ fora do escopo.
+- Lote B: reconciliar instruções conflitantes e mover planos/specs com tabela arquivo-origem/destino, atualização de links e _archive/ preservado. src/ fora do escopo.
 - Lote C: consolidar somente bundles comprovadamente duplicados e recursos pessoais mal posicionados. Medição de uso antes de remoção; testar descoberta nas versões instaladas.
 - Lote D: validar bootstrap de uma worktree nova e integração com Alethe. Comparar skills/instruções/hooks antes e depois; 0 alterações em src/, 0 segredo copiado, 0 reset de Gates/revisão e 0 dispatch duplicado.
 - Worktrees antigas e caches ficam para lote de limpeza próprio, após confirmação de dono, resultados e estado Git. Não confundir reorganização com purga de sessões.

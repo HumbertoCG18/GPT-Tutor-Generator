@@ -46,7 +46,7 @@ Bloco cumpre em todos (MF exatamente no mínimo). Unidade falta +8 (CG +11, SO +
   de cobertura 237 (+1/−12); todas reprovadas; subunidade cai em todas. Três execuções (1ª morta por memória; 2ª quebrou no
   dump; 3ª = 2ª byte a byte).
 - **W-Z2 diagnóstico causal** (`wz2_diagnostico_causal_23-09.{py,json}` + `_anexo.md`; relatório
-  `docs/reports/Feitos/2026-09-23-diagnostico-causal-tres-eixos.md`). Reexecução de conferência completa, idêntica.
+  `docs/reports/_archive/2026-09-23-diagnostico-causal-tres-eixos.md`). Reexecução de conferência completa, idêntica.
   - Gold **por bloco** existe (`tests/fixtures/eval/gold_units_{MF,SO,IA,ES2,TCC}.csv`) e casa com os blocos dos builds por
     data exata. DP posicional acerta 51/56 blocos; erros = 2 preenchimentos em fronteira (ES2 bloco-07, TCC bloco-10), 2 na
     janela de desvio do IA, 1 cabeçalho (SO bloco-06, gold u04). 40 % dos blocos-candidatos têm afinidade zero.

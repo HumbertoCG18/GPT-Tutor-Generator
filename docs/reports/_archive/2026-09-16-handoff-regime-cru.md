@@ -17,7 +17,7 @@ do estado do git, do tracker e do rollout da sessão Codex "Testar cuidados do r
 5. Estado vivo: `docs/reports/pendencias.md`, blocos "(16/09)" e "(15/09)" no topo.
 
 Artefato citado sem pasta mora em `docs/reports/_harness-2026-09-04/c1-3/` (`c1-3/`). Relatório citado sem pasta mora em
-`docs/reports/Feitos/`.
+`docs/reports/_archive/`.
 
 ## 1. Em uma frase
 

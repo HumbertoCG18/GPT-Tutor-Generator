@@ -20,7 +20,7 @@ Fonte única das instruções do projeto para Codex, Claude Code e AGY.
 - code_curation.json gerado é cache: podar obsoletos antes de ler, escrever atomicamente.
 - Fixtures reproduzem contrato real com proveniência: [convenções](.mex/context/conventions.md) e [contratos](.mex/context/institutional.md). Ler antes de código/testes.
 - Estado vivo apenas em `.workflow/campanhas.json`; `docs/reports/pendencias.md` guarda histórico e medições, não é mais fila. Atualizar só o escopo da tarefa.
-- Plano/spec/report concluídos com todos os aceites verdes vão para Feitos/ do próprio diretório; git mv quando trackeados. Não arquivar trabalho incompleto.
+- Plano/spec/report concluídos com todos os aceites verdes vão para _archive/ do próprio diretório; git mv quando trackeados. Não arquivar trabalho incompleto.
 - MEX guarda intenção/convenções/contratos; Graphify estrutura. Sem duplicar estado no mapa/contexto.
 - Ao mudar código, atualizar o grafo; ao mudar arquitetura/pipeline/atribuição, atualizar docs/Overview-Sistema.html.
 - Ao fechar tarefa, corrigir contexto obsoleto e padrão desviado; padrão novo só se necessário, com entrada em .mex/patterns/INDEX.md.

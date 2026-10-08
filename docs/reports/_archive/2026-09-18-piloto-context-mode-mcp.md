@@ -14,10 +14,10 @@ HOME, DATA_DIR, PROJECT_DIR, configuração Claude e TEMP apontaram para o sandb
 Dependências foram instaladas com `--ignore-scripts` apenas no clone privado. Nenhuma configuração
 de Claude, Codex ou AGY mudou; nenhum pacote global, skill ou hook foi instalado.
 
-Contrato: [`_context-mode-pilot/contract.json`](_context-mode-pilot/contract.json).
-Harness: [`_context-mode-pilot/run_pilot.py`](_context-mode-pilot/run_pilot.py).
-Resultado estruturado: [`_context-mode-pilot/result.json`](_context-mode-pilot/result.json).
-Revisão independente: [`_context-mode-pilot/astra-review.md`](_context-mode-pilot/astra-review.md).
+Contrato: [`_context-mode-pilot/contract.json`](../_context-mode-pilot/contract.json).
+Harness: [`_context-mode-pilot/run_pilot.py`](../_context-mode-pilot/run_pilot.py).
+Resultado estruturado: [`_context-mode-pilot/result.json`](../_context-mode-pilot/result.json).
+Revisão independente: [`_context-mode-pilot/astra-review.md`](../_context-mode-pilot/astra-review.md).
 
 ## Resultado medido
 

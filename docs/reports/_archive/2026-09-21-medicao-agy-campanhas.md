@@ -42,7 +42,7 @@ Pro3.1high teve menor tempo médio; Sonnet4.6 menor output agregado. Flash3.8hig
 Manter matriz aprovada sem promoção global. Para próximo piloto assistido de auditoria delimitada, Pro3.1high é candidato justificado por este resultado; Sonnet4.6 é alternativa a selecionar antes da chamada, não fallback automático. Investigador registra nível, critério e limites. Não chamar todos novamente em tarefa real. Nenhum default alterado.
 
 ## Fila e fechamento noturno
-Inventário: [pendencias.md](pendencias.md), bloco fila-campanhas:26tarefas únicas/11campanhas, níveis T0–T3 e classes C1–C3. Fonte GitHub consultada nesta rodada:9issues abertas (#11,#12,#14,#41–46),3PRs (#9,#39,#40). Estados classificados pelo investigador; níveis de escopo indefinido permanecem provisórios. Labels locais, não criados no GitHub. Histórico fora do bloco preservado; tarefas tecnicamente prontas ainda entram quando Gate2/integração pendem.
+Inventário: [pendencias.md](../pendencias.md), bloco fila-campanhas:26tarefas únicas/11campanhas, níveis T0–T3 e classes C1–C3. Fonte GitHub consultada nesta rodada:9issues abertas (#11,#12,#14,#41–46),3PRs (#9,#39,#40). Estados classificados pelo investigador; níveis de escopo indefinido permanecem provisórios. Labels locais, não criados no GitHub. Histórico fora do bloco preservado; tarefas tecnicamente prontas ainda entram quando Gate2/integração pendem.
 
 #42 continua bloqueada: causa de unexpected_model/unrecognized não estabelecida; diagnóstico sintético instrumentado de1chamada exige autorização específica; preflight/base/recursos e E2E continuam pendentes. Suspensão Windows real não implementada, generic_night negado; não prometer uma noite autônoma. Uma revisão já consumida não é renovada.
 

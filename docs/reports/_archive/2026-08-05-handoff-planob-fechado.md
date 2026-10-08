@@ -1,7 +1,7 @@
 # Handoff — Plano B FECHADO, campanha encerrada (2026-08-05)
 
 **Branch:** `feat/motor-atribuicao` · head `84d25b0` · **Este é o handoff de fechamento** do Plano B
-(sucede `docs/reports/Feitos/2026-08-05-handoff-planob-pronto.md`, que era o handoff de partida —
+(sucede `docs/reports/_archive/2026-08-05-handoff-planob-pronto.md`, que era o handoff de partida —
 "7 tasks, NENHUMA executada"). Agora: 7/7 executadas, review final READY TO MERGE, campanha
 encerrada.
 
@@ -18,7 +18,7 @@ encerrada.
    OFF. Nenhum reprocess real, nenhum flip de flag.
 5. **Achado paralelo da sessão** (fora do escopo do plano, autorizado pelo user): investigação
    completa da perda da unidade-03 do MF — causa-raiz FATO, promovida a
-   `docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md`. Vira a PRÓXIMA prioridade [CODE] em
+   `docs/reports/_archive/2026-08-05-unit-sources-investigacao.md`. Vira a PRÓXIMA prioridade [CODE] em
    `pendencias.md`. Ver §4.
 
 ## §2 O que mudou, por task
@@ -62,7 +62,7 @@ encerrada.
   auto-perpetuante. Matcher **inocentado**: com as 3 unidades reais, bloco-16 do MF cai em
   unidade-03 (argmax 4, experimento real). +2 vazamentos idênticos: `app.py:2391` (unprocess) e
   `curator_studio.py:1293/1303` (reject). Investigação completa promovida:
-  `docs/reports/Feitos/2026-08-05-unit-sources-investigacao.md`. Vira campanha própria — ver §5.
+  `docs/reports/_archive/2026-08-05-unit-sources-investigacao.md`. Vira campanha própria — ver §5.
 - **`persist=True` write-trap fechado para os scripts read-only.** Achado na Task 4
   (`_build_file_map_timeline_context_from_course` grava `manifest.json` — migração
   `manual_timeline_block_id` bloco-NN→uuid — mesmo em contexto de "leitura", não só o bump de
