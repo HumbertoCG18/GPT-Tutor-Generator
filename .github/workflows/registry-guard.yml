@@ -1,0 +1,26 @@
+name: Registry guard
+
+# The campaign registry and the findings box change only on the main checkout, where they live
+# uncommitted until a chore(workflow) commit made there. A PR that also changes them makes the next
+# pull of the main checkout fail. Policy: agent-workflow-lab references/campaigns.md, "Escrita".
+# Canonical copy: agent-workflow-lab ci/registry-guard.yml; projects copy it unchanged.
+on:
+  pull_request:
+
+jobs:
+  registry:
+    # Syncing one trunk into another may carry registry commits made on the main checkout.
+    if: ${{ !startsWith(github.head_ref, 'sync/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: The PR leaves the registry alone
+        # The checkout is the PR's merge commit: ^1 is the base, ^2 the PR head.
+        run: |
+          changed=$(git diff --name-only HEAD^1...HEAD^2 -- .workflow/campanhas.json .workflow/achados.json)
+          if [ -n "$changed" ]; then
+            echo "::error::This PR changes $(echo $changed). Registry changes are made on the main checkout (campanhas.py or the Alethe Todo List) and committed there."
+            exit 1
+          fi
