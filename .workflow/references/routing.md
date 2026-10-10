@@ -5,7 +5,7 @@ Aplicar sem exigir pedido explícito de delegação. Ler uma vez por tarefa; esc
 - Pergunta/status/documentação pequena: agente ativo.
 - Código: Claude Code executa conforme nível investigado abaixo.
 - Arquitetura, múltiplos componentes ou aceite ambíguo: Codex planeja/orquestra; Claude Code implementa.
-- Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md.
+- Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md (em T3, mais uma após NOT APPROVED).
 - Auditoria/corpus/pesquisa/achados: AGY (papel principal), fontes e arquivos de saída delimitados.
 
 ## Investigador e níveis (aprovado em 21/09/2026)
