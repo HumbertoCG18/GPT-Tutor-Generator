@@ -36,6 +36,15 @@ investigador confirma/revisa antes da próxima fase. Reclassificar com evidênci
 nunca como fallback por quota/recusa. Tarefa pequena pode ser T3; longa pode ser T1.
 Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 
+## Leitura no plano da OpenAI (fase 3 da #5, aprovada em 10/10/2026)
+
+Trabalho só de leitura vai para o Codex: verificar a issue contra o código antes de implementar,
+investigação delimitada e triagem do registro de campanhas ou de achados. Fora do Alethe, ferramenta
+codex_read do Mod astra-review; no Alethe, alethe_delegate com readOnly. A implementação fica no
+Claude Code, inclusive T1. O coordenador confere a resposta no código antes de agir e registra no
+estado o caminho e o que confirmou ou refutou. Limites: Codex nunca implementa automaticamente;
+pergunta sem segredos; effort pelo nível (medium T1/T2, high T3).
+
 ## AGY: pesquisador e orquestrador de último recurso
 
 Papel principal do AGY: pesquisador e derivados (pesquisa, auditoria, corpus, achados),
