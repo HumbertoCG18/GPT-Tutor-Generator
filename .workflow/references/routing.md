@@ -22,9 +22,9 @@ nível sustentado pelos critérios, não soma nem número de tokens/arquivos.
 | Nível | Critério | Executor Claude | Planejador Codex se necessário | Auditor AGY padrão se necessário |
 |---|---|---|---|---|
 | T0 | Determinístico: consulta, contagem, check mecânico | ferramenta, sem nova chamada | agente ativo | sem nova chamada |
-| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5-5 / medium | gpt-6-luna / medium | gemini-3.8-flash-low |
-| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5-5 / high | gpt-6.1-sol / high | gemini-3.8-flash-medium |
-| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-fable-5-1 / high | gpt-6-astra / high | gemini-3.8-flash-high |
+| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5-5 / medium | gpt-6.1-sol / medium | claude-sonnet-5-5-medium |
+| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5-5 / high | gpt-6.1-sol / high | claude-opus-5-5-high |
+| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-fable-5-1 / high | gpt-6-astra / high | claude-opus-5-5-high |
 
 Modelos em uso (conferidos em 30/09/2026): Claude Code prioriza claude-sonnet-5-5 e
 claude-opus-5-5, mais claude-fable-5-1; Codex usa gpt-6.1-sol, gpt-6-astra, gpt-6-sol e
@@ -78,7 +78,9 @@ Matriz governa próximas chamadas autorizadas, não troca sessão/default global
 Código relevante mantém uma revisão read-only do revisor: medium T1/T2, high T3; correção pelo
 executor selecionado. Não abrir chamada só para preencher coluna. Haiku/Luna ficam fora
 da seleção automática até avaliação; xhigh/max exigem justificativa/aprovação específica;
-ultra/ultracode não habilitados (orquestração adicional). Ausência/permissão/quota: parar.
+ultra/ultracode não habilitados (orquestração adicional). Permissão/quota/recusa: parar.
+Ausência de transporte admite somente a alternativa já prevista em review.md, antes da
+primeira tentativa, com o mesmo escopo e limite; nunca repetir uma revisão que falhou.
 Registrar modelo observado separado do solicitado; ausente = não atestado. Medir qualidade,
 input/cache_create/cache_read/output e tempo antes de promover vencedor. Preço de API
 não comprova economia de assinatura. Sem novo orçamento de revisão por reclassificação.

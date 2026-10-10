@@ -11,6 +11,15 @@ nativo do Alethe não libera automaticamente execução noturna. Hooks existente
 
 ## Continuidade no Alethe
 
+Identidade verificável em campos separados: `- worktree: <absoluto>`, `- branch: <nome|detached>`
+e `- head: <SHA completo>`. `branch_e_head` é narrativa, não substitui esses campos.
+Antes de executar ou delegar, rodar `python <lab>/hooks/delegate-gate.py --check <checkout> --action execute`.
+Para investigação/revisão usar `--action inspect`; isso não renova tentativas nem aprova Gates.
+Estado ausente, copiado ou legado deve ser reconciliado com Git e tracker antes de seguir;
+preservar a história em arquivo local separado e todos os contadores da mesma tarefa.
+Não copiar o estado de outra worktree para satisfazer o check. No Codex/AGY esse preflight
+é comando explícito do coordenador; a existência do hook Claude não prova execução nas outras CLIs.
+
 Consultar o Planner e seus Jobs/Runs com alethe_status; cruzar os IDs com o estado
 existente, cwd/Worktree e branch/HEAD do Git. O armazenamento nativo preserva a
 identidade operacional; tracker/estado preservam aceite, Gates, tentativas e revisões.

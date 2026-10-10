@@ -1,5 +1,17 @@
 # Issues, PRs e releases
 
+Aceite é evidência por critério, não só contagem de testes: registrar commit/diff, comando,
+resultado e pendência em `evidencia_de_aceite`. Para desktop, separar verificação automática,
+build, instalação autorizada e validação nativa. A instalação necessária ao teste visual
+pode ocorrer com autorização do dono antes do aceite visual; marcar esse aceite pendente.
+Não exigir que o usuário valide uma atualização ainda não instalada.
+Registrar manifesto/commit/SHA256 em `artefato_instalado` e cenário/resultado/captura em
+`validacao_nativa`; quando houver regressão de desempenho, medir RAM/CPU no cenário real.
+Ausência de ferramenta nativa é limitação registrada, nunca "UI validada" por teste de componente.
+CI deve cobrir a base real do PR (`dev` quando adotada), mantendo os checks existentes;
+job ausente não equivale a job verde. Snapshot do workflow é promovido junto da campanha,
+sem sobrescrever worktrees com WIP; `verify.py --projects-only` mostra drift por checkout.
+
 Toda tarefa de correção, melhoria ou nova função, incluindo documentação/CI que altere o projeto, começa por issue no GitHub do repositório correto. Pesquisar duplicatas; reutilizar issue aberta com o mesmo escopo. Uma issue por resultado verificável, não por chamada de ferramenta. Perguntas e diagnóstico exploratório sem mudança não exigem issue. Abrir a issue não aprova implementação nem antecipa campanha futura.
 
 Antes de editar, registrar issue/URL, problema, escopo, critérios de aceite e validação. Trabalhar em branch própria ou worktree isolado quando houver trabalho concorrente; não misturar mudanças de outra tarefa. Antes de publicar uma branch derivada, conferir `git log origin/<base>..HEAD`: não publicar commits de outra frente sem autorização; rebasear sobre a base publicada quando necessário. Se GitHub estiver indisponível, registrar o bloqueio e preparar diagnóstico/rascunho local, sem declarar issue criada.

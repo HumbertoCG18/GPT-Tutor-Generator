@@ -11,6 +11,9 @@
 - alvo_de_release_e_rollback:
 - objetivo_e_escopo_aprovados:
 - branch_e_head:
+- worktree: <caminho absoluto deste checkout>
+- branch: <nome exato ou detached>
+- head: <SHA completo conferido; atualizar após mudança de HEAD>
 - coordenador_e_sessao:
 - investigador_e_sessao:
 - classificacao: <T0..T3; C1..C3 ou nenhuma; provisória/confirmada>
@@ -21,7 +24,7 @@
 - executor: <Claude/modelo conforme routing.md ou escolha explícita>
 - revisor: papel reviewer ou reviewer-high (somente leitura; registrar o modelo observado)
 - restricoes_explicitas:
-- gate_1: pendente
+- gate_1: pendente <aprovado … | dispensado <motivo> em tarefa pequena e clara>
 - gate_2: pendente
 - etapa_atual:
 - proxima_acao:
@@ -31,6 +34,8 @@
 - criterio_de_termino:
 - evidencias_e_tentativas:
 - diff_e_testes:
+- artefato_instalado: <não aplicável | pendente | commit, caminho absoluto e SHA256>
+- validacao_nativa: <não aplicável | pendente | cenário, resultado e evidência; RAM medida quando pertinente>
 - escaladas_automaticas: 0
 - papel_autorizado: <opcional; papéis fora do nível escolhidos pelo usuário, separados por vírgula>
 - revisao_autorizada: <opcional; autorização explícita do usuário para nova revisão>

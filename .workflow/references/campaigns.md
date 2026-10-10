@@ -21,6 +21,25 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 
 ## Elo com a tarefa ativa
 
+No GPT Tutor, uma worktree de desenvolvimento por campanha ativa, criada da `dev`
+atual conferida. As tarefas da campanha compartilham essa worktree e seus checkpoints;
+uma campanha nova recebe outra worktree a partir da `dev` já integrada.
+`git worktree add -b <branch-da-campanha> <pasta> dev` cria o checkout; registrar base/HEAD,
+campanha e tarefa no estado local. Não herdar estado operacional da campanha anterior.
+
+Ao terminar: checks aplicáveis verdes, revisão independente e aceites cumpridos;
+Gate 2 antes de commit e autorização própria para push/merge. Integrar por PR para `dev`,
+verificar o commit integrado e só então retirar a worktree. Verde não autoriza merge.
+Não acumular worktrees antigas só para preservar o snapshot do workflow.
+
+Antes de remover: inventariar diff/index/untracked/ignorados, commits exclusivos, PRs,
+PTYs/workers/spawns pendentes e symlinks/junctions. HEAD antigo ou integrado não prova
+que o WIP foi entregue. Evidência local útil vai para backup com hashes; código não
+integrado e sessões ativas impedem remoção. Usar `git worktree remove` sem `--force`;
+não apagar branches remotas nem integrar WIP como efeito colateral da limpeza.
+Worktrees legadas com código pendente são exceções preservadas até integrar ou arquivar
+explicitamente esse código. Não propagá-las só para ocultar drift no verificador.
+
 1. Escolher a tarefa do registro (criar com `tarefa` se faltar).
 2. Gravar `campanha` e `tarefa` em `.workflow/local/active-task.md`; ao passar a `status: executando`, o hook sincroniza-tarefa.py põe `em execução` no registro.
 3. Delegar com `task: <ID>` igual a `tarefa`. Com registro, o delegate-gate.py bloqueia delegação, revisão ou validação sem tarefa aberta e dá o comando de criação.
@@ -54,6 +73,9 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 - Ler a fila no início/retomada; atualizar ao descobrir pendência e ao concluir tarefa, durante sessão ativa.
 - Sessão read-only não escreve: propõe o delta ao coordenador.
 - Ideia nova entra como `proposta`, nunca como autoridade para execução. Gates 1/2 permanecem.
+- Registro e caixa versionados mudam só no checkout principal e chegam ao tronco só por commit próprio `chore(workflow)` feito ali. PR nunca altera `.workflow/campanhas.json` nem `.workflow/achados.json`, salvo branch `sync/*`: a cópia viva, ainda sem commit, faria o pull seguinte falhar. O CI de cada projeto reprova (`ci/registry-guard.yml`, copiado sem mudança).
+- Antes de puxar o tronco com o registro alterado, commitar o snapshot; conflito nele se resolve no checkout principal, mantendo os dois lados, e `validar` em seguida.
+- PR que move arquivo citado no registro (handoff, evidência) lista as trocas de caminho no corpo; depois do merge, o coordenador as aplica no checkout principal e roda `validar`.
 
 ## Achados
 
