@@ -6,7 +6,8 @@ Aplicar sem exigir pedido explícito de delegação. Ler uma vez por tarefa; esc
 - Código: modelos Claude implementam conforme nível investigado abaixo (Claude Code; em T1/T2 também o worker AGY do Alethe; ver Camadas).
 - Arquitetura, múltiplos componentes ou aceite ambíguo: Codex planeja/orquestra; Claude Code implementa.
 - Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md (em T3, mais uma após NOT APPROVED).
-- Escrita, auditoria em volume, corpus e pesquisa: AGY com Gemini 3.8 Flash, fontes e arquivos de saída delimitados.
+- Escrita, auditoria em volume, corpus e pesquisa: AGY por prioridade de fornecedor (Claude Sonnet 5.5,
+  depois gpt-oss-120b, depois Gemini 3.8 Flash), fontes e arquivos de saída delimitados.
 
 ## Investigador e níveis (aprovado em 21/09/2026)
 
@@ -22,9 +23,9 @@ nível sustentado pelos critérios, não soma nem número de tokens/arquivos.
 | Nível | Critério | Executor Claude | Planejador Codex se necessário | Worker AGY: implementação / escrita e auditoria |
 |---|---|---|---|---|
 | T0 | Determinístico: consulta, contagem, check mecânico | ferramenta, sem nova chamada | agente ativo | sem nova chamada |
-| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5-5 / medium | gpt-6-astra / medium | claude-sonnet-5-5-medium / gemini-3.8-flash-medium |
-| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5-5 / high | gpt-6-astra / high | claude-sonnet-5-5-high, escalar a claude-opus-5-5-high / gemini-3.8-flash-medium |
-| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-opus-5-5 / high | gpt-6-astra / high | não implementa (fica no Claude Code) / gemini-3.8-flash-high |
+| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-sonnet-5-5 / medium | gpt-6-astra / medium | claude-sonnet-5-5-medium / claude-sonnet-5-5-medium |
+| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-opus-5-5 / high | gpt-6-astra / high | claude-sonnet-5-5-high, escalar a claude-opus-5-5-high / claude-sonnet-5-5-medium |
+| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-opus-5-5 / high | gpt-6-astra / high | não implementa (fica no Claude Code) / claude-sonnet-5-5-high |
 
 Modelos em uso (revistos em 10/10/2026 com dados públicos de benchlm.ai, Artificial Analysis e
 Arena, e com as medições internas de 09–10/10; evidência em ../evals/modelos-2026-10-10.md):
@@ -46,7 +47,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 |---|---|---|---|
 | 1 | Claude Code | Orquestra (padrão) e implementa | Executor Claude da tabela de níveis |
 | 2 | Codex | Só leitura: planeja se necessário, revisa, investiga, valida | gpt-6-astra, effort pelo nível |
-| 3 | AGY | Capacidade extra: implementa T1/T2 quando a cota da camada 1 aperta ou por escolha; escreve e audita | Claude do AGY e Gemini 3.8 Flash (seção AGY) |
+| 3 | AGY | Capacidade extra, só com arquivos (sem comandos): implementa T1/T2 quando a cota da camada 1 aperta ou por escolha; escreve e audita | Claude do AGY, depois gpt-oss-120b, depois Gemini 3.8 Flash (seção AGY) |
 
 - Implementação: camada 1, caindo para a 3; nunca para a 2. T3 fica na camada 1: sem cota, espera.
 - Leitura e revisão: camada 2. O revisor é independente do implementador (Claude), não do
@@ -59,7 +60,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
   sem precisar mudar.
 - Papéis no Alethe (AGY-03): executor-t1 ↔ executor-t1-agy (Sonnet 5.5 medium), executor-t2 ↔
   executor-t2-agy (Opus 5.5 high, o mesmo modelo do principal), executor-t3 sem fallback,
-  escritor-agy (Gemini 3.8 Flash medium). Revisores, planejadores e validador: gpt-6-astra, somente
+  escritor-agy (Claude Sonnet 5.5 medium). Revisores, planejadores e validador: gpt-6-astra, somente
   leitura e sem fallback (somente leitura só cai para somente leitura, e só o Codex roda assim).
 
 ## Leitura no plano da OpenAI (fase 3 da #5, aprovada em 10/10/2026)
@@ -73,15 +74,20 @@ pergunta sem segredos; effort pelo nível (medium T1/T2, high T3).
 
 ## AGY: workers de implementação e escrita, orquestrador de último recurso
 
-Aprovado pelo dono em 10/10/2026. Os modelos Claude do AGY são workers de implementação em T1/T2,
-com a cota do AGY: claude-sonnet-5-5-medium em T1, claude-sonnet-5-5-high em T2 e
-claude-opus-5-5-high como escalonamento (arquitetura, Sonnet travou). T3 não usa o AGY. Gemini 3.8
-Flash (medium; high em T3) escreve docs, changelog e relatórios a partir de material concreto
-(diff, código, registro) e faz auditoria em volume, corpus e pesquisa. Por ter 55,2% de alucinação
-(AA-Omniscience) e poucos bugs achados (Bug Hunt 18), seus achados passam pelo Codex (codex_read)
-ou pelo Claude antes de virar issue ou ação. Workers AGY rodam na Orquestração do Alethe desde
-11/10/2026 (AGY-01, alethe-agents #147), pelos papéis da seção Camadas. Código de worker AGY recebe
-a mesma revisão independente (review.md).
+Aprovado pelo dono em 10/10/2026; prioridade de fornecedor dentro do AGY em 11/10/2026: Anthropic,
+depois OpenAI, depois Google. Claude do AGY implementa T1/T2 com a cota do AGY
+(claude-sonnet-5-5-medium em T1, claude-sonnet-5-5-high em T2, claude-opus-5-5-high como
+escalonamento) e escreve docs, changelog e relatórios (claude-sonnet-5-5-medium; high em T3). T3 não
+implementa no AGY. Em 2º lugar, gpt-oss-120b-medium (esforço fixo, contexto de 128k, AA Agentic
+6,2): medido em 11/10 como worker (escreveu o arquivo, não rodou comando, 5,5k tokens, 6 s; uma
+amostra trivial). Em 3º, Gemini 3.8 Flash; por ter 55,2% de alucinação (AA-Omniscience) e poucos
+bugs achados (Bug Hunt 18), seus achados passam pelo Codex (codex_read) ou pelo Claude antes de virar
+issue ou ação. A ordem vale pela escolha do papel: no Alethe o fallback desce um nível e a cota do
+AGY é lida por fornecedor, então o app não troca de modelo dentro do AGY sozinho.
+Desde AGY-04 (alethe-agents #158) o worker AGY roda como agente gerenciado `alethe-worker`, sem
+comandos (só lê, busca e edita arquivos), sem os hooks globais e o GEMINI.md do dono, sempre numa
+worktree própria; git, testes e builds ficam com o coordenador depois do turno. Código de worker AGY
+recebe a mesma revisão independente (review.md).
 Orquestradores, prioridade fixa: Claude Code, Codex, AGY (o último). AGY orquestra só por
 escolha explícita, nunca como fallback automático; então planejador e revisor Opus 5.5
 (medium em T1/T2, high em T3). Revisão segue review.md (revisor independente).
@@ -90,7 +96,7 @@ escolha explícita, nunca como fallback automático; então planejador e revisor
 
 - Fora da seleção automática até medição no nosso uso: gemini-3.7-flash e gemini-3.6-flash
   (abaixo do 3.8 em DeepSWE, Terminal-Bench e AA Coding), gemini-3.1-pro (AA Intelligence 30 × 41
-  do 3.8 Flash, custo parecido) e gpt-oss-120b-medium (AA Agentic 6,2; contexto de 128k).
+  do 3.8 Flash, custo parecido).
 - Investigador pode escolher outro perfil do AGY com justificativa registrada; a superioridade no
   nosso uso ainda não foi medida. Não chamar vários para a mesma auditoria sem avaliação delimitada
   e autorizada. Não substituem a revisão do revisor.
@@ -103,7 +109,8 @@ escolha explícita, nunca como fallback automático; então planejador e revisor
 - Esforço: o CLI aceita --effort low|medium|high|xhigh|max, mas nem todo modelo muda de esforço.
   Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no ID; Gemini 3.1 Pro só low/high;
   GPT-OSS 120B (Medium) tem esforço fixo. O worker AGY do Alethe oferece só os aprovados: Sonnet
-  5.5 e Gemini 3.8 Flash medium/high pela família, Opus 5.5 pelo ID claude-opus-5-5-high.
+  5.5 e Gemini 3.8 Flash medium/high pela família, Opus 5.5 pelo ID claude-opus-5-5-high e
+  gpt-oss-120b-medium pelo ID (esforço fixo).
 
 ## Campanhas e limites
 
