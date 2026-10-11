@@ -3,7 +3,7 @@
 Aplicar sem exigir pedido explícito de delegação. Ler uma vez por tarefa; escolha do usuário prevalece.
 
 - Pergunta/status/documentação pequena: agente ativo.
-- Código: modelos Claude implementam conforme nível investigado abaixo (Claude Code; em T1/T2 também o worker AGY, quando existir no Alethe).
+- Código: modelos Claude implementam conforme nível investigado abaixo (Claude Code; em T1/T2 também o worker AGY do Alethe; ver Camadas).
 - Arquitetura, múltiplos componentes ou aceite ambíguo: Codex planeja/orquestra; Claude Code implementa.
 - Código relevante pronto: revisão independente do revisor, uma tentativa conforme review.md (em T3, mais uma após NOT APPROVED).
 - Escrita, auditoria em volume, corpus e pesquisa: AGY com Gemini 3.8 Flash, fontes e arquivos de saída delimitados.
@@ -40,6 +40,28 @@ investigador confirma/revisa antes da próxima fase. Reclassificar com evidênci
 nunca como fallback por quota/recusa. Tarefa pequena pode ser T3; longa pode ser T1.
 Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 
+## Camadas (aprovado pelo dono em 11/10/2026)
+
+| Camada | Ferramenta | Faz | Modelos |
+|---|---|---|---|
+| 1 | Claude Code | Orquestra (padrão) e implementa | Executor Claude da tabela de níveis |
+| 2 | Codex | Só leitura: planeja se necessário, revisa, investiga, valida | gpt-6-astra, effort pelo nível |
+| 3 | AGY | Capacidade extra: implementa T1/T2 quando a cota da camada 1 aperta ou por escolha; escreve e audita | Claude do AGY e Gemini 3.8 Flash (seção AGY) |
+
+- Implementação: camada 1, caindo para a 3; nunca para a 2. T3 fica na camada 1: sem cota, espera.
+- Leitura e revisão: camada 2. O revisor é independente do implementador (Claude), não do
+  orquestrador; sem cota do Codex, a revisão espera e nunca passa ao fornecedor do implementador.
+- Escrita: camada 3.
+- Cota: a passagem da camada 1 para a 3 é o fallback de papel configurado no Alethe (provedor acima
+  de 80%, um nível, só se o outro tem folga). Fora dele vale "Permissão/quota/recusa: parar".
+- Orquestrador Codex (escolha explícita): não edita arquivos; toda edição vai aos papéis executor-t*.
+  Os papéis "Qualquer" servem aos dois orquestradores; os planejadores Codex ficam redundantes,
+  sem precisar mudar.
+- Papéis no Alethe (AGY-03): executor-t1 ↔ executor-t1-agy (Sonnet 5.5 medium), executor-t2 ↔
+  executor-t2-agy (Opus 5.5 high, o mesmo modelo do principal), executor-t3 sem fallback,
+  escritor-agy (Gemini 3.8 Flash medium). Revisores, planejadores e validador: gpt-6-astra, somente
+  leitura e sem fallback (somente leitura só cai para somente leitura, e só o Codex roda assim).
+
 ## Leitura no plano da OpenAI (fase 3 da #5, aprovada em 10/10/2026)
 
 Trabalho só de leitura vai para o Codex: verificar a issue contra o código antes de implementar,
@@ -57,9 +79,9 @@ claude-opus-5-5-high como escalonamento (arquitetura, Sonnet travou). T3 não us
 Flash (medium; high em T3) escreve docs, changelog e relatórios a partir de material concreto
 (diff, código, registro) e faz auditoria em volume, corpus e pesquisa. Por ter 55,2% de alucinação
 (AA-Omniscience) e poucos bugs achados (Bug Hunt 18), seus achados passam pelo Codex (codex_read)
-ou pelo Claude antes de virar issue ou ação. Workers AGY rodam na Orquestração do Alethe (campanha
-AGY, em implementação); até lá, só por escolha explícita. Código de worker AGY recebe a mesma
-revisão independente (review.md).
+ou pelo Claude antes de virar issue ou ação. Workers AGY rodam na Orquestração do Alethe desde
+11/10/2026 (AGY-01, alethe-agents #147), pelos papéis da seção Camadas. Código de worker AGY recebe
+a mesma revisão independente (review.md).
 Orquestradores, prioridade fixa: Claude Code, Codex, AGY (o último). AGY orquestra só por
 escolha explícita, nunca como fallback automático; então planejador e revisor Opus 5.5
 (medium em T1/T2, high em T3). Revisão segue review.md (revisor independente).
@@ -72,17 +94,16 @@ escolha explícita, nunca como fallback automático; então planejador e revisor
 - Investigador pode escolher outro perfil do AGY com justificativa registrada; a superioridade no
   nosso uso ainda não foi medida. Não chamar vários para a mesma auditoria sem avaliação delimitada
   e autorizada. Não substituem a revisão do revisor.
-- Gemini, Sonnet 5.5 e Opus 5.5: escolher o ID da variante (o esforço vem no ID), sem
-  inventar variantes nem repassar --effort. Não transferir parâmetros ou supor mesma
-  assinatura/quota do Claude Code.
+- Gemini, Sonnet 5.5 e Opus 5.5: ID da variante (o esforço vem no ID) ou família com --effort,
+  nunca os dois (medido na 1.3.3: o agy recusa na partida); sem inventar variantes. Não transferir
+  parâmetros ou supor mesma assinatura/quota do Claude Code.
 - Modelos do AGY (agy models, AGY 1.3.2 em 10/10/2026, sem mudança desde a 1.2.16; o CLI se atualiza sozinho, 1.3.3 no mesmo dia): gemini-3.8/3.7/3.6-flash-{low,medium,high},
   gemini-3.1-pro-{low,high}, claude-opus-5-5-{low,medium,high},
   claude-sonnet-5-5-{low,medium,high} e gpt-oss-120b-medium.
-- Pendente para o worker AGY no Alethe: o CLI aceita --effort low|medium|high|xhigh|max, mas
-  nem todo modelo muda de esforço. Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no
-  ID; Gemini 3.1 Pro só low/high; GPT-OSS 120B (Medium) tem esforço fixo.
-  O papel/worker AGY só deve oferecer os esforços de cada modelo e não repassar
-  --effort aos fixos; medir antes se o CLI recusa ou ignora --effort nesses casos.
+- Esforço: o CLI aceita --effort low|medium|high|xhigh|max, mas nem todo modelo muda de esforço.
+  Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no ID; Gemini 3.1 Pro só low/high;
+  GPT-OSS 120B (Medium) tem esforço fixo. O worker AGY do Alethe oferece só os aprovados: Sonnet
+  5.5 e Gemini 3.8 Flash medium/high pela família, Opus 5.5 pelo ID claude-opus-5-5-high.
 
 ## Campanhas e limites
 
