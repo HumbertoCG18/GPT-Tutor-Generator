@@ -83,7 +83,13 @@ Teste Rust (`cargo test`, debug): `CARGO_TARGET_DIR=D:\cargo-target\alethe-test`
 compartilhado por sessões, worktrees e subagentes. Instalador (`tauri build`, release):
 `D:\cargo-target\alethe`. Não criar pasta de saída por tarefa (cada uma custa 6 GB). `cargo fmt`
 no crate inteiro é proibido; usar `rustfmt --check --edition 2021` só nos arquivos tocados.
-Briefs de subagente que rodam cargo citam essas pastas.
+Briefs de subagente que rodam cargo citam essas pastas; o coordenador também as usa (cargo sem
+`CARGO_TARGET_DIR` numa worktree cria um `src-tauri\target` local).
+Verificação enxuta (aprovada pelo dono em 11/10/2026, medida: tarefas de 12 a 64 min e 93k a 414k
+tokens por subagente): durante a iteração, só os testes focados; suíte completa uma vez no fim;
+repetir a suíte (3×) só em T3 ou para investigar instabilidade. Uma tarefa com cargo por vez e
+rebuild do Alethe Dev fora dessa janela: competem pela CPU, e a carga já gerou falso vermelho
+(ACH-0022 no Alethe).
 Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update -ExpectedCommit <SHA completo>`.
 O SHA é o commit validado/autorizado, não uma branch móvel. `build` recusa worktree suja ou de
 outro repositório, preserva WIP e grava `D:\cargo-target\alethe\alethe-build.json` com commit,
