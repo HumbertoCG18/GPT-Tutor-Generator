@@ -34,5 +34,12 @@
       }
     ]
   },
-  "enabledPlugins": {}
+  "enabledPlugins": {},
+  "permissions": {
+    "deny": [
+      "Read(/docs/reports/_codegraph-benchmark/**)",
+      "Read(/docs/reports/_workflow-audit-2026-09-15/**)",
+      "Read(/docs/reports/_archive/scripts-2026-09-04/**)"
+    ]
+  }
 }

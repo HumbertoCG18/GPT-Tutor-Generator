@@ -10,4 +10,5 @@ graphify-out/
 .codebase-memory/
 .cache/
 __pycache__/
-docs/reports/_codegraph-benchmark/
+# Relatórios, logs e fixtures de harness: histórico, não código do projeto.
+docs/reports/
