@@ -14,7 +14,8 @@ Usar quando avaliar substituição ou combinação de índices de código.
    Reexecutar todos os hashes alterados, nunca somente respostas erradas. Testar
    remoção e adição de uma relação em cópia isolada.
 
-Harness reproduzível: `docs/reports/_codegraph-benchmark/PROTOCOL.md`.
+Harness reproduzível arquivado na tag reports-arquivo-2026-10-13 (#104); recuperar com
+git checkout reports-arquivo-2026-10-13 -- docs/reports/_codegraph-benchmark e seguir o PROTOCOL.md de lá.
 Medições e decisão: relatório em `docs/reports/_archive/benchmark-codegraph_15-09.md`.
 Índices maiores não provam qualidade; leitura de fonte pode equalizar resultados.
 Piloto sem perguntas inéditas não demonstra superioridade geral.
