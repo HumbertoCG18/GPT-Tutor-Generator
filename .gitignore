@@ -299,3 +299,7 @@ docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 # worktrees do Alethe e pasta criada por processo sem a variavel SystemDrive (lixo de ambiente)
 /.alethe/
 /%SystemDrive%/
+
+# sobras locais de docs/reports tiradas do git na #104
+/docs/reports/_codegraph-benchmark/
+/docs/reports/_workflow-audit-2026-09-15/
