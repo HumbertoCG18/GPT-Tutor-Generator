@@ -15,9 +15,12 @@ o MCP saiu porque servia um graph.json fixo do GPT Tutor em qualquer projeto.
 ## MCPs por CLI (paridade medida em 30/09/2026)
 
 Iguais nas três: context7, claude-mem (mcp-search) e codebase-memory-mcp (fallback).
-GitHub e Graphify pelas CLIs gh e graphify. Uso real medido (tool_use) antes de remover:
-github 1/0/0 chamadas (Claude/Codex/AGY) contra gh 491/252; graphify MCP 2/0/~1 contra
-CLI 18/82; chrome-devtools 0/0/0; perssua 0/0/0. Removidos: github (as três),
+GitHub e Graphify pelas CLIs gh e graphify. Uso real antes de remover, remedido em 11/10 com
+`skills/medir-uso-antes-de-remover/scripts/count_tool_use.py` até 30/09 (a contagem anterior só lia
+tool_use e dava zero falso no Codex): github MCP 0/0/0 chamadas (Claude/Codex/AGY; as 28
+"github" do Codex são do conector embutido codex_apps) contra gh 491/252; graphify MCP 2/0/0
+contra CLI 18/82; chrome-devtools 0/0/0; perssua 0/0/0. O 1 do github no Claude e o ~1 do
+graphify no AGY de 30/09 não se reproduzem (hipótese: transcripts rotacionados). Removidos: github (as três),
 graphify e chrome-devtools-mcp (Claude, AGY), perssua (Claude; segue desligado no
 Codex e no AGY). O chrome-devtools continua via plugin ECC no Claude e no Codex.
 Codex mantém as ferramentas do app (cua_repl, node_repl, codex_app).

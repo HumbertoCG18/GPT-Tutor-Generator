@@ -39,11 +39,12 @@ e papel explicitamente, pois subprocessos com safe-mode podem não carregar hook
 
 ## Hooks e validação
 
-Hooks apenas injetam um lembrete desta rota, sem inferência, escrita de estado ou scheduler.
-Claude/Codex: UserPromptSubmit; AGY: PreInvocation. Configuração é local e preserva hooks existentes.
-Codex requer confiança da definição em /hooks; não escrever hashes de confiança nem usar bypass.
+O lembrete desta rota fica em `personal-instructions.md` (uma vez por sessão nos três CLIs), sem
+hook de prompt; no AGY a regra `always_on` guarda só o papel da CLI (../hooks/README.md).
+Hooks que restarem não fazem inferência, escrita de estado nem scheduler; o Codex requer confiança
+da definição em /hooks, sem hashes de confiança nem bypass.
 Modelo configurado não atesta modelo observado. Após abrir sessão nova, validar uma tarefa real
 e registrar sessão/roteamento/saída antes de declarar delegação E2E.
 Fontes: https://code.claude.com/docs/en/hooks e https://learn.chatgpt.com/docs/hooks;
-AGY: https://antigravity.google/docs/hooks?tab=ide documenta também a CLI; formato conferido
-com hooks.json e ponytail-inject.js instalados, sem presumir API de Gemini CLI.
+AGY: https://antigravity.google/docs/hooks?tab=ide documenta também a CLI; no AGY, PreInvocation
+roda a cada chamada ao modelo, então texto fixo vai para regras (#18).
