@@ -409,7 +409,7 @@
         "MOTOR"
       ],
       "worktrees": [],
-      "atualizado_em": "2026-09-22",
+      "atualizado_em": "2026-10-16",
       "decomposta": false,
       "tarefas": [
         {
@@ -441,6 +441,14 @@
           "titulo": "Backlog futuro: painel, LLM por conta, Moodle assistido, RAG, imagens no chat",
           "nivel": "T2",
           "estado": "proposta"
+        },
+        {
+          "id": "WEB-05",
+          "titulo": "Piloto fallow: audit TS/JS com versão fixa (npx fallow@3.33.1 audit), sem agent install nem MCP",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "USER"
         }
       ]
     },
