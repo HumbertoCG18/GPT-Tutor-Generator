@@ -60,8 +60,9 @@ O scheduler nativo não recebe outra cópia da fila por esta política.
 
 Um Planner e um único caminho de dispatch por tarefa. Não executar o mesmo trabalho
 por alethe_delegate e por CLI/subagente externo. Launchers e rotinas existentes são
-preservados para uso fora do Alethe ou escolha explícita; indisponibilidade de MCP,
-quota ou capacidade não autoriza fallback automático. AGY mantém seu contrato;
+preservados para uso fora do Alethe ou escolha explícita. Quota/recusa nunca autorizam
+fallback; falta do transporte de revisão admite só o caminho já definido em review.md,
+antes da primeira chamada, preservando contador, escopo e permissões. AGY mantém seu contrato;
 suporte nativo não demonstrado deve ser declarado, sem fabricar integração.
 
 Alethe executa; o workflow autoriza e aceita resultados. Eventos SubagentStart/Stop,
@@ -83,8 +84,14 @@ compartilhado por sessões, worktrees e subagentes. Instalador (`tauri build`, r
 `D:\cargo-target\alethe`. Não criar pasta de saída por tarefa (cada uma custa 6 GB). `cargo fmt`
 no crate inteiro é proibido; usar `rustfmt --check --edition 2021` só nos arquivos tocados.
 Briefs de subagente que rodam cargo citam essas pastas.
-Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update` (build de origin/dev
-+ instalação por cima com `/P /UPDATE /R`); `build` e `install` separados. Espera o usuário sair
+Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update -ExpectedCommit <SHA completo>`.
+O SHA é o commit validado/autorizado, não uma branch móvel. `build` recusa worktree suja ou de
+outro repositório, preserva WIP e grava `D:\cargo-target\alethe\alethe-build.json` com commit,
+caminho e SHA256. `verify -ExpectedCommit <SHA>` confere sem executar; `install` exige esse
+mesmo SHA e manifesto (`-Manifest <caminho>` opcional), nunca escolhe o exe mais recente.
+Os comandos que compartilham a saída usam uma trava; ela não substitui autorização.
+Instala por cima com `/P /UPDATE` e reabre pelo Explorer; `build` e `install` separados.
+Instalação requer autorização própria do dono. Espera o usuário sair
 pelo app; nunca fecha o Alethe Dev. Antes de dizer que o Alethe Dev está aberto ou fechado, ou de
 pedir ao usuário que o feche, conferir o processo (`alethe.exe` com caminho em `\Alethe Dev\`); não
 supor pelo histórico da conversa.

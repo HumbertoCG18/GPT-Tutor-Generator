@@ -18,11 +18,14 @@ on:
       - "scripts/validate_timeline.py"
       - ".github/workflows/validate-timeline.yml"
   push:
-    branches: [main, new-features]
+    branches: [main, dev, new-features]
     paths:
       - "schemas/timeline_index.v4.json"
       - "src/builder/timeline/**"
+      - "tests/test_timeline_*.py"
       - "tests/fixtures/timeline/**"
+      - "scripts/validate_timeline.py"
+      - ".github/workflows/validate-timeline.yml"
 
 jobs:
   validate:
