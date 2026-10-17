@@ -1777,7 +1777,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   Registro nativo AGY permanece não comprovado e não é requisito do caminho adotado.
 - Concluído: roteamento supervisionado Claude principal, Codex execução/revisão separada e
   AGY pesquisa/documentação registrado no laboratório; quatro passos validados em cópias isoladas.
-  [Resultado integrado](Feitos/workflow-validacao-integrada_16-09.md).
+  [Resultado integrado](_archive/workflow-validacao-integrada_16-09.md).
 - Concluído: piloto AGY de síntese com fonte fornecida (3/3 fatos) e edição documental
   isolada (somente parágrafo autorizado, original preservado). Quatro chamadas incluindo
   controle e pesquisa bloqueada; [resultados e limites](_archive/workflow-validacao-agy_16-09.md).

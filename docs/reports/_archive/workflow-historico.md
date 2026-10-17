@@ -14,6 +14,7 @@ documentos abaixo foram movidos sem alteração de conteúdo além de caminhos.
 - [Piloto Context7](workflow-context7-piloto_16-09.md) — 16/09.
 - [Piloto Fable × Astra](workflow-medicao-fable-astra_16-09.md) — 16/09.
 - [Fechamento da configuração](workflow-configuracao-fechamento_16-09.md) — 16/09.
+- [Workflow integrado e Context7](workflow-validacao-integrada_16-09.md) — 16/09.
 - [Benchmark Graphify × codebase-memory-mcp](benchmark-codegraph_15-09.md) e
   [Graphify primeiro, CBM como fallback](codegraph-fallback_15-09.md) — 15/09.
 
@@ -40,9 +41,6 @@ documentos abaixo foram movidos sem alteração de conteúdo além de caminhos.
 
 ## O que ficou fora do arquivo, e por quê
 
-- [`../Feitos/workflow-validacao-integrada_16-09.md`](../Feitos/workflow-validacao-integrada_16-09.md):
-  o laboratório o cita em `agent-workflow-lab/evals/workflow-20260916.md:17`. Ele se move junto
-  com a atualização desse consumidor.
 - [`../2026-09-18-piloto-hooks-context-mode.md`](../2026-09-18-piloto-hooks-context-mode.md):
   `_context-mode-hooks/validate_result.py` lê esse caminho.
 - [`../workflow-handoff-sessao-nova.md`](../workflow-handoff-sessao-nova.md) e
