@@ -4,20 +4,15 @@ from __future__ import annotations
 
 import json
 import subprocess
-import sys
 import tempfile
 from dataclasses import asdict
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-# Mock tkinter before importing the main module (not available in headless CI)
-_tk_mock = mock.MagicMock()
-sys.modules.setdefault("tkinter", _tk_mock)
-sys.modules.setdefault("tkinter.filedialog", _tk_mock)
-sys.modules.setdefault("tkinter.messagebox", _tk_mock)
-sys.modules.setdefault("tkinter.simpledialog", _tk_mock)
-sys.modules.setdefault("tkinter.ttk", _tk_mock)
+from tests._tkstub import garantir_tkinter
+
+garantir_tkinter()
 
 import pytest
 
@@ -93,6 +88,7 @@ from tests.fixtures.syllabus_timeline_cases import (
 # ---------------------------------------------------------------------------
 # slugify
 # ---------------------------------------------------------------------------
+
 
 class TestSlugify:
     def test_basic(self):
