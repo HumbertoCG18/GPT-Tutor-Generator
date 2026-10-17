@@ -5,16 +5,15 @@ Claude, Codex e AGY têm destinos próprios; validar com `verify.py` nesse labor
 Alethe cuida das sessões. Não reimportar bundles inteiros nem deixar dois gestores
 reescreverem os mesmos destinos. Skillfile permanece apenas piloto, sem sincronização automática.
 
-Graphify é principal. CBM é fallback nas três CLIs, com auto_index=false e
- auto_watch=false. Antes do primeiro fallback da sessão, ou após mudar fontes,
-executar index_repository explicitamente. Não sincronizar os bancos entre si.
-No GPT Tutor, seguir também `.mex/patterns/codegraph-fallback.md`.
+Graphify é o único grafo de código nas três CLIs. CBM removido na FERR-01 (#64) por falta de uso
+(Claude 0/4.622 sessões, Codex 20 chamadas em 3 sessões, AGY 1, medido em 15/10).
+GPT Tutor: fallback CBM removido do `.mex` na REC-06.
 Graphify roda pela CLI local nas três (graphify query/explain/path no projeto atual);
 o MCP saiu porque servia um graph.json fixo do GPT Tutor em qualquer projeto.
 
 ## MCPs por CLI (paridade medida em 30/09/2026)
 
-Iguais nas três: context7, claude-mem (mcp-search) e codebase-memory-mcp (fallback).
+Iguais nas três: context7, claude-mem (mcp-search).
 GitHub e Graphify pelas CLIs gh e graphify. Uso real antes de remover, remedido em 11/10 com
 `skills/medir-uso-antes-de-remover/scripts/count_tool_use.py` até 30/09 (a contagem anterior só lia
 tool_use e dava zero falso no Codex): github MCP 0/0/0 chamadas (Claude/Codex/AGY; as 28
@@ -64,7 +63,7 @@ O scheduler nativo não recebe outra cópia da fila por esta política.
 Um Planner e um único caminho de dispatch por tarefa. Não executar o mesmo trabalho
 por alethe_delegate e por CLI/subagente externo. Launchers e rotinas existentes são
 preservados para uso fora do Alethe ou escolha explícita. Quota/recusa nunca autorizam
-fallback; falta do transporte de revisão admite só o caminho já definido em review.md,
+fallback fora da reserva de routing.md › Camadas; falta do transporte de revisão admite só o caminho já definido em review.md,
 antes da primeira chamada, preservando contador, escopo e permissões. AGY mantém seu contrato;
 suporte nativo não demonstrado deve ser declarado, sem fabricar integração.
 

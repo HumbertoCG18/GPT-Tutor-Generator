@@ -4,7 +4,7 @@ Estado local por worktree em .workflow/local/active-task.md, excluído do Git (/
 
 Ao receber continuar, ler estado + tracker/handoff e conferir branch, HEAD, diff, testes e situação da chamada anterior. Se status=delegando, verificar a sessão registrada antes de decidir que foi interrompida; não lançar segunda chamada. Retomar a próxima etapa pendente, sem refazer trabalho concluído, reabrir tarefa encerrada ou ultrapassar Gate 1/2. Estado ausente, contraditório ou múltiplas tarefas plausíveis exige esclarecer a ambiguidade. Continuar não é autorização de commit nem de novo escopo.
 
-Quando houver quota esgotada, salvar estado e aguardar orientação; não trocar de provedor nem repetir chamadas recusadas automaticamente. Data e saldo de reset não são presumidos. AGY e Context7 entram somente quando pesquisa for necessária.
+Quando houver quota esgotada, salvar estado e aguardar orientação; não trocar de provedor (exceto a reserva registrada de routing.md › Camadas) nem repetir chamadas recusadas automaticamente. Data e saldo de reset não são presumidos. AGY e Context7 entram somente quando pesquisa for necessária.
 
 Automação conduzida pelo agente enquanto a sessão está ativa, com autorização persistente nas instruções. Esta política não instala daemon, monitor de reset ou scheduler. O scheduler
 nativo do Alethe não libera automaticamente execução noturna. Hooks existentes mantêm verificações mecânicas; não disparam LLM. O limite de uma revisão automática depende do coordenador seguir o estado, não de bloqueio técnico no servidor. Gates ECC permanecem aplicáveis; autorização explícita de commit dada pelo usuário no escopo prevalece, depois de preparar e verificar o diff.

@@ -19,6 +19,8 @@ Relatório: ../docs/reports/_archive/workflow-medicao-fable-astra_16-09.md. Amos
 contextos distintos; não comprova economia de quota ou superioridade de Astra na revisão.
 Fable executa; Astra revisa por preferência aprovada, uma chamada automática por tarefa
 relevante. Fable corrige os achados. Nenhuma troca automática de executor por quota.
+Superado em 16/10 (RECONCILIA): executor pelo nível em references/routing.md (Sonnet/Opus;
+Fable saiu do T3); Astra revisa conforme references/review.md.
 
 AGY usa contratos inline; registro de agentes nativos permanece não comprovado.
 Context7 autenticado nas três CLIs; piloto conservador 12/20 tentativas, sem novas consultas.
@@ -29,7 +31,7 @@ Critério: `.workflow/references/capabilities.md` (lacuna concreta antes de adot
 
 - opensrc (vercel-labs, Apache-2.0): código-fonte de pacotes npm/PyPI/crates/GitHub em cache local. Complementa o Context7 (código x documentação), mas no stack Python o fonte das dependências já está em site-packages e o `gh` busca repositórios com tag fixa. Gatilho: campanha web C6 (npm não instalado localmente); piloto contra Context7 + `gh` em perguntas reais de API.
 - ai-memory (akitaonrails, MIT, v2.4.0): memória de longo prazo e handoff tipado entre CLIs (Claude, Codex e AGY suportados), fonte em markdown versionado, captura por hooks sem LLM. Sobrepõe claude-mem, `.workflow/local/active-task.md` e os handoffs; Windows nativo é experimental; AGY sem SessionEnd automático; mais uma camada de hooks nas três CLIs junto de claude-mem, Alethe e guardas. Gatilho: substituir o claude-mem (não somar), ou handoff entre CLIs falhar de forma medida (#45). Piloto em WSL2 isolado.
-- repowise: terceiro índice de código ao lado de Graphify e CBM; ganhos publicados medidos fora deste projeto; `init` reescreve config do Claude. Gatilho: substituir Graphify ou CBM após comparação com perguntas reais do motor.
+- repowise: terceiro índice de código ao lado do Graphify (CBM removido na FERR-01, lab #64); ganhos publicados medidos fora deste projeto; `init` reescreve config do Claude. Gatilho: substituir o Graphify após comparação com perguntas reais do motor.
 - tron-claude-config: sem licença, foco frontend; aproveitada só a ideia do pre-commit com gitleaks (#54), reimplementada.
 
 ## Próxima frente depois do agente noturno (#42)

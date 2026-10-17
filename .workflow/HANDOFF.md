@@ -1,7 +1,7 @@
 # Continuidade do workflow
 
 21/09, decisão seguinte: matriz T0..T3/C1..C3 aprovada; investigador decide classificação,
-coordenador registra. Fonte operacional: references/routing.md; Sonnet/Opus/Fable por nível,
+coordenador registra. Fonte operacional: references/routing.md; Sonnet/Opus por nível (Fable saiu do T3),
 perfis AGY Pro3.1/Sonnet4.6/Opus4.6Thinking opcionais, sem superioridade medida.
 Fluxo diurno Claude→AGY já validado para auditoria (estado routing-daytime-44.md no checkout principal).
 Nova matriz é política documental; seleção de cada perfil ainda não validada E2E. Noite não liberada.
@@ -17,7 +17,7 @@ Fonte instalada: agent-workflow-lab/workflow.md; detalhes por ação em referenc
 
 Estado da #44: .workflow/local/active-task.md (legado: .workflow-local/) do worktree correspondente; não reutilizar estado do motor.
 
-Night-agent: #42, pacote em agent-workflow-lab-night-42/pilots/night-agent.
+Night-agent: #42, pacote em agent-workflow-lab-night-42/pilots/night-agent; congelado em 16/10 (Alethe fora do foco); base nova: campanha NOITE do lab (references/noite.md).
 Fila compartilhada: #43, worktree GPT-Tutor-Generator-campaign-43; inspecionar antes de estender.
 Smoke noturno anterior falhou por unexpected_model; generic_night/Codex executor/suspensão bloqueados.
 Não reiniciar claude-mem por quota nem repetir revisão consumida. Commit/merge seguem seus Gates.

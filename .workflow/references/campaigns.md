@@ -73,7 +73,7 @@ explicitamente esse código. Não propagá-las só para ocultar drift no verific
 - Ler a fila no início/retomada; atualizar ao descobrir pendência e ao concluir tarefa, durante sessão ativa.
 - Sessão read-only não escreve: propõe o delta ao coordenador.
 - Ideia nova entra como `proposta`, nunca como autoridade para execução. Gates 1/2 permanecem.
-- Registro e caixa versionados mudam só no checkout principal e chegam ao tronco só por commit próprio `chore(workflow)` feito ali. PR nunca altera `.workflow/campanhas.json` nem `.workflow/achados.json`, salvo branch `sync/*`: a cópia viva, ainda sem commit, faria o pull seguinte falhar. O CI de cada projeto reprova (`ci/registry-guard.yml`, copiado sem mudança).
+- Registro e caixa versionados mudam só no checkout principal e chegam ao tronco por commit `chore(workflow)` feito ali ou por PR `chore(workflow)` que só altera o registro. PR de código nunca altera `.workflow/campanhas.json` nem `.workflow/achados.json`, salvo branch `sync/*`: a cópia viva, ainda sem commit, faria o pull seguinte falhar. O CI de cada projeto reprova (`ci/registry-guard.yml`, copiado sem mudança).
 - Antes de puxar o tronco com o registro alterado, commitar o snapshot; conflito nele se resolve no checkout principal, mantendo os dois lados, e `validar` em seguida.
 - PR que move arquivo citado no registro (handoff, evidência) lista as trocas de caminho no corpo; depois do merge, o coordenador as aplica no checkout principal e roda `validar`.
 

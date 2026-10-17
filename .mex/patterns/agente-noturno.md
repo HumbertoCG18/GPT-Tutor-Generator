@@ -21,8 +21,8 @@ não pressupor plugin/slash command instalado.
 - Uma sessão por dia civil America/Sao_Paulo, uma ativa por vez. Sessão que atravessa
   meia-noite continua com orçamento original; nova data não permite execução concorrente.
   Retomada usa o mesmo ID, contadores e evidências, nunca novo orçamento.
-- Fable executor; Sol/high fallback somente por quota do executor e com autorização
-  desta política/preflight. Astra/medium faz uma revisão read-only por tarefa relevante.
+- Executor pelo nível em references/routing.md (Fable saiu do T3; sem troca de modelo por
+  quota sem autorização). Astra/medium faz uma revisão read-only por tarefa relevante.
   Sem fallback automático para AGY, modelo diferente, API paga ou compra de créditos.
 - Codex: máximo pretendido10 pontos percentuais da quota semanal total por sessão,
   incluindo coordenação/revisão/fallback; planejar2pontos desse total para revisão.
@@ -65,6 +65,7 @@ Simular primeiro; teste real de suspensão exige autorização presencial separa
 
 Pacote versionado de referência: repositório irmão `agent-workflow-lab`, diretório
 `pilots/night-agent/` (fontes, testes, `README.md` e `MANIFEST.json` com proveniência/hash).
+Pacote congelado em 16/10 (Alethe fora do foco); base nova: campanha NOITE do lab (references/noite.md).
 Estado em 2026-09-20: worktree `agent-workflow-lab-night-42`, branch
 `feat/42-night-operational`, baseline `6657622`; a fatia operacional mínima e suas correções
 são diff novo ainda NÃO commitado nesse worktree. Esse pacote não declara a noite pronta: só o

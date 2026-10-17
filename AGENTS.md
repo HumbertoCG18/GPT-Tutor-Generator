@@ -9,7 +9,7 @@ Fonte única das instruções do projeto para Codex, Claude Code e AGY.
 - Issue, PR, release, UI, observabilidade e qualidade: `.mex/patterns/engenharia-produto.md`.
 - Delegar, retomar tarefa, Gates, revisão ou quota: `.workflow/README.md`; estado em `.workflow/local/active-task.md`.
 - Campanhas: registro `.workflow/campanhas.json`, alterado só por `agent-workflow-lab/bin/campanhas.py` (`estado`, `tarefa`) ou pela Todo List do Alethe; política em `.workflow/references/campaigns.md`.
-- Estrutura e callers: Graphify explain/path; fallback em `.mex/patterns/codegraph-fallback.md`.
+- Estrutura e callers: Graphify explain/path; confirmar no código-fonte.
 - Sessão na nuvem, ou sem Graphify, tutores locais e laboratório: `.mex/context/sessao-nuvem.md` antes de agir.
 
 ## Invariantes
