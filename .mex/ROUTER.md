@@ -32,4 +32,4 @@ Não ler todos os destinos. Estado: conferir HEAD/diff e .workflow/local/active-
 da tarefa; nunca usar o estado de outra campanha como autorização.
 Tracker guarda fatos vivos, handoff continuidade, decisões justificativas; mapa não duplica estado.
 Snapshots históricos não comprovam checkout atual. Mem-search só para lacuna não coberta nessas fontes.
-Graphify é principal; CBM fallback segue [patterns/codegraph-fallback.md](patterns/codegraph-fallback.md).
+Graphify é o único grafo de código; sem cobertura, rg e leitura do trecho.

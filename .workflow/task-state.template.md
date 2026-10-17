@@ -20,8 +20,9 @@
 - risco_ambiguidade_alcance_e_evidencias:
 - confianca_e_motivo_reclassificacao:
 - modelo_effort_por_fase_e_justificativa:
-- modelo_observado_e_uso: <não atestado até evidência; input/cache_create/cache_read/output/tempo>
-- executor: <Claude/modelo conforme routing.md ou escolha explícita>
+- modelo_observado_e_uso: <não atestado até evidência; input/cache_create/cache_read/output/tempo; medir com bin/custo.py>
+- sessoes: <sessão[@início..fim] do coordenador e agent-<id> de cada delegação, separados por vírgula>
+- executor: <Claude/modelo conforme routing.md, Codex na reserva T1/T2 registrada ou escolha explícita>
 - revisor: papel reviewer ou reviewer-high (somente leitura; registrar o modelo observado)
 - restricoes_explicitas:
 - gate_1: pendente <aprovado … | dispensado <motivo> em tarefa pequena e clara>

@@ -11,25 +11,26 @@ Núcleo e permissões: ../workflow.md. Uma tarefa mantém um coordenador.
 | Implementação pequena e bem delimitada | Claude Code pelo nível em routing.md, teste e diff |
 | Mudança complexa, múltiplos componentes, arquitetura ou aceite ambíguo | Codex planeja/orquestra; plano e aceites delimitados; Claude Code implementa pelo nível investigado |
 | Código relevante pronto para revisão | Revisor em sessão independente, read-only, uma tentativa registrada |
-| Auditoria, pesquisa/corpus ou redação de achados | AGY, fontes verificáveis e relatório; arquivos de saída explicitamente permitidos |
+| Auditoria, corpus ou busca de código | Codex leitor, fontes verificáveis e achados; relatório só no caminho permitido |
+| Documentação, pesquisa ou redação de achados | Escritor no Codex (AGY por escolha), arquivos de saída explicitamente permitidos |
 
 Classificação, matriz e perfis: routing.md é a fonte canônica; investigador decide e coordenador registra.
-Contratos inline: ../agents/codex-planner.md e ../agents/agy-auditor.md; carregar apenas o papel escolhido.
+Contratos inline: ../agents/codex-leitor.md e ../agents/escritor.md; carregar apenas o papel escolhido.
 O usuário não precisa pedir "delegue". Classificar é parte da tarefa; chamadas respeitam
 Gates e contrato [delegation.md](delegation.md). Escolha explícita do usuário prevalece.
 Ler [review.md](review.md) antes de chamar revisor; não usar planejamento para renovar revisão.
 Se o host já é Codex, planejar nele; não chamar outro Codex para repetir orquestração.
 Se o host é Claude, conservar o terminal como interface; receber o plano e conduzir sua execução.
 Se o host é AGY, só orquestrar quando escolhido (último na prioridade, routing.md › Orquestradores),
-com planejador e revisor Opus 5.5; senão, limitar-se à auditoria/pesquisa/achados.
+com planejador e revisor Opus 5.5; senão, limitar-se à escrita escolhida.
 Documentação/configuração simples pode ser concluída pelo agente ativo conforme escolha explícita.
-Não delegar de volta ao chamador nem criar cadeia recursiva. Sem troca por quota.
+Não delegar de volta ao chamador nem criar cadeia recursiva. Troca por quota só pela reserva de routing.md › Camadas.
 
 ## Goals e agente noturno
 
 Quando solicitado listar goals, consultar o catálogo do projeto atual e mostrar ID, estado,
 aceite restante e bloqueio; se ausente, declarar ausência. No GPT Tutor a fonte prevista é
-docs/reports/goals-noturnos.md da frente #42; a fila persistente é #43.
+docs/reports/goals-noturnos.md da frente GPT #42; a fila persistente é GPT #43.
 Não confundir /goal nativo com catálogo do projeto. Selecionar/reservar não executa.
 Antes de continuar, localizar tarefa existente em .workflow/local/active-task.md (legado: .workflow-local/) e conferir
 branch/HEAD; preservar contador e chamada ativa. Nunca importar estado de outro worktree por suposição.

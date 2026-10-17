@@ -7,8 +7,8 @@ Pacote seletivo para as issues [#12](https://github.com/HumbertoCG18/GPT-Tutor-G
 MIT, revisão `a120596f6d7ff9b967a3f5e0331ea911376ee5ef`.
 
 Adaptação documental; não instala plugin, dependência, hook ou gate. Os donos atuais
-continuam: ponytail decide o que construir; MEX/Graphify localizam fatos; Fable executa;
-Astra revisa uma vez, somente leitura; Gates 1/2 controlam plano e commit.
+continuam: ponytail decide o que construir; MEX/Graphify localizam fatos; executor pelo nível em routing.md;
+revisão conforme references/review.md; Gates 1/2 controlam plano e commit.
 
 ## Qualidade: baseline, ratchet e piso
 

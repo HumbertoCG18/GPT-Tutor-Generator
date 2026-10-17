@@ -14,7 +14,7 @@ last_updated: 2026-09-17
 
 Política + template de brief: [workflow](../../.workflow/workflow.md), seção
 "Delegação com contexto delimitado". Fonte: agent-workflow-lab/workflow.md.
-Fable executa; Astra revisa uma vez, somente leitura; AGY pesquisa.
+Executor pelo nível em references/routing.md; Astra revisa conforme review.md; AGY só por escolha.
 CLI externa não herda automaticamente skills, hooks nem contexto do Claude Code.
 
 ## Chamada e contrato

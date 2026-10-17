@@ -13,8 +13,7 @@ Não modificar bundles ECC para adaptar um único projeto.
 
 1. Rodar `python verify.py` antes/depois de atualizar plugins ou abrir novas sessões no Alethe.
 2. Para revisar catálogo Codex sem inferência, rodar `python catalog.py`.
-3. Para testar CBM nas três configurações sem indexação/inferência, rodar `python probe_mcp.py`.
-4. Para pytest, usar `rtk pytest <args>` no ambiente do projeto; recuperar detalhes
+3. Para pytest, usar `rtk pytest <args>` no ambiente do projeto; recuperar detalhes
    com `rtk recall <hash> --full`. Outros comandos continuam brutos.
 
 `private/` contém backups e logs locais, inclusive configurações: nunca versionar.
@@ -29,7 +28,7 @@ Os comandos de validação não removem skills, não atualizam índices e não c
 | Sessões e terminais | Alethe; não importar novamente os mesmos destinos |
 | Processo | ECC; papéis nativos quando disponíveis, inline quando não |
 | Skills pessoais | Fontes deste diretório; distribuição manual revisada, hashes conferidos |
-| MCPs | Configuração nativa de cada CLI; CBM fallback, sem watcher/indexação automática |
+| MCPs | Configuração nativa de cada CLI; Graphify é o único grafo de código (CBM removido na FERR-01) |
 | Saída pytest | RTK 0.49.0, executável local, sem hooks automáticos |
 | Estado do projeto | Tracker/handoff do próprio projeto |
 
@@ -75,4 +74,4 @@ que referencia o grafo e os caminhos locais deste projeto.
 [personal-instructions.md](personal-instructions.md) é a cópia versionada das instruções
 pessoais instaladas, sem credenciais. [agents/README.md](agents/README.md) explica a
 portabilidade inline. No GPT Tutor, distribuir o snapshot .workflow/ entre branches.
-Comparação Fable/Astra e aceite Alethe continuam pendentes; não são checks de verify.py.
+Aceite Alethe continua pendente (Alethe congelado em 16/10); não é check de verify.py.

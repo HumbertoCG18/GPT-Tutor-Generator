@@ -2,7 +2,7 @@
 
 Uma CLI externa inicia sua própria sessão: não presumir herança do catálogo, hooks, skills carregadas ou contexto do coordenador. Não reinstalar skills para corrigir uma chamada. Usar este contrato nas três CLIs, preservando as instruções obrigatórias do destino.
 
-1. Classificar o pedido como planejamento, auditoria, revisão de diff, pesquisa ou implementação. Planejamento Codex produz plano/aceites; auditoria AGY produz achados com evidência, sem assumir implementação. A revisão automática do revisor responde ao checklist do diff fixado; hipótese nova, varredura de corpus e experimento são pesquisa, não extensão silenciosa da revisão. Registrar lacunas e encerrar ao satisfazer o critério, sem buscar melhorias fora do escopo.
+1. Classificar o pedido como planejamento, auditoria, revisão de diff, pesquisa ou implementação. Planejamento Codex produz plano/aceites; auditoria Codex produz achados com evidência, sem assumir implementação. A revisão automática do revisor responde ao checklist do diff fixado; hipótese nova, varredura de corpus e experimento são pesquisa, não extensão silenciosa da revisão. Registrar lacunas e encerrar ao satisfazer o critério, sem buscar melhorias fora do escopo.
 2. Enviar brief curto e autocontido: objetivo, tipo, cwd absoluto, branch/HEAD e identificação do diff, arquivos permitidos, restrições, critérios de término, testes já executados e dúvidas concretas. Anexar só evidência decisiva com arquivo:linha; logs completos ficam em arquivo. Não copiar histórico, catálogos ou manuais inteiros. Não resumir conjuntos/dados cuja diferença decide o achado.
 3. Indicar somente skills necessárias, com caminho resolvido e motivo. No destino, distinguir instalada, descoberta, lida sem truncamento e aplicada com resultado verificável. Ler a skill selecionada separadamente; usar referências específicas e trechos consecutivos se necessário. Caminho ausente ou ferramenta não exposta exige registrar limitação e seguir o fallback documentado, sem inventar chamada nativa. A leitura do SKILL.md sozinha não prova aplicação.
 4. Localizar com rg em arquivos/diretórios delimitados; para estrutura, usar Graphify explain e path com símbolos/IDs exatos antes de query aberta, conferindo o projeto do grafo. Depois ler função/bloco relevante, com arquivo:linha, e confirmar no código. Grafo orienta navegação, não substitui fonte; ausência de caminho não prova ausência de relação. Não repetir trecho inalterado já presente no contexto. Após compactação ou mudança do arquivo, recuperar apenas o necessário.
@@ -54,7 +54,7 @@ Dimensionar cada tarefa para o teto: o Alethe informa o orçamento no início do
   um pacote congelado, até 2 rodadas automáticas antes da rodada final do usuário no app. Papel
   ausente: model/effort e readOnly explícitos pelo nível em routing.md, registrando a
   limitação. Claude aceita model e effort, mas recusa readOnly: trabalho somente
-  leitura vai para Codex ou fica no agente ativo. Conferir role/model/effort/readOnly
+  leitura vai para Codex ou fica no agente ativo, exceto a revisão de código do Codex (review.md). Conferir role/model/effort/readOnly
   no retorno antes de depender deles.
 - Implementação fica no agente ativo por padrão. Delegar a executor-tN só quando o
   investigador decidir (unidades independentes ou nível diferente do da sessão), com
