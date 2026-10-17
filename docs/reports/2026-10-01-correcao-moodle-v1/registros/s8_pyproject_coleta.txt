@@ -1,0 +1,6 @@
+30c8587633fc667e167e7daed9fa9f4e7d44de1b2c91a5cb2c86cae7d1fa3797 *pyproject.toml
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2528 tests collected in 5.06s
+exit=0
+requires-python >=3.11 | pytest ini {'testpaths': ['tests'], 'pythonpath': ['.']}

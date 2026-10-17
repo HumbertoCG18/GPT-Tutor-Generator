@@ -1,0 +1,4445 @@
+{
+ "identidade": {
+  "python": "3.13.12 (main, Mar  3 2026, 15:00:12) [MSC v.1944 64 bit (AMD64)]",
+  "executavel": "C:\\Users\\Humberto\\AppData\\Roaming\\uv\\python\\cpython-3.13.12-windows-x86_64-none\\python.exe",
+  "plataforma": "Windows-11-10.0.26200-SP0",
+  "flags_otimizacao": 0,
+  "dont_write_bytecode": true,
+  "http_client": {
+   "arquivo": "C:\\Users\\Humberto\\AppData\\Roaming\\uv\\python\\cpython-3.13.12-windows-x86_64-none\\Lib\\http\\client.py",
+   "sha256": "9a1c011d11aaea22df4b5e837274a25ac16f7d2f91759244feafdecce3ad22a1"
+  },
+  "moodle": {
+   "arquivo": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-moodle-v1\\docs\\reports\\2026-10-01-correcao-moodle-v1\\delta_inicial\\moodle.py",
+   "sha256": "244301234d671b4ebb990499c96d4f2a6257348d614abcc15ee3e987c12b319b",
+   "modulo": "src.builder.sources.moodle",
+   "fonte_da_classe": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-moodle-v1\\docs\\reports\\2026-10-01-correcao-moodle-v1\\delta_inicial\\moodle.py"
+  },
+  "harness": {
+   "arquivo": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-moodle-v1\\docs\\reports\\2026-10-01-correcao-moodle-v1\\harness_r1_r6.py",
+   "sha256": "6bd8847840cf80fc33efc0ed79d0b1d63b2f600a62a5fbb11bc4bcbecb8b7f2f"
+  },
+  "casos": {
+   "arquivo": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-moodle-v1\\tests\\test_moodle.py",
+   "sha256": "c148166faa7ac3c5e68a0cf6c0ba0b16366620cbb33f28e93ee04134f2eefc3f"
+  },
+  "stubs": [
+   "requests: módulo vazio (ausente neste runtime; usado só dentro de função em src/utils/helpers.py; não é o cliente nem o transporte)"
+  ],
+  "modo": "delta"
+ },
+ "problemas_de_identidade": [],
+ "inesperados": [],
+ "situacoes": {
+  "defeito_reproduzido": 20,
+  "controle_verde": 31,
+  "regra_nova_ausente_no_delta": 4,
+  "controle_verde_com_assercao_nova_vermelha": 8,
+  "novo_registrado": 1
+ },
+ "casos": [
+  {
+   "id": "M1a",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     3,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     3,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 3,
+    "corpo": {
+     "hex": "616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": {
+     "hex": ""
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(0 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M1b",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     5,
+     2
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d616263"
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "5b5d616263"
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     5,
+     2
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d616263"
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b5d616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      10,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M1c",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     3,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     3,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 3,
+    "corpo": {
+     "hex": "616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": {
+     "hex": ""
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(0 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M1d",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     7,
+     4
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d2020616263"
+     },
+     {
+      "hex": "5b5d2020"
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "5b5d2020616263"
+     },
+     {
+      "hex": "5b5d2020"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     7,
+     4
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d2020616263"
+     },
+     {
+      "hex": "5b5d2020"
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 7,
+    "corpo": {
+     "hex": "5b5d2020616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 4,
+    "corpo": {
+     "hex": "5b5d2020"
+    },
+    "partial": {
+     "hex": "5b5d2020"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(4 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      4,
+      3,
+      4,
+      null
+     ],
+     [
+      "read",
+      2,
+      7,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      9,
+      3,
+      null
+     ],
+     [
+      "read",
+      4,
+      12,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A07",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     3,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     3,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "616263"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 3,
+    "corpo": {
+     "hex": "616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": {
+     "hex": ""
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(0 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A08",
+   "grupo": "M-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     6,
+     3
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d20616263"
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": "5b5d20616263"
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     6,
+     3
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d20616263"
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 6,
+    "corpo": {
+     "hex": "5b5d20616263"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 3,
+    "corpo": {
+     "hex": "5b5d20"
+    },
+    "partial": {
+     "hex": "5b5d20"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(3 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "read",
+      1,
+      10,
+      1,
+      null
+     ],
+     [
+      "read",
+      2,
+      11,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      13,
+      3,
+      null
+     ],
+     [
+      "read",
+      9,
+      16,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M2a",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "sucesso",
+     "IncompleteRead"
+    ],
+    [
+     "historico",
+     "retorno",
+     [],
+     null
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read, 997 more expected)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M2b",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "OrcamentoExcedido",
+     "sucesso"
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "M2c",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "sucesso",
+     "OrcamentoExcedido"
+    ],
+    [
+     "historico",
+     "retorno",
+     [],
+     null
+    ],
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 999 acima do orçamento restante 3",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "A02",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "sucesso",
+     "OrcamentoExcedido"
+    ],
+    [
+     "historico",
+     "retorno",
+     [],
+     null
+    ],
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 999 acima do orçamento restante 3",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "A03",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "OrcamentoExcedido",
+     "sucesso"
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      7,
+      null
+     ],
+     [
+      "read",
+      2,
+      7,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A12",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "sucesso",
+     "OrcamentoExcedido"
+    ],
+    [
+     "historico",
+     "retorno",
+     [],
+     null
+    ],
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 999 acima do orçamento restante 3",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "A16",
+   "grupo": "M-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "sucesso",
+     "OrcamentoExcedido"
+    ],
+    [
+     "historico",
+     "retorno",
+     [],
+     null
+    ],
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 999 acima do orçamento restante 3",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "A18",
+   "grupo": "P-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     2,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "LineTooLong",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "LineTooLong",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "got more than 65536 bytes when reading chunk size",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      65537,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A19",
+   "grupo": "P-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     2,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "LineTooLong",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "LineTooLong",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "got more than 65536 bytes when reading trailer line",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      65537,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A20",
+   "grupo": "P-01",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "LineTooLong",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "LineTooLong",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "got more than 65536 bytes when reading chunk size",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      65537,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A33",
+   "grupo": "P-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     2,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "TimeoutError",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "TimeoutError",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "timeout sintético do socket",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      0,
+      "TimeoutError"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A34",
+   "grupo": "P-01",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     2,
+     0
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": "5b5d"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "TimeoutError",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "TimeoutError",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "timeout sintético do socket",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      0,
+      "TimeoutError"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A21",
+   "grupo": "P-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     0,
+     3
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      -1,
+      4,
+      3,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      7,
+      0,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     3
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d20"
+     }
+    ],
+    [
+     "novo",
+     "tamanho negativo lido e nada depois",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "validou_tamanho": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 3,
+    "corpo": {
+     "hex": "5b5d20"
+    },
+    "partial": {
+     "hex": "5b5d20"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(3 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      4,
+      null
+     ],
+     [
+      "read",
+      -1,
+      4,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      7,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A22",
+   "grupo": "P-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     0,
+     23
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d202020202020202020202020202020202020202020"
+     }
+    ],
+    [
+     "historico",
+     "partial",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d202020202020202020202020202020202020202020"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      -1,
+      4,
+      23,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: pedido de payload acima do saldo",
+     2,
+     [
+      "read",
+      -1,
+      4,
+      23,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      27,
+      0,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d202020202020202020202020202020202020202020"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     23
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d202020202020202020202020202020202020202020"
+     }
+    ],
+    [
+     "novo",
+     "tamanho negativo lido e nada depois",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "validou_tamanho": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 23,
+    "corpo": {
+     "hex": "5b5d202020202020202020202020202020202020202020"
+    },
+    "partial": {
+     "hex": "5b5d202020202020202020202020202020202020202020"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(23 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      4,
+      null
+     ],
+     [
+      "read",
+      -1,
+      4,
+      23,
+      null
+     ],
+     [
+      "read",
+      2,
+      27,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A35",
+   "grupo": "P-02",
+   "estado_no_delta": "defeito",
+   "situacao": "defeito_reproduzido",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "IncompleteRead",
+     "OrcamentoExcedido"
+    ],
+    [
+     "novo",
+     "tamanho negativo lido e nada depois",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "validou_tamanho": true
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 999 acima do orçamento restante 2",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "A23",
+   "grupo": "R5",
+   "estado_no_delta": "regra_nova",
+   "situacao": "regra_nova_ausente_no_delta",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "UnknownTransferEncoding",
+     "sucesso"
+    ],
+    [
+     "historico",
+     "bytes",
+     0,
+     2
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     2
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "nenhuma operação no corpo",
+     [],
+     [
+      "read"
+     ]
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "UnknownTransferEncoding",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A24",
+   "grupo": "R5",
+   "estado_no_delta": "regra_nova",
+   "situacao": "regra_nova_ausente_no_delta",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "UnknownTransferEncoding",
+     "JSONDecodeError"
+    ],
+    [
+     "historico",
+     "bytes",
+     0,
+     12
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "320d0a5b5d0d0a300d0a0d0a"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      65536,
+      0,
+      12,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      65536,
+      12,
+      0,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "320d0a5b5d0d0a300d0a0d0a"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     12
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "320d0a5b5d0d0a300d0a0d0a"
+     }
+    ],
+    [
+     "novo",
+     "nenhuma operação no corpo",
+     [],
+     [
+      "read",
+      "read"
+     ]
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "UnknownTransferEncoding",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "JSONDecodeError",
+    "retorno": null,
+    "bytes": 12,
+    "corpo": {
+     "hex": "320d0a5b5d0d0a300d0a0d0a"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Extra data: line 2 column 1 (char 3)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      65536,
+      0,
+      12,
+      null
+     ],
+     [
+      "read",
+      65536,
+      12,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "TE-REPETIDO",
+   "grupo": "R5",
+   "estado_no_delta": "regra_nova",
+   "situacao": "regra_nova_ausente_no_delta",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "UnknownTransferEncoding",
+     "sucesso"
+    ],
+    [
+     "historico",
+     "bytes",
+     0,
+     2
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "320d0a5b5d0d0a300d0a0d0a"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     2
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "nenhuma operação no corpo",
+     [],
+     [
+      "readline",
+      "read",
+      "read",
+      "readline",
+      "readline"
+     ]
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "UnknownTransferEncoding",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "TE-IDENTITY",
+   "grupo": "R5",
+   "estado_no_delta": "regra_nova",
+   "situacao": "regra_nova_ausente_no_delta",
+   "falhas": [
+    [
+     "historico",
+     "tipo",
+     "UnknownTransferEncoding",
+     "sucesso"
+    ],
+    [
+     "historico",
+     "bytes",
+     0,
+     2
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R2: operação no trecho proibido",
+     null,
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ],
+    [
+     "novo",
+     "R2: bytes entregues do trecho proibido",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "R1/R3: contador = payload entregue pelo fio",
+     0,
+     2
+    ],
+    [
+     "novo",
+     "R1/R3: corpo = payload entregue pelo fio",
+     {
+      "hex": ""
+     },
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "novo",
+     "nenhuma operação no corpo",
+     [],
+     [
+      "read"
+     ]
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "UnknownTransferEncoding",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "TE-CAIXA",
+   "grupo": "R5",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C02",
+   "grupo": "terminal",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A01",
+   "grupo": "terminal",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      11,
+      null
+     ],
+     [
+      "read",
+      2,
+      11,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      13,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      15,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      18,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "SO-ZERO",
+   "grupo": "terminal",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "JSONDecodeError",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    }
+   },
+   "obtido": {
+    "tipo": "JSONDecodeError",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Expecting value: line 1 column 1 (char 0)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      3,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "SO-ZERO-LIMITE",
+   "grupo": "terminal",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "JSONDecodeError",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    }
+   },
+   "obtido": {
+    "tipo": "JSONDecodeError",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Expecting value: line 1 column 1 (char 0)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      3,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C16",
+   "grupo": "crlf",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      1,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C17",
+   "grupo": "crlf",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A09",
+   "grupo": "crlf",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      1,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C09",
+   "grupo": "read1-curto",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      5,
+      0,
+      5,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "CHUNK-CURTO",
+   "grupo": "read1-curto",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      5,
+      null
+     ],
+     [
+      "read",
+      2,
+      8,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      13,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "CHUNK-MAIOR-QUE-BLOCO",
+   "grupo": "read1-curto",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "bytes": 10,
+    "corpo": {
+     "hex": "5b312c322c332c345d20"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "bytes": 10,
+    "corpo": {
+     "hex": "5b312c322c332c345d20"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      4,
+      3,
+      4,
+      null
+     ],
+     [
+      "read",
+      4,
+      7,
+      4,
+      null
+     ],
+     [
+      "read",
+      2,
+      11,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      13,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      15,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      18,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "TIMEOUT-PAYLOAD",
+   "grupo": "timeout-payload",
+   "estado_no_delta": "novo",
+   "situacao": "novo_registrado",
+   "falhas": [
+    [
+     "historico",
+     "bytes",
+     2,
+     0
+    ],
+    [
+     "historico",
+     "corpo",
+     {
+      "hex": "5b31"
+     },
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "TimeoutError",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b31"
+    }
+   },
+   "obtido": {
+    "tipo": "TimeoutError",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "timeout sintético do socket",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      0,
+      "TimeoutError"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C04",
+   "grupo": "sem-CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "corpo sem Content-Length encheu o orçamento sem fim confirmado",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C05",
+   "grupo": "sem-CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "corpo sem Content-Length encheu o orçamento sem fim confirmado",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C10",
+   "grupo": "sem-CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [
+     1,
+     2
+    ],
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b312c325d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      6,
+      0,
+      5,
+      null
+     ],
+     [
+      "read",
+      1,
+      5,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C12",
+   "grupo": "sem-CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      65536,
+      0,
+      2,
+      null
+     ],
+     [
+      "read",
+      65536,
+      2,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C01",
+   "grupo": "CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      2,
+      0,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C11",
+   "grupo": "CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read, 3 more expected)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      5,
+      0,
+      2,
+      null
+     ],
+     [
+      "read",
+      3,
+      2,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C19",
+   "grupo": "CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 65536,
+    "corpo": {
+     "bytes": 65536,
+     "sha256": "eb20649039ae7ebc27d514e8a512bb8c64d03e0f47479fb8aa3a283d3aadf72f"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 65536,
+    "corpo": {
+     "bytes": 65536,
+     "sha256": "eb20649039ae7ebc27d514e8a512bb8c64d03e0f47479fb8aa3a283d3aadf72f"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      65536,
+      0,
+      65536,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C20",
+   "grupo": "CL",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 65539,
+    "corpo": {
+     "bytes": 65539,
+     "sha256": "e896d4cc3c71b442dd88e8d59a63c249301b8cb14a82cfde2f88f1b63a661416"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 65539,
+    "corpo": {
+     "bytes": 65539,
+     "sha256": "e896d4cc3c71b442dd88e8d59a63c249301b8cb14a82cfde2f88f1b63a661416"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      65536,
+      0,
+      65536,
+      null
+     ],
+     [
+      "read",
+      3,
+      65536,
+      3,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C03",
+   "grupo": "saldo-exato",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "corpo sem Content-Length encheu o orçamento sem fim confirmado",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A31",
+   "grupo": "saldo-exato",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "corpo sem Content-Length encheu o orçamento sem fim confirmado",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C06",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Content-Length 2 acima do orçamento restante 1",
+    "aberturas": 1,
+    "ops": []
+   }
+  },
+  {
+   "id": "C07",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "aberturas": 0,
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "orçamento de bytes esgotado antes da requisição",
+    "aberturas": 0,
+    "ops": []
+   }
+  },
+  {
+   "id": "C08",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "OrcamentoExcedido",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "aberturas": 0,
+    "sem_leitura": true
+   },
+   "obtido": {
+    "tipo": "OrcamentoExcedido",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "orçamento de bytes esgotado antes da requisição",
+    "aberturas": 0,
+    "ops": []
+   }
+  },
+  {
+   "id": "C13",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "JSONDecodeError",
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b5d787878"
+    }
+   },
+   "obtido": {
+    "tipo": "JSONDecodeError",
+    "retorno": null,
+    "bytes": 5,
+    "corpo": {
+     "hex": "5b5d787878"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Extra data: line 1 column 3 (char 2)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      5,
+      0,
+      5,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "UnicodeDecodeError",
+    "bytes": 1,
+    "corpo": {
+     "hex": "ff"
+    }
+   },
+   "obtido": {
+    "tipo": "UnicodeDecodeError",
+    "retorno": null,
+    "bytes": 1,
+    "corpo": {
+     "hex": "ff"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      1,
+      0,
+      1,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C15",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "RuntimeError",
+    "bytes": 58,
+    "corpo": {
+     "hex": "7b22657863657074696f6e223a2278222c226572726f72636f6465223a2273796e746865746963222c226d657373616765223a2274657374227d"
+    }
+   },
+   "obtido": {
+    "tipo": "RuntimeError",
+    "retorno": null,
+    "bytes": 58,
+    "corpo": {
+     "hex": "7b22657863657074696f6e223a2278222c226572726f72636f6465223a2273796e746865746963222c226d657373616765223a2274657374227d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": "Moodle [synthetic]: test",
+    "aberturas": 1,
+    "ops": [
+     [
+      "read",
+      58,
+      0,
+      58,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "C18",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      4,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A04",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": {
+     "hex": ""
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(0 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      1,
+      null
+     ],
+     [
+      "read",
+      5,
+      1,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A05",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      1,
+      null
+     ],
+     [
+      "read",
+      5,
+      8,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A06",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 0,
+    "corpo": {
+     "hex": ""
+    },
+    "partial": {
+     "hex": ""
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(0 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      5,
+      3,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A17",
+   "grupo": "controles",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde_com_assercao_nova_vermelha",
+   "falhas": [
+    [
+     "novo",
+     "causa encadeada",
+     true,
+     false
+    ]
+   ],
+   "erro": null,
+   "esperado": {
+    "tipo": "IncompleteRead",
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "causa": true
+   },
+   "obtido": {
+    "tipo": "IncompleteRead",
+    "retorno": null,
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": {
+     "hex": "5b5d"
+    },
+    "causa": null,
+    "mensagem": "IncompleteRead(2 bytes read)",
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A11",
+   "grupo": "tolerancias",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      1,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      8,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A13",
+   "grupo": "tolerancias",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      9,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A14",
+   "grupo": "tolerancias",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A15",
+   "grupo": "tolerancias",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      18,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      28,
+      0,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "A32",
+   "grupo": "tolerancias",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "falhas": [],
+   "erro": null,
+   "esperado": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    }
+   },
+   "obtido": {
+    "tipo": "sucesso",
+    "retorno": [],
+    "bytes": 2,
+    "corpo": {
+     "hex": "5b5d"
+    },
+    "partial": null,
+    "causa": null,
+    "mensagem": null,
+    "aberturas": 1,
+    "ops": [
+     [
+      "readline",
+      65537,
+      0,
+      3,
+      null
+     ],
+     [
+      "read",
+      2,
+      3,
+      2,
+      null
+     ],
+     [
+      "read",
+      2,
+      5,
+      2,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      7,
+      3,
+      null
+     ],
+     [
+      "readline",
+      65537,
+      10,
+      2,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "R02",
+   "grupo": "retencao",
+   "estado_no_delta": "controle",
+   "situacao": "controle_verde",
+   "erro": null,
+   "esperado": [
+    [
+     "sucesso",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OSError",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OrcamentoExcedido",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OrcamentoExcedido",
+     2,
+     {
+      "hex": ""
+     }
+    ]
+   ],
+   "obtido": [
+    [
+     "sucesso",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OSError",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OrcamentoExcedido",
+     2,
+     {
+      "hex": "5b5d"
+     }
+    ],
+    [
+     "OrcamentoExcedido",
+     2,
+     {
+      "hex": ""
+     }
+    ]
+   ]
+  }
+ ],
+ "nao_cobertos": [
+  "R01 (reentrância, M-03): só documentação, fora do código"
+ ]
+}

@@ -1,0 +1,495 @@
+--- docs/reports/2026-10-01-correcao-moodle-v1/delta_inicial/test_moodle.py	2026-10-01 03:16:41.483257600 -0300
++++ tests/test_moodle.py	2026-10-01 03:31:07.716363900 -0300
+@@ -1,3 +1,5 @@
++import io
++
+ import pytest
+ from src.builder.sources.moodle import (
+     sanitize_folder_name, iter_section_files, SectionFile, MoodleClient,
+@@ -676,3 +678,486 @@
+     with pytest.raises(KeyboardInterrupt):
+         c.site_info()
+     assert c.bytes_recebidos == 4 and c.ultimo_corpo == b"abcd"
++
++
++# --- Contrato R1–R6 da leitura do corpo (correção V1, 01/10) ------------------------------------------------------------
++# Casos dos reprodutores (C/M/A, 30/09–01/10) e casos novos, por comportamento. O corpo é uma sequência de segmentos:
++# framing ("f"), payload ("p") ou proibido ("x": nada pode ser lido dali); o 3º item repete o segmento. "delta" diz o
++# estado esperado no delta de 29/09 (defeito, controle, regra nova ou caso novo). O harness stdlib da noite
++# (docs/reports/2026-10-01-correcao-moodle-v1/) extrai por AST estas definições, sem pytest, e roda nos três runtimes.
++_CASOS_ORCAMENTO = [
++    # M-01: payload de chunk interrompido é contado (R1)
++    {"id": "M1a", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"5\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 3, "corpo": b"abc", "causa": True}},
++    {"id": "M1b", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n5\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 5, "corpo": b"[]abc", "causa": True}},
++    {"id": "M1c", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "limite": 10,
++     "fio": ((b"5\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 3, "corpo": b"abc", "causa": True}},
++    {"id": "M1d", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "bloco": 4,
++     "fio": ((b"4\r\n", "f"), (b"[]  ", "p"), (b"\r\n5\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 7, "corpo": b"[]  abc", "causa": True}},
++    {"id": "A07", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "limite": 5,
++     "fio": ((b"A\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 3, "corpo": b"abc", "causa": True}},
++    {"id": "A08", "grupo": "M-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "limite": 12,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n1\r\n", "f"), (b" ", "p"), (b"\r\n9\r\n", "f"), (b"abc", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 6, "corpo": b"[] abc", "causa": True}},
++    # M-02: o Content-Length não governa resposta chunked (R4)
++    {"id": "M2a", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "M2b", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 2\r\n",
++     "limite": 2, "fio": ((b"5\r\n", "f"), (b"[]xxx", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    {"id": "M2c", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "limite": 3, "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A02", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "limite": 3, "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\nX-Test: ok\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A03", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 2\r\n",
++     "limite": 2, "fio": ((b"2;x=y\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\nX: y\r\n\r\n", "f")),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A12", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "limite": 3, "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A16", "grupo": "M-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "limite": 3, "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\nX-Test: incompleto", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    # P-01: payload contado antes de falha de framing (LineTooLong, timeout)
++    {"id": "A18", "grupo": "P-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n", "f"), (b"F", "f", 65537)),
++     "esp": {"tipo": "LineTooLong", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A19", "grupo": "P-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\nX: ", "f"), (b"x", "f", 65537)),
++     "esp": {"tipo": "LineTooLong", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A20", "grupo": "P-01", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n", "bloco": 2,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n", "f"), (b"F", "f", 65537)),
++     "esp": {"tipo": "LineTooLong", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A33", "grupo": "P-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "corte": 7,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "TimeoutError", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A34", "grupo": "P-01", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "corte": 10,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "TimeoutError", "bytes": 2, "corpo": b"[]"}},
++    # P-02: tamanho de chunk negativo recusado antes de qualquer leitura de payload (R2), com ou sem CL
++    {"id": "A21", "grupo": "P-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"-1\r\n", "f"), (b"[] ", "x")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 0, "corpo": b"", "validou_tamanho": True}},
++    {"id": "A22", "grupo": "P-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\n", "limite": 2,
++     "fio": ((b"-1\r\n", "f"), (b"[]", "x"), (b" ", "x", 21)),
++     "esp": {"tipo": "IncompleteRead", "bytes": 0, "corpo": b"", "validou_tamanho": True}},
++    {"id": "A35", "grupo": "P-02", "delta": "defeito", "cab": "Transfer-Encoding: chunked\r\nContent-Length: 999\r\n",
++     "limite": 2, "fio": ((b"-1\r\n", "f"), (b"[]", "x"), (b" ", "x", 21)),
++     "esp": {"tipo": "IncompleteRead", "bytes": 0, "corpo": b"", "validou_tamanho": True}},
++    # R5: Transfer-Encoding diferente de `chunked` (lista, outro coding, repetido) recusado antes do corpo
++    {"id": "A23", "grupo": "R5", "delta": "regra_nova", "cab": "Transfer-Encoding: gzip\r\nContent-Length: 2\r\n",
++     "limite": 2, "fio": ((b"[]xxx", "x"),),
++     "esp": {"tipo": "UnknownTransferEncoding", "bytes": 0, "corpo": b"", "sem_leitura": True}},
++    {"id": "A24", "grupo": "R5", "delta": "regra_nova", "cab": "Transfer-Encoding: gzip, chunked\r\n",
++     "fio": ((b"2\r\n[]\r\n0\r\n\r\n", "x"),),
++     "esp": {"tipo": "UnknownTransferEncoding", "bytes": 0, "corpo": b"", "sem_leitura": True}},
++    {"id": "TE-REPETIDO", "grupo": "R5", "delta": "regra_nova",
++     "cab": "Transfer-Encoding: chunked\r\nTransfer-Encoding: chunked\r\n", "fio": ((b"2\r\n[]\r\n0\r\n\r\n", "x"),),
++     "esp": {"tipo": "UnknownTransferEncoding", "bytes": 0, "corpo": b"", "sem_leitura": True}},
++    {"id": "TE-IDENTITY", "grupo": "R5", "delta": "regra_nova",
++     "cab": "Transfer-Encoding: identity\r\nContent-Length: 2\r\n", "fio": ((b"[]", "x"),),
++     "esp": {"tipo": "UnknownTransferEncoding", "bytes": 0, "corpo": b"", "sem_leitura": True}},
++    {"id": "TE-CAIXA", "grupo": "R5", "delta": "controle", "cab": "Transfer-Encoding: Chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    # chunk terminal: pendente, transição e fim distinguidos; só o chunk zero dá corpo vazio
++    {"id": "C02", "grupo": "terminal", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A01", "grupo": "terminal", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n", "limite": 3,
++     "fio": ((b"2;foo=bar\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "SO-ZERO", "grupo": "terminal", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"0\r\n\r\n", "f"),),
++     "esp": {"tipo": "JSONDecodeError", "bytes": 0, "corpo": b""}},
++    {"id": "SO-ZERO-LIMITE", "grupo": "terminal", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "limite": 5, "fio": ((b"0\r\n\r\n", "f"),),
++     "esp": {"tipo": "JSONDecodeError", "bytes": 0, "corpo": b""}},
++    # parcial de CRLF não é payload (R3)
++    {"id": "C16", "grupo": "crlf", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r", "f")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    {"id": "C17", "grupo": "crlf", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"", "f")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    {"id": "A09", "grupo": "crlf", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n", "bloco": 2,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r", "f")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    # read1 curto: continua, conta o tamanho real uma vez, mantém o resto do chunk
++    {"id": "C09", "grupo": "read1-curto", "delta": "controle", "cab": "Content-Length: 5\r\n", "limite": 5,
++     "read1_max": 1, "fio": ((b"[1,2]", "p"),),
++     "esp": {"tipo": "sucesso", "retorno": [1, 2], "bytes": 5, "corpo": b"[1,2]"}},
++    {"id": "CHUNK-CURTO", "grupo": "read1-curto", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "limite": 6, "read1_max": 1, "fio": ((b"5\r\n", "f"), (b"[1,2]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [1, 2], "bytes": 5, "corpo": b"[1,2]"}},
++    {"id": "CHUNK-MAIOR-QUE-BLOCO", "grupo": "read1-curto", "delta": "controle",
++     "cab": "Transfer-Encoding: chunked\r\n", "bloco": 4,
++     "fio": ((b"A\r\n", "f"), (b"[1,2,3,4] ", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [1, 2, 3, 4], "bytes": 10, "corpo": b"[1,2,3,4] "}},
++    # timeout no meio do payload: retém exatamente os fragmentos entregues, sem zerar nem duplicar
++    {"id": "TIMEOUT-PAYLOAD", "grupo": "timeout-payload", "delta": "novo", "cab": "Transfer-Encoding: chunked\r\n",
++     "corte": 5, "fio": ((b"5\r\n", "f"), (b"[1,2]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "TimeoutError", "bytes": 2, "corpo": b"[1"}},
++    # sem Content-Length, não chunked: lê até o fim; no saldo exato recusa sem sondar
++    {"id": "C04", "grupo": "sem-CL", "delta": "controle", "cab": "Connection: close\r\n", "limite": 2,
++     "fio": ((b"[]", "p"),), "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    {"id": "C05", "grupo": "sem-CL", "delta": "controle", "cab": "Connection: close\r\n", "limite": 2,
++     "fio": ((b"[]xxx", "p"),), "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    {"id": "C10", "grupo": "sem-CL", "delta": "controle", "cab": "Connection: close\r\n", "limite": 6,
++     "read1_max": 1, "fio": ((b"[1,2]", "p"),),
++     "esp": {"tipo": "sucesso", "retorno": [1, 2], "bytes": 5, "corpo": b"[1,2]"}},
++    {"id": "C12", "grupo": "sem-CL", "delta": "controle", "cab": "Content-Length: lixo\r\n",
++     "fio": ((b"[]", "p"),), "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    # Content-Length válido, não chunked: prova a completude
++    {"id": "C01", "grupo": "CL", "delta": "controle", "cab": "Content-Length: 2\r\n", "limite": 9, "anterior": 7,
++     "fio": ((b"[]", "p"),), "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "C11", "grupo": "CL", "delta": "controle", "cab": "Content-Length: 5\r\n",
++     "fio": ((b"[]", "p"),), "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]"}},
++    {"id": "C19", "grupo": "CL", "delta": "controle", "cab": "Content-Length: 65536\r\n", "limite": 65536,
++     "fio": ((b"[]", "p"), (b" ", "p", 65534)),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 65536, "corpo": b"[]" + b" " * 65534}},
++    {"id": "C20", "grupo": "CL", "delta": "controle", "cab": "Content-Length: 65539\r\n", "limite": 65539,
++     "fio": ((b"[]", "p"), (b" ", "p", 65537)),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 65539, "corpo": b"[]" + b" " * 65537}},
++    # saldo exato em chunked: recusa sem ler o framing seguinte (ordem saldo → framing)
++    {"id": "C03", "grupo": "saldo-exato", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n", "limite": 2,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n\r\n", "f")),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    {"id": "A31", "grupo": "saldo-exato", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n", "limite": 2,
++     "fio": ((b"2\r\n", "f"), (b"[]", "p")),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 2, "corpo": b"[]"}},
++    # controles de saldo, leitura e erros (A25≡C07, A26≡C08, A27≡C05, A28≡C13, A29≡C14, A30≡C15, A10≡C16)
++    {"id": "C06", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 2\r\n", "limite": 1,
++     "fio": ((b"[]", "p"),), "esp": {"tipo": "OrcamentoExcedido", "bytes": 0, "corpo": b"", "sem_leitura": True}},
++    {"id": "C07", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 2\r\n", "limite": 2,
++     "anterior": 2, "fio": ((b"[]", "p"),),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 0, "corpo": b"", "aberturas": 0, "sem_leitura": True}},
++    {"id": "C08", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 2\r\n", "limite": 2,
++     "anterior": 3, "fio": ((b"[]", "p"),),
++     "esp": {"tipo": "OrcamentoExcedido", "bytes": 0, "corpo": b"", "aberturas": 0, "sem_leitura": True}},
++    {"id": "C13", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 5\r\n",
++     "fio": ((b"[]xxx", "p"),), "esp": {"tipo": "JSONDecodeError", "bytes": 5, "corpo": b"[]xxx"}},
++    {"id": "C14", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 1\r\n",
++     "fio": ((b"\xff", "p"),), "esp": {"tipo": "UnicodeDecodeError", "bytes": 1, "corpo": b"\xff"}},
++    {"id": "C15", "grupo": "controles", "delta": "controle", "cab": "Content-Length: 58\r\n",
++     "fio": ((b'{"exception":"x","errorcode":"synthetic","message":"test"}', "p"),),
++     "esp": {"tipo": "RuntimeError", "bytes": 58,
++             "corpo": b'{"exception":"x","errorcode":"synthetic","message":"test"}'}},
++    {"id": "C18", "grupo": "controles", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\nZZ\r\n", "f")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    {"id": "A04", "grupo": "controles", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"5", "f"), (b"", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 0, "corpo": b"", "causa": True}},
++    {"id": "A05", "grupo": "controles", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n5", "f"), (b"", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    {"id": "A06", "grupo": "controles", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"5\r\n", "f"), (b"", "p")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 0, "corpo": b"", "causa": True}},
++    {"id": "A17", "grupo": "controles", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n", "f")),
++     "esp": {"tipo": "IncompleteRead", "bytes": 2, "corpo": b"[]", "causa": True}},
++    # tolerâncias de framing da stdlib mantidas pela V1 (R6; declaradas, não endurecidas)
++    {"id": "A11", "grupo": "tolerancias", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A13", "grupo": "tolerancias", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A14", "grupo": "tolerancias", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A15", "grupo": "tolerancias", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"\r\n0\r\nX-Test: incompleto", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++    {"id": "A32", "grupo": "tolerancias", "delta": "controle", "cab": "Transfer-Encoding: chunked\r\n",
++     "fio": ((b"2\r\n", "f"), (b"[]", "p"), (b"XX0\r\n\r\n", "f")),
++     "esp": {"tipo": "sucesso", "retorno": [], "bytes": 2, "corpo": b"[]"}},
++]
++
++# R02: o último corpo só muda quando uma resposta nova começa a ser lida.
++_R02_ESPERADO = [("sucesso", 2, b"[]"), ("OSError", 2, b"[]"), ("OrcamentoExcedido", 2, b"[]"),
++                 ("OrcamentoExcedido", 2, b"")]
++
++
++class _FioCorpo(io.BytesIO):
++    """Corpo HTTP instrumentado: registra cada operação depois do cabeçalho (pedido, posição no corpo, dados, erro),
++    inclusive as que lançam exceção. `corte`: posição do corpo a partir da qual nada chega (timeout do socket; o que
++    passaria do corte não é entregue). `read1_max`: retorno curto do read1, como num socket."""
++
++    def __init__(self, bruto, inicio, corte=None, read1_max=None):
++        super().__init__(bruto)
++        self.inicio, self.read1_max, self.ops, self.gravando = inicio, read1_max, [], False
++        self.corte = None if corte is None else inicio + corte
++
++    def _registra(self, op, pedido, fazer):
++        pos = self.tell()
++        try:
++            dado = fazer(pos)
++        except BaseException as exc:
++            if self.gravando:
++                self.ops.append({"op": op, "pedido": pedido, "pos": pos - self.inicio, "dado": b"",
++                                 "erro": type(exc).__name__})
++            raise
++        if self.gravando:
++            self.ops.append({"op": op, "pedido": pedido, "pos": pos - self.inicio, "dado": bytes(dado), "erro": None})
++        return dado
++
++    def _ate_o_corte(self, pos, dado):
++        if self.corte is not None and pos + len(dado) > self.corte:
++            self.seek(pos)
++            raise TimeoutError("timeout sintético do socket")
++        return dado
++
++    def read(self, n=-1):
++        return self._registra("read", n, lambda pos: self._ate_o_corte(pos, io.BytesIO.read(self, n)))
++
++    def readline(self, limite=-1):
++        return self._registra("readline", limite, lambda pos: self._ate_o_corte(pos, io.BytesIO.readline(self, limite)))
++
++    def read1(self, n=-1):
++        def fazer(pos):
++            m = len(self.getvalue()) - pos if n is None or n < 0 else n
++            if self.read1_max is not None:
++                m = min(m, self.read1_max)
++            if self.corte is not None and m > 0:
++                if pos >= self.corte:
++                    raise TimeoutError("timeout sintético do socket")
++                m = min(m, self.corte - pos)
++            return io.BytesIO.read1(self, m)
++        return self._registra("read1", n, fazer)
++
++    def readinto(self, b):
++        raise AssertionError("readinto não instrumentado")
++
++
++def _monta_fio(fio):
++    corpo, mapa = b"", []
++    for seg in fio:
++        dado = seg[0] * (seg[2] if len(seg) > 2 else 1)
++        mapa.append((len(corpo), len(corpo) + len(dado), seg[1]))
++        corpo += dado
++    return corpo, mapa
++
++
++def _tipo_em(mapa, pos):
++    return next((t for ini, fim, t in mapa if ini <= pos < fim), mapa[-1][2])
++
++
++def _executa_caso(caso, moodle, troca):
++    """Roda o caso no cliente real sobre `http.client.HTTPResponse` real. `troca(obj, nome, valor)` é o
++    monkeypatch.setattr (no harness, um equivalente que desfaz ao fim)."""
++    import http.client
++    import types
++    corpo, _ = _monta_fio(caso["fio"])
++    cab = ("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n" + caso["cab"] + "\r\n").encode()
++    fio = _FioCorpo(cab + corpo, len(cab), caso.get("corte"), caso.get("read1_max"))
++    aberturas = []
++
++    def urlopen_falso(req, timeout=0):
++        aberturas.append(req)
++        r = http.client.HTTPResponse(types.SimpleNamespace(makefile=lambda modo: fio))
++        r.begin()
++        fio.gravando = True
++        return r
++
++    troca(moodle.urllib.request, "urlopen", urlopen_falso)
++    if "bloco" in caso:
++        troca(moodle, "_BLOCO_LEITURA", caso["bloco"])
++    c = moodle.MoodleClient("https://m", "tok")
++    c.limite_bytes, c.bytes_recebidos = caso.get("limite"), caso.get("anterior", 0)
++    retorno, exc = None, None
++    try:
++        retorno = c.get_course_contents(1)
++    except Exception as e:  # o oráculo compara o tipo
++        exc = e
++    return {"tipo": "sucesso" if exc is None else type(exc).__name__, "retorno": retorno, "exc": exc,
++            "bytes": c.bytes_recebidos - caso.get("anterior", 0), "corpo": c.ultimo_corpo,
++            "aberturas": len(aberturas), "ops": fio.ops}
++
++
++def _confere_caso(caso, res):
++    """Falhas do caso: ("historico", ...) nos observáveis dos reprodutores; ("novo", ...) nas asserções da V1 —
++    R1/R3 (contador e corpo = payload entregue pelo fio), R2 (pedido de payload ≤ saldo; nada lido do trecho
++    proibido), causa encadeada, R6 (sem limite, corpo = r.read()), sem leitura e validação do tamanho."""
++    esp, falhas = caso["esp"], []
++
++    def confere(cat, nome, esperado, obtido):
++        if esperado != obtido:
++            falhas.append((cat, nome, esperado, obtido))
++
++    confere("historico", "tipo", esp["tipo"], res["tipo"])
++    if esp["tipo"] == "sucesso":
++        confere("historico", "retorno", esp["retorno"], res["retorno"])
++    confere("historico", "bytes", esp["bytes"], res["bytes"])
++    confere("historico", "corpo", esp["corpo"], res["corpo"])
++    if esp["tipo"] == "IncompleteRead" and res["tipo"] == "IncompleteRead":
++        confere("historico", "partial", esp["corpo"], res["exc"].partial)
++    confere("historico", "aberturas", esp.get("aberturas", 1), res["aberturas"])
++
++    corpo_fio, mapa = _monta_fio(caso["fio"])
++    teto = None if caso.get("limite") is None else caso["limite"] - caso.get("anterior", 0)
++    entregue = {"f": b"", "p": b"", "x": b""}
++    for op in res["ops"]:
++        inicio = _tipo_em(mapa, op["pos"])
++        resumo = (op["op"], op["pedido"], op["pos"], len(op["dado"]), op["erro"])
++        if inicio == "x":
++            falhas.append(("novo", "R2: operação no trecho proibido", None, resumo))
++        if teto is not None and op["op"] != "readline" and inicio != "f":
++            pedido = op["pedido"] if op["pedido"] is not None and op["pedido"] >= 0 else float("inf")
++            if pedido > teto - len(entregue["p"]):
++                falhas.append(("novo", "R2: pedido de payload acima do saldo", teto - len(entregue["p"]), resumo))
++        for ini, fim, t in mapa:
++            a, b = max(ini, op["pos"]), min(fim, op["pos"] + len(op["dado"]))
++            if a < b:
++                entregue[t] += op["dado"][a - op["pos"]:b - op["pos"]]
++    confere("novo", "R2: bytes entregues do trecho proibido", b"", entregue["x"])
++    confere("novo", "R1/R3: contador = payload entregue pelo fio", len(entregue["p"]), res["bytes"])
++    confere("novo", "R1/R3: corpo = payload entregue pelo fio", entregue["p"], res["corpo"])
++    if "causa" in esp and res["exc"] is not None:
++        confere("novo", "causa encadeada", esp["causa"], res["exc"].__cause__ is not None)
++    if esp.get("sem_leitura"):
++        confere("novo", "nenhuma operação no corpo", [], [op["op"] for op in res["ops"]])
++    if esp.get("validou_tamanho"):
++        ult = res["ops"][-1] if res["ops"] else {"op": None, "dado": b""}
++        confere("novo", "tamanho negativo lido e nada depois", True,
++                ult["op"] == "readline" and ult["dado"].lstrip().startswith(b"-"))
++    if caso.get("limite") is None and esp["tipo"] == "sucesso":
++        import http.client
++        import types
++        bruto = ("HTTP/1.1 200 OK\r\n" + caso["cab"] + "\r\n").encode() + corpo_fio
++        r = http.client.HTTPResponse(types.SimpleNamespace(makefile=lambda modo: io.BytesIO(bruto)))
++        r.begin()
++        confere("novo", "R6: corpo = r.read() sem limite", r.read(), res["corpo"])
++    return falhas
++
++
++def _sequencia_r02(moodle, troca):
++    import http.client
++    import types
++
++    def resposta(req, timeout=0):
++        bruto = b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n[]"
++        r = http.client.HTTPResponse(types.SimpleNamespace(makefile=lambda modo: io.BytesIO(bruto)))
++        r.begin()
++        return r
++
++    def falha(req, timeout=0):
++        raise OSError("rede indisponível")
++
++    c, obs = moodle.MoodleClient("https://m", "tok"), []
++    for urlopen, limite in ((resposta, None), (falha, None), (resposta, 2), (resposta, 3)):
++        troca(moodle.urllib.request, "urlopen", urlopen)
++        c.limite_bytes = limite
++        try:
++            c.get_course_contents(1)
++            tipo = "sucesso"
++        except Exception as e:  # o oráculo compara o tipo
++            tipo = type(e).__name__
++        obs.append((tipo, c.bytes_recebidos, c.ultimo_corpo))
++    return obs
++
++
++_GRUPOS_TESTADOS = set()
++
++
++def _casos(grupo):
++    _GRUPOS_TESTADOS.add(grupo)
++    return [pytest.param(c, id=c["id"]) for c in _CASOS_ORCAMENTO if c["grupo"] == grupo]
++
++
++def _confere(monkeypatch, caso):
++    from src.builder.sources import moodle
++    falhas = _confere_caso(caso, _executa_caso(caso, moodle, monkeypatch.setattr))
++    assert not falhas, falhas
++
++
++@pytest.mark.parametrize("caso", _casos("M-01"))
++def test_contrato_payload_de_chunk_interrompido_e_contado(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("M-02"))
++def test_contrato_content_length_nao_governa_resposta_chunked(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("P-01"))
++def test_contrato_payload_contado_antes_de_falha_de_framing(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("P-02"))
++def test_contrato_tamanho_negativo_recusado_antes_do_payload(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("R5"))
++def test_contrato_transfer_encoding_nao_suportado_recusado_antes_do_corpo(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("terminal"))
++def test_contrato_chunk_terminal_confirma_o_fim(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("crlf"))
++def test_contrato_parcial_de_crlf_nao_e_payload(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("read1-curto"))
++def test_contrato_leitura_curta_continua_e_conta_uma_vez(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("timeout-payload"))
++def test_contrato_timeout_no_payload_retem_os_fragmentos_entregues(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("sem-CL"))
++def test_contrato_sem_content_length_le_ate_o_fim_ou_recusa_no_saldo(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("CL"))
++def test_contrato_content_length_valido_prova_a_completude(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("saldo-exato"))
++def test_contrato_saldo_exato_em_chunked_recusa_sem_ler_o_framing(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("controles"))
++def test_contrato_controles_de_saldo_leitura_e_erros(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++@pytest.mark.parametrize("caso", _casos("tolerancias"))
++def test_contrato_tolerancias_de_framing_da_stdlib_mantidas(monkeypatch, caso):
++    _confere(monkeypatch, caso)
++
++
++def test_contrato_todo_caso_pertence_a_um_teste():
++    ids = [c["id"] for c in _CASOS_ORCAMENTO]
++    assert len(ids) == len(set(ids))
++    assert {c["grupo"] for c in _CASOS_ORCAMENTO} == _GRUPOS_TESTADOS
++
++
++def test_call_retencao_do_ultimo_corpo_entre_chamadas(monkeypatch):
++    from src.builder.sources import moodle
++    assert _sequencia_r02(moodle, monkeypatch.setattr) == _R02_ESPERADO

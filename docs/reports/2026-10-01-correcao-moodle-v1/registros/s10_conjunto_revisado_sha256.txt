@@ -1,0 +1,7 @@
+be9788c3c8b0c88f30dcf67fc373c5f8ffc0ed3a1fdc2350619de8043ed18816  src/builder/sources/moodle.py
+c148166faa7ac3c5e68a0cf6c0ba0b16366620cbb33f28e93ee04134f2eefc3f  tests/test_moodle.py
+30c8587633fc667e167e7daed9fa9f4e7d44de1b2c91a5cb2c86cae7d1fa3797  pyproject.toml
+709419189670a87c0b46c8334267d2c732febd4ab9141e32a4497a16a447a03d  docs/reports/2026-10-01-correcao-moodle-v1/relatorio.md
+6bd8847840cf80fc33efc0ed79d0b1d63b2f600a62a5fbb11bc4bcbecb8b7f2f  docs/reports/2026-10-01-correcao-moodle-v1/harness_r1_r6.py
+aa31707433128f36fc00c88fef8989ca69c15f739142efded03a56e6ff778bb3  docs/reports/2026-10-01-correcao-moodle-v1/runner_s7_adquire_v5.py
+f3345f8f6c8a8e3f2072f429688cd4807e0df2526f69f6b0964065d7ed879b53  docs/reports/2026-10-01-correcao-moodle-v1/resultados/diff_worktree_vs_bf46d51f.diff

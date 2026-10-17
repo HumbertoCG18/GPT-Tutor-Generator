@@ -1,0 +1,6 @@
+be9788c3c8b0c88f30dcf67fc373c5f8ffc0ed3a1fdc2350619de8043ed18816 *src/builder/sources/moodle.py
+c148166faa7ac3c5e68a0cf6c0ba0b16366620cbb33f28e93ee04134f2eefc3f *tests/test_moodle.py
+........................................................................ [ 60%]
+...............................................                          [100%]
+119 passed in 1.74s
+exit=0

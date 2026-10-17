@@ -8,6 +8,7 @@ Só stdlib.
 """
 from __future__ import annotations
 
+import http.client
 import json
 import logging
 import re
@@ -406,18 +407,90 @@ def backfill_source_section_from_api(manifest_entries, contents):
     return assignments, unmatched, ambiguous
 
 
+_BLOCO_LEITURA = 65536   # leitura do corpo em blocos: cada bloco é contado ao chegar
+
+
+class OrcamentoExcedido(RuntimeError):
+    """Orçamento de bytes de corpo do webservice esgotado ou insuficiente; `parcial` = corpo lido nesta chamada."""
+
+    def __init__(self, mensagem: str, parcial: bytes = b""):
+        super().__init__(mensagem)
+        self.parcial = parcial
+
+
 class MoodleClient:
     def __init__(self, base_url: str, token: str):
         self.base = str(base_url).rstrip("/")
         self._token = token
+        # Orçamento opcional (None = sem limite, comportamento anterior). Conta só os bytes dos CORPOS HTTP das
+        # respostas do webservice lidos por esta instância; não inclui cabeçalhos, TLS nem outro tráfego de rede.
+        # Uso sequencial por instância: o orçamento não é protegido contra chamadas concorrentes ou reentrantes.
+        self.bytes_recebidos = 0
+        self.limite_bytes = None
+        self._ultimo = []
+
+    @property
+    def ultimo_corpo(self) -> bytes:
+        """Corpo (ou parcial) da última resposta lida, preservado mesmo quando a chamada falha."""
+        return b"".join(self._ultimo)
+
+    def _le_resposta(self, r) -> bytes:
+        """Lê o corpo contando cada fragmento assim que chega. Com limite, nenhum pedido de payload passa do saldo:
+        Content-Length acima dele não é lido; corpo sem fim confirmado que enche o orçamento é recusado (sem sondar).
+        Em chunked o Content-Length é ignorado e o framing não conta; Transfer-Encoding que não seja `chunked` é
+        recusado antes do corpo."""
+        self._ultimo = []
+        codings = [v for k, v in r.headers.items() if k.lower() == "transfer-encoding"]
+        if codings and (len(codings) > 1 or codings[0].lower() != "chunked"):   # mesma comparação da stdlib
+            raise http.client.UnknownTransferEncoding(f"Transfer-Encoding não suportado: {', '.join(codings)}")
+        chunked = bool(getattr(r, "chunked", False))
+        declarado = "" if chunked else str(r.headers.get("content-length") or "").strip()
+        esperado = int(declarado) if declarado.isdigit() else None
+        teto = None if self.limite_bytes is None else self.limite_bytes - self.bytes_recebidos
+        if teto is not None and esperado is not None and esperado > teto:
+            raise OrcamentoExcedido(f"Content-Length {esperado} acima do orçamento restante {teto}")
+        ler = getattr(r, "read1", None) or r.read   # read1: um fragmento por vez, sem cruzar o fim do chunk
+        lido = 0
+        while True:
+            pedir = _BLOCO_LEITURA if teto is None else min(_BLOCO_LEITURA, teto - lido)
+            if pedir <= 0:
+                break   # saldo antes do framing: no saldo exato o fim não é confirmado
+            if chunked:
+                try:   # framing (CRLF, tamanho, extensões, trailers): nada disso conta
+                    pendente = r._get_chunk_left()   # privado da stdlib: > 0 pendente, None fim, < 0 inválido
+                except http.client.IncompleteRead as exc:
+                    raise http.client.IncompleteRead(self.ultimo_corpo) from exc
+                if pendente is None:
+                    break
+                if pendente < 0:
+                    raise http.client.IncompleteRead(self.ultimo_corpo)   # antes de qualquer leitura de payload
+                pedir = min(pedir, pendente)
+            try:
+                bloco = ler(pedir)
+            except http.client.IncompleteRead as exc:   # payload interrompido: conta o que chegou
+                self._ultimo.append(exc.partial)
+                self.bytes_recebidos += len(exc.partial)
+                raise http.client.IncompleteRead(self.ultimo_corpo, exc.expected) from exc
+            if not bloco:
+                break
+            self._ultimo.append(bloco)
+            self.bytes_recebidos += len(bloco)
+            lido += len(bloco)
+        if esperado is not None and lido < esperado:
+            raise http.client.IncompleteRead(self.ultimo_corpo, esperado - lido)
+        if teto is not None and lido == teto and esperado is None:
+            raise OrcamentoExcedido("corpo sem Content-Length encheu o orçamento sem fim confirmado", self.ultimo_corpo)
+        return self.ultimo_corpo
 
     def _call(self, wsfunction: str, **params):
+        if self.limite_bytes is not None and self.bytes_recebidos >= self.limite_bytes:
+            raise OrcamentoExcedido("orçamento de bytes esgotado antes da requisição")
         url = self.base + "/webservice/rest/server.php"
         data = {"wstoken": self._token, "wsfunction": wsfunction,
                 "moodlewsrestformat": "json", **{k: str(v) for k, v in params.items()}}
         req = urllib.request.Request(url, data=urllib.parse.urlencode(data).encode("utf-8"), method="POST")
         with urllib.request.urlopen(req, timeout=30) as r:
-            payload = json.loads(r.read().decode("utf-8"))
+            payload = json.loads(self._le_resposta(r).decode("utf-8"))
         if isinstance(payload, dict) and payload.get("exception"):
             raise RuntimeError(f"Moodle [{payload.get('errorcode')}]: {payload.get('message')}")
         return payload

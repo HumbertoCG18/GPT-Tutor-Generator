@@ -1,0 +1,21 @@
+== C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/.venv/Scripts/python.exe
+3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
+C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Scripts\python.exe
+Windows-10-10.0.26200-SP0
+C:\Users\Humberto\AppData\Local\Programs\Python\Python311\Lib\http\client.py
+True True True
+pytest 9.0.2
+== C:/Users/Humberto/AppData/Roaming/uv/python/cpython-3.13.12-windows-x86_64-none/python.exe
+3.13.12 (main, Mar  3 2026, 15:00:12) [MSC v.1944 64 bit (AMD64)]
+C:\Users\Humberto\AppData\Roaming\uv\python\cpython-3.13.12-windows-x86_64-none\python.exe
+Windows-11-10.0.26200-SP0
+C:\Users\Humberto\AppData\Roaming\uv\python\cpython-3.13.12-windows-x86_64-none\Lib\http\client.py
+True True True
+pytest ausente
+== C:/Users/Humberto/AppData/Local/Python/pythoncore-3.14-64/python.exe
+3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]
+C:\Users\Humberto\AppData\Local\Python\pythoncore-3.14-64\python.exe
+Windows-11-10.0.26200-SP0
+C:\Users\Humberto\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py
+True True True
+pytest ausente

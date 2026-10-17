@@ -1,0 +1,33 @@
+M1a defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+M1b defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+M1c defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+M1d defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+A07 defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+A08 defeito_reproduzido | bytes; corpo; partial; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; causa encadeada
+M2a defeito_reproduzido | tipo; retorno
+M2b defeito_reproduzido | tipo
+M2c defeito_reproduzido | tipo; retorno; bytes; corpo
+A02 defeito_reproduzido | tipo; retorno; bytes; corpo
+A03 defeito_reproduzido | tipo
+A12 defeito_reproduzido | tipo; retorno; bytes; corpo
+A16 defeito_reproduzido | tipo; retorno; bytes; corpo
+A18 defeito_reproduzido | bytes; corpo; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio
+A19 defeito_reproduzido | bytes; corpo; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio
+A33 defeito_reproduzido | bytes; corpo; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio
+A34 defeito_reproduzido | bytes; corpo; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio
+A21 defeito_reproduzido | bytes; corpo; partial; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; tamanho negativo lido e nada depois
+A22 defeito_reproduzido | bytes; corpo; partial; R2: operação no trecho proibido; R2: pedido de payload acima do saldo; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; tamanho negativo lido e nada depois
+A35 defeito_reproduzido | tipo; tamanho negativo lido e nada depois
+A23 regra_nova_ausente_no_delta | tipo; bytes; corpo; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; nenhuma operação no corpo
+A24 regra_nova_ausente_no_delta | tipo; bytes; corpo; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; nenhuma operação no corpo
+TE-REPETIDO regra_nova_ausente_no_delta | tipo; bytes; corpo; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; nenhuma operação no corpo
+TE-IDENTITY regra_nova_ausente_no_delta | tipo; bytes; corpo; R2: operação no trecho proibido; R2: bytes entregues do trecho proibido; R1/R3: contador = payload entregue pelo fio; R1/R3: corpo = payload entregue pelo fio; nenhuma operação no corpo
+C16 controle_verde_com_assercao_nova_vermelha | causa encadeada
+C17 controle_verde_com_assercao_nova_vermelha | causa encadeada
+A09 controle_verde_com_assercao_nova_vermelha | causa encadeada
+TIMEOUT-PAYLOAD novo_registrado | bytes; corpo
+C18 controle_verde_com_assercao_nova_vermelha | causa encadeada
+A04 controle_verde_com_assercao_nova_vermelha | causa encadeada
+A05 controle_verde_com_assercao_nova_vermelha | causa encadeada
+A06 controle_verde_com_assercao_nova_vermelha | causa encadeada
+A17 controle_verde_com_assercao_nova_vermelha | causa encadeada

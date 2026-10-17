@@ -1,0 +1,60 @@
+--- docs/reports/2026-10-01-correcao-moodle-v1/delta_inicial/moodle.py	2026-10-01 03:16:41.452343800 -0300
++++ src/builder/sources/moodle.py	2026-10-01 03:34:06.971605600 -0300
+@@ -424,6 +424,7 @@
+         self._token = token
+         # Orçamento opcional (None = sem limite, comportamento anterior). Conta só os bytes dos CORPOS HTTP das
+         # respostas do webservice lidos por esta instância; não inclui cabeçalhos, TLS nem outro tráfego de rede.
++        # Uso sequencial por instância: o orçamento não é protegido contra chamadas concorrentes ou reentrantes.
+         self.bytes_recebidos = 0
+         self.limite_bytes = None
+         self._ultimo = []
+@@ -434,25 +435,42 @@
+         return b"".join(self._ultimo)
+ 
+     def _le_resposta(self, r) -> bytes:
+-        """Lê o corpo em blocos contando cada um. Com limite, nunca lê além do orçamento: Content-Length acima dele não
+-        é lido; sem Content-Length, corpo que enche o orçamento sem fim confirmado é recusado (sem sondar)."""
++        """Lê o corpo contando cada fragmento assim que chega. Com limite, nenhum pedido de payload passa do saldo:
++        Content-Length acima dele não é lido; corpo sem fim confirmado que enche o orçamento é recusado (sem sondar).
++        Em chunked o Content-Length é ignorado e o framing não conta; Transfer-Encoding que não seja `chunked` é
++        recusado antes do corpo."""
+         self._ultimo = []
+-        declarado = str(r.headers.get("content-length") or "").strip()
++        codings = [v for k, v in r.headers.items() if k.lower() == "transfer-encoding"]
++        if codings and (len(codings) > 1 or codings[0].lower() != "chunked"):   # mesma comparação da stdlib
++            raise http.client.UnknownTransferEncoding(f"Transfer-Encoding não suportado: {', '.join(codings)}")
++        chunked = bool(getattr(r, "chunked", False))
++        declarado = "" if chunked else str(r.headers.get("content-length") or "").strip()
+         esperado = int(declarado) if declarado.isdigit() else None
+         teto = None if self.limite_bytes is None else self.limite_bytes - self.bytes_recebidos
+         if teto is not None and esperado is not None and esperado > teto:
+             raise OrcamentoExcedido(f"Content-Length {esperado} acima do orçamento restante {teto}")
++        ler = getattr(r, "read1", None) or r.read   # read1: um fragmento por vez, sem cruzar o fim do chunk
+         lido = 0
+         while True:
+             pedir = _BLOCO_LEITURA if teto is None else min(_BLOCO_LEITURA, teto - lido)
+             if pedir <= 0:
+-                break
++                break   # saldo antes do framing: no saldo exato o fim não é confirmado
++            if chunked:
++                try:   # framing (CRLF, tamanho, extensões, trailers): nada disso conta
++                    pendente = r._get_chunk_left()   # privado da stdlib: > 0 pendente, None fim, < 0 inválido
++                except http.client.IncompleteRead as exc:
++                    raise http.client.IncompleteRead(self.ultimo_corpo) from exc
++                if pendente is None:
++                    break
++                if pendente < 0:
++                    raise http.client.IncompleteRead(self.ultimo_corpo)   # antes de qualquer leitura de payload
++                pedir = min(pedir, pendente)
+             try:
+-                bloco = r.read(pedir)
+-            except http.client.IncompleteRead as exc:   # corpo chunked interrompido: conta o que chegou
++                bloco = ler(pedir)
++            except http.client.IncompleteRead as exc:   # payload interrompido: conta o que chegou
+                 self._ultimo.append(exc.partial)
+                 self.bytes_recebidos += len(exc.partial)
+-                raise http.client.IncompleteRead(self.ultimo_corpo, exc.expected) from None
++                raise http.client.IncompleteRead(self.ultimo_corpo, exc.expected) from exc
+             if not bloco:
+                 break
+             self._ultimo.append(bloco)

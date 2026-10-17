@@ -1,0 +1,4 @@
+f7549835202f108d78434a035b6a150e614c63021ae4b672dbc12a55dccd3031 *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/adquire.py
+8a2bc6f54aa2bb8213b4e2e91418d59d64172f0f0d6b9823075c3453202313eb *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v3.py
+e0432904634b395d4f9a0cd88f7de949326928e34ae957ff921c18f0073e4a9b *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v4.py
+af6eb563dcdc12751c592447b062ac7ce8368674725258ad5e2cf79a6eb62071 *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/correcoes/aquisicao/test_adquire_v5.py

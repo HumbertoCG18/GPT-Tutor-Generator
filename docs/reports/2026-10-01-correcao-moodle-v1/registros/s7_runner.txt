@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator
+configfile: pyproject.toml
+plugins: anyio-4.12.1, Faker-40.13.0
+collected 40 items
+
+..\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\validacao_externa_etapa3_correcoes_v5_29-09\correcoes\aquisicao\test_adquire_v3.py . [  2%]
+.....                                                                    [ 15%]
+..\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\validacao_externa_etapa3_correcoes_v5_29-09\correcoes\aquisicao\test_adquire_v4.py . [ 17%]
+..........                                                               [ 42%]
+..\GPT-Tutor-Generator\docs\reports\_harness-2026-09-04\c1-3\validacao_externa_etapa3_correcoes_v5_29-09\correcoes\aquisicao\test_adquire_v5.py . [ 45%]
+......................                                                   [100%]
+
+============================= 40 passed in 1.97s ==============================
+identidades [True, True, True] | pytest 0 | principal alterada nada | ok
+exit=0

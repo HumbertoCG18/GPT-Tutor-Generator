@@ -1,0 +1,15 @@
+ M docs/reports/pendencias.md
+ M src/builder/sources/moodle.py
+ M tests/test_moodle.py
+?? .codex/hooks.json
+?? docs/reports/2026-09-29-regime-vocab-validacao-externa-preregistro.md
+?? docs/reports/_harness-2026-09-04/c1-3/astra_revisao_regime2_17-09.md
+?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.csv
+?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.json
+?? docs/reports/_harness-2026-09-04/c1-3/diagnostico_subunidade_17-09.py
+?? docs/reports/_harness-2026-09-04/c1-3/revisao_delta_rmeta_rpage_29-09/
+?? docs/reports/_harness-2026-09-04/c1-3/validacao_externa_29-09/
+?? docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa2_29-09/
+?? docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_29-09/
+?? docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_29-09/
+?? docs/reports/_harness-2026-09-04/c1-3/validacao_externa_etapa3_correcoes_v5_29-09/

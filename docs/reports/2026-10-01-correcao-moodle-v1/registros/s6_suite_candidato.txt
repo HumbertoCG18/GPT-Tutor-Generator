@@ -1,0 +1,71 @@
+inicio 03:34:24
+be9788c3c8b0c88f30dcf67fc373c5f8ffc0ed3a1fdc2350619de8043ed18816 *src/builder/sources/moodle.py
+c148166faa7ac3c5e68a0cf6c0ba0b16366620cbb33f28e93ee04134f2eefc3f *tests/test_moodle.py
+........................................................................ [  2%]
+........................................................................ [  5%]
+..............................F.............sss.s....................... [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 65%]
+.......................................F................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 79%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+........                                                                 [100%]
+================================== FAILURES ===================================
+repo = WindowsPath('C:/Users/Humberto/Documents/GitHub/Fundamentos-de-Redes-Tutor')
+name = 'Fundamentos-de-Redes-Tutor__divisao_blocos'
+data = [{'id': 'bloco-01', 'n_sessoes': 1, 'span_dias': 0, 'topico': 'disciplina'}, {'id': 'bloco-02', 'n_sessoes': 2, 'span_...pico': 'protocolos aplicacao'}, {'id': 'bloco-06', 'n_sessoes': 2, 'span_dias': 5, 'topico': 'camada transporte'}, ...]
+============================== warnings summary ===============================
+tests\test_moodle_sync.py:234
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_moodle_sync.py:234: DeprecationWarning: invalid escape sequence '\T'
+tests\test_moodle_sync.py:264
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_moodle_sync.py:264: DeprecationWarning: invalid escape sequence '\G'
+tests\test_moodle_sync.py:265
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_moodle_sync.py:265: DeprecationWarning: invalid escape sequence '\S'
+tests\test_moodle_sync.py:266
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_moodle_sync.py:266: DeprecationWarning: invalid escape sequence '\D'
+tests\test_vocabulary_compile.py:380
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_vocabulary_compile.py:380: DeprecationWarning: invalid escape sequence '\s'
+tests\test_vocabulary_compile.py:381
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_vocabulary_compile.py:381: DeprecationWarning: invalid escape sequence '\s'
+tests\test_vocabulary_compile.py:382
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_vocabulary_compile.py:382: DeprecationWarning: invalid escape sequence '\j'
+tests\test_vocabulary_compile.py:388
+  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-moodle-v1\tests\test_vocabulary_compile.py:388: DeprecationWarning: invalid escape sequence '\s'
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+FAILED tests/test_pdf_markdown.py::test_respect_actualtext_tira_a_flag_e_restaura
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Computacao-Grafica-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Engenharia-Software-2-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Fundamentos-de-Redes-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Laboratorio-de-Redes-Tutor
+2 failed, 2522 passed, 4 skipped, 8 warnings in 56.91s
+exit=1
+fim 03:35:25

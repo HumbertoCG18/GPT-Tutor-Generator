@@ -3,7 +3,7 @@ name = "academic-tutor-repo-builder"
 version = "3.0.0"
 description = "Converts academic PDFs into curated knowledge repositories for AI tutoring systems."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 dependencies = [
     "beautifulsoup4>=4.12.0",

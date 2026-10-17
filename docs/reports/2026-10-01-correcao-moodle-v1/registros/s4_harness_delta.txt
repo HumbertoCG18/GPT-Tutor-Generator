@@ -1,0 +1,6 @@
+3.11.9 | delta | moodle 244301234d671b4e | casos 64 | {'defeito_reproduzido': 20, 'controle_verde': 31, 'regra_nova_ausente_no_delta': 4, 'controle_verde_com_assercao_nova_vermelha': 8, 'novo_registrado': 1} | inesperados [] | identidade ok
+exit=0
+3.13.12 | delta | moodle 244301234d671b4e | casos 64 | {'defeito_reproduzido': 20, 'controle_verde': 31, 'regra_nova_ausente_no_delta': 4, 'controle_verde_com_assercao_nova_vermelha': 8, 'novo_registrado': 1} | inesperados [] | identidade ok
+exit=0
+3.14.3 | delta | moodle 244301234d671b4e | casos 64 | {'defeito_reproduzido': 20, 'controle_verde': 31, 'regra_nova_ausente_no_delta': 4, 'controle_verde_com_assercao_nova_vermelha': 8, 'novo_registrado': 1} | inesperados [] | identidade ok
+exit=0

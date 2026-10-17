@@ -1,0 +1,6 @@
+3.11.9 | candidato | moodle be9788c3c8b0c88f | casos 64 | {'contrato_ok': 64} | inesperados [] | identidade ok
+exit=0
+3.13.12 | candidato | moodle be9788c3c8b0c88f | casos 64 | {'contrato_ok': 64} | inesperados [] | identidade ok
+exit=0
+3.14.3 | candidato | moodle be9788c3c8b0c88f | casos 64 | {'contrato_ok': 64} | inesperados [] | identidade ok
+exit=0
