@@ -10,8 +10,9 @@ from typing import Callable, Dict, List, Optional
 
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
-from src.builder.timeline.classifier import classify_block, row_kind_from_text, STRONG_EXAM_RE
+from src.builder.timeline.classifier import classify_block, STRONG_EXAM_RE
 from src.builder.timeline.kinds import BlockKind
+from src.builder.timeline.row_kind import aplica_adjacencia, rotulo, tipo_da_linha
 from src.builder.timeline.curation import apply_block_curation, load_boundary_dates
 from src.builder.timeline.unit_matcher import assign_units_by_work_milestones, assign_units_positional
 from src.builder.text.normalize import (
@@ -39,12 +40,23 @@ from src.builder.timeline.block_identity import (
 TIMELINE_INDEX_VERSION = 4
 
 
+def _kind_por_linhas(block: dict) -> str:
+    """#52: kind do bloco = agregacao dos kinds das linhas (override manual vence).
+    Bloco persistido (sem `rows`) segue o classificador por conteudo."""
+    override = block.get("manual_kind_override")
+    if isinstance(override, str) and override in _VALID_KIND_VALUES:
+        return override
+    if "rows" not in block:
+        return classify_block(block).value
+    return _aggregate_source_kind(block["rows"]) or BlockKind.CLASS.value
+
+
 def ensure_block_kind(block: dict) -> dict:
     """Lazy backfill: garante `kind` no bloco. Idempotente."""
     if not isinstance(block, dict):
         return block
     if not block.get("kind"):
-        block["kind"] = classify_block(block).value
+        block["kind"] = _kind_por_linhas(block)
     # transiente do guard cue-x-conteudo (F2/F3): nunca persiste no JSON
     block.pop("_plan_phrases", None)
     return block
@@ -292,12 +304,12 @@ _KIND_TOKEN_RE = re.compile(r"\{kind=(\w+)\}")
 _IGNORED_KINDS = {"suspension", "g2", "ps", "event"}
 _VALID_KIND_VALUES = {k.value for k in BlockKind}
 
-# Prioridade ao agregar kinds das linhas num hint de bloco (mais forte vence).
-# class/overview/unknown nunca viram hint (sao o fallback de texto).
+# Prioridade ao agregar kinds das linhas no kind do bloco (mais forte vence; #52).
+# class nunca vira hint; overview por linha tira o bloco do DP de unidades.
 _SOURCE_KIND_PRIORITY = [
     "assessment", "deliverable", "review", "holiday", "makeup",
     "suspended", "academic_event", "results", "workshop",
-    "office_hours", "planning", "reserved",
+    "office_hours", "planning", "reserved", "overview",
 ]
 
 
@@ -328,35 +340,27 @@ def _row_atividade(row: Dict[str, str]) -> str:
 
 def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
     content_keys, date_keys = _infer_timeline_keys(timeline)
+    # Rotulo = colunas de conteudo SEM a Atividade (o `content` a inclui).
+    label_keys = [key for key in content_keys if "atividade" not in key] or content_keys
     candidate_rows: List[Dict[str, object]] = []
+    linhas: List[Dict[str, object]] = []
     for index, row in enumerate(timeline or []):
         content = " ".join(row.get(key, "") for key in content_keys).strip()
         date_text = " / ".join(row.get(key, "") for key in date_keys if row.get(key, "")).strip()
-        kind = "class"
+        atividade_raw = _row_atividade(row)
+        # `ignored` = metadado de periodo (g2/ps/suspension/event) pelo marcador ou Atividade crus
         match = _KIND_TOKEN_RE.search(content)
         if match:
-            raw = match.group(1).strip().lower() or "class"
-            # token deve ser um BlockKind valido OU um token ignorado conhecido;
-            # qualquer outra coisa cai em class (defensivo).
-            kind = raw if (raw in _VALID_KIND_VALUES or raw in _IGNORED_KINDS) else "class"
+            ignored = match.group(1).strip().lower() in _IGNORED_KINDS
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
         else:
-            # Sem marcador {kind=}: a coluna Atividade do SARC é o sinal autoritativo.
-            # Nota: ps/g2 so se distinguem pela COR (caminho SARC-HTML). Aqui, sem
-            # cor, "prova de substituicao/g2" colapsa em assessment (direcao segura).
-            atividade = norm_ascii_lower(_row_atividade(row))
-            for needle, mapped in ATIVIDADE_KIND_MAP.items():
-                if needle in atividade:
-                    kind = mapped
-                    break
-            if kind == "class":
-                # Atividade "aula"/vazia nao e sinal: o TEXTO da linha pode
-                # denunciar suspensao/feriado/reserva. Sem isto a linha entra
-                # como aula, funde com a vizinha e o classificador so ve o
-                # agregado (ES2 bloco-11 `suspended` inteiro; IA bloco-06
-                # engoliu "suspensao de aulas"). So kinds nao-academicos.
-                kind = row_kind_from_text(content) or "class"
-        ignored = kind in _IGNORED_KINDS
+            atividade = norm_ascii_lower(atividade_raw)
+            ignored = next((m for n, m in ATIVIDADE_KIND_MAP.items() if n in atividade), "") in _IGNORED_KINDS
+        bruto = " ".join(row.get(key, "") for key in label_keys).strip()
+        marca = _KIND_TOKEN_RE.search(bruto)
+        sem_marca = _KIND_TOKEN_RE.sub("", bruto)
+        kind, so_rotulo = tipo_da_linha(rotulo(sem_marca), marca.group(1).strip().lower() if marca else "", atividade_raw)
+        linhas.append({"kind": kind, "so_rotulo": so_rotulo, "vazia": not _collapse_ws(sem_marca)})
         candidate_rows.append({
             "index": index,
             "row": row,
@@ -367,6 +371,11 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
             "kind": kind,
             "ignored": ignored,
         })
+    aplica_adjacencia(linhas)
+    for candidate, linha in zip(candidate_rows, linhas):
+        candidate["kind"] = linha["kind"]
+        if linha.get("review_duvidas"):
+            candidate["review_duvidas"] = True
     return candidate_rows
 
 
@@ -1419,6 +1428,137 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
                 b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
 
 
+def _finaliza_indice(
+    timeline_index: dict,
+    course_meta: dict,
+    unit_index: list,
+    content_taxonomy: Optional[dict],
+    persist: bool,
+    previa: bool = False,
+) -> None:
+    """Identidade (uuid), migracao de refs, curadoria + pinos e pos-transforms do indice recem-montado. In-place.
+    `previa=True` (#52): so memoria (persist=False), sem repetir avisos."""
+    # Re-attach block_uuid via identity ledger (Task 1 — additive, não muda bloco-NN).
+    _repo_root = course_meta.get("_repo_root")
+    if _repo_root:
+        _course_dir = Path(_repo_root) / "course"
+        _ledger = load_identity_ledger(_course_dir)
+        _manifest = course_meta.get("manifest") or {}
+        _has_refs = scan_existing_block_refs(_course_dir, _manifest)
+        _blocks_list = timeline_index.get("blocks") or []
+        try:
+            _blocks_list, _ledger, _id_flags = reattach_block_uuids(
+                _blocks_list, _ledger, has_existing_refs=_has_refs
+            )
+            timeline_index["blocks"] = _blocks_list
+            if not persist and not previa and any("mint" in f for f in _id_flags):
+                logging.getLogger(__name__).warning(
+                    "ledger stale; rebuild %s to persist new block uuids", _course_dir
+                )
+            if persist:
+                save_identity_ledger(_course_dir, _ledger)
+        except BlockIdentityError:
+            raise
+        except OSError:
+            pass  # I/O error on ledger read/write: non-fatal for additive Task 1
+
+    # Task 3: migrate human-truth legacy bloco-NN refs to uuid before curation apply.
+    if _repo_root:
+        from src.builder.timeline.block_identity import migrate_human_truth_block_refs
+        from src.builder.timeline.curation import CURATION_FILENAME
+        _blocks_for_mig = timeline_index.get("blocks") or []
+        _manifest_path = Path(_repo_root) / "manifest.json"
+        _curation_file = Path(_repo_root) / "course" / CURATION_FILENAME
+        try:
+            if _manifest_path.is_file():
+                _mf = json.loads(_manifest_path.read_text(encoding="utf-8"))
+                _mf_entries = _mf.get("entries") or []
+            else:
+                _mf = None
+                _mf_entries = []
+        except (json.JSONDecodeError, OSError):
+            _mf = None
+            _mf_entries = []
+        try:
+            if _curation_file.is_file():
+                _cur_raw = json.loads(_curation_file.read_text(encoding="utf-8"))
+                _cur_blocks = dict(_cur_raw.get("blocks") or {}) if isinstance(_cur_raw, dict) else {}
+            else:
+                _cur_raw = {"version": 1, "blocks": {}}
+                _cur_blocks = {}
+        except (json.JSONDecodeError, OSError):
+            _cur_raw = {"version": 1, "blocks": {}}
+            _cur_blocks = {}
+        _upd_entries, _upd_cur_blocks, _mig_flags = migrate_human_truth_block_refs(
+            _mf_entries, _cur_blocks, _blocks_for_mig, logger=logging.getLogger(__name__),
+        )
+        if _mig_flags and not previa:
+            logging.getLogger(__name__).warning("Task3 migration flags: %s", _mig_flags)
+        if persist and _mf is not None and _upd_entries != _mf_entries:
+            try:
+                _mf["entries"] = _upd_entries
+                _manifest_path.write_text(
+                    json.dumps(_mf, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
+        if persist and _upd_cur_blocks != _cur_blocks:
+            try:
+                _cur_raw["blocks"] = _upd_cur_blocks
+                _curation_file.write_text(
+                    json.dumps(_cur_raw, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
+
+    # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
+    # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
+    if _repo_root:
+        touched = _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
+        if touched:
+            # Pino de unidade = inversao LOCAL calendario-vs-plano: o DP monotonico
+            # nao pode arrastar os vizinhos atras dele (IA: ML pinado em marco
+            # empurrava busca/agentes de junho para u05). Re-roda so nos livres.
+            from src.builder.timeline.unit_matcher import assign_units_around_pins
+            _blocks = timeline_index.get("blocks", []) or []
+            if assign_units_around_pins(_blocks, list((content_taxonomy or {}).get("units", []) or []),
+                                        is_pinned=lambda b: bool(b.get("block_manual_unit_slug"))):
+                _frases = plan_phrases_para_classificacao(unit_index)
+                for _b in _blocks:
+                    if not _b.get("block_manual_unit_slug"):
+                        _b["_plan_phrases"] = _frases
+                        finalize_block(_b)
+
+    # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
+    # kinds/units finais via finalize_block + curation) porque o caminho real de
+    # gravação (persist_enriched_timeline_index) não passa por
+    # _serialize_timeline_index. Mesma função usada pelo _serialize → sem divergência.
+    _apply_timeline_post_transforms(timeline_index.get("blocks", []) or [])
+
+
+def _reviews_demovidas_para_aula(
+    candidate_rows: List[Dict[str, object]],
+    course_meta: dict,
+    unit_index: list,
+    content_taxonomy: Optional[dict] = None,
+    boundary_dates: Optional[set] = None,
+) -> None:
+    """#52 (adjudicacao 05/10): linha review cujo bloco o pos-processamento demove a aula volta a ser aula ANTES
+    da segmentacao e do DP; senao a linha (isolada por ter kind) fica fora da atribuicao de unidade. A previa
+    passa pela mesma finalizacao (curadoria inclusive) da construcao real, sem gravar. In-place."""
+    if not any(r.get("kind") == BlockKind.REVIEW.value for r in candidate_rows or []):
+        return
+    previa = _build_timeline_index(candidate_rows, unit_index, content_taxonomy, boundary_dates)
+    _finaliza_indice(previa, course_meta, unit_index, content_taxonomy, persist=False, previa=True)
+    for bloco in previa.get("blocks") or []:
+        if bloco.get("kind") != BlockKind.CLASS.value or bloco.get("manual_kind_override"):
+            continue
+        for row in bloco.get("rows") or []:
+            if row.get("kind") == BlockKind.REVIEW.value:
+                row["kind"] = BlockKind.CLASS.value
+                row.pop("review_duvidas", None)
+
+
 def _apply_timeline_post_transforms(blocks: List[Dict[str, object]]) -> None:
     """Transforms pós-classificação compartilhados por TODOS os caminhos de
     gravação do índice (GUI via build_file_map+persist; scripts/testes via
@@ -1486,6 +1626,7 @@ def _build_file_map_timeline_context_from_course(
             if _repo_root_for_boundaries
             else None
         )
+        _reviews_demovidas_para_aula(candidate_rows, course_meta, unit_index, content_taxonomy, boundary_dates)
         timeline_index = _build_timeline_index(
             candidate_rows,
             unit_index=unit_index,
@@ -1505,102 +1646,7 @@ def _build_file_map_timeline_context_from_course(
         else:
             timeline_index = _empty_timeline_index()
 
-    # Re-attach block_uuid via identity ledger (Task 1 — additive, não muda bloco-NN).
-    _repo_root = course_meta.get("_repo_root")
-    if _repo_root:
-        _course_dir = Path(_repo_root) / "course"
-        _ledger = load_identity_ledger(_course_dir)
-        _manifest = course_meta.get("manifest") or {}
-        _has_refs = scan_existing_block_refs(_course_dir, _manifest)
-        _blocks_list = timeline_index.get("blocks") or []
-        try:
-            _blocks_list, _ledger, _id_flags = reattach_block_uuids(
-                _blocks_list, _ledger, has_existing_refs=_has_refs
-            )
-            timeline_index["blocks"] = _blocks_list
-            if not persist and any("mint" in f for f in _id_flags):
-                logging.getLogger(__name__).warning(
-                    "ledger stale; rebuild %s to persist new block uuids", _course_dir
-                )
-            if persist:
-                save_identity_ledger(_course_dir, _ledger)
-        except BlockIdentityError:
-            raise
-        except OSError:
-            pass  # I/O error on ledger read/write: non-fatal for additive Task 1
-
-    # Task 3: migrate human-truth legacy bloco-NN refs to uuid before curation apply.
-    if _repo_root:
-        from src.builder.timeline.block_identity import migrate_human_truth_block_refs
-        from src.builder.timeline.curation import CURATION_FILENAME
-        _blocks_for_mig = timeline_index.get("blocks") or []
-        _manifest_path = Path(_repo_root) / "manifest.json"
-        _curation_file = Path(_repo_root) / "course" / CURATION_FILENAME
-        try:
-            if _manifest_path.is_file():
-                _mf = json.loads(_manifest_path.read_text(encoding="utf-8"))
-                _mf_entries = _mf.get("entries") or []
-            else:
-                _mf = None
-                _mf_entries = []
-        except (json.JSONDecodeError, OSError):
-            _mf = None
-            _mf_entries = []
-        try:
-            if _curation_file.is_file():
-                _cur_raw = json.loads(_curation_file.read_text(encoding="utf-8"))
-                _cur_blocks = dict(_cur_raw.get("blocks") or {}) if isinstance(_cur_raw, dict) else {}
-            else:
-                _cur_raw = {"version": 1, "blocks": {}}
-                _cur_blocks = {}
-        except (json.JSONDecodeError, OSError):
-            _cur_raw = {"version": 1, "blocks": {}}
-            _cur_blocks = {}
-        _upd_entries, _upd_cur_blocks, _mig_flags = migrate_human_truth_block_refs(
-            _mf_entries, _cur_blocks, _blocks_for_mig, logger=logging.getLogger(__name__),
-        )
-        if _mig_flags:
-            logging.getLogger(__name__).warning("Task3 migration flags: %s", _mig_flags)
-        if persist and _mf is not None and _upd_entries != _mf_entries:
-            try:
-                _mf["entries"] = _upd_entries
-                _manifest_path.write_text(
-                    json.dumps(_mf, ensure_ascii=False, indent=2), encoding="utf-8"
-                )
-            except OSError:
-                pass
-        if persist and _upd_cur_blocks != _cur_blocks:
-            try:
-                _cur_raw["blocks"] = _upd_cur_blocks
-                _curation_file.write_text(
-                    json.dumps(_cur_raw, ensure_ascii=False, indent=2), encoding="utf-8"
-                )
-            except OSError:
-                pass
-
-    # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
-    # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
-    if _repo_root:
-        touched = _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
-        if touched:
-            # Pino de unidade = inversao LOCAL calendario-vs-plano: o DP monotonico
-            # nao pode arrastar os vizinhos atras dele (IA: ML pinado em marco
-            # empurrava busca/agentes de junho para u05). Re-roda so nos livres.
-            from src.builder.timeline.unit_matcher import assign_units_around_pins
-            _blocks = timeline_index.get("blocks", []) or []
-            if assign_units_around_pins(_blocks, list((content_taxonomy or {}).get("units", []) or []),
-                                        is_pinned=lambda b: bool(b.get("block_manual_unit_slug"))):
-                _frases = plan_phrases_para_classificacao(unit_index)
-                for _b in _blocks:
-                    if not _b.get("block_manual_unit_slug"):
-                        _b["_plan_phrases"] = _frases
-                        finalize_block(_b)
-
-    # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
-    # kinds/units finais via finalize_block + curation) porque o caminho real de
-    # gravação (persist_enriched_timeline_index) não passa por
-    # _serialize_timeline_index. Mesma função usada pelo _serialize → sem divergência.
-    _apply_timeline_post_transforms(timeline_index.get("blocks", []) or [])
+    _finaliza_indice(timeline_index, course_meta, unit_index, content_taxonomy, persist)
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
@@ -2244,6 +2290,10 @@ def _build_timeline_index(
         source_kind = _aggregate_source_kind(rows)
         if source_kind:
             runtime_block["source_kind"] = source_kind
+        revisoes = [r for r in rows if r.get("kind") == BlockKind.REVIEW.value]
+        if revisoes and all(r.get("review_duvidas") for r in revisoes):
+            # H (#52): review de duvidas hospeda material, mas nao e alvo do prep-prova
+            runtime_block["review_from_office_hours"] = True
         runtime_block["sessions"] = _attach_card_evidence_to_sessions(
             _extract_block_sessions(rows, f"bloco-{position:02d}"),
             runtime_block["card_evidence"],
@@ -2267,11 +2317,9 @@ def _build_timeline_index(
         runtime_block["topic_source"] = topic_source
         runtime_blocks.append(runtime_block)
 
-    # Atribuicao de unidade ANTES da classificacao final de kind. Blocos com
-    # source_kind nao-aula (provas/trabalhos/feriados via Atividade) ficam de fora;
-    # o resto sao candidatos a aula. Assim, quando finalize_block classificar, o
-    # has_unit ja reflete o posicional e o gate do classificador de sessao volta
-    # a valer (aula de conteudo que cita "revisao" nao vira review).
+    # Atribuicao de unidade antes do finalize_block. Blocos com source_kind nao-aula
+    # (kind de alguma linha: prova, trabalho, feriado, overview, review...) ficam de
+    # fora; o resto sao candidatos a aula (#52: o kind vem das linhas).
     units_ordered = list((content_taxonomy or {}).get("units", []) or [])
     class_candidates = [b for b in runtime_blocks if not b.get("source_kind")]
     # F5: entregas numeradas ("Fechamento da parte N") segmentam as unidades com

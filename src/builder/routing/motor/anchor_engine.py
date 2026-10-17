@@ -165,6 +165,8 @@ def resolve_exam_prep(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision
             break
         if str(b.get("kind") or "") in _NOT_PREP_HOSTS or not b.get("id"):
             continue
+        if b.get("kind") == "review" and b.get("review_from_office_hours"):
+            continue  # duvidas pre-prova hospedam, mas a lista e "uma aula antes" (#52, H)
         prev = b
     if prev is None:
         return None

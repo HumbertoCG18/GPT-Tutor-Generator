@@ -70,7 +70,7 @@ def test_atividade_evento_uncolored_emits_event():
 def test_candidate_row_event_from_atividade_is_ignored():
     rows = [{"content": "SE Day", "Atividade": "Evento Academico", "date": "03/07/2026"}]
     out = _build_timeline_candidate_rows(rows)
-    assert out[0]["kind"] == "event"
+    assert out[0]["kind"] == "academic_event"  # #52: Atividade traduzida; segue ignorada
     assert out[0]["ignored"] is True
 
 
@@ -90,7 +90,7 @@ def test_candidate_row_invalid_kind_becomes_class():
 def test_candidate_row_ignored_token_preserved():
     rows = [{"content": "Greve {kind=suspension}", "date": "03/07/2026"}]
     out = _build_timeline_candidate_rows(rows)
-    assert out[0]["kind"] == "suspension"
+    assert out[0]["kind"] == "suspended"  # #52: o rotulo "greve" decide; segue ignorada
     assert out[0]["ignored"] is True
 
 
@@ -137,5 +137,5 @@ def test_finalize_preserves_manual_unit_on_non_class():
 
 def test_source_kind_priority_covers_all_non_class_kinds():
     from src.builder.timeline.kinds import BlockKind
-    expected = {k.value for k in BlockKind} - {"class", "overview", "unknown"}
+    expected = {k.value for k in BlockKind} - {"class", "unknown"}  # #52: overview por linha
     assert set(_SOURCE_KIND_PRIORITY) == expected

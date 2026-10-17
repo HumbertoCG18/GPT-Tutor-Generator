@@ -288,8 +288,11 @@ def save_block_scope_override(
 
 
 def block_kind(block: dict) -> str:
-    """kind efetivo do bloco (honra manual_kind_override via classifier)."""
-    return classify_block(block).value
+    """kind efetivo do bloco: override manual (curadoria aplicada ao vivo) > kind gravado pelo
+    indice (#52, decidido por linha) > classificador por conteudo (indice antigo sem kind)."""
+    if block.get("manual_kind_override") or not block.get("kind"):
+        return classify_block(block).value
+    return str(block["kind"])
 
 
 def _block_scope_slugs(block: dict) -> list[str]:

@@ -1196,7 +1196,7 @@ def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
         syllabus="""
 | Semana | Data | Conteúdo |
 |---|---|---|
-| 1 | 2026-03-04 | Introdução |
+| 1 | 2026-03-04 | Introdução aos métodos formais |
 | 2 | 2026-03-16 | definições indutivas e recursivas, exercícios |
 | 3 | 2026-03-18 | definições indutivas e recursivas sobre listas |
 | 4 | 2026-03-23 | definições indutivas e recursivas sobre árvores |
