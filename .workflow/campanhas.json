@@ -752,6 +752,75 @@
           "resultado": "252 arquivos versionados na dev; gitleaks: falsos positivos com exceção"
         }
       ]
+    },
+    {
+      "id": "CI-LINUX",
+      "titulo": "Job core verde no Linux (#107, #68)",
+      "prioridade": 14,
+      "janela": "assistida",
+      "depende_de": [],
+      "worktrees": [
+        "GPT-Tutor-Generator-suite-linux"
+      ],
+      "nota": "vermelho desde 08/10 (run 37735208552, sync #101): 26 falhas em 4 causas; a branch local fix/suite-linux tem um wip (c437f4b5) a avaliar. Ordem: 01+02 num PR, 03 noutro, 04 por último",
+      "atualizado_em": "2026-10-17",
+      "tarefas": [
+        {
+          "id": "CI-LINUX-01",
+          "titulo": "Workflow instala o extra code-summarization (ou google-genai no dev)",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE"
+        },
+        {
+          "id": "CI-LINUX-02",
+          "titulo": "Teste do robocopy só no Windows (skipif ou mock)",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE"
+        },
+        {
+          "id": "CI-LINUX-03",
+          "titulo": "Datas do Moodle no fuso America/Sao_Paulo (moodle_labels.py:206/241), teste com TZ=UTC",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE"
+        },
+        {
+          "id": "CI-LINUX-04",
+          "titulo": "Caminhos Windows no Linux: section_from_source_path, FileEntry.id, moodle_sync (21 testes)",
+          "nivel": "T2",
+          "estado": "proposta",
+          "depende_de": [],
+          "origem": "CODE"
+        },
+        {
+          "id": "CI-LINUX-05",
+          "titulo": "Suíte completa no CI Linux; conferir a catraca verify_python_quality e tests/test_core.py:405",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [
+            "CI-LINUX-01",
+            "CI-LINUX-02",
+            "CI-LINUX-03",
+            "CI-LINUX-04"
+          ],
+          "origem": "CODE"
+        },
+        {
+          "id": "CI-LINUX-06",
+          "titulo": "Fechar #107 e #68 com o link do run verde; avaliar tornar o core obrigatório",
+          "nivel": "T1",
+          "estado": "proposta",
+          "depende_de": [
+            "CI-LINUX-05"
+          ],
+          "origem": "CODE"
+        }
+      ]
     }
   ]
 }
