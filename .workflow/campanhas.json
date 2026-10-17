@@ -22,7 +22,7 @@
         "GPT-Tutor-Generator"
       ],
       "handoff": "GPT-Tutor-Generator-moodle-v1/docs/reports/2026-10-01-correcao-moodle-v1/relatorio.md",
-      "atualizado_em": "2026-10-03",
+      "atualizado_em": "2026-10-07",
       "tarefas": [
         {
           "id": "MOODLE-V1-01",
@@ -305,46 +305,52 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-09-23",
-      "decomposta": false,
+      "atualizado_em": "2026-10-17",
       "tarefas": [
         {
           "id": "PRODUTO-01",
           "titulo": "#63–#65: sync_moodle.py:93, unprocess/reject com options={}, voter default, renomear matéria cria perfil {}, app.py:2305",
           "nivel": "T2",
-          "estado": "proposta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         },
         {
           "id": "PRODUTO-02",
           "titulo": "#50: 5 pendências do FR (timeline, override de unidade, escopo, golden)",
           "nivel": "T2",
-          "estado": "proposta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         },
         {
           "id": "PRODUTO-03",
           "titulo": "#47: testes aninhados nunca coletados",
           "nivel": "T1",
-          "estado": "pronta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         },
         {
           "id": "PRODUTO-04",
           "titulo": "FR curado: mudanças não commitadas no repo Fundamentos-de-Redes-Tutor (incerto)",
           "nivel": "T1",
-          "estado": "proposta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         },
         {
           "id": "PRODUTO-05",
           "titulo": "Sync FR U03/U06 e aprovação no Curator",
           "nivel": "T2",
-          "estado": "proposta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         },
         {
           "id": "PRODUTO-06",
           "titulo": "Triar pendências antigas de 03 a 14/09 (incertas)",
           "nivel": "T1",
-          "estado": "proposta"
+          "estado": "concluída",
+          "resultado": "arquivada sem execução (decisão REC-04 lote 6 do lab, executada na ARRUMA-04 em 17/10); reabrir se precisar; as issues citadas (#47, #50, #63-#65) seguem abertas no GitHub"
         }
-      ]
+      ],
+      "nota": "arquivada em 17/10 (decisão REC-04 lote 6 do lab, ARRUMA-04) sem decompor o escopo; reabrir se precisar"
     },
     {
       "id": "INTEGRACAO",
@@ -459,7 +465,7 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-10-03",
+      "atualizado_em": "2026-10-07",
       "tarefas": [
         {
           "id": "WORKFLOW-01",
@@ -517,6 +523,28 @@
           "estado": "concluída",
           "evidencia": "transferida para o registro do laboratório: TYPESAFE-01",
           "resultado": "transferida; o workflow mora no agent-workflow-lab"
+        },
+        {
+          "id": "WORKFLOW-08",
+          "titulo": "Harden checkout state and adopt dev-based campaign worktrees (#99)",
+          "nivel": "T3",
+          "estado": "em execução",
+          "depende_de": [],
+          "origem": "USER",
+          "passos": [
+            {
+              "texto": "Inventory and safely retire obsolete worktrees",
+              "feito": false
+            },
+            {
+              "texto": "Fix workflow preflight and refresh project snapshot",
+              "feito": false
+            },
+            {
+              "texto": "Validate CI, review evidence and prepare Gate 2",
+              "feito": false
+            }
+          ]
         }
       ]
     },
@@ -639,7 +667,7 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-10-05",
+      "atualizado_em": "2026-10-17",
       "tarefas": [
         {
           "id": "LIMPEZA-01",
@@ -653,7 +681,9 @@
           "id": "LIMPEZA-02",
           "titulo": "Encerrar UI-11 e OBS-12 (PRs #39 e #40 mergeados em 23/09)",
           "nivel": "T0",
-          "estado": "pronta"
+          "estado": "concluída",
+          "evidencia": "PRs #39 e #40 mergeados em 23/09 (conferido 17/10)",
+          "resultado": "superada: UI-11 e OBS-12 já entregues pelos PRs #39/#40; fechada pela decisão REC-04 lote 2 (lab), executada na ARRUMA-04"
         },
         {
           "id": "LIMPEZA-03",
