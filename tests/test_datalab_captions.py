@@ -1,15 +1,9 @@
 # tests/test_datalab_captions.py
 from __future__ import annotations
 
-import sys
-from unittest import mock
+from tests._tkstub import garantir_tkinter
 
-_tk_mock = mock.MagicMock()
-sys.modules.setdefault("tkinter", _tk_mock)
-sys.modules.setdefault("tkinter.filedialog", _tk_mock)
-sys.modules.setdefault("tkinter.messagebox", _tk_mock)
-sys.modules.setdefault("tkinter.simpledialog", _tk_mock)
-sys.modules.setdefault("tkinter.ttk", _tk_mock)
+garantir_tkinter()
 
 
 def test_appconfig_image_description_source_default():
