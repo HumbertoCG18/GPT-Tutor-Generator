@@ -1777,7 +1777,7 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   Registro nativo AGY permanece não comprovado e não é requisito do caminho adotado.
 - Concluído: roteamento supervisionado Claude principal, Codex execução/revisão separada e
   AGY pesquisa/documentação registrado no laboratório; quatro passos validados em cópias isoladas.
-  [Resultado integrado](Feitos/workflow-validacao-integrada_16-09.md).
+  [Resultado integrado](_archive/workflow-validacao-integrada_16-09.md).
 - Concluído: piloto AGY de síntese com fonte fornecida (3/3 fatos) e edição documental
   isolada (somente parágrafo autorizado, original preservado). Quatro chamadas incluindo
   controle e pesquisa bloqueada; [resultados e limites](_archive/workflow-validacao-agy_16-09.md).
@@ -1808,14 +1808,14 @@ Estado: `.workflow/local/d9-flags-63-64-20260923.md` (pedidos literais de 23/09)
   retorna 24 habilitadas. Teste interativo 0.154.0 também iniciou sem aviso.
   Usuário confirmou conversa retomada no Alethe e ocorrência também no terminal.
   Retomada paralela bloqueada pela conversa aberta nesta aplicação; sem forçar lock.
-  Handoff para teste em sessão nova: workflow-handoff-sessao-nova.md.
+  Handoff para teste em sessão nova: _archive/workflow-handoff-sessao-nova.md.
   Não declarar resolvido nem remover mais skills por suposição. Evidência local:
   agent-workflow-lab/warning-diagnosis.json.
 - Concluído nesta retomada: sessão nova `01a0a824-59b4-72f1-ab1b-fcf3c39bdb36`,
   `codex-tui`/CLI `0.154.0`, catálogo recebido de 44 skills (JSONL).
   Usuário confirmou ausência do aviso. Terminal novo validado neste caso;
   causa anterior e aceite de conversa nova no Alethe permanecem abertos.
-  Proveniência: [workflow-handoff-sessao-nova.md](workflow-handoff-sessao-nova.md).
+  Proveniência: [workflow-handoff-sessao-nova.md](_archive/workflow-handoff-sessao-nova.md).
 - [USER] Uso MCP no AGY headless exige permissão normal; não ampliada nesta tarefa.
   Descoberta e transporte CBM verificados. Não confundir configuração com autorização.
 

@@ -40,12 +40,17 @@ documentos abaixo foram movidos sem alteração de conteúdo além de caminhos.
 
 ## O que ficou fora do arquivo, e por quê
 
-- [`../Feitos/workflow-validacao-integrada_16-09.md`](../Feitos/workflow-validacao-integrada_16-09.md):
+- [`workflow-validacao-integrada_16-09.md`](workflow-validacao-integrada_16-09.md):
   o laboratório o cita em `agent-workflow-lab/evals/workflow-20260916.md:17`. Ele se move junto
   com a atualização desse consumidor.
 - [`../2026-09-18-piloto-hooks-context-mode.md`](../2026-09-18-piloto-hooks-context-mode.md):
   `_context-mode-hooks/validate_result.py` lê esse caminho.
-- [`../workflow-handoff-sessao-nova.md`](../workflow-handoff-sessao-nova.md) e
+- [`workflow-handoff-sessao-nova.md`](workflow-handoff-sessao-nova.md) e
   `.workflow/pendencias_workflow.md`: ainda guardam pendências sem encerramento verificado.
 - Pastas com código e dados (`_workflow-audit-2026-09-15/`, `_context-mode-pilot/`,
   `_context-mode-hooks/`, `_capability-usage-audit/`): ficam no lugar.
+
+Atualização de 17/10 (ARRUMA-04 do laboratório): `workflow-validacao-integrada_16-09.md` e
+`workflow-handoff-sessao-nova.md` foram movidos para este `_archive/`. O consumidor do laboratório já
+aponta para cá, e as pendências do handoff continuam ligadas a partir de `pendencias.md`.
+`_workflow-audit-2026-09-15/` foi para `agent-workflow-lab/scratch/` (ARRUMA-03).
