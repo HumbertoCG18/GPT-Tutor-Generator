@@ -1012,7 +1012,7 @@ DICAS
 
 DEPENDÊNCIAS
   Se faltarem PyMuPDF, PyMuPDF4LLM ou pdfplumber:
-  pip install pymupdf pymupdf4llm pdfplumber
+  pip install pymupdf "pymupdf4llm<1.28" pdfplumber
 """),
 ]
 
@@ -1572,7 +1572,7 @@ class SubjectManagerDialog(tk.Toplevel):
 
     def _import_pdf_teaching_plan(self):
         if not HAS_PYMUPDF4LLM:
-            messagebox.showerror(APP_NAME, "pymupdf4llm não está instalado. Feche a aplicação e execute 'pip install pymupdf4llm'.")
+            messagebox.showerror(APP_NAME, "pymupdf4llm não está instalado. Feche a aplicação e execute 'pip install \"pymupdf4llm<1.28\"'.")
             return
             
         pdf_path = filedialog.askopenfilename(
@@ -4933,7 +4933,7 @@ class StatusDialog(tk.Toplevel):
         # ── Backends de Extração ─────────────────────────────────────────
         f_ext = section("Backends de Extração de PDF")
         row(f_ext, "PyMuPDF",      HAS_PYMUPDF,      "pymupdf" if HAS_PYMUPDF else "pip install pymupdf")
-        row(f_ext, "PyMuPDF4LLM", HAS_PYMUPDF4LLM,  "pymupdf4llm" if HAS_PYMUPDF4LLM else "pip install pymupdf4llm")
+        row(f_ext, "PyMuPDF4LLM", HAS_PYMUPDF4LLM,  "pymupdf4llm" if HAS_PYMUPDF4LLM else "pip install \"pymupdf4llm<1.28\"")
         row(f_ext, "pdfplumber",   HAS_PDFPLUMBER,   "pdfplumber" if HAS_PDFPLUMBER else "pip install pdfplumber")
         row(f_ext, "Datalab API", has_datalab_api_key(), get_datalab_base_url() if has_datalab_api_key() else "defina DATALAB_API_KEY no .env")
         row(f_ext, "docling CLI",  bool(DOCLING_CLI), DOCLING_CLI or "não encontrado no PATH")
