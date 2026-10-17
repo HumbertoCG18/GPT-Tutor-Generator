@@ -1,0 +1,33 @@
+## SO|1205-laminas-gerencia-de-memoria
+  1a  B: swapping c=0.350588 | C: memoria-virtual c=0.306122
+  2a  B: swapping c=0.350588 | C: memoria-virtual c=0.306122
+  fim B: swapping ['winner_score=2.04'] | C: memoria-virtual ['winner_score=2.94']
+## TCC|aula-10-linguagens-reconheciveis-e-linguagens-decidiveis
+  1a  B: linguagens-reconheciveis-e-decidiveis c=0.602105 | C: maquinas-de-turing-universais c=0.036913 AMB
+  2a  B: linguagens-reconheciveis-e-decidiveis c=0.733768 | C: maquinas-de-turing c=0.335262
+  fim B: linguagens-reconheciveis-e-decidiveis ['rotulo-decomposto'] | C: maquinas-de-turing ['propagado-headings']
+## TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem
+  1a  B: conjectura-de-church-turing c=0.88127 | C: maquinas-de-turing c=0.853728
+  2a  B: (igual) | C: (igual)
+  tit B: {'unidade': 'unidade-02-turing-computabilidade', 'vencedor': 'conjectura-de-church-turing', 'resultado': ''} | C: {'unidade': 'unidade-02-turing-computabilidade', 'vencedor': 'maquinas-de-turing', 'resultado': ''}
+  fim B: conjectura-de-church-turing ['winner_score=0.91'] | C: maquinas-de-turing ['winner_score=10.14']
+## TCC|aula-12-entscheidungsproblem
+  1a  B: prova-da-indecidibilidade-do-problema-da-parada c=0.934386 | C: prova-da-indecidibilidade-do-problema-da-parada c=0.192982
+  2a  B: - | C: teoremas-de-godel c=0.119565 AMB
+  tit B: {'unidade': 'unidade-03-problemas-indecidiveis', 'vencedor': 'prova-da-indecidibilidade-do-problema-da-parada', 'resultado': ''} | C: None
+  fim B: prova-da-indecidibilidade-do-problema-da-parada ['winner_score=1.64'] | C: teoremas-de-godel ['propagado-headings']
+## TCC|aula-15-teoremas-de-incompletude-de-godel
+  1a  B: prova-da-indecidibilidade-do-problema-da-parada c=0.390533 | C: teoremas-de-godel c=0.432886
+  2a  B: prova-da-indecidibilidade-do-problema-da-parada c=0.542426 | C: teoremas-de-godel c=0.244631
+  fim B: prova-da-indecidibilidade-do-problema-da-parada ['propagado-headings'] | C: teoremas-de-godel ['winner_score=5.96']
+## TCC|aula-17-np-completude
+  1a  B: teorema-de-cook-levin c=0.7075 | C: teorema-de-cook-levin c=0.577
+  2a  B: - | C: reducao-polinomial-de-problemas c=0.853688
+  tit B: {'unidade': 'unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais', 'vencedor': 'teorema-de-cook-levin', 'resultado': ''} | C: None
+  fim B: teorema-de-cook-levin ['winner_score=3.20'] | C: reducao-polinomial-de-problemas ['propagado-headings']
+
+TCC aliases só base: ['unidade-02-turing-computabilidade|linguagens-reconheciveis-e-decidiveis|Decidíveis', 'unidade-02-turing-computabilidade|maquinas-de-turing|aveis', 'unidade-03-problemas-indecidiveis|prova-da-indecidibilidade-do-problema-da-parada|alise', 'unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais|reducao-polinomial-de-problemas|instancia']
+TCC aliases só cand: ['unidade-02-turing-computabilidade|maquinas-de-turing|codificacao', 'unidade-02-turing-computabilidade|maquinas-de-turing|contexto', 'unidade-02-turing-computabilidade|maquinas-de-turing|historico', 'unidade-02-turing-computabilidade|maquinas-de-turing|maquina', 'unidade-03-problemas-indecidiveis|prova-da-indecidibilidade-do-problema-da-parada|analise']
+SO  aliases só base: ['unidade-02-gerencia-do-processador|escalonamento|defini']
+SO  aliases só cand: ['unidade-02-gerencia-do-processador|escalonamento|definicao']
+mudou_2a {'CG': [22, 22], 'ES2': [14, 14], 'FR': [8, 8], 'IA': [21, 21], 'MF': [15, 15], 'SO': [9, 9], 'TCC': [13, 14]}

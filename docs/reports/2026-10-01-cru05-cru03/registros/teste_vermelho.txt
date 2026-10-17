@@ -1,0 +1,12 @@
+E         - muller
+E         + mu ller
+E         ?   +
+
+tests\test_text_normalize.py:58: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_text_normalize.py::test_diacritico_espacador_nao_parte_a_palavra[Comput\xb4aveis-computaveis]
+FAILED tests/test_text_normalize.py::test_diacritico_espacador_nao_parte_a_palavra[An\xb4alise-analise]
+FAILED tests/test_text_normalize.py::test_diacritico_espacador_nao_parte_a_palavra[Defini\xb8c\u02dcao-definicao]
+FAILED tests/test_text_normalize.py::test_diacritico_espacador_nao_parte_a_palavra[Func\xb8\u02dcoes-funcoes]
+FAILED tests/test_text_normalize.py::test_diacritico_espacador_nao_parte_a_palavra[Mu\xa8ller-muller]
+5 failed, 9 passed in 4.06s

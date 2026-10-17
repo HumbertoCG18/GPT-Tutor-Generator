@@ -1,0 +1,5270 @@
+{
+ "preregistro_sha256": "68ff436fe699991c4888887ff5edc06cff75f382a1c9dd9642670c0cd41ab2dd",
+ "worktree": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-noite-20260930",
+ "cursos": [
+  "MF",
+  "SO",
+  "IA",
+  "ES2",
+  "TCC"
+ ],
+ "f_mat_limiar": 0.25,
+ "identidade": {
+  "src.builder.timeline.index": "bfe352c287794728ce6d661bfbe16da8c2f3a651e00231410cf295d15d857c54",
+  "src.builder.routing.file_map": "77d8e0347ef16af4ec13f66c423bc3adae9dbef6ba53569ba1a437551ff64483",
+  "src.builder.text.normalize": "d0ce230919dc5460f5866f1f8b4d028a9a21b0a76d15600dbbe51b355d31b745"
+ },
+ "fidelidade": {
+  "decisoes_divergentes": [],
+  "src_fora": [],
+  "pares": 1536,
+  "dif_max": 0.0,
+  "captura_ok": 231,
+  "captura_falha": [],
+  "matcher_ok": 27968,
+  "matcher_falha": 0,
+  "integral": true
+ },
+ "total": {
+  "materiais_1a": 231,
+  "R_top_argmax_muda": 21,
+  "R_top_estado_muda": 17,
+  "R_mat_argmax_muda": 56,
+  "R_mat_estado_muda": 52,
+  "R_both_argmax_muda": 68,
+  "R_both_estado_muda": 64,
+  "com_vencedor": 158,
+  "vencedor_sem_frase": 92,
+  "mediana_fracao_qualquer": 0.0,
+  "argmax_muda_R_both_sobre_com_vencedor": 0.4304,
+  "fracao_frases_vencedor": {
+   "top": {
+    "n": 66,
+    "mediana": 0.0
+   },
+   "mat": {
+    "n": 66,
+    "mediana": 0.0
+   },
+   "qualquer": {
+    "n": 66,
+    "mediana": 0.0
+   }
+  }
+ },
+ "criterio_indicativo": "ganha força",
+ "por_curso": {
+  "MF": {
+   "materiais_1a": 69,
+   "R_top_argmax_muda": 1,
+   "R_top_estado_muda": 2,
+   "R_mat_argmax_muda": 6,
+   "R_mat_estado_muda": 6,
+   "R_both_argmax_muda": 7,
+   "R_both_estado_muda": 8,
+   "com_vencedor": 45,
+   "vencedor_sem_frase": 30,
+   "fracao_frases_vencedor": {
+    "top": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "mat": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "qualquer": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    }
+   }
+  },
+  "SO": {
+   "materiais_1a": 39,
+   "R_top_argmax_muda": 11,
+   "R_top_estado_muda": 10,
+   "R_mat_argmax_muda": 7,
+   "R_mat_estado_muda": 8,
+   "R_both_argmax_muda": 15,
+   "R_both_estado_muda": 14,
+   "com_vencedor": 22,
+   "vencedor_sem_frase": 7,
+   "fracao_frases_vencedor": {
+    "top": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 1.0,
+     "q3": 1.0,
+     "frac_maior_que_0": 0.5333
+    },
+    "mat": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 0.0832,
+     "q3": 0.2821,
+     "frac_maior_que_0": 0.5333
+    },
+    "qualquer": {
+     "n": 15,
+     "q1": 0.0,
+     "mediana": 1.0,
+     "q3": 1.0,
+     "frac_maior_que_0": 0.5333
+    }
+   }
+  },
+  "IA": {
+   "materiais_1a": 63,
+   "R_top_argmax_muda": 1,
+   "R_top_estado_muda": 1,
+   "R_mat_argmax_muda": 23,
+   "R_mat_estado_muda": 19,
+   "R_both_argmax_muda": 23,
+   "R_both_estado_muda": 19,
+   "com_vencedor": 49,
+   "vencedor_sem_frase": 27,
+   "fracao_frases_vencedor": {
+    "top": {
+     "n": 22,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "mat": {
+     "n": 22,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "qualquer": {
+     "n": 22,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    }
+   }
+  },
+  "ES2": {
+   "materiais_1a": 34,
+   "R_top_argmax_muda": 5,
+   "R_top_estado_muda": 0,
+   "R_mat_argmax_muda": 13,
+   "R_mat_estado_muda": 12,
+   "R_both_argmax_muda": 14,
+   "R_both_estado_muda": 13,
+   "com_vencedor": 20,
+   "vencedor_sem_frase": 17,
+   "fracao_frases_vencedor": {
+    "top": {
+     "n": 3,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "mat": {
+     "n": 3,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "qualquer": {
+     "n": 3,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    }
+   }
+  },
+  "TCC": {
+   "materiais_1a": 26,
+   "R_top_argmax_muda": 3,
+   "R_top_estado_muda": 4,
+   "R_mat_argmax_muda": 7,
+   "R_mat_estado_muda": 7,
+   "R_both_argmax_muda": 9,
+   "R_both_estado_muda": 10,
+   "com_vencedor": 22,
+   "vencedor_sem_frase": 11,
+   "fracao_frases_vencedor": {
+    "top": {
+     "n": 11,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.1818
+    },
+    "mat": {
+     "n": 11,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.0
+    },
+    "qualquer": {
+     "n": 11,
+     "q1": 0.0,
+     "mediana": 0.0,
+     "q3": 0.0,
+     "frac_maior_que_0": 0.1818
+    }
+   }
+  }
+ },
+ "inventario": {
+  "MF": {
+   "frases_F_top_ge2": [],
+   "frases_F_mat_gt_lim": {},
+   "tokens_F_top_ge2": [
+    "modelos",
+    "programas",
+    "temporal"
+   ],
+   "uso_no_vencedor_de_frases_pouco_discriminantes": {}
+  },
+  "SO": {
+   "frases_F_top_ge2": [
+    "arquivos",
+    "escalonamento"
+   ],
+   "frases_F_mat_gt_lim": {
+    "escalonamento": {
+     "markdown_text": 0.333
+    },
+    "arquivos": {
+     "markdown_text": 0.333
+    }
+   },
+   "tokens_F_top_ge2": [
+    "arquivos",
+    "dispositivos",
+    "escalonamento",
+    "particoes",
+    "sincronizacao"
+   ],
+   "uso_no_vencedor_de_frases_pouco_discriminantes": {
+    "escalonamento": 12,
+    "arquivos": 11
+   }
+  },
+  "IA": {
+   "frases_F_top_ge2": [
+    "inferencia probabilistica"
+   ],
+   "frases_F_mat_gt_lim": {},
+   "tokens_F_top_ge2": [
+    "aprendizado",
+    "busca",
+    "ia",
+    "inferencia",
+    "modelos",
+    "probabilistica",
+    "problemas"
+   ],
+   "uso_no_vencedor_de_frases_pouco_discriminantes": {}
+  },
+  "ES2": {
+   "frases_F_top_ge2": [
+    "orientada a microsservicos"
+   ],
+   "frases_F_mat_gt_lim": {},
+   "tokens_F_top_ge2": [
+    "arquitetura",
+    "arquiteturais",
+    "continua",
+    "devops",
+    "orientada",
+    "teste",
+    "testes"
+   ],
+   "uso_no_vencedor_de_frases_pouco_discriminantes": {}
+  },
+  "TCC": {
+   "frases_F_top_ge2": [
+    "maquinas de turing"
+   ],
+   "frases_F_mat_gt_lim": {},
+   "tokens_F_top_ge2": [
+    "classe",
+    "completude",
+    "conjuntos",
+    "exemplos",
+    "maquinas",
+    "np",
+    "provas",
+    "pspace",
+    "turing"
+   ],
+   "uso_no_vencedor_de_frases_pouco_discriminantes": {
+    "maquinas de turing": 10
+   }
+  }
+ },
+ "materiais": {
+  "MF|archive-of-formal-proofs-355fb8": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "sistemas-formais",
+    "decidido"
+   ],
+   "R_top": [
+    "sistemas-formais",
+    "decidido"
+   ],
+   "R_mat": [
+    "sistemas-formais",
+    "decidido"
+   ],
+   "R_both": [
+    "sistemas-formais",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|arvores": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|aws-encryption-sdk": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|classes-parte1": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ]
+  },
+  "MF|classes-parte2": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ]
+  },
+  "MF|colecoes-arrays": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|colecoes-conjuntos": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|colecoes-sequences": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|conjuntosindutivos": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_top": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_mat": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_both": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|correcaoterminacao": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_top": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_mat": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_both": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|eth2": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|exemplos": {
+   "unidade": "unidade-03-verificacao-de-modelos",
+   "chamadas": 1,
+   "base": [
+    "maquinas-de-estado",
+    "decidido"
+   ],
+   "R_top": [
+    "maquinas-de-estado",
+    "decidido"
+   ],
+   "R_mat": [
+    "maquinas-de-estado",
+    "decidido"
+   ],
+   "R_both": [
+    "maquinas-de-estado",
+    "decidido"
+   ]
+  },
+  "MF|exemplos-thy": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_top": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_mat": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_both": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|exercicios-arrays": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "sistema-de-prova",
+    "decidido"
+   ],
+   "R_top": [
+    "sistema-de-prova",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exercicios-conjuntos": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosconjuntosindutivos": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-conjuntos-indutivos",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-conjuntos-indutivos",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-conjuntos-indutivos",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-conjuntos-indutivos",
+    "decidido"
+   ]
+  },
+  "MF|exercicioscorrecaoinducaomatematica": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|exercicioscorrecaoterminacao": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosdafny1": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_top": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_mat": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_both": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosdafny2": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "pre-e-pos-condicoes",
+    "decidido"
+   ],
+   "R_top": [
+    "pre-e-pos-condicoes",
+    "decidido"
+   ],
+   "R_mat": [
+    "pre-e-pos-condicoes",
+    "decidido"
+   ],
+   "R_both": [
+    "pre-e-pos-condicoes",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|exerciciosdafny3": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosdafny4": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_top": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_mat": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_both": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosdafny5": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_top": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_mat": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_both": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosespecificacao": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_top": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_mat": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_both": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosespecificacao-respostas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_top": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_mat": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ],
+   "R_both": [
+    "linguagens-de-especificacao-e-logicas",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosformalizacaoalgoritmosinvariantes": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|exerciciosformalizacaoalgoritmosrecursao": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|exerciciosformalizacaoalgoritmosrecursao-respostas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosformalizacaoalgoritmosrecursao2": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosformalizacaoalgoritmosrecursao3": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosformalizacaoalgoritmosrecursao3-respostas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosisabelle": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "provadores-de-teoremas",
+    "decidido"
+   ],
+   "R_top": [
+    "provadores-de-teoremas",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|exerciciosisabelle2": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "ambiguo"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "ambiguo"
+   ]
+  },
+  "MF|exercicioslogicatemporal": {
+   "unidade": "unidade-03-verificacao-de-modelos",
+   "chamadas": 1,
+   "base": [
+    "modelos-de-kripke",
+    "decidido"
+   ],
+   "R_top": [
+    "modelos-de-kripke",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "modelos-de-kripke",
+    "decidido"
+   ],
+   "R_both": [
+    "modelos-de-kripke",
+    "ambiguo"
+   ]
+  },
+  "MF|exerciciosnusmv": {
+   "unidade": "unidade-03-verificacao-de-modelos",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "fundamentos-de-logicas-temporais",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "fundamentos-de-logicas-temporais",
+    "decidido"
+   ]
+  },
+  "MF|formalizacaoalgoritmos-invarianteslaco": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|formalizacaoalgoritmos-recursao": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|formalizacaoalgoritmos-recursao2": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|formalizacaoalgoritmos-recursao3": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_top": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_mat": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_both": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|hoare": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_top": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_mat": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ],
+   "R_both": [
+    "correcao-parcial-e-total",
+    "decidido"
+   ]
+  },
+  "MF|ieeesoftwaredafny2017": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_top": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_mat": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_both": [
+    "logica-de-hoare",
+    "decidido"
+   ]
+  },
+  "MF|intro": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|introducao": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|introducao-zip": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|invariantes": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "sistema-de-prova",
+    "decidido"
+   ],
+   "R_top": [
+    "sistema-de-prova",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|listas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|logicadehoare": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_top": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_mat": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_both": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|logicadehoare-exercicios-respostas": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_top": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_mat": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_both": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|logicadehoare1-exercicios-respostas": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_top": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_mat": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "R_both": [
+    "logica-de-hoare",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|logicadehoare2": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_top": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "R_both": [
+    "invariante-e-variante-de-laco",
+    "ambiguo"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|logicapredicados-semantica": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|logicapredicados-sintaxe": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "fundamentos-de-logica-de-primeira-ordem",
+    "decidido"
+   ],
+   "R_top": [
+    "fundamentos-de-logica-de-primeira-ordem",
+    "decidido"
+   ],
+   "R_mat": [
+    "fundamentos-de-logica-de-primeira-ordem",
+    "decidido"
+   ],
+   "R_both": [
+    "fundamentos-de-logica-de-primeira-ordem",
+    "decidido"
+   ]
+  },
+  "MF|logicaproposicional-semantica": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|logicaproposicional-sintaxe": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|mcs": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|provas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_top": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_mat": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ],
+   "R_both": [
+    "abordagens-para-verificacao-formal",
+    "decidido"
+   ]
+  },
+  "MF|provasindutivas-especificacoesrecursivas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_top": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_mat": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "R_both": [
+    "exemplos-de-aplicacoes",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "MF|provasindutivas-especificacoesrecursivas-arvores": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|provasindutivas-especificacoesrecursivas-listas": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|revisao": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|revisao-p1": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|revisao-p1-gabarito": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|rigoroussoftwaredevelopment-chapters-1-2": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|t1-2026-1": {
+   "unidade": "unidade-01-metodos-formais",
+   "chamadas": 1,
+   "base": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_top": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_mat": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ],
+   "R_both": [
+    "especificacao-de-funcoes-recursivas",
+    "decidido"
+   ]
+  },
+  "MF|t1-2026-1-thy": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|t2-2026-1": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|terminacao": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|tiposindutivos": {
+   "unidade": "unidade-02-verificacao-de-programas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "MF|verificacaomodelos": {
+   "unidade": "unidade-03-verificacao-de-modelos",
+   "chamadas": 1,
+   "base": [
+    "verificacao-de-modelos-model-checking",
+    "decidido"
+   ],
+   "R_top": [
+    "verificacao-de-modelos-model-checking",
+    "decidido"
+   ],
+   "R_mat": [
+    "verificacao-de-modelos-model-checking",
+    "decidido"
+   ],
+   "R_both": [
+    "verificacao-de-modelos-model-checking",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|0205-laminas-segmentacao": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "segmentacao",
+    "decidido"
+   ],
+   "R_top": [
+    "segmentacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "segmentacao",
+    "decidido"
+   ],
+   "R_both": [
+    "segmentacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|0206-laminas-gerencia-de-i-o-livro-texto": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|0206-laminas-mecanismos-de-interrupcao": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "politicas-basicas",
+    "decidido"
+   ],
+   "R_both": [
+    "politicas-basicas",
+    "decidido"
+   ]
+  },
+  "SO|0206-laminas-memoria-virtual-livro-texto": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "memoria-virtual",
+    "decidido"
+   ],
+   "R_top": [
+    "memoria-virtual",
+    "decidido"
+   ],
+   "R_mat": [
+    "memoria-virtual",
+    "decidido"
+   ],
+   "R_both": [
+    "memoria-virtual",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|0704-exemplo-threads-em-java": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "conceitos-basicos",
+    "decidido"
+   ],
+   "R_top": [
+    "conceitos-basicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "conceitos-basicos",
+    "decidido"
+   ],
+   "R_both": [
+    "conceitos-basicos",
+    "decidido"
+   ]
+  },
+  "SO|0704-laminas-comunicacao-e-sincronizacao": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_top": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_mat": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_both": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ]
+  },
+  "SO|0904-laminas-semaforos": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ]
+  },
+  "SO|1203-processos": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_top": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_mat": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_both": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|1205-laminas-gerencia-de-memoria": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "swapping",
+    "decidido"
+   ],
+   "R_top": [
+    "swapping",
+    "decidido"
+   ],
+   "R_mat": [
+    "swapping",
+    "decidido"
+   ],
+   "R_both": [
+    "swapping",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|14-04-troca-de-mensagens": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ],
+   "R_both": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ]
+  },
+  "SO|1404-laminas-ipc": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_top": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_mat": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ],
+   "R_both": [
+    "comunicacao-e-sincronizacao-de-processos",
+    "decidido"
+   ]
+  },
+  "SO|1404-troca-de-mensagens": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ],
+   "R_both": [
+    "primitivas-de-sincronizacao",
+    "decidido"
+   ]
+  },
+  "SO|1703-chamada-de-sistema": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_top": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|1903-estruturas-de-controle": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.2,
+    "qualquer": 1.0
+   }
+  },
+  "SO|2105-laminas-paginacao": {
+   "unidade": "unidade-05-gerencia-de-memoria",
+   "chamadas": 1,
+   "base": [
+    "paginacao",
+    "decidido"
+   ],
+   "R_top": [
+    "paginacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "paginacao",
+    "decidido"
+   ],
+   "R_both": [
+    "paginacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|2306-laminas-gerencia-de-arquivos": {
+   "unidade": "unidade-06-gerencia-de-arquivos",
+   "chamadas": 1,
+   "base": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_top": [
+    "diretorios",
+    "decidido"
+   ],
+   "R_mat": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_both": [
+    "diretorios",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.0832,
+    "qualquer": 1.0
+   }
+  },
+  "SO|2306-laminas-laminas-armazenamento-em-massa": {
+   "unidade": "unidade-06-gerencia-de-arquivos",
+   "chamadas": 1,
+   "base": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 1.0,
+    "qualquer": 1.0
+   }
+  },
+  "SO|2403-escalonamento-de-processos": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.0832,
+    "qualquer": 1.0
+   }
+  },
+  "SO|2603-algoritmos-de-escalonamento": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-escalonamento",
+    "ambiguo"
+   ],
+   "R_top": [
+    "algoritmos-de-escalonamento",
+    "decidido"
+   ],
+   "R_mat": [
+    "algoritmos-de-escalonamento",
+    "decidido"
+   ],
+   "R_both": [
+    "algoritmos-de-escalonamento",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|3103-threads": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.2,
+    "qualquer": 1.0
+   }
+  },
+  "SO|biblioteca-em-c-pthread": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "escalonamento",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.2821,
+    "qualquer": 1.0
+   }
+  },
+  "SO|definicao-e-historico": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "servicos-dos-sistemas-operacionais",
+    "decidido"
+   ],
+   "R_top": [
+    "servicos-dos-sistemas-operacionais",
+    "decidido"
+   ],
+   "R_mat": [
+    "servicos-dos-sistemas-operacionais",
+    "decidido"
+   ],
+   "R_both": [
+    "servicos-dos-sistemas-operacionais",
+    "decidido"
+   ]
+  },
+  "SO|exemplo-criacao-de-processos-no-unix-linux-filho": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-criacao-de-processos-no-unix-linux-teste01": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-criacao-de-processos-no-unix-linux-teste02": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-criacao-de-processos-no-unix-linux-teste03": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-threads-em-c-exemplo1": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-threads-em-c-exemplo2": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exemplo-threads-em-c-exemplo3": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exercicios": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|exercicios-p2": {
+   "unidade": "unidade-06-gerencia-de-arquivos",
+   "chamadas": 1,
+   "base": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.2821,
+    "qualquer": 1.0
+   }
+  },
+  "SO|laminas-cs-4244-internet-programming-sockets-programming": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|laminas-sockets-material-alternativo-em-pt": {
+   "unidade": "unidade-02-gerencia-do-processador",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|lista-exercicios-p1": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "programas-multithreads",
+    "decidido"
+   ],
+   "R_both": [
+    "programas-multithreads",
+    "decidido"
+   ]
+  },
+  "SO|lista-exercicios-p1-gabarito": {
+   "unidade": "unidade-03-programacao-concorrente",
+   "chamadas": 1,
+   "base": [
+    "programas-multithreads",
+    "decidido"
+   ],
+   "R_top": [
+    "programas-multithreads",
+    "decidido"
+   ],
+   "R_mat": [
+    "programas-multithreads",
+    "decidido"
+   ],
+   "R_both": [
+    "programas-multithreads",
+    "decidido"
+   ]
+  },
+  "SO|lista-exercicios-p2": {
+   "unidade": "unidade-06-gerencia-de-arquivos",
+   "chamadas": 1,
+   "base": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_top": [
+    "implementacao-de-sistemas-de-arquivos",
+    "decidido"
+   ],
+   "R_mat": [
+    "arquivos",
+    "decidido"
+   ],
+   "R_both": [
+    "implementacao-de-sistemas-de-arquivos",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.2821,
+    "qualquer": 1.0
+   }
+  },
+  "SO|lista1-gab": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_top": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_mat": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_both": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "SO|lista2": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_top": [
+    "chamadas-de-sistema",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "SO|questoes-do-enade-sobre-sisop": {
+   "unidade": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|ag-feito-em-aula-pelo-luca": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|agrupamento-hierarquico-exemplo-1": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|agrupamento-usando-k-means-exemplo-1-ipynb": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ]
+  },
+  "IA|agrupamento-usando-k-means-exemplo-2-ipynb": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|algoritmo-de-classificacao-k-nn": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|algoritmo-dijkstra": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_both": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ]
+  },
+  "IA|algoritmo-genetico": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_top": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_both": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|analise-exploratoria-de-dados-exemplo-1": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|analise-exploratoria-dos-dados-exemplo-2": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ]
+  },
+  "IA|artigo-usando-agrupamento": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|artigo-usando-k-nn-em-texto": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|arvores-de-decisao": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|aula-sobre-agrupamento-parte-1-particional": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|aula-sobre-agrupamento-parte-2-hierarquico": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|cap-sobre-algoritmos-geneticos-lacerda-e-outros": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|caracteristicas-dos-dados": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|como-analisar-resultados-acc-pr-re-e-f1": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|exemplo-1-arvores-de-decisao-classificacao-planta-iris": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|exemplo-2-arvores-de-decisao-regressao-diabetes": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|exemplo-2-k-nn-com-iriscsv-mais-completo": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|exemplo-com-k-nn": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|exemplo-complementar-classificacao-com-arvores-de-decisao": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_top": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|exemplo-de-programa-com-k-nn-em-java": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|exercicio-2-solucao-com-rede-perceptron-atualizado": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|future-of-jobs-report-2025": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_both": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ]
+  },
+  "IA|hill-climbing-e-simulated-annealing": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_top": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_both": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|ia-responsável-7c4626": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|implementacaominimax": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "busca-adversaria",
+    "decidido"
+   ],
+   "R_top": [
+    "busca-adversaria",
+    "decidido"
+   ],
+   "R_mat": [
+    "busca-adversaria",
+    "decidido"
+   ],
+   "R_both": [
+    "busca-adversaria",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|introducao-a-agentes": {
+   "unidade": "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento",
+   "chamadas": 1,
+   "base": [
+    "planejamento-classico",
+    "decidido"
+   ],
+   "R_top": [
+    "planejamento-classico",
+    "decidido"
+   ],
+   "R_mat": [
+    "planejamento-classico",
+    "decidido"
+   ],
+   "R_both": [
+    "planejamento-classico",
+    "decidido"
+   ]
+  },
+  "IA|introducao-a-busca-informada": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "busca-informada-heuristica",
+    "decidido"
+   ],
+   "R_top": [
+    "busca-informada-heuristica",
+    "decidido"
+   ],
+   "R_mat": [
+    "busca-informada-heuristica",
+    "decidido"
+   ],
+   "R_both": [
+    "busca-informada-heuristica",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|introducao-a-ml": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|introducao-a-redes-neurais": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|k-nn-para-classificacao-exemplo-cardio": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|k-nn-para-regressao-exemplo-imc": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|lista-de-exercicios-i": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_both": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|lista1": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_both": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|minimax": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|minimax-teoria": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_top": [
+    "algoritmos-de-busca-com-informacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|mlp": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ]
+  },
+  "IA|mlp-classificacao-iris-atualizado": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ]
+  },
+  "IA|mlp-regressao-cardio": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|mlp-xoripynb": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|o-que-é-inteligência-artificial-ia-oracle-brasil-43437f": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_top": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_mat": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ],
+   "R_both": [
+    "problemas-de-otimizacao",
+    "decidido"
+   ]
+  },
+  "IA|outros-operadores": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|p2-202401": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ]
+  },
+  "IA|p2-202402": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|programa-exemplo-ag": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "busca-informada-heuristica",
+    "decidido"
+   ],
+   "R_both": [
+    "busca-informada-heuristica",
+    "decidido"
+   ]
+  },
+  "IA|prova-1-2024-02": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|prova-1-202402": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|rede-perceptron": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ],
+   "R_both": [
+    "metricas-de-avaliacao",
+    "decidido"
+   ]
+  },
+  "IA|rede-perceptron-classificacao-de-cliente": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|rede-perceptron-classificacao-planta-iris": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|rede-perceptron-e-equacao-de-reta": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|rede-perceptron-exemplo-atualizado": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|rede-perceptron-or-em-python": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|rede-perceptron-reconhecendo-letras": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "IA|respostas-da-lista-i-feito-pela-aluna-chiara": {
+   "unidade": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "chamadas": 1,
+   "base": [
+    "algoritmos-de-busca-com-informacao",
+    "ambiguo"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "introducao-a-agentes-em-ambientes-deterministicos",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-a-agentes-em-ambientes-deterministicos",
+    "decidido"
+   ]
+  },
+  "IA|survey-on-clustering": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ]
+  },
+  "IA|visao-geral-introducao-e-historico": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_top": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_mat": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "R_both": [
+    "introducao-ao-aprendizado-de-maquina",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "IA|xor-backpropagation-em-python": {
+   "unidade": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|azure": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|devops": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "integracao-continua-ci",
+    "decidido"
+   ],
+   "R_top": [
+    "integracao-continua-ci",
+    "decidido"
+   ],
+   "R_mat": [
+    "integracao-continua-ci",
+    "decidido"
+   ],
+   "R_both": [
+    "integracao-continua-ci",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "ES2|kubernetes": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_top": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_both": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ]
+  },
+  "ES2|microsservicos": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "estilos-e-padroes-arquiteturais",
+    "ambiguo"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "estilos-e-padroes-arquiteturais",
+    "decidido"
+   ],
+   "R_both": [
+    "estilos-e-padroes-arquiteturais",
+    "decidido"
+   ]
+  },
+  "ES2|microsservicos2": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|microsservicos3": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "estilos-e-padroes-arquiteturais",
+    "decidido"
+   ],
+   "R_top": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|microsservicos4": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "estilos-e-padroes-arquiteturais",
+    "decidido"
+   ],
+   "R_top": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|microsservicos5": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "entrega-continua-cd",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|microsservicos6": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|microsservicos7": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|revisao-p1": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|revisao-p1-respostas": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|revisao-p2": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|revisao-p2-respostas": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|revisaoarquiteturapadroes": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro1": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro1-introducao": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro2": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro2-nameserver": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro3": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro3-gateway": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro4": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro4-circuitbreaker": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "conceito-de-arquitetura-de-software",
+    "decidido"
+   ],
+   "R_top": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro5": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro5-conteiners": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_top": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ],
+   "R_both": [
+    "estudo-de-caso-integracao-e-implantacao-de-microsservicos",
+    "decidido"
+   ]
+  },
+  "ES2|roteiro6": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro6-conteiners-composicao": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro7": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro7-filas": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "entrega-continua-cd",
+    "decidido"
+   ],
+   "R_both": [
+    "entrega-continua-cd",
+    "decidido"
+   ]
+  },
+  "ES2|roteiro7-history-service": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|roteiro8-autenticacao-autorizacao": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_top": [
+    "gerenciamento-da-configuracao",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "ES2|servicos": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_top": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_mat": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "R_both": [
+    "orientada-a-servicos",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "ES2|t1-2026-1": {
+   "unidade": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "chamadas": 1,
+   "base": [
+    "entrega-continua-cd",
+    "decidido"
+   ],
+   "R_top": [
+    "plataformas-de-devops",
+    "decidido"
+   ],
+   "R_mat": [
+    "entrega-continua-cd",
+    "decidido"
+   ],
+   "R_both": [
+    "plataformas-de-devops",
+    "decidido"
+   ]
+  },
+  "ES2|web": {
+   "unidade": "unidade-01-arquitetura-de-software",
+   "chamadas": 1,
+   "base": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_top": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_mat": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "R_both": [
+    "cliente-servidor",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|3d-matching": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "reducao-polinomial-de-problemas",
+    "decidido"
+   ],
+   "R_top": [
+    "reducao-polinomial-de-problemas",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|3dm-caetano-gabriel-e-gustavo": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "reducao-polinomial-de-problemas",
+    "decidido"
+   ],
+   "R_top": [
+    "reducao-polinomial-de-problemas",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "conjuntos-enumeraveis",
+    "decidido"
+   ],
+   "R_top": [
+    "conjuntos-enumeraveis",
+    "decidido"
+   ],
+   "R_mat": [
+    "conjuntos-enumeraveis",
+    "decidido"
+   ],
+   "R_both": [
+    "conjuntos-enumeraveis",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_top": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_mat": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_both": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ]
+  },
+  "TCC|aula-04-funcoes-computaveis-funcoes-recursivas-parciais": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_top": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_mat": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_both": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ]
+  },
+  "TCC|aula-05-minimizacao-de-funcoes-recursivas-parciais": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_top": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_mat": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_both": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ]
+  },
+  "TCC|aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis": {
+   "unidade": "unidade-02-turing-computabilidade",
+   "chamadas": 1,
+   "base": [
+    "maquinas-de-turing",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "maquinas-de-turing",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.0,
+    "qualquer": 1.0
+   }
+  },
+  "TCC|aula-08-maquinas-de-turing-como-processadoras-de-funcoes": {
+   "unidade": "unidade-02-turing-computabilidade",
+   "chamadas": 1,
+   "base": [
+    "maquinas-de-turing",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "maquinas-de-turing",
+    "decidido"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 1.0,
+    "mat": 0.0,
+    "qualquer": 1.0
+   }
+  },
+  "TCC|aula-09-variacoes-de-maquinas-de-turing": {
+   "unidade": "unidade-02-turing-computabilidade",
+   "chamadas": 1,
+   "base": [
+    "variacoes-de-maquinas-de-turing",
+    "ambiguo"
+   ],
+   "R_top": [
+    "variacoes-de-maquinas-de-turing",
+    "decidido"
+   ],
+   "R_mat": [
+    "variacoes-de-maquinas-de-turing",
+    "ambiguo"
+   ],
+   "R_both": [
+    "variacoes-de-maquinas-de-turing",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-10-linguagens-reconheciveis-e-linguagens-decidiveis": {
+   "unidade": "unidade-02-turing-computabilidade",
+   "chamadas": 1,
+   "base": [
+    "linguagens-reconheciveis-e-decidiveis",
+    "decidido"
+   ],
+   "R_top": [
+    "linguagens-reconheciveis-e-decidiveis",
+    "decidido"
+   ],
+   "R_mat": [
+    "linguagens-reconheciveis-e-decidiveis",
+    "decidido"
+   ],
+   "R_both": [
+    "linguagens-reconheciveis-e-decidiveis",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem": {
+   "unidade": "unidade-02-turing-computabilidade",
+   "chamadas": 1,
+   "base": [
+    "conjectura-de-church-turing",
+    "decidido"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-12-entscheidungsproblem": {
+   "unidade": "unidade-03-problemas-indecidiveis",
+   "chamadas": 1,
+   "base": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_top": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-13-teorema-de-rice": {
+   "unidade": "unidade-03-problemas-indecidiveis",
+   "chamadas": 1,
+   "base": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_top": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-14-problema-da-correspondencia-de-post": {
+   "unidade": "unidade-03-problemas-indecidiveis",
+   "chamadas": 1,
+   "base": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_top": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-15-teoremas-de-incompletude-de-godel": {
+   "unidade": "unidade-03-problemas-indecidiveis",
+   "chamadas": 1,
+   "base": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_top": [
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "decidido"
+   ],
+   "R_mat": [
+    "teoremas-de-godel",
+    "ambiguo"
+   ],
+   "R_both": [
+    "teoremas-de-godel",
+    "ambiguo"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-16-classes-de-problemas-e-complexidade": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_top": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_mat": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_both": [
+    "classe-np",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-16-exemplo-de-prova-para-revisao": {
+   "unidade": "unidade-03-problemas-indecidiveis",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|aula-17-complexidade-de-tempo-classes-p-e-np": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_top": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_mat": [
+    "classe-np",
+    "decidido"
+   ],
+   "R_both": [
+    "classe-np",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|aula-17-np-completude": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "teorema-de-cook-levin",
+    "decidido"
+   ],
+   "R_top": [
+    "teorema-de-cook-levin",
+    "decidido"
+   ],
+   "R_mat": [
+    "teorema-de-cook-levin",
+    "decidido"
+   ],
+   "R_both": [
+    "teorema-de-cook-levin",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|cubic-3-edge-coloring": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "",
+    "vazio"
+   ],
+   "R_top": [
+    "",
+    "vazio"
+   ],
+   "R_mat": [
+    "",
+    "vazio"
+   ],
+   "R_both": [
+    "",
+    "vazio"
+   ]
+  },
+  "TCC|integer-programming-0001": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_top": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_both": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ]
+  },
+  "TCC|programacao-inteira-01-20260617-154423-0000": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_top": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_mat": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ],
+   "R_both": [
+    "reducao-polinomial-de-problemas",
+    "ambiguo"
+   ]
+  },
+  "TCC|t1-enunciado": {
+   "unidade": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "chamadas": 1,
+   "base": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_top": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_mat": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "R_both": [
+    "funcoes-recursivas-primitivas-e-funcoes-recursivas-parciais",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  },
+  "TCC|trabalho-t2-enunciado": {
+   "unidade": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "chamadas": 1,
+   "base": [
+    "provas-de-np-completude",
+    "decidido"
+   ],
+   "R_top": [
+    "provas-de-np-completude",
+    "decidido"
+   ],
+   "R_mat": [
+    "provas-de-np-completude",
+    "decidido"
+   ],
+   "R_both": [
+    "provas-de-np-completude",
+    "decidido"
+   ],
+   "fracao_frases_vencedor": {
+    "top": 0.0,
+    "mat": 0.0,
+    "qualquer": 0.0
+   }
+  }
+ },
+ "segundos": 181
+}

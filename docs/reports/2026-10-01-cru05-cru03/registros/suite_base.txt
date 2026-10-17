@@ -1,0 +1,11 @@
+inicio 15:34:04
+cwd C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-noite-20260930 (bf46d51f, src/tests sem a correção)
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+FAILED tests/test_pdf_markdown.py::test_respect_actualtext_tira_a_flag_e_restaura
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Computacao-Grafica-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Engenharia-Software-2-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Fundamentos-de-Redes-Tutor
+SKIPPED [1] tests\test_caracterizacao_blocos_atual.py:216: sem casos-chave mapeados pra Laboratorio-de-Redes-Tutor
+2 failed, 2447 passed, 4 skipped, 8 warnings in 145.72s (0:02:25)
+exit=1
+fim 15:36:34

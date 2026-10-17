@@ -1,0 +1,8 @@
+inicio 18:34:06
+13228662e5f5947e5965f9b7b34f3e3766bc29bfd91503bd91da0dcb048f9769 *mede_cru03.py
+36eed38b7ee3bcfdbd911fa9dc57fd211c94b8fcc9f2b4c75ad56291629ed37e *preregistro-cru03-medicao.md
+candidatos {'candidatos': 125, 'sem_sinal': 50, 'historico_wz2': '50/125', 'nao_fieis': 0} | tabela 24a95cd6d3ba5902
+por posição: {"borda": {"card_0": 6, "ausente": 6, "blocos": 6}, "fronteira": {"card_0": 11, "ausente": 11, "blocos": 11}, "interior": {"card_0": 33, "ausente": 33, "blocos": 33}}
+por curso: {"CG": {"card_0": 9, "ausente": 9, "blocos": 9}, "ES2": {"card_0": 7, "ausente": 7, "blocos": 7}, "FR": {"card_0": 6, "ausente": 6, "blocos": 6}, "IA": {"card_0": 8, "ausente": 8, "blocos": 8}, "MF": {"card_0": 8, "ausente": 8, "blocos": 8}, "SO": {"card_0": 7, "ausente": 7, "blocos": 7}, "TCC": {"card_0": 5, "ausente": 5, "blocos": 5}}
+exit=0
+fim 18:34:10

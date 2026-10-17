@@ -1,0 +1,14 @@
+inicio 23:08:24
+cb1405f180fee3779c7ee7a4b4cd36324fe0295cf60a330ac3eb1ab529174ff3 *fase0_pontuador.py
+68ff436fe699991c4888887ff5edc06cff75f382a1c9dd9642670c0cd41ab2dd *preregistro-fase0-pontuador.md
+e024d396bf1cc84c33cc6735718803411cfe6bf2a57a7485501e8c4f81b77dd7 *replay_base.json
+  replay base MF 70 85 s
+  replay base SO 42 95 s
+  replay base IA 63 135 s
+  replay base ES2 35 143 s
+  replay base TCC 27 153 s
+fidelidade: True | div 0 | src fora nenhum | pares 1536 | dif_max 0.0 | captura ok/falha 231 0 | matcher ok/falha 27968 0
+total: {"materiais_1a": 231, "R_top_argmax_muda": 21, "R_top_estado_muda": 17, "R_mat_argmax_muda": 56, "R_mat_estado_muda": 52, "R_both_argmax_muda": 68, "R_both_estado_muda": 64, "com_vencedor": 158, "vencedor_sem_frase": 92, "mediana_fracao_qualquer": 0.0, "argmax_muda_R_both_sobre_com_vencedor": 0.4304, "fracao_frases_vencedor": {"top": {"n": 66, "mediana": 0.0}, "mat": {"n": 66, "mediana": 0.0}, "qualquer": {"n": 66, "mediana": 0.0}}}
+critério indicativo: ganha força | segundos 181
+exit=0
+fim 23:11:26

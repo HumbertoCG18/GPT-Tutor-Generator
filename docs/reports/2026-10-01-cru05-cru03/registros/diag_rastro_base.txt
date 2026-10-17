@@ -1,0 +1,8 @@
+inicio 18:10:37
+0a18e2e3d308177d0e6f606a3837f7b65d3177e80e87aa2d76f08e2294c14bb8 *diag_cru05_mecanismo.py
+  replay base TCC 27 738 s
+  replay base CG 93 1122 s
+  replay base FR 20 1158 s
+fidelidade: integral | divergências 0 | src fora nenhum | normalize d0ce230919dc5460 | segundos 1158
+exit=0
+fim 18:29:56

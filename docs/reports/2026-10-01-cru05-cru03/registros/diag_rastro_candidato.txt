@@ -1,0 +1,7 @@
+inicio 18:10:41
+  replay base TCC 27 821 s
+  replay base CG 93 1126 s
+  replay base FR 20 1160 s
+fidelidade: integral | divergências 0 | src fora nenhum | normalize f5b9581a38e436bd | segundos 1160
+exit=0
+fim 18:30:02

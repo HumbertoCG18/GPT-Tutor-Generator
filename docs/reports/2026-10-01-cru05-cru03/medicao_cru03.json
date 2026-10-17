@@ -1,0 +1,2613 @@
+{
+ "preregistro_sha256": "36eed38b7ee3bcfdbd911fa9dc57fd211c94b8fcc9f2b4c75ad56291629ed37e",
+ "worktree": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-noite-20260930",
+ "decisoes": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05\\docs\\reports\\2026-10-01-cru05-cru03\\replay_base.json",
+ "rastro": "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05\\docs\\reports\\2026-10-01-cru05-cru03\\diag_rastro_base.json",
+ "reconciliacao_wz2": {
+  "candidatos": 125,
+  "sem_sinal": 50,
+  "historico_wz2": "50/125",
+  "nao_fieis": 0
+ },
+ "resumo_por_posicao": {
+  "borda": {
+   "card_0": 6,
+   "ausente": 6,
+   "blocos": 6
+  },
+  "fronteira": {
+   "card_0": 11,
+   "ausente": 11,
+   "blocos": 11
+  },
+  "interior": {
+   "card_0": 33,
+   "ausente": 33,
+   "blocos": 33
+  }
+ },
+ "resumo_por_curso": {
+  "CG": {
+   "card_0": 9,
+   "ausente": 9,
+   "blocos": 9
+  },
+  "ES2": {
+   "card_0": 7,
+   "ausente": 7,
+   "blocos": 7
+  },
+  "FR": {
+   "card_0": 6,
+   "ausente": 6,
+   "blocos": 6
+  },
+  "IA": {
+   "card_0": 8,
+   "ausente": 8,
+   "blocos": 8
+  },
+  "MF": {
+   "card_0": 8,
+   "ausente": 8,
+   "blocos": 8
+  },
+  "SO": {
+   "card_0": 7,
+   "ausente": 7,
+   "blocos": 7
+  },
+  "TCC": {
+   "card_0": 5,
+   "ausente": 5,
+   "blocos": 5
+  }
+ },
+ "tabela_sha256": "24a95cd6d3ba590286e0997d746c04fe2201c0192c79936defdd2ae67b146820",
+ "tabela": [
+  {
+   "curso": "MF",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-03-02",
+    "2026-03-02"
+   ],
+   "rotulo": "apresentacao da disciplina aula",
+   "n_materiais": 6,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "archive-of-formal-proofs-355fb8": "",
+    "aws-encryption-sdk": "",
+    "eth2": "",
+    "introducao": "",
+    "plano": "",
+    "rigoroussoftwaredevelopment-chapters-1-2": ""
+   },
+   "secao_crua_por_material": {
+    "archive-of-formal-proofs-355fb8": "",
+    "aws-encryption-sdk": "",
+    "eth2": "",
+    "introducao": "Introdução a Métodos Formais",
+    "plano": "Plano de Ensino",
+    "rigoroussoftwaredevelopment-chapters-1-2": "Introdução a Métodos Formais"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-03-30",
+    "2026-04-01"
+   ],
+   "rotulo": "provas por inducao aula / provas por inducao listas e arvores aula",
+   "n_materiais": 8,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "arvores": "",
+    "exercicioscorrecaoinducaomatematica": "",
+    "intro": "",
+    "listas": "",
+    "mcs": "",
+    "provasindutivas-especificacoesrecursivas": "",
+    "provasindutivas-especificacoesrecursivas-arvores": "",
+    "provasindutivas-especificacoesrecursivas-listas": ""
+   },
+   "secao_crua_por_material": {
+    "arvores": "Provas por Indução",
+    "exercicioscorrecaoinducaomatematica": "Provas por Indução",
+    "intro": "Provas por Indução",
+    "listas": "Provas por Indução",
+    "mcs": "Provas por Indução",
+    "provasindutivas-especificacoesrecursivas": "Provas por Indução",
+    "provasindutivas-especificacoesrecursivas-arvores": "Provas por Indução",
+    "provasindutivas-especificacoesrecursivas-listas": "Provas por Indução"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-15",
+    "2026-04-15"
+   ],
+   "rotulo": "exercicios de revisao aula",
+   "n_materiais": 2,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "revisao-p1": "",
+    "revisao-p1-gabarito": ""
+   },
+   "secao_crua_por_material": {
+    "revisao-p1": "Exercícios de Revisão para Provas",
+    "revisao-p1-gabarito": "Exercícios de Revisão para Provas"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-20",
+    "2026-04-20"
+   ],
+   "rotulo": "suspensao de aulas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-12",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-11",
+    "2026-05-11"
+   ],
+   "rotulo": "terminacao introducao ao dafny aula",
+   "n_materiais": 1,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "exerciciosdafny1": ""
+   },
+   "secao_crua_por_material": {
+    "exerciciosdafny1": "Verificação de Programas"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-14",
+   "ordem": 11,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-27",
+    "2026-05-27"
+   ],
+   "rotulo": "se day evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-17",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-24",
+    "2026-06-24"
+   ],
+   "rotulo": "suspensao jogo copa do mundo aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-19",
+   "ordem": 16,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-07-01",
+    "2026-07-01"
+   ],
+   "rotulo": "exercicios de revisao aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-03-03",
+    "2026-03-03"
+   ],
+   "rotulo": "apresentacao da disciplina e introducao aula",
+   "n_materiais": 6,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "apresentacao-da-disciplina": "",
+    "lista1-gab": "",
+    "lista2": "",
+    "plano-de-ensino": "",
+    "programa": "",
+    "questoes-do-enade-sobre-sisop": ""
+   },
+   "secao_crua_por_material": {
+    "apresentacao-da-disciplina": "Informações Gerais",
+    "lista1-gab": "Informações Gerais",
+    "lista2": "Informações Gerais",
+    "plano-de-ensino": "Informações Gerais",
+    "programa": "Informações Gerais",
+    "questoes-do-enade-sobre-sisop": "Informações Gerais"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-03-05",
+    "2026-03-05"
+   ],
+   "rotulo": "introducao aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-02",
+    "2026-04-02"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-21",
+    "2026-04-21"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-10",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-programacao-concorrente",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-30",
+    "2026-04-30"
+   ],
+   "rotulo": "duvidas prova aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-11",
+   "ordem": 10,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-programacao-concorrente",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-05",
+    "2026-05-05"
+   ],
+   "rotulo": "duvidas tp1 duvidas p1 aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-17",
+   "ordem": 13,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-05-gerencia-de-memoria",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-04",
+    "2026-06-04"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio",
+   "periodo": [
+    "2026-03-04",
+    "2026-03-04"
+   ],
+   "rotulo": "visao geral da ia aula",
+   "n_materiais": 1,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "visao-geral-introducao-e-historico": ""
+   },
+   "secao_crua_por_material": {
+    "visao-geral-introducao-e-historico": "Semana 1 - 02.03 a 06.03 - Plano de Ensino e Introdução a IA"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio",
+   "periodo": [
+    "2026-03-09",
+    "2026-03-09"
+   ],
+   "rotulo": "ml introducao a ml aula",
+   "n_materiais": 1,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "introducao-a-ml": ""
+   },
+   "secao_crua_por_material": {
+    "introducao-a-ml": "Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio",
+   "periodo": [
+    "2026-03-18",
+    "2026-04-15"
+   ],
+   "rotulo": "ml abordagem supervisionada k nn aula / ml abordagem supervisionada k nn aula / ml abordagem supervisionada rede neural introducao aula / ml abordagem supervisi",
+   "n_materiais": 28,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "algoritmo-de-classificacao-k-nn": "",
+    "analise-exploratoria-de-dados-exemplo-1": "",
+    "artigo-usando-k-nn-em-texto": "",
+    "arvores-de-decisao": "",
+    "como-analisar-resultados-acc-pr-re-e-f1": "",
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris": "",
+    "exemplo-2-arvores-de-decisao-regressao-diabetes": "",
+    "exemplo-2-k-nn-com-iriscsv-mais-completo": "",
+    "exemplo-com-k-nn": "",
+    "exemplo-complementar-classificacao-com-arvores-de-decisao": "",
+    "exemplo-de-programa-com-k-nn-em-java": "",
+    "exercicio-2-solucao-com-rede-perceptron-atualizado": "",
+    "introducao-a-redes-neurais": "",
+    "k-nn-para-classificacao-exemplo-cardio": "",
+    "k-nn-para-regressao-exemplo-imc": "",
+    "mlp": "",
+    "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv": "",
+    "mlp-classificacao-iris-atualizado": "",
+    "mlp-regressao-cardio": "",
+    "mlp-xoripynb": "",
+    "rede-perceptron": "",
+    "rede-perceptron-classificacao-de-cliente": "",
+    "rede-perceptron-classificacao-planta-iris": "",
+    "rede-perceptron-e-equacao-de-reta": "",
+    "rede-perceptron-exemplo-atualizado": "",
+    "rede-perceptron-or-em-python": "",
+    "rede-perceptron-reconhecendo-letras": "",
+    "xor-backpropagation-em-python": ""
+   },
+   "secao_crua_por_material": {
+    "algoritmo-de-classificacao-k-nn": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "analise-exploratoria-de-dados-exemplo-1": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "artigo-usando-k-nn-em-texto": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "arvores-de-decisao": "Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado",
+    "como-analisar-resultados-acc-pr-re-e-f1": "Semana 6 - 06.04 a 10.04 - ML - Aprendizado Supervisionado",
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris": "Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado",
+    "exemplo-2-arvores-de-decisao-regressao-diabetes": "Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado",
+    "exemplo-2-k-nn-com-iriscsv-mais-completo": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "exemplo-com-k-nn": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "exemplo-complementar-classificacao-com-arvores-de-decisao": "Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado",
+    "exemplo-de-programa-com-k-nn-em-java": "Semana 3 - 16.03 a 20.03 - Machine Learning e Dados",
+    "exercicio-2-solucao-com-rede-perceptron-atualizado": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "introducao-a-redes-neurais": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "k-nn-para-classificacao-exemplo-cardio": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "k-nn-para-regressao-exemplo-imc": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "mlp": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "mlp-classificacao-inadimplencia-normalizacao-e-gridsearchcv": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "mlp-classificacao-iris-atualizado": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "mlp-regressao-cardio": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "mlp-xoripynb": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "rede-perceptron": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "rede-perceptron-classificacao-de-cliente": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "rede-perceptron-classificacao-planta-iris": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "rede-perceptron-e-equacao-de-reta": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
+    "rede-perceptron-exemplo-atualizado": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "rede-perceptron-or-em-python": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "rede-perceptron-reconhecendo-letras": "Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado",
+    "xor-backpropagation-em-python": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio",
+   "periodo": [
+    "2026-04-20",
+    "2026-04-20"
+   ],
+   "rotulo": "suspensao de aulas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-01-visao-geral",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-29",
+    "2026-04-29"
+   ],
+   "rotulo": "duvidas para t1 aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-11",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-01-visao-geral",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-11",
+    "2026-05-11"
+   ],
+   "rotulo": "exercicios gerais aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-14",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-27",
+    "2026-05-27"
+   ],
+   "rotulo": "es day evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-18",
+   "ordem": 14,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-24",
+    "2026-06-24"
+   ],
+   "rotulo": "suspensao de atividades feriado",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-03",
+    "2026-04-03"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-10",
+    "2026-04-24"
+   ],
+   "rotulo": "microservicos no spring discovery aula / microservicos no spring api gateway aula / exercicios aula",
+   "n_materiais": 8,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "microsservicos2": "",
+    "microsservicos3": "",
+    "revisao-p1": "",
+    "revisao-p1-respostas": "",
+    "roteiro2": "",
+    "roteiro2-nameserver": "",
+    "roteiro3": "",
+    "roteiro3-gateway": ""
+   },
+   "secao_crua_por_material": {
+    "microsservicos2": "Microsserviços",
+    "microsservicos3": "Microsserviços",
+    "revisao-p1": "Exercícios Revisão para Provas",
+    "revisao-p1-respostas": "Exercícios Revisão para Provas",
+    "roteiro2": "Microsserviços",
+    "roteiro2-nameserver": "Microsserviços",
+    "roteiro3": "Microsserviços",
+    "roteiro3-gateway": "Microsserviços"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-01",
+    "2026-05-01"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-07",
+   "ordem": 5,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-15",
+    "2026-05-15"
+   ],
+   "rotulo": "microservicos no spring circuit breaker aula",
+   "n_materiais": 3,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "microsservicos4": "",
+    "roteiro4": "",
+    "roteiro4-circuitbreaker": ""
+   },
+   "secao_crua_por_material": {
+    "microsservicos4": "Microsserviços",
+    "roteiro4": "Microsserviços",
+    "roteiro4-circuitbreaker": "Microsserviços"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-09",
+   "ordem": 7,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-05",
+    "2026-06-05"
+   ],
+   "rotulo": "comunicacao assincrona aula",
+   "n_materiais": 4,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "microsservicos7": "",
+    "roteiro7": "",
+    "roteiro7-filas": "",
+    "roteiro7-history-service": ""
+   },
+   "secao_crua_por_material": {
+    "microsservicos7": "Microsserviços",
+    "roteiro7": "Microsserviços",
+    "roteiro7-filas": "Microsserviços",
+    "roteiro7-history-service": "Microsserviços"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-10",
+   "ordem": 8,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-12",
+    "2026-06-12"
+   ],
+   "rotulo": "autenticacao e autorizacao aula",
+   "n_materiais": 2,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "microsservicos6": "",
+    "roteiro8-autenticacao-autorizacao": ""
+   },
+   "secao_crua_por_material": {
+    "microsservicos6": "Microsserviços",
+    "roteiro8-autenticacao-autorizacao": "Microsserviços"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-11",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-06-19",
+    "2026-06-19"
+   ],
+   "rotulo": "suspensao jogo copa do mundo aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-07",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-03",
+    "2026-04-03"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-10",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-15",
+    "2026-04-15"
+   ],
+   "rotulo": "halting problem aula",
+   "n_materiais": 1,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "aula-11-o-problema-da-parada-halting-problem-halteproblem": ""
+   },
+   "secao_crua_por_material": {
+    "aula-11-o-problema-da-parada-halting-problem-halteproblem": "Semana 7- Halteproblem und Entscheidungsproblem"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-12",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-04-22",
+    "2026-04-22"
+   ],
+   "rotulo": "theorema de rice aula",
+   "n_materiais": 1,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "aula-13-teorema-de-rice": ""
+   },
+   "secao_crua_por_material": {
+    "aula-13-teorema-de-rice": "Semana 8 - Teorema de Rice e Problema da Correspondência de Post"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-15",
+   "ordem": 13,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-01",
+    "2026-05-01"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-20",
+   "ordem": 17,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-05-27",
+    "2026-05-27"
+   ],
+   "rotulo": "se day evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-processamento-grafico",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-08-06",
+    "2026-08-06"
+   ],
+   "rotulo": "introducao a opengl aula",
+   "n_materiais": 6,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "exercicios": "",
+    "opengl-cpp": "",
+    "opengl-py": "",
+    "openglbasico": "",
+    "texturas-v3": "",
+    "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758": ""
+   },
+   "secao_crua_por_material": {
+    "exercicios": "2 - Biblioteca OpenGL",
+    "opengl-cpp": "2 - Biblioteca OpenGL",
+    "opengl-py": "2 - Biblioteca OpenGL",
+    "openglbasico": "2 - Biblioteca OpenGL",
+    "texturas-v3": "2 - Biblioteca OpenGL",
+    "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758": "2 - Biblioteca OpenGL"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-09",
+   "ordem": 8,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-09-22",
+    "2026-09-22"
+   ],
+   "rotulo": "aula de duvidas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-11",
+   "ordem": 9,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-09-29",
+    "2026-09-29"
+   ],
+   "rotulo": "aula de duvidas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-16",
+   "ordem": 12,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-10-20",
+    "2026-10-20"
+   ],
+   "rotulo": "semana academica evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-17",
+   "ordem": 13,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-10-22",
+    "2026-10-22"
+   ],
+   "rotulo": "semana academica evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-22",
+   "ordem": 18,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-11-17",
+    "2026-11-17"
+   ],
+   "rotulo": "aula de duvidas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-25",
+   "ordem": 19,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-11-26",
+    "2026-11-26"
+   ],
+   "rotulo": "aula de duvidas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-27",
+   "ordem": 20,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-12-03",
+    "2026-12-03"
+   ],
+   "rotulo": "aula de duvidas aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-29",
+   "ordem": 21,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-12-10",
+    "2026-12-10"
+   ],
+   "rotulo": "aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-a-redes-de-computadores",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-08-04",
+    "2026-08-04"
+   ],
+   "rotulo": "apresentacao da disciplina aula",
+   "n_materiais": 2,
+   "n_com_secao": 0,
+   "section_slug_por_material": {
+    "01-protocolos-de-rede": "",
+    "plano-de-ensino-20262": ""
+   },
+   "secao_crua_por_material": {
+    "01-protocolos-de-rede": "U1 - Redes de Computadores",
+    "plano-de-ensino-20262": "Plano de Ensino"
+   },
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-nivel-de-aplicacao",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-08-25",
+    "2026-08-25"
+   ],
+   "rotulo": "aula magna da escola politecnica evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-10",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-09-22",
+    "2026-09-22"
+   ],
+   "rotulo": "duvidas da p1 aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-16",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-10-13",
+    "2026-10-13"
+   ],
+   "rotulo": "feriado aula",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-18",
+   "ordem": 16,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-10-20",
+    "2026-10-20"
+   ],
+   "rotulo": "semana academica da pucrs evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-19",
+   "ordem": 17,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro",
+   "periodo": [
+    "2026-10-22",
+    "2026-10-22"
+   ],
+   "rotulo": "semana academica da pucrs evento academico",
+   "n_materiais": 0,
+   "n_com_secao": 0,
+   "section_slug_por_material": {},
+   "secao_crua_por_material": {},
+   "compativeis": [],
+   "cardinalidade": "0",
+   "concordancia": "ausente"
+  }
+ ],
+ "inventario": [
+  {
+   "curso": "MF",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-metodos-formais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-10",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-12",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-13",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-14",
+   "ordem": 11,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-15",
+   "ordem": 12,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-verificacao-de-programas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-16",
+   "ordem": 13,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-17",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-18",
+   "ordem": 15,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "MF",
+   "bloco": "bloco-19",
+   "ordem": 16,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-verificacao-de-modelos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-gerencia-do-processador",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-09",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-programacao-concorrente",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-10",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-programacao-concorrente",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-11",
+   "ordem": 10,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-programacao-concorrente",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-13",
+   "ordem": 11,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-05-gerencia-de-memoria",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-16",
+   "ordem": 12,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-05-gerencia-de-memoria",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-17",
+   "ordem": 13,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-05-gerencia-de-memoria",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-18",
+   "ordem": 14,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-07-gerencia-de-entrada-e-saida",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-19",
+   "ordem": 15,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-07-gerencia-de-entrada-e-saida",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "SO",
+   "bloco": "bloco-20",
+   "ordem": 16,
+   "posicao": "borda",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-06-gerencia-de-arquivos",
+   "mecanismo": "ancora"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-01-visao-geral",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-11",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-01-visao-geral",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-13",
+   "ordem": 9,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-14",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-15",
+   "ordem": 11,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-16",
+   "ordem": 12,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-02-solucao-de-problemas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-17",
+   "ordem": 13,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "IA",
+   "bloco": "bloco-18",
+   "ordem": 14,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-07",
+   "ordem": 5,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-arquitetura-de-software",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-08",
+   "ordem": 6,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-09",
+   "ordem": 7,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-10",
+   "ordem": 8,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-11",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "ES2",
+   "bloco": "bloco-12",
+   "ordem": 10,
+   "posicao": "borda",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-integracao-de-desenvolvimento-e-operacao-devops",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-05",
+   "ordem": 3,
+   "posicao": "fronteira",
+   "classe": "contra_argmax",
+   "fiel": true,
+   "unidade_dp": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-06",
+   "ordem": 4,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-07",
+   "ordem": 5,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-08",
+   "ordem": 6,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-09",
+   "ordem": 7,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-10",
+   "ordem": 8,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-turing-computabilidade",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-11",
+   "ordem": 9,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-12",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-13",
+   "ordem": 11,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-14",
+   "ordem": 12,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-15",
+   "ordem": 13,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-16",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-18",
+   "ordem": 15,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-problemas-indecidiveis",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-19",
+   "ordem": 16,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-20",
+   "ordem": 17,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-21",
+   "ordem": 18,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-22",
+   "ordem": 19,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-30",
+   "ordem": 20,
+   "posicao": "interior",
+   "classe": "contra_argmax",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "TCC",
+   "bloco": "bloco-33",
+   "ordem": 21,
+   "posicao": "borda",
+   "classe": "contra_argmax",
+   "fiel": true,
+   "unidade_dp": "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-processamento-grafico",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-ao-processamento-grafico",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-fundamentos-matematicos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-fundamentos-matematicos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-fundamentos-matematicos",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-processo-de-visualizacao-2d",
+   "mecanismo": "desvio"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-processamento-de-imagens-e-visao-computacional",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-09",
+   "ordem": 8,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-11",
+   "ordem": 9,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-13",
+   "ordem": 10,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-07-representacao-e-modelagem-de-objetos",
+   "mecanismo": "ancora"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-15",
+   "ordem": 11,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-07-representacao-e-modelagem-de-objetos",
+   "mecanismo": "ancora"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-16",
+   "ordem": 12,
+   "posicao": "fronteira",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-17",
+   "ordem": 13,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-18",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-19",
+   "ordem": 15,
+   "posicao": "interior",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-20",
+   "ordem": 16,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-06-processo-de-visualizacao-3d",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-21",
+   "ordem": 17,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-22",
+   "ordem": 18,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-25",
+   "ordem": 19,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-27",
+   "ordem": 20,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "CG",
+   "bloco": "bloco-29",
+   "ordem": 21,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-08-sintese-de-imagens-realisticas",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-01",
+   "ordem": 0,
+   "posicao": "borda",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-a-redes-de-computadores",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-02",
+   "ordem": 1,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-01-introducao-a-redes-de-computadores",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-03",
+   "ordem": 2,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-nivel-de-aplicacao",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-04",
+   "ordem": 3,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-02-nivel-de-aplicacao",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-05",
+   "ordem": 4,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-02-nivel-de-aplicacao",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-06",
+   "ordem": 5,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-03-nivel-de-transporte",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-07",
+   "ordem": 6,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-08",
+   "ordem": 7,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-09",
+   "ordem": 8,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-10",
+   "ordem": 9,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-12",
+   "ordem": 10,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-13",
+   "ordem": 11,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-14",
+   "ordem": 12,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-15",
+   "ordem": 13,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-16",
+   "ordem": 14,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-17",
+   "ordem": 15,
+   "posicao": "interior",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-18",
+   "ordem": 16,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-19",
+   "ordem": 17,
+   "posicao": "interior",
+   "classe": "sem_sinal",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-20",
+   "ordem": 18,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_empatado",
+   "fiel": true,
+   "unidade_dp": "unidade-04-nivel-de-rede",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-21",
+   "ordem": 19,
+   "posicao": "fronteira",
+   "classe": "sinal_proprio_unico",
+   "fiel": true,
+   "unidade_dp": "unidade-05-nivel-de-enlace",
+   "mecanismo": "dp_puro"
+  },
+  {
+   "curso": "FR",
+   "bloco": "bloco-22",
+   "ordem": 20,
+   "posicao": "borda",
+   "classe": "contra_argmax",
+   "fiel": true,
+   "unidade_dp": "unidade-05-nivel-de-enlace",
+   "mecanismo": "dp_puro"
+  }
+ ]
+}

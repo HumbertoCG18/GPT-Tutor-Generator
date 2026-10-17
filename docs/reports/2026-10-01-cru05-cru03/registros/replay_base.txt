@@ -1,0 +1,13 @@
+inicio 12:02:06
+d0ce230919dc5460f5866f1f8b4d028a9a21b0a76d15600dbbe51b355d31b745 *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/src/builder/text/normalize.py
+82131af7f29b2de2dde83657c11ed56b7ba5482a376e98bc08d4be546c771452 *replay_cru05.py
+  replay base CG 93 136 s
+  replay base FR 20 137 s
+mudanças por ID contra a captura congelada (sem gold): 1 (antes de --referencia)
+src fora da worktree: nenhum | normalize: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-cru05\src\builder\text\normalize.py
+placar referência: {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 248, 'sub_n': 251, 'sub_primaria': 86, 'sub_aceita': 109} | captura congelada W-Z2 (f941ac33)
+placar execução:  {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 86, 'sub_aceita': 109}
+ganhos: {'unidade': 1, 'sub_primaria': 0, 'sub_aceita': 0} | perdas: {'unidade': 0, 'sub_primaria': 0, 'sub_aceita': 0}
+segundos: 138
+exit=0
+fim 12:04:24

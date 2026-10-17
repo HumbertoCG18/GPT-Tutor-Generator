@@ -1,0 +1,14 @@
+inicio 12:04:48
+f5b9581a38e436bdf73b2f30a89045fe884051639767a832772aa96e2cb17de1 *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/src/builder/text/normalize.py
+82131af7f29b2de2dde83657c11ed56b7ba5482a376e98bc08d4be546c771452 *replay_cru05.py
+e024d396bf1cc84c33cc6735718803411cfe6bf2a57a7485501e8c4f81b77dd7 *replay_base.json
+  replay base CG 93 144 s
+  replay base FR 20 145 s
+mudanças por ID contra a captura congelada (sem gold): 31 (antes de --referencia)
+src fora da worktree: nenhum | normalize: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-cru05\src\builder\text\normalize.py
+placar referência: {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 86, 'sub_aceita': 109} | execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_base.json
+placar execução:  {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 85, 'sub_aceita': 108}
+ganhos: {'unidade': 0, 'sub_primaria': 0, 'sub_aceita': 0} | perdas: {'unidade': 0, 'sub_primaria': 1, 'sub_aceita': 1}
+segundos: 145
+exit=0
+fim 12:07:14

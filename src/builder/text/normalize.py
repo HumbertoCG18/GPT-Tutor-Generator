@@ -5,6 +5,10 @@ from typing import Callable, Optional
 
 from src.utils.helpers import strip_accents
 
+# Diacriticos espacadores soltos (´ ˜ ¸ ˆ ¨) que PDFs do LaTeX deixam ao lado da letra ("Comput´aveis"): o NFKD os
+# decompoe em espaco + combinante e partia a palavra (CRU-05, #89). ASCII ` ^ ~ ficam de fora (codigo e matematica).
+_DIACRITICOS_ESPACADORES = dict.fromkeys(map(ord, "´˜¸ˆ¨"))
+
 
 def normalize_match_text(
     text: str,
@@ -30,7 +34,7 @@ def normalize_match_text(
     espaco via regex (divergencia preservada intencionalmente).
     `fix_typos=False`: pula o fix propocional->proposicional; idem classifier.
     """
-    text = strip_accents(text).lower()
+    text = strip_accents((text or "").translate(_DIACRITICOS_ESPACADORES)).lower()
     if em_dash_to_hyphen:
         text = text.replace("—", "-").replace("–", "-")
     if fix_typos:

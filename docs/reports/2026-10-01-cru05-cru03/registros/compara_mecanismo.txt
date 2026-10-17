@@ -1,0 +1,8 @@
+materiais com alguma divergência: 46 | primeira divergência: {'tokens_headings': 31, 'unidade_bruta': 0, 'sub_1a': 0, 'confiante_1a': 0, 'titulo': 0, 'aliases_da_unidade': 15, 'sub_2a_chamada': 0, 'secao': 0, 'final': 0, 'final_motivos': 0}
+mudam no final: ['SO|1205-laminas-gerencia-de-memoria', 'TCC|aula-10-linguagens-reconheciveis-e-linguagens-decidiveis', 'TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem', 'TCC|aula-12-entscheidungsproblem', 'TCC|aula-15-teoremas-de-incompletude-de-godel', 'TCC|aula-17-np-completude']
+  SO|1205-laminas-gerencia-de-memoria -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'sub_2a_chamada', 'final', 'final_motivos']
+  TCC|aula-10-linguagens-reconheciveis-e-linguagens-decidiveis -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'aliases_da_unidade', 'sub_2a_chamada', 'final', 'final_motivos']
+  TCC|aula-11-o-problema-da-parada-halting-problem-halteproblem -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'titulo', 'aliases_da_unidade', 'final', 'final_motivos']
+  TCC|aula-12-entscheidungsproblem -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'confiante_1a', 'titulo', 'aliases_da_unidade', 'sub_2a_chamada', 'secao', 'final', 'final_motivos']
+  TCC|aula-15-teoremas-de-incompletude-de-godel -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'aliases_da_unidade', 'sub_2a_chamada', 'final', 'final_motivos']
+  TCC|aula-17-np-completude -> tokens_headings ['tokens_headings', 'unidade_bruta', 'sub_1a', 'confiante_1a', 'titulo', 'aliases_da_unidade', 'sub_2a_chamada', 'final', 'final_motivos']

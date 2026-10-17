@@ -1,0 +1,6 @@
+inicio 12:04:52
+FAILED tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]
+FAILED tests/test_pdf_markdown.py::test_respect_actualtext_tira_a_flag_e_restaura
+2 failed, 2454 passed, 4 skipped, 8 warnings in 65.17s (0:01:05)
+exit=1
+fim 12:06:00
