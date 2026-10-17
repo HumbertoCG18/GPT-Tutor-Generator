@@ -10,7 +10,8 @@ dependencies = [
     "pillow>=10.0.0",
     "requests>=2.31.0",
     "pymupdf>=1.24.0",
-    "pymupdf4llm>=0.0.10",
+    # <1.28: a fração empilhada some na 1.28.2 (#71).
+    "pymupdf4llm>=0.0.10,<1.28",
     "pdfplumber>=0.10.0",
     "jsonschema>=4.0.0",
     "pydantic>=2.0",
@@ -21,6 +22,8 @@ dev = [
     "pytest>=7.0",
     "pytest-cov>=4.1",
     "ruff>=0.6",
+    # tests/test_gemini_generate_text.py importa o cliente real.
+    "google-genai>=0.3.0",
 ]
 # Optional: enable Gemini-based code summarization (course/code_curation.json).
 # Without this extra, the build still works — code summaries are simply skipped.

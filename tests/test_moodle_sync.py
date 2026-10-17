@@ -5,7 +5,7 @@ com `timemodified` real dos arquivos. Entries copiam o contrato do manifest do L
 """
 import json
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from src.builder.sources.moodle_sync import sync_diff
 
@@ -102,7 +102,7 @@ def test_plan_readds_changed_entries_from_their_stash_file():
     diff = sync_diff([_lab1(posting_date="2026-08-01")], LR)
     plan = plan_import(diff, LR, _scan(), [], [_lab1(posting_date="2026-08-01")], nomes=NOMES)
     assert plan.readd == ["lab-1-wireshark"]
-    assert sorted(Path(e.source_path).name for e in plan.add) == ["Lab 1 - Wireshark.pdf", "Lab 4 - HTTP.pdf"]
+    assert sorted(PureWindowsPath(e.source_path).name for e in plan.add) == ["Lab 1 - Wireshark.pdf", "Lab 4 - HTTP.pdf"]
 
 
 # --- S3: diff de decisoes, marca "mudou, confira", SYNC_REPORT ---

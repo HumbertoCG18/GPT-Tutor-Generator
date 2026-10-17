@@ -8,7 +8,12 @@ from __future__ import annotations
 
 import html
 import re
-from datetime import date
+from datetime import date, timedelta, timezone
+
+# Prazos do Moodle são instantes; a data vale no fuso do curso (PUCRS), não no da máquina:
+# 23:59 de Brasília já é o dia seguinte em UTC (sessão na nuvem, CI).
+# ponytail: offset fixo, o Brasil não tem horário de verão desde 2019; se voltar, usar ZoneInfo + tzdata.
+_MOODLE_TZ = timezone(timedelta(hours=-3))
 
 from src.builder.sources.moodle import _savename_from_module, sanitize_folder_name
 
@@ -204,7 +209,7 @@ def _module_due(mod, year: int = 0) -> tuple:
             if str(d.get("dataid") or "") == "duedate" and d.get("timestamp"):
                 try:
                     return (datetime.fromtimestamp(
-                        int(d["timestamp"])).date().isoformat(), "structured")
+                        int(d["timestamp"]), tz=_MOODLE_TZ).date().isoformat(), "structured")
                 except (ValueError, OSError, OverflowError):
                     pass
                 break
@@ -239,7 +244,7 @@ def extract_assign_deadlines(contents, year: int = 0) -> dict:
                     if str(d.get("dataid") or "") == "duedate" and d.get("timestamp"):
                         try:
                             structured = datetime.fromtimestamp(
-                                int(d["timestamp"])).date().isoformat()
+                                int(d["timestamp"]), tz=_MOODLE_TZ).date().isoformat()
                         except (ValueError, OSError, OverflowError):
                             structured = ""
                         break

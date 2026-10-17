@@ -1,5 +1,7 @@
 """Regressões com plano e contrato de sidecar de test_glossary_curation.py."""
 import json
+import shutil
+import sys
 
 import pytest
 
@@ -63,7 +65,9 @@ def test_fresh_copy_copies_source_and_propagates_failure(tmp_path, monkeypatch):
     src.mkdir()
     (src / "manifest.json").write_text('{"entries": []}', encoding="utf-8")
     dst = tmp_path / ".frzero" / "run"
-    ablacao_rapida.sync_fresh(src, dst)
+    # robocopy só existe no Windows; fora dele a cópia vem do shutil e o resto do contrato vale igual.
+    copy = None if sys.platform == "win32" else (lambda s, d: shutil.copytree(s, d, dirs_exist_ok=True))
+    ablacao_rapida.sync_fresh(src, dst, sync_fn=copy)
     assert (dst / "manifest.json").read_bytes() == (src / "manifest.json").read_bytes()
     assert list(src.iterdir()) == [src / "manifest.json"]
 

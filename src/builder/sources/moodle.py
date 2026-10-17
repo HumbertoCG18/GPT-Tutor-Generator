@@ -15,7 +15,7 @@ import re
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import List
 
 from src.utils.helpers import slugify, write_json_manifest
@@ -260,6 +260,7 @@ def module_files(mod) -> list:
     return [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
 
 
+# source_path vem do Windows (C:\...): nome e stem por PureWindowsPath, que separa \ e / em qualquer sistema.
 def match_module_entries(in_sec, mod, n_name) -> list:
     """Entries da secao que sao este modulo (casador UNICO do backfill e da sync): basename ==
     savename/filename -> stem do arquivo (extensao trocada pelo pipeline) -> moodle_label == nome
@@ -268,21 +269,21 @@ def match_module_entries(in_sec, mod, n_name) -> list:
     name = str(mod.get("name") or "")
     files = module_files(mod)
     keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
-    ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+    ids = [e for e in in_sec if PureWindowsPath(str(e.get("source_path") or "")).name.casefold() in keys]
     if not ids and files:
         # Stem so com extensao COMPATIVEL: identica, ou o par html<->pdf da pagina impressa. Sem isto o anexo
         # TransformacoesGeometricas.cpp de uma pagina roubava o TransformacoesGeometricas.zip de outro modulo (CG 04/09).
         stems = {(_norm_text(Path(k).stem), Path(k).suffix.lower()) for k in keys}
         ids = [e for e in in_sec if any(
-            _norm_text(Path(str(e.get("source_path") or "")).stem) == st
-            and _ext_compatible(Path(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
+            _norm_text(PureWindowsPath(str(e.get("source_path") or "")).stem) == st
+            and _ext_compatible(PureWindowsPath(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
     # Label do sidecar == nome do modulo: entry ROTULADA pertence ao modulo mesmo quando outro arquivo ja casou
     # pelo basename (folhas da subarvore levam o label do hub, S6d; sem a uniao viravam "sumidas" na sync, 04/09).
     same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
     if same and (len(same) == 1 or n_name[_norm_text(name)] == 1):
         ids = ids + [e for e in same if e not in ids]
     if not ids:
-        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) == _norm_text(name)]
+        ids = [e for e in in_sec if _norm_text(PureWindowsPath(str(e.get("source_path") or "")).stem) == _norm_text(name)]
     return ids
 
 
@@ -396,7 +397,7 @@ def backfill_source_section_from_api(manifest_entries, contents):
     assignments, unmatched, ambiguous = {}, [], []
     for e in manifest_entries or []:
         eid = str(e.get("id") or "")
-        base = Path(str(e.get("source_path") or "")).name.casefold()
+        base = PureWindowsPath(str(e.get("source_path") or "")).name.casefold()
         if base not in sec_by_name:
             unmatched.append(eid or base)
             continue

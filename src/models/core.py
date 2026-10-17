@@ -1,7 +1,7 @@
 import json
 import logging
 from dataclasses import asdict, dataclass, field, fields
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -168,7 +168,8 @@ class FileEntry:
             base = slugify(self.title) or "url"
             url_hash = hashlib.md5(self.source_path.encode()).hexdigest()[:6]
             return f"{base}-{url_hash}"
-        stem = Path(self.source_path).stem
+        # source_path vem do Windows (C:\...): PureWindowsPath separa \ e / em qualquer sistema.
+        stem = PureWindowsPath(self.source_path).stem
         # ".tar.gz": stem devolve "x.tar" — sem o corte o id herda o "tar"
         # (tcp-chat-ctar, achado no import do FR 01/09).
         if stem.lower().endswith(".tar"):
