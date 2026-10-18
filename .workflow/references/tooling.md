@@ -38,8 +38,17 @@ se ele estiver ligado, e o conserto é desligar (#110), não remover a regra par
 No Claude Code o plugin fica: zero uso sem cobertura total dos transcripts é lacuna, não prova.
 Remedir com `--until` em 17/11 antes de desligar, seguindo references/capabilities.md.
 
-RTK 0.49.0 está em `C:/Users/Humberto/.local/bin/rtk.exe`. Uso aprovado inicialmente:
-`rtk pytest <argumentos>` para leitura humana da saída. Se o pytest do projeto não
+RTK rtk-oss 1.0.1 (Apache-2.0; o binário padrão da 1.0 inclui motor BUSL-1.1) está em
+`C:/Users/Humberto/.local/bin/rtk.exe`. Piloto da fase 1 (CUSTO-02, #128, medir em 24/10):
+o hook `~/.claude/hooks/rtk-pytest-only.py` aceita a reescrita do `rtk hook claude` só
+quando os operadores `&&`/`;` ficam iguais e cada trecho fica como digitado ou igual à
+reescrita que o próprio hook calcula: `rtk ` antes de `pytest|cargo|ls|gh|wc`, ou
+`python -m pytest` → `rtk pytest`, com os mesmos argumentos. Caractere fora do ASCII
+imprimível (exceto espaço e tab, p. ex. NBSP), quebra de linha, pipe, `&`,
+subshell, `$`, crase, aspas, `\`, `#` ou redirecionamento (exceto `2>&1`) no original ou na
+reescrita, e falha ou timeout do rtk, deixam o comando nativo. `vitest` e `npm test` ficam fora. Rollback: `rtk-pytest-only.py.bak-custo02`
+(hook) e `rtk-0.49.0.exe.bak` (binário). `%APPDATA%/rtk/config.toml` só cala o aviso do
+hook global (`suppress_hook_warning`); telemetria desligada. Se o pytest do projeto não
 estiver no PATH, preservar o ambiente nativo e executar o comando original.
 Recuperar detalhes omitidos com `rtk recall <hash> --full` quando houver indicação.
 Para comparação exata, JSON ou pipelines, usar saída original. Não aplicar RTK a
