@@ -35,7 +35,8 @@ Não acumular worktrees antigas só para preservar o snapshot do workflow.
 Antes de remover: inventariar diff/index/untracked/ignorados, commits exclusivos, PRs,
 PTYs/workers/spawns pendentes e symlinks/junctions. HEAD antigo ou integrado não prova
 que o WIP foi entregue. Evidência local útil vai para backup com hashes; código não
-integrado e sessões ativas impedem remoção. Usar `git worktree remove` sem `--force`;
+integrado e sessões ativas impedem remoção, assim como a pasta citada em `worktrees` ou no
+`handoff` de campanha com tarefa não concluída no registro: concluir ou atualizar a tarefa antes. Usar `git worktree remove` sem `--force`;
 não apagar branches remotas nem integrar WIP como efeito colateral da limpeza.
 Worktrees legadas com código pendente são exceções preservadas até integrar ou arquivar
 explicitamente esse código. Não propagá-las só para ocultar drift no verificador.
