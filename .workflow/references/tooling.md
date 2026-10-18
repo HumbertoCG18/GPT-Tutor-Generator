@@ -28,6 +28,16 @@ Readicionar: claude mcp add perssua -s user -e PERSSUA_MCP_SOURCE=... -- cmd.exe
 Backups: ~/.claude.json, ~/.codex/config.toml e ~/.gemini/config/mcp_config.json com
 sufixo .bak-paridade-20260930-011932 (e .bak-github-mcp-20260930-004949).
 
+## Codex Companion (plugin codex@openai-codex)
+
+Medido em 17/10/2026 com count_tool_use.py (Claude/Codex/AGY: 4.979/649/237 sessões):
+codex-rescue como tool 0/0/0, Skill codex:* 1/0/0, astra-review 123/0/0. Caminho oficial de
+leitura no Codex: codex_read/astra_review (no Alethe, alethe_delegate readOnly).
+Invariante: o Codex não carrega o Companion (Codex chamando Codex é circular); verify.py falha
+se ele estiver ligado, e o conserto é desligar (#110), não remover a regra para deixar verde.
+No Claude Code o plugin fica: zero uso sem cobertura total dos transcripts é lacuna, não prova.
+Remedir com `--until` em 17/11 antes de desligar, seguindo references/capabilities.md.
+
 RTK 0.49.0 está em `C:/Users/Humberto/.local/bin/rtk.exe`. Uso aprovado inicialmente:
 `rtk pytest <argumentos>` para leitura humana da saída. Se o pytest do projeto não
 estiver no PATH, preservar o ambiente nativo e executar o comando original.

@@ -39,6 +39,10 @@ integrado e sessões ativas impedem remoção. Usar `git worktree remove` sem `-
 não apagar branches remotas nem integrar WIP como efeito colateral da limpeza.
 Worktrees legadas com código pendente são exceções preservadas até integrar ou arquivar
 explicitamente esse código. Não propagá-las só para ocultar drift no verificador.
+Arquivar = commit `wip: arquivado` na branch, push e `git worktree remove`; a branch local fica.
+Enquanto não estiver no tronco, o hook de início a lista, e antes de uma implementação nova o
+agente oferece retomar, integrar por PR, descartar (`git branch -d` só depois de integrada; a
+remota fica) ou adiar.
 
 1. Escolher a tarefa do registro (criar com `tarefa` se faltar).
 2. Gravar `campanha` e `tarefa` em `.workflow/local/active-task.md`; ao passar a `status: executando`, o hook sincroniza-tarefa.py põe `em execução` no registro.
