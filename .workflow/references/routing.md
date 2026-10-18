@@ -67,7 +67,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 |---|---|---|---|
 | 1 | Claude Code | Orquestra (padrão) e implementa | Executor Claude da tabela de níveis |
 | 2 | Codex | Lê (planeja, revisa, investiga, valida, audita, busca código), escreve docs e pesquisa, e implementa T1/T2 na reserva | gpt-6-astra, effort pelo nível |
-| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 4 Argon, depois Gemini 3.8 Flash (seção AGY) |
+| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 3.8 Flash; Gemini 4 Argon só como reserva (seção AGY) |
 
 - Implementação: camada 1. Com a cota do Claude apertada (aviso de limite ou escolha do dono), o
   coordenador registra a troca no estado e passa T1/T2 ao Codex: `codex exec -m gpt-6-astra -c
@@ -110,11 +110,14 @@ depois OpenAI, depois Google. Claude do AGY implementa T1/T2 com a cota do AGY
 escalonamento) e escreve docs, changelog e relatórios (claude-sonnet-5-5-medium; high em T3). T3 não
 implementa no AGY. Em 2º lugar, gpt-oss-120b-medium (esforço fixo, contexto de 128k, AA Agentic
 6,2): medido em 11/10 como worker (escreveu o arquivo, não rodou comando, 5,5k tokens, 6 s; uma
-amostra trivial). Em 3º, gemini-4-argon-high para implementar (ROTEAMENTO-06, aprovado pelo dono em
-18/10/2026): no replay deu a qualidade dos outros braços (5 P1, ocultos 27/36), sem US$ e o mais
-lento (72 min); uma rodada, evidência em ../evals/rota-06-argon-2026-10-18.md. Em 4º, Gemini 3.8
-Flash; por ter 55,2% de alucinação (AA-Omniscience) e poucos bugs achados (Bug Hunt 18), seus achados
-passam pelo Codex (codex_read) ou pelo Claude antes de virar issue ou ação. A ordem vale pela escolha do papel: no Alethe o fallback desce um nível e a cota do
+amostra trivial). Em 3º, Gemini 3.8 Flash; por ter 55,2% de alucinação (AA-Omniscience) e poucos bugs achados (Bug Hunt 18), seus achados
+passam pelo Codex (codex_read) ou pelo Claude antes de virar issue ou ação. gemini-4-argon-high fica
+como reserva, por escolha explícita na tarefa (#151, 18/10/2026): no replay deu a qualidade dos
+outros braços (5 P1, ocultos 27/36), mas 3 PRs gastaram ~46% da cota semanal do Argon
+(../evals/rota-06-argon-2026-10-18.md).
+Cota (#151): ler o `/usage` do agy antes e depois de cada uso e anotar no eval ou no estado da tarefa;
+replay no AGY só por escolha explícita e com 1 PR por rodada (`bin/replay.py` recusa mais); sondas
+de capacidade (flags, sandbox, ferramentas) no Gemini 3.8 Flash. A ordem vale pela escolha do papel: no Alethe o fallback desce um nível e a cota do
 AGY é lida por fornecedor, então o app não troca de modelo dentro do AGY sozinho.
 Desde AGY-04 (alethe-agents #158) o worker AGY roda como agente gerenciado `alethe-worker`, sem
 comandos (só lê, busca e edita arquivos), sem os hooks globais e o GEMINI.md do dono, sempre numa
