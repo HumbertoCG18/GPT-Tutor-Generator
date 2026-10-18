@@ -60,6 +60,15 @@
       "detalhe": "Colisão herdada (não é dos commits do piloto); reconciliar antes de integrar a P1. Revisão job-32 Q1",
       "estado": "descartado",
       "motivo": "coberto pela LIMPEZA-03; conferir .codex/hooks.json da p1 (difere da dev) antes de apagar"
+    },
+    {
+      "id": "ACH-0007",
+      "data": "2026-10-18",
+      "tipo": "divida",
+      "titulo": "gitleaks marca token público do beacon Cloudflare em Curvas.htm (falso positivo)",
+      "origem": "",
+      "detalhe": "docs/reports/_harness-2026-09-03/piloto-curvas/Curvas.htm, linha 2384: data-cf-beacon {version 2024.11.0, token 32 hex}, público. No dev desde e7ab84eb (03/09), repo público. Liberar só esse formato/arquivo no .gitleaks.toml. Visto ao arquivar a p1 (46e1894f).",
+      "estado": "novo"
     }
   ]
 }
