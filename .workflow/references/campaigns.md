@@ -12,6 +12,7 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 - Tarefa: `id`, `titulo`, `nivel`, `estado`, `depende_de`, `janela`, `eixo`, `nota`, `motivo`, `origem`, `evidencia`, `resultado`, `recorrente`, `passos` (`[{texto, feito}]`; o atual é o primeiro não feito).
 - Estados: proposta · pronta · em execução · bloqueada · reservada · concluída. Janelas: assistida · noite · qualquer. `depende_de` aceita IDs de tarefa ou de campanha.
 - Mudar estado só por `estado`: grava escrita atômica e atualiza `atualizado_em`. Narrativa longa vai ao arquivo `handoff` da campanha, não ao registro. Rodar `validar` após edição manual.
+- Vetos: `.workflow/vetos.json` ao lado do registro lista decisões vigentes (`id`, `fonte`, `palavras`, `janela` opcional, `mensagem`). `validar` imprime `Aviso: TAREFA / veto / fonte: mensagem` para tarefa aberta cujo `titulo` ou `nota` cite uma palavra inteira (sem caixa nem acento) e segue retornando 0; o `verify.py` publica o mesmo em `warnings`. Aviso não bloqueia: "remover o CBM" também casa. Decisão nova que deve ser vigiada entra ali por PR (REC-07, #147).
 - Criar tarefa só por `tarefa CAMPANHA "título" [--nivel] [--estado proposta|pronta] [--depende ID ...] [--origem USER|CODE|DECISION]`: imprime o id novo `<CAMPANHA>-NN` (maior sufixo numérico da campanha + 1, mín. 2 dígitos, nunca reusa; colisão no registro incrementa). A Todo List do Alethe usa a mesma regra, o mesmo lock e a mesma escrita atômica.
 - IDs estáveis, nunca reutilizados; `origem` USER, CODE ou DECISION. Deduplicar por issue/resultado/escopo.
 - `decomposta: false` mostra `+?` no total: escopo desconhecido é "a definir", nunca zero.
@@ -54,7 +55,7 @@ remota fica) ou adiar.
 ## Passos de aceite
 
 - Ao iniciar uma tarefa, o coordenador dela (o agente que executa, inclusive o da noite) define de 3 a 7 passos de aceite com `passo TAREFA --definir "…" "…"` e marca cada um com `--feito N` assim que estiver verificavelmente feito (`--desfazer N` volta atrás; `passo TAREFA` sem opção imprime `feitos/total · passo atual`).
-- Os passos são o progresso da tarefa que o dono vê no Alethe (linha, detalhe e título do terminal). Revisor e sessão read-only não escrevem passos: propõem o delta ao coordenador.
+- Os passos são o progresso da tarefa que o dono vê no Alethe (linha, detalhe e título do terminal) e, no Claude Code, acima do prompt (mod `tarefa-ativa`, via `campanhas.py ativa`: a `tarefa` do `active-task.md` do checkout; sem ele, nada aparece). Revisor e sessão read-only não escrevem passos: propõem o delta ao coordenador.
 - `passo` não muda o estado da tarefa; o Gate 2 do dono não muda. Tarefa concluída recusa; `--definir` sobre passo já feito exige `--forcar`.
 
 ## Seleção e confirmação

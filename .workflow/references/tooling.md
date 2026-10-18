@@ -37,6 +37,9 @@ Invariante: o Codex não carrega o Companion (Codex chamando Codex é circular);
 se ele estiver ligado, e o conserto é desligar (#110), não remover a regra para deixar verde.
 No Claude Code o plugin fica: zero uso sem cobertura total dos transcripts é lacuna, não prova.
 Remedir com `--until` em 17/11 antes de desligar, seguindo references/capabilities.md.
+Controle do revisor só leitura (ACH-0006, medido em 18/10 com `codex exec --profile astra --sandbox
+read-only` e `windows.sandbox = "elevated"`): escrita em arquivo, `git commit` e rede (`WinError 10013`)
+falham; push e `gh` de escrita dependem de rede. A regra no brief (#114) é só instrução; o sandbox é o controle.
 
 RTK rtk-oss 1.0.1 (Apache-2.0; o binário padrão da 1.0 inclui motor BUSL-1.1) está em
 `C:/Users/Humberto/.local/bin/rtk.exe`. Piloto da fase 1 (CUSTO-02, #128, medir em 24/10):
