@@ -21,15 +21,17 @@
         "GPT-Tutor-Generator"
       ],
       "handoff": "fix/moodle-rmeta-v1:docs/reports/2026-10-01-correcao-moodle-v1/relatorio.md",
-      "atualizado_em": "2026-10-07",
+      "atualizado_em": "2026-10-18",
       "tarefas": [
         {
           "id": "MOODLE-V1-01",
           "titulo": "Correção V1 na worktree moodle-v1",
           "nivel": "T2",
-          "estado": "em execução",
+          "estado": "concluída",
           "depende_de": [],
-          "nota": "arquivada em 17/10 (fix/moodle-rmeta-v1, 2961067a, com push); relatório de 01/10 na branch"
+          "nota": "arquivada em 17/10 (fix/moodle-rmeta-v1, 2961067a, com push); relatório de 01/10 na branch",
+          "evidencia": "fix/moodle-rmeta-v1 (2961067a): relatorio.md de 01/10, validador-externo job-29 APROVÁVEL COM AJUSTES (5 MINOR)",
+          "resultado": "V1 pronta, sem commit no tronco; branch 145 atrás do dev; reconciliação dos 3 arquivos de código fica na V1-02"
         },
         {
           "id": "MOODLE-V1-02",
