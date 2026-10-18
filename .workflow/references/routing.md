@@ -67,7 +67,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 |---|---|---|---|
 | 1 | Claude Code | Orquestra (padrão) e implementa | Executor Claude da tabela de níveis |
 | 2 | Codex | Lê (planeja, revisa, investiga, valida, audita, busca código), escreve docs e pesquisa, e implementa T1/T2 na reserva | gpt-6-astra, effort pelo nível |
-| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 3.8 Flash (seção AGY) |
+| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 4 Argon, depois Gemini 3.8 Flash (seção AGY) |
 
 - Implementação: camada 1. Com a cota do Claude apertada (aviso de limite ou escolha do dono), o
   coordenador registra a troca no estado e passa T1/T2 ao Codex: `codex exec -m gpt-6-astra -c
@@ -110,9 +110,11 @@ depois OpenAI, depois Google. Claude do AGY implementa T1/T2 com a cota do AGY
 escalonamento) e escreve docs, changelog e relatórios (claude-sonnet-5-5-medium; high em T3). T3 não
 implementa no AGY. Em 2º lugar, gpt-oss-120b-medium (esforço fixo, contexto de 128k, AA Agentic
 6,2): medido em 11/10 como worker (escreveu o arquivo, não rodou comando, 5,5k tokens, 6 s; uma
-amostra trivial). Em 3º, Gemini 3.8 Flash; por ter 55,2% de alucinação (AA-Omniscience) e poucos
-bugs achados (Bug Hunt 18), seus achados passam pelo Codex (codex_read) ou pelo Claude antes de virar
-issue ou ação. A ordem vale pela escolha do papel: no Alethe o fallback desce um nível e a cota do
+amostra trivial). Em 3º, gemini-4-argon-high para implementar (ROTEAMENTO-06, aprovado pelo dono em
+18/10/2026): no replay deu a qualidade dos outros braços (5 P1, ocultos 27/36), sem US$ e o mais
+lento (72 min); uma rodada, evidência em ../evals/rota-06-argon-2026-10-18.md. Em 4º, Gemini 3.8
+Flash; por ter 55,2% de alucinação (AA-Omniscience) e poucos bugs achados (Bug Hunt 18), seus achados
+passam pelo Codex (codex_read) ou pelo Claude antes de virar issue ou ação. A ordem vale pela escolha do papel: no Alethe o fallback desce um nível e a cota do
 AGY é lida por fornecedor, então o app não troca de modelo dentro do AGY sozinho.
 Desde AGY-04 (alethe-agents #158) o worker AGY roda como agente gerenciado `alethe-worker`, sem
 comandos (só lê, busca e edita arquivos), sem os hooks globais e o GEMINI.md do dono, sempre numa
@@ -124,20 +126,19 @@ escolha explícita, nunca como fallback automático; então planejador e revisor
 
 ## Perfis adicionais AGY
 
-- Fora da seleção automática até medição no nosso uso: gemini-3.7-flash e gemini-3.6-flash
-  (abaixo do 3.8 em DeepSWE, Terminal-Bench e AA Coding), gemini-3.1-pro (AA Intelligence 30 × 41
-  do 3.8 Flash, custo parecido).
+- Fora da seleção automática até medição no nosso uso: gemini-4-argon-low e gemini-4-argon-medium
+  (só o high foi medido). gemini-3.7/3.6-flash e gemini-3.1-pro saíram do AGY na 1.4.2.
 - Investigador pode escolher outro perfil do AGY com justificativa registrada; a superioridade no
   nosso uso ainda não foi medida. Não chamar vários para a mesma auditoria sem avaliação delimitada
   e autorizada. Não substituem a revisão do revisor.
 - Gemini, Sonnet 5.5 e Opus 5.5: ID da variante (o esforço vem no ID) ou família com --effort,
   nunca os dois (medido na 1.3.3: o agy recusa na partida); sem inventar variantes. Não transferir
   parâmetros ou supor mesma assinatura/quota do Claude Code.
-- Modelos do AGY (agy models, AGY 1.3.2 em 10/10/2026, sem mudança desde a 1.2.16; o CLI se atualiza sozinho, 1.3.3 no mesmo dia): gemini-3.8/3.7/3.6-flash-{low,medium,high},
-  gemini-3.1-pro-{low,high}, claude-opus-5-5-{low,medium,high},
+- Modelos do AGY (agy models, AGY 1.4.2 em 18/10/2026; o CLI se atualiza sozinho):
+  gemini-4-argon-{low,medium,high}, gemini-3.8-flash-{low,medium,high}, claude-opus-5-5-{low,medium,high},
   claude-sonnet-5-5-{low,medium,high} e gpt-oss-120b-medium.
 - Esforço: o CLI aceita --effort low|medium|high|xhigh|max, mas nem todo modelo muda de esforço.
-  Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no ID; Gemini 3.1 Pro só low/high;
+  Gemini Argon, Gemini Flash, Sonnet 5.5 e Opus 5.5 têm low/medium/high no ID;
   GPT-OSS 120B (Medium) tem esforço fixo. O worker AGY do Alethe oferece só os aprovados: Sonnet
   5.5 e Gemini 3.8 Flash medium/high pela família, Opus 5.5 pelo ID claude-opus-5-5-high e
   gpt-oss-120b-medium pelo ID (esforço fixo).
