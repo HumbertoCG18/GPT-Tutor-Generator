@@ -1,0 +1,892 @@
+# GPT Tutor Generator
+
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](#requisitos)
+[![UI](https://img.shields.io/badge/UI-Tkinter-1f6feb)](#arquitetura)
+[![Vision](https://img.shields.io/badge/Vision-Ollama-000000)](#image-curator-e-vision)
+[![Backend](https://img.shields.io/badge/PDF-Datalab-0f766e)](#backend-datalab)
+[![License](https://img.shields.io/badge/Licenca-MIT-green)](#licenca)
+
+Aplicação desktop em Python para transformar materiais acadêmicos em um repositório Markdown estruturado, curado e pronto para uso com tutores baseados em LLM.
+
+## Sumário
+
+- [Visão Geral](#visao-geral)
+- [Como o App Funciona](#como-o-app-funciona)
+- [Suporte Institucional](#suporte-institucional)
+- [Cronograma PUCRS — Importação do Portal ASPNET](#cronograma-pucrs--importacao-do-portal-aspnet)
+- [Arquitetura](#arquitetura)
+- [Processamento de Arquivos](#processamento-de-arquivos)
+- [Tag Scoring e Aprendizado por Matéria](#tag-scoring-e-aprendizado-por-materia)
+- [Backend Datalab](#backend-datalab)
+- [Arquitetura Low-Token](#arquitetura-low-token)
+- [Image Curator e Vision](#image-curator-e-vision)
+- [Timeline Dashboard](#timeline-dashboard)
+- [Resiliência de Build](#resiliencia-de-build)
+- [Resumos de código (opcional — via Gemini)](#resumos-de-codigo-opcional--via-gemini)
+- [Estrutura do Repositório Gerado](#estrutura-do-repositorio-gerado)
+- [Requisitos](#requisitos)
+- [Instalação](#instalacao)
+- [Configuração](#configuracao)
+- [Execução](#execucao)
+- [Testes](#testes)
+- [Roadmap](#roadmap)
+- [Notas de Manutenção](#notas-de-manutencao)
+- [Licença](#licenca)
+
+## Visão Geral
+
+O **GPT Tutor Generator** organiza materiais reais de uma disciplina ao longo do semestre e os converte em um repositório navegável por IA.
+
+O app combina:
+
+- importação multiformato
+- processamento automático de PDFs, links, imagens e código
+- revisão manual dos casos difíceis
+- curadoria de imagens acadêmicas
+- geração de instruções e artefatos para Claude, GPT e Gemini
+
+O sistema mantém contexto de:
+
+- disciplina
+- professor
+- semestre
+- cronograma
+- perfil do aluno
+- progresso de processamento
+
+## Como o App Funciona
+
+Fluxo de alto nível:
+
+```text
+Importar materiais
+  -> classificar e configurar entries
+  -> processar PDFs / links / código / imagens
+  -> revisar saídas problemáticas
+  -> curar imagens e extrair descrições
+  -> consolidar conteúdo em markdown
+  -> gerar arquivos de instrução e estrutura pedagógica
+```
+
+Fluxo típico no app:
+
+1. Criar ou selecionar uma matéria.
+2. Definir a pasta do repositório.
+3. Importar arquivos e links.
+4. Processar a fila.
+5. Revisar saídas em `manual-review/` quando necessário.
+6. Abrir o **Image Curator** para imagens extraídas de PDFs ou fotos.
+7. Construir ou atualizar o repositório final.
+8. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
+9. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
+10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
+11. Abrir a aba **Cronograma** para inspecionar a alocação de arquivos por bloco do cronograma e mover entries entre blocos manualmente.
+
+Observação operacional: a fila é persistente entre sessões do app, então builds e reprocessamentos podem ser retomados sem recriar toda a fila manualmente.
+
+## Suporte Institucional
+
+O sistema foi desenvolvido e validado na **PUCRS**. É a única instituição com suporte completo nativo, incluindo:
+
+- parse automático do cronograma de aulas via portal acadêmico (tabela `dgAulas` do sistema ASPNET)
+- detecção de suspensões, provas e feriados por cor de linha
+- mapeamento automático de arquivos para blocos do cronograma usando datas e tópicos
+
+Outras instituições podem usar o app normalmente para processar PDFs, links e imagens, e construir o repositório — mas o preenchimento do cronograma precisará ser feito manualmente no campo **Cronograma** da matéria, sem o botão de importação automática.
+
+> Se você estudar em outra instituição e quiser adaptar o parser, o ponto de entrada é `src/utils/helpers.py` → `parse_html_schedule()` e `_is_aspnet_schedule()`.
+
+## Cronograma PUCRS — Importação do Portal ASPNET
+
+O app consegue converter a tabela de aulas do portal da PUCRS diretamente em markdown estruturado, sem digitar nada manualmente.
+
+### O que copiar
+
+1. Acesse **Minha PUCRS** → sua matéria → aba **Cronograma de Aulas**
+2. Abra o DevTools do navegador (`F12`)
+3. Inspecione a tabela de aulas — ela tem o atributo `id="dgAulas"`
+4. Clique com o botão direito no elemento `<table id="dgAulas">` na aba **Elements**
+5. Selecione **Copy → Copy outerHTML**
+
+### Como importar no app
+
+1. Na tela da matéria, clique em **Importar Cronograma (HTML)**
+2. Cole o HTML copiado no campo de texto
+3. Clique em **Importar para Markdown**
+
+O app converte cada linha da tabela para o formato:
+
+```text
+- (30/03/2026) SEG — Provas por indução [Aula]
+- (20/04/2026) SEG — Suspensão de aulas [Aula] {kind=suspension} ⊘
+- (08/04/2026) QUA — Prova Interativa de Teoremas - Isabelle [Aula] @Laboratório 409/412
+```
+
+### O que o parser reconhece automaticamente
+
+| Situação | Como aparece na tabela | O que o app faz |
+|---|---|---|
+| Aula normal | linha branca ou sem cor | importa normalmente |
+| Suspensão de aulas | linha vermelha (`background-color: Red`) | adiciona `{kind=suspension} ⊘` |
+| Feriado | linha amarela | adiciona `{kind=holiday} ⊘` |
+| Prova / avaliação | linha azul | adiciona `{kind=exam}` |
+| Recurso (sala/lab) | campo `Recursos` preenchido | adiciona `@NomeDoRecurso` ao final |
+
+Os itens marcados com `⊘` são automaticamente ignorados no mapeamento de arquivos — o app não tenta alocar material para dias sem aula.
+
+### Por que isso importa
+
+O cronograma importado vira o esqueleto do `FILE_MAP.md` e do `COURSE_MAP.md`. Quanto mais preciso o cronograma, melhor o mapeamento automático entre arquivos e blocos de conteúdo — o que reduz a necessidade de configuração manual no backlog.
+
+## Arquitetura
+
+```text
+app.py
+  -> bootstrap da aplicação
+
+src/
+|-- builder/
+|   |-- engine.py            # facade principal e orquestração do build
+|   |-- artifacts/           # COURSE_MAP, FILE_MAP, prompts e índices
+|   |-- core/                # config semântica e utilidades centrais
+|   |-- extraction/          # taxonomy, sinais e helpers de extração
+|   |-- facade/              # wiring configurado usado pela facade
+|   |-- ops/                 # operações de build, regen e fila
+|   |-- pdf/                 # pipeline PDF e assets
+|   |-- routing/             # matching e roteamento do FILE_MAP
+|   |-- runtime/             # integrações com backends externos
+|   |-- text/                # sanitização textual e URL -> markdown
+|   |-- timeline/            # índice e sinais do cronograma
+|   `-- vision/              # clientes de vision e classificação visual
+|-- models/
+|   |-- core.py              # dataclasses e modelos persistidos
+|   `-- task_queue.py        # RepoTask e RepoTaskStore (fila persistida)
+|-- ui/
+|   |-- app.py                       # janela principal
+|   |-- consolidate_unit_dialog.py   # diálogo de consolidação de unidade
+|   |-- curator_studio.py            # revisão manual e curadoria
+|   |-- dialogs.py                   # configurações, status, ajuda e dialogs
+|   |-- image_curator.py             # curadoria de imagens e extração visual
+|   |-- repo_dashboard.py            # dashboard operacional de repositórios
+|   |-- student_state_curator.py     # captura e edição do estado do aluno
+|   |-- timeline_dashboard.py        # dashboard de alocação por bloco do cronograma
+|   `-- theme.py                     # tema e configuração persistente
+`-- utils/
+    |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
+    `-- power.py             # prevenção de sleep durante builds longos
+```
+
+### Decisões Atuais de Arquitetura
+
+- Backend de vision ativo: `ollama`
+- Endpoint usado para vision: `/api/chat`
+- O pipeline PDF é híbrido e seleciona backends conforme o perfil e a disponibilidade local/cloud
+- Para `math_heavy`, o **Datalab** é hoje a alternativa mais previsível quando a API key está configurada
+- `marker` continua disponível, mas não é o caminho principal recomendado no estado atual do projeto
+- A arquitetura de contexto para Claude Web é **map-first**:
+  - começar por `course/COURSE_MAP.md`
+  - consultar `student/STUDENT_STATE.md` para calibrar profundidade e evitar repetição
+  - usar `course/FILE_MAP.md` para localizar o material certo
+  - abrir markdowns longos só quando os artefatos curtos não bastarem
+
+## Processamento de Arquivos
+
+O pipeline usa múltiplas camadas e heurísticas.
+
+### Modos de processamento
+
+```text
+auto
+quick
+high_fidelity
+manual_assisted
+```
+
+### Perfis de documento
+
+```text
+auto
+math_heavy
+diagram_heavy
+scanned
+```
+
+### Backends de extração
+
+Base:
+
+- `pymupdf4llm`
+- `pymupdf`
+
+Avançados:
+
+- `datalab`
+- `docling`
+- `docling_python`
+- `marker`
+
+### Observação prática sobre backends
+
+No estado atual do projeto:
+
+- `datalab` é a melhor aposta para PDFs `math_heavy`
+- `docling` e `docling_python` continuam úteis para comparação e processamento local
+- `marker` continua disponível, mas está em fase de investigação/refino e não é a rota principal recomendada agora
+
+O sistema também consegue:
+
+- extrair imagens
+- extrair tabelas
+- forçar OCR
+- preservar imagens do PDF no markdown
+- limitar páginas por faixa
+- consolidar saídas intermediárias
+- regenerar artefatos derivados sem reprocessar tudo do zero
+
+## Tag Scoring e Aprendizado por Matéria
+
+O sistema de mapeamento automático de arquivos para unidades/blocos do cronograma inclui um mecanismo de aprendizado por matéria.
+
+### Como funciona
+
+Quando você corrige manualmente a unidade ou subunidade de um entry pelo app, o app registra essa correção em um perfil de tags local da matéria (`course/.tag_profile.json`).
+
+Em mapeamentos futuros, os termos extraídos dos entries corrigidos geram **boosts** nas unidades que foram confirmadas manualmente — aumentando a pontuação dessas unidades e reduzindo erros de mapeamento recorrentes.
+
+### Cálculo de confiança
+
+A confiança de mapeamento é **relativa**, não absoluta. Implementação em `src/builder/routing/file_map.py` (`auto_map_entry_unit`, `auto_map_entry_subtopic`).
+
+Definições:
+
+```text
+winner_score    = maior score bruto entre as unidades candidatas
+runner_up_score = segundo maior score (0 se só houver 1 candidata)
+margin          = winner_score - runner_up_score
+rel_margin      = margin / max(winner_score, 1e-6)
+```
+
+Lógica de atribuição:
+
+```text
+se winner_score <= 0:
+    confidence = 0.0
+    ambiguous  = True
+
+senão se houver apenas 1 candidata:
+    confidence = 0.70   (unidade)  | 0.72 (tópico)
+    ambiguous  = False
+
+senão:
+    confidence = clamp(rel_margin, 0, 1)
+    ambiguous  = rel_margin < 0.15
+```
+
+Pós-processamento:
+
+```text
+se ambíguo:
+    confidence = min(confidence, 0.40)   (unidade)
+    confidence = min(confidence, 0.45)   (tópico)
+```
+
+Boost de tópico no matching de unidade (`auto_map_entry_unit`) — quando há um tópico vencedor forte dentro da unidade vencedora, sobrescreve o veredicto de ambíguo:
+
+```text
+topic_margin     = winner_topic_score - runner_up_topic_score
+topic_rel_margin = topic_margin / max(winner_topic_score, 1e-6)
+
+se winner_topic_score >= 0.55 e topic_rel_margin >= 0.15:
+    ambiguous  = False
+    confidence = max(confidence, min(0.95, topic_rel_margin))
+```
+
+Threshold de aceite (em `src/builder/extraction/content_taxonomy.py`):
+
+```text
+auto_tags recebe unit:<slug> apenas se
+    not ambiguous AND confidence >= 0.65
+```
+
+Em prosa: uma unidade só ganha alta confiança quando vence as concorrentes por uma margem proporcionalmente grande (≥ 15%) **e** seu tópico mais bem ranqueado dentro dela é coerente. Caso contrário o entry é marcado ambíguo, recebe teto de confiança baixo e não é auto-atribuído.
+
+### Isolamento por matéria
+
+O perfil de tags é **isolado por matéria**. Correções feitas em Cálculo não afetam o mapeamento de Algoritmos, por exemplo.
+
+### Transparência
+
+Na interface, ao sugerir unidade e subunidade, o app exibe um tooltip com as razões do mapeamento — incluindo quais boosts aprendidos influenciaram a pontuação.
+
+### Arquivo gerado
+
+```text
+{repo-root}/course/.tag_profile.json
+```
+
+Esse arquivo cresce com o uso e não precisa de intervenção manual.
+
+## Backend Datalab
+
+O projeto agora suporta **Datalab** como backend avançado de processamento de PDF.
+
+Ele é especialmente útil para:
+
+- materiais `math_heavy`
+- PDFs com fórmulas e layout complexo
+- casos em que o pipeline local não está entregando a qualidade esperada
+
+### Como o backend é usado
+
+- Se `DATALAB_API_KEY` estiver definida, o app pode preferir `datalab` automaticamente em `math_heavy`
+- Também é possível selecionar `Backend preferido = datalab` manualmente por entry
+- Quando `datalab` é escolhido, o item passa a ter um seletor `Modelo` com:
+  - `fast`
+  - `balanced`
+  - `accurate`
+
+### Modos do Datalab
+
+- `fast`: menor custo e maior velocidade
+- `balanced`: equilíbrio entre custo e qualidade
+- `accurate`: maior qualidade, especialmente útil para material matemático
+
+### Saída do Datalab
+
+As saídas são gravadas em:
+
+```text
+staging/markdown-auto/datalab/<entry>/
+```
+
+Com artefatos como:
+
+- markdown retornado pela API
+- imagens extraídas
+- `datalab-run.json` com metadados da execução
+
+### Extração de imagens pelo Datalab
+
+Quando o Datalab processa um PDF, as imagens são salvas automaticamente em:
+
+```text
+staging/markdown-auto/datalab/<entry>/images/
+```
+
+O caminho é propagado via `BackendRunResult.images_dir` até o manifest do item e fica disponível para o **Image Curator** sem processamento adicional.
+
+### Configuração mínima
+
+No arquivo `.env`:
+
+```env
+DATALAB_API_KEY=
+DATALAB_BASE_URL=https://www.datalab.to
+```
+
+Sem `DATALAB_API_KEY`, o backend continua indisponível.
+
+### Observação de custo
+
+O Datalab é um serviço externo com cobrança por página. Antes de adotar como backend principal, verifique:
+
+- o custo por volume de páginas
+- a necessidade de enviar documentos para serviço externo
+- requisitos de privacidade do seu material
+
+Documentação oficial:
+
+- https://documentation.datalab.to/
+
+## Arquitetura Low-Token
+
+O projeto gera artefatos pensados para **baixo custo de contexto** em LLMs web, especialmente no Claude.
+
+Princípios:
+
+- começar por arquivos curtos e roteadores
+- usar `STUDENT_STATE.md` antes de repetir conteúdo ou subir demais a profundidade
+- abrir markdowns longos apenas como último recurso
+- promover para o bundle só metadados e materiais de alto sinal
+- compactar descrições de imagem antes de injetar no markdown final
+- reduzir repetição visual de slides e PDFs exportados
+
+Arquivos-chave dessa arquitetura:
+
+```text
+course/COURSE_MAP.md
+course/FILE_MAP.md
+exercises/EXERCISE_INDEX.md
+build/claude-knowledge/bundle.seed.json
+setup/INSTRUCOES_CLAUDE_PROJETO.md
+```
+
+### O que muda na prática
+
+- `COURSE_MAP.md` funciona como mapa pedagógico curto
+- `STUDENT_STATE.md` entra no fluxo antes dos materiais longos
+- `FILE_MAP.md` vira índice de roteamento com prioridade e contexto
+- `EXERCISE_INDEX.md` vira roteador de prática por unidade
+- `bundle.seed.json` fica seletivo e focado em metadados
+
+### Como aplicar isso em repositórios antigos
+
+Use a ação **Reprocessar Repositório** no backlog para reaplicar a arquitetura atual.
+
+Essa ação:
+
+- não reextrai PDFs crus por padrão
+- reutiliza o `manifest.json`
+- regenera os artefatos pedagógicos com o código atual
+- reaplica `COURSE_MAP`, `FILE_MAP`, bundle e instruções atualizados
+
+## Image Curator e Vision
+
+O **Image Curator** é a camada de curadoria visual do projeto.
+
+Ele opera sobre `content/images/` e faz:
+
+- agrupamento por página
+- preview de imagens
+- preview da página do PDF
+- captura manual de regiões
+- classificação heurística
+- descrição acadêmica de imagens
+- extração de texto + matemática com saída em Markdown/LaTeX
+- sinalização de duplicatas exatas entre páginas
+- injeção compacta de descrições no markdown final
+
+### Tipos visuais usados no curator
+
+```text
+diagrama
+tabela
+formula
+codigo
+generico
+decorativa
+extracao-latex
+```
+
+### Modos do Image Curator
+
+O curator opera em dois modos dependendo da configuração `image_description_source`:
+
+**Modo Ollama (padrão)**
+
+- botão "Gerar Descrições" e "Descrever" disponíveis
+- vision local via Ollama processa cada imagem
+- modo de recorte manual disponível
+
+**Modo DataLab**
+
+- controles de geração via Ollama ficam ocultos
+- um banner informa que as descrições são fornecidas pelo DataLab
+- as descrições vêm das captions extraídas automaticamente durante o processamento do PDF — sem custo adicional de vision
+- imagens sem caption do DataLab exibem aviso na interface
+
+Para alternar entre os modos, ajuste `Fonte de descrição de imagens` em **Configurações**.
+
+### Runtime atual de Vision
+
+```text
+Backend:  ollama
+Endpoint: http://localhost:11434/api/chat
+```
+
+O pipeline de vision do **Image Curator** é independente do backend PDF principal. Ou seja:
+
+- você pode usar `datalab` para PDFs e `ollama` no curator de imagens
+- ou usar `datalab` em ambos — nesse caso as descrições vêm das captions do DataLab e o Ollama não é necessário no curator
+
+### Setup do Ollama
+
+Exemplo:
+
+```powershell
+ollama signin
+ollama pull qwen3-vl:235b-cloud
+ollama pull qwen3-vl:8b
+```
+
+Opcionalmente, se quiser apenas testar o fallback local:
+
+```powershell
+ollama pull qwen3-vl:8b
+```
+
+### Validação no app
+
+Na interface:
+
+1. abra `Status`
+2. localize a seção `Vision`
+3. clique em `Validar Vision`
+
+O app verifica:
+
+- Ollama acessível
+- modelo configurado disponível
+- fallback disponível
+
+## Timeline Dashboard
+
+A aba **📅 Cronograma** (`src/ui/timeline_dashboard.py`, classe `TimelineDashboardView`) mostra a alocação de arquivos por bloco do cronograma da matéria ativa.
+
+Funcionalidades:
+
+- accordion por bloco com cabeçalho de data + título
+- linhas de entries dentro de cada bloco, com badges de confiança e marcador `✎` para override manual
+- seção dedicada para entries **não-mapeados** (sem `manual_timeline_block_id` e sem `bloco:` em `auto_tags`)
+- reatribuição manual de um entry para outro bloco via dropdown
+- persistência imediata da decisão no `manifest.json` via `save_block_assignment`
+- botão **🔄 Reprocessar** aparece após a primeira alteração, ligado à ação de reprocessamento do repositório
+
+Fonte de dados:
+
+- `manifest.json` → lista de entries e atribuições atuais
+- `course/.timeline_index.json` → blocos do cronograma
+
+A aba é independente do build principal — atribuir um bloco apenas grava `manual_timeline_block_id` no manifest. O reprocessamento (que aplica essas decisões nos artefatos derivados) só roda quando o usuário clica em **🔄 Reprocessar**.
+
+A aba se recarrega automaticamente ao ser selecionada, refletindo a matéria ativa no momento.
+
+## Resiliência de Build
+
+O pipeline de build foi endurecido contra dois cenários frequentes na operação:
+
+### Arquivos-fonte ausentes
+
+Se um entry da fila aponta para um caminho que não existe mais no disco (arquivo movido/deletado da pasta de origem), o build **não aborta**. O entry é registrado em `failed_entries` no manifest com `error_type=missing_source` e o processamento continua para os demais entries.
+
+Ao final do build, a UI exibe um messagebox listando título e caminho de cada arquivo ausente (até 20 itens, restante agregado em contador), permitindo decidir entre restaurar arquivos ou remover entries da fila.
+
+Vale tanto para **build completo** (`build_workflow.py`) quanto para **build incremental** (`incremental_build.py`).
+
+### Curadoria de imagens órfã
+
+Quando uma imagem é deletada pelo Image Curator (ou removida fora do app), o build de reprocessamento agora roda uma rotina de limpeza (`prune_stale_image_curation`) antes de regenerar os artefatos pedagógicos.
+
+A rotina:
+
+- escaneia recursivamente o `images_dir` de cada entry
+- compara com as entradas em `image_curation.pages[*].images`
+- remove curadorias de arquivos que não existem mais
+- poda páginas vazias
+- reseta `status` para `pending` se a entry ficar sem nenhuma página
+
+Imagens vivas e suas descrições não são tocadas. Garante que o lote de "Gerar Descrições" e a contagem na UI reflitam exatamente o que está no disco.
+
+A limpeza também é tolerante a chaves de página em formatos coexistentes (`"1"`, `"page_1"`, índice zero-based legado) — todas são consolidadas para o formato canônico no próximo save da página.
+
+## Resumos de código (opcional — via Gemini)
+
+Para enriquecer a indexação do código (títulos descritivos, conceitos extraídos,
+papel pedagógico, e vinculação automática ao bloco do cronograma), o app pode
+usar a API do Gemini.
+
+### Pré-requisitos
+
+```bash
+pip install google-genai
+```
+
+E uma chave da API do Gemini configurada via `Configurações → Processamento →
+Gemini — Resumos de Código`.
+
+### Como funciona
+
+1. Cada arquivo de código (`.py`, `.ipynb`, `.dfy`, etc) vira um *bundle* de texto.
+2. O Gemini retorna um JSON estruturado (`inferred_title`, `pedagogical_role`,
+   `concepts`, `summary`).
+3. Os `concepts` são casados localmente contra os blocos do cronograma
+   (`.timeline_index.json`) — sem custo extra de LLM — definindo a aula primária
+   e aulas secundárias.
+4. O resultado é persistido em `course/code_curation.json` (cache por hash de
+   conteúdo: re-executar não custa tokens se nada mudou).
+
+### Onde isso aparece
+
+- Cabeçalho de cada código gerado (`code/...`).
+- `course/CODE_INDEX.md` agrupado por aula.
+- `course/CRONOGRAMA_DETALHADO.md` (novo: bloco-a-bloco com códigos vinculados).
+- `course/CODE_HEALTH.md` (novo: cobertura, órfãos, distribuição por unidade).
+
+### Custo aproximado
+
+`gemini-2.5-flash` a $0.30 / 1M tokens entrada + $2.50 / 1M tokens saída.
+Uma matéria com ~20 códigos custa em torno de $0.03. Reprocessamento sem
+mudanças = 0 chamadas.
+
+### Sem chave configurada
+
+Tudo continua funcionando sem a chave: `code_curation.json` simplesmente não
+existe e os artefatos voltam ao formato original (fallback byte-equal).
+
+## Estrutura do Repositório Gerado
+
+```text
+{repo-root}/
+|-- manifest.json
+|-- build/
+|-- content/
+|-- course/
+|-- exercises/
+|-- exams/
+|-- manual-review/
+|-- raw/
+|-- setup/
+|-- staging/
+|-- student/
+`-- system/
+```
+
+### Pastas importantes
+
+- `raw/`: cópias dos arquivos originais
+- `staging/`: saídas intermediárias e automáticas
+- `manual-review/`: revisão manual guiada
+- `content/`: conteúdo textual consolidado
+- `exercises/`: materiais de exercício
+- `exams/`: materiais de prova
+- `build/`: artefatos de build e bundles
+
+## Requisitos
+
+- Windows 10/11
+- Python `3.11` recomendado
+- `tkinter` habilitado na instalacao do Python
+- Git
+- Ollama local para o fluxo de Vision
+
+Dependencias Python usadas de fato pelo app:
+
+- `pymupdf`
+- `pymupdf4llm`
+- `pdfplumber`
+- `Pillow`
+- `requests`
+- `beautifulsoup4`
+- `pytest` para desenvolvimento
+
+Ferramentas externas opcionais, mas importantes:
+
+- `tesseract` para OCR local
+- `docling` CLI
+- `marker_single` via `marker-pdf`
+
+Servicos externos opcionais:
+
+- Datalab para PDFs `math_heavy`
+- Ollama para Vision no Image Curator
+- OpenAI / Gemini so se voce usar essas integracoes fora do fluxo local principal
+
+### Stack operacional
+
+Hoje, o stack pratico do projeto e:
+
+- UI desktop: `Tkinter`
+- processamento PDF base: `PyMuPDF`, `PyMuPDF4LLM`, `pdfplumber`
+- HTTP / integracoes cloud: `requests`
+- parsing HTML de URLs: `beautifulsoup4`
+- imagens na UI: `Pillow`
+- vision local: `Ollama`
+- OCR local opcional: `Tesseract`
+- PDF cloud opcional: `Datalab`
+
+## Instalacao
+
+### Windows / PowerShell
+
+```powershell
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
+python -m pip install -U pip setuptools wheel
+pip install -e .[dev]
+```
+
+### Bootstrap completo em maquina nova
+
+```powershell
+git clone <URL_DO_REPOSITORIO>
+cd GPT-Tutor-Generator
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
+python -m pip install -U pip setuptools wheel
+pip install -e .[dev]
+pip install docling marker-pdf
+```
+
+### CLIs opcionais
+
+```powershell
+pip install docling
+pip install marker-pdf
+```
+
+### Tesseract OCR
+
+Se voce usar OCR local, instale o Tesseract e deixe o executavel no `PATH`. Veja detalhes de configuração de `TESSDATA_PREFIX` na seção [Configuração](#configuracao).
+
+### Ollama
+
+O Image Curator usa Ollama. O minimo e ter o servidor local ativo:
+
+```powershell
+ollama serve
+```
+
+Modelos uteis:
+
+```powershell
+ollama pull qwen3-vl:8b
+ollama pull qwen3-vl:235b-cloud
+```
+
+Se o servidor nao estiver em `http://localhost:11434`, ajuste isso nas configuracoes do app.
+
+### Validacao rapida do ambiente
+
+No app, abra `Status` e confira:
+
+- `Datalab API`
+- `docling CLI`
+- `marker CLI`
+- `TESSDATA`
+- `Vision`
+
+Essa e a forma mais rapida de validar o outro computador.
+
+## Configuracao
+
+### Variáveis de sistema (PATH)
+
+O app depende que os executáveis abaixo estejam disponíveis no `PATH` do sistema:
+
+| Executável | Obrigatório | Função |
+|---|---|---|
+| `python` | sim | rodar o app |
+| `ollama` | sim, para Vision | servidor de vision local |
+| `tesseract` | não | OCR local (fallback) |
+| `docling` | não | backend PDF alternativo |
+| `marker_single` | não | backend PDF alternativo (em investigação) |
+
+Se a autodetecção do `TESSDATA_PREFIX` falhar, defina manualmente:
+
+```powershell
+# Temporário (sessão atual)
+$env:TESSDATA_PREFIX = "C:\Program Files\Tesseract-OCR\tessdata"
+
+# Permanente
+[Environment]::SetEnvironmentVariable("TESSDATA_PREFIX", "C:\Program Files\Tesseract-OCR\tessdata", "User")
+```
+
+### `.env`
+
+O projeto carrega automaticamente o arquivo `.env` na raiz, sem sobrescrever variáveis já existentes no sistema.
+
+Variáveis atualmente em uso:
+
+```env
+DATALAB_API_KEY=          # necessária para o backend datalab
+DATALAB_BASE_URL=https://www.datalab.to
+```
+
+- `DATALAB_API_KEY` é a única chave necessária no fluxo principal atual
+- `DATALAB_BASE_URL` pode ficar no padrão
+
+### Configuracao persistida do app
+
+As opcoes da UI ficam fora do repositorio, no diretorio de dados do usuario.
+
+No Windows, o app usa:
+
+```text
+%APPDATA%\GPTTutorGenerator
+```
+
+Em geral, vale copiar isso apenas se voce quiser reaproveitar preferencias de interface e modelos configurados.
+
+Campos relevantes:
+
+- `vision_backend`
+- `vision_model`
+- `vision_model_quantization`
+- `ollama_base_url`
+- `image_description_source` — `"ollama"` (padrão) ou `"datalab"`
+- `prevent_sleep_during_build`
+
+## Execucao
+
+### Rodar com o venv ativado
+
+```powershell
+& .\.venv\Scripts\Activate.ps1
+python app.py
+```
+
+### Comandos uteis de desenvolvimento
+
+```powershell
+python -m pytest tests -q
+python -m pytest tests\test_image_curation.py -q
+```
+
+### Execucao direta
+
+```powershell
+python app.py
+```
+
+## Testes
+
+Rodar a suíte principal:
+
+```powershell
+pytest tests -q
+```
+
+Rodar apenas os testes do Image Curator / Vision:
+
+```powershell
+pytest tests\test_image_curation.py -q
+```
+
+## Roadmap
+
+O roadmap completo está em [`ROADMAP.md`](ROADMAP.md).
+
+Itens planejados em ordem de prioridade:
+
+| # | Feature | Esforço | Ganho |
+|---|---|---|---|
+| 1 | **Student State** — painel de captura de sessão para eliminar cold start | médio | alto |
+| 2 | **Cronograma visual** — timeline bloco × arquivo no app | médio | alto |
+| 3 | **NotebookLM** — export como destino adicional além de Claude/GPT/Gemini | médio | alto |
+| 4 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
+| 5 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
+| 6 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
+
+## Notas de Manutenção
+
+- O pipeline de vision do curator continua sendo `Ollama`
+- O pipeline PDF agora pode usar `datalab`, `docling`, `docling_python` e `marker`
+- Para `math_heavy`, o Datalab é a principal alternativa prática no estado atual do projeto
+- `marker` continua no projeto, mas está em investigação e refinamento
+- O ponto de verdade do fluxo atual está em:
+  - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
+  - [src/builder/runtime/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/runtime/datalab_client.py)
+  - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
+  - [src/builder/routing/file_map.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/routing/file_map.py)
+  - [src/builder/core/image_resolution.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/core/image_resolution.py)
+  - [src/builder/ops/build_workflow.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/build_workflow.py)
+  - [src/builder/ops/incremental_build.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/incremental_build.py)
+  - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
+  - [src/ui/timeline_dashboard.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/timeline_dashboard.py)
+  - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
+  - [src/models/tag_profile.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/models/tag_profile.py)
+- Documentos em `docs/plans/` e `docs/specs/` podem descrever versões históricas da implementação
+
+## Licença
+
+MIT

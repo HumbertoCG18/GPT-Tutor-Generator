@@ -1,0 +1,868 @@
+import json
+import logging
+import re
+import shutil
+import unicodedata
+from pathlib import Path
+from typing import Dict, List, Optional, Sequence
+from urllib.parse import urlparse
+import sys
+import os
+
+import requests
+
+logger = logging.getLogger(__name__)
+
+
+def _load_project_env_file() -> None:
+    """Load simple KEY=VALUE pairs from the repository .env without overriding OS env."""
+    project_root = Path(__file__).resolve().parents[2]
+    env_path = project_root / ".env"
+    if not env_path.exists():
+        return
+
+    try:
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if not key or key in os.environ:
+                continue
+            value = value.strip().strip('"').strip("'")
+            os.environ[key] = value
+    except Exception:
+        logger.debug("Falha ao carregar .env local do projeto.", exc_info=True)
+
+
+_load_project_env_file()
+
+# Environment / Optional Dependencies
+try:
+    import pymupdf
+    HAS_PYMUPDF = True
+except Exception:
+    pymupdf = None
+    HAS_PYMUPDF = False
+    logger.info("pymupdf not available; PyMuPDF backend disabled.")
+
+try:
+    import pymupdf4llm
+    HAS_PYMUPDF4LLM = True
+except Exception:
+    pymupdf4llm = None
+    HAS_PYMUPDF4LLM = False
+    logger.info("pymupdf4llm not available; PyMuPDF4LLM backend disabled.")
+
+try:
+    import pdfplumber
+    HAS_PDFPLUMBER = True
+except Exception:
+    pdfplumber = None
+    HAS_PDFPLUMBER = False
+    logger.info("pdfplumber not available; table extraction via pdfplumber disabled.")
+
+def _resolve_cli_from_project_venv(command_name: str) -> Optional[str]:
+    """Resolve a CLI preferring the repository-local virtualenv over PATH."""
+    project_root = Path(__file__).resolve().parents[2]
+    candidate_dirs = []
+
+    if os.name == "nt":
+        candidate_dirs.extend(
+            [
+                project_root / ".venv" / "Scripts",
+                project_root / "venv" / "Scripts",
+            ]
+        )
+        candidate_names = [f"{command_name}.exe", f"{command_name}.bat", command_name]
+    else:
+        candidate_dirs.extend(
+            [
+                project_root / ".venv" / "bin",
+                project_root / "venv" / "bin",
+            ]
+        )
+        candidate_names = [command_name]
+
+    for candidate_dir in candidate_dirs:
+        for candidate_name in candidate_names:
+            candidate_path = candidate_dir / candidate_name
+            if candidate_path.is_file():
+                return str(candidate_path)
+
+    return shutil.which(command_name)
+
+
+DOCLING_CLI = shutil.which("docling")
+MARKER_CLI = _resolve_cli_from_project_venv("marker_single")
+
+
+def _configure_tessdata() -> Optional[str]:
+    """Detecta a instalação do Tesseract e configura TESSDATA_PREFIX se necessário.
+    Retorna o caminho do tessdata encontrado, ou None."""
+    # Se já está configurado e o diretório existe, não mexe
+    existing = os.environ.get("TESSDATA_PREFIX", "")
+    if existing and Path(existing).is_dir():
+        return existing
+
+    candidates: List[Path] = []
+
+    # 1. Derivar do executável tesseract no PATH
+    tess_bin = shutil.which("tesseract")
+    if tess_bin:
+        bin_dir = Path(tess_bin).parent
+        candidates += [
+            bin_dir / "tessdata",
+            bin_dir.parent / "tessdata",
+            bin_dir.parent / "share" / "tessdata",
+        ]
+
+    # 2. Caminhos padrão no Windows
+    if sys.platform == "win32":
+        for prog in [
+            Path(os.environ.get("ProgramFiles", r"C:\Program Files")),
+            Path(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")),
+            Path(r"C:\Tesseract-OCR"),
+        ]:
+            candidates += [prog / "Tesseract-OCR" / "tessdata", prog / "tessdata"]
+
+    # 3. Caminhos padrão no Linux/macOS
+    candidates += [
+        Path("/usr/share/tesseract-ocr/4.00/tessdata"),
+        Path("/usr/share/tesseract-ocr/tessdata"),
+        Path("/usr/local/share/tessdata"),
+        Path("/opt/homebrew/share/tessdata"),
+    ]
+
+    for candidate in candidates:
+        if candidate.is_dir() and any(candidate.glob("*.traineddata")):
+            os.environ["TESSDATA_PREFIX"] = str(candidate)
+            logger.info("TESSDATA_PREFIX configurado automaticamente: %s", candidate)
+            return str(candidate)
+
+    logger.warning("tessdata não encontrado; OCR por Tesseract pode não funcionar.")
+    return None
+
+
+TESSDATA_PATH = _configure_tessdata()
+
+APP_NAME = "Academic Tutor Repo Builder V3"
+
+DEFAULT_CATEGORIES = [
+    "material-de-aula",
+    "provas",
+    "listas",
+    "gabaritos",
+    "fotos-de-prova",
+    "referencias",
+    "bibliografia",
+    "cronograma",
+    "trabalhos",
+    "codigo-professor",
+    "codigo-aluno",
+    "quadro-branco",
+    "outros",
+]
+
+CATEGORY_LABELS: Dict[str, str] = {
+    "material-de-aula": "📘 Material de aula (slides, notas, apostilas)",
+    "provas": "📝 Provas anteriores",
+    "listas": "📋 Listas de exercícios",
+    "gabaritos": "✅ Gabaritos e resoluções",
+    "fotos-de-prova": "📷 Fotos de provas/cadernos",
+    "referencias": "📚 Referências e documentos",
+    "bibliografia": "🔗 Bibliografia (livros, artigos, links)",
+    "cronograma": "📅 Cronograma da disciplina",
+    "trabalhos": "📋 Trabalhos e projetos (enunciados, requisitos)",
+    "codigo-professor": "💻 Código do professor (exemplos, base de código)",
+    "codigo-aluno": "🧑‍💻 Meu código (para revisão e feedback)",
+    "quadro-branco": "🖊 Quadro branco (foto de aula ou explicação)",
+    "outros": "📦 Outros materiais",
+}
+
+_LEGACY_CATEGORY_MAP: Dict[str, str] = {
+    "course-material": "material-de-aula",
+    "exams": "provas",
+    "exercise-lists": "listas",
+    "rubrics": "gabaritos",
+    "schedule": "cronograma",
+    "references": "referencias",
+    "photos-of-exams": "fotos-de-prova",
+    "answer-keys": "gabaritos",
+    "other": "outros",
+}
+
+IMAGE_CATEGORIES = {"fotos-de-prova", "provas", "material-de-aula", "quadro-branco", "outros"}
+
+EXAM_CATEGORIES = ("provas", "fotos-de-prova")
+EXERCISE_CATEGORIES = ("listas", "gabaritos")
+
+CODE_EXTENSIONS: set = {
+    ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
+    ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
+    ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
+    ".css", ".scss", ".ipynb", ".thy", ".dfy", ".smv",
+}
+
+LANG_MAP: Dict[str, str] = {
+    "py": "python", "js": "javascript", "ts": "typescript",
+    "jsx": "jsx", "tsx": "tsx", "java": "java", "c": "c",
+    "cpp": "cpp", "h": "c", "hpp": "cpp", "cs": "csharp",
+    "go": "go", "rs": "rust", "rb": "ruby", "php": "php",
+    "swift": "swift", "kt": "kotlin", "scala": "scala",
+    "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
+    "sql": "sql", "html": "html", "css": "css", "scss": "scss",
+    "ipynb": "json", "thy": "isabelle", "dfy": "dafny", "smv": "nusmv",
+}
+
+CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
+ASSIGNMENT_CATEGORIES = ("trabalhos",)
+WHITEBOARD_CATEGORIES = ("quadro-branco",)
+STUDENT_BRANCHES      = {"main", "master", "minha-solucao", "aluno", "student"}
+
+DEFAULT_OCR_LANGUAGE = "por,eng"
+
+PROCESSING_MODES = ["auto", "quick", "high_fidelity", "manual_assisted"]
+DOCUMENT_PROFILES = ["auto", "math_heavy", "diagram_heavy", "scanned"]
+LEGACY_DOCUMENT_PROFILE_ALIASES = {
+    "": "auto",
+    "auto": "auto",
+    "general": "auto",
+    "math_light": "math_heavy",
+    "math_heavy": "math_heavy",
+    "layout_heavy": "diagram_heavy",
+    "diagram_heavy": "diagram_heavy",
+    "exam_pdf": "diagram_heavy",
+    "scanned": "scanned",
+}
+PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "datalab", "docling", "docling_python", "marker"]
+DATALAB_MODES = ["fast", "balanced", "accurate"]
+OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
+
+
+def normalize_document_profile(profile: str | None) -> str:
+    normalized = str(profile or "").strip().lower()
+    return LEGACY_DOCUMENT_PROFILE_ALIASES.get(normalized, "auto")
+
+# Utilities
+
+def strip_accents(text: str) -> str:
+    """NFKD + remove marcas combinantes. Fonte única do strip de acento
+    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12).
+
+    U+0131 (dotless i) não decompõe em NFKD e vazou pro id da aula-10 do TCC
+    ("Reconhecıveis" no PDF do professor) — translitera na fonte única."""
+    text = (text or "").replace("ı", "i")
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in text if not unicodedata.combining(ch))
+
+
+def slugify(value: str) -> str:
+    value = strip_accents(value)
+    value = value.strip().lower()
+    value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
+    value = re.sub(r"[\s_]+", "-", value)
+    value = re.sub(r"-+", "-", value)
+    return value.strip("-") or "untitled"
+
+def collapse_ws(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "")).strip()
+
+def ensure_dir(path: Path) -> Path:
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+def write_text(path: Path, content: str) -> None:
+    """Write text atomically: stage to a sibling .tmp then os.replace().
+
+    os.replace is atomic on the same filesystem, so a crash/kill mid-write
+    leaves the previous file fully intact (never a torn/empty file)."""
+    ensure_dir(path.parent)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(content, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def write_json_manifest(path: Path, data: dict) -> None:
+    """Write manifest.json atomically, keeping a .bak of the previous version.
+
+    Backup is best-effort (never blocks the write). Uses the canonical
+    serialization shared by every manifest writer (indent=2, ensure_ascii=False)."""
+    ensure_dir(path.parent)
+    if path.exists():
+        try:
+            path.with_name(path.name + ".bak").write_text(
+                path.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+        except OSError:
+            pass  # backup best-effort, never block the write
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
+
+def parse_page_range(page_range: str) -> Optional[List[int]]:
+    value = (page_range or "").strip()
+    if not value:
+        return None
+
+    tokens = [t.strip() for t in value.split(",") if t.strip()]
+    if not tokens:
+        return None
+
+    raw_pages: List[int] = []
+    saw_zero = False
+    saw_positive = False
+
+    for token in tokens:
+        if "-" in token:
+            start_str, end_str = [p.strip() for p in token.split("-", 1)]
+            if not start_str.isdigit() or not end_str.isdigit():
+                raise ValueError(f"Faixa de páginas inválida: {token}")
+            start = int(start_str)
+            end = int(end_str)
+            if start > end:
+                start, end = end, start
+            raw_pages.extend(list(range(start, end + 1)))
+            if start == 0 or end == 0:
+                saw_zero = True
+            if end >= 1:
+                saw_positive = True
+        else:
+            if not token.isdigit():
+                raise ValueError(f"Página inválida: {token}")
+            num = int(token)
+            raw_pages.append(num)
+            if num == 0:
+                saw_zero = True
+            if num >= 1:
+                saw_positive = True
+
+    pages = sorted(set(raw_pages))
+    if not saw_zero and saw_positive:
+        pages = [p - 1 for p in pages]
+
+    pages = [p for p in pages if p >= 0]
+    return pages or None
+
+def pages_to_marker_range(pages: Optional[Sequence[int]]) -> Optional[str]:
+    if not pages:
+        return None
+    pages = sorted(set(int(p) for p in pages if p >= 0))
+    if not pages:
+        return None
+    ranges: List[str] = []
+    start = prev = pages[0]
+    for p in pages[1:]:
+        if p == prev + 1:
+            prev = p
+            continue
+        ranges.append(f"{start}-{prev}" if start != prev else str(start))
+        start = prev = p
+    ranges.append(f"{start}-{prev}" if start != prev else str(start))
+    return ",".join(ranges)
+
+def normalized_source_key(raw_path: str) -> str:
+    """Chave canônica de um source_path para dedup: URLs casefold;
+    paths locais resolvidos, barras normalizadas, casefold."""
+    value = str(raw_path or "").strip()
+    if not value:
+        return ""
+    if "://" in value:
+        return value.casefold()
+    try:
+        normalized = Path(value).expanduser().resolve()
+    except Exception:
+        normalized = Path(value).expanduser()
+    return str(normalized).replace("\\", "/").casefold()
+
+
+def safe_rel(path: Optional[Path], root: Path) -> Optional[str]:
+    if not path:
+        return None
+    try:
+        return str(path.relative_to(root)).replace("\\", "/")
+    except Exception:
+        return str(path).replace("\\", "/")
+
+def json_str(value: object) -> str:
+    return json.dumps(value, ensure_ascii=False)
+
+def _is_aspnet_schedule(soup) -> bool:
+    if soup.find(id="dgAulas"):
+        return True
+    import re as _re
+    if soup.find("span", id=_re.compile(r"_lblData$")):
+        return True
+    return False
+
+
+def _aspnet_row_cell(row, suffix: str) -> str:
+    import re as _re
+    span = row.find("span", id=_re.compile(rf"_lbl{suffix}$"))
+    if not span:
+        return ""
+    return " ".join(span.get_text(" ", strip=True).split())
+
+
+_ASPNET_COLOR_KIND_MAP = {
+    "red": ("suspension", True),
+    "#ff0000": ("suspension", True),
+    # #FF4500 (orangered): feriado/suspensao no export do IA (censo D2 28/08);
+    # fora do mapa caia em aula.
+    "#ff4500": ("suspension", True),
+    "orangered": ("suspension", True),
+    "lightgrey": ("g2_or_results", False),
+    "#d3d3d3": ("g2_or_results", False),
+    "#ffa500": ("assessment", False),
+    "orange": ("assessment", False),
+    # D1 (ruling 28/08): darkorange e a cor PROPRIA da PS em 6/6 cronogramas —
+    # substitutiva cobre o semestre inteiro, nao e prova principal nem marco.
+    "#ff8c00": ("ps", True),
+    "darkorange": ("ps", True),
+    "#8b0000": ("event", True),
+    "darkred": ("event", True),
+    "#ffff00": ("deliverable", False),
+    "yellow": ("deliverable", False),
+}
+
+
+def _aspnet_row_kind(row) -> tuple[str, bool]:
+    """Return (kind, ignored) derived from row background-color. Default: ('class', False).
+
+    Exports 2026/1 usam style="background-color:X"; os de 2026/2 (FR/labs)
+    trocaram pelo ATRIBUTO bgcolor= — os dois formatos contam."""
+    import re as _re
+    color = ""
+    style = (row.get("style") or "").lower().replace(" ", "")
+    match = _re.search(r"background-color:([^;]+)", style)
+    if match:
+        color = match.group(1).strip().rstrip(";")
+    if not color:
+        color = str(row.get("bgcolor") or "").strip().lower()
+    if not color:
+        return ("class", False)
+    return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
+
+
+ATIVIDADE_KIND_MAP = {
+    "prova": "assessment",
+    "avaliacao": "assessment",
+    "exame": "assessment",
+    "teste": "assessment",
+    "trabalho": "deliverable",
+    "entrega": "deliverable",
+    "feriado": "holiday",
+    # "evento" (Evento Academico/Institucional): kind ignorado, igual ao evento
+    # marcado por cor (darkred -> "event"). Sem isso, "Evento Academico" na coluna
+    # Atividade caía em "class" (aula) e poluía a atribuição de unidade.
+    "evento": "event",
+    "revisao": "review",
+}
+
+
+def norm_ascii_lower(text: str) -> str:
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC.
+
+    Preserva pontuação (≠ normalize_match_text, que reduz a [a-z0-9 ] para
+    matching fuzzy — precisa de chave exata? use este; matching? use aquele)."""
+    return strip_accents(text).lower().strip()
+
+
+def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
+    """Tipo canonico (valor de BlockKind) da linha SARC.
+
+    Precedencia:
+    1. Cor de EXCLUSAO (suspensao/ps/g2/evento) vence tudo: e a marcacao
+       explicita do professor que a coluna Atividade nao expressa.
+    2. Coluna Atividade (mapa de keywords) — sinal primario do tipo positivo.
+    3. Atividade explicita nao-mapeada (ex.: "Aula") -> class, ignora cor.
+    4. Atividade vazia -> cai para a cor positiva (assessment/deliverable).
+    Retorna (kind, ignored).
+    """
+    color_kind, ignored = _aspnet_row_kind(row)
+    atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
+    if color_kind == "g2_or_results":
+        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade OU
+        # Descricao decidem (caso real MF 13/07: Atividade "Aula", Descricao
+        # "Devolução das provas").
+        # D1 (ruling 28/08): G2 = recuperacao condicional que cobre o semestre —
+        # nao e N-esima prova; linha ignorada como marco (consumidor ja tratava
+        # o token g2 em _IGNORED_KINDS; o produtor nunca emitia).
+        descricao = norm_ascii_lower(_aspnet_row_cell(row, "Descricao"))
+        return ("results", True) if "devolu" in f"{atividade} {descricao}" else ("g2", True)
+    if ignored:
+        return (color_kind, True)
+    for needle, kind in ATIVIDADE_KIND_MAP.items():
+        if needle in atividade:
+            return (kind, False)
+    if atividade:
+        return ("class", False)
+    if color_kind != "class":
+        return (color_kind, ignored)
+    return ("class", False)
+
+
+def _parse_aspnet_schedule(soup) -> str:
+    table = soup.find(id="dgAulas") or soup.find("table")
+    if not table:
+        return "Erro: Tabela de cronograma ASP.NET nao encontrada."
+    lines = ["## Cronograma de Aulas", ""]
+    for row in table.find_all("tr"):
+        data = _aspnet_row_cell(row, "Data")
+        descricao = _aspnet_row_cell(row, "Descricao")
+        if not data or not descricao:
+            continue
+        dia = _aspnet_row_cell(row, "Dia")
+        atividade = _aspnet_row_cell(row, "Atividade") or "Aula"
+        recursos = _aspnet_row_cell(row, "Recursos")
+        kind, ignored = _aspnet_row_canonical_kind(row)
+
+        parts = [f"- ({data})"]
+        if dia:
+            parts.append(dia)
+        parts.append(f"— {descricao} [{atividade}]")
+        if recursos:
+            parts.append(f"@{recursos}")
+        if kind != "class":
+            parts.append(f"{{kind={kind}}}")
+        if ignored:
+            parts.append("⊘")
+        lines.append(" ".join(parts))
+    return "\n".join(lines) + "\n"
+
+
+SARC_HOST = "sarc.pucrs.br"
+
+
+def is_sarc_url(url: Optional[str]) -> bool:
+    """Return True if `url` points to the SARC host (sarc.pucrs.br).
+
+    Pure/testable domain check (UI responsibility, not the fetcher's).
+    Accepts http/https and any subpath/query; compares the hostname
+    exactly and case-insensitively (ignoring port) so suffix spoofs like
+    `sarc.pucrs.br.evil.com` are rejected.
+    """
+    if not url:
+        return False
+    try:
+        parsed = urlparse(url)
+    except (ValueError, AttributeError):
+        return False
+    if parsed.scheme not in ("http", "https"):
+        return False
+    host = (parsed.hostname or "").lower()
+    return host == SARC_HOST
+
+
+def parse_sarc_turma_key(url: Optional[str]) -> dict:
+    """Extrai {guid, ano, sem} da query da URL do SARC Export.aspx. Ausentes -> ""."""
+    from urllib.parse import parse_qs
+    try:
+        q = parse_qs(urlparse(str(url or "")).query)
+    except Exception:
+        return {"guid": "", "ano": "", "sem": ""}
+    return {
+        "guid": (q.get("id") or [""])[0].strip(),
+        "ano": (q.get("ano") or [""])[0].strip(),
+        "sem": (q.get("sem") or [""])[0].strip(),
+    }
+
+
+def decide_schedule_source(url: Optional[str], pasted_html: Optional[str]) -> dict:
+    """Decide where the cronograma HTML comes from, given the dialog fields.
+
+    Pure/testable: no network, no UI. Given the (possibly empty) SARC URL and
+    the pasted HTML, returns a small dict describing the next action so the UI
+    only has to obey it:
+      {"action": "fetch", "url": <str>}      → fetch this URL on a thread
+      {"action": "parse", "html": <str>}     → parse this HTML directly
+      {"action": "cancel"}                   → both empty; nothing to do
+      {"action": "error", "message": <str>}  → invalid URL; show message
+    URL (when present) takes precedence over pasted HTML.
+    """
+    url = (url or "").strip()
+    pasted_html = (pasted_html or "").strip()
+    if url:
+        if not is_sarc_url(url):
+            return {
+                "action": "error",
+                "message": "URL inválida. Use uma URL do SARC (sarc.pucrs.br).",
+            }
+        return {"action": "fetch", "url": url}
+    if pasted_html:
+        return {"action": "parse", "html": pasted_html}
+    return {"action": "cancel"}
+
+
+def fetch_schedule_html(url: str) -> str:
+    """GET `url` and return the raw HTML body.
+
+    Single purpose: fetch only. Domain validation (see `is_sarc_url`) and
+    parsing happen elsewhere. Raises on network/HTTP failure so the UI can
+    translate it into a friendly message.
+
+    Timeout uses the (connect, read) tuple pattern reused from
+    datalab_client (timeout=(connect_to, ...)).
+    """
+    response = requests.get(url, timeout=(10, 30))
+    response.raise_for_status()
+    return response.text
+
+
+def parse_html_schedule(html_content: str) -> str:
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError:
+        return "Erro: A biblioteca 'beautifulsoup4' não está instalada.\nUse no terminal: pip install beautifulsoup4"
+
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    if _is_aspnet_schedule(soup):
+        return _parse_aspnet_schedule(soup)
+
+    table = soup.find("table")
+    if not table:
+        return "Erro: Nenhuma tabela (<table>) encontrada no HTML fornecido."
+
+    rows = table.find_all("tr")
+    if not rows:
+        return "Erro: A tabela não possui linhas (<tr>)."
+
+    output = []
+
+    header_cells = rows[0].find_all(["th", "td"])
+    headers = [c.get_text(" ", strip=True) for c in header_cells]
+    if not headers:
+        return "Erro: Tabela sem colunas reconhecíveis."
+
+    output.append("| " + " | ".join(headers) + " |")
+    output.append("|" + "|".join(["---"] * len(headers)) + "|")
+
+    for row in rows[1:]:
+        cells = row.find_all(["td", "th"])
+        row_data = []
+        for cell in cells:
+            text = " ".join(cell.get_text(" ", strip=True).replace("\n", " ").replace("\r", " ").split())
+            row_data.append(text)
+
+        if any(row_data):
+            output.append("| " + " | ".join(row_data) + " |")
+
+    return "\n".join(output) + "\n"
+
+def get_app_data_dir() -> Path:
+    """Retorna o diretório base para configurações do aplicativo."""
+    if sys.platform == "win32":
+        base_dir = Path(os.getenv("APPDATA") or str(Path.home())) / "GPTTutorGenerator"
+    else:
+        base_dir = Path.home() / ".config" / "gpt_tutor_generator"
+    ensure_dir(base_dir)
+    return base_dir
+def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None) -> str:
+    """Detecta a categoria provável baseada no nome do arquivo.
+
+    `frases_do_plano` (F11, opcional): frases de conteúdo do plano de ensino, minúsculas.
+    Cue de bibliografia não dispara quando o nome casa uma frase do plano que contém o
+    cue — "02 - Modelos de Referencia.pdf" é tópico da u01 do FR ("modelos de referência
+    de interconexão OSI/ISO"), não bibliografia. Sem o parâmetro, comportamento de antes."""
+    if is_image:
+        return "fotos-de-prova"
+    
+    import re as _re
+    name = name.lower()
+    ext = Path(name).suffix.lower()
+    # ".htm/.html" solto no stash e pagina (material), nao codigo (SYNC S6b, 03/09); dentro de zip
+    # o process_zip decide por CODE_EXTENSIONS e nao passa por aqui.
+    if ext in CODE_EXTENSIONS and ext not in (".htm", ".html"):
+        return "codigo-professor"
+
+    # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
+    _wb = lambda pattern, s=name: bool(_re.search(r'(?:^|[\W_])' + pattern + r'(?:$|[\W_])', s))
+    _exam_cue = lambda s: any(k in s for k in ["prova", "exame"]) or any(_wb(p, s) for p in ("test", "p1", "p2", "p3", "av1", "av2"))
+    if _exam_cue(name):
+        # Prova matematica ("ProvasIndutivas_...", "Provas por inducao") e material de aula, nao avaliacao (MF 17/09).
+        # Remove o tema e reaplica as cues ao residuo: sobrou marcador de avaliacao ("P1 - ", "Prova final - ",
+        # "Exames - ") continua prova. Substitui a protecao por palavra inteira de candidate() em
+        # c1-3/verifica_categoria_prova_15-09.py, que deixava "Exames"/"Prova final" passar (Astra 17/09).
+        import unicodedata as _ud
+        ascii_name = "".join(c for c in _ud.normalize("NFD", name) if not _ud.combining(c))
+        residual, n = _re.subn(r"provas?[\W_]*(?:indutiv\w*|por[\W_]+induc\w*)", " ", ascii_name)
+        if n and not _exam_cue(residual) and "avaliac" not in residual:
+            return "material-de-aula"
+        return "provas"
+    if any(k in name for k in ["lista", "exerc", "quest", "trab", "exer"]):
+        return "listas"
+    if any(k in name for k in ["gabarito", "resol", "soluc", "key", "espelho"]):
+        return "gabaritos"
+    # "ementa" so como palavra: "material-complementar" contem "ementa" (holdout CG 2026-08-26).
+    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule"]) or _wb("ementa"):
+        return "cronograma"
+    if any(k in name for k in ["slide", "aula", "apresenta", "unidade", "modulo", "cap"]):
+        return "material-de-aula"
+    def _cue_e_conteudo_do_plano(cue: str) -> bool:
+        for fr in (frases_do_plano or ()):
+            fr = str(fr or "").lower()
+            if cue in fr and any(len(t) >= 4 and cue not in t and t in name for t in fr.split()):
+                return True
+        return False
+
+    # "bibliogra", nao "biblio": "biblioteca" (library de codigo: "Biblioteca Grafica OpenGL",
+    # "ImageClass - biblioteca para manipulacao de imagens") virava bibliografia e saia do
+    # desempate de bloco (ref-generica -> 1o bloco). Achado no holdout CG 2026-08-26.
+    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]
+           if not _cue_e_conteudo_do_plano(k)):
+        return "bibliografia"
+
+    if any(k in name for k in ["trabalho", "projeto", "assignment",
+                                "enunciado", "spec", "requisito"]):
+        return "trabalhos"
+
+    return "outros"
+
+def auto_detect_title(path_or_name: str) -> str:
+    """Gera um título amigável a partir do nome do arquivo."""
+    name = Path(path_or_name).stem
+    # Limpa caracteres comuns de separação
+    name = name.replace("-", " ").replace("_", " ").replace(".", " ")
+    # Remove espaços duplos
+    name = " ".join(name.split())
+    return name.title()
+
+
+def fetch_url_title(url: str, timeout: float = 5.0) -> str:
+    """Busca o <title> de uma URL. Retorna '' em caso de erro.
+
+    Funciona com YouTube, sites genéricos, etc.
+    Usa apenas stdlib (urllib) para evitar dependências extras.
+    """
+    import urllib.request
+    import html as html_mod
+
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+        })
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            # Lê só os primeiros 64KB para não baixar a página inteira
+            raw = resp.read(65536)
+            charset = resp.headers.get_content_charset() or "utf-8"
+            text = raw.decode(charset, errors="replace")
+        # Extrai <title>...</title>
+        m = re.search(r"<title[^>]*>(.*?)</title>", text, re.IGNORECASE | re.DOTALL)
+        if m:
+            title = m.group(1).strip()
+            title = html_mod.unescape(title)
+            # YouTube: remove " - YouTube" do final
+            title = re.sub(r"\s*[-–—]\s*YouTube\s*$", "", title)
+            return title
+    except Exception:
+        pass
+    return ""
+
+
+# Presets embutidos: um por perfil de documento hardcoded (alinhados ao
+# profile_backends default). Aparecem no gerenciador de perfis pra edição.
+BUILTIN_PROCESSING_PROFILES = [
+    {"name": "auto", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "auto"},
+    {"name": "math_heavy", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+     "datalab_mode": "accurate", "document_profile": "math_heavy"},
+    {"name": "diagram_heavy", "processing_mode": "auto", "preferred_backend": "docling",
+     "datalab_mode": "accurate", "document_profile": "diagram_heavy"},
+    {"name": "scanned", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "scanned"},
+]
+
+
+def ensure_builtin_profiles(config_obj):
+    """Migração one-time: injeta os presets embutidos que faltam, sem duplicar
+    nem reverter exclusões do usuário (guardada por flag persistida)."""
+    if config_obj is None or config_obj.get("processing_profiles_seeded_v2"):
+        return
+    existing = list(config_obj.get("processing_profiles") or [])
+    names = {p.get("name") for p in existing}
+    existing += [dict(b) for b in BUILTIN_PROCESSING_PROFILES if b["name"] not in names]
+    config_obj.set("processing_profiles", existing)
+    config_obj.set("processing_profiles_seeded_v2", True)
+    config_obj.save()
+
+
+def load_processing_profiles(config_obj):
+    """Lista de ProcessingProfile salva no config (vazia se ausente ou sem config)."""
+    if config_obj is None:
+        return []
+    from src.models.core import ProcessingProfile
+    raw = config_obj.get("processing_profiles") or []
+    return [ProcessingProfile.from_dict(d) for d in raw]
+
+
+def get_processing_profile(config_obj, name):
+    """ProcessingProfile pelo nome, ou None."""
+    for p in load_processing_profiles(config_obj):
+        if p.name == name:
+            return p
+    return None
+
+
+def save_processing_profiles(config_obj, profiles):
+    """Grava a lista de ProcessingProfile no config."""
+    config_obj.set("processing_profiles", [p.to_dict() for p in profiles])
+
+
+def derive_profile_backends(config_obj) -> dict:
+    """Mapa {document_profile: preferred_backend} derivado dos perfis nomeados.
+
+    Fonte única do auto-roteamento (substitui o antigo config `profile_backends`).
+    Primeiro perfil por ordem da lista vence; conflito (mesmo document_profile com
+    backend diferente) -> log.warning e ignora. `config_obj` None -> {}.
+    """
+    if config_obj is None:
+        return {}
+    mapping: dict = {}
+    for prof in load_processing_profiles(config_obj):
+        dp = (prof.document_profile or "").strip()
+        if not dp:
+            continue
+        backend = (prof.preferred_backend or "").strip() or "auto"
+        if dp in mapping:
+            if mapping[dp] != backend:
+                logger.warning(
+                    "perfil '%s' redefine document_profile '%s' (%s -> %s); mantendo o primeiro",
+                    prof.name, dp, mapping[dp], backend,
+                )
+            continue
+        mapping[dp] = backend
+    return mapping
+
+
+def resolve_profile_for_document_profile(config_obj, document_profile):
+    """Primeiro ProcessingProfile cujo `document_profile` casa, ou None."""
+    dp = (document_profile or "").strip()
+    if not dp or config_obj is None:
+        return None
+    for prof in load_processing_profiles(config_obj):
+        if (prof.document_profile or "").strip() == dp:
+            return prof
+    return None
+
+
+def apply_document_profile_preset(config_obj, document_profile) -> dict:
+    """Deriva os ajustes ao escolher um `document_profile`, a partir do perfil
+    nomeado correspondente (fonte única) + heurísticas de flag por tipo de
+    documento. Retorna dict com `processing_mode`, `preferred_backend`,
+    `datalab_mode` (None = manter o atual), `formula_priority`, `force_ocr`.
+    """
+    profile = normalize_document_profile(document_profile)
+    named = resolve_profile_for_document_profile(config_obj, profile)
+    mode = ((named.processing_mode if named else "") or "auto")
+    backend = ((named.preferred_backend if named else "") or "auto")
+    datalab = (named.datalab_mode or "").strip() if named else ""
+    return {
+        "processing_mode": mode,
+        "preferred_backend": backend,
+        "datalab_mode": datalab or None,
+        "formula_priority": profile == "math_heavy",
+        "force_ocr": profile == "scanned",
+    }

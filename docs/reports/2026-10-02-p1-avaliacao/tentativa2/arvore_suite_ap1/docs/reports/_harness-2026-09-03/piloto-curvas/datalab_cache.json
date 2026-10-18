@@ -1,0 +1,198 @@
+{
+ "DuasBz3Ptos.gif": {
+  "markdown": "\n\n![A diagram showing a curve C1 and a piecewise linear path C2 connecting points P0, P1, P2, and P3.](770fa0497770252dc22b4fa902ebb384_img.jpg)\n\nThe figure illustrates a curve  $C_1$  and a piecewise linear path  $C_2$  connecting four points  $P_0, P_1, P_2,$  and  $P_3$ . The points are marked with black dots. The curve  $C_1$  is a smooth, thick black line that starts at  $P_0$ , rises to a peak, descends to a trough, and then rises again. The piecewise linear path  $C_2$  is a thin black line that connects the points in a zigzag pattern: from  $P_0$  to  $P_1$ , then from  $P_1$  to  $P_2$ , and finally from  $P_2$  to  $P_3$ . The labels  $P_0, P_1, P_2,$  and  $P_3$  are placed near their respective points, and the labels  $C_1$  and  $C_2$  are placed near their respective paths.\n\n| Point | Approximate X-coordinate | Approximate Y-coordinate |\n|-------|--------------------------|--------------------------|\n| $P_0$ | 100                      | 650                      |\n| $P_1$ | 370                      | 180                      |\n| $P_2$ | 610                      | 730                      |\n| $P_3$ | 900                      | 320                      |\n\nA diagram showing a curve C1 and a piecewise linear path C2 connecting points P0, P1, P2, and P3.",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "EquacaoHermite.png": {
+  "markdown": "\n\n$$P(t) =$$\n\n$$P(0) * (2t^3 - 3t^2 + 1) +$$\n\n$$P(1) * (-2t^3 + 3t^2) +$$\n\n$$P'(0) * (t^3 - 2t^2 + t) +$$\n\n$$P'(1) * (t^3 - t^2)$$",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image1.gif": {
+  "markdown": "\n\n$$P(t) = \\begin{bmatrix} t^3 & t^2 & t & 1 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image11.gif": {
+  "markdown": "\n\n$$p(t) = \\frac{1}{6} [P_0 * (-t^3 + 3t^2 - 3t + 1) + P_1 * (3t^3 - 6t^2 + 4) + P_2 * (-3t^3 + 3t^2 + 3t + 1) + P_3 * (t^3)]$$",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "list_cost_cents": 1,
+   "final_cost_cents": 1,
+   "regional_multiplier": 1.0
+  }
+ },
+ "Image2.gif": {
+  "markdown": "\n\n$$P'(t) = \\begin{bmatrix} 3t^3 & 2t^2 & t & 0 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image3.gif": {
+  "markdown": "\n\n$$P(1) = \\begin{bmatrix} 1 & 1 & 1 & 1 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image4.gif": {
+  "markdown": "\n\n$$P(0) = \\begin{bmatrix} 0 & 0 & 0 & 0 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image5.gif": {
+  "markdown": "\n\n$$p'(0) = \\begin{bmatrix} 0 & 0 & 1 & 0 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image6.gif": {
+  "markdown": "\n\n$$P'(1) = \\begin{bmatrix} 3 & 2 & 1 & 0 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image7.gif": {
+  "markdown": "\n\n$$\\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix} = \\begin{bmatrix} 2 & -2 & 1 & 1 \\\\ -3 & 3 & -2 & -1 \\\\ 0 & 0 & 1 & 0 \\\\ 1 & 0 & 0 & 0 \\end{bmatrix} \\begin{bmatrix} p(0) \\\\ p(1) \\\\ p'(0) \\\\ p'(1) \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image8.gif": {
+  "markdown": "\n\n$$P(t) = \\begin{bmatrix} t^3 & t^2 & t & 1 \\end{bmatrix} \\begin{bmatrix} a \\\\ b \\\\ c \\\\ d \\end{bmatrix}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "Image9.gif": {
+  "markdown": "\n\n$$P(t) = \\begin{bmatrix} t^3 & t^2 & t & 1 \\end{bmatrix} \\mathbf{M}_h \\quad \\mathbf{M}_G h$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "bezier3pontos.gif": {
+  "markdown": "\n\n![A diagram showing a curve C1 and its control points P0, P1, and P2. The curve starts at P0, peaks, and ends at P2, with P1 acting as a control point above the arc.](770fa0497770252dc22b4fa902ebb384_img.jpg)\n\nThe figure illustrates a curve  $C_1$  defined by three points:  $P_0$ ,  $P_1$ , and  $P_2$ . The curve is a smooth arc connecting  $P_0$  and  $P_2$ , with  $P_1$  positioned above the arc. The curve  $C_1$  is the lower, curved path, while the upper path is a straight line segment connecting  $P_0$  and  $P_2$  through  $P_1$ .\n\n| Point | Relative Position             |\n|-------|-------------------------------|\n| $P_0$ | Bottom-left endpoint          |\n| $P_1$ | Control point above the curve |\n| $P_2$ | Bottom-right endpoint         |\n\nA diagram showing a curve C1 and its control points P0, P1, and P2. The curve starts at P0, peaks, and ends at P2, with P1 acting as a control point above the arc.",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "bezier4pontos.gif": {
+  "markdown": "\n\n![A graph showing a blue curve on a black background with four red control points. The curve starts at the bottom-left, rises to a peak, falls to a trough, and then rises again. The control points are located at the start and end of the curve, and two additional points are positioned above and below the curve's path.](770fa0497770252dc22b4fa902ebb384_img.jpg)\n\nA graph illustrating a curve defined by four red control points on a black background. The curve is blue and follows a path that starts at the bottom-left, rises to a peak, falls to a trough, and then rises again. The control points are located at the start and end of the curve, and two additional points are positioned above and below the curve's path.\n\n| Control Point | Relative Position | Effect on Curve     |\n|---------------|-------------------|---------------------|\n| 1             | Bottom-left       | Start of the curve  |\n| 2             | Top-center        | Peak of the curve   |\n| 3             | Bottom-center     | Trough of the curve |\n| 4             | Top-right         | End of the curve    |\n\nA graph showing a blue curve on a black background with four red control points. The curve starts at the bottom-left, rises to a peak, falls to a trough, and then rises again. The control points are located at the start and end of the curve, and two additional points are positioned above and below the curve's path.",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image001.gif": {
+  "markdown": "\n\n![A diagram showing a path from P0 to P1 to P2. The segment from P0 to P1 is green, and the segment from P1 to P2 is gray. P0 is a solid black dot, P1 is a green dot, and P2 is an open circle. The label t=0 is positioned below the path.](c35212e2ffef321207c18ea3ce6d5c09_img.jpg)\n\nA diagram illustrating a path or trajectory between three points:  $P_0$ ,  $P_1$ , and  $P_2$ .\n\n- $P_0$  is represented by a solid black dot at the bottom left.\n- $P_1$  is represented by a green dot at the top center.\n- $P_2$  is represented by an open circle at the bottom right.\n\nThe path consists of two segments:\n\n- A green line segment connecting  $P_0$  and  $P_1$ .\n- A gray line segment connecting  $P_1$  and  $P_2$ .\n\nThe label  $t=0$  is positioned below the path, near the segment connecting  $P_0$  and  $P_1$ .\n\nA diagram showing a path from P0 to P1 to P2. The segment from P0 to P1 is green, and the segment from P1 to P2 is gray. P0 is a solid black dot, P1 is a green dot, and P2 is an open circle. The label t=0 is positioned below the path.",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "list_cost_cents": 1,
+   "final_cost_cents": 1,
+   "regional_multiplier": 1.0
+  }
+ },
+ "image002.gif": {
+  "markdown": "\n\n![A diagram showing a sequence of points P0, P1, P2, and P3 connected by colored line segments. P0 is a black dot, P1 is a blue dot, P2 is a green dot, and P3 is an open circle. The segment P0-P1 is blue, P1-P2 is green, and P2-P3 is gray. The label t=0 is positioned below the segment P1-P2.](c35212e2ffef321207c18ea3ce6d5c09_img.jpg)\n\nA diagram illustrating a sequence of points and their connections:\n\n- Point  $P_0$  is represented by a black dot.\n- Point  $P_1$  is represented by a blue dot.\n- Point  $P_2$  is represented by a green dot.\n- Point  $P_3$  is represented by an open circle.\n\nThe connections are as follows:\n\n- A blue line segment connects  $P_0$  and  $P_1$ .\n- A green line segment connects  $P_1$  and  $P_2$ .\n- A gray line segment connects  $P_2$  and  $P_3$ .\n\nThe label  $t=0$  is positioned below the green line segment  $P_1 P_2$ .\n\nA diagram showing a sequence of points P0, P1, P2, and P3 connected by colored line segments. P0 is a black dot, P1 is a blue dot, P2 is a green dot, and P3 is an open circle. The segment P0-P1 is blue, P1-P2 is green, and P2-P3 is gray. The label t=0 is positioned below the segment P1-P2.",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image003.gif": {
+  "markdown": "\n\n",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image004.png": {
+  "markdown": "\n\n![Diagram 1: A red curve connecting node 1 to node 3, with vertical black lines at nodes 1 and 3.](c35212e2ffef321207c18ea3ce6d5c09_img.jpg)\n\nDiagram 1: A red curve connects node 1 to node 3. Node 1 is at the bottom left, and node 3 is at the bottom right. A vertical black line segment is drawn at node 1, extending upwards to node 2. Another vertical black line segment is drawn at node 3, extending downwards to node 4.\n\nDiagram 1: A red curve connecting node 1 to node 3, with vertical black lines at nodes 1 and 3.\n\n![Diagram 2: A red curve connecting node 1 to node 3, with vertical black lines at nodes 1 and 3.](e84c7434834958f49141d04130194231_img.jpg)\n\nDiagram 2: A red curve connects node 1 to node 3. Node 1 is at the bottom left, and node 3 is at the bottom right. A vertical black line segment is drawn at node 1, extending upwards to node 2. Another vertical black line segment is drawn at node 3, extending upwards to node 4.\n\nDiagram 2: A red curve connecting node 1 to node 3, with vertical black lines at nodes 1 and 3.\n\n![Diagram 3: A red curve connecting node 1 to node 3, with a diagonal line at node 1 and a horizontal line at node 3.](52218820ae0a5a10bb2d604859f803e7_img.jpg)\n\nDiagram 3: A red curve connects node 1 to node 3. Node 1 is at the top left, and node 3 is at the bottom right. A diagonal black line segment is drawn at node 1, extending downwards and to the left to node 2. A horizontal black line segment is drawn at node 3, extending to the right to node 4.\n\nDiagram 3: A red curve connecting node 1 to node 3, with a diagonal line at node 1 and a horizontal line at node 3.\n\n![Diagram 4: A red curve connecting node 1 to node 3, with a horizontal line at node 1 and a diagonal line at node 3.](68d50e85fb8de4fae0e0eafaf20e63c0_img.jpg)\n\nDiagram 4: A red curve connects node 1 to node 3. Node 1 is at the bottom left, curving up and right to node 3. A horizontal black line segment is drawn at node 1, extending to the left to node 2. A diagonal black line segment is drawn at node 3, extending downwards and to the right to node 4.\n\nDiagram 4: A red curve connecting node 1 to node 3, with a horizontal line at node 1 and a diagonal line at node 3.",
+  "pages": 1,
+  "quality": 4.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image005.png": {
+  "markdown": "\n\n![Diagram of a rectangle with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.](c35212e2ffef321207c18ea3ce6d5c09_img.jpg)\n\nA rectangle with vertices labeled 1 (bottom-left), 2 (top-left), 3 (top-right), and 4 (bottom-right). A red arc is drawn above the top edge, connecting vertex 2 to vertex 3.\n\nDiagram of a rectangle with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.\n\n![Diagram of a V-shape with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.](e84c7434834958f49141d04130194231_img.jpg)\n\nA V-shape with vertices labeled 1 (bottom-left), 2 (top-left), 3 (bottom-right), and 4 (top-right). A red arc is drawn above the left edge, connecting vertex 2 to vertex 3.\n\nDiagram of a V-shape with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.\n\n![Diagram of a rectangle with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.](52218820ae0a5a10bb2d604859f803e7_img.jpg)\n\nA rectangle with vertices labeled 1 (bottom-left), 2 (top-left), 3 (top-right), and 4 (bottom-right). A red arc is drawn above the top edge, connecting vertex 3 to vertex 2.\n\nDiagram of a rectangle with vertices labeled 1, 2, 3, 4 and a red arc connecting the top-left and top-right corners.\n\n![Diagram of a complex shape with vertices labeled 1 through 12 and a red arc connecting the top-left and top-right corners.](68d50e85fb8de4fae0e0eafaf20e63c0_img.jpg)\n\nA complex shape with vertices labeled 1 through 12. The vertices are arranged in two rows: the top row contains vertices 2, 3, 6, 7, 10, 11 from left to right; the bottom row contains vertices 1, 4, 5, 8, 9, 12 from left to right. The shape is defined by vertical edges (1-2, 2-3, 3-4, 4-5, 5-6, 6-7, 7-8, 8-9, 9-10, 10-11, 11-12) and horizontal edges (1-4, 4-5, 5-6, 6-7, 7-8, 8-9, 9-10, 10-11, 11-12). A red arc is drawn above the top edge, connecting vertex 2 to vertex 3.\n\nDiagram of a complex shape with vertices labeled 1 through 12 and a red arc connecting the top-left and top-right corners.",
+  "pages": 1,
+  "quality": null,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image006.png": {
+  "markdown": "\n\n![A geometric diagram showing a path through points 1, 2, 3, 4, 5, and 6. It includes black line segments connecting 1-2, 2-3, 3-4, 4-5, and 5-6. A red curve connects points 2, 3, 4, and 5. Blue line segments are tangent to the red curve at points 2, 3, and 5.](770fa0497770252dc22b4fa902ebb384_img.jpg)\n\nThe diagram illustrates a geometric path and its tangents. The points are arranged as follows:\n\n- Point 1 is at the bottom left.\n- Point 2 is directly above point 1.\n- Point 3 is to the right of point 2.\n- Point 4 is directly below point 3.\n- Point 5 is to the right of point 4.\n- Point 6 is directly above point 5.\n\nThe black line segments form a path: 1-2, 2-3, 3-4, 4-5, and 5-6. A red curve connects points 2, 3, 4, and 5. The blue line segments are tangents to the red curve at points 2, 3, and 5.\n\nA geometric diagram showing a path through points 1, 2, 3, 4, 5, and 6. It includes black line segments connecting 1-2, 2-3, 3-4, 4-5, and 5-6. A red curve connects points 2, 3, 4, and 5. Blue line segments are tangent to the red curve at points 2, 3, and 5.",
+  "pages": 1,
+  "quality": 4.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "image007.png": {
+  "markdown": "\n\n$$p_i = \\frac{(p_i - p_{i-1}) + (p_{i+1} - p_i)}{2}$$",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "interpola.gif": {
+  "markdown": "\n\n",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "reta.gif": {
+  "markdown": "\n\n![A line segment connecting two points labeled P0 and P1.](770fa0497770252dc22b4fa902ebb384_img.jpg)\n\nA diagram showing a line segment connecting two points,  $P_0$  and  $P_1$ , on a blue background. The point  $P_0$  is located at the bottom left, and the point  $P_1$  is located at the top right. A straight line segment connects the two points.\n\n| Point | Approximate X-coordinate (0-1000) | Approximate Y-coordinate (0-1000) |\n|-------|-----------------------------------|-----------------------------------|\n| $P_0$ | 210                               | 650                               |\n| $P_1$ | 750                               | 350                               |\n\nA line segment connecting two points labeled P0 and P1.",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ },
+ "vetor.gif": {
+  "markdown": "\n\n",
+  "pages": 1,
+  "quality": 5.0,
+  "cost": {
+   "final_cost_cents": 1.0
+  }
+ }
+}

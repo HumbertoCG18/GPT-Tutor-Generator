@@ -1,0 +1,15 @@
+  replay base MF 70 123 s
+  replay base SO 42 140 s
+  replay base IA 63 217 s
+  replay base ES2 35 228 s
+  replay base TCC 27 242 s
+  replay base CG 93 273 s
+  replay base FR 20 275 s
+mudanças por ID contra a captura congelada (sem gold): 31 (antes de --referencia)
+decisões congeladas ap1_desligado 05ed7428391bd133fcb4ed2ec6db28e5c71e8ec156a0c6cab09d1ecb13f41a73 s 275
+barreira liberada 279
+src fora da worktree: nenhum | normalize: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator-p1\.alethe\worktrees\job-31\docs\reports\2026-10-02-p1-avaliacao\braco_ap1\src\builder\text\normalize.py
+placar referência: {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 85, 'sub_aceita': 108} | execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_candidato.json
+placar execução:  {'bloco_n': 237, 'bloco': 223, 'unidade_n': 284, 'unidade': 249, 'sub_n': 251, 'sub_primaria': 85, 'sub_aceita': 108}
+ganhos: {'unidade': 0, 'sub_primaria': 0, 'sub_aceita': 0} | perdas: {'unidade': 0, 'sub_primaria': 0, 'sub_aceita': 0}
+segundos: 279

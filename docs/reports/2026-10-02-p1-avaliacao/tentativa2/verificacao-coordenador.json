@@ -1,0 +1,194 @@
+{
+  "result": "both_candidates_pass_frozen_criteria",
+  "verified_replays": {
+    "p1": {
+      "ids": 350,
+      "scope_differences": 0,
+      "loaded_identity_verified": true,
+      "decision_digest": "d7a6c9debde20aef36d4346c2e8f43b4ef3790de787f858598582c56afa6b66f"
+    },
+    "ap1": {
+      "ids": 350,
+      "scope_differences": 0,
+      "loaded_identity_verified": true,
+      "decision_digest": "545ee632c51eea8c494457be36ce5a1d8057c1b99ccf904f840507be2b58be2c"
+    },
+    "ap1_desligado": {
+      "ids": 350,
+      "scope_differences": 0,
+      "loaded_identity_verified": true,
+      "decision_digest": "05ed7428391bd133fcb4ed2ec6db28e5c71e8ec156a0c6cab09d1ecb13f41a73"
+    }
+  },
+  "ap1_vs_A": {
+    "unidade": {
+      "gains": [],
+      "losses": []
+    },
+    "sub_primaria": {
+      "gains": [
+        [
+          "TCC",
+          "aula-09-variacoes-de-maquinas-de-turing"
+        ],
+        [
+          "TCC",
+          "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf"
+        ]
+      ],
+      "losses": []
+    },
+    "sub_aceita": {
+      "gains": [
+        [
+          "TCC",
+          "aula-09-variacoes-de-maquinas-de-turing"
+        ],
+        [
+          "TCC",
+          "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf"
+        ]
+      ],
+      "losses": []
+    }
+  },
+  "strata": {
+    "desenvolvimento": {
+      "base": {
+        "bloco": 190,
+        "bloco_n": 202,
+        "unidade": 175,
+        "unidade_n": 191,
+        "sub_primaria": 50,
+        "sub_aceita": 59,
+        "sub_n": 151
+      },
+      "A": {
+        "bloco": 190,
+        "bloco_n": 202,
+        "unidade": 175,
+        "unidade_n": 191,
+        "sub_primaria": 49,
+        "sub_aceita": 58,
+        "sub_n": 151
+      },
+      "p1": {
+        "bloco": 190,
+        "bloco_n": 202,
+        "unidade": 175,
+        "unidade_n": 191,
+        "sub_primaria": 51,
+        "sub_aceita": 60,
+        "sub_n": 151
+      },
+      "ap1": {
+        "bloco": 190,
+        "bloco_n": 202,
+        "unidade": 175,
+        "unidade_n": 191,
+        "sub_primaria": 51,
+        "sub_aceita": 60,
+        "sub_n": 151
+      }
+    },
+    "CG_FR_descritivo": {
+      "base": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "unidade": 74,
+        "unidade_n": 93,
+        "sub_primaria": 36,
+        "sub_aceita": 50,
+        "sub_n": 100
+      },
+      "A": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "unidade": 74,
+        "unidade_n": 93,
+        "sub_primaria": 36,
+        "sub_aceita": 50,
+        "sub_n": 100
+      },
+      "p1": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "unidade": 74,
+        "unidade_n": 93,
+        "sub_primaria": 36,
+        "sub_aceita": 50,
+        "sub_n": 100
+      },
+      "ap1": {
+        "bloco": 33,
+        "bloco_n": 35,
+        "unidade": 74,
+        "unidade_n": 93,
+        "sub_primaria": 36,
+        "sub_aceita": 50,
+        "sub_n": 100
+      }
+    }
+  },
+  "totals": {
+    "base": {
+      "bloco_n": 237,
+      "bloco": 223,
+      "unidade_n": 284,
+      "unidade": 249,
+      "sub_n": 251,
+      "sub_primaria": 86,
+      "sub_aceita": 109
+    },
+    "A": {
+      "bloco_n": 237,
+      "bloco": 223,
+      "unidade_n": 284,
+      "unidade": 249,
+      "sub_n": 251,
+      "sub_primaria": 85,
+      "sub_aceita": 108
+    },
+    "p1": {
+      "bloco_n": 237,
+      "bloco": 223,
+      "unidade_n": 284,
+      "unidade": 249,
+      "sub_n": 251,
+      "sub_primaria": 87,
+      "sub_aceita": 110
+    },
+    "ap1": {
+      "bloco_n": 237,
+      "bloco": 223,
+      "unidade_n": 284,
+      "unidade": 249,
+      "sub_n": 251,
+      "sub_primaria": 87,
+      "sub_aceita": 110
+    }
+  },
+  "suite": {
+    "collected_original": 2467,
+    "collected_combined": 2474,
+    "missing_original": 0,
+    "extra_accent_tests": 7,
+    "passed": 2469,
+    "skipped": 4,
+    "failed": 1,
+    "baseline_failure_id": "tests/test_caracterizacao_blocos_atual.py::test_divisao_de_blocos_atual[Fundamentos-de-Redes-Tutor]",
+    "new_failures": 0
+  },
+  "hashes": {
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05\\docs\\reports\\2026-10-01-cru05-cru03\\replay_base.json": "e024d396bf1cc84c33cc6735718803411cfe6bf2a57a7485501e8c4f81b77dd7",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-cru05\\docs\\reports\\2026-10-01-cru05-cru03\\replay_candidato.json": "0216122cabc7943a22dfcd19a8946e3ecbc822d4a1bdd3a9c73d6b4440335a23",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\tentativa2\\replay_p1.json": "a3d9c7b9bfa19b1aa8b0b1a9d0f8565ed8af0af69d17fdf1ec655738d739aca0",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\tentativa2\\replay_ap1.json": "6299edfd3823b2c5fd5c4a373ef221d592216250593428b9f1a2fa994cf79edd",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\tentativa2\\replay_ap1_desligado.json": "96de4d1e093258dda197ecaa13a77b013857dbdfc6135385fecd9abae453655f",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\tentativa2\\replay_t2.py": "65389bbf032a2addd547e1e50ccf9cf89604dc414fe392b30f5b6f2bba48a7ff",
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\tentativa2\\suite_ap1_comparavel.txt": "37155398ba41083fb08b13be236ac29897408965ddcdce60342148cbe0b45cf3"
+  },
+  "integration_authorized": false,
+  "commit_authorized": false,
+  "independent_courses": 0
+}

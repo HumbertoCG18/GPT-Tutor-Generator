@@ -1,0 +1,13 @@
+# Retomada da campanha MOTOR-01 — proposta após interrupção
+
+Estado conferido em 02/10/2026: worktree p1 em feat/cru-p1-frases-compartilhadas @ bf46d51fc80d1e7dcc62c08cccd0399c056bcbe1; job-31 released; nenhum worker ativo desta tarefa; P1/A+P1 sem JSON final; campanha2/10=20%. Rota T2 permanece: integração experimental entre seletor e normalização, aceite objetivo, resultado desconhecido; executor Claude Opus5.5/high; revisão job-30 preservada e não renovada.
+
+**Pendente: autorização específica do usuário para nova execução técnica.** A mensagem “vamos continuar a campanha” inicia retomada; não zera a tentativa registrada como consumida nem autoriza commit ou outra revisão. Nenhum replay foi iniciado nesta retomada.
+
+1. Preparar o runner e consolidador de avaliação dentro da worktree isolada, sem alterar produto, contrato, divisor, limiar ou escopo. Fechar somente as lacunas operacionais já conhecidas: identidade falha antes do scoring, decisões completas congeladas antes do gold, contraste A+P1 vs A na subunidade, e parada por prazo real em vez de estimativa. Preservar logs/resultados anteriores; não sobrescrever a tentativa1.
+2. Preservar controles base e A selados e a evidência350/350. Conferir hashes/fontes/insumos antes de reutilizá-los. Completar a pré-condição combinada P1-desligado vs A e suíte na árvore A+P1, que ficaram sem evidência; repetir verificações anteriores só se houver drift relevante.
+3. Executar uma nova rodada técnica delimitada, com replays independentes em processos/árvores/saídas separadas e prazo real de600s do worker. O coordenador acompanha; não há encerramento antecipado só por estimativa, processo órfão, fallback de modelo ou retry automático. Só depois das decisões completas usar gold para o placar.
+4. Apurar separadamente P1 vs base, A+P1 vs base e contraste adicional A+P1 vs A;350IDs, três eixos, ganhos/perdas por material, por curso e por grupo. Aceite: ganho positivo na primária,zero perda por ID em cada eixo,nenhum curso regride,bloco/unidade invariantes ao ligar P1,sem regressão nova de testes. Desenvolvimento MF/SO/IA/ES2/TCC separado CG/FR descritivos/expostos; nenhum curso independente.
+5. Registrar aceites ou reprovação e encerrar, sem ajuste do candidato, nova revisão, integração,commit,merge,push,build,tutores,LLM do produto ou liberação de scheduler/#42. Atualizar somente os artefatos e estado da tarefa; preservar trabalhos alheios.
+
+A preparação operacional integra a nova rodada somente se autorizada. A falta de qualquer pré-condição ou identidade bloqueia o aceite. Nova interrupção consome a execução autorizada e exige nova direção; nenhuma alteração do protocolo científico é proposta.

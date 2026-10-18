@@ -1,0 +1,159 @@
+"""Gerador do artefato setup/CONTEXTO_TEMPORAL.md."""
+
+from src.builder.artifacts.temporal_context import build_temporal_context_rows
+
+
+def _class_block():
+    return {
+        "id": "bloco-01",
+        "period_start": "2026-03-03",
+        "period_end": "2026-03-10",
+        "kind": "class",
+        "unit_slug": "unidade-01-limites",
+        "topics": ["Definição de limite", "Limites laterais"],
+        "primary_topic_label": "Definição de limite",
+    }
+
+
+def _assessment_block():
+    return {
+        "id": "bloco-09",
+        "period_start": "2026-04-28",
+        "period_end": "2026-04-28",
+        "kind": "assessment",
+        "sessions": [{"label": "prova p1 prova"}],
+        "scope_unit_slugs": ["unidade-01-limites", "unidade-02-derivadas"],
+    }
+
+
+def test_class_row_uses_full_topics_list_and_short_unit():
+    rows = build_temporal_context_rows([_class_block()])
+    assert len(rows) == 1
+    r = rows[0]
+    assert r["id"] == "bloco-01"
+    assert r["inicio"] == "2026-03-03"
+    assert r["fim"] == "2026-03-10"
+    assert r["tipo"] == "aula"
+    assert r["unidade"] == "U1"
+    assert r["unidade_slug"] == "unidade-01-limites"
+    assert r["topico"] == "Definição de limite; Limites laterais"
+    assert r["escopo"] == []
+
+
+def test_class_row_falls_back_to_primary_topic_when_no_topics():
+    blk = _class_block()
+    blk["topics"] = []
+    rows = build_temporal_context_rows([blk])
+    assert rows[0]["topico"] == "Definição de limite"
+
+
+def test_assessment_row_has_exam_code_and_short_scope():
+    rows = build_temporal_context_rows([_assessment_block()])
+    r = rows[0]
+    assert r["tipo"] == "prova P1"
+    assert r["escopo"] == ["U1", "U2"]
+    assert r["escopo_slugs"] == ["unidade-01-limites", "unidade-02-derivadas"]
+
+
+def test_review_and_holiday_tipo_labels():
+    review = {"id": "b7", "period_start": "2026-04-21", "kind": "review",
+              "scope_unit_slugs": ["unidade-01-limites"]}
+    holiday = {"id": "b8", "period_start": "2026-04-22", "kind": "holiday"}
+    rows = build_temporal_context_rows([review, holiday])
+    assert rows[0]["tipo"] == "revisão"
+    assert rows[0]["escopo"] == ["U1"]
+    assert rows[1]["tipo"] == "feriado"
+
+
+def test_block_without_start_date_is_omitted():
+    blk = {"id": "x", "kind": "class", "topics": ["t"]}  # sem period_start
+    assert build_temporal_context_rows([blk]) == []
+
+
+def test_end_falls_back_to_start_when_missing():
+    blk = {"id": "b", "period_start": "2026-03-03", "kind": "class"}
+    assert build_temporal_context_rows([blk])[0]["fim"] == "2026-03-03"
+
+
+from src.builder.artifacts.temporal_context import build_unit_legend
+
+
+def test_unit_legend_collects_units_from_unit_and_scope_sorted_deduped():
+    rows = [
+        {"unidade_slug": "unidade-02-derivadas", "escopo_slugs": []},
+        {"unidade_slug": "", "escopo_slugs": ["unidade-01-limites", "unidade-02-derivadas"]},
+        {"unidade_slug": "unidade-01-limites", "escopo_slugs": []},
+    ]
+    legend = build_unit_legend(rows)
+    assert legend == [
+        {"label": "U1", "slug": "unidade-01-limites", "nome": "Limites"},
+        {"label": "U2", "slug": "unidade-02-derivadas", "nome": "Derivadas"},
+    ]
+
+
+def test_unit_legend_empty_when_no_units():
+    rows = [{"unidade_slug": "", "escopo_slugs": []}]
+    assert build_unit_legend(rows) == []
+
+
+from datetime import date
+
+from src.builder.artifacts.temporal_context import (
+    temporal_context_md,
+    current_block_for_date,
+)
+
+
+def test_md_has_legend_table_iso_dates_and_short_labels():
+    blocks = [_class_block(), _assessment_block()]
+    md = temporal_context_md({"course_name": "Cálculo I"}, blocks)
+    assert "# CONTEXTO TEMPORAL — Cálculo I" in md
+    assert "## Unidades" in md
+    assert "- **U1** = `unidade-01-limites` — Limites" in md
+    assert "## Cronograma" in md
+    assert "| bloco | inicio | fim | tipo | unidade | topico | escopo |" in md
+    assert "2026-03-03" in md
+    assert "| bloco-09 | 2026-04-28 | 2026-04-28 | prova P1 | — | — | U1, U2 |" in md
+
+
+def test_md_empty_timeline_shows_unavailable_note():
+    md = temporal_context_md({"course_name": "X"}, [])
+    assert "Cronograma indisponível" in md
+    assert "## Cronograma" not in md
+    assert "## Unidades" not in md
+
+
+def test_current_block_for_date_inside_window():
+    rows = build_temporal_context_rows([_class_block()])
+    found = current_block_for_date(rows, date(2026, 3, 5))
+    assert found is not None and found["id"] == "bloco-01"
+
+
+def test_current_block_for_date_inclusive_bounds():
+    rows = build_temporal_context_rows([_class_block()])
+    assert current_block_for_date(rows, date(2026, 3, 3))["id"] == "bloco-01"
+    assert current_block_for_date(rows, date(2026, 3, 10))["id"] == "bloco-01"
+
+
+def test_current_block_for_date_outside_returns_none():
+    rows = build_temporal_context_rows([_class_block()])
+    assert current_block_for_date(rows, date(2026, 1, 1)) is None
+
+
+def test_md_escapes_pipe_in_cell_values():
+    blk = {
+        "id": "bloco-01",
+        "period_start": "2026-03-03",
+        "period_end": "2026-03-10",
+        "kind": "class",
+        "unit_slug": "unidade-01-limites",
+        "topics": ["Tabela|verdade", "Linha\nquebrada"],
+    }
+    md = temporal_context_md({"course_name": "Lógica"}, [blk])
+    # pipe escapado, newline virou espaço — a linha da tabela não quebra
+    assert "Tabela\\|verdade" in md
+    assert "Linha quebrada" in md
+    # nenhuma linha de dados da tabela tem mais colunas que o header
+    data_lines = [l for l in md.splitlines() if l.startswith("| bloco-01 ")]
+    assert len(data_lines) == 1
+    assert data_lines[0].count("|") == 9  # 8 pipes delimitadores + 1 do escape \| no tópico

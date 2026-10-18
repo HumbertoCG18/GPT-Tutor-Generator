@@ -1,0 +1,106 @@
+import json
+from pathlib import Path
+
+from src.models.core import FileEntry
+from src.models.core import SubjectProfile
+from src.models.task_queue import RepoTask
+from src.ui.repo_dashboard import collect_repo_metrics
+
+
+def test_collect_repo_metrics_counts_manifest_manual_review_and_tasks(tmp_path: Path):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    (repo_root / "manifest.json").write_text(
+        json.dumps({"entries": [{"id": "a"}, {"id": "b"}]}),
+        encoding="utf-8",
+    )
+    (repo_root / "manual-review" / "pdfs").mkdir(parents=True)
+    (repo_root / "manual-review" / "images").mkdir(parents=True)
+    (repo_root / "manual-review" / "code").mkdir(parents=True)
+    (repo_root / "manual-review" / "pdfs" / "item-a.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "images" / "item-b.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "code" / "item-c.md").write_text("x", encoding="utf-8")
+
+    subject = SubjectProfile(
+        name="Métodos Formais",
+        repo_root=str(repo_root),
+        queue=[],
+    )
+    tasks = [
+        RepoTask(task_id="task-1", subject_name="Métodos Formais", repo_root=str(repo_root), action="build_repo"),
+        RepoTask(
+            task_id="task-2",
+            subject_name="Métodos Formais",
+            repo_root=str(repo_root),
+            action="refresh_repo",
+            status="completed",
+            finished_at="2026-04-03T10:00:00",
+        ),
+    ]
+
+    rows = collect_repo_metrics([subject], tasks)
+
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.subject_name == "Métodos Formais"
+    assert row.repo_status == "Manifest pronto"
+    assert row.manifest_entries == 2
+    assert row.manual_review_items == 2
+    assert row.pending_repo_tasks == 1
+    assert row.last_task_status == "completed @ 2026-04-03T10:00:00"
+
+
+def test_collect_repo_metrics_handles_missing_repo():
+    subject = SubjectProfile(name="IA", repo_root="", queue=[])
+
+    rows = collect_repo_metrics([subject], [])
+
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.repo_status == "Sem repositório"
+    assert row.manifest_entries == 0
+    assert row.pending_repo_tasks == 0
+
+
+def test_collect_repo_metrics_excludes_manifest_entries_from_queue_count(tmp_path: Path):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    processed = repo_root / "raw" / "pdfs" / "done.pdf"
+    queued = repo_root / "raw" / "pdfs" / "todo.pdf"
+    processed.parent.mkdir(parents=True)
+    (repo_root / "manifest.json").write_text(
+        json.dumps({"entries": [{"source_path": str(processed)}]}),
+        encoding="utf-8",
+    )
+
+    subject = SubjectProfile(
+        name="Métodos Formais",
+        repo_root=str(repo_root),
+        queue=[
+            FileEntry(source_path=str(processed), file_type="pdf", category="material-de-aula", title="Done"),
+            FileEntry(source_path=str(queued), file_type="pdf", category="material-de-aula", title="Todo"),
+        ],
+    )
+
+    row = collect_repo_metrics([subject], [])[0]
+
+    assert row.queued_files == 1
+
+
+def test_collect_repo_metrics_excludes_code_manual_review_from_count(tmp_path: Path):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    (repo_root / "manual-review" / "pdfs").mkdir(parents=True)
+    (repo_root / "manual-review" / "code").mkdir(parents=True)
+    (repo_root / "manual-review" / "pdfs" / "pdf-review.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "code" / "code-review.md").write_text("x", encoding="utf-8")
+
+    subject = SubjectProfile(
+        name="Métodos Formais",
+        repo_root=str(repo_root),
+        queue=[],
+    )
+
+    row = collect_repo_metrics([subject], [])[0]
+
+    assert row.manual_review_items == 1

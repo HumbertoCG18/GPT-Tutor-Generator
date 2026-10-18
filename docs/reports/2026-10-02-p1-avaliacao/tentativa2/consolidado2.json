@@ -1,0 +1,836 @@
+{
+ "controles": {
+  "base": {
+   "placar": {
+    "total": {
+     "bloco_n": 237,
+     "bloco": 223,
+     "unidade_n": 284,
+     "unidade": 249,
+     "sub_n": 251,
+     "sub_primaria": 86,
+     "sub_aceita": 109
+    },
+    "por_curso": {
+     "MF": {
+      "bloco_n": 66,
+      "bloco": 60,
+      "unidade_n": 66,
+      "unidade": 63,
+      "sub_n": 58,
+      "sub_primaria": 25,
+      "sub_aceita": 29
+     },
+     "SO": {
+      "bloco_n": 39,
+      "bloco": 36,
+      "unidade_n": 37,
+      "unidade": 30,
+      "sub_n": 15,
+      "sub_primaria": 7,
+      "sub_aceita": 8
+     },
+     "IA": {
+      "bloco_n": 42,
+      "bloco": 41,
+      "unidade_n": 42,
+      "unidade": 39,
+      "sub_n": 39,
+      "sub_primaria": 4,
+      "sub_aceita": 5
+     },
+     "ES2": {
+      "bloco_n": 28,
+      "bloco": 27,
+      "unidade_n": 28,
+      "unidade": 26,
+      "sub_n": 28,
+      "sub_primaria": 7,
+      "sub_aceita": 8
+     },
+     "TCC": {
+      "bloco_n": 27,
+      "bloco": 26,
+      "unidade_n": 18,
+      "unidade": 17,
+      "sub_n": 11,
+      "sub_primaria": 7,
+      "sub_aceita": 9
+     },
+     "CG": {
+      "bloco_n": 35,
+      "bloco": 33,
+      "unidade_n": 93,
+      "unidade": 74,
+      "sub_n": 82,
+      "sub_primaria": 30,
+      "sub_aceita": 43
+     },
+     "FR": {
+      "sub_n": 18,
+      "sub_primaria": 6,
+      "sub_aceita": 7
+     }
+    }
+   }
+  },
+  "A": {
+   "placar": {
+    "total": {
+     "bloco_n": 237,
+     "bloco": 223,
+     "unidade_n": 284,
+     "unidade": 249,
+     "sub_n": 251,
+     "sub_primaria": 85,
+     "sub_aceita": 108
+    },
+    "por_curso": {
+     "MF": {
+      "bloco_n": 66,
+      "bloco": 60,
+      "unidade_n": 66,
+      "unidade": 63,
+      "sub_n": 58,
+      "sub_primaria": 25,
+      "sub_aceita": 29
+     },
+     "SO": {
+      "bloco_n": 39,
+      "bloco": 36,
+      "unidade_n": 37,
+      "unidade": 30,
+      "sub_n": 15,
+      "sub_primaria": 7,
+      "sub_aceita": 8
+     },
+     "IA": {
+      "bloco_n": 42,
+      "bloco": 41,
+      "unidade_n": 42,
+      "unidade": 39,
+      "sub_n": 39,
+      "sub_primaria": 4,
+      "sub_aceita": 5
+     },
+     "ES2": {
+      "bloco_n": 28,
+      "bloco": 27,
+      "unidade_n": 28,
+      "unidade": 26,
+      "sub_n": 28,
+      "sub_primaria": 7,
+      "sub_aceita": 8
+     },
+     "TCC": {
+      "bloco_n": 27,
+      "bloco": 26,
+      "unidade_n": 18,
+      "unidade": 17,
+      "sub_n": 11,
+      "sub_primaria": 6,
+      "sub_aceita": 8
+     },
+     "CG": {
+      "bloco_n": 35,
+      "bloco": 33,
+      "unidade_n": 93,
+      "unidade": 74,
+      "sub_n": 82,
+      "sub_primaria": 30,
+      "sub_aceita": 43
+     },
+     "FR": {
+      "sub_n": 18,
+      "sub_primaria": 6,
+      "sub_aceita": 7
+     }
+    }
+   },
+   "ganhos_vs_ref": {
+    "unidade": [],
+    "sub_primaria": [],
+    "sub_aceita": []
+   },
+   "perdas_vs_ref": {
+    "unidade": [],
+    "sub_primaria": [
+     [
+      "TCC",
+      "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf"
+     ]
+    ],
+    "sub_aceita": [
+     [
+      "TCC",
+      "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf"
+     ]
+    ]
+   },
+   "referencia": "execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_base.json"
+  }
+ },
+ "p1": {
+  "carregados": {
+   "src.builder.timeline.index": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\src\\builder\\timeline\\index.py",
+    "28894d0aeed9ed7c57e2ba30efd04934c5261a63d1d8392609b8f1dc491043e5"
+   ],
+   "src.builder.routing.file_map": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\src\\builder\\routing\\file_map.py",
+    "6ad4f70b6aee2f1ad1c322e10a6ff26aee5789a4c76dff8dea9a5f574c5a4247"
+   ],
+   "src.builder.text.normalize": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\src\\builder\\text\\normalize.py",
+    "d0ce230919dc5460f5866f1f8b4d028a9a21b0a76d15600dbbe51b355d31b745"
+   ]
+  },
+  "src_fora": [],
+  "sha256_decisoes_pre_gold": "d7a6c9debde20aef36d4346c2e8f43b4ef3790de787f858598582c56afa6b66f",
+  "ids": 350,
+  "ids_por_curso": {
+   "MF": 70,
+   "SO": 42,
+   "IA": 63,
+   "ES2": 35,
+   "TCC": 27,
+   "CG": 93,
+   "FR": 20
+  },
+  "dif_vs_braco_sem_p1": [
+   [
+    "SO",
+    "2306-laminas-gerencia-de-arquivos",
+    "sub",
+    "arquivos",
+    "diretorios"
+   ],
+   [
+    "TCC",
+    "aula-09-variacoes-de-maquinas-de-turing",
+    "sub",
+    "maquinas-de-turing",
+    "variacoes-de-maquinas-de-turing"
+   ]
+  ],
+  "placar_ref": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "sub_aceita": 109
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 7,
+     "sub_aceita": 9
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "placar": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 87,
+    "sub_aceita": 110
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 8,
+     "sub_aceita": 10
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "ganhos_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [
+    [
+     "TCC",
+     "aula-09-variacoes-de-maquinas-de-turing"
+    ]
+   ],
+   "sub_aceita": [
+    [
+     "TCC",
+     "aula-09-variacoes-de-maquinas-de-turing"
+    ]
+   ]
+  },
+  "perdas_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [],
+   "sub_aceita": []
+  },
+  "referencia": "execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_base.json",
+  "escopo_bloco_unidade": []
+ },
+ "ap1": {
+  "carregados": {
+   "src.builder.timeline.index": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\timeline\\index.py",
+    "28894d0aeed9ed7c57e2ba30efd04934c5261a63d1d8392609b8f1dc491043e5"
+   ],
+   "src.builder.routing.file_map": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\routing\\file_map.py",
+    "6ad4f70b6aee2f1ad1c322e10a6ff26aee5789a4c76dff8dea9a5f574c5a4247"
+   ],
+   "src.builder.text.normalize": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\text\\normalize.py",
+    "f5b9581a38e436bdf73b2f30a89045fe884051639767a832772aa96e2cb17de1"
+   ]
+  },
+  "src_fora": [],
+  "sha256_decisoes_pre_gold": "545ee632c51eea8c494457be36ce5a1d8057c1b99ccf904f840507be2b58be2c",
+  "ids": 350,
+  "ids_por_curso": {
+   "MF": 70,
+   "SO": 42,
+   "IA": 63,
+   "ES2": 35,
+   "TCC": 27,
+   "CG": 93,
+   "FR": 20
+  },
+  "dif_vs_braco_sem_p1": [
+   [
+    "SO",
+    "2306-laminas-gerencia-de-arquivos",
+    "sub",
+    "arquivos",
+    "diretorios"
+   ],
+   [
+    "TCC",
+    "aula-09-variacoes-de-maquinas-de-turing",
+    "sub",
+    "maquinas-de-turing",
+    "variacoes-de-maquinas-de-turing"
+   ],
+   [
+    "TCC",
+    "aula-10-linguagens-reconheciveis-e-linguagens-decidiveis",
+    "sub",
+    "maquinas-de-turing",
+    "linguagens-reconheciveis-e-decidiveis"
+   ]
+  ],
+  "placar_ref": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 86,
+    "sub_aceita": 109
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 7,
+     "sub_aceita": 9
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "placar": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 87,
+    "sub_aceita": 110
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 8,
+     "sub_aceita": 10
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "ganhos_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [
+    [
+     "TCC",
+     "aula-09-variacoes-de-maquinas-de-turing"
+    ]
+   ],
+   "sub_aceita": [
+    [
+     "TCC",
+     "aula-09-variacoes-de-maquinas-de-turing"
+    ]
+   ]
+  },
+  "perdas_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [],
+   "sub_aceita": []
+  },
+  "referencia": "execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_base.json",
+  "escopo_bloco_unidade": [],
+  "dif_vs_base": [
+   [
+    "SO",
+    "1205-laminas-gerencia-de-memoria",
+    "sub",
+    "swapping",
+    "memoria-virtual"
+   ],
+   [
+    "SO",
+    "2306-laminas-gerencia-de-arquivos",
+    "sub",
+    "arquivos",
+    "diretorios"
+   ],
+   [
+    "TCC",
+    "aula-09-variacoes-de-maquinas-de-turing",
+    "sub",
+    "maquinas-de-turing",
+    "variacoes-de-maquinas-de-turing"
+   ],
+   [
+    "TCC",
+    "aula-11-o-problema-da-parada-halting-problem-halteproblem",
+    "sub",
+    "conjectura-de-church-turing",
+    "maquinas-de-turing"
+   ],
+   [
+    "TCC",
+    "aula-12-entscheidungsproblem",
+    "sub",
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "teoremas-de-godel"
+   ],
+   [
+    "TCC",
+    "aula-15-teoremas-de-incompletude-de-godel",
+    "sub",
+    "prova-da-indecidibilidade-do-problema-da-parada",
+    "teoremas-de-godel"
+   ],
+   [
+    "TCC",
+    "aula-17-np-completude",
+    "sub",
+    "teorema-de-cook-levin",
+    "reducao-polinomial-de-problemas"
+   ]
+  ]
+ },
+ "ap1_desligado": {
+  "carregados": {
+   "src.builder.timeline.index": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\timeline\\index.py",
+    "28894d0aeed9ed7c57e2ba30efd04934c5261a63d1d8392609b8f1dc491043e5"
+   ],
+   "src.builder.routing.file_map": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\routing\\file_map.py",
+    "6ad4f70b6aee2f1ad1c322e10a6ff26aee5789a4c76dff8dea9a5f574c5a4247"
+   ],
+   "src.builder.text.normalize": [
+    "C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator-p1\\.alethe\\worktrees\\job-31\\docs\\reports\\2026-10-02-p1-avaliacao\\braco_ap1\\src\\builder\\text\\normalize.py",
+    "f5b9581a38e436bdf73b2f30a89045fe884051639767a832772aa96e2cb17de1"
+   ]
+  },
+  "src_fora": [],
+  "sha256_decisoes_pre_gold": "05ed7428391bd133fcb4ed2ec6db28e5c71e8ec156a0c6cab09d1ecb13f41a73",
+  "ids": 350,
+  "ids_por_curso": {
+   "MF": 70,
+   "SO": 42,
+   "IA": 63,
+   "ES2": 35,
+   "TCC": 27,
+   "CG": 93,
+   "FR": 20
+  },
+  "dif_vs_braco_sem_p1": [],
+  "placar_ref": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 85,
+    "sub_aceita": 108
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 6,
+     "sub_aceita": 8
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "placar": {
+   "total": {
+    "bloco_n": 237,
+    "bloco": 223,
+    "unidade_n": 284,
+    "unidade": 249,
+    "sub_n": 251,
+    "sub_primaria": 85,
+    "sub_aceita": 108
+   },
+   "por_curso": {
+    "MF": {
+     "bloco_n": 66,
+     "bloco": 60,
+     "unidade_n": 66,
+     "unidade": 63,
+     "sub_n": 58,
+     "sub_primaria": 25,
+     "sub_aceita": 29
+    },
+    "SO": {
+     "bloco_n": 39,
+     "bloco": 36,
+     "unidade_n": 37,
+     "unidade": 30,
+     "sub_n": 15,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "IA": {
+     "bloco_n": 42,
+     "bloco": 41,
+     "unidade_n": 42,
+     "unidade": 39,
+     "sub_n": 39,
+     "sub_primaria": 4,
+     "sub_aceita": 5
+    },
+    "ES2": {
+     "bloco_n": 28,
+     "bloco": 27,
+     "unidade_n": 28,
+     "unidade": 26,
+     "sub_n": 28,
+     "sub_primaria": 7,
+     "sub_aceita": 8
+    },
+    "TCC": {
+     "bloco_n": 27,
+     "bloco": 26,
+     "unidade_n": 18,
+     "unidade": 17,
+     "sub_n": 11,
+     "sub_primaria": 6,
+     "sub_aceita": 8
+    },
+    "CG": {
+     "bloco_n": 35,
+     "bloco": 33,
+     "unidade_n": 93,
+     "unidade": 74,
+     "sub_n": 82,
+     "sub_primaria": 30,
+     "sub_aceita": 43
+    },
+    "FR": {
+     "sub_n": 18,
+     "sub_primaria": 6,
+     "sub_aceita": 7
+    }
+   }
+  },
+  "ganhos_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [],
+   "sub_aceita": []
+  },
+  "perdas_vs_ref": {
+   "unidade": [],
+   "sub_primaria": [],
+   "sub_aceita": []
+  },
+  "referencia": "execução C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_candidato.json",
+  "escopo_bloco_unidade": []
+ }
+}

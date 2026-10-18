@@ -1,0 +1,220 @@
+[
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Programa da disciplina",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104516/mod_resource/content/2/Plano%20de%20Ensino%20-%2020262.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\Plano de Ensino - 20262.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Cronograma da disciplina",
+  "url": "https://sarc.pucrs.br/Default/Export.aspx?id=944c725a-475c-4eb4-ae2e-fa77e918232f&ano=2026&sem=2",
+  "tipo": "cronograma",
+  "acao": "cronograma",
+  "destino": "",
+  "sinal": "sarc",
+  "turma_export": "320",
+  "turma_moodle": "320"
+ },
+ {
+  "secao": "Sugestão de Conteúdo Online",
+  "nome": "O Triunfo dos Nerds (Documentário)",
+  "url": "https://www.youtube.com/watch?v=XlCaiD5VQRU",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "Sugestão de Conteúdo Online",
+  "nome": "Piratas do Vale do Silício (Filme)",
+  "url": "https://www.imdb.com/pt/title/tt0168122/",
+  "tipo": "review",
+  "acao": "review",
+  "destino": "",
+  "sinal": "nenhum"
+ },
+ {
+  "secao": "Sugestão de Conteúdo Online",
+  "nome": "Entre a origem e o destino um panorama dos bloqueios na internet brasileira (Apresentação de estudo)",
+  "url": "https://www.youtube.com/watch?v=bO_oUjersHI",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "nome": "Tipos de Redes (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104549/mod_resource/content/2/03%20-%20Tipos%20de%20Redes.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U1 - Redes de Computadores\\03 - Tipos de Redes.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "nome": "Protocolos de Redes (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104550/mod_resource/content/1/01%20-%20Protocolos%20de%20Rede.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U1 - Redes de Computadores\\01 - Protocolos de Rede.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "nome": "Modelos de Referência (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104551/mod_resource/content/1/02%20-%20Modelos%20de%20Referencia.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U1 - Redes de Computadores\\02 - Modelos de Referencia.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "nome": "Poster Network Communication Protocols (PNG)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104552/mod_resource/content/1/02%20-%20poster-network-protocols.png?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U1 - Redes de Computadores\\02 - poster-network-protocols.png",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U1 - Redes de Computadores",
+  "nome": "Lista de exercícios - Unidade 1",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104553/mod_resource/content/1/unidade1-exercicios.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U1 - Redes de Computadores\\unidade1-exercicios.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Introdução camada de aplicação (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104555/mod_resource/content/3/04%20-%20Camada%20de%20Aplica%C3%A7%C3%A3o.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\04 - Camada de Aplicação.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Protocolo DHCP (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104556/mod_resource/content/2/06%20-%20Protocolo%20DHCP.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\06 - Protocolo DHCP.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Protocolo DNS (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104558/mod_resource/content/4/05%20-%20Protocolo%20DNS.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\05 - Protocolo DNS.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Protocolo HTTP (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104557/mod_resource/content/4/04%20-%20Protocolo%20HTTP.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\04 - Protocolo HTTP.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Protocolos SMTP, POP e IMAP (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104559/mod_resource/content/3/07%20-%20Protocolos%20de%20E-mail.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\07 - Protocolos de E-mail.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Lista de exercícios - DHCP",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104564/mod_resource/content/1/unidade2-exercicios-dhcp.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\unidade2-exercicios-dhcp.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Lista de exercícios - DNS",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104566/mod_resource/content/1/unidade2-exercicios-dns.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\unidade2-exercicios-dns.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Lista de exercícios - HTTP",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104565/mod_resource/content/1/unidade2-exercicios-http.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\unidade2-exercicios-http.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Lista de exercícios - Camada de Aplicação",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104567/mod_resource/content/1/LIsta%20de%20exerc%C3%ADcios%201%20-%20Camada%20de%20Aplica%C3%A7%C3%A3o.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\LIsta de exercícios 1 - Camada de Aplicação.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Desenvolvimento de aplicações com comunicação via rede (Slides)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104569/mod_resource/content/2/08%20-%20Desenvolvimento%20de%20Aplica%C3%A7%C3%B5es.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\08 - Desenvolvimento de Aplicações.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Exemplo de socket UDP em Java",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104570/mod_resource/content/1/udp_example_java.tar.gz?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\udp_example_java.tar.gz",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Exemplo de socket UDP em C",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104571/mod_resource/content/1/udp_example_c.tar.gz?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\udp_example_c.tar.gz",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Exemplo de socket TCP em Java",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104572/mod_resource/content/1/tcp_example.tar.gz?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\tcp_example.tar.gz",
+  "sinal": "resource"
+ },
+ {
+  "secao": "U2 - Camada de Aplicação",
+  "nome": "Exemplo de socket TCP em C",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6104573/mod_resource/content/1/tcp_chat_c.tar.gz?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\U2 - Camada de Aplicação\\tcp_chat_c.tar.gz",
+  "sinal": "resource"
+ }
+]

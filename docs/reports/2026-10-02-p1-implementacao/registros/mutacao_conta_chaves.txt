@@ -1,0 +1,4 @@
+>       assert _divisores_de_frase(u) == {"maquinas de turing": 2, "maquinas de turing mt": 1,
+E       AssertionError: assert {'maquinas de...de turing': 1} == {'maquinas de...de turing': 1}
+1 failed, 1 passed, 12 deselected in 0.40s
+exit pytest sob mutação: 1 (esperado != 0)

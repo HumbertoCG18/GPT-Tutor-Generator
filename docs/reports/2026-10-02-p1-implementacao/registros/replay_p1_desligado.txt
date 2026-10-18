@@ -1,0 +1,8 @@
+inicio 00:10:45
+5c2232215054f07880ea2a92dba49380d6e27b93ac23d639c30fdad4a10af1ad *replay_identidade.py
+e024d396bf1cc84c33cc6735718803411cfe6bf2a57a7485501e8c4f81b77dd7 *C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/replay_base.json
+  replay base CG 93 196 s
+  replay base FR 20 198 s
+ids 350 | divergências 0 | src fora nenhum | idêntico True | segundos 198
+exit=0
+fim 00:14:03

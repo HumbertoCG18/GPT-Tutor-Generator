@@ -1,0 +1,2284 @@
+from __future__ import annotations
+
+import json
+import re
+import shutil
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+
+from src.utils.helpers import json_str, norm_ascii_lower, safe_rel, slugify
+from src.builder.artifacts.build_metrics import (
+    collect_build_metrics,
+    render_build_metrics_md,
+)
+from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
+
+
+def student_state_md(
+    course_meta: dict,
+    student_profile=None,
+    *,
+    render_student_state_md_fn: Callable[..., str],
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    nick = "Aluno"
+    if student_profile and getattr(student_profile, "full_name", ""):
+        nick = getattr(student_profile, "nickname", "") or getattr(student_profile, "full_name", "")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    return render_student_state_md_fn(
+        course_name=course_name,
+        student_nickname=nick,
+        today=today,
+        active=None,
+        active_unit_progress=[],
+        recent=[],
+        closed_units=[],
+        next_topic="",
+    )
+
+
+def syllabus_md(subject_profile) -> str:
+    """Gera o conteúdo de course/SYLLABUS.md a partir do SubjectProfile."""
+    subj = subject_profile
+    return f"""---
+course: {subj.name}
+professor: {subj.professor}
+schedule: {subj.schedule}
+---
+
+# Cronograma — {subj.name}
+
+**Horário:** {subj.schedule}
+
+{subj.syllabus}
+"""
+
+
+def student_profile_md(student_profile) -> str:
+    """Gera o conteúdo de student/STUDENT_PROFILE.md a partir do StudentProfile."""
+    sp = student_profile
+    return f"""---
+nickname: {sp.nickname or sp.full_name}
+---
+
+# Perfil do Aluno
+
+- **Nome:** {sp.full_name}
+- **Apelido:** {sp.nickname or sp.full_name}
+
+## Estilo de aprendizado preferido
+
+{sp.personality}
+"""
+
+
+def effective_course_meta(
+    course_meta: Optional[Dict[str, object]],
+    root_dir: Path,
+    *,
+    manifest: Optional[Dict[str, object]] = None,
+) -> Dict[str, str]:
+    merged = dict(course_meta or {})
+    manifest_course = {}
+    if manifest:
+        raw_course = manifest.get("course")
+        if isinstance(raw_course, dict):
+            manifest_course = dict(raw_course)
+
+    for key in ("course_name", "course_slug", "semester", "professor", "institution"):
+        if not str(merged.get(key, "") or "").strip() and str(manifest_course.get(key, "") or "").strip():
+            merged[key] = manifest_course[key]
+
+    course_name = str(merged.get("course_name", "") or "").strip() or root_dir.name
+    course_slug = str(merged.get("course_slug", "") or "").strip() or slugify(course_name) or slugify(root_dir.name) or "curso"
+    merged["course_name"] = course_name
+    merged["course_slug"] = course_slug
+    merged["semester"] = str(merged.get("semester", "") or "").strip()
+    merged["professor"] = str(merged.get("professor", "") or "").strip()
+    merged["institution"] = str(merged.get("institution", "") or "").strip() or "PUCRS"
+    return {key: str(value or "").strip() for key, value in merged.items()}
+
+
+def write_internal_assessment_context(
+    root_dir: Path,
+    assessment_context: dict,
+    *,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    write_text_fn(
+        root_dir / "course" / ".assessment_context.json",
+        json.dumps(
+            assessment_context or {"version": 1, "assessments": [], "conflicts": []},
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
+
+
+def bundle_priority_score(
+    entry: dict,
+    *,
+    normalize_document_profile_fn: Callable[[str], str],
+    exam_categories: set[str],
+    exercise_categories: set[str],
+) -> int:
+    score = 0
+    category = (entry.get("category") or "").strip().lower()
+    title = (entry.get("title") or "").strip().lower()
+    profile = normalize_document_profile_fn(entry.get("effective_profile"))
+
+    if entry.get("include_in_bundle"):
+        score += 30
+    if entry.get("relevant_for_exam"):
+        score += 40
+    if category in exam_categories:
+        score += 45
+    elif category in exercise_categories:
+        score += 35
+    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
+        score += 20
+    elif category in {"bibliografia", "referencias", "cronograma"}:
+        score += 5
+
+    if profile in {"math_heavy", "diagram_heavy"}:
+        score += 10
+
+    if "resumo" in title or "summary" in title:
+        score += 10
+    if "lista" in title or "exerc" in title:
+        score += 8
+    return score
+
+
+def bundle_reason_labels(
+    entry: dict,
+    *,
+    normalize_document_profile_fn: Callable[[str], str],
+    exam_categories: set[str],
+    exercise_categories: set[str],
+) -> List[str]:
+    reasons: List[str] = []
+    category = (entry.get("category") or "").strip().lower()
+    profile = normalize_document_profile_fn(entry.get("effective_profile"))
+    if entry.get("include_in_bundle"):
+        reasons.append("marcado-manualmente")
+    if entry.get("relevant_for_exam"):
+        reasons.append("relevante-para-prova")
+    if category in exam_categories:
+        reasons.append("categoria-prova")
+    elif category in exercise_categories:
+        reasons.append("categoria-exercicio")
+    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
+        reasons.append("material-base")
+    if profile in {"math_heavy", "diagram_heavy"}:
+        reasons.append(f"perfil-{profile}")
+    return reasons or ["prioridade-geral"]
+
+
+def entry_existing_reference_count(
+    root_dir: Path,
+    entry: dict,
+    *,
+    entry_image_source_dirs_fn: Callable[[Path, dict], List[Path]],
+) -> int:
+    refs: List[Path] = []
+    for key in [
+        "raw_target",
+        "base_markdown",
+        "advanced_markdown",
+        "manual_review",
+        "tables_dir",
+        "table_detection_dir",
+        "advanced_asset_dir",
+        "advanced_metadata_path",
+        "approved_markdown",
+        "curated_markdown",
+    ]:
+        value = entry.get(key)
+        if value:
+            refs.append(root_dir / value)
+    refs.extend(entry_image_source_dirs_fn(root_dir, entry))
+    return sum(1 for path in refs if path.exists())
+
+
+def filter_live_manifest_entries(
+    root_dir: Optional[Path],
+    manifest_entries: list,
+    *,
+    entry_existing_reference_count_fn: Callable[[Path, dict], int],
+) -> list:
+    if not root_dir:
+        return list(manifest_entries or [])
+
+    live_entries = []
+    for entry in manifest_entries or []:
+        if not isinstance(entry, dict):
+            continue
+
+        ref_count = entry_existing_reference_count_fn(root_dir, entry)
+        if ref_count > 0:
+            live_entries.append(entry)
+            continue
+
+        has_any_reference = any(
+            entry.get(key)
+            for key in [
+                "raw_target",
+                "base_markdown",
+                "advanced_markdown",
+                "manual_review",
+                "images_dir",
+                "tables_dir",
+                "table_detection_dir",
+                "advanced_asset_dir",
+                "advanced_metadata_path",
+                "approved_markdown",
+                "curated_markdown",
+                "rendered_pages_dir",
+            ]
+        )
+        if not has_any_reference:
+            live_entries.append(entry)
+
+    return live_entries
+
+
+def bundle_seed_candidate(
+    entry: dict,
+    score: int,
+    *,
+    bundle_reason_labels_fn: Callable[[dict], List[str]],
+) -> dict:
+    return {
+        "id": entry["id"],
+        "title": entry["title"],
+        "category": entry["category"],
+        "preferred_manual_review": entry.get("manual_review"),
+        "approved_markdown": entry.get("approved_markdown"),
+        "curated_markdown": entry.get("curated_markdown"),
+        "advanced_markdown": entry.get("advanced_markdown"),
+        "base_markdown": entry.get("base_markdown"),
+        "effective_profile": entry.get("effective_profile"),
+        "relevant_for_exam": bool(entry.get("relevant_for_exam")),
+        "bundle_priority_score": score,
+        "bundle_reasons": bundle_reason_labels_fn(entry),
+    }
+
+
+def assessment_conflict_section_lines(
+    assessment_context: Optional[dict],
+    *,
+    compact: bool = False,
+) -> List[str]:
+    conflicts = list((assessment_context or {}).get("conflicts", []) or [])
+    if not conflicts:
+        return []
+
+    lines = [
+        "## Conflitos de avaliação x cronograma",
+        "",
+    ]
+    if compact:
+        lines += [
+            "| Avaliação | Data | Escopo | Observação |",
+            "|---|---|---|---|",
+        ]
+        for item in conflicts:
+            declared_units = item.get("declared_unit_numbers", []) or []
+            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "—"
+            note = " ".join(item.get("conflicts", []) or [])
+            lines.append(
+                f"| {item.get('label', '')} | {item.get('assessment_date', '') or '—'} | {scope} | {note or '—'} |"
+            )
+    else:
+        lines.append("**Resumo das inconsistências detectadas**")
+        lines.append("")
+        for item in conflicts:
+            declared_units = item.get("declared_unit_numbers", []) or []
+            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "escopo não explicitado"
+            note = " ".join(item.get("conflicts", []) or [])
+            lines.append(
+                f"- {item.get('label', '')}"
+                f" ({item.get('assessment_date', '') or 'data não localizada'})"
+                f" -> {scope}: {note or 'observação estrutural'}"
+            )
+    lines.append("")
+    return lines
+
+
+def write_source_registry(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    lines = [
+        f"generated_at: {manifest['generated_at']}",
+        "sources:",
+    ]
+    for item in manifest["entries"]:
+        lines.extend(
+            [
+                f"  - id: {item['id']}",
+                f"    title: {json_str(item['title'])}",
+                f"    category: {item['category']}",
+                f"    file_type: {item['file_type']}",
+                f"    source_path: {json_str(item['source_path'])}",
+                f"    raw_target: {json_str(item.get('raw_target'))}",
+                f"    processing_mode: {item.get('processing_mode', 'auto')}",
+                f"    effective_profile: {item.get('effective_profile', 'auto')}",
+                f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
+            ]
+        )
+    write_text_fn(root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
+
+
+def write_bundle_seed(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    course_meta: Dict[str, str],
+    bundle_priority_score_fn: Callable[[dict], int],
+    bundle_seed_candidate_fn: Callable[[dict, int], dict],
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    selected = []
+    for entry in manifest["entries"]:
+        score = bundle_priority_score_fn(entry)
+        if score < 30:
+            continue
+        chosen_markdown = (
+            entry.get("approved_markdown")
+            or entry.get("curated_markdown")
+            or entry.get("advanced_markdown")
+            or entry.get("base_markdown")
+        )
+        if not chosen_markdown:
+            continue
+        selected.append((score, entry))
+
+    selected.sort(
+        key=lambda item: (
+            -item[0],
+            (item[1].get("category") or ""),
+            (item[1].get("title") or ""),
+        )
+    )
+    seed = {
+        "generated_at": manifest["generated_at"],
+        "course_slug": course_meta["course_slug"],
+        "target_platform": "claude-projects",
+        "selection_policy": {
+            "min_score": 30,
+            "goal": "baixo-custo-alto-sinal",
+            "routing_first": True,
+            "exclude_full_text": True,
+            "metadata_only": True,
+        },
+        "bundle_candidates": [
+            bundle_seed_candidate_fn(e, score)
+            for score, e in selected
+        ],
+    }
+    write_text_fn(
+        root_dir / "build" / "claude-knowledge" / "bundle.seed.json",
+        json.dumps(seed, indent=2, ensure_ascii=False),
+    )
+
+
+def write_build_report(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    preferred_platform: str,
+    has_pymupdf: bool,
+    has_pymupdf4llm: bool,
+    has_pdfplumber: bool,
+    has_datalab_api_key_fn: Callable[[], bool],
+    docling_cli: object,
+    has_docling_python_api_fn: Callable[[], bool],
+    marker_cli: object,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    platform_map = {
+        "claude": ("setup/INSTRUCOES_CLAUDE_PROJETO.md",
+                   "Cole no campo 'Instructions' do Claude Project"),
+        "gpt":    ("setup/INSTRUCOES_GPT_PROJETO.md",
+                   "Cole no campo 'Instructions' do GPT / Custom GPT"),
+        "gemini": ("setup/INSTRUCOES_GEMINI_PROJETO.md",
+                   "Cole no campo de instruções do Gem no Google AI Studio"),
+    }
+    filename, instruction = platform_map.get(preferred_platform, platform_map["claude"])
+
+    report = [
+        "# BUILD_REPORT",
+        "",
+        f"- generated_at: {manifest['generated_at']}",
+        f"- preferred_platform: {preferred_platform}",
+        f"- pymupdf: {has_pymupdf}",
+        f"- pymupdf4llm: {has_pymupdf4llm}",
+        f"- pdfplumber: {has_pdfplumber}",
+        f"- datalab_api: {has_datalab_api_key_fn()}",
+        f"- docling_cli: {bool(docling_cli)}",
+        f"- docling_python: {has_docling_python_api_fn()}",
+        f"- marker_cli: {bool(marker_cli)}",
+        "",
+        f"## Plataforma principal: {preferred_platform.upper()}",
+        "",
+        f"> Copie o conteúdo de `{filename}`",
+        f"> {instruction}",
+        "",
+        "Os três arquivos de instruções foram gerados:",
+    ]
+    for key, (artifact, _) in platform_map.items():
+        marker = " **<< atual**" if key == preferred_platform else ""
+        report.append(f"- `{artifact}`{marker}")
+
+    report.extend([
+        "",
+        "## Regras práticas de curadoria",
+        "- PDFs simples: camada base costuma bastar.",
+        "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
+        "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
+        "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
+    ])
+    report.extend(render_build_metrics_md(collect_build_metrics(manifest, root_dir)))
+    write_text_fn(root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
+
+
+def resolve_entry_markdown_targets(root_dir: Path, entry_data: dict) -> List[Path]:
+    target_markdowns: List[Path] = []
+    seen_targets = set()
+
+    def _is_allowed_rel_path(rel_path: str) -> bool:
+        rel_posix = str(rel_path).replace("\\", "/").lower()
+        return (
+            rel_posix.startswith("content/")
+            or rel_posix.startswith("exercises/")
+            or rel_posix.startswith("exams/")
+            or rel_posix.startswith("assignments/")
+            or rel_posix.startswith("code/")
+            or rel_posix.startswith("whiteboard/")
+            or rel_posix.startswith("staging/markdown-auto/")
+        )
+
+    for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+        rel_path = entry_data.get(key)
+        if not rel_path or not str(rel_path).lower().endswith(".md"):
+            continue
+        md_file = root_dir / rel_path
+        if not md_file.exists() or not md_file.is_file():
+            continue
+        if not _is_allowed_rel_path(rel_path):
+            continue
+        if md_file in seen_targets:
+            continue
+        seen_targets.add(md_file)
+        target_markdowns.append(md_file)
+
+    if target_markdowns:
+        return target_markdowns
+
+    entry_id = (entry_data.get("id") or "").strip()
+    if not entry_id:
+        return target_markdowns
+
+    search_roots = [
+        root_dir / "content",
+        root_dir / "exercises",
+        root_dir / "exams",
+        root_dir / "assignments",
+        root_dir / "code",
+        root_dir / "whiteboard",
+        root_dir / "staging" / "markdown-auto",
+    ]
+    frontmatter_mark = f'entry_id: "{entry_id}"'
+    for root in search_roots:
+        if not root.exists():
+            continue
+        for md_file in root.rglob("*.md"):
+            if md_file in seen_targets:
+                continue
+            try:
+                text = md_file.read_text(encoding="utf-8")
+            except Exception:
+                continue
+            if frontmatter_mark not in text:
+                continue
+            seen_targets.add(md_file)
+            target_markdowns.append(md_file)
+
+    return target_markdowns
+
+
+def heal_manifest_markdown_paths(root_dir: Path, manifest: dict) -> tuple[dict, int]:
+    entries = manifest.get("entries", []) or []
+    healed = 0
+    for entry_data in entries:
+        if not isinstance(entry_data, dict):
+            continue
+
+        live_targets: List[tuple[str, Path]] = []
+        for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+            rel_path = entry_data.get(key)
+            if not rel_path or not str(rel_path).lower().endswith(".md"):
+                continue
+            md_file = root_dir / rel_path
+            if md_file.exists() and md_file.is_file():
+                live_targets.append((key, md_file))
+
+        if live_targets:
+            final_targets = []
+            for key, md_file in live_targets:
+                rel_md = safe_rel(md_file, root_dir).replace("\\", "/")
+                if (
+                    rel_md.startswith("content/curated/")
+                    or rel_md.startswith("exercises/lists/")
+                    or rel_md.startswith("exams/past-exams/")
+                    or rel_md.startswith("assignments/")
+                    or rel_md.startswith("code/")
+                    or rel_md.startswith("whiteboard/")
+                ):
+                    final_targets.append(rel_md)
+            if final_targets:
+                preferred = final_targets[0]
+                if entry_data.get("approved_markdown") != preferred:
+                    entry_data["approved_markdown"] = preferred
+                    healed += 1
+                if entry_data.get("curated_markdown") != preferred:
+                    entry_data["curated_markdown"] = preferred
+                    healed += 1
+                if entry_data.get("base_markdown") != preferred:
+                    entry_data["base_markdown"] = preferred
+                    healed += 1
+            continue
+
+        resolved_targets = resolve_entry_markdown_targets(root_dir, entry_data)
+        if not resolved_targets:
+            continue
+
+        preferred = safe_rel(resolved_targets[0], root_dir)
+        if entry_data.get("base_markdown") != preferred:
+            entry_data["base_markdown"] = preferred
+            healed += 1
+        if (
+            preferred.startswith("content/curated/")
+            or preferred.startswith("exercises/lists/")
+            or preferred.startswith("exams/past-exams/")
+            or preferred.startswith("assignments/")
+            or preferred.startswith("code/")
+            or preferred.startswith("whiteboard/")
+        ):
+            if entry_data.get("approved_markdown") != preferred:
+                entry_data["approved_markdown"] = preferred
+                healed += 1
+            if entry_data.get("curated_markdown") != preferred:
+                entry_data["curated_markdown"] = preferred
+                healed += 1
+
+    manifest["entries"] = entries
+    return manifest, healed
+
+
+def compact_manifest(
+    root_dir: Path,
+    manifest: dict,
+    *,
+    filter_live_manifest_entries_fn: Callable[[Optional[Path], list], list],
+    heal_manifest_markdown_paths_fn: Callable[[Path, dict], tuple[dict, int]],
+    manifest_log_limit: int,
+) -> tuple[dict, int, int]:
+    entries = manifest.get("entries", []) or []
+    live_entries = filter_live_manifest_entries_fn(root_dir, entries)
+    removed = len(entries) - len(live_entries)
+    manifest["entries"] = live_entries
+    manifest, healed = heal_manifest_markdown_paths_fn(root_dir, manifest)
+
+    logs = manifest.get("logs", [])
+    if isinstance(logs, list) and len(logs) > manifest_log_limit:
+        manifest["logs"] = logs[-manifest_log_limit:]
+    return manifest, removed, healed
+
+
+def bibliography_md(
+    course_meta: dict,
+    entries=None,
+    subject_profile=None,
+    *,
+    reference_curation: dict | None = None,
+    parse_bibliography_from_teaching_plan_fn: Callable[[str], dict],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+
+    _ref_entries = (reference_curation or {}).get("entries", {})
+
+    def _rec(entry):
+        try:
+            return _ref_entries.get(entry.id()) or {}
+        except Exception:
+            return {}
+
+    lines = [
+        f"# BIBLIOGRAPHY — {course_name}",
+        "",
+        "> **Como usar:** Links e referências da disciplina.",
+        "> O tutor consulta este arquivo quando o aluno pede fontes",
+        "> ou quando uma explicação pode ser aprofundada com leitura adicional.",
+        "",
+    ]
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    parsed = parse_bibliography_from_teaching_plan_fn(teaching_plan) if teaching_plan else {}
+    basica = parsed.get("basica", [])
+    complementar = parsed.get("complementar", [])
+
+    if basica or complementar:
+        lines.append("## Bibliografia do plano de ensino")
+        lines.append("")
+        if basica:
+            lines.append("### Básica")
+            lines.append("")
+            for ref in basica:
+                lines.append(f"- {ref}")
+            lines.append("")
+        if complementar:
+            lines.append("### Complementar")
+            lines.append("")
+            for ref in complementar:
+                lines.append(f"- {ref}")
+            lines.append("")
+
+    if entries:
+        lines.append("## Referências importadas")
+        lines.append("")
+        for entry in entries:
+            lines.append(f"### {entry.title}")
+            lines.append(f"- **URL:** {entry.source_path}")
+            if entry.tags:
+                lines.append(f"- **Tags:** {entry.tags}")
+            if entry.notes:
+                lines.append(f"- **Nota:** {entry.notes}")
+            rec = _rec(entry)
+            ref_summary = rec.get("ref_summary") or ""
+            if ref_summary:
+                lines.append(f"- **Resumo:** {ref_summary}")
+            # N ancoras: uma referencia cobre mais de uma unidade (o eth2 do MF
+            # cobre verificacao de programas E metodos formais). Ate 2026-08-19
+            # so o espelho single-winner era exibido.
+            from src.builder.core.reference_navigation import _ancoras
+            ancoras = _ancoras(rec)
+            if ancoras:
+                partes = [u + (f" / {', '.join(t)}" if t else "") for u, t in ancoras]
+                lines.append(f"- **Relevante para:** {' · '.join(partes)}")
+            lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
+            lines.append("")
+
+    if not basica and not complementar and not entries:
+        lines += [
+            "## Referências",
+            "",
+            "<!-- Adicione referências aqui, importe links pelo app,",
+            "     ou preencha o Plano de Ensino no Gerenciador de Matérias. -->",
+            "",
+        ]
+
+    lines += [
+        "## Relevância por tópico",
+        "",
+        "> A relevância por tópico agora vive no `course/COURSE_MAP.md` "
+        "(linhas `📖 Apoio:` sob cada tópico/unidade). Esta página traz o resumo "
+        "completo de cada referência.",
+        "",
+    ]
+
+    return clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=14000,
+        label="course/BIBLIOGRAPHY.md",
+    )
+
+
+def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact: Callable[..., str]) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+
+    lines = [
+        f"# EXAM_INDEX — {course_name}",
+        "",
+        "> **Como usar:** Índice de provas anteriores por unidade.",
+        "> O tutor consulta este arquivo no modo `exam_prep` para identificar",
+        "> quais unidades têm maior incidência. (Incidência por tópico/questão",
+        "> depende da extração de questões — item futuro da fila.)",
+        "",
+        "## Provas disponíveis",
+        "",
+    ]
+
+    if entries:
+        lines.append("| Arquivo | Tipo | Prova | Unidades cobertas | Observação |")
+        lines.append("|---|---|---|---|---|")
+        seen = set()
+        for entry in entries:
+            key = (Path(entry.source_path).name, entry.title)
+            if key in seen:  # FASE 4: fotos/duplicatas do mesmo arquivo = 1 linha
+                continue
+            seen.add(key)
+            tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            cov = [str(c.get("unit_slug") or "") for c in (getattr(entry, "coverage_units", None) or [])]
+            unidades = ", ".join(u for u in cov if u) or str(getattr(entry, "computed_unit_slug", "") or "")
+            lines.append(
+                f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
+                f"| {unidades} | {entry.notes or ''} |"
+            )
+    else:
+        lines.append("_Nenhuma prova mapeada ainda._")
+    lines.append("")
+
+    return clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=12000,
+        label="course/EXAM_INDEX.md",
+    )
+
+
+def assignment_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact: Callable[..., str]) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [
+        f"# ASSIGNMENT_INDEX — {course_name}",
+        "",
+        "> **Como usar:** Índice de trabalhos e projetos.",
+        "> Consulte antes de guiar o aluno — não entregue a solução.",
+        "",
+        "## Trabalhos",
+        "",
+    ]
+    if entries:
+        lines += ["| Arquivo | Título | Unidade |", "|---|---|---|"]
+        for e in entries:
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
+    else:
+        lines.append("_Nenhum trabalho mapeado ainda._")
+    lines.append("")
+    result = "\n".join(lines)
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/ASSIGNMENT_INDEX.md")
+
+
+def code_index_md(
+    course_meta: dict,
+    entries=None,
+    subject_profile=None,
+    *,
+    code_curation: Optional[dict] = None,
+    timeline_blocks: Optional[list[dict]] = None,
+    code_review_profile_fn: Callable[[Optional[dict], object], dict],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    profile = code_review_profile_fn(course_meta, subject_profile)
+
+    code_only = [e for e in entries
+                 if e.file_type in ("code", "zip")
+                 and e.category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno")]
+
+    # (a) No code entries → empty template (byte-equal to old)
+    if not code_only:
+        prof_entries = [e for e in entries if e.category == "codigo-professor"]
+        lines = [
+            f"# CODE_INDEX — {course_name}",
+            "",
+            profile["code_index_intro"],
+            profile["code_index_review_line"],
+            "",
+        ]
+        if not prof_entries:
+            lines += [profile["code_index_empty"], ""]
+        result = "\n".join(lines)
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
+
+    # (b) Code entries but no curation/blocks → flat table (byte-equal to old)
+    curation_entries = (code_curation or {}).get("entries", {})
+    if not curation_entries or not timeline_blocks:
+        prof_entries = [e for e in entries if e.category == "codigo-professor"]
+        lines = [
+            f"# CODE_INDEX — {course_name}",
+            "",
+            profile["code_index_intro"],
+            profile["code_index_review_line"],
+            "",
+        ]
+        if prof_entries:
+            lines += [
+                profile["code_index_section"],
+                "",
+                "| Arquivo | Linguagem | Unidade | Notas |",
+                "|---|---|---|---|",
+            ]
+            for e in prof_entries:
+                unit_str = ""
+                if e.notes and "Unidade:" in e.notes:
+                    try:
+                        unit_str = e.notes.split("Unidade:")[1].strip()
+                    except (IndexError, AttributeError):
+                        pass
+                lines.append(
+                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | |"
+                )
+            lines.append("")
+        else:
+            lines += [profile["code_index_empty"], ""]
+        result = "\n".join(lines)
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
+
+    # (c) Code entries + curation + blocks → grouped Phase-3 format
+    blocks_by_id = {b["id"]: b for b in (timeline_blocks or []) if b.get("id")}
+    by_block: dict[str, list] = {}
+    orphans: list = []
+    for e in code_only:
+        summary = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        primary = resolve_effective_block(e.to_dict(), timeline_blocks).block_id
+        if primary and primary in blocks_by_id:
+            by_block.setdefault(primary, []).append((e, summary))
+        else:
+            orphans.append((e, summary))
+
+    lines = [f"# CODE_INDEX — {course_name}", "",
+             profile["code_index_intro"],
+             profile["code_index_review_line"], ""]
+
+    # Render por bloco (em ordem cronológica)
+    for bid in sorted(blocks_by_id.keys()):
+        entries_in = by_block.get(bid, [])
+        if not entries_in:
+            continue
+        blk = blocks_by_id[bid]
+        period = blk.get("period_label", bid)
+        topic = blk.get("primary_topic_label", "")
+        header = f"## {period} — {topic}" if topic else f"## {period}"
+        lines += [header, ""]
+        lines += ["| Título | Linguagem | Categoria | Conceitos | Papel | Arquivo |",
+                  "|---|---|---|---|---|---|"]
+        for e, s in entries_in:
+            title = s.get("inferred_title") or e.title
+            lang = s.get("language", "")
+            cat_short = {"codigo-professor": "prof",
+                         "codigo-aluno": "aluno",
+                         "codigo-trabalho-aluno": "trabalho"}.get(e.category, e.category)
+            concepts = ", ".join((s.get("concepts") or [])[:4])
+            role = s.get("pedagogical_role", "")
+            fname = Path(e.source_path).name
+            lines.append(f"| {title} | {lang} | {cat_short} | {concepts} | {role} | `{fname}` |")
+        lines.append("")
+
+    # Órfãos
+    if orphans:
+        lines += ["## ⚠ Sem aula atribuída (requer atribuição manual)", ""]
+        lines += ["| Título | Linguagem | Conceitos | Arquivo |",
+                  "|---|---|---|---|"]
+        for e, s in orphans:
+            title = s.get("inferred_title") or e.title
+            lang = s.get("language", "")
+            concepts = ", ".join((s.get("concepts") or [])[:4])
+            fname = Path(e.source_path).name
+            lines.append(f"| {title} | {lang} | {concepts} | `{fname}` |")
+        lines.append("")
+
+    result = "\n".join(lines)
+    return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
+
+
+_PT_WEEKDAYS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
+
+
+def _session_date_label(date_iso: str) -> str:
+    """'qua 11/03' a partir de 'YYYY-MM-DD'; retorna a string crua se inválida/vazia."""
+    from datetime import date as _date
+    try:
+        d = _date.fromisoformat(str(date_iso))
+    except (ValueError, TypeError):
+        return str(date_iso or "")
+    return f"{_PT_WEEKDAYS[d.weekday()]} {d.day:02d}/{d.month:02d}"
+
+
+def cronograma_detalhado_md(
+    course_meta: dict,
+    entries: list,
+    code_curation: dict,
+    timeline_blocks: list[dict],
+    subject_profile=None,
+) -> str:
+    """Render bloco-por-bloco com tópicos + códigos vinculados.
+
+    Estrutura code-only nesta iteração. Seções placeholder ("Materiais",
+    "Exercícios") ficam comentadas/vazias até material-agnostic refactor.
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    curation_entries = (code_curation or {}).get("entries", {})
+
+    # Index: code entries primários e secundários por block
+    primary_idx: dict[str, list] = {}
+    secondary_idx: dict[str, list] = {}
+    for e in entries:
+        if e.file_type not in ("code", "zip"):
+            continue
+        if e.category not in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
+            continue
+        s = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        # TEMPORAL (CRONOGRAMA_DETALHADO): bloco efetivo via âncora>manual>computed.
+        primary = resolve_temporal_block(e.to_dict(), timeline_blocks)
+        if primary:
+            primary_idx.setdefault(primary, []).append((e, s))
+        for sb in (s.get("secondary_block_ids") or []):
+            secondary_idx.setdefault(sb, []).append((e, s))
+
+    lines = [
+        f"# CRONOGRAMA DETALHADO — {course_name}",
+        "",
+        "> Visão aula-por-aula com tópicos cobertos e materiais vinculados.",
+        "> **Nesta versão**: apenas códigos. Expansão futura: PDFs, exercícios, imagens.",
+        "",
+    ]
+
+    # C1 item 2 (05/09): 6 dos 8 cursos tem blocos-aula com o MESMO label (7 labels, 16 blocos, 33 materiais;
+    # FR "Modelos OSI e TCP/IP" x2 fez o LLM trocar bloco-02 por bloco-20 no "quando"). Em colisao dentro do
+    # curso, o titulo ganha um qualificador do proprio bloco: topic_text (humanizado) se distinguir, senao a 1a
+    # sessao. Sem colisao, nada muda — byte-identico nos outros blocos.
+    def _cw(s) -> str:
+        return " ".join(str(s or "").split())
+
+    # So blocos de AULA: feriado/entrega/evento/avaliacao repetem label por natureza ("Feriado" x3) e o
+    # qualificador ali e ruido ("Feriado · Feriado aula"). Medido 05/09: 62 cabecalhos qualificados sem o
+    # filtro x 16 colisoes reais de aula.
+    def _e_aula(b: dict) -> bool:
+        return str(b.get("kind") or "class") == "class"
+
+    _label_count: dict[str, int] = {}
+    for blk in timeline_blocks:
+        _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
+        if _lbl and _e_aula(blk):
+            _label_count[_lbl] = _label_count.get(_lbl, 0) + 1
+
+    def _qualificador(blk: dict) -> str:
+        _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
+        if not _lbl or not _e_aula(blk) or _label_count.get(_lbl, 0) < 2:
+            return ""
+        irmaos = [b for b in timeline_blocks if _e_aula(b) and str(b.get("primary_topic_label") or "").strip().lower() == _lbl]
+        textos = {_cw(str(b.get("topic_text") or "")).lower() for b in irmaos}
+        if len(textos) == len(irmaos) and all(textos):
+            return _cw(str(blk.get("topic_text") or ""))
+        sess = [str(s.get("label") or "") for s in (blk.get("sessions") or []) if str(s.get("label") or "").strip()]
+        return _cw(sess[0]) if sess else ""
+
+    for blk in timeline_blocks:
+        bid = blk["id"]
+        # Lookup por uuid (computed_block_id/secondary_block_ids já são uuid pós-Task 2);
+        # fallback por id legado para compat com refs manuais que ainda usam bloco-NN.
+        buuid = str(blk.get("block_uuid") or "")
+        period = blk.get("period_label", bid)
+        topic = blk.get("primary_topic_label", "")
+        topics = blk.get("topics") or []
+        unit_slug = blk.get("unit_slug", "")
+
+        header = f"## {period}"
+        if topic:
+            header += f" — {topic}"
+            _q = _qualificador(blk)
+            if _q:
+                header += f" · {_q[:1].upper()}{_q[1:60]}"
+        lines += [header, ""]
+
+        if unit_slug:
+            lines.append(f"**Unidade**: {unit_slug}")
+        if topics:
+            lines.append(f"**Tópicos cobertos**: {', '.join(topics)}")
+        lines.append("")
+
+        sessions = blk.get("sessions") or []
+        if sessions:
+            lines += ["### Sessões", ""]
+            for s in sessions:
+                date_label = _session_date_label(str(s.get("date") or ""))
+                slabel = str(s.get("label") or "")
+                mark = " ⏱" if str(s.get("kind") or "class") == "assessment" else ""
+                line = f"- **{date_label}**{mark}" if date_label else f"- **(sem data)**{mark}"
+                if slabel:
+                    line += f" — {slabel}"
+                lines.append(line)
+            lines.append("")
+
+        # Materiais (code-only por enquanto)
+        primaries = primary_idx.get(buuid) or primary_idx.get(bid, [])
+        secondaries = secondary_idx.get(buuid) or secondary_idx.get(bid, [])
+
+        if primaries or secondaries:
+            lines += ["### Códigos desta aula", ""]
+            for e, s in primaries:
+                title = s.get("inferred_title") or e.title
+                fname = Path(e.source_path).name
+                concepts = ", ".join((s.get("concepts") or [])[:4])
+                role = s.get("pedagogical_role", "")
+                lines.append(f"- **{title}** (`{fname}`)")
+                if concepts:
+                    lines.append(f"  - Conceitos: {concepts}")
+                if role:
+                    lines.append(f"  - Papel: {role}")
+            if secondaries:
+                lines += ["", "**Também relevante** (outras aulas como contexto):", ""]
+                for e, s in secondaries:
+                    title = s.get("inferred_title") or e.title
+                    fname = Path(e.source_path).name
+                    lines.append(f"- {title} (`{fname}`)")
+        else:
+            lines.append("_Sem códigos vinculados a esta aula._")
+
+        lines += ["", "---", ""]
+
+    return "\n".join(lines)
+
+
+def code_health_md(
+    course_meta: dict,
+    entries: list,
+    code_curation: dict,
+    timeline_blocks: list[dict],
+    glossary_terms: Optional[set[str]] = None,
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    curation_entries = (code_curation or {}).get("entries", {})
+    code_entries = [e for e in entries if e.file_type in ("code", "zip")
+                    and e.category and e.category.startswith("codigo")]
+
+    total = len(code_entries)
+    with_summary = sum(1 for e in code_entries if e.id() in curation_entries)
+    pct = (with_summary / total * 100) if total else 0
+
+    # Cobertura timeline
+    with_block = 0
+    orphans_list = []
+    for e in code_entries:
+        s = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        if resolve_effective_block(e.to_dict(), timeline_blocks).block_id:
+            with_block += 1
+        elif s:  # tem summary mas sem block
+            orphans_list.append((e, s))
+
+    # Cobertura por unidade
+    by_unit: dict[str, int] = {}
+    for e in code_entries:
+        key = e.tags or "(sem unidade)"
+        by_unit[key] = by_unit.get(key, 0) + 1
+
+    # Conceitos
+    all_concepts: set[str] = set()
+    for eid in curation_entries:
+        all_concepts.update(
+            (curation_entries[eid].get("summary") or {}).get("concepts") or []
+        )
+
+    lines = [
+        f"# CODE_HEALTH — {course_name}",
+        "",
+        "> Relatório auto-gerado da saúde da base de código.",
+        "",
+        "## Cobertura de resumos",
+        f"- Códigos totais: **{total}**",
+        f"- Com resumo Gemini: **{with_summary} / {total} ({pct:.0f}%)**",
+        f"- Sem resumo: **{total - with_summary}**",
+        "",
+        "## Cobertura timeline",
+        f"- Vinculados a aula: **{with_block} / {with_summary}**",
+        f"- Órfãos (resumo sem aula): **{len(orphans_list)}**",
+    ]
+    if orphans_list:
+        lines += ["", "### Órfãos (requer atribuição manual)"]
+        for e, s in orphans_list[:30]:
+            title = s.get("inferred_title") or e.title
+            lines.append(f"- `{Path(e.source_path).name}` — {title}")
+
+    lines += ["", "## Cobertura por unidade"]
+    for unit, n in sorted(by_unit.items()):
+        lines.append(f"- {unit}: {n} código(s)")
+
+    if glossary_terms is not None:
+        intersect = all_concepts & glossary_terms
+        orphan_concepts = sorted(all_concepts - glossary_terms)
+        lines += ["", "## Conceitos vs Glossário",
+                  f"- Conceitos extraídos: **{len(all_concepts)}**",
+                  f"- Match com glossário: **{len(intersect)}**"]
+        if orphan_concepts:
+            lines.append(f"- ⚠ Órfãos (no resumo mas não no glossário): {len(orphan_concepts)}")
+            lines += [f"  - {c}" for c in orphan_concepts[:20]]
+
+    return "\n".join(lines)
+
+
+def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact: Callable[..., str]) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [f"# WHITEBOARD_INDEX — {course_name}", "", "> Fotos de quadro branco com explicações do professor.", ""]
+    if entries:
+        lines += ["| Arquivo | Título | Unidade | Padrão identificado |", "|---|---|---|---|"]
+        for e in entries:
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
+    else:
+        lines.append("_Nenhum registro de quadro ainda._")
+    lines.append("")
+    result = "\n".join(lines)
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/WHITEBOARD_INDEX.md")
+
+
+def clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
+    compact = (text or "").strip()
+    if len(compact) <= max_chars:
+        return compact
+
+    note = f"> Conteúdo truncado para manter {label} compacto e roteável."
+    cutoff = max(0, max_chars - len(note) - 4)
+    clipped = compact[:cutoff].rstrip()
+    if "\n" in clipped:
+        clipped = clipped.rsplit("\n", 1)[0].rstrip()
+    return f"{clipped}\n\n{note}"
+
+
+def extract_markdown_headings(
+    raw_markdown: str,
+    *,
+    collapse_ws: Callable[[str], str],
+    limit: int = 8,
+) -> List[str]:
+    headings: List[str] = []
+    for line in (raw_markdown or "").splitlines():
+        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        heading = collapse_ws(match.group(1))
+        if not heading:
+            continue
+        headings.append(heading)
+        if len(headings) >= limit:
+            break
+    return headings
+
+
+_EXEC_SUMMARY_RE = re.compile(r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?", re.DOTALL)
+# Descricoes de imagem injetadas no build ("Uma seta descendente...", "Faded coat of
+# arms of the Holy See") nao sao frases do professor. Linhas de heading (# ...) sao
+# estrutura, nao prosa: fora do corpo (ficam em `headings`).
+_IMAGE_DESC_RE = re.compile(r"<!-- IMAGE_DESCRIPTION:.*?<!-- /IMAGE_DESCRIPTION -->\n?|^> \*\*\[Descrição de imagem\]\*\*.*$", re.DOTALL | re.MULTILINE)
+_HEADING_LINE_RE = re.compile(r"^#{1,6}\s+.*$", re.MULTILINE)
+# "1.2 Chamadas de sistema" -> "Chamadas de sistema"; "Unidade 01 — Titulo" -> "Titulo".
+_TOPIC_CODE_RE = re.compile(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*")
+_UNIT_PREFIX_RE = re.compile(r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[—:\-–]?\s*", re.IGNORECASE)
+
+
+def glossary_term_core(term: str) -> str:
+    """Nucleo do termo sem a numeracao do plano. O material real diz "chamadas de
+    sistema", nunca "1.2 Chamadas de sistema" — casar o termo numerado so
+    encontrava o proprio plano de ensino (2026-08-26)."""
+    return _TOPIC_CODE_RE.sub("", str(term or "")).strip()
+
+
+def _doc_is_meta(text_norm: str, unit_titles_norm: List[str]) -> bool:
+    """Doc que DESCREVE o curso (plano, programa, apresentacao): cita quase todos os
+    titulos de unidade. Mesmo criterio de conteudo da cobertura (coverage_rules,
+    `_FRACAO_META`), nao por nome de arquivo nem categoria."""
+    from src.builder.routing.coverage_rules import _FRACAO_META
+    titulos = [_UNIT_PREFIX_RE.sub("", t).strip() for t in unit_titles_norm]
+    titulos = [t for t in titulos if len(t) >= 6]
+    if not titulos or not text_norm:
+        return False
+    return sum(1 for t in titulos if t in text_norm) / len(titulos) >= _FRACAO_META
+
+
+def collect_glossary_evidence(
+    root_dir: Optional[Path],
+    *,
+    manifest_entries: Optional[List[dict]] = None,
+    unit_titles: Optional[List[str]] = None,
+    collapse_ws: Callable[[str], str],
+    strip_frontmatter_block: Callable[[str], str],
+    extract_markdown_headings_fn: Callable[[str], List[str]],
+) -> List[Dict[str, str]]:
+    """Docs de `content/curated` como evidencia para definicoes do glossario.
+
+    2026-08-26 (censo nos 5 cursos: 73/132 definicoes genericas, 10 com lixo):
+    (1) o bloco EXEC_SUMMARY (TOC injetado no build) sai antes de extrair
+    frases/headings — "Sumario Introducao a IA: Visao Geral Roteiro..." virava
+    definicao; (2) docs META (plano de ensino, programa, apresentacao) saem —
+    contem a string de TODOS os topicos, ganhavam o +8 sempre e a "definicao"
+    de "Conjuntos Enumeraveis" era "CONTEUDOS: ### UNIDADE 01..." (TCC)."""
+    if not root_dir:
+        return []
+    from src.utils.helpers import norm_ascii_lower
+    titles_norm = [norm_ascii_lower(t) for t in (unit_titles or []) if t]
+    curated_dir = root_dir / "content" / "curated"
+    if not curated_dir.exists():
+        return []
+
+    manifest_by_markdown: Dict[str, str] = {}
+    for entry in manifest_entries or []:
+        markdown_path = (
+            entry.get("approved_markdown")
+            or entry.get("curated_markdown")
+            or entry.get("advanced_markdown")
+            or entry.get("base_markdown")
+            or ""
+        )
+        if markdown_path:
+            manifest_by_markdown[Path(markdown_path).name.lower()] = collapse_ws(
+                entry.get("title") or entry.get("name") or ""
+            )
+
+    docs: List[Dict[str, str]] = []
+    for md_path in sorted(curated_dir.glob("*.md")):
+        try:
+            raw = md_path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        stripped = _IMAGE_DESC_RE.sub("", _EXEC_SUMMARY_RE.sub("", strip_frontmatter_block(raw)))
+        # meta: texto COM headings (o plano lista as unidades como "### UNIDADE 01: ...");
+        # frases: corpo SEM headings (estrutura nao e prosa).
+        if titles_norm and _doc_is_meta(norm_ascii_lower(collapse_ws(stripped)), titles_norm):
+            continue
+        body = collapse_ws(_HEADING_LINE_RE.sub("", stripped))
+        if not body:
+            continue
+        title_match = re.search(r"^#\s+(.+)$", stripped, flags=re.MULTILINE)
+        title = collapse_ws(title_match.group(1)) if title_match else md_path.stem.replace("-", " ")
+        docs.append({
+            "title": title,
+            "manifest_title": manifest_by_markdown.get(md_path.name.lower(), ""),
+            "headings": extract_markdown_headings_fn(stripped),
+            "text": body[:4000],
+        })
+    return docs
+
+
+def glossary_tokens(text: str) -> List[str]:
+    words = re.findall(r"[a-zà-ÿ0-9]+", (text or "").lower())
+    stopwords = {
+        "de", "da", "do", "das", "dos", "e", "em", "para", "com", "por", "na",
+        "no", "nas", "nos", "um", "uma", "as", "os", "o", "a", "ou", "ao", "à",
+        "ii", "iii", "iv", "v", "unidade", "aprendizagem",
+    }
+    return [word for word in words if len(word) > 2 and word not in stopwords]
+
+
+def trim_glossary_prefix(text: str, prefixes: List[str], *, collapse_ws: Callable[[str], str]) -> str:
+    cleaned = collapse_ws(text)
+    if not cleaned:
+        return ""
+    for prefix in prefixes:
+        prefix = collapse_ws(prefix)
+        if not prefix:
+            continue
+        # So e rotulo ("Titulo - texto") se vier separador; "Conceituacao estabelece..."
+        # e frase com o termo como sujeito e fica inteira.
+        if cleaned.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", cleaned[len(prefix):]):
+            cleaned = cleaned[len(prefix):].lstrip(" -:|#")
+    return collapse_ws(cleaned)
+
+
+def shorten_glossary_sentence(sentence: str, *, collapse_ws: Callable[[str], str], max_chars: int = 180) -> str:
+    sent = collapse_ws(sentence)
+    if len(sent) <= max_chars:
+        return sent
+    truncated = sent[:max_chars].rstrip()
+    if " " in truncated:
+        truncated = truncated.rsplit(" ", 1)[0]
+    return truncated.rstrip(" ,;:") + "..."
+
+
+def is_bad_glossary_evidence(sentence: str, *, collapse_ws: Callable[[str], str]) -> bool:
+    sent = collapse_ws(sentence)
+    if not sent or len(sent) < 40:
+        return True
+    if sent.count("**") >= 2:
+        return True
+    if sent.lower().startswith("exemplo:"):
+        return True
+    # Ruido de extracao de PDF ("{4}------", marcador de pagina) e headings
+    # markdown embutidos no fluxo ("... # Algoritmos de Escalonamento Miguel ...").
+    if "----" in sent or re.search(r"\{\d+\}", sent) or " # " in f" {sent}" or sent.startswith("#"):
+        return True
+    if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][\wÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç-]+\s+[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]", sent):
+        if re.search(r"\d", sent) and len(sent) <= 80:
+            return True
+    return False
+
+
+def normalize_glossary_sentence(
+    term: str,
+    unit_title: str,
+    sentence: str,
+    *,
+    collapse_ws: Callable[[str], str],
+    shorten_glossary_sentence_fn: Callable[[str], str],
+) -> str:
+    sent = collapse_ws(sentence)
+    if not sent:
+        return ""
+    sent = re.sub(r"^(?:#+\s*)+", "", sent)
+    for prefix in [term, unit_title]:
+        prefix = collapse_ws(prefix)
+        if not prefix:
+            continue
+        # So tira o prefixo quando e rotulo ("Termo - texto", "Termo: texto"); numa frase
+        # definicional ("Conceituacao estabelece o escopo...") o termo E o sujeito.
+        if sent.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", sent[len(prefix):]):
+            sent = sent[len(prefix):].lstrip(" -:|#")
+    sent = collapse_ws(sent)
+    if not sent:
+        return shorten_glossary_sentence_fn(term, 120)
+    if len(sent) > 180:
+        sent = shorten_glossary_sentence_fn(sent, 180)
+    return sent
+
+
+def best_glossary_sentence(
+    term: str,
+    unit_title: str,
+    doc: Dict[str, str],
+    *,
+    collapse_ws: Callable[[str], str],
+    glossary_tokens_fn: Callable[[str], List[str]],
+    trim_glossary_prefix_fn: Callable[[str, List[str]], str],
+    is_bad_glossary_evidence_fn: Callable[[str], bool],
+    normalize_glossary_sentence_fn: Callable[[str, str, str], str],
+    shorten_glossary_sentence_fn: Callable[[str, int], str],
+) -> str:
+    prefixes = [
+        doc.get("manifest_title", ""),
+        doc.get("title", ""),
+        *doc.get("headings", []),
+    ]
+    # 2026-08-26: so o CORPO do texto e fonte de frase. Titulo e headings
+    # concatenados viravam "definicao" ("Escalonamento de Processos Definicao (1)
+    # Definicao (2) Troca de Contexto...", "Aula 02 - Conjuntos Enumeraveis...") —
+    # censo nos 5 cursos: das 47 definicoes "com evidencia", 2 eram frases reais.
+    sources = [
+        trim_glossary_prefix_fn(doc.get("text", ""), prefixes),
+    ]
+    core = glossary_term_core(term)
+    term_tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
+    candidate_sentences: List[str] = []
+    for source in sources:
+        if not source:
+            continue
+        for sentence in re.split(r"(?<=[.!?])\s+", collapse_ws(source)):
+            sent = collapse_ws(sentence)
+            if len(sent) < 40 or len(sent) > 220:
+                continue
+            if is_bad_glossary_evidence_fn(sent):
+                continue
+            candidate_sentences.append(sent)
+    best_sentence = ""
+    best_score = 0
+    for sent in candidate_sentences:
+        sent = normalize_glossary_sentence_fn(term, unit_title, sent)
+        sent_lower = sent.lower()
+        score = 0
+        if core.lower() in sent_lower:
+            score += 6
+        score += sum(1 for token in dict.fromkeys(term_tokens) if token in sent_lower)
+        if score > best_score:
+            best_score = score
+            best_sentence = sent
+    # 2026-08-26: sem frase candidata, sem evidencia. O fallback devolvia os
+    # primeiros 180 chars do documento ("{0}------ # Titulo Autor 2026") e isso
+    # virava "definicao" (SO 3.3, TCC 2.2/2.3/2.5/4.5.5). Generico honesto e melhor.
+    return best_sentence
+
+
+def find_glossary_evidence(
+    term: str,
+    unit_title: str,
+    docs: List[Dict[str, str]],
+    *,
+    glossary_tokens_fn: Callable[[str], List[str]],
+    best_glossary_sentence_fn: Callable[[str, str, Dict[str, str]], str],
+) -> str:
+    if not docs:
+        return ""
+
+    term_lower = glossary_term_core(term).lower()
+    tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
+    best_score = 0
+    best_text = ""
+
+    for doc in docs:
+        haystack = " ".join([
+            doc.get("manifest_title", ""),
+            doc.get("title", ""),
+            " ".join(doc.get("headings", [])),
+            doc.get("text", ""),
+        ]).lower()
+        score = 0
+        if term_lower and term_lower in haystack:
+            score += 8
+        score += sum(1 for token in dict.fromkeys(tokens) if token in haystack)
+        if score < 3 or score <= best_score:
+            continue
+        best_score = score
+        best_text = best_glossary_sentence_fn(term, unit_title, doc)
+
+    return best_text[:600]
+
+
+def refine_glossary_definition_from_evidence(
+    term: str,
+    unit_hint: str,
+    evidence: str,
+    *,
+    collapse_ws: Callable[[str], str],
+    glossary_tokens_fn: Callable[[str], List[str]],
+    normalize_glossary_sentence_fn: Callable[[str, str, str], str],
+    shorten_glossary_sentence_fn: Callable[[str, int], str],
+) -> str:
+    compact = collapse_ws(evidence)
+    if compact:
+        sentences = re.split(r"(?<=[.!?])\s+", compact)
+        core = glossary_term_core(term)
+        term_tokens = glossary_tokens_fn(core)
+        for sentence in sentences:
+            sent = normalize_glossary_sentence_fn(term, unit_hint, sentence)
+            sent_lower = sent.lower()
+            if len(sent) < 40:
+                continue
+            if core.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
+                cleaned = re.sub(r"^[^A-Za-zÀ-ÿ0-9]*", "", sent).rstrip(" .")
+                cleaned = shorten_glossary_sentence_fn(cleaned, 180)
+                if not cleaned.endswith("."):
+                    cleaned += "."
+                return cleaned
+    de_hint = "desta unidade" if unit_hint.strip().lower() == "esta unidade" else f"de {unit_hint}"
+    return f"Conceito central {de_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
+
+
+def seed_glossary_fields(
+    term: str,
+    unit_title: str,
+    *,
+    evidence: str = "",
+    collapse_ws: Callable[[str], str],
+    refine_glossary_definition_from_evidence_fn: Callable[[str, str, str], str],
+) -> tuple[str, str, str]:
+    text = collapse_ws(term)
+    lower = text.lower()
+    unit_lower = (unit_title or "").lower()
+
+    def _unit_hint() -> str:
+        if "visão geral" in unit_lower or "visao geral" in unit_lower:
+            return "visão geral"
+        if "aprendizado de máquina" in unit_lower or "machine" in unit_lower:
+            return "aprendizado de máquina"
+        if "incerteza" in unit_lower or "probabilidade" in unit_lower:
+            return "raciocínio sob incerteza"
+        if "planejamento" in unit_lower:
+            return "planejamento e representação de conhecimento"
+        if "problemas" in unit_lower or "busca" in unit_lower:
+            return "solução de problemas"
+        if "verificação de programas" in unit_lower:
+            return "verificação de programas"
+        if "verificação de modelos" in unit_lower:
+            return "verificação de modelos"
+        if "métodos formais" in unit_lower:
+            return "métodos formais"
+        return "esta unidade"
+
+    def _generic_definition() -> str:
+        return refine_glossary_definition_from_evidence_fn(text, _unit_hint(), evidence)
+
+    if "lógica de hoare" in lower:
+        return (
+            "Formalismo para especificar e verificar programas com pré-condições, pós-condições e invariantes.",
+            "tripla de Hoare",
+            "lógica temporal",
+        )
+    if "model checking" in lower or "verificação de modelos" in lower:
+        return (
+            "Técnica automática que checa se um modelo de sistema satisfaz propriedades formais.",
+            "checagem de modelos",
+            "prova de teoremas",
+        )
+    if "provadores de teoremas" in lower or "prova interativa de teoremas" in lower:
+        return (
+            "Ferramentas e técnicas usadas para construir provas formais com assistência mecânica.",
+            "assistentes de prova",
+            "model checking",
+        )
+    if "métodos formais" in lower:
+        return (
+            "Conjunto de técnicas matemáticas para especificar, modelar e verificar sistemas de software.",
+            "formal methods",
+            "testes informais",
+        )
+    if "máquinas de estado" in lower:
+        return (
+            "Modelo que representa um sistema por estados e transições entre eles.",
+            "state machines",
+            "árvores de derivação",
+        )
+    if "modelos de kripke" in lower:
+        return (
+            "Estruturas de estados rotulados usadas para interpretar propriedades em lógica temporal.",
+            "estruturas de Kripke",
+            "máquina de Turing",
+        )
+    if "lógica temporal linear" in lower:
+        return (
+            "Lógica temporal que descreve propriedades ao longo de sequências lineares de estados.",
+            "LTL",
+            "CTL",
+        )
+    if "lógica temporal ramificada" in lower:
+        return (
+            "Lógica temporal que considera múltiplos futuros possíveis a partir de um estado.",
+            "CTL",
+            "LTL",
+        )
+    if "pré e pós" in lower:
+        return (
+            "Condições que descrevem o que deve valer antes e depois da execução de um programa.",
+            "precondições e pós-condições",
+            "invariantes de laço",
+        )
+    if "invariante e variante de laço" in lower:
+        return (
+            "Propriedades usadas para demonstrar correção parcial e terminação de laços.",
+            "invariante de laço",
+            "pré-condições",
+        )
+    if "planejamento clássico" in lower or lower == "planejamento":
+        return (
+            "Abordagem que busca sequências de ações para atingir objetivos em um modelo explícito de estados.",
+            "planning",
+            "busca adversária",
+        )
+    if "agentes em lógica" in lower or "introdução a agentes" in lower:
+        return (
+            "Modelo de agente que percebe o ambiente e escolhe ações segundo uma representação formal.",
+            "agentes racionais",
+            "classificadores supervisionados",
+        )
+    if "busca informada" in lower:
+        return (
+            "Busca guiada por heurísticas para explorar primeiro estados mais promissores.",
+            "busca heurística",
+            "busca cega",
+        )
+    if "algoritmos de busca" in lower:
+        return (
+            "Procedimentos para explorar espaços de estados e encontrar soluções para problemas modelados.",
+            "search algorithms",
+            "métodos de otimização contínua",
+        )
+    if "busca adversária" in lower:
+        return (
+            "Estratégia de decisão para problemas competitivos em que as ações dependem do oponente.",
+            "jogos adversariais",
+            "busca heurística simples",
+        )
+    if "representação de problemas" in lower:
+        return (
+            "Forma de modelar estados, ações, restrições e objetivos para permitir resolução algorítmica.",
+            "modelagem do problema",
+            "pré-processamento de dados",
+        )
+    if "probabilidade" in lower or "regra de bayes" in lower or "independência e permutabilidade" in lower:
+        return (
+            "Conceito central de raciocínio sob incerteza usado para modelar crenças e atualizar evidências.",
+            "inferência probabilística",
+            "lógica determinística",
+        )
+    if "aprendizado de máquina" in lower:
+        return (
+            "Área da IA que aprende padrões a partir de dados para descrever ou prever comportamentos.",
+            "machine learning",
+            "planejamento clássico",
+        )
+    if "paradigmas de aprendizado" in lower:
+        return (
+            "Categorias de estratégias de aprendizado, como supervisionado, não supervisionado e por reforço.",
+            "tipos de aprendizado",
+            "métricas de avaliação",
+        )
+    if "modelos preditivos" in lower:
+        return (
+            "Modelos voltados a prever saídas, classes ou valores a partir de exemplos observados.",
+            "modelos supervisionados",
+            "modelos descritivos",
+        )
+    if "modelos descritivos" in lower:
+        return (
+            "Modelos usados para revelar estrutura, agrupamentos ou relações presentes nos dados.",
+            "modelos exploratórios",
+            "modelos preditivos",
+        )
+    if "métricas de avaliação" in lower:
+        return (
+            "Critérios quantitativos usados para comparar desempenho e qualidade de modelos.",
+            "medidas de desempenho",
+            "função objetivo do problema",
+        )
+    if "k-means" in lower:
+        return (
+            "Algoritmo de agrupamento que particiona exemplos em grupos definidos por centróides.",
+            "agrupamento k-means",
+            "k-NN",
+        )
+    if "k-nn" in lower:
+        return (
+            "Método que classifica ou estima saídas com base nos vizinhos mais próximos no espaço de atributos.",
+            "k nearest neighbors",
+            "k-means",
+        )
+    if "árvores de decisão" in lower:
+        return (
+            "Modelo que organiza decisões em divisões sucessivas sobre atributos dos dados.",
+            "decision trees",
+            "grafos de busca",
+        )
+    if "mlp" in lower or "rede neural" in lower or "perceptron" in lower:
+        return (
+            "Família de modelos conexionistas que aprende transformações por camadas a partir de exemplos.",
+            "redes neurais artificiais",
+            "árvore de decisão",
+        )
+    if "conceituação" in lower:
+        return (
+            refine_glossary_definition_from_evidence_fn(text, _unit_hint(), evidence),
+            "visão geral",
+            "detalhamento técnico",
+        )
+    if "histórico" in lower:
+        return (
+            refine_glossary_definition_from_evidence_fn(text, _unit_hint(), evidence),
+            "contexto histórico",
+            "estado da arte detalhado",
+        )
+
+    return (
+        _generic_definition(),
+        "—",
+        "—",
+    )
+
+
+_GLOSSARY_CURATION_NAME = ".glossary_curation.json"
+_GLOSSARY_LLM_NAME = ".glossary_curation.llm.json"
+_SECAO_NUM_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-–.:)]?\s*")
+
+
+def _normalize_secao(text: str) -> str:
+    from src.builder.text.normalize import normalize_match_text
+    return normalize_match_text(_SECAO_NUM_RE.sub("", str(text or "")))
+
+
+def _veto_norm(text: str) -> str:
+    """Chave de comparacao do veto (12/09, revisao): o mesmo normalizador do casamento (NFKD, sem acento), para
+    'Comunicacao entre Processos' vetar 'Comunicação entre Processos'; so casefold falhava em silencio."""
+    from src.builder.text.normalize import normalize_match_text
+    return normalize_match_text(" ".join(str(text or "").split()))
+
+
+def _moodle_section_names(root_dir: Optional[Path]) -> set:
+    """Nomes das secoes do Moodle (`source_section`, sem numeracao), normalizados; vazio sem manifest."""
+    path = Path(root_dir) / "manifest.json"
+    if not path.is_file():
+        return set()
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8")).get("entries") or []
+    except (ValueError, OSError, AttributeError):
+        return set()
+    return {_normalize_secao(e.get("source_section")) for e in entries if isinstance(e, dict) and e.get("source_section")} - {""}
+_GLOSSARY_EMPTY = {"", "—", "-", "n/a", "N/A"}
+
+
+def _glossary_curation_key(term: str) -> str:
+    """Chave do sidecar = texto do topico como o glossario o escreve, COM o codigo de outline
+    ("1.2 Modelos OSI e TCP/IP"; R8: "3.1 Conceitos basicos" != "5.1 Conceitos basicos").
+    Normaliza so marcadores: `*` fora, "1.2." -> "1.2", espacos, casefold. Sem codigo, o label."""
+    text = " ".join(str(term or "").replace("*", "").split())
+    text = re.sub(r"^(\d+(?:\.\d+)*)\.(\s+)", r"\1\2", text)
+    return text.casefold()
+
+
+def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
+    """{termo (casefold): [sinonimos]} de `course/.glossary_curation.json`.
+
+    2026-08-25 (alavanca iii da subunidade): o GLOSSARY.md e artefato DERIVADO,
+    regravado a cada build a partir do plano + seed; a taxonomia consome o texto
+    gerado, nao o arquivo. Curadoria a mao no .md morre no proximo build. Este
+    sidecar e o lugar que sobrevive (mesmo padrao do .card_block_map): os
+    sinonimos entram em "Sinonimos aceitos" e viram alias do topico via
+    `_glossary_aliases_for_topic`. E conteudo por curso (vocabulario dos
+    algoritmos que o plano nao nomeia: "Modelos Preditivos" <- perceptron,
+    k-NN, arvore de decisao), nunca regra de motor. Medido no IA u05: 4 -> 37/39.
+    Formato: {"<Termo do plano>": {"synonyms": ["..."]}}."""
+    if not root_dir:
+        return {}
+    out: Dict[str, List[str]] = {}
+    vetos: Dict[str, set] = {}  # 12/09: "veto" por termo no sidecar MANUAL tira o sinonimo da fusao, venha do manual ou do LLM
+    secoes = _moodle_section_names(root_dir)
+    # Manual + compilado por LLM (Fase 1b, 02/09: `.glossary_curation.llm.json`, mesmo formato,
+    # chaves `_*` = metadados). Fundidos sem repetir; manual vem primeiro.
+    for name in (_GLOSSARY_CURATION_NAME, _GLOSSARY_LLM_NAME):
+        path = Path(root_dir) / "course" / name
+        if not path.is_file():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        for term, info in (data or {}).items():
+            if str(term).startswith("_"):
+                continue
+            key = _glossary_curation_key(term)
+            if name == _GLOSSARY_CURATION_NAME and isinstance(info, dict) and info.get("veto"):
+                # Regressao de unidade no SO (11/09): o LLM doou 'Comunicacao entre Processos' e 'Pipes' a 3.1 (u02) e o
+                # bloco-09 virou u03 -> u02; editar o .llm.json morre no --refiltrar. O veto e decisao humana e sobrevive.
+                # A chave do veto e a do topico (`_glossary_curation_key`, COM o codigo de outline: "3.1 Conceitos basicos");
+                # sem o codigo cai noutra chave e nao faz nada, sem aviso.
+                vetos.setdefault(key, set()).update(_veto_norm(s) for s in info["veto"])
+            syn = info.get("synonyms") if isinstance(info, dict) else info
+            vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())
+                    and _veto_norm(s) not in vetos.get(key, set())]
+            if name == _GLOSSARY_LLM_NAME and secoes:
+                # Higiene (CG 05/09): o compilador recebe NOMES DE SECAO do Moodle como termos e, sem
+                # topico que case, pendura-os no topico generico da unidade 1 ("Morfologia Matematica"
+                # virou alias de "Areas relacionadas" e puxava o bloco para u01). Secao e estrutura, nao
+                # vocabulario; so o sinonimo COMPILADO e filtrado — o manual e decisao humana.
+                vals = [v for v in vals if _normalize_secao(v) not in secoes]
+            if not vals:
+                continue
+            atual = out.setdefault(key, [])
+            seen = {v.casefold() for v in atual}
+            for v in vals:
+                if v.casefold() not in seen:
+                    atual.append(v)
+                    seen.add(v.casefold())
+    return out
+
+
+def merge_glossary_synonyms(seed: str, curated: List[str]) -> str:
+    """Linha "Sinonimos aceitos" = seed + curadoria, sem repetir, sem marcador vazio."""
+    parts = [p.strip() for p in re.split(r"[,;/|]", str(seed or "")) if p.strip() not in _GLOSSARY_EMPTY]
+    seen = {p.casefold() for p in parts}
+    for s in curated or []:
+        if s.casefold() not in seen:
+            parts.append(s)
+            seen.add(s.casefold())
+    return ", ".join(parts) if parts else "—"
+
+
+def glossary_md(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    root_dir: Optional[Path] = None,
+    manifest_entries: Optional[List[dict]] = None,
+    parse_units_from_teaching_plan_fn: Callable[[str], list],
+    topic_text_fn: Callable[[object], str],
+    collect_glossary_evidence_fn: Callable[[Optional[Path]], List[Dict[str, str]]],
+    find_glossary_evidence_fn: Callable[[str, str, List[Dict[str, str]]], str],
+    seed_glossary_fields_fn: Callable[[str, str, str], tuple[str, str, str]],
+    clamp_navigation_artifact_fn: Callable[..., str],
+) -> str:
+    from src.builder.core.course_vocabulary import build_course_terms, course_terms_text
+
+    course_name = course_meta.get("course_name", "Curso")
+
+    lines = [
+        f"# GLOSSARY — {course_name}",
+        "",
+        "> **Como usar:** Terminologia oficial da disciplina.",
+        "> O tutor consulta este arquivo para usar os mesmos termos que o professor.",
+        "> Inconsistência terminológica é fonte de confusão em provas.",
+        "",
+        "## Formato de entrada",
+        "",
+        "```",
+        "## [Termo]",
+        "**Definição:** [definição precisa usada nesta disciplina]",
+        "**Sinônimos aceitos:** [outros nomes para o mesmo conceito]",
+        "**Não confundir com:** [termo similar mas diferente]",
+        "**Aparece em:** [unidades / tópicos onde é usado]",
+        "```",
+        "",
+        "---",
+        "",
+        "## Termos",
+        "",
+    ]
+
+    terms = build_course_terms(
+        subject_profile, root_dir=root_dir, manifest_entries=manifest_entries,
+        parse_units_from_teaching_plan_fn=parse_units_from_teaching_plan_fn,
+        topic_text_fn=topic_text_fn, collect_glossary_evidence_fn=collect_glossary_evidence_fn,
+        find_glossary_evidence_fn=find_glossary_evidence_fn,
+        seed_glossary_fields_fn=seed_glossary_fields_fn,
+        load_curation_fn=load_glossary_curation, curation_key_fn=_glossary_curation_key,
+        merge_synonyms_fn=merge_glossary_synonyms,
+    )
+    if terms:
+        lines.append("> Termos extraídos automaticamente do plano de ensino.")
+        lines.append("> Definições iniciais curtas são geradas no build para reduzir custo de contexto no tutor web.")
+        lines.append("")
+        lines.append(course_terms_text(terms))
+    else:
+        lines.append("> ⏳ **Nenhum termo foi detectado automaticamente ainda.**")
+        lines.append("> Reprocesse o repositório após enriquecer o conteúdo curado ou ajustar o material de origem.")
+        lines.append("")
+
+    return clamp_navigation_artifact_fn(
+        "\n".join(lines),
+        max_chars=14000,
+        label="course/GLOSSARY.md",
+    )
+
+
+def root_readme(course_meta: dict) -> str:
+    return f"""# {course_meta.get('course_name', 'Curso')}
+
+Repositório gerado pelo **Academic Tutor Repo Builder V3**.
+Compatível com **Claude Projects**, **ChatGPT Projects** e **Gemini Gems**.
+
+## Como usar com uma LLM
+
+1. Gere ou regenere os arquivos em `setup/`
+2. Escolha a plataforma alvo:
+   - `setup/INSTRUCOES_CLAUDE_PROJETO.md`
+   - `setup/INSTRUCOES_GPT_PROJETO.md`
+   - `setup/INSTRUCOES_GEMINI_PROJETO.md`
+3. Cole o arquivo correspondente no campo de instruções da plataforma
+4. Conecte este repositório GitHub ou carregue os arquivos conforme a plataforma escolhida
+5. Inicie a conversa usando os artefatos gerados do app
+
+## Estrutura
+- `system/` — política do tutor, pedagogia, modos, templates
+- `course/` — identidade, mapa, cronograma, glossário, bibliografia
+- `student/` — estado atual, perfil e baterias de progresso
+- `content/` — material de aula curado
+- `exercises/` — listas de exercícios
+- `exams/` — provas anteriores e gabaritos
+- `raw/` — materiais originais (PDFs, imagens)
+- `staging/` — extração automática (para revisão)
+- `manual-review/` — revisão humana guiada
+- `build/` — artefatos internos do app e bundles auxiliares
+
+## Arquivos-chave para o tutor
+
+| Arquivo | Função |
+|---|---|
+| `setup/INSTRUCOES_*.md` | Instruções por plataforma (fora do knowledge base indexado) |
+| `student/STUDENT_STATE.md` | Estado atual do aluno — atualizar após cada sessão |
+| `course/COURSE_MAP.md` | Mapa pedagógico curto gerado pelo app |
+| `course/FILE_MAP.md` | Roteador operacional com seções e confiança |
+| `course/FILE_MAP_TRACE.md` | Rastreabilidade por material (raw, tags, markdown-base) — auditoria, não roteamento |
+| `course/GLOSSARY.md` | Glossário semeado e refinado a partir do conteúdo |
+| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
+
+## Fluxo recomendado
+
+1. Rodar extração automática no app
+2. Revisar `manual-review/`
+3. Promover conteúdo curado para `content/`, `exercises/`, `exams/`
+4. Reprocessar o repositório quando quiser reaplicar a arquitetura atual do app
+5. Conectar o repositório à plataforma LLM escolhida
+6. Após cada sessão de estudo: atualizar `student/STUDENT_STATE.md` e fazer push
+"""
+
+
+def wrap_frontmatter(meta: dict, body: str, *, json_str_fn: Optional[Callable[[Any], str]] = None) -> str:
+    json_str_fn = json_str_fn or json_str
+    header = ["---"]
+    for k, v in meta.items():
+        header.append(f"{k}: {json_str_fn(v)}")
+    header.append("---")
+    header.append("")
+    return "\n".join(header) + body.strip() + "\n"
+
+
+def rows_to_markdown_table(rows: list) -> str:
+    if not rows:
+        return ""
+    width = max(len(r) for r in rows)
+    fixed = [r + [""] * (width - len(r)) for r in rows]
+    header = fixed[0]
+    sep = ["---"] * width
+    lines = [
+        "| " + " | ".join(header) + " |",
+        "| " + " | ".join(sep) + " |",
+    ]
+    for row in fixed[1:]:
+        lines.append("| " + " | ".join(row) + " |")
+    return "\n".join(lines) + "\n"
+
+
+def manual_pdf_review_template(entry, item: Dict[str, object], *, json_str_fn: Callable[[Any], str]) -> str:
+    report = item.get("document_report") or {}
+    decision = item.get("pipeline_decision") or {}
+    return f"""---
+id: {entry.id()}
+title: {json_str_fn(entry.title)}
+type: manual_pdf_review
+category: {entry.category}
+source_pdf: {json_str_fn(item.get('raw_target'))}
+processing_mode: {json_str_fn(entry.processing_mode)}
+document_profile: {json_str_fn(entry.document_profile)}
+page_range: {json_str_fn(entry.page_range)}
+effective_profile: {json_str_fn(item.get('effective_profile'))}
+base_backend: {json_str_fn(item.get('base_backend'))}
+advanced_backend: {json_str_fn(item.get('advanced_backend'))}
+base_markdown: {json_str_fn(item.get('base_markdown'))}
+advanced_markdown: {json_str_fn(item.get('advanced_markdown'))}
+---
+
+# Revisão Manual — {entry.title}
+
+## Perfil detectado
+- Perfil efetivo: `{item.get('effective_profile')}`
+- Páginas: `{report.get('page_count')}`
+- Texto: `{report.get('text_chars')}` chars
+- Imagens: `{report.get('images_count')}`
+- Tabelas: `{report.get('table_candidates')}`
+- Scan: `{report.get('suspected_scan')}`
+
+## Pipeline
+- Modo: `{decision.get('processing_mode')}`
+- Base: `{decision.get('base_backend')}`
+- Avançado: `{decision.get('advanced_backend')}`
+
+## Checklist
+- [ ] Conferir títulos e subtítulos
+- [ ] Corrigir ordem de leitura
+- [ ] Revisar fórmulas e converter para LaTeX
+- [ ] Revisar tabelas exportadas
+- [ ] Verificar imagens/figuras importantes
+- [ ] Registrar pistas sobre o professor
+
+## Markdown corrigido
+<!-- Cole aqui a versão corrigida -->
+
+## Destino curado sugerido
+- [ ] `content/curated/`
+- [ ] `exercises/lists/`
+- [ ] `exams/past-exams/`
+"""
+
+
+def manual_image_review_template(entry, raw_target: Path, root_dir: Path, *, safe_rel_fn: Callable[[Path, Path], str]) -> str:
+    image_path = safe_rel_fn(raw_target, root_dir)
+    return f"""---
+id: {entry.id()}
+title: {json.dumps(entry.title, ensure_ascii=False)}
+type: manual_image_review
+category: {entry.category}
+source_image: {json.dumps(image_path, ensure_ascii=False)}
+---
+
+# Revisão Manual — Imagem
+
+## Metadados
+- Tags: `{entry.tags}`
+- Relevante para prova: `{entry.relevant_for_exam}`
+
+## Transcrição fiel
+<!-- Escreva o texto da imagem aqui -->
+
+## Destino curado sugerido
+- [ ] `exams/past-exams/`
+- [ ] `content/curated/`
+"""
+
+
+def manual_url_review_template(entry, item: Dict[str, object], *, json_str_fn: Callable[[Any], str]) -> str:
+    source_url = entry.source_path
+    return f"""---
+id: {entry.id()}
+title: {json_str_fn(entry.title)}
+type: manual_url_review
+category: {entry.category}
+source_url: {json_str_fn(source_url)}
+processing_mode: {json_str_fn(entry.processing_mode)}
+base_backend: {json_str_fn(item.get('base_backend'))}
+base_markdown: {json_str_fn(item.get('base_markdown'))}
+---
+
+# Revisão Manual — Página Web
+
+## Origem
+- URL: <{source_url}>
+- Backend base: `{item.get('base_backend')}`
+
+## Checklist
+- [ ] Conferir se o conteúdo baixado corresponde à página correta
+- [ ] Remover navegação, rodapé, anúncios e texto irrelevante
+- [ ] Corrigir títulos e hierarquia de seções
+- [ ] Verificar se links importantes foram preservados
+- [ ] Destacar trechos úteis para o tutor
+
+## Markdown corrigido
+<!-- Cole aqui a versão corrigida -->
+
+## Destino curado sugerido
+- [ ] `content/curated/`
+- [ ] `course/references/`
+"""
+
+
+def migrate_legacy_url_manual_reviews(
+    root_dir: Path,
+    *,
+    ensure_dir_fn: Callable[[Path], None],
+    safe_rel_fn: Callable[[Path, Path], str],
+    write_text_fn: Callable[[Path, str], None],
+    logger,
+) -> int:
+    manual_pdfs_dir = root_dir / "manual-review" / "pdfs"
+    manual_web_dir = root_dir / "manual-review" / "web"
+    if not manual_pdfs_dir.exists():
+        return 0
+
+    ensure_dir_fn(manual_web_dir)
+    manifest_path = root_dir / "manifest.json"
+    manifest = None
+    manifest_changed = False
+    moved = 0
+
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            logger.warning("Could not read manifest.json during URL review migration: %s", exc)
+            manifest = None
+
+    for review_path in manual_pdfs_dir.rglob("*.md"):
+        try:
+            content = review_path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+
+        fm = {}
+        match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
+        if match:
+            for line in match.group(1).strip().split("\n"):
+                if ":" not in line:
+                    continue
+                key, _, value = line.partition(":")
+                fm[key.strip()] = value.strip().strip('"').strip("'")
+
+        if fm.get("type") != "manual_url_review" and fm.get("base_backend") != "url_fetcher":
+            continue
+
+        destination = manual_web_dir / review_path.name
+        if destination.exists():
+            try:
+                review_path.unlink()
+            except Exception as exc:
+                logger.warning("Could not remove duplicate legacy URL review %s: %s", review_path, exc)
+            else:
+                moved += 1
+            continue
+
+        ensure_dir_fn(destination.parent)
+        try:
+            shutil.move(str(review_path), str(destination))
+        except Exception as exc:
+            logger.warning("Could not migrate legacy URL review %s: %s", review_path, exc)
+            continue
+
+        moved += 1
+        entry_id = fm.get("id") or destination.stem
+        if manifest:
+            for entry in manifest.get("entries", []):
+                if entry.get("id") == entry_id and entry.get("manual_review"):
+                    old_rel = safe_rel_fn(review_path, root_dir)
+                    if entry.get("manual_review") == old_rel:
+                        entry["manual_review"] = safe_rel_fn(destination, root_dir)
+                        manifest_changed = True
+                    break
+
+    if manifest and manifest_changed:
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        write_text_fn(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+
+    return moved
+
+
+def pdf_curation_guide() -> str:
+    return """# PDF_CURATION_GUIDE
+
+## Regra central
+PDF bruto não é conhecimento final.
+Ele é insumo para:
+1. extração automática
+2. revisão manual
+3. curadoria por função pedagógica
+
+## Quando usar cada camada
+- Base: PDFs simples, texto corrido, listas e cronogramas.
+- Avançada: fórmulas, tabelas difíceis, layout complexo, scans, provas.
+- Manual assisted: qualquer material que influencie a lógica de prova.
+
+## Artefatos gerados
+- `raw/`: arquivo original
+- `staging/`: extração automática
+- `manual-review/`: revisão humana guiada
+- `content/` e `exams/`: conhecimento curado
+
+## Destino final no repositório pedagógico
+Todo arquivo curado deve estar em formato Markdown limpo
+para ser lido eficientemente pela plataforma LLM conectada ao repositório.
+"""
+
+
+def backend_architecture_md() -> str:
+    return """# BACKEND_ARCHITECTURE
+
+## Visão geral
+A V3 usa arquitetura de backends em camadas.
+
+```text
+PDF bruto
+ -> camada base
+ -> camada avançada (quando necessário)
+ -> extração de artefatos
+ -> revisão manual guiada
+ -> conteúdo curado
+ -> plataforma LLM conectada (via GitHub sync ou upload)
+```
+
+## Camada base
+- `pymupdf4llm`: Markdown rápido para PDFs digitais.
+- `pymupdf`: fallback bruto.
+
+## Camada avançada
+- `docling`: OCR, fórmulas, tabelas e imagens referenciadas.
+- `marker`: equações, inline math, tabelas e imagens.
+
+## Modos de processamento
+- `quick`: só camada base.
+- `high_fidelity`: base + avançada.
+- `manual_assisted`: base + artefatos + revisão humana.
+- `auto`: decide pelo perfil do documento.
+
+## Regra de ouro
+O tutor não deve consumir o PDF bruto como fonte final.
+A fonte final deve ser o Markdown curado derivado da revisão manual,
+sincronizado com a plataforma LLM escolhida.
+"""
+
+
+def backend_policy_yaml(options: Dict[str, object], *, json_str_fn: Callable[[Any], str]) -> str:
+    return f"""version: 3
+target_platform: claude-projects
+policy:
+  default_processing_mode: {options.get('default_processing_mode', 'auto')}
+  default_ocr_language: {json_str_fn(options.get('default_ocr_language', 'por,eng'))}
+  require_manual_review_for:
+    - math_heavy
+    - scanned
+    - diagram_heavy
+  base_layer_priority:
+    - pymupdf4llm
+    - pymupdf
+  advanced_layer_priority:
+    - docling
+    - marker
+  asset_pipeline:
+    extract_images: true
+    extract_tables: true
+  promotion_rule: |
+    Nenhum arquivo de staging é conhecimento final.
+    O conhecimento final deve sair de manual-review/ e depois ser promovido
+    para content/, exercises/ ou exams/, e então sincronizado com a plataforma LLM escolhida.
+"""
+
+
+_ANSWER_SUFFIX_RE = re.compile(r"\s*(?:respostas?|gabaritos?|solucao|solucoes|resolucao)$")
+
+
+def _exercise_answer_stem(title: str) -> tuple:
+    """(stem normalizado, e_gabarito) do titulo — casa X com X_respostas."""
+    norm = re.sub(r"[^a-z0-9]+", " ", norm_ascii_lower(str(title or ""))).strip()
+    stripped = _ANSWER_SUFFIX_RE.sub("", norm).strip()
+    return stripped, stripped != norm and bool(stripped)
+
+
+def exercise_index_md(
+    course_meta: dict,
+    entries=None,
+    *,
+    collapse_ws_fn: Callable[[str], str],
+    merge_manual_and_auto_tags_fn: Callable[..., str],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [
+        f"# EXERCISE_INDEX — {course_name}",
+        "",
+        "> **Como usar:** Índice operacional de prática da disciplina.",
+        "> O tutor consulta este arquivo para localizar listas, provas antigas",
+        "> e recursos de exercícios por unidade, prioridade e finalidade.",
+        "",
+        "| Recurso | Tipo | Unidade | Solução | Prioridade | Quando usar |",
+        "|---|---|---|---|---|---|",
+    ]
+    if entries:
+        # FASE 4: pareamento enunciado<->gabarito por stem do titulo
+        # ("ExerciciosEspecificacao" <-> "ExerciciosEspecificacao_respostas").
+        answer_by_stem = {}
+        for entry in entries:
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            if is_answer:
+                answer_by_stem[stem] = entry.title
+        for entry in entries:
+            notes = collapse_ws_fn(entry.notes or "")
+            tags = collapse_ws_fn(
+                merge_manual_and_auto_tags_fn(
+                    list(entry.manual_tags or []),
+                    list(entry.auto_tags or []),
+                    fallback_tags=entry.tags or "",
+                    limit=3,
+                )
+            )
+            category = collapse_ws_fn(entry.category or "")
+            category_lower = category.lower()
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            kind = ("gabarito" if is_answer
+                    else "prova" if "prova" in category_lower
+                    else "lista" if "lista" in category_lower else "exercício")
+            paired = answer_by_stem.get(stem) if not is_answer else None
+            if is_answer:
+                has_solution = "é o gabarito"
+            elif paired:
+                has_solution = f"sim — {paired}"
+            elif any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]):
+                has_solution = "sim"
+            else:
+                has_solution = "não"
+            # unidade REAL do motor; tags so como fallback (pre-FASE 4 a coluna
+            # inteira era tags cruas).
+            unidade = str(getattr(entry, "computed_unit_slug", "") or "") or tags or "não mapeado"
+            priority = "alta" if "prova" in category_lower or has_solution != "não" else "média"
+            usage = ("conferir após tentar" if is_answer
+                     else "revisão de prova" if "prova" in category_lower else "fixação por unidade")
+            lines.append(
+                f"| {entry.title} | {kind} | {unidade} | {has_solution} | {priority} | {usage} |"
+            )
+    else:
+        lines += [
+            "> Adicione listas ou provas antigas para o tutor conseguir sugerir prática com baixo custo de contexto.",
+        ]
+    lines.append("")
+    result = "\n".join(lines)
+    return clamp_navigation_artifact(result, max_chars=14000, label="exercises/EXERCISE_INDEX.md")

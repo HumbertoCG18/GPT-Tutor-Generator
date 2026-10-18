@@ -1817,25 +1817,7 @@ def _specific_tokens(text: str) -> set:
 
 
 
-def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fallback: bool = False) -> float:
-    title_text = signals.get("title_text", "")
-    markdown_headings_text = signals.get("markdown_headings_text", "")
-    markdown_lead_text = signals.get("markdown_lead_text", "")
-    markdown_text = signals.get("markdown_text", "")
-    category_text = signals.get("category_text", "")
-    manual_tags_text = signals.get("manual_tags_text", "")
-    auto_tags_text = signals.get("auto_tags_text", "")
-    legacy_tags_text = signals.get("legacy_tags_text", "")
-    raw_text = signals.get("raw_text", "")
-    label = _collapse_ws(str(topic.get("topic_label", "") or ""))
-    topic_slug = _collapse_ws(str(topic.get("topic_slug", "") or ""))
-    aliases = [str(alias) for alias in (topic.get("aliases", []) or []) if _collapse_ws(str(alias))]
-
-    if not label and not topic_slug and not aliases:
-        return 0.0
-
-    score = 0.0
-    exact_hits = 0
+def _frases_do_topico(label: str, aliases: List[str], topic_slug: str) -> dict:
     # Dedupe de frases por forma normalizada (2026-09-01): label cujo slug vira
     # a MESMA frase ("Integração contínua (CI)" -> "integracao continua ci")
     # contava label+slug (1.65x) por campo — inflacao estrutural a favor de
@@ -1855,6 +1837,41 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
         if slug_norm and slug_norm not in phrases:
             phrases[slug_norm] = (0.65, slug_phrase)
     phrases.pop("", None)
+    return phrases
+
+
+def _divisores_de_frase(topicos: List[dict]) -> dict:
+    """P1 (#90): F_top de cada chave de frase = nº de tópicos concorrentes com alguma chave que a casa pelo matcher do
+    pontuador. Palavra única < 4 chars não casa nem consigo mesma (F_top 0) e nunca acerta; a divisão é só no acerto."""
+    chaves = [list(_frases_do_topico(
+        _collapse_ws(str(t.get("topic_label", "") or "")),
+        [str(a) for a in (t.get("aliases", []) or []) if _collapse_ws(str(a))],
+        _collapse_ws(str(t.get("topic_slug", "") or "")))) for t in topicos]
+    return {k: sum(1 for ks in chaves if any(_matches_normalized_phrase(q, k) for q in ks))
+            for k in dict.fromkeys(k for ks in chaves for k in ks)}
+
+
+def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fallback: bool = False,
+                                        divisores_frase: Optional[dict] = None) -> float:
+    title_text = signals.get("title_text", "")
+    markdown_headings_text = signals.get("markdown_headings_text", "")
+    markdown_lead_text = signals.get("markdown_lead_text", "")
+    markdown_text = signals.get("markdown_text", "")
+    category_text = signals.get("category_text", "")
+    manual_tags_text = signals.get("manual_tags_text", "")
+    auto_tags_text = signals.get("auto_tags_text", "")
+    legacy_tags_text = signals.get("legacy_tags_text", "")
+    raw_text = signals.get("raw_text", "")
+    label = _collapse_ws(str(topic.get("topic_label", "") or ""))
+    topic_slug = _collapse_ws(str(topic.get("topic_slug", "") or ""))
+    aliases = [str(alias) for alias in (topic.get("aliases", []) or []) if _collapse_ws(str(alias))]
+
+    if not label and not topic_slug and not aliases:
+        return 0.0
+
+    score = 0.0
+    exact_hits = 0
+    phrases = _frases_do_topico(label, aliases, topic_slug)
     for text, weight in [
         (markdown_headings_text, 4.4),
         (title_text, 3.8),
@@ -1865,9 +1882,12 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
         (legacy_tags_text, 0.15),
         (raw_text, 0.9),
     ]:
-        for factor, phrase in phrases.values():
+        for chave, (factor, phrase) in phrases.items():
             if _matches_normalized_phrase(text, phrase, stem_fallback):
-                score += weight * factor
+                if divisores_frase is None:
+                    score += weight * factor
+                else:   # P1 (#90): frase compartilhada pelos concorrentes divide o peso; exact_hits nao muda
+                    score += weight * factor / divisores_frase[chave]
                 exact_hits += 1
 
     _generic = set(topic.get("generic_tokens") or []) or UNIT_GENERIC_TOKENS  # A2: por curso

@@ -1,0 +1,9 @@
+# Mesmas exclusões estruturais da .graphifyignore; .gitignore também é respeitado.
+docs/vendor/
+*.min.js
+*.min.css
+graphify-out/
+.codebase-memory/
+.cache/
+__pycache__/
+docs/reports/_codegraph-benchmark/

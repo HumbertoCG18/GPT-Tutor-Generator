@@ -1,0 +1,4 @@
+  replay base MF 70 78 s
+  replay base SO 42 87 s
+  replay base IA 63 127 s
+  replay base ES2 35 137 s

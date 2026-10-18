@@ -37,3 +37,35 @@ type = "command"
 command = "node scripts/hooks/gemini-antipattern-guard.js"
 commandWindows = "node scripts/hooks/gemini-antipattern-guard.js"
 timeout = 15
+
+
+
+
+
+# alethe-managed-hooks-start
+[[hooks.SubagentStart]]
+matcher = ".*"
+
+[[hooks.SubagentStart.hooks]]
+type = "command"
+command = "true"
+commandWindows = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Humberto\AppData\Local\Temp\alethe-codex-hook-forward-92e8e1be.ps1"'
+timeout = 5
+
+[[hooks.SubagentStop]]
+matcher = ".*"
+
+[[hooks.SubagentStop.hooks]]
+type = "command"
+command = "true"
+commandWindows = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Humberto\AppData\Local\Temp\alethe-codex-hook-forward-92e8e1be.ps1"'
+timeout = 5
+
+# alethe-managed-hooks-end
+
+# alethe-managed-mcp-start
+[mcp_servers.alethe]
+command = "powershell.exe"
+args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", 'C:\Users\Humberto\AppData\Local\Temp\alethe-codex-mcp-bridge-92e8e1be.ps1']
+env_vars = ["ALETHE_PLANNER"]
+# alethe-managed-mcp-end

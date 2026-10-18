@@ -1,0 +1,111 @@
+"""Contratos do motor: tipos de resultado/contexto + Protocols dos 3 tiers.
+
+Sem lógica de negócio — só shape. A implementação vive em window_provider.py,
+disambiguator.py, anchor_engine.py.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Protocol
+
+
+@dataclass
+class AnchorDecision:
+    """Decisão do motor para uma entry (grão de bloco DISPLAY, não uuid).
+
+    band ∈ {"alta","media","baixa",""}; flag=True => entra na fila humana / TIER 3.
+    provider = qual WindowProvider rendeu a janela ("manual"|"labels"|"data"|"topic"|"").
+    method = tier/caminho que decidiu ("janela-1"|"disamb"|"funil"|"d6"|...).
+    window = janela DISPLAY considerada (para auditoria/serialização Dashboard).
+    """
+    block_ref: str
+    conf: float = 0.0
+    band: str = ""
+    flag: bool = False
+    provider: str = ""
+    method: str = ""
+    window: List[str] = field(default_factory=list)
+
+
+@dataclass
+class MotorContext:
+    """Contexto READ-ONLY de um curso: blocos + card_block_map + lessons_index.
+
+    blocks ficam ORDENADOS por period_start; _by_ref indexa id E block_uuid.
+    course_name = nome da disciplina (manifest course.course_name / gold
+    subject); tokens dele são BOILERPLATE local e saem das assinaturas de
+    bloco no disambiguator ("" = sem desconto, comportamento FASE 0).
+    """
+    blocks: List[dict]
+    card_block_map: Dict[str, dict]
+    lessons_index: Dict[str, str]  # {date_iso: topico} (by_date do .lessons_index.json)
+    course_name: str = ""
+    # unidades do plano [{slug, title}] (2026-09-06): a secao do Moodle que NOMEIA a unidade ('U2 - ...' ou o
+    # titulo da unidade) restringe a janela de bloco aos blocos dessa unidade (window_provider.narrow_window_by_unit)
+    units: List[dict] = field(default_factory=list)
+    _by_ref: Dict[str, dict] = field(default_factory=dict, repr=False)
+    _global_df_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    _modal_years_cache: Optional[list] = field(default=None, repr=False, compare=False)
+    _ncm_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    _stems_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # ordinal de ENCONTRO -> ref do bloco (provider_ordinal, P3b)
+    _session_ordinal_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # entry id -> janela DISPLAY do card lido como documento ordenado (card_stream.card_windows,
+    # Fase 3b); preenchido por apply_anchor_engine a partir das entries. None = provider "card" mudo.
+    _card_windows_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # tokens CURTOS (2-3 chars) consagrados pelo cronograma (disambiguator.course_short_vocab, Fase 3c)
+    _short_vocab_cache: Optional[frozenset] = field(default=None, repr=False, compare=False)
+
+    @classmethod
+    def from_artifacts(
+        cls,
+        *,
+        blocks: List[dict],
+        card_block_map: Dict[str, dict],
+        lessons_index: Dict[str, str],
+        course_name: str = "",
+        units: Optional[List[dict]] = None,
+    ) -> "MotorContext":
+        ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
+        by_ref: Dict[str, dict] = {}
+        for b in ordered:
+            for key in (str(b.get("id") or ""), str(b.get("block_uuid") or "")):
+                if key:
+                    by_ref[key] = b
+        return cls(
+            blocks=ordered,
+            card_block_map=dict(card_block_map or {}),
+            lessons_index=dict(lessons_index or {}),
+            course_name=str(course_name or ""),
+            units=list(units or []),
+            _by_ref=by_ref,
+        )
+
+    def block_by_ref(self, ref: str) -> Optional[dict]:
+        return self._by_ref.get(str(ref or ""))
+
+
+class WindowProvider(Protocol):
+    """1º provider que rende janela não-vazia; [] = sem janela (funil-piso)."""
+    def __call__(self, entry: dict, ctx: MotorContext) -> List[str]: ...
+
+
+class Disambiguator(Protocol):
+    """Escolhe DENTRO da janela (só roda se |janela| > 1)."""
+    def __call__(self, entry: dict, window: List[str], ctx: MotorContext,
+                 markdown: str = "", provider: str = "") -> AnchorDecision: ...
+
+
+class AnchorEngineProtocol(Protocol):
+    """Orquestra tiers; None = sem âncora -> funil.
+
+    Nome com sufixo Protocol: a implementação concreta anchor_engine.AnchorEngine
+    tinha shadowing com este Protocol na FASE 0 (dívida do tracker)."""
+    def resolve(self, entry: dict, ctx: MotorContext,
+                markdown: str = "") -> Optional[AnchorDecision]: ...
+
+
+class LlmVoterProtocol(Protocol):
+    """TIER 3: voto LLM bounded a janela; None = sem voto -> mantem decisao/FLAG."""
+    def vote(self, entry: dict, window: List[str], ctx: MotorContext,
+             markdown: str = "") -> Optional[str]: ...

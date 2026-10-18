@@ -1,0 +1,24 @@
+﻿block_uuid,block_id,date_start,date_end,kind,topic_text,unit_slug_atual,true_unit,notes
+c4bf9e4c-80f8-4e57-b2b1-a943c6656e52,bloco-01,2026-03-02,2026-03-02,class,disciplina,unidade-01-metodos-formais,unidade-01-metodos-formais,
+1e73625a-de3e-4c8a-87c4-d301a3138c0b,bloco-02,2026-03-04,2026-03-04,class,introducao metodos formais,unidade-01-metodos-formais,unidade-01-metodos-formais,
+2edd762f-2dc8-4437-90c7-c207b796434a,bloco-03,2026-03-09,2026-03-09,class,logica predicados,unidade-01-metodos-formais,unidade-01-metodos-formais,
+7ccdaf5e-76b8-48e5-82b5-05f80b3f054b,bloco-04,2026-03-11,2026-03-25,class,conjuntos indutivos equacoes recursivas arvores,unidade-01-metodos-formais,unidade-01-metodos-formais,
+7a5e29db-f228-4e96-bd4b-272d5b74e2ae,bloco-05,2026-03-30,2026-04-01,class,inducao arvores,unidade-01-metodos-formais,unidade-01-metodos-formais,
+5599d015-10e0-4f6e-ad17-c526b903dc09,bloco-06,2026-04-06,2026-04-13,class,interativa teoremas isabelle,unidade-01-metodos-formais,unidade-01-metodos-formais,"Isabelle = assistentes de prova, u01 no plano (revisao 2026-08-08 c/ CC)"
+1dd6f143-d239-45bb-8a05-391ef8acbba1,bloco-07,2026-04-15,2026-04-15,review,Revisão para P1,,unidade-01-metodos-formais,revisao vespera P1 (regra: unidade da prova)
+fb878a00-3bfb-455d-9e3c-b5774f69930d,bloco-08,2026-04-20,2026-04-20,suspended,suspensao,,,
+78e52d36-e9a8-4acf-824d-8b63a7ef9f23,bloco-09,2026-04-22,2026-04-22,assessment,Prova P1,,,FORA DA RÉGUA: u01 (kind=assessment)
+171a1a09-a72d-490d-b4d8-5843cfb301b4,bloco-10,2026-04-27,2026-05-04,class,logica hoare,unidade-02-verificacao-de-programas,unidade-02-verificacao-de-programas,
+c9f5f7cf-3477-4531-be7a-f7b68727009c,bloco-11,2026-05-06,2026-05-06,deliverable,logica programas correcao parcial total terminacao invariantes laco entrega trabalho,,unidade-02-verificacao-de-programas,aula de conteudo (invariantes) com Entrega T1 embutida; indice zera por politica deliverable — rotulo = verdade de conteudo
+e3bc8a61-e729-4f25-9bc5-12b8a47151e3,bloco-12,2026-05-11,2026-05-11,class,terminacao introducao dafny,unidade-02-verificacao-de-programas,unidade-02-verificacao-de-programas,
+de7d1b70-fb58-4a18-ad49-d1a64c6c7684,bloco-13,2026-05-13,2026-05-25,class,logica programas introducao dafny colecoes arrays sequencias conjuntos,unidade-02-verificacao-de-programas,unidade-02-verificacao-de-programas,
+8f2d652a-bd74-4e21-aa94-7fc9d6c7bb05,bloco-14,2026-05-27,2026-05-27,academic_event,evento academico,,,"SE Day = evento, fora da regua"
+95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0,bloco-15,2026-06-01,2026-06-10,class,logica programas orientacao objetos dafny ghosts autocontrato,unidade-02-verificacao-de-programas,unidade-02-verificacao-de-programas,
+a6ac04f2-7611-4bef-b74a-54390cef4084,bloco-16,2026-06-15,2026-06-22,class,verificacao modelos logica temporal,unidade-03-verificacao-de-modelos,unidade-03-verificacao-de-modelos,
+ce1ddb74-0774-4bd7-bb52-eae9c09dc17d,bloco-17,2026-06-24,2026-06-24,suspended,suspensao jogo copa mundo,,,
+37d49c0d-3cc1-4a8b-add6-d82ea868ec52,bloco-18,2026-06-29,2026-06-29,class,verificacao modelos ferramenta,unidade-03-verificacao-de-modelos,unidade-03-verificacao-de-modelos,
+38383c92-9c71-4c4c-90af-ad19935e5597,bloco-19,2026-07-01,2026-07-01,review,Revisão para P2,,,revisao vespera P2; P2 cobre u02+u03
+dd52ff18-4d6c-4dcd-a7c2-c154f19ea314,bloco-20,2026-07-06,2026-07-06,assessment,Prova P2 e Entrega T2,,,"FORA DA RÉGUA: u02, u03 (kind=assessment)"
+b0a63baf-b0ae-4cfe-a2cb-c81ce30d5a22,bloco-21,2026-07-08,2026-07-08,assessment,Prova OS,,,FORA DA RÉGUA: tudo (kind=assessment)
+b99568b0-fc0b-4181-bf42-043f4797c92b,bloco-22,2026-07-13,2026-07-13,results,devolucao,,,
+b4a0046d-49c1-4eab-89bc-f62dad577d52,bloco-23,2026-07-15,2026-07-15,assessment,Prova G2,,,FORA DA RÉGUA: tudo (kind=assessment)

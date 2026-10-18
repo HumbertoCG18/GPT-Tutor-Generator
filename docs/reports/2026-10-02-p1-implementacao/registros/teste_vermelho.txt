@@ -1,0 +1,4 @@
+=========================== short test summary info ===========================
+ERROR tests/test_p1_frases_compartilhadas.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 2.48s

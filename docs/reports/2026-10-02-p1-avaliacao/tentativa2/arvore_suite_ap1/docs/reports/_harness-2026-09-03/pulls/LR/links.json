@@ -1,0 +1,85 @@
+[
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Plano de ensino",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059090/mod_resource/content/12/320-340.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\320-340.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Cronograma",
+  "url": "https://sarc.pucrs.br/Default/Export.aspx?id=282a108b-cd17-40c1-aeb4-202b2da1e479&ano=2026&sem=2",
+  "tipo": "cronograma",
+  "acao": "cronograma",
+  "destino": "",
+  "sinal": "sarc",
+  "turma_export": "340",
+  "turma_moodle": "340"
+ },
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Aula 0 - Apresentação da Disciplina",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6065334/mod_resource/content/2/Aula%200%20-%20Apresenta%C3%A7%C3%A3o%20da%20Disciplina.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\Aula 0 - Apresentação da Disciplina.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "[03/08] - Introdução",
+  "nome": "Aula 01 - Introdução",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059092/mod_resource/content/4/Aula%2001%20-%20Introdu%C3%A7%C3%A3o.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\[03.08] - Introdução\\Aula 01 - Introdução.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "[10/08] - Wireshark",
+  "nome": "Laboratório 1 - Wireshark",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059096/mod_resource/content/14/Lab%201%20-%20Wireshark.html?forcedownload=1",
+  "tipo": "material-pagina-arquivo",
+  "acao": "print",
+  "destino": "",
+  "sinal": "resource-html"
+ },
+ {
+  "secao": "[10/08] - Wireshark",
+  "nome": "Página do Wireshark",
+  "url": "https://www.wireshark.org/",
+  "tipo": "review",
+  "acao": "review",
+  "destino": "",
+  "sinal": "nenhum"
+ },
+ {
+  "secao": "[17/08] - DHCP",
+  "nome": "Laboratório 2 - DHCP",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059099/mod_resource/content/3/Lab%202%20-%20DHCP.html?forcedownload=1",
+  "tipo": "material-pagina-arquivo",
+  "acao": "print",
+  "destino": "",
+  "sinal": "resource-html"
+ },
+ {
+  "secao": "[24/08] - DNS",
+  "nome": "Laboratório 3 - DNS",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059106/mod_resource/content/4/Lab%203a%20-%20DNS.html?forcedownload=1",
+  "tipo": "material-pagina-arquivo",
+  "acao": "print",
+  "destino": "",
+  "sinal": "resource-html"
+ },
+ {
+  "secao": "[31/08] - HTTP",
+  "nome": "Laboratório 04 - HTTP(S)",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6059108/mod_resource/content/3/Lab%204%20-%20HTTP.html?forcedownload=1",
+  "tipo": "material-pagina-arquivo",
+  "acao": "print",
+  "destino": "",
+  "sinal": "resource-html"
+ }
+]

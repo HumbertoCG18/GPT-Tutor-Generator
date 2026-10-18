@@ -1,0 +1,6 @@
+28894d0aeed9ed7c57e2ba30efd04934c5261a63d1d8392609b8f1dc491043e5  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-p1/src/builder/timeline/index.py
+6ad4f70b6aee2f1ad1c322e10a6ff26aee5789a4c76dff8dea9a5f574c5a4247  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-p1/src/builder/routing/file_map.py
+10f3188fa6614f3de8f8d16808904229058c56c9984383cbc95248adb2d177aa  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-p1/tests/test_p1_frases_compartilhadas.py
+d30980a3347c9866bbe2a11860310e33497d6b26a2330b408294a6600fa2e3d3  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-cru05/docs/reports/2026-10-01-cru05-cru03/fase1-p1-desenho-congelado-v2.md
+f4bb156f3949ff954f94f3463cb90b4f9e2d928da08f9d098aaf16489593324e  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-p1/docs/reports/2026-10-02-p1-implementacao/diff_p1_vs_bf46d51f.diff
+a3c093c4c7f001347ad8443b9360322a8f90775f6438f84eb89e02d5ee48924c  C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator-p1/docs/reports/2026-10-02-p1-implementacao/relatorio-p1-implementacao.md
