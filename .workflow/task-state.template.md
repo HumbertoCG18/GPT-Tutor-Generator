@@ -33,7 +33,7 @@
 - tipo_de_delegacao: <planejamento | auditoria | revisao_de_diff | pesquisa | implementacao | nenhuma>
 - skills_necessarias_e_evidencia_de_uso:
 - criterio_de_termino:
-- evidencias_e_tentativas:
+- evidencias_e_tentativas: <comando, resultado e data; check não rodado = não executado>
 - diff_e_testes:
 - artefato_instalado: <não aplicável | pendente | commit, caminho absoluto e SHA256>
 - validacao_nativa: <não aplicável | pendente | cenário, resultado e evidência; RAM medida quando pertinente>
