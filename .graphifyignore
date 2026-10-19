@@ -12,3 +12,6 @@ graphify-out/
 __pycache__/
 # Relatórios, logs e fixtures de harness: histórico, não código do projeto.
 docs/reports/
+# Specs e planos arquivados: histórico, representavam 1.587 nós (17%) do grafo (#129).
+docs/specs/_archive/
+docs/plans/_archive/
