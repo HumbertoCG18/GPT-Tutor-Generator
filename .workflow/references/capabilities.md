@@ -8,10 +8,13 @@ catálogo padrão. Quando o gap justificar busca externa, usar sob demanda
 
 Resultado de busca é candidato, não recomendação. Fixar repositório, caminho, commit e
 licença; auditar `SKILL.md`, scripts, referências, hooks, MCPs, rede, telemetria, permissões e
-tratamento de segredos. Comparar com o dono atual usando fixture e critérios prévios. Só
+tratamento de segredos. Comparar com o dono atual na mesma fixture e entrada, com critérios fixados antes de editar;
+uma comparação por rodada, e outra só com falha específica pendente. Uma execução bem-sucedida
+é fumaça, não taxa de confiabilidade. Só
 instalar após issue própria, piloto isolado, ganho verificável e Gates 1/2. Manter a solução
 atual até o candidato superar o baseline; popularidade, estrelas e bytes não provam qualidade,
-segurança ou economia de tokens.
+segurança ou economia de tokens. Lição adotada registra evidência, escopo, data e gatilho de
+invalidação.
 
 Antes de remover skill, MCP, plugin ou conector, medir invocações reais nos transcripts e
 separar definições de ferramenta de chamadas executadas. Distinguir homônimos por prefixo e
