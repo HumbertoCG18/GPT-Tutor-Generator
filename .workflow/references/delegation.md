@@ -17,7 +17,7 @@ arquivos_permitidos / restricoes:
 evidencias_decisivas / testes_ja_executados:
 skills_necessarias: caminho -> acao verificavel (ou nenhuma)
 perguntas_delimitadas:
-saida: achados com arquivo:linha, evidencias, limitacoes; sem repetir o brief
+saida: achados com arquivo:linha, evidencias, limitacoes; separar lido/executado de inferido; sem repetir o brief
 ```
 
 Retornar apenas resultado final ao coordenador; manter eventos completos no log local. Registrar ID da sessão, skills realmente aplicadas e lacunas. Medir chamadas, input total/cache/output separados, crescimento do contexto e tempo. Bytes removidos e tokens em cache não equivalem a economia comprovada de quota; comparar tarefas equivalentes antes de concluir.

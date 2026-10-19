@@ -22,9 +22,15 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 
 ## Elo com a tarefa ativa
 
-No GPT Tutor, uma worktree de desenvolvimento por campanha ativa, criada da `dev`
-atual conferida. As tarefas da campanha compartilham essa worktree e seus checkpoints;
-uma campanha nova recebe outra worktree a partir da `dev` já integrada.
+Em todo repo o tronco é a `dev`; a `main` é backup e só recebe a `dev` por PR de promoção
+quando uma campanha fecha com a suíte inteira verde. O PR sai de `sync/promocao-<campanha>`, criada
+no commit validado da `dev`, com `--base main` (o registry-guard só isenta `sync/*`). A `main` segue como branch padrão do
+GitHub (vitrine estável), então todo PR de trabalho leva `--base dev`.
+Unidade de integração: campanha acoplada (tarefas só funcionam juntas, como no GPT Tutor) usa
+uma worktree de desenvolvimento criada da `dev` atual conferida e entra na `dev` só ao terminar;
+as tarefas compartilham essa worktree e seus checkpoints, e uma campanha nova recebe outra
+worktree a partir da `dev` já integrada. Campanha de tarefas independentes (padrão do lab):
+uma worktree e um PR para `dev` por tarefa.
 `git worktree add -b <branch-da-campanha> <pasta> dev` cria o checkout; registrar base/HEAD,
 campanha e tarefa no estado local. Não herdar estado operacional da campanha anterior.
 
