@@ -20,11 +20,11 @@
   "references/parallel.md": "f9f1d39afcbd7598078200d5a8f8f6b51b0102ef105c334ed88e6a4f0d4db96a",
   "references/resume.md": "9d1bf83bad666e58088f016044508099ad50eb5a73f2d7955e01f4429de30e6e",
   "references/review.md": "e2c32ff6e36c35d6758693a96fe35d17621a10c1b16408edeb7091bae261c977",
-  "references/routing-details.md": "257bbab3f90d4f2b30cced43df875febd4268549fb0295a41019b57b5d59a8a5",
-  "references/routing.md": "8866f07f7291e871ffe5a7f4ebb5f206a31502c8d6e735b0ca2fbbccc8175356",
+  "references/routing-details.md": "dde28985bb9a2357489bbfd43a3bdaf7ca9229a251febe1972a2abd02f63b68e",
+  "references/routing.md": "ec85e062899e4c4e64ab0b98ecd7044981cb7892ed696bc0e8bdcc813a17e97e",
   "references/services.md": "ef308ed758f539ff7515b49546f153a4bf278fad56de6713bf0ac7fb6e11b086",
   "references/tooling.md": "957af908202da7a96dc318fc2edf4dc924df2ea67e2f8c3376948920f6ab7bde",
-  "task-state.template.md": "f4da67ebe3da8567cc7e39cbf6718a0146b7db7de02cc12199c3702c1aecd743",
-  "workflow.md": "175f447f2540f04c64946e1669a3fca4a2ca229e1287d119834ffb508cb70096",
+  "task-state.template.md": "7d9f505cda88e4acef6ecbbd27be681fc68fca37ea98a9a456a4e24953a62c48",
+  "workflow.md": "addec0512eb0d953d298b9ef79a80c406ddc73373df5e14c053d97a7f502f7cb",
   "references/seguranca.md": "6af33815b64f2bc2e52c1b3288752017ee161cef9a8811f547c91c2f66200fd8"
 }

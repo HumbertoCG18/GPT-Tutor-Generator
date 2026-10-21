@@ -25,7 +25,7 @@
 - executor: <Claude/modelo conforme routing.md, Codex na reserva T1/T2 registrada ou escolha explícita>
 - revisor: papel reviewer ou reviewer-high (somente leitura; registrar o modelo observado)
 - restricoes_explicitas:
-- gate_1: pendente <aprovado … | dispensado <motivo> em tarefa pequena e clara>
+- gate_1: pendente <aprovado dd/mm ("citação literal do dono"); legado "aprovado" puro: recuperar data e citação reais | dispensado <motivo> em tarefa pequena e clara>
 - gate_2: pendente
 - etapa_atual:
 - proxima_acao:
