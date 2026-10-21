@@ -26,13 +26,17 @@ You are a Test-Driven Development (TDD) specialist who ensures all code is devel
 
 ## TDD Workflow
 
-### 1. Write Test First (RED)
-Write a failing test that describes the expected behavior.
+### 0. Define Test Points First
+Before any test, list the points to test: entry function or endpoint, each edge case from the list below, and each error path. No test point, no code.
 
-### 2. Run Test -- Verify it FAILS
+### 1. Write Test First (RED)
+Write a failing test that describes the expected behavior, one per test point.
+
+### 2. Run Test -- Verify it FAILS for the right reason
 ```bash
 npm test
 ```
+The failure must be the behavior assertion of the bug or feature. Import error, missing fixture, syntax error or setup failure is not RED: fix the setup and run again.
 
 ### 3. Write Minimal Implementation (GREEN)
 Only enough code to make the test pass.

@@ -14,7 +14,8 @@ uma comparação por rodada, e outra só com falha específica pendente. Uma exe
 instalar após issue própria, piloto isolado, ganho verificável e Gates 1/2. Manter a solução
 atual até o candidato superar o baseline; popularidade, estrelas e bytes não provam qualidade,
 segurança ou economia de tokens. Lição adotada registra evidência, escopo, data e gatilho de
-invalidação.
+invalidação. Sem candidato aprovado, registrar o estado bloqueado com causa e condição de
+retomada (`bloqueio_causa_e_condicao` em task-state.template.md), não adoção parcial.
 
 Antes de remover skill, MCP, plugin ou conector, medir invocações reais nos transcripts e
 separar definições de ferramenta de chamadas executadas. Distinguir homônimos por prefixo e

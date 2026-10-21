@@ -44,6 +44,8 @@
 - status: planejando
 - sessao_delegada:
 - inicio_e_timeout:
+- recursos_e_limpeza: <portas, processos, pastas temporárias e como liberar; nenhum | pendente>
+- bloqueio_causa_e_condicao: <só com status bloqueado: causa e condição de retomada>
 - resultado_e_pendencias:
 
 Atualizar antes de delegar e ao fechar cada etapa. Estados: planejando, executando,

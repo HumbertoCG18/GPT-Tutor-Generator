@@ -9,6 +9,8 @@ Snapshots locais são fallback quando a fonte estiver indisponível; registrar a
 - Claude Code é o terminal principal e implementa/testa pelo nível definido pelo investigador em references/routing.md. Codex planeja/orquestra tarefas complexas, revisa, audita, busca código, escreve documentação/pesquisa e implementa T1/T2 quando a cota do Claude aperta. Antigravity (AGY) entra só por escolha explícita. Uma tarefa tem um coordenador e cada arquivo um escritor; papéis não autorizam trocar modelo silenciosamente.
 - Tarefa pequena fica no executor atual. Decomposição complexa pode ir ao Codex, com brief delimitado; planejamento não consome nem substitui a revisão independente. Não abrir chamada apenas para ocupar as três assinaturas.
 - Gate 1: plano aprovado antes de implementação nova. Gate 2: diff confirmado antes de commit. Autorização já dada no escopo persiste; continuar não autoriza commit, merge/deploy nem outra revisão.
+- Grilling (T2/T3, antes do plano): todas as perguntas abertas numa única mensagem, cada uma com resposta sugerida; o plano só sai depois das respostas. T0/T1 não passam por isso.
+- Medição de planos (T2/T3): cada versão do plano apresentada ao Gate 1 conta; cada versão reprovada (dono nega ou pede novo plano) vira uma linha em `.workflow/local/planos-reprovados.md` do checkout principal: tarefa, data, se houve grilling, motivo em uma frase. Retenção: até a campanha EFICIENCIA fechar. Métrica: reprovadas ÷ apresentadas, antes e depois da regra. Sem baseline medido ainda.
 - Código relevante recebe uma revisão read-only do revisor, sem recursão/retry; o executor selecionado corrige. Registrar a tentativa antes da chamada; falha/timeout/quota também a consomem. Documentação simples recebe conferência local.
 - Persistir tarefa/escopo, branch/HEAD, Gates, contador e chamada em .workflow/local/active-task.md (legado: .workflow-local/) antes de delegar. Só o coordenador atualiza esse estado; tracker/handoff guarda resultados e pendências. Não reabrir tarefa concluída nem zerar contador.
 - Quota esgotada: salvar estado e aguardar orientação; sem troca silenciosa de provider; a reserva de routing.md › Camadas é registrada no estado. Gate técnico indisponível deve ser declarado. Arquivo presente, configuração concluída e execução observada são provas distintas; check não rodado fica "não executado", nunca aprovado.
@@ -25,6 +27,7 @@ Ler a referência da ação antes de executá-la; não carregar a tabela inteira
 | Classificar tarefa e escolher responsável | [Roteamento por tarefa](references/routing.md) |
 | Implementar mudança, abrir issue/PR ou preparar release | [Issues, PRs e releases](references/delivery.md) |
 | Chamar revisor independente | [Executor selecionado e revisor](references/review.md) + delegação |
+| Revisar segurança (só leitura) | [Revisão de segurança](references/seguranca.md) + review.md |
 | Delegar implementação, planejamento, auditoria ou pesquisa | [Delegação com contexto delimitado](references/delegation.md) |
 | Retomar tarefa/chamada interrompida | [Retomada e limites](references/resume.md) |
 | Adotar/remover ferramenta, plugin ou skill | [Descoberta, adoção e remoção de capacidades](references/capabilities.md) |

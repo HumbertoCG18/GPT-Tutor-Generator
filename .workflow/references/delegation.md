@@ -14,6 +14,7 @@ Antes de iniciar, preencher no brief:
 tipo / objetivo / criterio_de_termino:
 cwd / branch / HEAD / diff_fixado:
 arquivos_permitidos / restricoes:
+recursos: portas, banco, pasta de build (ou nenhum)
 evidencias_decisivas / testes_ja_executados:
 skills_necessarias: caminho -> acao verificavel (ou nenhuma)
 perguntas_delimitadas:

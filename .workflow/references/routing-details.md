@@ -40,7 +40,8 @@ e papel explicitamente, pois subprocessos com safe-mode podem não carregar hook
 
 ## Hooks e validação
 
-O lembrete desta rota fica em `personal-instructions.md` (uma vez por sessão nos três CLIs), sem
+O lembrete desta rota (implementação, refatoração, defeito ou git) fica em `personal-instructions.md`
+(uma vez por sessão nos três CLIs, #180), sem
 hook de prompt; no AGY a regra `always_on` guarda só o papel da CLI (../hooks/README.md).
 Hooks que restarem não fazem inferência, escrita de estado nem scheduler; o Codex requer confiança
 da definição em /hooks, sem hashes de confiança nem bypass.

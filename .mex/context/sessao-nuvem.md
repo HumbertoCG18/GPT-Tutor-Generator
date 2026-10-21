@@ -14,7 +14,7 @@ edges:
     condition: instalar e testar no Linux
   - target: context/decisions.md
     condition: porquê de uma decisão, antes de propor mudança
-last_updated: 2026-09-24
+last_updated: 2026-10-21
 ---
 
 # Sessão na nuvem — ler antes de agir
@@ -57,15 +57,8 @@ bloqueado) e o hook é sempre instalado pela sessão, com `chmod +x`.
 
 ## 3. Branch — escolher antes de tudo
 
-- O padrão do remoto é `main`. O motor vive em feat/motor-atribuicao (PR #9 aberto, em
-  conflito). As duas divergiram em 06/2026: em 24/09 eram cerca de 60 commits só na `main` e 1100
-  só no motor.
-- Só no motor: `src/builder/routing/motor/`, `src/builder/ops/assignment_run.py`, cerca de 200
-  testes, réguas e relatórios do motor.
-- Só na `main`: src/observability.py, movimento reduzido na UI, `pydantic` declarado no
-  `pyproject.toml` e a CI python-quality.yml (check obrigatório `core`).
-- Motor, atribuição, timeline → base feat/motor-atribuicao. UI, observabilidade, web C6 → base
-  `main`. Na dúvida, perguntar; não escolher pela conveniência.
+- A base é `dev` (tronco: PRs recentes têm base `dev`). O padrão do remoto ainda é `main`, mas ela está atrasada: em 21/10, `git rev-list --count origin/main..origin/dev` = 1209 e `origin/dev..origin/main` = 0. O motor (antes em feat/motor-atribuicao) já está na `dev`. Conferir esses dois números antes de começar; se a `main` tiver commits próprios, perguntar.
+- Na dúvida sobre a base, perguntar; não escolher pela conveniência.
 - Trabalhar sempre numa branch própria nuvem/<AAAA-MM-DD>-<tema> criada da base.
 - Nunca: commit direto na base, merge, force-push, rebase de branch publicada, fechar issue,
   integrar o PR #9, `git add -A`.
@@ -111,7 +104,7 @@ Detalhe em [architecture.md](architecture.md). Resumo:
 - **Issue antes de editar**: toda mudança de código, doc ou CI parte de uma issue existente (buscar
   duplicata). Criar issue nova só se o pedido autorizar.
 - **PR**: template `.github/pull_request_template.md`; `Closes #N` só para entrega completa,
-  `Refs #N` para parcial. Na `main`, o check `core` é obrigatório, a branch precisa estar
+  `Refs #N` para parcial. Na `main` (e onde a proteção da branch o exigir), o check `core` é obrigatório, a branch precisa estar
   atualizada e as conversas resolvidas.
 - **Testes**: rodar a suíte e corrigir falhas causadas pela mudança, sem pedir licença a cada passo
   (`AGENTS.md`). Separar falha preexistente de falha nova, comparando com a base. Como instalar e
