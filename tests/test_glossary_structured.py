@@ -1,5 +1,6 @@
 """Regressões com plano e contrato de sidecar de test_glossary_curation.py."""
 import json
+import sys
 
 import pytest
 
@@ -57,6 +58,7 @@ def test_fresh_copy_rejects_outside_root(tmp_path, monkeypatch):
     assert not dst.exists()
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="sync_fresh usa robocopy (so Windows)")
 def test_fresh_copy_copies_source_and_propagates_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(ablacao_rapida, "GEN", tmp_path)
     src = tmp_path / "source"
