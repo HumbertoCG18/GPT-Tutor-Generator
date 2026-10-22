@@ -135,7 +135,7 @@ def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, de
     vira entry de ARQUIVO html (`root/<raw>`), nunca url — o conversor de URL busca `moodle.pucrs.br` sem sessao e
     recebe a tela de login (CG: 16 paginas, 0 texto). Se ja existe entry url para o mesmo URL, ela sai (`prune`) e a
     nova herda o id (`id_override`) para golds/curadoria nao quebrarem. `root` = raiz do pull (pai do stash)."""
-    from pathlib import Path
+    from pathlib import Path, PureWindowsPath
     from src.builder.core.stash_import import StashScanResult, build_stash_entries
     from src.builder.sources.moodle import sanitize_folder_name
     from src.models.core import FileEntry
@@ -147,7 +147,7 @@ def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, de
     plan.readd = [a["id"] for a in diff.get("alterados", [])]
     pseudo = []
     for it in scan.items:
-        base = Path(it.source_path).name
+        base = PureWindowsPath(it.source_path).name
         pseudo.append({"_item": it, "source_path": it.source_path, "source_section": it.card_name,
                        "moodle_label": nomes.get(f"{it.card_name}/{base}") or None})
     picked = []
@@ -162,7 +162,7 @@ def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, de
     readd_paths = {str(e.get("source_path") or "") for e in manifest_entries or [] if str(e.get("id") or "") in set(plan.readd)}
     scan_delta = StashScanResult(items=picked, skipped=list(scan.skipped))
     for fe in build_stash_entries(scan_delta, existing - readd_paths, defaults or {}):
-        base = Path(fe.source_path).name
+        base = PureWindowsPath(fe.source_path).name
         fe.moodle_label = str(nomes.get(f"{fe.source_section}/{base}") or "")
         plan.add.append(fe)
     if prune_removed:
@@ -195,7 +195,7 @@ def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, de
             plan.links.append(FileEntry(source_path=url, file_type="url", category="references",
                                         title=str(l.get("nome") or "").strip(),
                                         source_section=sanitize_folder_name(str(l.get("secao") or ""))))
-    plan.ignorados = [Path(p).name for p in scan.skipped if not Path(p).name.startswith(".")]
+    plan.ignorados = [PureWindowsPath(p).name for p in scan.skipped if not PureWindowsPath(p).name.startswith(".")]
     return plan
 
 

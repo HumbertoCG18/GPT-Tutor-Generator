@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import shutil
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Dict
 
 from src.utils.helpers import ensure_dir, safe_rel
@@ -19,7 +19,7 @@ def _section_from_source_path(entry) -> str:
     if str(getattr(entry, "file_type", "") or "") in ("url", "github-repo"):
         return ""
     sp = str(getattr(entry, "source_path", "") or "")
-    return Path(sp).parent.name if sp else ""
+    return PureWindowsPath(sp).parent.name if sp else ""
 
 
 def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:

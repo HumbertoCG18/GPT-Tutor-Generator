@@ -15,7 +15,7 @@ import re
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import List
 
 from src.utils.helpers import slugify, write_json_manifest
@@ -180,7 +180,7 @@ def _section_file_value_index(contents, value_fn):
 def _match_entry_basename(entry, val_by_key, counts):
     """Casa o basename do source_path do entry contra o índice; só retorna
     valor se a key existir, tiver valor e for única (count == 1)."""
-    base = Path(str(entry.get("source_path") or "")).name.casefold()
+    base = PureWindowsPath(str(entry.get("source_path") or "")).name.casefold()
     if base in val_by_key and counts[base] == 1:
         return val_by_key[base]
     return None
@@ -196,7 +196,7 @@ def backfill_moodle_label_from_api(manifest_entries, contents):
     for e in manifest_entries or []:
         v = _match_entry_basename(e, val_by_key, counts)
         if v is not None:
-            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            eid = str(e.get("id") or "") or PureWindowsPath(str(e.get("source_path") or "")).name
             out[eid] = v
     return out
 
@@ -225,7 +225,7 @@ def backfill_posting_date_from_api(manifest_entries, contents):
     for e in manifest_entries or []:
         v = _match_entry_basename(e, val_by_key, counts)
         if v is not None:
-            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            eid = str(e.get("id") or "") or PureWindowsPath(str(e.get("source_path") or "")).name
             out[eid] = v
     return out
 
@@ -268,21 +268,21 @@ def match_module_entries(in_sec, mod, n_name) -> list:
     name = str(mod.get("name") or "")
     files = module_files(mod)
     keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
-    ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+    ids = [e for e in in_sec if PureWindowsPath(str(e.get("source_path") or "")).name.casefold() in keys]
     if not ids and files:
         # Stem so com extensao COMPATIVEL: identica, ou o par html<->pdf da pagina impressa. Sem isto o anexo
         # TransformacoesGeometricas.cpp de uma pagina roubava o TransformacoesGeometricas.zip de outro modulo (CG 04/09).
         stems = {(_norm_text(Path(k).stem), Path(k).suffix.lower()) for k in keys}
         ids = [e for e in in_sec if any(
-            _norm_text(Path(str(e.get("source_path") or "")).stem) == st
-            and _ext_compatible(Path(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
+            _norm_text(PureWindowsPath(str(e.get("source_path") or "")).stem) == st
+            and _ext_compatible(PureWindowsPath(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
     # Label do sidecar == nome do modulo: entry ROTULADA pertence ao modulo mesmo quando outro arquivo ja casou
     # pelo basename (folhas da subarvore levam o label do hub, S6d; sem a uniao viravam "sumidas" na sync, 04/09).
     same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
     if same and (len(same) == 1 or n_name[_norm_text(name)] == 1):
         ids = ids + [e for e in same if e not in ids]
     if not ids:
-        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) == _norm_text(name)]
+        ids = [e for e in in_sec if _norm_text(PureWindowsPath(str(e.get("source_path") or "")).stem) == _norm_text(name)]
     return ids
 
 
@@ -396,7 +396,7 @@ def backfill_source_section_from_api(manifest_entries, contents):
     assignments, unmatched, ambiguous = {}, [], []
     for e in manifest_entries or []:
         eid = str(e.get("id") or "")
-        base = Path(str(e.get("source_path") or "")).name.casefold()
+        base = PureWindowsPath(str(e.get("source_path") or "")).name.casefold()
         if base not in sec_by_name:
             unmatched.append(eid or base)
             continue
@@ -635,7 +635,7 @@ def backfill_repo_signals_additive(repo_root, contents, info, write: bool = True
     posting = backfill_posting_date_from_api(entries, contents)
     n_lab = n_post = 0
     for e in entries:
-        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        eid = str(e.get("id") or "") or PureWindowsPath(str(e.get("source_path") or "")).name
         if labels.get(eid) and not str(e.get("moodle_label") or "").strip():
             e["moodle_label"] = labels[eid]
             n_lab += 1
@@ -676,7 +676,7 @@ def backfill_repo_signals_consumed(repo_root, contents, info, write: bool = True
     assignments, _u, _a = backfill_source_section_from_api(entries, contents)
     n_sec = 0
     for e in entries:
-        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        eid = str(e.get("id") or "") or PureWindowsPath(str(e.get("source_path") or "")).name
         if eid in assignments:
             e["source_section"] = assignments[eid]
             n_sec += 1
