@@ -54,8 +54,8 @@ Dimensionar cada tarefa para o teto: o Alethe informa o orçamento no início do
   validador-externo (Codex gpt-6-astra, high, readOnly, 1800 s) para a validação externa de
   um pacote congelado, até 2 rodadas automáticas antes da rodada final do usuário no app. Papel
   ausente: model/effort e readOnly explícitos pelo nível em routing.md, registrando a
-  limitação. Claude aceita model e effort, mas recusa readOnly: trabalho somente
-  leitura vai para Codex ou fica no agente ativo, exceto a revisão de código do Codex (review.md). Conferir role/model/effort/readOnly
+  limitação. Claude aceita model, effort e readOnly (só Read, Grep e Glob, desde
+  alethe-agents#207); Antigravity recusa readOnly. Revisor: review.md. Conferir role/model/effort/readOnly
   no retorno antes de depender deles.
 - Implementação fica no agente ativo por padrão. Delegar a executor-tN só quando o
   investigador decidir (unidades independentes ou nível diferente do da sessão), com

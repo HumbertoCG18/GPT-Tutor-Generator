@@ -3,7 +3,7 @@
 Atualizado em 23/09/2026. Índice por horizonte, uma linha por item.
 Estado vivo e prioridade das campanhas: bloco `fila-campanhas` de [`docs/reports/pendencias.md`](docs/reports/pendencias.md).
 Detalhe das ideias de produto: seção **CAMPANHA FUTURA (produto) [BACKLOG VIVO]** do mesmo tracker, que é a caixa de entrada.
-Ideia nova entra primeiro na caixa; aqui só entra depois de triada. Ferramentas avaliadas e não adotadas: [`.workflow/pendencias_workflow.md`](.workflow/pendencias_workflow.md).
+Ideia nova entra primeiro na caixa; aqui só entra depois de triada. Ferramentas avaliadas e não adotadas: achado ACH-0030 do agent-workflow-lab, com o gatilho de reabertura de cada uma.
 
 ## Agora
 

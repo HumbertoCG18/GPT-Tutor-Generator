@@ -22,7 +22,8 @@ contra CLI 18/82; chrome-devtools 0/0/0; perssua 0/0/0. O 1 do github no Claude 
 graphify no AGY de 30/09 não se reproduzem (hipótese: transcripts rotacionados). Removidos: github (as três),
 graphify e chrome-devtools-mcp (Claude, AGY), perssua (Claude; segue desligado no
 Codex e no AGY). O chrome-devtools continua via plugin ECC no Claude e no Codex.
-Codex mantém as ferramentas do app (cua_repl, node_repl, codex_app).
+Codex: node_repl (MCP, sem `enabled` = ativo) e o plugin codex-app-tools seguem ativos; cua_repl
+fica desligado (`enabled = false`), assim como graphify e perssua.
 Readicionar: claude mcp add perssua -s user -e PERSSUA_MCP_SOURCE=... -- cmd.exe /d /s
 /c npx -y @perssua/mcp; graphify MCP com graph.json do projeto como argumento.
 Backups: ~/.claude.json, ~/.codex/config.toml e ~/.gemini/config/mcp_config.json com
@@ -69,12 +70,27 @@ o papel, executar a etapa inline seguindo a definição em
 (tdd-guide.md ou python-reviewer.md), preservando Gates 1/2. Nunca inventar
 uma chamada de subagente. Ausência do papel ECC não é gatilho para escalar ao revisor.
 
+## `/goal`: encerrar só com a suíte verde
+Sem hook novo no Stop (os 10 atuais somam 2,3 s por turno). `/goal` é um hook Stop de prompt, por sessão; custo do avaliador não medido.
+Usar em trabalho com fim verificável. Exemplo: `/goal pytest -q bin hooks claude plugins githooks sai com código 0, ou parar após 20 turnos`.
+O avaliador (modelo pequeno) não roda comandos: só lê o que o agente mostrou. Pedir o comando e a saída final.
+Limite da condição: 4.000 caracteres. `/goal clear` remove. Indisponível com `disableAllHooks`.
+Fonte: https://code.claude.com/docs/en/goal
+
+## Leitura que cabe no contexto (#339)
+
+Medido em 23/10 na sessão 9d476570: depois da compactação, 218 saídas de ferramenta somaram 269.563 caracteres, e 3 leituras inteiras ocuparam 75.303 deles. Para evitar:
+- Arquivo ou artefato grande: localizar com `grep -n` ou com a ferramenta Grep, e ler só o trecho (`Read` com `offset`/`limit`). O `Artifact read` salva o HTML num arquivo local, que também se lê por trecho. O painel lido inteiro custou 49.999 caracteres.
+- Busca no lab exclui `graphify-out/` (`--exclude-dir=graphify-out`, ou `glob` na Grep). Sem isso, um `grep -rln` deu 15.394 caracteres, a maior parte de `graph.json` diários.
+- `bin/show-config.py`: primeiro `--keys`, depois o caminho mais estreito que responde, nunca o bloco `hooks` inteiro. `hooks.PreToolUse` deu 9.910 caracteres, quase tudo `node -e` dos hooks ECC.
+
 ## Número medido
 
 Número medido citado em doc ou eval vem com três marcas: N (amostras ou rodadas), faixa (min–max ou IC)
 e limitador (o que não foi medido). Com N=1 a faixa escreve-se `faixa n/d (N=1)`. Contagem exata de itens observados (achados, rodadas,
 sessões) dispensa faixa; mediana com mínimo e máximo vale como faixa. Sem as três, o número
 é só indício: não serve de decisão.
+Antes de citar, responder: rodou como roda de verdade (build, flags e cache de produção)? contou erros e falhas, não só o tempo? o trabalho aconteceu dentro da região medida (cache, lazy load, processo em background)? alternou A/B em vez de A depois B? (origem: pstack `benchmark-checklist`, perguntas 2, 4, 7 e alternância da 5).
 
 ## Donos por fase
 

@@ -6,7 +6,8 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 
 ## Registro
 
-- Ferramenta: `bin/campanhas.py` — `listar [--noite] [--curto]`, `validar`, `estado ID NOVO [--evidencia T] [--resultado T]`, `tarefa`, `passo`, `noite`, `achado`, `achados`, `triar`. `--registro CAMINHO` substitui o local. O hook SessionStart (hooks/README.md) injeta `listar --curto`.
+- Ferramenta: `bin/campanhas.py` — `listar [--noite] [--curto] [--arquivo]`, `arquivar [--dias N]`, `validar`, `estado ID NOVO [--evidencia T] [--resultado T]`, `tarefa`, `passo`, `noite`, `achado`, `achados`, `triar`. `--registro CAMINHO` substitui o local. O hook SessionStart (hooks/README.md) injeta `listar --curto`.
+- Arquivo: `arquivar` move as tarefas `concluída`/`descartada` (de campanhas paradas há N dias; padrão 0 = todas) para `.workflow/campanhas-arquivo.json` (`{"campanhas": {ID: [tarefa]}}`), sob a mesma trava; a campanha guarda a contagem em `arquivadas` e o progresso não muda. Ids arquivados não se reusam e `estado`/`passo` os tratam como somente leitura.
 - Diário da noite: `noite TAREFA --resultado ok|aguarda-voce|falhou|parou --resumo T [--evidencia T]` acrescenta uma entrada em `.workflow/local/noites/<AAAA-MM-DD>.json` do checkout principal (data em que a noite começou: antes de 12:00, ontem); resumo até 120 caracteres; não muda o estado da tarefa. `listar --curto` resume o diário mais recente em "Noite de DD/MM: …".
 - Campanha: `id`, `titulo`, `prioridade`, `janela`, `depende_de`, `worktrees`, `handoff`, `atualizado_em`, `decomposta`, `tarefas`.
 - Tarefa: `id`, `titulo`, `nivel`, `estado`, `depende_de`, `janela`, `eixo`, `nota`, `motivo`, `origem`, `evidencia`, `resultado`, `recorrente`, `passos` (`[{texto, feito}]`; o atual é o primeiro não feito).
@@ -23,7 +24,8 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 ## Elo com a tarefa ativa
 
 Em todo repo o tronco é a `dev`; a `main` é backup e só recebe a `dev` por PR de promoção
-quando uma campanha fecha com a suíte inteira verde. O PR sai de `sync/promocao-<campanha>`, criada
+quando uma campanha fecha com a suíte inteira verde e a revisão de fim de campanha aprovada
+(review.md). O PR sai de `sync/promocao-<campanha>`, criada
 no commit validado da `dev`, com `--base main` (o registry-guard só isenta `sync/*`). A `main` segue como branch padrão do
 GitHub (vitrine estável), então todo PR de trabalho leva `--base dev`.
 Unidade de integração: campanha acoplada (tarefas só funcionam juntas, como no GPT Tutor) usa
@@ -70,6 +72,7 @@ remota fica) ou adiar.
 - Confirmação: título/ID, N restantes, estimativa (não medida ou "a definir"), prioridade, janela e risco.
 - Opções: executar agora · reservar · detalhar · voltar. Tarefa bloqueada só admite detalhar ou desbloquear, nunca lançar.
 - Não repetir escolha já registrada no registro.
+- Uma sessão por campanha (aprovado pelo dono em 23/10/2026, #339): trabalho fora de campanha conta como frente própria. Ao trocar de campanha ou de frente, o estado vai para o registro, o `active-task.md` e o work_state, e a próxima começa com `/clear` ou sessão nova. Motivo: na sessão 9d476570, que juntou seis frentes, `/context` deu 323.3k de 400k, com as mensagens em 293.9k e o custo fixo da sessão em ~29k.
 
 ## Estimativa, janela e reserva
 
