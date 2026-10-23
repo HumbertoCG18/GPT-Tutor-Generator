@@ -44,6 +44,15 @@ T2 no Sonnet e T1 no Haiku (ROTA-04, aprovado pelo dono em 15/10/2026): escalar 
 Sonnet travar, falhar no aceite ou a revisão achar P1 que ele não corrige; T1 sobe do Haiku ao
 Sonnet nas mesmas condições. Evidência: ../evals/rota-03-2026-10-15.md.
 
+Subagente Claude para implementar T1/T2: worker (../agents/worker.md, sem Skill nem Agent, mantém
+o CLAUDE.md), no lugar de general-purpose. O frontmatter é sonnet (T2 e escalada do T1); em T1
+passar `model: haiku` na chamada, que vale mais que o frontmatter. 21/10, general-purpose gastou mediana
+33.964 tokens na 1ª chamada e 0 Skill em 24 subagentes; haiku-ops (tools explícito) gastou 9.293.
+
+Investigação só de leitura (medir, achar causa, contar uso, comparar versões) -> subagente investigador
+(../agents/investigador.md), não general-purpose: general-purpose gastou 33.964 tokens na 1ª chamada contra 9.293 do haiku-ops
+(medido 21/10; o investigador ainda não foi medido).
+
 Reserva no Codex (ROTA-06, aprovado pelo dono em 16/10/2026): uma rodada só. A cota do AGY (plano
 PRO) é baixa, então reserva, escrita e auditoria saem do AGY. Evidência:
 ../evals/rota-05-2026-10-16.md. Números das duas medições: routing-details.md › Medições ROTA-04 e ROTA-06.
@@ -69,20 +78,26 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 - Codex implementando roda sem os hooks do workflow (`features.hooks=false`, SEG-02): só o sandbox
   protege. Nunca com `--dangerously-bypass-approvals-and-sandbox`, `--yolo` ou `danger-full-access`;
   brief sem segredos; proibido no noturno (noite.md).
-- Revisão: o revisor é independente do implementador, não do orquestrador. Código do Claude: revisor
-  Codex (gpt-6-astra). Código do Codex: revisor claude-opus-5-5 / high, pelo mesmo review.md. Sem
-  cota do revisor, a revisão espera e nunca passa ao fornecedor do implementador.
+- Revisão (#332, aprovado pelo dono em 22/10/2026): o revisor é independente do implementador, não do
+  orquestrador. Todo código é revisado por claude-opus-5-5 (medium em T1/T2, high em T3), em contexto
+  novo: só o brief, nunca fork da sessão que implementou. Em T3 o revisor pode ser o mesmo modelo do
+  implementador. Fallback: com a cota do Claude acima de 80% (mod `cota-alerta`; no Alethe, o limiar
+  do app), código do Claude vai ao revisor Codex (gpt-6-astra). Código do Codex não tem fallback: sem
+  cota do Claude, a revisão espera, porque nunca passa ao fornecedor do implementador.
 - Leitura, auditoria e busca: camada 2 (../agents/codex-leitor.md), somente leitura. Escrita e
   pesquisa: camada 2 (../agents/escritor.md), com `-s workspace-write` limitado aos alvos do brief.
-- Alethe: o fallback de papel configurado lá (provedor acima de 80%, um nível, só se o outro tem folga) ainda
-  aponta para o AGY; adequar é pendência do Alethe, e o workflow não depende dele.
+- Alethe: o fallback de papel (provedor acima de 80%, um nível, só se o outro tem folga) é medido por
+  agente, não por modelo; o workflow não depende dele.
 - Orquestrador Codex (escolha explícita): não edita arquivos; toda edição vai aos papéis executor-t*.
   Os papéis "Qualquer" servem aos dois orquestradores; os planejadores Codex ficam redundantes,
   sem precisar mudar.
-- Papéis no Alethe (AGY-03): executor-t1 ↔ executor-t1-agy (Sonnet 5.5 medium), executor-t2 ↔
-  executor-t2-agy (Opus 5.5 high, o mesmo modelo do principal), executor-t3 sem fallback,
-  escritor-agy (Claude Sonnet 5.5 medium). Revisores, planejadores e validador: gpt-6-astra, somente
-  leitura e sem fallback (somente leitura só cai para somente leitura, e só o Codex roda assim).
+- Papéis no Alethe (#332, substitui AGY-03): executor-t1 (haiku high) ↔ executor-t1-astra
+  (gpt-6-astra medium), executor-t2 (sonnet high) ↔ executor-t2-astra (gpt-6-astra high),
+  executor-t3 (opus high) sem fallback, escritor-agy sem fallback. reviewer (opus medium) e
+  reviewer-high (opus high), somente leitura, com fallback para um papel Codex gpt-6-astra somente
+  leitura; somente leitura só cai para somente leitura. O Claude roda somente leitura (Read, Grep,
+  Glob) desde alethe-agents#207, no build com o commit 05b882c. Planejadores e validador: gpt-6-astra,
+  somente leitura e sem fallback. O dono aplica os papéis em Preferências > Orquestração.
 
 ## Leitura no plano da OpenAI (fase 3 da #5, aprovada em 10/10/2026)
 

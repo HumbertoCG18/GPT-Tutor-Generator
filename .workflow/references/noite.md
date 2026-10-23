@@ -21,3 +21,13 @@ Valem até a correção de cada lacuna; levantar uma restrição exige decisão 
 3. Executor Codex do modo economia não roda: o guarda só confere o prefixo `codex exec` e aceita comando encadeado.
 4. AGY não roda: a config do usuário tem sandbox de terminal desligado, acesso fora do workspace liberado e nenhum hook.
 5. Skills só de origem registrada (`deployed-skills.json` ou plugin com versão e commit); MCP ativo sem versão fixa é erro do verify.py.
+
+## Checklist antes de sair (#313)
+
+Seis travas da noite (~7,3 h) vieram de `ask` sem ninguém acordado.
+
+- Heredoc com delimitador entre aspas lido por `cat`, `tee` ou `python -` já não pede por causa de `eval`/`exec` no corpo; evitar `sh <<`, `bash <<` e `eval`, que ainda pedem.
+- Commit só na forma canônica e só pelo agente principal; subagente não grava.
+- Edição de teste que remove ou troca `assert` é negada pelo teste-guard em subagente (dia ou noite) e pergunta no agente principal (#313): acrescentar testes em vez de trocar asserts. O git-lock também nega em subagente o commit fora da forma canônica.
+- Comparação nova num teste novo não pergunta mais; trocar `==` por `>=` num assert existente pergunta.
+- Worktrees em `alw-wt/<issue>`; nada fora dele.

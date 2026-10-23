@@ -31,6 +31,7 @@ Ler a referência da ação antes de executá-la; não carregar a tabela inteira
 | Delegar implementação, planejamento, auditoria ou pesquisa | [Delegação com contexto delimitado](references/delegation.md) |
 | Retomar tarefa/chamada interrompida | [Retomada e limites](references/resume.md) |
 | Adotar/remover ferramenta, plugin ou skill | [Descoberta, adoção e remoção de capacidades](references/capabilities.md) |
+| Propor regra, comando ou skill a partir de padrões repetidos | [Aprendizado](references/learning.md) |
 | Usar ferramentas compartilhadas, ECC, Graphify ou RTK | [Ferramentas locais](references/tooling.md) |
 | Rodar trabalhadores simultâneos | [Enxame experimental](references/parallel.md) |
 | Usar Context7 ou saída estruturada AGY | [Context7 e segredos](references/services.md) |
