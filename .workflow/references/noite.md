@@ -31,3 +31,4 @@ Seis travas da noite (~7,3 h) vieram de `ask` sem ninguém acordado.
 - Edição de teste que remove ou troca `assert` é negada pelo teste-guard em subagente (dia ou noite) e pergunta no agente principal (#313): acrescentar testes em vez de trocar asserts. O git-lock também nega em subagente o commit fora da forma canônica.
 - Comparação nova num teste novo não pergunta mais; trocar `==` por `>=` num assert existente pergunta.
 - Worktrees em `alw-wt/<issue>`; nada fora dele.
+- Antes de sair: `/noite` (ou `campanhas.py noite-flag ligar`) liga o flag `.workflow/local/noite` do lab por 12 h e mostra as tarefas livres. Com ele, o `ask` do git-lock e do teste-guard vira bloqueio com motivo também no agente principal, que reescreve o comando ou acrescenta testes (#345, #347). De manhã: `/dia`.
