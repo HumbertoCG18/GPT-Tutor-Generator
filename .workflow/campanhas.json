@@ -553,7 +553,7 @@
       "janela": "assistida",
       "depende_de": [],
       "worktrees": [],
-      "atualizado_em": "2026-10-02",
+      "atualizado_em": "2026-10-23",
       "tarefas": [
         {
           "id": "NOITE-01",
@@ -575,19 +575,21 @@
           "id": "NOITE-03",
           "titulo": "O noturno lê o registro e só pega tarefas com janela noite e sem bloqueio",
           "nivel": "T2",
-          "estado": "proposta",
+          "estado": "concluída",
           "depende_de": [
             "WORKFLOW-01"
-          ]
+          ],
+          "evidencia": "transferida: já existe no laboratório (bin/campanhas.py, effective_janela; seleção só janela noite sem bloqueio); INTEGRA-01, GPT Tutor #138"
         },
         {
           "id": "NOITE-04",
           "titulo": "Um coordenador novo por tarefa, para o contexto não crescer a noite inteira",
           "nivel": "T2",
-          "estado": "proposta",
+          "estado": "concluída",
           "depende_de": [
             "NOITE-03"
-          ]
+          ],
+          "evidencia": "transferida para o registro do laboratório: NOITE-04 (INTEGRA-01, GPT Tutor #138)"
         }
       ]
     },
