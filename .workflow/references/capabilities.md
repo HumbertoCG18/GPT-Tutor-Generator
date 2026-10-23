@@ -22,3 +22,9 @@ separar definições de ferramenta de chamadas executadas. Distinguir homônimos
 origem, mapear dependências e confirmar o substituto já usado. Zero uso sem cobertura de
 transcript vira lacuna de observabilidade, não autorização de remoção. Preferir desabilitação
 reversível; cada lote de remoção usa issue, diff, rollback e Gates próprios.
+
+Ao instalar ou alterar nas três CLIs, arquivo instalado, recurso descoberto e chamada executada
+são provas distintas; uma não prova as outras. No Codex, arrays de configuração do projeto
+substituem os globais: o projeto declara a seleção completa, não só acréscimos. O AGY rejeita
+descrição YAML sem aspas que contenha dois-pontos, mesmo quando outra CLI a aceita. O Claude Code
+pode expor o nome da pasta da skill, não o `name` do frontmatter: conferir a descoberta na CLI.

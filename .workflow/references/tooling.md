@@ -103,13 +103,13 @@ Saíram das instruções pessoais na #180. Uma fase, um dono.
 - Medição repetida: parallel-execution-optimizer. Git e PR: git-workflow e pr. Aprendizado: skill-create quando disponível.
 - Escada de aprendizado: erro que se repete vira primeiro check mecânico (hook, `verify.py` ou teste) e só depois texto. O check só vale se falhar (vermelho) com o caso real passado e passar após a correção; registrar o caso na issue ou no teste.
 - Skills: carregar só na fase correspondente e conforme as regras da CLI. Leitura com objetivo: `rg` localiza, depois só o trecho necessário.
-- Fontes: `.mex/ROUTER.md` localiza. A memória é a quarta fonte, depois de tracker e handoff; não buscar sessão anterior já documentada.
+- Fontes: o mapa de fontes do projeto localiza (tabela tarefa → estado e fontes): `.mex/ROUTER.md` quando existir; sem `.mex`, uma seção nesse formato no AGENTS.md. A memória é a quarta fonte, depois de tracker e handoff; não buscar sessão anterior já documentada.
 - Salvar na memória só o que surpreenderia uma sessão futura e não se deriva de código, git ou docs. Cada lição leva a fonte e o gatilho de invalidação.
 
 ## Glossário e ADR leve
 
 Não por padrão. Um projeto ganha glossário só com termo sobrecarregado comprovado: o mesmo termo com dois significados que já geraram erro ou retrabalho registrado (issue, revisão, handoff). Sem esse registro, não criar.
-- Onde: seção `## Glossário` no `.mex/ROUTER.md` do projeto, linkada do próprio ROUTER; sem arquivo novo, sem glossário global no laboratório.
+- Onde: seção `## Glossário` no mapa de fontes do projeto (`.mex/ROUTER.md` quando existir), linkada do próprio mapa; sem arquivo novo, sem glossário global no laboratório.
 - Formato mínimo: `termo: significado adotado; o que não é; fonte`. Uma linha por termo. ADR leve: só decisão que contradiz o óbvio do código, 3 linhas (contexto, decisão, gatilho de revisão), na mesma seção.
 - Manutenção: termo sem consulta no período de medição sai (mesma regra de remoção de skill).
 - Medição de consultas reais: contar leituras do ROUTER depois de criado o glossário, não grep do termo. `python skills/medir-uso-antes-de-remover/scripts/count_tool_use.py '\.mex/ROUTER\.md' --in-args` por projeto, antes e depois (`--until` fixa a data de corte). Consulta ao glossário = leitura do ROUTER em sessão cujo tema contém o termo; a contagem do arquivo inteiro é teto, não consulta ao glossário. Janela e limiar de remoção: definir ao criar o primeiro glossário; hoje 🔴 sem dado (nenhum glossário existe).
