@@ -71,7 +71,7 @@ o papel, executar a etapa inline seguindo a definição em
 uma chamada de subagente. Ausência do papel ECC não é gatilho para escalar ao revisor.
 
 ## `/goal`: encerrar só com a suíte verde
-Sem hook novo no Stop (os 10 atuais somam 2,3 s por turno). `/goal` é um hook Stop de prompt, por sessão; custo do avaliador não medido.
+Sem hook novo no Stop além do `tamanho.py` (#374, aprovado em 24/10); em 21/10 os 10 hooks Stop da sessão, plugins incluídos, somavam 2,3 s por turno (#244). `/goal` é um hook Stop de prompt, por sessão; custo do avaliador não medido.
 Usar em trabalho com fim verificável. Exemplo: `/goal pytest -q bin hooks claude plugins githooks sai com código 0, ou parar após 20 turnos`.
 O avaliador (modelo pequeno) não roda comandos: só lê o que o agente mostrou. Pedir o comando e a saída final.
 Limite da condição: 4.000 caracteres. `/goal clear` remove. Indisponível com `disableAllHooks`.

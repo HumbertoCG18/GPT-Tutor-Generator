@@ -49,9 +49,14 @@ o CLAUDE.md), no lugar de general-purpose. O frontmatter é sonnet (T2 e escalad
 passar `model: haiku` na chamada, que vale mais que o frontmatter. 21/10, general-purpose gastou mediana
 33.964 tokens na 1ª chamada e 0 Skill em 24 subagentes; haiku-ops (tools explícito) gastou 9.293.
 
-Investigação só de leitura (medir, achar causa, contar uso, comparar versões) -> subagente investigador
-(../agents/investigador.md), não general-purpose: general-purpose gastou 33.964 tokens na 1ª chamada contra 9.293 do haiku-ops
-(medido 21/10; o investigador ainda não foi medido).
+<a id="leitura-dono"></a>
+Trabalho só de leitura: um dono por tipo (#360).
+
+| Tipo de leitura | Dono |
+|---|---|
+| Investigação, auditoria, verificar issue contra o código, triagem do registro | Codex via `codex_read` (padrão; ver Leitura no plano da OpenAI) |
+| Precisa gravar arquivos de sonda ou rodar comandos fora do sandbox read-only do Codex (ex.: enviar payload a hooks) | Subagente `investigador` (../agents/investigador.md) |
+| Busca ampla de arquivos | Explore com `model: haiku` |
 
 Reserva no Codex (ROTA-06, aprovado pelo dono em 16/10/2026): uma rodada só. A cota do AGY (plano
 PRO) é baixa, então reserva, escrita e auditoria saem do AGY. Evidência:
@@ -101,9 +106,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 
 ## Leitura no plano da OpenAI (fase 3 da #5, aprovada em 10/10/2026)
 
-Trabalho só de leitura vai para o Codex: verificar a issue contra o código antes de implementar,
-investigação delimitada, auditoria, busca de código e triagem do registro de campanhas ou de achados
-(../agents/codex-leitor.md). Fora do Alethe, ferramenta codex_read do Mod astra-review; no Alethe,
+Dono por tipo de leitura: tabela em [Investigador e níveis](#leitura-dono). Codex (../agents/codex-leitor.md): fora do Alethe, ferramenta codex_read do Mod astra-review; no Alethe,
 alethe_delegate com readOnly. A implementação fica com modelos Claude, inclusive T1; o Codex só
 implementa na reserva (Camadas). O coordenador confere a resposta no código antes de agir e registra no
 estado o caminho e o que confirmou ou refutou. Limites: Codex nunca implementa sem troca registrada;
@@ -140,9 +143,7 @@ Haiku recebe tarefas inteiras, repetitivas e já especificadas; evidência em
 ../evals/rota-03-2026-10-15.md. O coordenador confere o resultado antes de usá-lo.
 
 - Executor T1 (tabela de níveis), com escalada ao Sonnet.
-- Busca ampla só de leitura no Claude Code (varrer muitos arquivos para localizar, só a
-  conclusão): Explore com model haiku; com a cota do Claude apertada ou por escolha, codex-leitor.
-  Investigação e validação seguem no Codex (seção acima).
+- Busca ampla de arquivos: Explore com model haiku (tabela em [Investigador e níveis](#leitura-dono)).
 - Tarefa operacional: subagente haiku-ops (../agents/haiku-ops.md) para rascunho de commit/PR,
   comandos do registro de campanhas, resumo de log ou relatório, inventário e contagem, renomear
   lista aprovada e edição pequena exata. Ele devolve a tarefa quando falta insumo.
