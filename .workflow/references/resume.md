@@ -9,6 +9,20 @@ Quando houver quota esgotada, salvar estado e aguardar orientação; não trocar
 Automação conduzida pelo agente enquanto a sessão está ativa, com autorização persistente nas instruções. Esta política não instala daemon, monitor de reset ou scheduler. O scheduler
 nativo do Alethe não libera automaticamente execução noturna. Hooks existentes mantêm verificações mecânicas; não disparam LLM. O limite de uma revisão automática depende do coordenador seguir o estado, não de bloqueio técnico no servidor. Gates ECC permanecem aplicáveis; autorização explícita de commit dada pelo usuário no escopo prevalece, depois de preparar e verificar o diff.
 
+## Estados de retomada (#353)
+
+Ao retomar, declarar um estado por tarefa na primeira linha do resumo. No diário da noite, `--resultado` leva o valor da tabela e o `--resumo` abre com o prefixo.
+
+| Estado | Quando | `--resultado` | Prefixo do `--resumo` |
+|---|---|---|---|
+| retomada | estado, branch, HEAD e diff conferem; segue a próxima etapa | `ok` (ou `parou` se cortou antes do fim) | `retomada:` |
+| do zero | contexto ou estado perdido, ou ausente/contraditório; refeito a partir do Git e do tracker | `ok`, `aguarda-voce` ou `parou` conforme o desfecho | `do zero:` |
+| pronto | `status: concluido`, `gate_2: pendente` | `aguarda-voce` | `Gate 2:` |
+| decisão | parou numa decisão de plano ou escopo | `aguarda-voce` | `decisão:` |
+| falha | teste, verificação ou delegação falhou | `falhou` | `falhou:` |
+
+`aguarda-voce` cobre "pronto" e "decisão"; só o prefixo os separa. Sem valor novo em `--resultado`: o contador de `listar --curto` continua com quatro categorias.
+
 ## Continuidade no Alethe
 
 Identidade verificável em campos separados: `- worktree: <absoluto>`, `- branch: <nome|detached>`
