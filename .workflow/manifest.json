@@ -11,7 +11,7 @@
   "agents/tdd-guide.md": "b54bc425c68193d1119adbcc9f4e8783140ede3cb86641214d097bf172438c42",
   "evals/research-output.schema.json": "379a6db0ce2bfa97179127690fb1e2d4b4968d493643d8885b3282a1e12f6480",
   "README.md": "63b92d96e82c27901dc907637cefdfc8f445d5443c527258ac303546b9cb6aaf",
-  "references/campaigns.md": "2ae7ccbdbecf1f29bd26b4a398bd5eed501838d7321ad70a0bd158451c6679b4",
+  "references/campaigns.md": "ac47fcaf1c486dad3f9fcd3843261e48ac44433d812081ec221e3970ad1e93cf",
   "references/capabilities.md": "736b251173a17726af69e1f79a36d1bbbc4281f6d480f29070dc8b0e1e1377b7",
   "references/delegation.md": "e0a1ec30192c7ad79ac5e55c884750a9acbea2e924a6de8efda33094210219e1",
   "references/delivery.md": "83f0ca58c85579f3e6325f6ecfa8d481044df7872652b3d143b079d7897458fe",
@@ -19,12 +19,15 @@
   "references/parallel.md": "f9f1d39afcbd7598078200d5a8f8f6b51b0102ef105c334ed88e6a4f0d4db96a",
   "references/resume.md": "f2f0ab92207890eba5a4f760f2eb2d88c226c8566b95e5eebe6d23d5bc80e0d3",
   "references/review.md": "114f6f217f885e2a0cc2e86db3552a73f96ad849b2a55cb3293640161073aa36",
-  "references/routing-details.md": "dde28985bb9a2357489bbfd43a3bdaf7ca9229a251febe1972a2abd02f63b68e",
-  "references/routing.md": "8c746f7e83922c738778fac079ea26afbf2b955b51817da424fdacecde761f5b",
+  "references/routing-details.md": "0b80d2070d31f1a885076ff0755a9f50c673fb7f66caf37ef2be53679e61deb8",
+  "references/routing.md": "797a382b83bf15a84668d91e6a0b651e7abe1789a783ecb236aaea5404bbeeca",
   "references/services.md": "ef308ed758f539ff7515b49546f153a4bf278fad56de6713bf0ac7fb6e11b086",
-  "references/tooling.md": "366ee90dbbe6dd88ba7d683154696603231e4b7102ac0f4b09c343c40711f5ff",
+  "references/tooling.md": "790dbfd7af5d98393608510b58e26d9ee8327dc0cc5a475f2ec684a9eb8df213",
   "task-state.template.md": "7d9f505cda88e4acef6ecbbd27be681fc68fca37ea98a9a456a4e24953a62c48",
   "workflow.md": "2048796cf2425843ad596241152f4c4775cfa264473c76c8641e1f805f592d02",
   "references/seguranca.md": "a80579f9082f2c6ebddbb42cf52d57caf4235f92a463488545291210e7a21bc5",
-  "references/learning.md": "b8a5f6315fef4e5a54fa029920e85329a073d38a61e135daf26a0bbe70e0cd74"
+  "references/learning.md": "b8a5f6315fef4e5a54fa029920e85329a073d38a61e135daf26a0bbe70e0cd74",
+  "references/campaigns-details.md": "0549074223bc65435e146160560855b8a1c666928e4faad3eb88babb25c485de",
+  "references/tooling-alethe.md": "38b20d91cc23ffe4a9f0ab8c731ea39292a1c86584f08df9b804435afc729643",
+  "references/tooling-details.md": "631a8e1e19a25b0b1c9375b0e5d3aa5fe36a062db4e0b87e212984f3d6a549b3"
 }

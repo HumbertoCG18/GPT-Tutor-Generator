@@ -27,11 +27,7 @@ nível sustentado pelos critérios, não soma nem número de tokens/arquivos.
 | T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-sonnet-5-5 / high, escalar a claude-opus-5-5 / high | gpt-6-astra / high; implementa na reserva | claude-sonnet-5-5-high, escalar a claude-opus-5-5-high / claude-sonnet-5-5-medium |
 | T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-opus-5-5 / high | gpt-6-astra / high; não implementa | não implementa (fica no Claude Code) / claude-sonnet-5-5-high |
 
-Modelos em uso (revistos em 10/10/2026; evidência em ../evals/modelos-2026-10-10.md):
-Claude Code usa claude-sonnet-5-5 e claude-opus-5-5. claude-fable-5-1 saiu do T3. Codex usa
-gpt-6-astra (leitura, escrita e reserva do executor); gpt-6.1-sol e gpt-6-sol ficam fora da seleção
-por falta de dado público suficiente. Linhas anteriores (claude-*-5, gpt-5.6-*) saem da seleção.
-Números e fontes: [routing-details.md](routing-details.md) › Modelos em uso.
+Movido para [routing-details.md › Modelos em uso: texto da revisão de 10/10/2026](routing-details.md#modelos-em-uso-texto-da-revisão-de-10102026): revisão de 10/10 (fable fora do T3, gpt-6.1-sol/gpt-6-sol fora da seleção) e fontes.
 
 IDs só aqui (agent-workflow-lab#43). No Claude Code, settings, frontmatter de agentes e delegações
 usam alias (opus, sonnet, haiku, fable, opusplan, inherit; [1m] aceito); verify.py confere settings
@@ -74,7 +70,7 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
 |---|---|---|---|
 | 1 | Claude Code | Orquestra (padrão) e implementa | Executor Claude da tabela de níveis |
 | 2 | Codex | Lê (planeja, revisa, investiga, valida, audita, busca código), escreve docs e pesquisa, e implementa T1/T2 na reserva | gpt-6-astra, effort pelo nível |
-| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 3.8 Flash; Gemini 4 Argon só como reserva (seção AGY) |
+| 3 | AGY | Só por escolha explícita (cota do plano PRO baixa), só com arquivos (sem comandos): implementa T1/T2 ou escreve | Claude do AGY, depois gpt-oss-120b, depois Gemini 3.8 Flash; Gemini 4 Argon só como reserva ([routing-details.md › AGY](routing-details.md#agy-por-escolha-explícita-orquestrador-de-último-recurso)) |
 
 - Implementação: camada 1. Com a cota do Claude apertada (aviso de limite ou escolha do dono), o
   coordenador registra a troca no estado e passa T1/T2 ao Codex: `codex exec -m gpt-6-astra -c
@@ -112,45 +108,21 @@ implementa na reserva (Camadas). O coordenador confere a resposta no código ant
 estado o caminho e o que confirmou ou refutou. Limites: Codex nunca implementa sem troca registrada;
 pergunta sem segredos; effort pelo nível (medium T1/T2, high T3).
 
-## AGY: por escolha explícita, orquestrador de último recurso
+## AGY e perfis do AGY
 
-Desde a ROTA-06 (16/10/2026) o AGY entra só por escolha explícita: a cota do plano PRO é baixa, e
-reserva, escrita e auditoria foram para o Codex. Quando escolhido, vale o que segue. Aprovado pelo
-dono em 10/10/2026; prioridade de fornecedor dentro do AGY em 11/10/2026: Anthropic, depois OpenAI,
-depois Google. Claude do AGY implementa T1/T2 com a cota do AGY (claude-sonnet-5-5-medium em T1,
-claude-sonnet-5-5-high em T2, claude-opus-5-5-high como escalonamento) e escreve docs, changelog e
-relatórios (claude-sonnet-5-5-medium; high em T3). T3 não implementa no AGY. Em 2º lugar,
-gpt-oss-120b-medium (esforço fixo, contexto de 128k). Em 3º, Gemini 3.8 Flash; por ter alta taxa de
-alucinação e poucos bugs achados, seus achados passam pelo Codex (codex_read) ou pelo Claude antes de
-virar issue ou ação. gemini-4-argon-high fica como reserva, por escolha explícita na tarefa (#151,
-18/10/2026): a qualidade foi a dos outros braços, mas 3 PRs gastaram ~46% da cota semanal do Argon.
-Medições: routing-details.md › Medições AGY; ../evals/rota-06-argon-2026-10-18.md.
-Cota (#151): ler o `/usage` do agy antes e depois de cada uso e anotar no eval ou no estado da tarefa. Replay no AGY só por escolha explícita, 1 PR por rodada (`bin/replay.py` recusa mais). Sondas de capacidade (flags, sandbox, ferramentas) no Gemini 3.8 Flash. No Alethe o app não troca de modelo dentro do AGY sozinho. Worker AGY (AGY-04): sem comandos (só lê, busca e edita arquivos), sem hooks globais nem GEMINI.md do dono, sempre em worktree própria; git, testes e builds ficam com o coordenador; mesma revisão independente (review.md).
+Movido para [routing-details.md › AGY: por escolha explícita, orquestrador de último recurso](routing-details.md#agy-por-escolha-explícita-orquestrador-de-último-recurso): modelos por nível no AGY, ordem de fornecedor, cota e worker AGY.
+
+Movido para [routing-details.md › Perfis adicionais AGY: regras de routing.md](routing-details.md#perfis-adicionais-agy-regras-de-routingmd): perfis fora da seleção, ID da variante e lista do worker do Alethe.
+
+## Orquestradores
+
 Orquestradores, prioridade fixa: Claude Code, Codex, AGY (o último). AGY orquestra só por
 escolha explícita, nunca como fallback automático; então planejador e revisor Opus 5.5
 (medium em T1/T2, high em T3). Revisão segue review.md (revisor independente).
 
-## Perfis adicionais AGY
+## Haiku
 
-- Fora da seleção automática: gemini-4-argon-low/medium (só o high foi medido). gemini-3.7/3.6-flash e gemini-3.1-pro saíram do AGY.
-- Investigador pode escolher outro perfil do AGY com justificativa registrada. Não chamar vários para a mesma auditoria sem avaliação delimitada e autorizada; não substituem o revisor.
-- ID da variante (o esforço vem no ID) ou família com --effort, nunca os dois (o agy recusa na partida). Não inventar variantes, não transferir parâmetros nem supor mesma assinatura/quota do Claude Code.
-- O worker AGY do Alethe oferece só: Sonnet 5.5 e Gemini 3.8 Flash medium/high pela família, claude-opus-5-5-high e gpt-oss-120b-medium (esforço fixo) pelo ID. Lista de modelos: routing-details.md.
-
-## Haiku (ROTA-04, aprovado pelo dono em 15/10/2026)
-
-Haiku recebe tarefas inteiras, repetitivas e já especificadas; evidência em
-../evals/rota-03-2026-10-15.md. O coordenador confere o resultado antes de usá-lo.
-
-- Executor T1 (tabela de níveis), com escalada ao Sonnet.
-- Busca ampla de arquivos: Explore com model haiku (tabela em [Investigador e níveis](#leitura-dono)).
-- Tarefa operacional: subagente haiku-ops (../agents/haiku-ops.md) para rascunho de commit/PR,
-  comandos do registro de campanhas, resumo de log ou relatório, inventário e contagem, renomear
-  lista aprovada e edição pequena exata. Ele devolve a tarefa quando falta insumo.
-- Dentro de tarefa de código não há delegação forçada: o Opus gastou ~1/4 do custo em leitura
-  nas 12 rodadas da ROTA-03, abaixo do limiar de 1/3.
-- Nunca: revisão, adjudicação, verificação, gates, classificação de nível, T2/T3, refatoração
-  multiarquivo, depuração entre dependências e loops autônomos longos.
+Movido para [routing-details.md › Haiku (ROTA-04, aprovado pelo dono em 15/10/2026)](routing-details.md#haiku-rota-04-aprovado-pelo-dono-em-15102026): papéis do Haiku (executor T1, Explore, haiku-ops) e a lista "Nunca".
 
 ## Campanhas e limites
 
@@ -162,7 +134,7 @@ exige preflight, dependências cumpridas e opt-in; tarefa bloqueada não executa
 Matriz governa próximas chamadas autorizadas, não troca sessão/default global silenciosamente.
 Código relevante mantém uma revisão read-only do revisor: medium T1/T2, high T3; correção pelo
 executor selecionado. Não abrir chamada só para preencher coluna. Luna fica fora da seleção
-automática até avaliação; Haiku só nos papéis da seção Haiku; xhigh/max exigem justificativa/aprovação específica;
+automática até avaliação; Haiku só nos papéis da seção Haiku (routing-details.md); xhigh/max exigem justificativa/aprovação específica;
 ultra/ultracode não habilitados (orquestração adicional). Permissão/quota/recusa: parar, exceto a reserva T1/T2 de Camadas.
 Ausência de transporte admite somente a alternativa já prevista em review.md, antes da
 primeira tentativa, com o mesmo escopo e limite; nunca repetir uma revisão que falhou.

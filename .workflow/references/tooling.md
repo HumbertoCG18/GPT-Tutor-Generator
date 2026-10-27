@@ -13,21 +13,7 @@ o MCP saiu porque servia um graph.json fixo do GPT Tutor em qualquer projeto.
 
 ## MCPs por CLI (paridade medida em 30/09/2026)
 
-Iguais nas três: context7, claude-mem (mcp-search).
-GitHub e Graphify pelas CLIs gh e graphify. Uso real antes de remover, remedido em 11/10 com
-`skills/medir-uso-antes-de-remover/scripts/count_tool_use.py` até 30/09 (a contagem anterior só lia
-tool_use e dava zero falso no Codex): github MCP 0/0/0 chamadas (Claude/Codex/AGY; as 28
-"github" do Codex são do conector embutido codex_apps) contra gh 491/252; graphify MCP 2/0/0
-contra CLI 18/82; chrome-devtools 0/0/0; perssua 0/0/0. O 1 do github no Claude e o ~1 do
-graphify no AGY de 30/09 não se reproduzem (hipótese: transcripts rotacionados). Removidos: github (as três),
-graphify e chrome-devtools-mcp (Claude, AGY), perssua (Claude; segue desligado no
-Codex e no AGY). O chrome-devtools continua via plugin ECC no Claude e no Codex.
-Codex: node_repl (MCP, sem `enabled` = ativo) e o plugin codex-app-tools seguem ativos; cua_repl
-fica desligado (`enabled = false`), assim como graphify e perssua.
-Readicionar: claude mcp add perssua -s user -e PERSSUA_MCP_SOURCE=... -- cmd.exe /d /s
-/c npx -y @perssua/mcp; graphify MCP com graph.json do projeto como argumento.
-Backups: ~/.claude.json, ~/.codex/config.toml e ~/.gemini/config/mcp_config.json com
-sufixo .bak-paridade-20260930-011932 (e .bak-github-mcp-20260930-004949).
+Movido para [tooling-details.md › MCPs por CLI](tooling-details.md#mcps-por-cli-paridade-medida-em-30092026): contagens de uso, MCPs removidos, como readicionar e backups. Iguais nas três: context7, claude-mem (mcp-search); GitHub e Graphify pelas CLIs gh e graphify.
 
 ## Codex Companion (plugin codex@openai-codex)
 
@@ -63,7 +49,7 @@ Aprendizagem: ao fechar trabalho relevante, usar ECC para propor correções com
  evidência; não editar skills globais automaticamente. Tracker/handoff preservam
 continuidade quando claude-mem não grava. Não reiniciar o worker por erro de quota.
 
-Portabilidade ECC: dentro do Alethe, seguir o caminho de Orquestração abaixo.
+Portabilidade ECC: dentro do Alethe, seguir o caminho de Orquestração ([tooling-alethe.md](tooling-alethe.md)).
 Fora dele, usar subagente nativo quando disponível. Se a CLI não expuser
 o papel, executar a etapa inline seguindo a definição em
 `C:/Users/Humberto/Documents/GitHub/agent-workflow-lab/agents/`
@@ -86,11 +72,7 @@ Medido em 23/10 na sessão 9d476570: depois da compactação, 218 saídas de fer
 
 ## Número medido
 
-Número medido citado em doc ou eval vem com três marcas: N (amostras ou rodadas), faixa (min–max ou IC)
-e limitador (o que não foi medido). Com N=1 a faixa escreve-se `faixa n/d (N=1)`. Contagem exata de itens observados (achados, rodadas,
-sessões) dispensa faixa; mediana com mínimo e máximo vale como faixa. Sem as três, o número
-é só indício: não serve de decisão.
-Antes de citar, responder: rodou como roda de verdade (build, flags e cache de produção)? contou erros e falhas, não só o tempo? o trabalho aconteceu dentro da região medida (cache, lazy load, processo em background)? alternou A/B em vez de A depois B? (origem: pstack `benchmark-checklist`, perguntas 2, 4, 7 e alternância da 5).
+Movido para [tooling-details.md › Número medido](tooling-details.md#número-medido): N, faixa e limitador de todo número citado, e o checklist antes de citar.
 
 ## Donos por fase
 
@@ -108,67 +90,10 @@ Saíram das instruções pessoais na #180. Uma fase, um dono.
 
 ## Glossário e ADR leve
 
-Não por padrão. Um projeto ganha glossário só com termo sobrecarregado comprovado: o mesmo termo com dois significados que já geraram erro ou retrabalho registrado (issue, revisão, handoff). Sem esse registro, não criar.
-- Onde: seção `## Glossário` no mapa de fontes do projeto (`.mex/ROUTER.md` quando existir), linkada do próprio mapa; sem arquivo novo, sem glossário global no laboratório.
-- Formato mínimo: `termo: significado adotado; o que não é; fonte`. Uma linha por termo. ADR leve: só decisão que contradiz o óbvio do código, 3 linhas (contexto, decisão, gatilho de revisão), na mesma seção.
-- Manutenção: termo sem consulta no período de medição sai (mesma regra de remoção de skill).
-- Medição de consultas reais: contar leituras do ROUTER depois de criado o glossário, não grep do termo. `python skills/medir-uso-antes-de-remover/scripts/count_tool_use.py '\.mex/ROUTER\.md' --in-args` por projeto, antes e depois (`--until` fixa a data de corte). Consulta ao glossário = leitura do ROUTER em sessão cujo tema contém o termo; a contagem do arquivo inteiro é teto, não consulta ao glossário. Janela e limiar de remoção: definir ao criar o primeiro glossário; hoje 🔴 sem dado (nenhum glossário existe).
+Movido para [tooling-details.md › Glossário e ADR leve](tooling-details.md#glossário-e-adr-leve): quando criar glossário/ADR, formato mínimo e como medir consultas.
 
-## Alethe como Orquestração principal
+## Alethe
 
-Em sessões Alethe, a Orquestração é o caminho principal para executar trabalho
-aprovado. Usar os nomes nativos: Planner coordena; Run agrupa uma rodada de
-delegação; Worker/Job executa; Thread preserva a conversa; cwd/Worktree identifica
-o local. Uma campanha pode ter várias Runs; Task do scheduler não é sinônimo de Job.
+Movido para [tooling-alethe.md › Alethe como Orquestração principal](tooling-alethe.md#alethe-como-orquestração-principal): nomes nativos, dispatch único e limites do Alethe.
 
-Reutilizar criação, fila de Jobs, concorrência, timeout, cancelamento, persistência
-e telemetria nativos quando atenderem ao contrato. Não criar outro launcher,
-registro operacional ou painel. Tracker/estado existentes continuam como fonte de
-campanhas, tarefas, Gates, tentativas e revisões; referenciar seus IDs no label/spec.
-O scheduler nativo não recebe outra cópia da fila por esta política.
-
-Um Planner e um único caminho de dispatch por tarefa. Não executar o mesmo trabalho
-por alethe_delegate e por CLI/subagente externo. Launchers e rotinas existentes são
-preservados para uso fora do Alethe ou escolha explícita. Quota/recusa nunca autorizam
-fallback fora da reserva de routing.md › Camadas; falta do transporte de revisão admite só o caminho já definido em review.md,
-antes da primeira chamada, preservando contador, escopo e permissões. AGY mantém seu contrato;
-suporte nativo não demonstrado deve ser declarado, sem fabricar integração.
-
-Alethe executa; o workflow autoriza e aceita resultados. Eventos SubagentStart/Stop,
-status done e botões de aplicar/merge não substituem Gates. Conferir modelo/effort
-observado, permissões, arquivos permitidos e retomada antes de depender deles;
-askForApproval não comprova confinamento de leitura e prompt não impõe controle.
-Quota/fitness são telemetria, não teto por campanha. Falta de controle exigido
-bloqueia a ação; não enfraquecer o contrato para conseguir lançar.
-
-Memória, revisão e noite mantêm contratos e contadores próprios. Não remover o
-runtime noturno nem liberar scheduler/noite antes da equivalência validada e dos
-preflights de #42 no projeto correspondente. Não iniciar segundo servidor standalone
-para duplicar o painel. Operação: delegation.md; continuidade: resume.md.
-
-## Build do Alethe (pastas de saída do cargo)
-
-Teste Rust (`cargo test`, debug): `CARGO_TARGET_DIR=D:\cargo-target\alethe-test`, cache único
-compartilhado por sessões, worktrees e subagentes. Instalador (`tauri build`, release):
-`D:\cargo-target\alethe`. Não criar pasta de saída por tarefa (cada uma custa 6 GB). `cargo fmt`
-no crate inteiro é proibido; usar `rustfmt --check --edition 2021` só nos arquivos tocados.
-Briefs de subagente que rodam cargo citam essas pastas; o coordenador também as usa (cargo sem
-`CARGO_TARGET_DIR` numa worktree cria um `src-tauri\target` local).
-Verificação enxuta (aprovada pelo dono em 11/10/2026, medida: tarefas de 12 a 64 min e 93k a 414k
-tokens por subagente): durante a iteração, só os testes focados; suíte completa uma vez no fim;
-repetir a suíte (3×) só em T3 ou para investigar instabilidade. Uma tarefa com cargo por vez e
-rebuild do Alethe Dev fora dessa janela: competem pela CPU, e a carga já gerou falso vermelho
-(ACH-0022 no Alethe).
-Atualizar o Alethe Dev sem desinstalar: `bin/alethe-dev/alethe-dev.ps1 update -ExpectedCommit <SHA completo>`.
-O SHA é o commit validado/autorizado, não uma branch móvel. `build` recusa worktree suja ou de
-outro repositório, preserva WIP e grava `D:\cargo-target\alethe\alethe-build.json` com commit,
-caminho e SHA256. `verify -ExpectedCommit <SHA>` confere sem executar; `install` exige esse
-mesmo SHA e manifesto (`-Manifest <caminho>` opcional), nunca escolhe o exe mais recente.
-Os comandos que compartilham a saída usam uma trava; ela não substitui autorização.
-Instala por cima com `/P /UPDATE` e reabre pelo Explorer; `build` e `install` separados.
-Instalação requer autorização própria do dono. Espera o usuário sair
-pelo app; nunca fecha o Alethe Dev. Antes de dizer que o Alethe Dev está aberto ou fechado, ou de
-pedir ao usuário que o feche, conferir o processo (`alethe.exe` com caminho em `\Alethe Dev\`); não
-supor pelo histórico da conversa.
-Antes de merge com mudança em Rust: `cargo check --bins --lib` (o `orchestrator_core.rs` também
-entra no binário `alethe-orchestrator-mcp`; `cargo test --lib` não compila os binários, #58→#59).
+Movido para [tooling-alethe.md › Build do Alethe (pastas de saída do cargo)](tooling-alethe.md#build-do-alethe-pastas-de-saída-do-cargo): `CARGO_TARGET_DIR`, verificação enxuta, atualizar o Alethe Dev e `cargo check`.
