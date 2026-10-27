@@ -7,21 +7,18 @@ Política canônica; o estado vive em `.workflow/campanhas.json` do checkout pri
 ## Registro
 
 - Ferramenta: `bin/campanhas.py` — `listar [--noite] [--curto] [--arquivo]`, `arquivar [--dias N]`, `validar`, `estado ID NOVO [--evidencia T] [--resultado T]`, `tarefa`, `janela`, `passo`, `ativa`, `noite`, `noite-flag`, `achado`, `achados`, `triar`, `limpar-achados`, `sobreposicao`. `--registro CAMINHO` substitui o local. O hook SessionStart (hooks/README.md) injeta `listar --curto`.
-- Arquivo: `arquivar` move as tarefas `concluída`/`descartada` (de campanhas paradas há N dias; padrão 0 = todas) para `.workflow/campanhas-arquivo.json` (`{"campanhas": {ID: [tarefa]}}`), sob a mesma trava; a campanha guarda a contagem em `arquivadas` e o progresso não muda. Ids arquivados não se reusam e `estado`/`passo` os tratam como somente leitura.
-- Diário da noite: `noite TAREFA --resultado ok|aguarda-voce|falhou|parou --resumo T [--evidencia T]` acrescenta uma entrada em `.workflow/local/noites/<AAAA-MM-DD>.json` do checkout principal (data em que a noite começou: antes de 12:00, ontem); resumo até 120 caracteres; não muda o estado da tarefa. `listar --curto` resume o diário mais recente em "Noite de DD/MM: …".
+- Movido para [campaigns-details.md › Registro: caminhos raros](campaigns-details.md#registro-caminhos-raros): arquivo (`arquivar`), diário da noite, vetos (`vetos.json`) e gabarito do painel do Alethe.
 - Campanha: `id`, `titulo`, `prioridade`, `janela`, `depende_de`, `worktrees`, `handoff`, `atualizado_em`, `decomposta`, `tarefas`.
 - Tarefa, campo opcional `worktree` (texto, pasta da worktree): `campanhas.py estado <id> <novo> --worktree <pasta>`; `validar` exige texto. `manutencao.py` lista em `tarefas_concluidas` a worktree cuja tarefa está `concluída`, candidata a retirar (o estado do git continua decidindo).
 - Tarefa, campo opcional `gate_2` (`pendente` ou `aprovado`): `campanhas.py estado <id> <novo> --gate2 pendente|aprovado`; `validar` recusa outro valor. `pendente` = trabalho pronto aguardando o Gate 2 do dono; `aprovado` só depois da aprovação dele.
 - Tarefa: `id`, `titulo`, `nivel`, `estado`, `depende_de`, `janela`, `eixo`, `nota`, `motivo`, `origem`, `evidencia`, `resultado`, `recorrente`, `passos` (`[{texto, feito}]`; o atual é o primeiro não feito).
 - Estados: proposta · pronta · em execução · bloqueada · reservada · concluída · descartada (fechada sem entrega: fora do percentual, vale de qualquer estado, inclusive concluída). `estado … concluída` é recusado com passo aberto. Janelas: assistida · noite · qualquer. `depende_de` aceita IDs de tarefa ou de campanha.
 - Mudar estado só por `estado`: grava escrita atômica e atualiza `atualizado_em`. Narrativa longa vai ao arquivo `handoff` da campanha, não ao registro. Rodar `validar` após edição manual.
-- Vetos: `.workflow/vetos.json` ao lado do registro lista decisões vigentes (`id`, `fonte`, `palavras`, `janela` opcional, `mensagem`). `validar` imprime `Aviso: TAREFA / veto / fonte: mensagem` para tarefa aberta cujo `titulo` ou `nota` cite uma palavra inteira (sem caixa nem acento) e segue retornando 0; o `verify.py` publica o mesmo em `warnings`. Aviso não bloqueia: "remover o CBM" também casa. Decisão nova que deve ser vigiada entra ali por PR (REC-07, #147).
 - Criar tarefa só por `tarefa CAMPANHA "título" [--nivel] [--estado proposta|pronta] [--depende ID ...] [--origem USER|CODE|DECISION]`: imprime o id novo `<CAMPANHA>-NN` (maior sufixo numérico da campanha + 1, mín. 2 dígitos, nunca reusa; colisão no registro incrementa). A Todo List do Alethe usa a mesma regra, o mesmo lock e a mesma escrita atômica.
 - IDs estáveis, nunca reutilizados; `origem` USER, CODE ou DECISION. Deduplicar por issue/resultado/escopo.
 - `decomposta: false` mostra `+?` no total: escopo desconhecido é "a definir", nunca zero.
 - Goals referenciam tarefas; não duplicam contagem nem aceite.
 - Campanha só fecha com 100% dos aceites cumpridos e integração aprovada, não pela emissão de relatório.
-- Gabarito: o painel do Alethe reimplementa progresso e situação em TS. Ao mudar uma regra, regenerar `bin/fixtures/campanhas.gabarito.json` com `listar --json --registro bin/fixtures/campanhas.exemplo.json` e copiar os dois arquivos para o teste do Alethe; percentual arredonda meio para cima nos dois.
 
 ## Elo com a tarefa ativa
 
@@ -86,18 +83,8 @@ remota fica) ou adiar.
 
 ## Escrita
 
-- Um coordenador por tarefa e um writer por registro; `estado` relê o arquivo antes de gravar.
-- Ler a fila no início/retomada; atualizar ao descobrir pendência e ao concluir tarefa, durante sessão ativa.
-- Sessão read-only não escreve: propõe o delta ao coordenador.
-- Ideia nova entra como `proposta`, nunca como autoridade para execução. Gates 1/2 permanecem.
-- Registro e caixa versionados mudam só no checkout principal e chegam ao tronco por commit `chore(workflow)` feito ali ou por PR `chore(workflow)` que só altera o registro. PR de código nunca altera `.workflow/campanhas.json` nem `.workflow/achados.json`, salvo branch `sync/*`: a cópia viva, ainda sem commit, faria o pull seguinte falhar. O CI de cada projeto reprova (`ci/registry-guard.yml`, copiado sem mudança).
-- Antes de puxar o tronco com o registro alterado, commitar o snapshot; conflito nele se resolve no checkout principal, mantendo os dois lados, e `validar` em seguida.
-- PR que move arquivo citado no registro (handoff, evidência) lista as trocas de caminho no corpo; depois do merge, o coordenador as aplica no checkout principal e roda `validar`.
+Movido para [campaigns-details.md › Escrita](campaigns-details.md#escrita): um coordenador e um writer por registro, registro só no checkout principal (registry-guard) e conflitos de snapshot.
 
 ## Achados
 
-- Caixa: `.workflow/achados.json` do checkout principal (versionada, mesma trava e escrita atômica do registro). Achado fora da tarefa atual vira uma linha `achado "título" --tipo ideia|bug|risco|divida [--origem TAREFA] [--detalhe T]`, que imprime `ACH-NNNN`; o agente não investiga e segue a tarefa.
-- No máximo 3 achados novos por tarefa (`--origem`); título até 100 caracteres, sem duplicar achado não descartado.
-- Triagem só quando o usuário pedir ("triar achados"): listar com `achados --novos`, o usuário decide cada um, então `triar ACH-NNNN --virar CAMPANHA [--titulo T] [--nivel Tn]` (cria tarefa `proposta`, origem CODE) ou `--descartar "motivo"`.
-- `limpar-achados` remove da caixa os achados com estado diferente de `novo` (mesma trava e escrita atômica) e imprime quantos. O campo `ultimo` de `achados.json` guarda o último número usado, então o id removido nunca é reaproveitado (e `triar` não casa a tarefa antiga); caixa antiga sem o campo usa o maior id. A deduplicação por título deixa de ver os achados removidos.
-- `listar --curto` só informa a contagem de achados novos, nunca os títulos.
+Movido para [campaigns-details.md › Achados](campaigns-details.md#achados): caixa `achados.json`, limite de 3 por tarefa, triagem e `limpar-achados`.

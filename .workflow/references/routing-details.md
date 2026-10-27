@@ -115,3 +115,56 @@ recebe a mesma revisão independente (review.md).
   GPT-OSS 120B (Medium) tem esforço fixo. O worker AGY do Alethe oferece só os aprovados: Sonnet
   5.5 e Gemini 3.8 Flash medium/high pela família, Opus 5.5 pelo ID claude-opus-5-5-high e
   gpt-oss-120b-medium pelo ID (esforço fixo).
+
+## Modelos em uso: texto da revisão de 10/10/2026
+
+Movido de [routing.md](routing.md) (PODA-18, #447). Ler ao rever a seleção de modelos.
+
+Modelos em uso (revistos em 10/10/2026; evidência em ../evals/modelos-2026-10-10.md):
+Claude Code usa claude-sonnet-5-5 e claude-opus-5-5. claude-fable-5-1 saiu do T3. Codex usa
+gpt-6-astra (leitura, escrita e reserva do executor); gpt-6.1-sol e gpt-6-sol ficam fora da seleção
+por falta de dado público suficiente. Linhas anteriores (claude-*-5, gpt-5.6-*) saem da seleção.
+Números e fontes: [routing-details.md](routing-details.md) › Modelos em uso.
+
+## AGY: por escolha explícita, orquestrador de último recurso
+
+Movido de [routing.md](routing.md) (PODA-18, #447). Ler ao usar o AGY por escolha explícita.
+
+Desde a ROTA-06 (16/10/2026) o AGY entra só por escolha explícita: a cota do plano PRO é baixa, e
+reserva, escrita e auditoria foram para o Codex. Quando escolhido, vale o que segue. Aprovado pelo
+dono em 10/10/2026; prioridade de fornecedor dentro do AGY em 11/10/2026: Anthropic, depois OpenAI,
+depois Google. Claude do AGY implementa T1/T2 com a cota do AGY (claude-sonnet-5-5-medium em T1,
+claude-sonnet-5-5-high em T2, claude-opus-5-5-high como escalonamento) e escreve docs, changelog e
+relatórios (claude-sonnet-5-5-medium; high em T3). T3 não implementa no AGY. Em 2º lugar,
+gpt-oss-120b-medium (esforço fixo, contexto de 128k). Em 3º, Gemini 3.8 Flash; por ter alta taxa de
+alucinação e poucos bugs achados, seus achados passam pelo Codex (codex_read) ou pelo Claude antes de
+virar issue ou ação. gemini-4-argon-high fica como reserva, por escolha explícita na tarefa (#151,
+18/10/2026): a qualidade foi a dos outros braços, mas 3 PRs gastaram ~46% da cota semanal do Argon.
+Medições: routing-details.md › Medições AGY; ../evals/rota-06-argon-2026-10-18.md.
+Cota (#151): ler o `/usage` do agy antes e depois de cada uso e anotar no eval ou no estado da tarefa. Replay no AGY só por escolha explícita, 1 PR por rodada (`bin/replay.py` recusa mais). Sondas de capacidade (flags, sandbox, ferramentas) no Gemini 3.8 Flash. No Alethe o app não troca de modelo dentro do AGY sozinho. Worker AGY (AGY-04): sem comandos (só lê, busca e edita arquivos), sem hooks globais nem GEMINI.md do dono, sempre em worktree própria; git, testes e builds ficam com o coordenador; mesma revisão independente (review.md).
+
+## Perfis adicionais AGY: regras de routing.md
+
+Movido de [routing.md](routing.md) (PODA-18, #447). Complementa "Perfis adicionais AGY" acima.
+
+- Fora da seleção automática: gemini-4-argon-low/medium (só o high foi medido). gemini-3.7/3.6-flash e gemini-3.1-pro saíram do AGY.
+- Investigador pode escolher outro perfil do AGY com justificativa registrada. Não chamar vários para a mesma auditoria sem avaliação delimitada e autorizada; não substituem o revisor.
+- ID da variante (o esforço vem no ID) ou família com --effort, nunca os dois (o agy recusa na partida). Não inventar variantes, não transferir parâmetros nem supor mesma assinatura/quota do Claude Code.
+- O worker AGY do Alethe oferece só: Sonnet 5.5 e Gemini 3.8 Flash medium/high pela família, claude-opus-5-5-high e gpt-oss-120b-medium (esforço fixo) pelo ID. Lista de modelos: routing-details.md.
+
+## Haiku (ROTA-04, aprovado pelo dono em 15/10/2026)
+
+Movido de [routing.md](routing.md) (PODA-18, #447). Ler ao delegar a um agente Haiku ou ao decidir o que ele pode receber.
+
+Haiku recebe tarefas inteiras, repetitivas e já especificadas; evidência em
+../evals/rota-03-2026-10-15.md. O coordenador confere o resultado antes de usá-lo.
+
+- Executor T1 (tabela de níveis), com escalada ao Sonnet.
+- Busca ampla de arquivos: Explore com model haiku (tabela em [Investigador e níveis](routing.md#leitura-dono)).
+- Tarefa operacional: subagente haiku-ops (../agents/haiku-ops.md) para rascunho de commit/PR,
+  comandos do registro de campanhas, resumo de log ou relatório, inventário e contagem, renomear
+  lista aprovada e edição pequena exata. Ele devolve a tarefa quando falta insumo.
+- Dentro de tarefa de código não há delegação forçada: o Opus gastou ~1/4 do custo em leitura
+  nas 12 rodadas da ROTA-03, abaixo do limiar de 1/3.
+- Nunca: revisão, adjudicação, verificação, gates, classificação de nível, T2/T3, refatoração
+  multiarquivo, depuração entre dependências e loops autônomos longos.
