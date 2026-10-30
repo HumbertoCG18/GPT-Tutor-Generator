@@ -22,23 +22,55 @@ nível sustentado pelos critérios, não soma nem número de tokens/arquivos.
 
 | Nível | Critério | Executor Claude | Codex: leitura, escrita e reserva do executor | AGY por escolha: implementação / escrita |
 |---|---|---|---|---|
-| T0 | Determinístico: consulta, contagem, check mecânico | ferramenta, sem nova chamada | agente ativo | sem nova chamada |
-| T1 | Baixo risco, causa/escopo locais, aceite objetivo | claude-haiku-5-5 / high, escalar a claude-sonnet-5-5 / medium | gpt-6-astra / medium; implementa na reserva | claude-sonnet-5-5-medium / claude-sonnet-5-5-medium |
-| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | claude-sonnet-5-5 / high, escalar a claude-opus-5-5 / high | gpt-6-astra / high; implementa na reserva | claude-sonnet-5-5-high, escalar a claude-opus-5-5-high / claude-sonnet-5-5-medium |
-| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | claude-opus-5-5 / high | gpt-6-astra / high; não implementa | não implementa (fica no Claude Code) / claude-sonnet-5-5-high |
+| T0 | Determinístico: consulta, contagem, check mecânico | ver Matriz executável | agente ativo | sem nova chamada |
+| T1 | Baixo risco, causa/escopo locais, aceite objetivo | ver Matriz executável | gpt-6-astra / medium; implementa na reserva | claude-sonnet-5-5-medium / claude-sonnet-5-5-medium |
+| T2 | Integração entre componentes, hipóteses concorrentes, regressão relevante | ver Matriz executável | gpt-6-astra / high; implementa na reserva | claude-sonnet-5-5-high, escalar a claude-opus-5-5-high / claude-sonnet-5-5-medium |
+| T3 | Segurança/permissões sensíveis, perda de dados/irreversibilidade, arquitetura ou incerteza sistêmica | ver Matriz executável | gpt-6-astra / high; não implementa | não implementa (fica no Claude Code) / claude-sonnet-5-5-high |
+
+Matriz executável gerada de rotas.json por `bin/rotas.py --escrever`; o Mod rota aplica (ROTA-08). Não editar à mão.
+
+<!-- rotas:inicio -->
+| Papel | T0 | T1 | T2 | T3 |
+|---|---|---|---|---|
+| principal planejamento | sonnet/high | sonnet/high | opus/high | opus/high |
+| principal coordenação | sonnet/high | sonnet/high | sonnet/high | opus/high |
+| worker | — | haiku/high | sonnet/high | — |
+| worker escalada | — | sonnet/medium | opus/high | — |
+| revisor | — | opus/medium | opus/medium | opus/high |
+| Plan | sonnet/high | sonnet/high | opus/high | opus/high |
+| haiku-ops | haiku/low | haiku/low | haiku/low | haiku/low |
+| investigador | sonnet/high | sonnet/high | sonnet/high | sonnet/high |
+| Explore | haiku | haiku | haiku | haiku |
+| general-purpose | sonnet/high | sonnet/high | sonnet/high | sonnet/high |
+
+Cota (leitura válida por 30 min; vale a janela 5 h ou 7 d mais alta): reserva do executor acima de 80%, fallback do revisor acima de 80%, reserva de coordenação acima de 90% (volta até 80%).
+<!-- rotas:fim -->
 
 Movido para [routing-details.md › Modelos em uso: texto da revisão de 10/10/2026](routing-details.md#modelos-em-uso-texto-da-revisão-de-10102026): revisão de 10/10 (fable fora do T3, gpt-6.1-sol/gpt-6-sol fora da seleção) e fontes.
 
 IDs só aqui (agent-workflow-lab#43). No Claude Code, settings, frontmatter de agentes e delegações
 usam alias (opus, sonnet, haiku, fable, opusplan, inherit; [1m] aceito); verify.py confere settings
 e frontmatter (lab e ~/.claude/agents) e falha com ID fixo. Alias → ID medido: routing-details.md ›
-Modelos em uso. Precedência do subagente: model da chamada > model do
-frontmatter > CLAUDE_CODE_SUBAGENT_MODEL > modelo da sessão. O menu /model ainda oferece linhas
+Modelos em uso. Precedência do subagente: hook `agent.spawn` de Mod (rota, em modo auto) > model da
+chamada > model do frontmatter > CLAUDE_CODE_SUBAGENT_MODEL > modelo da sessão (doc oficial de
+sub-agents; desde a 2.1.251 o env deixou de vir primeiro). Effort: CLAUDE_CODE_EFFORT_LEVEL >
+effort da chamada > frontmatter > sessão; o Mod rota aplica o effort no `turn.step` do subagente. O menu /model ainda oferece linhas
 antigas (Sonnet 5) e Enter salva como padrão: escolher pelo alias ou usar s (só na sessão).
 
 T2 no Sonnet e T1 no Haiku (ROTA-04, aprovado pelo dono em 15/10/2026): escalar ao Opus quando o
 Sonnet travar, falhar no aceite ou a revisão achar P1 que ele não corrige; T1 sobe do Haiku ao
-Sonnet nas mesmas condições. Evidência: ../evals/rota-03-2026-10-15.md.
+Sonnet nas mesmas condições. Evidência: ../evals/rota-03-2026-10-15.md. Cada subida soma 1 em
+`escalada_executor` no estado, separado de `escaladas_automaticas` (revisão); escalar não muda o nível
+nem renova revisão.
+
+Principal (ROTA-07, aprovado pelo dono em 29/10/2026; substitui o opus/high fixo da ROTA-04, #50):
+sonnet/high coordena T0–T2; opus/high no planejamento T2/T3 e em toda tarefa T3 (linhas "principal" da
+Matriz executável). Fase pelo `status` do active-task.md (planejando = planejamento; executando,
+delegando, revisando, bloqueado = coordenação). Sem tarefa ativa, fica o modelo da sessão. O Mod rota só
+troca no início de um turno, depois de mudar tarefa, nível ou fase: trocar de modelo refaz o cache do
+contexto inteiro. Escolha do dono: `/rota manual <modelo> [effort]`, válida até a tarefa mudar.
+Motivo da troca: em 22–28/10 a thread principal gerou 930M de cache_read em Opus (~73% do output total
+era Opus); critério de validação na ROTA-12 (#554).
 
 Subagente Claude para implementar T1/T2: worker (../agents/worker.md, sem Skill nem Agent, mantém
 o CLAUDE.md), no lugar de general-purpose. O frontmatter é sonnet (T2 e escalada do T1); em T1
@@ -76,11 +108,26 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
   coordenador registra a troca no estado e passa T1/T2 ao Codex: `codex exec -m gpt-6-astra -c
   model_reasoning_effort=<medium T1, high T2> -s workspace-write`, numa worktree própria. T3 fica
   na camada 1: sem cota, espera. Erro ou recusa não é troca: parar.
+- Gatilho (#62): antes de delegar T1/T2, o coordenador lê a última linha de
+  `<raiz>/.workflow/local/cota-historico.jsonl` (o mod `cota-alerta` grava `t`, `five_hour`, `seven_day` a
+  cada turno do dono). Qualquer janela acima de 80% com `t` de até 30 min: T1/T2 vão à reserva Codex,
+  registrado no estado. Sem linha, sem nenhuma das janelas `five_hour`/`seven_day` (uma só basta: o
+  mod grava as que a API devolve), com `t` no futuro ou mais velho que 30 min: cota
+  desconhecida, fica no Claude, sem troca silenciosa, e o estado diz "cota desconhecida". 30 min: o mod
+  só mede ao fim de cada turno do dono (sem timer), então turno longo ou sessão parada deixa o dado velho.
 - Codex implementando roda sem os hooks do workflow (`features.hooks=false`, SEG-02): só o sandbox
   protege. Nunca com `--dangerously-bypass-approvals-and-sandbox`, `--yolo` ou `danger-full-access`;
   brief sem segredos; proibido no noturno (noite.md).
-- Revisão (#332, aprovado pelo dono em 22/10/2026): o revisor é independente do implementador, não do
-  orquestrador. Todo código é revisado por claude-opus-5-5 (medium em T1/T2, high em T3), em contexto
+- Reserva de coordenação (ROTA-10, aprovada pelo dono em 29/10/2026; ainda não implementada): com a
+  cota do Claude estritamente acima de 90% em qualquer janela (5 h ou 7 d), leitura de até 30 min, o
+  Codex coordena a próxima tarefa, trocando só entre tarefas e com um coordenador por vez. Ele planeja e
+  implementa T1/T2 na worktree; T3 espera; sem commit, push ou merge; a revisão do código dele espera o
+  Claude. Volta ao Claude com as duas janelas até 80% em leitura válida. Nunca à noite. O Claude Code
+  segue como interface. Limiar próprio: não muda os 80% da reserva do executor nem do fallback do revisor.
+- Revisão (#332, aprovado pelo dono em 22/10/2026; ordem atualizada em 29/10/2026, review.md): o revisor
+  é independente do implementador, não do orquestrador. Em T1/T2 de código do Claude a 1ª rodada é do
+  Codex (`astra_review`); as rodadas Claude usam claude-opus-5-5 medium. Em T3 e em código do Codex, o
+  revisor é claude-opus-5-5 (high em T3), em contexto
   novo: só o brief, nunca fork da sessão que implementou. Em T3 o revisor pode ser o mesmo modelo do
   implementador. Fallback: com a cota do Claude acima de 80% (mod `cota-alerta`; no Alethe, o limiar
   do app), código do Claude vai ao revisor Codex (gpt-6-astra). Código do Codex não tem fallback: sem
@@ -131,7 +178,9 @@ ou irreversível com checkpoints assistidos. Investigador classifica campanha e 
 separadamente; classe não fixa modelo para todas. Janela noturna é eixo independente:
 exige preflight, dependências cumpridas e opt-in; tarefa bloqueada não executa.
 
-Matriz governa próximas chamadas autorizadas, não troca sessão/default global silenciosamente.
+Matriz governa próximas chamadas autorizadas, não troca sessão/default global silenciosamente; a troca
+por turno do Mod rota (modo auto) aparece no `/rota` e em `.workflow/local/rotas.jsonl`, e o
+default do settings não muda.
 Código relevante mantém uma revisão read-only do revisor: medium T1/T2, high T3; correção pelo
 executor selecionado. Não abrir chamada só para preencher coluna. Luna fica fora da seleção
 automática até avaliação; Haiku só nos papéis da seção Haiku (routing-details.md); xhigh/max exigem justificativa/aprovação específica;

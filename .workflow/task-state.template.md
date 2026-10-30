@@ -38,6 +38,8 @@
 - artefato_instalado: <não aplicável | pendente | commit, caminho absoluto e SHA256>
 - validacao_nativa: <não aplicável | pendente | cenário, resultado e evidência; RAM medida quando pertinente>
 - escaladas_automaticas: 0
+- escalada_executor: 0 <subidas de modelo do executor (Haiku→Sonnet, Sonnet→Opus); separado do contador de revisão>
+- achado_repetido:
 - papel_autorizado: <opcional; papéis fora do nível escolhidos pelo usuário, separados por vírgula>
 - revisao_autorizada: <opcional; autorização explícita do usuário para nova revisão>
 - brief_grande_autorizado: <opcional; escolha do usuário de não dividir tarefa com mais de 8 arquivos>

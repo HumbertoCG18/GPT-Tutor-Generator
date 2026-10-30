@@ -28,15 +28,20 @@ Controle do revisor só leitura (ACH-0006, medido em 18/10 com `codex exec --pro
 read-only` e `windows.sandbox = "elevated"`): escrita em arquivo, `git commit` e rede (`WinError 10013`)
 falham; push e `gh` de escrita dependem de rede. A regra no brief (#114) é só instrução; o sandbox é o controle.
 
+Codex medido: 0.165.0 (28/10/2026, #479; sondas repetidas na 0.165.0, #62). No Windows o Codex roda cada hook pelo `pwsh -Command`, que
+troca exit 2 por 1, e com 1 a chamada passa (openai/codex#54072); os guardas do lab no modo `codex` negam
+com exit 0 + JSON deny, que saiu `Blocked` no `codex exec`. Versão nova do Codex: o verify.py avisa até
+alguém repetir as sondas da CODEX-03 (chave falsa e `git -c … commit` num repo descartável) e trocar esta linha.
+
 RTK rtk-oss 1.0.1 (Apache-2.0; o binário padrão da 1.0 inclui motor BUSL-1.1) está em
 `C:/Users/Humberto/.local/bin/rtk.exe`. Piloto da fase 1 (CUSTO-02, #128, medir em 24/10):
-o hook `~/.claude/hooks/rtk-pytest-only.py` aceita a reescrita do `rtk hook claude` só
+o hook `hooks/rtk-pytest-only.py` do lab (#470) aceita a reescrita do `rtk hook claude` só
 quando os operadores `&&`/`;` ficam iguais e cada trecho fica como digitado ou igual à
 reescrita que o próprio hook calcula: `rtk ` antes de `pytest|cargo|ls|gh|wc`, ou
 `python -m pytest` → `rtk pytest`, com os mesmos argumentos. Caractere fora do ASCII
 imprimível (exceto espaço e tab, p. ex. NBSP), quebra de linha, pipe, `&`,
 subshell, `$`, crase, aspas, `\`, `#` ou redirecionamento (exceto `2>&1`) no original ou na
-reescrita, e falha ou timeout do rtk, deixam o comando nativo. `vitest` e `npm test` ficam fora. Rollback: `rtk-pytest-only.py.bak-custo02`
+reescrita, e falha ou timeout do rtk, deixam o comando nativo. `vitest` e `npm test` ficam fora. Rollback: `~/.claude/hooks/rtk-pytest-only.py.bak-custo02`
 (hook) e `rtk-0.49.0.exe.bak` (binário). `%APPDATA%/rtk/config.toml` só cala o aviso do
 hook global (`suppress_hook_warning`); telemetria desligada. Se o pytest do projeto não
 estiver no PATH, preservar o ambiente nativo e executar o comando original.
