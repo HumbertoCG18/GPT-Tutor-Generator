@@ -76,6 +76,12 @@ Pergunta/status/docs simples ficam no agente ativo, sem migração de sessão.
   coordenador registra a troca no estado e passa T1/T2 ao Codex: `codex exec -m gpt-6-astra -c
   model_reasoning_effort=<medium T1, high T2> -s workspace-write`, numa worktree própria. T3 fica
   na camada 1: sem cota, espera. Erro ou recusa não é troca: parar.
+- Gatilho (#62): antes de delegar T1/T2, o coordenador lê a última linha de
+  `<raiz>/.workflow/local/cota-historico.jsonl` (o mod `cota-alerta` grava `t`, `five_hour`, `seven_day` a
+  cada turno do dono). Qualquer janela acima de 80% com `t` de até 30 min: T1/T2 vão à reserva Codex,
+  registrado no estado. Sem linha, sem `five_hour`/`seven_day` ou `t` mais velho que 30 min: cota
+  desconhecida, fica no Claude, sem troca silenciosa, e o estado diz "cota desconhecida". 30 min: o mod
+  só mede ao fim de cada turno do dono (sem timer), então turno longo ou sessão parada deixa o dado velho.
 - Codex implementando roda sem os hooks do workflow (`features.hooks=false`, SEG-02): só o sandbox
   protege. Nunca com `--dangerously-bypass-approvals-and-sandbox`, `--yolo` ou `danger-full-access`;
   brief sem segredos; proibido no noturno (noite.md).

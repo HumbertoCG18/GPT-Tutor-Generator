@@ -5,14 +5,23 @@ Ler ao coordenar trabalho noturno; não carregar preventivamente. Registro e est
 1. Tomar só tarefas `livre` de `campanhas.py listar --noite`. Nada livre: dizer no chat e parar.
    Aberto pelo agendador do Alethe: a tarefa já vem no prompt; trabalhar só nela, sem escolher outra.
 2. Uma tarefa por vez, com o seu `.workflow/local/active-task.md` (`campanha`, `tarefa`, classificação).
+   Cada tarefa num subagente de contexto novo; só o pai (o coordenador da noite) grava o diário (`campanhas.py noite`).
 3. Delegar com `task: <ID>` igual a `tarefa`; contratos de delegação, revisão e timeout valem (delegation.md, review.md).
 4. Registrar cada resultado: `campanhas.py noite <ID> --resultado ok|aguarda-voce|falhou|parou --resumo "…" [--evidencia "…"]`.
    Abrir o `--resumo` com o estado de retomada (`retomada:`, `do zero:`, `Gate 2:`, `decisão:`, `falhou:`), tabela em resume.md.
    Execução longa grava `.workflow/local/execucao.json` com `i`, `N`, `inicio`, `teto` e `pid`, como o `replay.py`.
    Selo `✕ parado` na tarefa ativa: o processo morreu antes do teto; registrar `parou`, sem esperar o teto (#142).
-5. Nunca concluir: o Gate 2 é do usuário. Não marcar `gate_2: aprovado` nem rodar `estado … concluída`. Trabalho pronto fica `status: concluido` com `gate_2: pendente` (o hook deixa a tarefa `bloqueada`, aguardando o Gate 2), recebe no registro `campanhas.py estado <ID> bloqueada --gate2 pendente` e entra no diário como `aguarda-voce` com resumo `Gate 2:`; parada numa decisão de plano também é `aguarda-voce`, com `decisão:`.
+5. Gate 2 automático (#486), só T1/T2 e fora das guardas: na worktree, antes do commit, `gates.py gate2 --tarefa ID --aprovador noite-auto`. Ele grava só com a última rodada de revisão Codex (`astra_review.py run`) APPROVED neste HEAD e neste conteúdo (tarefa que precisa de revisão Claude fica `aguarda-voce`), nível T1/T2 no registro de campanhas e Gate 1 do dono (`gate1-aprovado`) com a issue da branch, a noite ligada no flag real (o `CAMPANHAS_NOITE_FLAG` dos testes não conta e o git-lock o nega em chamada ao `gates.py` ou ao `campanhas.py`), diff só em `arquivos_permitidos` e fora de `hooks/`, `githooks/`, `plugins/gate2-pergunta/`, `plugins/astra-review/`, `bin/gates.py`, `bin/campanhas.py`, `workflow.md`, `references/noite.md` e settings, nenhum assert removido e a suíte do CI verde (o `gates.py` roda). Com ele, `git add` numa chamada própria, depois `git commit`, `git push origin <branch>` e `gh pr create --draft` passam; editar a worktree depois invalida o Gate 2, e índice diferente da worktree aprovada também; de dia o `noite-auto` não vale, o Gate 2 volta ao dono. À noite o git-lock nega escrita em `.workflow/campanhas.json` fora do `campanhas.py`. Recusa: a tarefa fica `aguarda-voce` com o motivo. Merge nunca (Gate 3 do dono).
+   Sem `noite-auto`, nunca concluir: o Gate 2 é do usuário. Não marcar `gate_2: aprovado` nem rodar `estado … concluída`. Trabalho pronto fica `status: concluido` com `gate_2: pendente` (o hook deixa a tarefa `bloqueada`, aguardando o Gate 2), recebe no registro `campanhas.py estado <ID> bloqueada --gate2 pendente` e entra no diário como `aguarda-voce` com resumo `Gate 2:`; parada numa decisão de plano também é `aguarda-voce`, com `decisão:`.
 6. Toda espera por subagente tem prazo (#396): Monitor no mtime de `subagents/agent-<id>.jsonl` da sessão (o `tasks/<id>.output` fica com 0 bytes até o fim), avisando com 4 min sem escrita e teto de 30 min. Aviso de "interim" ou "waiting on its own background work" sem processo em segundo plano: ler a transcrição e a worktree, sem esperar mais. Agente retomado por SendMessage não entrega um 2º relatório: o resultado está na transcrição.
 7. Achado fora da tarefa: `campanhas.py achado "título" --tipo ideia|bug|risco|divida --origem <ID>`, sem investigar; no máximo 3 por tarefa.
+
+## Rodada antes da noite
+
+1. O agente roda `campanhas.py listar --rodada` (T1/T2 prontas, sem dependência aberta; a `janela` não filtra).
+2. Grilling das escolhidas por pergunta nativa, até 4 por chamada, recomendada em 1º.
+3. Por tarefa aprovada: `gates.py gate1-aprovado --tarefa ID --issue N --citacao "<palavras do dono>"`, com N a issue da branch da tarefa (`<tipo>/<N>-<slug>`). Só essas ficam `livre` em `listar --noite`.
+4. O dono liga a noite com `/noite`. A aprovação vale 12 h; mais velha, no futuro ou seguida de `gate1-reprovado`, não vale.
 
 ## Restrições (SEG-02, #53)
 
@@ -36,8 +45,10 @@ Seis travas da noite (~7,3 h) vieram de `ask` sem ninguém acordado.
 - Edição de teste que remove ou troca `assert` é negada pelo teste-guard em subagente (dia ou noite) e pergunta no agente principal (#313): acrescentar testes em vez de trocar asserts. O git-lock também nega em subagente o commit fora da forma canônica. O teste-guard só vê Edit/Write: edição por script passa, e a linha "Testes" do cartão do Gate 2 conta os asserts removidos no diff do PR (#396).
 - Comparação nova num teste novo não pergunta mais; trocar `==` por `>=` num assert existente pergunta.
 - Worktrees em `alw-wt/<issue>`; nada fora dele.
-- Antes de sair: `/noite` (ou `campanhas.py noite-flag ligar`) liga o flag `.workflow/local/noite` do lab por 12 h e mostra as tarefas livres. Com ele, o `ask` do git-lock e do teste-guard vira bloqueio com motivo também no agente principal, que reescreve o comando ou acrescenta testes (#345, #347). De manhã: `/dia`.
+- Antes de sair: o dono roda `/noite` (o git-lock bloqueia o agente que tenta `campanhas.py noite-flag ligar` ou `desligar`, #463), que liga o flag `.workflow/local/noite` do lab por 12 h e mostra as tarefas livres. Com ele, o `ask` do git-lock e do teste-guard vira bloqueio com motivo também no agente principal, que reescreve o comando ou acrescenta testes (#345, #347). De manhã: `/dia`.
 - O gate2-pergunta também nega à noite: `git commit`/`git push` sem Gate 2 da tarefa, `gh pr merge` fora da forma `gh pr merge N [--squash|--merge|--rebase|-d|--auto|--admin]` ou sem Gate 2 do PR (`gates.py verificar --pr N`), e qualquer falha da conferência (#358).
+- Merge à noite nunca: o Gate 3 (merge na `dev`) é do dono. `gates.py verificar --pr N` responde 1 com a noite ligada e o git-lock nega `gh pr merge`, mesmo com Gate 2 válido (#486).
+- À noite o gate2-pergunta só deixa `git commit`, `git push` e `gh pr create` com Gate 2 `noite-auto` válido; o PR só em rascunho (`--draft`) e nesta pasta; o push nomeia a branch de destino e nunca vai para `dev`, `main` ou `master` (destino não lido também é negado). O pre-push `pre-push-tronco` recusa o tronco à noite em qualquer worktree, pelo que o próprio git envia; vale depois que o dono roda `gates.py instalar` de novo. O git-lock nega escrita em `.workflow/local/astra-reviews` (só `astra_review.py` grava) e o cartão do Gate 3 mostra a linha `Gate 2 · noite-auto` (#486).
 
 ## Limites do gate2-pergunta (#358)
 
