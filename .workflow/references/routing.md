@@ -69,6 +69,15 @@ Matriz executável). Fase pelo `status` do active-task.md (planejando = planejam
 delegando, revisando, bloqueado = coordenação). Sem tarefa ativa, fica o modelo da sessão. O Mod rota só
 troca no início de um turno, depois de mudar tarefa, nível ou fase: trocar de modelo refaz o cache do
 contexto inteiro. Escolha do dono: `/rota manual <modelo> [effort]`, válida até a tarefa mudar.
+Estado do principal (#565): é o `.workflow/local/active-task.md` da raiz da sessão, que pode ser o checkout
+principal ou uma worktree; o principal lê o estado dessa raiz e nunca escolhe outra worktree por conta própria. Ao
+iniciar, retomar numa sessão nova ou trocar de tarefa, o coordenador grava ali, pelo template, `tarefa`, `campanha`,
+`classificacao`, `status` e `coordenador_e_sessao` com o id da sessão. `worktree`, `branch` e `head` identificam o
+checkout onde o arquivo está (o `delegate-gate.py` os confere contra o Git dele); o destino de execução de uma tarefa
+delegada é outra informação e vai no campo `destino_de_execucao`, com o estado próprio da worktree dela. O estado
+anterior vai para `active-task-<id>.md`, e ao concluir fica `status: concluido`. Estado sem a sessão atual, de tarefa encerrada,
+sem `classificacao` ou com `classification` divergente mantém o modelo da sessão, com o motivo na faixa
+(`rota: AUTO · mantido: …`) e em rotas.jsonl (`diagnostico`, `estado_origem`).
 Motivo da troca: em 22–28/10 a thread principal gerou 930M de cache_read em Opus (~73% do output total
 era Opus); critério de validação na ROTA-12 (#554).
 
